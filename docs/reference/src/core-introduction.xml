@@ -1,0 +1,79 @@
+<chapter id="core">
+  <title>Inroduction</title>
+  <sect1 id="overview">
+    <title>Overview</title>
+
+    <para>
+      Compass is built using a layered architecture. Applications interacts with the underlying Search Engine through three main Compass interfaces: <literal>Compass</literal>, <literal> CompassSession</literal> and <literal>CompassTransaction</literal>. These interfaces hide the implementation details of Compass Search Engine abstraction layer.
+    </para>
+
+    <para>
+      <emphasis>Compass</emphasis> provide access to search engine management functionality and <literal>CompassSession</literal>'s for managing data within the Search Engine. It is created using <literal> CompassConfiguration</literal> (loads configuration and mappings files). When <literal>Compass</literal> is created, it will either join an existing index or create a new one if none is available, then instantiates the configured Search Engine Optimizer. After this, an application will use <literal>Compass</literal> to obtain a <literal>CompassSession</literal> in order to start managing the data with the Search Engine. <literal>Compass</literal> is a heavyweight object, usually created at application startup and shared within an application for <literal>CopmassSession</literal> creation.
+    </para>
+
+    <para>
+      <emphasis>CompassSession</emphasis> as the name suggests, represents a working lightweight session within Compass::Core. With a <literal>CompassSession</literal>, applications can save and retrieve any meta data (declared in Compass mapping files) from the Search Engine. Applications work with <literal>CompassSession</literal> at either the Object level or Compass Resource level to save and retrieve data.  In order to work with Objects within Compass::Core, they must be specified within a Object/Search Engine Mapping (OSEM) file. In order to work with Resources, they must be specified within a Resource Mapping file. Compass::Core will then retrieve the declared meta data from the Object automatically when saving Objects within Compass. When querying the Search Engine, Compass::Core provides a <literal>CompassHits</literal> interface which one can use to work with the search engine results (getting scores, resources and mapped objects).
+    </para>
+
+    <para>
+      <emphasis>CompassTransaction</emphasis>, retrieved from the <literal>CompassSession</literal> and is used to manage transactions within Compass. You can configure Compass::Core to use either local transactions or JTA synchronization. Note, that unlike JDBC, automatic transaction registration will not happen, so we strongly recommend using the <literal>CompassTransaction</literal> abstraction for easy (configuration based) replacement of the transaction strategy.
+    </para>
+
+    <para>
+      After so many words, lets see a code snippet that shows the usage of the main compass interfaces:
+<programlisting><![CDATA[CompassConfiguration conf =
+    new CompassConfiguration().configure().addClass(Author.class);
+Compass compass = conf.buildCompass();
+CompassSession session = compass.openSession();
+CompassTransaction tx = null;
+try {
+    tx = session.beginTransaction();
+    ...
+    session.save(author);
+    CompassHits hits = session.find("jack london");
+    Author a = (Author)hits.get(0);
+    Resource r = hits.getResource(0);
+    ...
+    tx.commit();
+} catch (CompassException ce) {
+    if (tx != null) tx.rollback();
+} finally {
+    session.close();
+}
+]]></programlisting>
+    </para>
+
+  </sect1>
+
+  <sect1 id="TemplateandCallback">
+  <title>Template and Callback</title>
+
+    <para>
+      Compass::Core also provides a simple implementation of the template design pattern, using the <literal>CompassTemplate</literal> and the <literal>CompassCallback</literal> classes. Using it, one does not have to worry about the Compass session or transaction handling. The <literal>CompassTemplate</literal> provides all the
+      session operations, except that they are transactional (a new session is opened and a new transaction is created and committed when calling them). It also provides the <literal>execute</literal> method, which accepts a callback class (usually an anonymous inner class), to execute within it operations that are wrapped within the same transaction.
+    </para>
+
+    <para>
+      An example of using the template is provided:
+<programlisting><![CDATA[CompassConfiguration conf =
+    new CompassConfiguration().configure().addClass(Author.class);
+Compass compass = conf.buildCompass();
+CompassTemplate template = new CompassTemplate(compass);
+template.save(author); // open a session, transaction, and closes both
+Author a = (Author) template.execute(new CompassCallback() {
+    public Object doInCompass(CompassSession session) {
+    // all the actions here are within the same session
+    // and transaction
+        session.save(author);
+        CompassHits hits = session.find("london");
+        ...
+        return session.load(id);
+    }
+});
+]]></programlisting>
+    </para>
+
+  </sect1>
+</chapter>
+
+

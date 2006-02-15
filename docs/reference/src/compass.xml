@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+[
+<!ENTITY core-intro  SYSTEM "core-intro.xml">
+<!ENTITY core-introduction  SYSTEM "core-introduction.xml">
+<!ENTITY core-configuration  SYSTEM "core-configuration.xml">
+<!ENTITY core-searchengine  SYSTEM "core-searchengine.xml">
+<!ENTITY core-osem  SYSTEM "core-osem.xml">
+<!ENTITY core-commonmetadata  SYSTEM "core-commonmetadata.xml">
+<!ENTITY core-resourcemapping  SYSTEM "core-resourcemapping.xml">
+<!ENTITY core-transaction  SYSTEM "core-transaction.xml">
+<!ENTITY core-workingwithobjects  SYSTEM "core-workingwithobjects.xml">
+<!ENTITY core-jdbcdirectory  SYSTEM "core-jdbcdirectory.xml">
+
+<!ENTITY vocabulary-intro  SYSTEM "vocabulary-intro.xml">
+<!ENTITY vocabulary-introduction  SYSTEM "vocabulary-introduction.xml">
+<!ENTITY vocabulary-dublincore  SYSTEM "vocabulary-dublincore.xml">
+
+<!ENTITY gps-intro  SYSTEM "gps-intro.xml">
+<!ENTITY gps-introduction  SYSTEM "gps-introduction.xml">
+<!ENTITY gps-jdbc  SYSTEM "gps-jdbc.xml">
+<!ENTITY gps-hibernate  SYSTEM "gps-hibernate.xml">
+<!ENTITY gps-jdo  SYSTEM "gps-jdo.xml">
+<!ENTITY gps-ojb  SYSTEM "gps-ojb.xml">
+<!ENTITY gps-ibatis  SYSTEM "gps-ibatis.xml">
+
+<!ENTITY spring-intro  SYSTEM "spring-intro.xml">
+<!ENTITY spring-introduction  SYSTEM "spring-introduction.xml">
+<!ENTITY spring-dao  SYSTEM "spring-dao.xml">
+<!ENTITY spring-transaction  SYSTEM "spring-transaction.xml">
+<!ENTITY spring-hibernate  SYSTEM "spring-hibernate.xml">
+<!ENTITY spring-ojb  SYSTEM "spring-ojb.xml">
+<!ENTITY spring-jdbc  SYSTEM "spring-jdbc.xml">
+<!ENTITY spring-aop  SYSTEM "spring-aop.xml">
+<!ENTITY spring-mvc  SYSTEM "spring-mvc.xml">
+
+<!ENTITY samples-intro  SYSTEM "samples-intro.xml">
+<!ENTITY samples-library  SYSTEM "samples-library.xml">
+<!ENTITY samples-petclinic SYSTEM "samples-petclinic.xml">
+
+]>
+
+<book>
+  <bookinfo>
+    <title>Compass - Java Search Engine Framework</title>
+    <subtitle>Reference Documentation</subtitle>
+    <releaseinfo>0.8.2</releaseinfo>
+
+    <authorgroup>
+      <author>
+        <firstname>Shay</firstname>
+        <surname>Banon (kimchy)</surname>
+      </author>
+      <author>
+        <firstname>Alan</firstname>
+        <surname>Hardy</surname>
+      </author>
+    </authorgroup>
+
+    <legalnotice>Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.</legalnotice>
+  </bookinfo>
+
+  <toc></toc>
+
+  <preface id="preface">
+    <title>Preface</title>
+
+    <para>Compass is a powerful, transactional Object to Search Engine Mapping (OSEM) Java framework. Compass allows you to declaratively map your Object domain model to the underlying Search Engine, synchronising data changes between Index and different datasources. Compass provides a high level abstraction on top of the Lucene low level API. Compass also implements fast index operations and optimization and introduces transaction capabilities to the Search Engine.</para>
+
+    <para>
+    Compass aim is to provide the following:
+
+      <itemizedlist>
+        <listitem>
+          <para>
+            The simplest solution for enabling search capabilities within your application stack.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Promote the use of Search Engine as a lightweight application datasource.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Provide rich Search Engine semantics to find application data.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Synchronise data changes between Search Engine and datasource.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Write less code, find data quicker.
+          </para>
+        </listitem>
+      </itemizedlist>
+
+    </para>
+
+  </preface>
+
+
+  <part>
+    <title>Compass::Core</title>
+    <partintro>
+    &core-intro;
+    </partintro>
+    &core-introduction;
+    &core-configuration;
+    &core-searchengine;
+    &core-osem;
+    &core-commonmetadata;
+    &core-resourcemapping;
+    &core-transaction;
+    &core-workingwithobjects;
+  </part>
+
+  <part>
+    <title>Compass::Vocabulary</title>
+    <partintro>
+    &vocabulary-intro;
+    </partintro>
+    &vocabulary-introduction;
+    &vocabulary-dublincore;
+  </part>
+
+  <part>
+    <title>Compass::Gps</title>
+    <partintro>
+    &gps-intro;
+    </partintro>
+    &gps-introduction;
+    &gps-jdbc;
+    &gps-hibernate;
+    &gps-jdo;
+    &gps-ojb;
+    &gps-ibatis;
+  </part>
+
+  <part>
+    <title>Compass::Spring</title>
+    <partintro>
+    &spring-intro;
+    </partintro>
+    &spring-introduction;
+    &spring-dao;
+    &spring-transaction;
+    &spring-hibernate;
+    &spring-ojb;
+    &spring-jdbc;
+    &spring-aop;
+    &spring-mvc;
+  </part>
+
+  <part>
+    <title>Compass::Samples</title>
+    <partintro>
+    &samples-intro;
+    </partintro>
+    &samples-library;
+    &samples-petclinic;
+  </part>
+
+  <part>
+    <title>Appendixes</title>
+    &core-jdbcdirectory;
+  </part>
+
+</book>

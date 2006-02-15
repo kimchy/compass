@@ -1,0 +1,174 @@
+<chapter id="spring-aop">
+  <title>Spring AOP</title>
+
+  <sect1 id="spring-aop-introduction">
+   <title>Introduction</title>
+    <para>
+      Compass provides a set of Spring AOP Advices which helps to mirror data changes done within a Spring powered application. For applications with a data source or a tool with no gps device that works with it (or it does not have mirroring capabilities - like iBatis), the mirror advices can make synchronizing changes made to the data source and Compass index simpler.
+    </para>
+  </sect1>
+
+  <sect1 id="spring-aop-advices">
+   <title>Advices</title>
+    <para>
+      The AOP support comes with three advices: <literal>CompassCreateAdvice</literal>, <literal>CompassSaveAdvice</literal>, and <literal>CompassDeleteAdvice</literal>. They can create, save, or delete a data Object respectively. The advices are of type <literal>AfterReturningAdvice</literal>, and will persist the change to the index after the method proxied/adviced returns.
+    </para>
+
+    <para>
+      The data object that will be used to be created/saved/deleted can be one of the adviced method parameters (using the <literal>parameterIndex</literal> property), or it's return value (setting the <literal>useReturnValue</literal> to <literal>true</literal>).
+    </para>
+  </sect1>
+
+  <sect1 id="spring-aop-dao-sample">
+   <title>Dao Sample</title>
+    <para>
+      The following is an example using Spring AOP to proxy the dao layer. The Dao layer usually acts as an abstraction layer on top of the actual data source interaction code. It is one of the most common places where the Compass advices can be applied (the second is explained in the next section). The assumption here is that the Dao have create/save/delete methods.
+
+<programlisting><![CDATA[<beans>
+  ...
+
+  <bean id="compass" class="org.compass.spring.LocalCompassBean">
+    ... // configure a compass instance
+  </bean>
+
+  <!-- define the daos -->
+
+  <bean id="userDao" class="eg.UserDaoImpl">
+    ...
+  </bean>
+
+  <bean id="contactDao" class="eg.ContactDaoImpl">
+    ...
+  </bean>
+
+  <!-- Definen the advisors -->
+
+  <bean id="compassCreateAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice">
+      <bean class="org.compass.spring.aop.CompassCreateAdvice">
+          <property name="compass" ref="compass" />
+      </bean>
+    </property>
+    <property name="pattern" value=".*create" />
+  </bean>
+
+  <bean id="compassSaveAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice">
+      <bean class="org.compass.spring.aop.CompassSaveAdvice">
+          <property name="compass" ref="compass" />
+      </bean>
+    </property>
+    <property name="pattern" value=".*save" />
+  </bean>
+
+  <bean id="compassDeleteAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice">
+      <bean class="org.compass.spring.aop.CompassDeleteAdvice">
+          <property name="compass" ref="compass" />
+      </bean>
+    </property>
+    <property name="pattern" value=".*delete" />
+  </bean>
+
+  <!-- Auto proxy the daos -->
+
+  <bean id="proxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+    <property name="beanNames"><value>userDao, contactDao</value></property>
+    <property name="interceptorNames">
+      <list>
+        <value>compassCreateAdvisor</value>
+        <value>compassSaveAdvisor</value>
+        <value>compassDeleteAdvisor</value>
+      </list>
+    </property>
+  </bean>
+
+...
+</beans>
+]]></programlisting>
+
+    </para>
+
+  </sect1>
+
+  <sect1 id="spring-aop-service-sample">
+   <title>Transactional Serivce Sample</title>
+    <para>
+      The following is an example using Spring AOP to proxy the transactional service layer. The service layer is already proxied by the <literal>TransactionProxyFactoryBean</literal>, and the Compass advices can be one of it's <literal>postInterceptors</literal>. The assumption here is that the service layer have create/save/delete methods.
+
+<programlisting><![CDATA[<beans>
+  ...
+
+  <bean id="compass" class="org.compass.spring.LocalCompassBean">
+    ... // configure a compass instance
+  </bean>
+
+  <!-- Definen the advisors -->
+
+  <bean id="compassCreateAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice">
+      <bean class="org.compass.spring.aop.CompassCreateAdvice">
+          <property name="compass" ref="compass" />
+      </bean>
+    </property>
+    <property name="pattern" value=".*create" />
+  </bean>
+
+  <bean id="compassSaveAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice">
+      <bean class="org.compass.spring.aop.CompassSaveAdvice">
+          <property name="compass" ref="compass" />
+      </bean>
+    </property>
+    <property name="pattern" value=".*save" />
+  </bean>
+
+  <bean id="compassDeleteAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="advice">
+      <bean class="org.compass.spring.aop.CompassDeleteAdvice">
+          <property name="compass" ref="compass" />
+      </bean>
+    </property>
+    <property name="pattern" value=".*delete" />
+  </bean>
+
+  <!-- the transaciton proxy template -->
+
+  <bean id="txProxyTemplate" abstract="true"
+    class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    <property name="transactionManager"><ref bean="transactionManager"/></property>
+    <property name="transactionAttributes">
+      <props>
+        <prop key="create*">PROPAGATION_REQUIRED</prop>
+        <prop key="save*">PROPAGATION_REQUIRED</prop>
+        <prop key="delete*">PROPAGATION_REQUIRED</prop>
+        <prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+      </props>
+    </property>
+  </bean>
+
+
+  <bean id="userManager" parent="txProxyTemplate">
+    <property name="target">
+      <bean class="org.appfuse.service.impl.UserManagerImpl">
+        <property name="userDAO"><ref bean="userDAO"/></property>
+      </bean>
+    </property>
+    <property name="postInterceptors">
+      <list>
+        <ref bean="compassCreateAdvisor"/>
+        <ref bean="compassSaveAdvisor"/>
+        <ref bean="compassDeleteAdvisor"/>
+      </list>
+    </property>
+  </bean>
+
+...
+</beans>
+]]></programlisting>
+
+    </para>
+
+  </sect1>
+
+</chapter>

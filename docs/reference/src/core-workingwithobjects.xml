@@ -1,0 +1,285 @@
+<chapter id="core-workingwithobjects">
+  <title>Working with objects</title>
+
+  <sect1 id="workingwithobjects-introduction">
+    <title>Introduction</title>
+
+    <para>
+      Lets assume you have download and configured Compass within your application and create some OSEM mappings. This section provides the basics of how you will use Compass from within the application to load, search and delete Compass searchable objects. All operations within Compass::Core are accessed through the <literal>CompassSession</literal> interface. The interface provides <literal>Object</literal> and <literal>Resource</literal> method API's, giving the developer the choice to work directly with Compass::Core internal representation (<literal>Resource</literal>) or application domain Objects.
+    </para>
+
+    </sect1>
+
+    <sect1 id="Making Object/Resource Searchable">
+      <title>Making Object/Resource Searchable</title>
+
+      <para>
+        Newly instantiated objects (or Resources) are saved to the index using the <literal>save(Object)</literal> method. If you have created more than one mapping (alias) to the same object (in OSEM file), use the <literal>save(String alias, Object)</literal> instead.
+
+<programlisting><![CDATA[Author author = new Author();
+author.setId(new Long(1));
+author.setName("Jack London");
+compassSession.save(author);
+]]></programlisting>
+
+      </para>
+
+    </sect1>
+
+    <sect1 id="Loading an Object/Resource">
+      <title>Loading an Object/Resource</title>
+      <para>
+        The <literal>load()</literal> method allows you to load an object (or a Resource) if you already know it's identifier. If you have one mapping for the object (hence one alias), you can use the <literal> load(Class, Object id)</literal> method. If you created more than one mapping (alias) to the same object, use the <literal>load(String alias, Object id)</literal> method instead.
+
+<programlisting><![CDATA[Author author = (Author) session.load(Author.class,
+     new Long(12));
+]]></programlisting>
+
+      </para>
+
+      <para>
+        <literal>load()</literal> will throw an exception if no object exists in the index. If you are not sure that there is an object that maps to the supplied id, use the <literal>get</literal> method instead.
+      </para>
+    </sect1>
+
+    <sect1 id="Deleting an Object/Resource">
+      <title>Deleting an Object/Resource</title>
+
+      <para>
+        If you wish to delete an object (or a Resource), you can use the <literal> delete()</literal> method on the <literal>CompassSession</literal> interface (note that only the identifiers need to be set on the corresponding object or Resource).
+      </para>
+
+    </sect1>
+
+    <sect1 id="Searching">
+        <title>Searching</title>
+
+        <para>
+          For a quick way to query the index, use the <literal>find()</literal> method. The <literal>find()</literal> method returns a <literal>CompassHits</literal> object, which is an interface which encapsulates the search results. For more control over how the query will executed, use the <literal>CompassQuery</literal> interface, explained later in the section.
+        </para>
+
+        <para>
+<programlisting><![CDATA[CompassHits hits = session.find("name:jack");]]>
+</programlisting>
+        </para>
+
+      <sect2 id="Query String Syntax">
+        <title>Query String Syntax</title>
+
+        <para>
+          The free text query string has a specific syntax. The syntax is the same one <ulink url="http://lucene.apache.org">Lucene</ulink> uses, and is summarised here:
+
+          <table><tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row>
+                <entry>Expression</entry><entry>Hits That</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>jack</entry>
+                <entry>Contain the term <literal>jack</literal> in the default search field</entry>
+              </row>
+              <row>
+                <entry>jack london (jack or london)</entry>
+                <entry>Contains the term <literal>jack</literal> or <literal>london</literal>, or both, in the default search field</entry>
+              </row>
+              <row>
+                <entry>+jack +london (jack and london)</entry>
+                <entry>Contains both <literal>jack</literal> and <literal>london</literal> in the default search field</entry>
+              </row>
+              <row>
+                <entry>name:jack</entry>
+                <entry>Contains the term <literal>jack</literal> in the <literal>name</literal> property (meta-data)</entry>
+              </row>
+              <row>
+                <entry>name:jack -city:london (name:jack and not city:london)</entry>
+                <entry>Have <literal>jack</literal> in the <literal>name</literal> property and don't have <literal>london</literal> in the <literal>city</literal> property</entry>
+              </row>
+              <row>
+                <entry>name:"jack london"</entry>
+                <entry>Contains the exact phrase <literal>jack london</literal> in the <literal>name</literal> property</entry>
+              </row>
+              <row>
+                <entry>name:"jack london"~5</entry>
+                <entry>Contain the term <literal>jack</literal> and <literal>london</literal> within five positions of one another</entry>
+              </row>
+              <row>
+                <entry>jack*</entry>
+                <entry>Contain terms that begin with <literal>jack</literal></entry>
+              </row>
+              <row>
+                <entry>jack~</entry>
+                <entry>Contains terms that are close to the word <literal>jack</literal></entry>
+              </row>
+              <row>
+                <entry>birthday:[1870/01/01 TO 1920/01/01]</entry>
+                <entry>Have the <literal>birthday</literal> values between the specified values. Note that it is a lexicography range</entry>
+              </row>
+            </tbody>
+          </tgroup></table>
+
+        </para>
+
+        <para>
+          The default search can be controlled using the Compass::Core configuration parameters and defaults to <literal>all</literal> meta-data.
+        </para>
+
+      </sect2>
+
+      <sect2 id="CompassHits">
+        <title>CompassHits, CompassDetachedHits &amp; CompassHitsOperations</title>
+
+        <para>
+            All the search results are accessible using the <literal>CompassHits</literal> interface. It provides an efficient access to the search results and will only hit the index for "hit number N" when requested. Results are ordered by relevance (if no sorting is provided), in other words and by how well each resource matches the query.
+        </para>
+
+        <para>
+          <literal>CompassHits</literal> can only be used within a transactional context, if hits are needed to be accessed outside of a transactional context (like in a jsp view page), they have to be "detached", using one of <literal>CompassHits#detch</literal> methods. The detached hits are of type <literal>COmpassDetachedHits</literal>, and it is guaranteed that the index will not be accessed by any operation of the detached hits. <literal>CompassHits</literal> and <literal>CompassDetachedHits</literal> both share the same operations interface called <literal>CompassHitsOperations</literal>.
+        </para>
+
+        <para>
+          The following table lists the different <literal>CompassHitsOperations</literal> methods (note that there are many more, please view the javadoc):
+
+          <table><tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row>
+                <entry>Method</entry><entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry><literal>getLength()</literal> or <literal>length()</literal></entry>
+                <entry>Number of resources in the hits.</entry>
+              </row>
+              <row>
+                <entry><literal>score(n)</literal></entry>
+                <entry>Normalized score (based on the score of the topmost resource) of the n'th top-scoring resource. Guaranteed to be greater than 0 and less than or equal to 1.</entry>
+              </row>
+              <row>
+                <entry><literal>resource(n)</literal></entry>
+                <entry>Resource instance of the n'th top-scoring resource.</entry>
+              </row>
+              <row>
+                <entry><literal>data(n)</literal></entry>
+                <entry>Object instance of the n'th top-scoring resource.</entry>
+              </row>
+            </tbody>
+          </tgroup></table>
+
+        </para>
+
+      </sect2>
+
+      <sect2 id="CompassQuery">
+        <title>CompassQuery and CompassQueryBuilder</title>
+
+        <para>
+          Compass::Core comes with the <literal>CompassQueryBuilder</literal> interface, which provides programmatic API for building a query. The query builder creates a <literal>CompassQuery</literal> which can than be used to add sorting and executing the query.
+        </para>
+
+        <para>
+          Using the <literal>CompassQueryBuilder</literal>, simple queries can be created (i.e. eq, between, prefix, fuzzy), and more complex query builders can be created as well (such as a boolean query, multi-phrase, and query string).
+        </para>
+
+        <para>
+          The following code shows how to use a query string query builder and using the <literal>CompassQuery</literal> add sorting to the result.
+
+<programlisting><![CDATA[CompassHits hits = session.createQueryBuilder()
+  .queryString("+name:jack +familyName:london")
+    .setAnalyzer("an1") // use a different analyzer
+  .toQuery()
+    .addSort("familyName", CompassQuery.SortPropertyType.STRING)
+    .addSort("birthdate", CompassQuery.SortPropertyType.INT)
+  .hits();
+]]></programlisting>
+        </para>
+
+        <para>
+          Another example for building a query that requires the name to be jack, and the familyName not to be london:
+
+<programlisting><![CDATA[CompassQueryBuilder queryBuilder = session.createQueryBuilder();
+CompassHits hits =  queryBuilder.bool()
+    .addMust( queryBuilder.term("name", "jack") )
+    .addMustNot( queryBuilder.term("familyName", "london") )
+  .toQuery()
+    .addSort("familyName", CompassQuery.SortPropertyType.STRING)
+    .addSort("birthdate", CompassQuery.SortPropertyType.INT)
+  .hits();
+]]></programlisting>
+        </para>
+
+        <para>
+          Note that sorted resource properties / meta-data must be stored and un_tokenized. Also sorting requires more memory to keep sorting properties available. For numeric types, each property sorted requires four bytes to be cached for each resource in the index. For <literal>String</literal> types, each unique term needs to be cached.
+        </para>
+
+        <para>
+          When a query is built, most of the queries can accept an Object as a parameter, and the name part can be more than just a simple string value of the meta-data / resource-property. If we take the following mapping for example:
+
+<programlisting><![CDATA[<class name="eg.A" alias="a">
+  <id name="id" />
+
+  <property name="familyName">
+    <meta-data>family-name</meta-data>
+  </property>
+
+  <property name="date">
+    <meta-data converter-param="YYYYMMDD">date-sem</meta-data>
+  </property>
+
+</class>
+]]></programlisting>
+
+        </para>
+
+        <para>
+          The mapping defines a simple class mapping, with a simple string property called familyName and a date property called date. With the <literal>CompassQueryBuilder</literal>, most of the queries can directly work with either level of the mappings. Here are some samples:
+
+<programlisting><![CDATA[CompassQueryBuilder queryBuilder = session.createQueryBuilder();
+// The following search will result in matching "london" against "familyName"
+CompassHits hits =  queryBuilder.term("a.familyName.family-name", "london").hits();
+
+// The following search will use the class property meta-data id, which in this case
+// is the first one (family-name). If there was another meta-data with the family-name value,
+// the internal meta-data that is created will be used ($/a/familyName).
+CompassHits hits =  queryBuilder.term("a.familyName", "london").hits();
+
+// Here, we provide the Date object as a parameter, the query builder will use the
+// converter framework to convert the value (and use the given parameter)
+CompassHits hits =  queryBuilder.term("a.date.date-sem", new Date()).hits();
+
+// Remmember, that the alias constraint will not be added automatically, so
+// the following query will cause only family-name with the value "london" of alias "a"
+CompassHits hits =  queryBuilder.bool()
+    .addMust( queryBuilder.alias("a") )
+    .addMust( queryBuilder.term("a.familyName", "london") )
+  .toQuery().hits();
+]]></programlisting>
+
+        </para>
+
+      </sect2>
+
+      <sect2 id="CompassHighlighter">
+        <title>CompassHighlighter</title>
+
+        <para>
+          Compass::Core comes with the <literal>CompassHighlighter</literal> interface. It provides ways to highlight matched text fragments based on a query executed. The following code fragment shows a simple usage of the highlighter functionality (please consult the javadoc for more information):
+
+<programlisting><![CDATA[CompassHits hits =  session.find("london");
+// a fragment highlighted for the first hit, and the description property name
+String fragment = hits.highlighter(0).fragment("description");
+]]></programlisting>
+        </para>
+
+      </sect2>
+
+    </sect1>
+
+
+</chapter>
+

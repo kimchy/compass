@@ -1,0 +1,79 @@
+<chapter id="gps-hibernate">
+    <title>Hibernate</title>
+
+    <sect1 id="hibernate-introduction">
+      <title>Introduction</title>
+
+      <para>
+        The Hibernate Gps Device provides support for database indexing through the use of <ulink url="http://hibernate.org">Hibernate</ulink> ORM mappings. If your application uses Hibernate, it couldn't be easier to integrate Compass into your application (Sometimes with no code attached - see the petclinic sample).
+      </para>
+
+      <para>
+        Hibernate Gps Device utilizes Compass::Core OSEM feature (Object to Search Engine Mappings) and Hibernate ORM feature (Object to Relational Mappings) to provide simple database indexing. As well as Hibernate 3 new event based system to provide real time mirroring of data changes done through Hibernate. The path data travels through the system is:  Database -- Hibernate -- Objects -- Compass::Gps -- Compass::Core (Search Engine).
+      </para>
+
+    </sect1>
+
+    <sect1 id="hibernate-configuration">
+      <title>Configuration</title>
+
+      <para>
+        When configuring the Hibernate device, one must instantiate either <literal>Hibernate2GpsDevice</literal> (for Hibernate 2 version) or <literal>Hibernate3GpsDevice</literal> (for Hibernate 3 version). After instantiating the device, it must be initialized by either a Hibernate <literal>Configuration</literal> or a Hibernate <literal>SessionFactory</literal>. When configuring the device with Hibernate <literal>Configuration</literal>, a new <literal>SessionFactory</literal> is created when the device is started.
+      </para>
+
+      <para>
+        It is more preferable to configure the device with the <literal>SessionFactory</literal> that the actual application will use, especially since data mirroring will only work when both the device and the application will use the same <literal>SessionFactory</literal>.
+      </para>
+
+      <para>
+        Here is a code sample of how to configure the hibernate device:
+<programlisting><![CDATA[Compass compass = ... // set compass instance
+CompassGps gps = new SingleCompassGps(compass);
+CompassGpsDevice hibernateDevice =
+// If Hibernate 2
+     new Hibernate2GpsDevice("hibernate", sessionFactory);
+// If Hibernate 3
+     new Hibernate3GpsDevice("hibernate", sessionFactory);
+gps.addDevice(hibernateDevice);
+.... // configure other devices
+gps.start();
+]]></programlisting>
+      </para>
+
+    </sect1>
+
+    <sect1 id="hibernate-index">
+      <title>Index Operation</title>
+
+      <para>
+        Hibernate Gps device provides the ability to index a database. It supports both Hibernate 2 and Hibernate 3 versions. Compass will index objects (or their matching database tables in the Hibernate mappings) specified in both the Hibernate mappings and Compass::Core mappings (OSEM) files.
+      </para>
+
+      <para>
+        When indexing Compass::Gps, the Hibernate device can be configured with a <literal>fetchCount</literal>. The <literal>fetchCount</literal> parameter controls the pagination process of indexing a class (and it's represented table) so in case of large tables, the memory level can be controlled.
+      </para>
+
+    </sect1>
+
+    <sect1 id="hibernate-datamirroring">
+      <title>Real Time Data Mirroring</title>
+
+      <para>
+        The Hibernate Gps Device, with Hibernate 3 new event system, provides support for real time data mirroring. Data changes via Hibernate are reflected in the Compass index. There is no need to configure anything in order to enable the feature, the device takes care for it all.
+      </para>
+
+      <para>
+        An important point when configuring the hibernate device is that both the application and the hibernate device must use the same <literal>SessionFactory</literal>. Which means that the device must be configured with a <literal>SessionFactory</literal> and not a <literal>Configuration</literal>.
+      </para>
+
+      <para>
+        Note on Hibernate 2 and <literal>Interceptor</literal>s. When using generated ids with Hibernate 2, the id in the interceptor is <literal>null</literal>, which means that when creating new objects and persisting them to the database, the device has no way to index the object. If Hibernate 2 is a must, one possible solution is to use aspects.
+      </para>
+
+      <para>
+        If using Hibernate 3 and the Spring Framework, please see the <link linkend="spring-hibernate">SpringHibernate3GpsDevice</link>
+      </para>
+
+    </sect1>
+
+</chapter>

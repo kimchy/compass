@@ -1,0 +1,73 @@
+<chapter id="core-transaction">
+  <title>Transaction</title>
+
+  <sect1 id="transaction-inroduction">
+    <title>Introduction</title>
+
+    <para>
+        As we explained in the overview page, Compass::Core provides an abstraction layer on top of the actual transaction handling using the <literal>CompassTransaction</literal> interface. Compass::Core has a transaction handling framework in place to support different transaction strategies and comes built in with LocalTranasction and JTA synchronization support.
+    </para>
+
+    <para>
+        As oppose to transaction handling based on JDBC data source or JCA based resources (and until compass will implement something similar to JCA), you have to use the <literal>CompassTransaction</literal> abstraction. Note, that it is made much simpler when using <literal>CompassTemplate</literal> and <literal>CompassCallback</literal> classes since both the session management and the transaction management is done by the template class.
+    </para>
+
+  </sect1>
+
+  <sect1 id="transaction-sessionLifecycle">
+    <title>Session Lifecycle</title>
+
+    <para>
+        Compass::Core <literal>Compass</literal> interface manages the creation of <literal>CompassSession</literal> using the <literal>openSession()</literal> method. When <literal>beginTransaction()</literal> is called on the <literal>CompassTransaction</literal>, the session is bound to the created transaction (JTA or Local) and used throughout the life-cycle of the transaction. It means that if an additional session is opened within the current transaction, the originating session will be returned by the <literal>openSession()</literal> method.
+    </para>
+
+  </sect1>
+
+  <sect1 id="transaction-localTransaction">
+    <title>Local Transaction</title>
+
+    <para>
+        Compass::Core provides support for compass local transactions. Local transactions are Compass session level transaction, with no knowledge of other running transactions (like JDBC or JTA).
+    </para>
+
+    <para>
+        A local transaction which starts within the boundaries of a compass local transaction will share the same session and transaction context and will be controlled by the outer transaction.
+    </para>
+
+    <para>
+        In order to configure Compass to work with the Local Transaction, you must set the <literal>compass.transaction.factory</literal> to <literal>org.compass.core.transaction.LocalTransactionFactory</literal>.
+    </para>
+
+  </sect1>
+
+  <sect1 id="transaction-JTASynchronizationTransaction">
+    <title>JTA Synchronization Transaction</title>
+
+    <para>
+        Compass::Core provides support for JTA transactions, using the JTA synchronization support. A JTA transaction will be joined if already started (by CMT for example) or will be started if non was initiated.
+    </para>
+
+    <para>
+        The support for JTA also includes support for suspend and resume provided by the JTA transaction manager (or REQUIRES_NEW in CMT when there is already a transaction running).
+    </para>
+
+    <para>
+        JTA transaction support is best used when wishing to join with other transactional resources (like DataSource).
+    </para>
+
+    <para>
+        The current implementation performs the full transaction commit (first and second phase) at the <literal>afterCompletion</literal> method and any exception is logged but not propagated.
+    </para>
+
+    <para>
+        In order to configure Compass to work with the JTA Sync Transaction, you must set the <literal>compass.transaction.factory</literal> to <literal>org.compass.core.transaction.JTASyncTransactionFactory</literal>. You must also set the transaction manager lookup based on the environment your application will be running at.
+    </para>
+
+    <para>
+        If you wish to unit test your application without a container, you might consider using <ulink url="http://jotm.objectweb.org">JOTM</ulink> as your JTA transaction manager.
+    </para>
+
+  </sect1>
+
+</chapter>
+

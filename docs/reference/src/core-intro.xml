@@ -1,0 +1,44 @@
+<para>
+  Compass::Core aim is to simplify the integration of Java applications with Search Engine.
+</para>
+
+<para>
+The Compass::Core functionality is explained in detail in the following chapters.
+</para>
+<para>
+  <itemizedlist>
+    <listitem>
+    <para>
+    Configuration: describes how to configure and work with Compass and explains all of Compass's configuration parameters.
+    </para>
+    </listitem>
+    <listitem>
+    <para>
+      Search Engine: an abstraction built on top of the Lucene search engine. Adds features like two phase transaction management, fast updates and optimisers.
+    </para>
+    </listitem>
+    <listitem>
+    <para>
+      OSEM: Object Search Engine Mapping, provides the ability to map POJO's (Plain Old Java Objects) to the search engine through XML configuration files. Introduces the syntax for configuring Compass to work with Objects.
+    </para>
+    </listitem>
+    <listitem>
+    <para>
+      Common-metadata: a Compass feature for externalising the definition of mata-data names and aliases used in OSEM files. This provides the ability to centralise the management of meta-data.
+    </para>
+    </listitem>
+    <listitem>
+    <para>
+      Resource Mapping: provides the ability to map resources other than Objects for indexing within the search engine. Introduces the syntax for configuring Compass to work with Resources.
+    </para>
+    </listitem>
+    <listitem>
+    <para>
+      Transaction: describes Compass transaction support. Compass supports multiple transaction stratergies and comes built in with LocalTransaction and JTA synchonisation support.
+    </para>
+    </listitem>
+  </itemizedlist>
+</para>
+
+
+
