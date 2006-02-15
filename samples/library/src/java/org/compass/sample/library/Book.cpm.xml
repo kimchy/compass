@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.sample.library">
+
+    <class name="Book" alias="${library.book}">
+    
+        <id name="id" />
+
+        <property name="keywords">
+            <meta-data boost="2">${library.keyword}</meta-data>
+        </property>
+        
+        <property name="title">
+            <meta-data>${library.title}</meta-data>
+        </property>
+
+        <property name="publishDate">
+            <meta-data>${library.publishDate}</meta-data>
+        </property>
+
+        <property name="summary">
+            <meta-data>${library.summary}</meta-data>
+        </property>
+    
+    </class>
+    
+</compass-core-mapping>
