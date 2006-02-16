@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-meta-data PUBLIC 
+    "-//Compass/Compass Core Meta Data DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-meta-data-1.0.dtd">
+
+<compass-core-meta-data>
+
+    <meta-data-group id="petclinic" displayName="Petclinic Meta Data">
+    
+        <description>Petclinic Meta Data</description>       
+        <uri>http://compass/sample/petclinic</uri>
+        
+        <alias id="vet" displayName="Vet">
+            <description>Vet alias</description>
+            <uri>http://compass/sample/petclinic/alias/vet</uri>
+            <name>vet</name>
+        </alias>
+
+        <alias id="pet" displayName="Pet">
+            <description>Pet alias</description>
+            <uri>http://compass/sample/petclinic/alias/pet</uri>
+            <name>pet</name>
+        </alias>
+
+        <alias id="owner" displayName="Owner">
+            <description>Owner alias</description>
+            <uri>http://compass/sample/petclinic/alias/owner</uri>
+            <name>owner</name>
+        </alias>
+
+        <alias id="visit" displayName="Visit">
+            <description>Visit alias</description>
+            <uri>http://compass/sample/petclinic/alias/visit</uri>
+            <name>visit</name>
+        </alias>
+
+        <alias id="specialty" displayName="Specialty">
+            <description>Specialty alias</description>
+            <uri>http://compass/sample/petclinic/alias/specialty</uri>
+            <name>specialty</name>
+        </alias>
+
+        <alias id="petType" displayName="Pet Type">
+            <description>Pet Type alias</description>
+            <uri>http://compass/sample/petclinic/alias/petType</uri>
+            <name>petType</name>
+        </alias>
+
+        <meta-data id="type" displayName="Type">
+            <description>Type of an entity in the system</description>
+            <uri>http://compass/sample/petclinic/type</uri>
+            <name>type</name>
+            <value id="mdPerson">person</value>
+        </meta-data>
+
+        <meta-data id="name" displayName="Name">
+            <description>The name of an entity</description>
+            <uri>http://compass/sample/petclinic/name</uri>
+            <name>name</name>
+        </meta-data>
+        
+        <meta-data id="firstName" displayName="First Name">
+            <description>The first name of a person</description>
+            <uri>http://compass/sample/petclinic/firstName</uri>
+            <name>firstName</name>
+        </meta-data>
+
+        <meta-data id="lastName" displayName="Last Name">
+            <description>The last name of a person</description>
+            <uri>http://compass/sample/petclinic/lastName</uri>
+            <name>lastName</name>
+        </meta-data>
+
+        <meta-data id="address" displayName="Address">
+            <description>The address of a person</description>
+            <uri>http://compass/sample/petclinic/address</uri>
+            <name>address</name>
+        </meta-data>
+
+        <meta-data id="city" displayName="City">
+            <description>The city of a person</description>
+            <uri>http://compass/sample/petclinic/city</uri>
+            <name>city</name>
+        </meta-data>
+
+        <meta-data id="telephone" displayName="Telephone">
+            <description>The telephone of a person</description>
+            <uri>http://compass/sample/petclinic/telephone</uri>
+            <name>telephone</name>
+        </meta-data>
+
+        <meta-data id="birthdate" displayName="Birthdate">
+            <description>The birthdate</description>
+            <uri>http://compass/sample/petclinic/birthdate</uri>
+            <name format="yyyy-MM-dd">birthdate</name>
+        </meta-data>
+
+        <meta-data id="description" displayName="Description">
+            <description>The description of a visit</description>
+            <uri>http://compass/sample/petclinic/description</uri>
+            <name>description</name>
+        </meta-data>
+
+        <meta-data id="petType" displayName="Pet Type">
+            <description>The type of a pet</description>
+            <uri>http://compass/sample/petclinic/petType</uri>
+            <name>petType</name>
+        </meta-data>
+
+        <meta-data id="specialty" displayName="Specialty">
+            <description>The specialty of a vet</description>
+            <uri>http://compass/sample/petclinic/specialty</uri>
+            <name>specialty</name>
+        </meta-data>
+
+        <meta-data id="date" displayName="Date">
+            <description>The date</description>
+            <uri>http://compass/sample/petclinic/date</uri>
+            <name format="yyyy-MM-dd">date</name>
+        </meta-data>
+        
+    </meta-data-group>
+    
+</compass-core-meta-data>
