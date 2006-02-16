@@ -1,5 +1,5 @@
-COMPASS UPGRADE DOCUMENTETION (Please see Compass JIRA for more information)
-============================================================================
+COMPASS UPGRADE DOCUMENTETION (Please see Compass JIRA for a complete changelog)
+================================================================================
 
 VERSION 0.9.0 ()
 ================
