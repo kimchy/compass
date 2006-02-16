@@ -1,0 +1,14 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.annotations.test.xml">
+
+    <class name="A" alias="A">
+
+        <property name="valueXml">
+            <meta-data>valueXml</meta-data>
+        </property>
+    
+    </class>
+</compass-core-mapping>
