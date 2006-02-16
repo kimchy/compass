@@ -81,15 +81,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene/lucene-core-1.9-rc1-dev.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/j2ee/jdbc2_0-stdext.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -189,15 +180,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene/lucene-snowball-1.9-rc1-dev.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/jakarta-commons/commons-collections.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -217,15 +199,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/j2ee/activation.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene/lucene-highlighter-1.9-rc1-dev.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -343,15 +316,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/log4j/log4j-1.2.13.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/lucene/lucene-analyzers-1.9-rc1-dev.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -523,6 +487,42 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/hibernate/jboss-archive-browsing.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene/lucene-snowball.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene/lucene-highlighter.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene/lucene-core.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/lucene/lucene-analyzers.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
