@@ -1,0 +1,418 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.compass.core;
+
+import java.io.Reader;
+import java.io.Serializable;
+
+/**
+ * A interface describing all the available operations allowed by compass.
+ * 
+ * @author kimchy
+ */
+public interface CompassOperations {
+
+    /**
+     * Creates a resource, that is used with the actual Search Engine
+     * implementation.
+     * 
+     * @return a new resource
+     * @throws CompassException
+     */
+    Resource createResource(String alias) throws CompassException;
+
+    /**
+     * Creates a Property that is used with the actual Search Engine. The
+     * available values for the store and index parameters are provided in the
+     * Property interface (Property.Store and Property.Index). It stores no term
+     * vector information (Property.TermVector.NO).
+     * 
+     * @param name
+     * @param value
+     * @param store
+     * @param index
+     * @return a new property
+     * @throws CompassException
+     */
+    Property createProperty(String name, String value, Property.Store store, Property.Index index)
+            throws CompassException;
+
+    /**
+     * Creates a Property that is used with the actual Search Engine. The
+     * available values for the store and index parameters are provided in the
+     * Property interface (Property.Store, Property.Index, Property.TermVector).
+     * 
+     * @param name
+     * @param value
+     * @param store
+     * @param index
+     * @return a new property
+     * @throws CompassException
+     */
+    Property createProperty(String name, String value, Property.Store store, Property.Index index,
+            Property.TermVector termVector) throws CompassException;
+
+    /**
+     * Creates a property (indexed, and not stored) for the specified reader. It
+     * stores no term vector information (Property.TermVector.NO).
+     * 
+     * @param name
+     * @param value
+     * @return a new property
+     * @throws CompassException
+     */
+    Property createProperty(String name, Reader value) throws CompassException;
+
+    /**
+     * Creates a property (indexed, and not stored) for the specified reader.
+     * 
+     * @param name
+     * @param value
+     * @return a new property
+     * @throws CompassException
+     */
+    Property createProperty(String name, Reader value, Property.TermVector termVector) throws CompassException;
+
+    /**
+     * Creates a binary property only stored (can be compressed).
+     * 
+     * @param name
+     * @param value
+     * @return a new property
+     * @throws CompassException
+     */
+    Property createProperty(String name, byte[] value, Property.Store store) throws CompassException;
+
+    /**
+     * Deletes a resource with the specified alias. Note that the resource must
+     * have the defined ids in the mapping files set and an alias set.
+     * 
+     * @param resource
+     *            The resource to be deleted.
+     * @throws CompassException
+     */
+    void delete(Resource resource) throws CompassException;
+
+    /**
+     * Returns a Resource that match the mapping specified for the defined class
+     * type, and specified id. The id can be an object of the class (with the id
+     * attributes set), an array of id objects, or the actual id object. Returns
+     * <code>null</code> if the object is not found.
+     * 
+     * @param clazz
+     *            The class that represents the required mapping
+     * @param id
+     *            The id that identifies the resource
+     * @return The resource, returns <code>null</code> if not found
+     * @throws CompassException
+     */
+    Resource getResource(Class clazz, Serializable id) throws CompassException;
+
+    /**
+     * Returns a Resource that match the mapping specified for the defined alias
+     * (possibley different object types), and matches the specified id. The id
+     * can be an object of the class (with the id attributes set), an array of
+     * id objects, or the actual id object. Returns <code>null</code> if the
+     * object is not found.
+     * 
+     * @param alias
+     *            The alias that represents the required mapping
+     * @param id
+     *            The id that identifies the resource
+     * @return The resource
+     * @throws CompassException
+     */
+    Resource getResource(String alias, Serializable id) throws CompassException;
+
+    /**
+     * Loads and returns a Resource that match the mapping specified for the
+     * defined class, and matches the specified id. The id can be an object of
+     * the class (with the id attributes set), an array of id objects, or the
+     * actual id object. Throws an exception if the resource is not found.
+     * 
+     * @param clazz
+     *            The class that represents the required mapping
+     * @param id
+     *            The id that identifies the resource
+     * @return The resource
+     * @throws CompassException
+     */
+    Resource loadResource(Class clazz, Serializable id) throws CompassException;
+
+    /**
+     * Loads and returns a Resource that match the mapping specified for the
+     * defined alias, and matches the specified id. The id can be an object of
+     * the class (with the id attributes set), an array of id objects, or the
+     * actual id object. Throws an exception if the resource is not found.
+     * 
+     * @param alias
+     *            The alias that represents the required mapping
+     * @param id
+     *            The id that identifies the resource
+     * @return The resource
+     * @throws CompassException
+     */
+    Resource loadResource(String alias, Serializable id) throws CompassException;
+
+    /**
+     * Saves a Resource in Compass. Resource objects are normally created by
+     * Compass, which creates internal id's for the object. Ensure that only
+     * Compass loaded Resources are saved.
+     * 
+     * @param resource
+     *            The resource to save
+     * @throws CompassException
+     */
+    void save(Resource resource) throws CompassException;
+
+    /**
+     * Creates a NEW Resource in Compass. Resource objects are normally created
+     * by Compass, which creates internal id's for the object. Ensure that only
+     * Compass loaded Resources are saved.
+     * 
+     * @param resource
+     *            The resource to save
+     * @throws CompassException
+     */
+    void create(Resource resource) throws CompassException;
+
+    /**
+     * Deletes an object from Compass. The object must have been either loaded
+     * by Compass or it's ids must be set if already known.
+     * 
+     * @param obj
+     *            The object to delete
+     * @throws CompassException
+     */
+    void delete(Object obj) throws CompassException;
+
+    /**
+     * Deletes an object from Compass with multiple alias's. The object can
+     * either be the id (or an array of ids), or the actual data object with
+     * it's property ids set.
+     * 
+     * @param alias
+     *            The alias that the objects maps under
+     * @param obj
+     *            The object to delete
+     * @throws CompassException
+     */
+    void delete(String alias, Object obj) throws CompassException;
+
+    /**
+     * Returns an object that match the mapping specified for the defined class,
+     * and matches the specified id. The id can be an object of the class (with
+     * the id attributes set), an array of id objects, or the actual id object.
+     * Returns <code>null</code> if the object is not found.
+     * 
+     * @param clazz
+     *            The class that represents the required mapping
+     * @param id
+     *            The id that identifies the resource
+     * @return The object, returns <code>null</code> if not found
+     * @throws CompassException
+     */
+    Object get(Class clazz, Serializable id) throws CompassException;
+
+    /**
+     * Returns an object that match the mapping specified for the defined alias,
+     * and matches the specified id. The id can be an object of the class (with
+     * the id attributes set), an array of id objects, or the actual id object.
+     * Returns <code>null</code> if the object is not found.
+     * 
+     * @param alias
+     *            The alias that represents the required mapping
+     * @param id
+     *            The id that identifies the resource
+     * @return The object, returns <code>null</code> if not found
+     * @throws CompassException
+     */
+    Object get(String alias, Serializable id) throws CompassException;
+
+    /**
+     * Loads and returns an object that match the mapping specified for the
+     * defined class, and matches the specified id. The id can be an object of
+     * the class (with the id attributes set), an array of id objects, or the
+     * actual id object. Throws an exception if the resource is not found.
+     * 
+     * @param clazz
+     *            The class that represents the required mapping
+     * @param id
+     *            The id that identifies the resource
+     * @return The object
+     * @throws CompassException
+     */
+    Object load(Class clazz, Serializable id) throws CompassException;
+
+    /**
+     * Loads and returns an object that match the mapping specified for the
+     * defined class, and matches the specified id. The id can be an object of
+     * the class (with the id attributes set), an array of id objects, or the
+     * actual id object. Throws an exception if the resource is not found.
+     * 
+     * @param alias
+     *            The alias that represents the required mapping
+     * @param id
+     *            The id that identifies the resource
+     * @return The object
+     * @throws CompassException
+     */
+    Object load(String alias, Serializable id) throws CompassException;
+
+    /**
+     * Deletes all entries in the index that match the given query.
+     *
+     * @param query The query to delete by
+     * @throws CompassException
+     */
+    void delete(CompassQuery query) throws CompassException;
+
+    /**
+     * Finds a list of objects that match the specified query. The query syntax
+     * is a search engine format query. For detailed description of the query
+     * syntax please visit the site.
+     * <p>
+     * Several examples are:
+     * <ul>
+     * <li>A set of words - i.e. "Jack London". Compass will search the default
+     * property (usually ALL properties, specified in CompassEnvironment).</li>
+     * <li>A set of words prefixed by meta data name - i.e. author:"Jack
+     * London". Compass will search only meta data name author matching keywords
+     * Jack London.
+     * <li>Multiple meta data names - i.e. author:"Jack London" AND book:Fang*.
+     * Compass will search both meta data name author matching keywords Jack
+     * London and meta data name book matching wildcard Fang*</li>
+     * </ul>
+     * </p>
+     * <p>
+     * Note that the list may contains several object types (classes) with no
+     * relation between them (except for the semantic relation).
+     * </p>
+     * 
+     * @param query
+     *            The query string to search by
+     * @return A hits of objects that matches the query string
+     * @throws CompassException
+     */
+    CompassHits find(String query) throws CompassException;
+
+    /**
+     * Creates a NEW object in Compass. All the meta data defined in the Compass
+     * mapping files will be indexed and saved for later searching. Note that if
+     * the same object (same alias and same id's already exists in the index, it
+     * won't be deleted).
+     * 
+     * @param obj
+     *            The object to save.
+     * @throws CompassException
+     */
+    void create(Object obj) throws CompassException;
+
+    /**
+     * Creates a NEW object in Compass that shares mapping alais with multiple
+     * objects. All the meta data defined in Compass mapping files will be
+     * indexed and saved for later searching.
+     * 
+     * @param alias
+     *            The alias that match the object mappings
+     * @param obj
+     *            The object to save
+     * @throws CompassException
+     */
+    void create(String alias, Object obj) throws CompassException;
+
+    /**
+     * Saves an object in Compass. All the meta data defined in the Compass
+     * mapping files will be indexed and saved for later searching.
+     * 
+     * @param obj
+     *            The object to save.
+     * @throws CompassException
+     */
+    void save(Object obj) throws CompassException;
+
+    /**
+     * Saves an object in Compass that shares mapping alais with multiple
+     * objects. All the meta data defined in Compass mapping files will be
+     * indexed and saved for later searching.
+     * 
+     * @param alias
+     *            The alias that match the object mappings
+     * @param obj
+     *            The object to save
+     * @throws CompassException
+     */
+    void save(String alias, Object obj) throws CompassException;
+
+    /**
+     * Returns a list of term vectors for the specified resource.
+     * 
+     * @param resource
+     *            The resource for the term vectors.
+     * @return All the term vectors for the resource.
+     * @throws CompassException
+     */
+    CompassTermInfoVector[] getTermInfos(Resource resource) throws CompassException;
+
+    /**
+     * Returns the term vector associated with the resource, and the given
+     * property name.
+     * 
+     * @param resource
+     *            The resource for the term vector.
+     * @param propertyName
+     *            The property for the term vector.
+     * @return The term vector.
+     * @throws CompassException
+     */
+    CompassTermInfoVector getTermInfo(Resource resource, String propertyName) throws CompassException;
+
+    /**
+     * Evicts the given object from the first level cache (transaction scoped
+     * cache).
+     * 
+     * @param obj
+     *            The objects to evict.
+     */
+    void evict(Object obj);
+
+    /**
+     * Evicts the given object from the first level cache (transaction scoped
+     * cache). The object can either be the id (or an array of ids), or the
+     * actual data object with it's property ids set.
+     * 
+     * @param alias
+     *            The alias of the object/entry to evict.
+     * @param id
+     *            The id of the object/entry to evict.
+     */
+    void evict(String alias, Object id);
+
+    /**
+     * Evicts the given resource from the first level cache (transaction scoped
+     * cache).
+     * 
+     * @param resource The resource to evict.
+     */
+    void evict(Resource resource);
+
+    /**
+     * Evicts all the objects and the resources from the first level cache.
+     * 
+     */
+    void evictAll();
+}

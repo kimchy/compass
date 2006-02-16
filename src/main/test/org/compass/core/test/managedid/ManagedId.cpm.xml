@@ -1,0 +1,149 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.managedid">
+
+    <class name="A" alias="a">
+    
+        <id name="id" />
+        
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+        
+    </class>
+    
+    <class name="B" alias="b">
+    
+        <id name="id" />
+        
+        <property name="value1">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue</meta-data>
+        </property>
+        
+    </class>
+
+    <class name="C" alias="c">
+    
+        <id name="id" />
+        
+        <property name="value1">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue1</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue2</meta-data>
+        </property>
+        
+    </class>
+
+    <class name="D" alias="d">
+
+        <id name="id" />
+
+        <property name="value" managed-id="false">
+            <meta-data store="no">mvalue</meta-data>
+        </property>
+
+    </class>
+
+    <class name="Constant" alias="constant">
+    
+        <id name="id" />
+        
+        <constant>
+            <meta-data>mvalue1</meta-data>
+            <meta-data-value>mvalueVALUE</meta-data-value>
+        </constant>
+        
+        <property name="value1">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue1</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue2</meta-data>
+        </property>
+        
+    </class>
+
+
+    <class name="ParentComponent" alias="parentComp">
+    
+        <id name="id" />
+        
+        <property name="value1">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue1</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue2</meta-data>
+        </property>
+
+        <component name="childComponent" ref-alias="childComp" />
+        
+    </class>
+
+    <class name="ChildComponent" alias="childComp" root="false">
+    
+        <property name="value1">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue1</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue2</meta-data>
+        </property>
+        
+    </class>
+
+    <class name="ParentReference" alias="parentRef">
+    
+        <id name="id" />
+        
+        <property name="value1">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue1</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue2</meta-data>
+        </property>
+
+        <reference name="childReference" ref-alias="childRef1" />
+        
+    </class>
+
+    <class name="ChildReference" alias="childRef1">
+
+        <id name="id" />
+    
+        <property name="value1">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue1</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue</meta-data>
+            <meta-data>mvalue2</meta-data>
+        </property>
+        
+    </class>
+    
+</compass-core-mapping>

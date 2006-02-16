@@ -1,0 +1,46 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.contract">
+
+    <contract alias="contract1">
+    
+        <id name="id" />
+    
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+    </contract>
+
+    <contract alias="contract2">
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </contract>
+
+    <class name="A" alias="a" extends="contract1, contract2">
+    
+        <property name="valueA">
+            <meta-data>mvalueA</meta-data>
+        </property>
+    
+    </class>
+
+    <class name="A" alias="a1" extends="contract1, contract2">
+
+        <property name="value1" override="true">
+            <meta-data>mvalueEx</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a2" extends="contract1, contract2">
+
+        <property name="value1" override="false">
+            <meta-data>mvalueEx</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>

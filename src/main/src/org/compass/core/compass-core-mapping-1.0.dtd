@@ -1,0 +1,188 @@
+<!-- Compass Mapping DTD.
+
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+-->
+
+<!ELEMENT compass-core-mapping (
+    (contract|class|resource)* 
+)>
+    <!ATTLIST compass-core-mapping package CDATA #IMPLIED>
+
+<!ELEMENT resource ( 
+    resource-id*,
+    (resource-analyzer?),
+    (resource-property)*
+)>
+    <!ATTLIST resource alias CDATA #REQUIRED>
+    <!ATTLIST resource sub-index CDATA #IMPLIED>
+    <!ATTLIST resource analyzer CDATA #IMPLIED>
+    <!ATTLIST resource all (true|false) "true">
+    <!ATTLIST resource all-metadata CDATA #IMPLIED>
+    <!ATTLIST resource all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
+    <!ATTLIST resource all-analyzer CDATA #IMPLIED>
+
+<!ELEMENT resource-id EMPTY
+>
+    <!ATTLIST resource-id name CDATA #REQUIRED>
+    <!ATTLIST resource-id analyzer CDATA #IMPLIED>
+
+<!ELEMENT resource-property (
+    #PCDATA|converter-param
+)*>
+    <!ATTLIST resource-property name CDATA #REQUIRED>
+    <!ATTLIST resource-property store (no|yes|compress) "yes">
+    <!ATTLIST resource-property index (no|tokenized|un_tokenized) "tokenized">
+    <!ATTLIST resource-property term-vector (no|yes|positions|offsets|positions_offsets) "no">
+    <!ATTLIST resource-property reverse (no|reader|string) "no">
+    <!ATTLIST resource-property analyzer CDATA #IMPLIED>
+    <!ATTLIST resource-property override (true|false) "true">
+    <!ATTLIST resource-property exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST resource-property converter CDATA #IMPLIED>
+    <!ATTLIST resource-property boost CDATA #IMPLIED>
+    <!ATTLIST resource-property converter-param CDATA #IMPLIED>
+
+<!ELEMENT resource-analyzer (
+    #PCDATA|converter-param
+)*>
+    <!ATTLIST resource-analyzer name CDATA #REQUIRED>
+    <!ATTLIST resource-analyzer null-analyzer CDATA #IMPLIED>
+    <!ATTLIST resource-analyzer converter CDATA #IMPLIED>
+    <!ATTLIST resource-analyzer converter-param CDATA #IMPLIED>
+    
+
+<!ELEMENT contract ( 
+    id*,
+    parent?,
+    (analyzer?),
+    (property|component|reference|constant)*
+)>
+    <!ATTLIST contract alias CDATA #REQUIRED>
+    <!ATTLIST contract extends CDATA #IMPLIED>
+    <!ATTLIST contract analyzer CDATA #IMPLIED>
+
+<!ELEMENT class ( 
+    converter-param*,
+    id*,
+    parent?,
+    (analyzer?),
+    (property|component|reference|constant)*
+)>
+    <!ATTLIST class name CDATA #REQUIRED>
+    <!ATTLIST class alias    CDATA #REQUIRED>
+    <!ATTLIST class sub-index CDATA #IMPLIED>
+    <!ATTLIST class analyzer CDATA #IMPLIED>
+    <!ATTLIST class extends CDATA #IMPLIED>
+    <!ATTLIST class root (true|false) "true">
+    <!ATTLIST class poly (true|false) "false">
+    <!ATTLIST class all (true|false) "true">
+    <!ATTLIST class all-metadata CDATA #IMPLIED>
+    <!ATTLIST class all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
+    <!ATTLIST class all-analyzer CDATA #IMPLIED>
+    <!ATTLIST class converter CDATA #IMPLIED>
+    <!ATTLIST class boost CDATA #IMPLIED>
+    <!ATTLIST class converter-param CDATA #IMPLIED>
+
+<!ELEMENT id (
+    converter-param*,
+    meta-data*
+)>
+    <!ATTLIST id name CDATA #REQUIRED>
+    <!ATTLIST id class CDATA #IMPLIED>
+    <!ATTLIST id analyzer CDATA #IMPLIED>
+    <!ATTLIST id accessor (field|property) "property">
+    <!ATTLIST id managed-id (auto|true|false) "auto">
+    <!ATTLIST id exclude-from-all (true|false) "false">
+    <!ATTLIST id converter CDATA #IMPLIED>
+    <!ATTLIST id boost CDATA #IMPLIED>
+    <!ATTLIST id converter-param CDATA #IMPLIED>
+
+<!ELEMENT property (
+    converter-param*,
+    meta-data*
+)>
+    <!ATTLIST property name CDATA #REQUIRED>
+    <!ATTLIST property class CDATA #IMPLIED>
+    <!ATTLIST property analyzer CDATA #IMPLIED>
+    <!ATTLIST property override (true|false) "true">
+    <!ATTLIST property col-class CDATA #IMPLIED>
+    <!ATTLIST property accessor (field|property) "property">
+    <!ATTLIST property managed-id (auto|true|false) "auto">
+    <!ATTLIST property managed-id-index (no|un_tokenized) #IMPLIED>
+    <!ATTLIST property exclude-from-all (true|false) "false">
+    <!ATTLIST property converter CDATA #IMPLIED>
+    <!ATTLIST property boost CDATA #IMPLIED>
+    <!ATTLIST property converter-param CDATA #IMPLIED>
+
+<!ELEMENT analyzer (
+    #PCDATA|converter-param
+)*>
+    <!ATTLIST analyzer name CDATA #REQUIRED>
+    <!ATTLIST analyzer null-analyzer CDATA #IMPLIED>
+    <!ATTLIST analyzer accessor (field|property) "property">
+    <!ATTLIST analyzer converter CDATA #IMPLIED>
+    <!ATTLIST analyzer converter-param CDATA #IMPLIED>
+
+<!ELEMENT component (
+    converter-param*
+)>
+    <!ATTLIST component name CDATA #REQUIRED>
+    <!ATTLIST component ref-alias CDATA #REQUIRED>
+    <!ATTLIST component override (true|false) "true">
+    <!ATTLIST component max-depth CDATA #IMPLIED>
+    <!ATTLIST component col-class CDATA #IMPLIED>
+    <!ATTLIST component converter CDATA #IMPLIED>
+    <!ATTLIST component accessor (field|property) "property">
+    <!ATTLIST component converter-param CDATA #IMPLIED>
+
+<!ELEMENT reference (
+    converter-param*
+)>
+    <!ATTLIST reference name CDATA #REQUIRED>
+    <!ATTLIST reference ref-alias CDATA #REQUIRED>
+    <!ATTLIST reference col-class CDATA #IMPLIED>
+    <!ATTLIST reference ref-comp-alias CDATA #IMPLIED>
+    <!ATTLIST reference converter CDATA #IMPLIED>
+    <!ATTLIST reference accessor (field|property) "property">
+    <!ATTLIST reference converter-param CDATA #IMPLIED>
+
+<!ELEMENT parent (
+    converter-param*
+)>
+    <!ATTLIST parent name CDATA #REQUIRED>
+    <!ATTLIST parent converter CDATA #IMPLIED>
+    <!ATTLIST parent accessor (field|property) "property">
+    <!ATTLIST parent converter-param CDATA #IMPLIED>
+
+<!ELEMENT constant (
+    converter-param*,
+    meta-data,
+    meta-data-value+
+)>
+    <!ATTLIST constant exclude-from-all (true|false) "false">
+    <!ATTLIST constant override (true|false) "true">
+    <!ATTLIST constant converter CDATA #IMPLIED>
+    <!ATTLIST constant converter-param CDATA #IMPLIED>
+
+<!ELEMENT meta-data (
+    #PCDATA|converter-param
+)*>
+    <!ATTLIST meta-data store (no|yes|compress) "yes">
+    <!ATTLIST meta-data index (no|tokenized|un_tokenized) "tokenized">
+    <!ATTLIST meta-data term-vector (no|yes|positions|offsets|positions_offsets) "no">
+    <!ATTLIST meta-data reverse (no|reader|string) "no">
+    <!ATTLIST meta-data analyzer CDATA #IMPLIED>
+    <!ATTLIST meta-data exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST meta-data converter CDATA #IMPLIED>
+    <!ATTLIST meta-data boost CDATA #IMPLIED>
+    <!ATTLIST meta-data converter-param CDATA #IMPLIED>
+
+<!ELEMENT meta-data-value (
+    #PCDATA
+)>
+
+<!ELEMENT converter-param (
+    #PCDATA
+)>
+    <!ATTLIST converter-param name CDATA #REQUIRED>

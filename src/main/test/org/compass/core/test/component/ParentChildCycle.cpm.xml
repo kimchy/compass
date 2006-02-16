@@ -1,0 +1,29 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component">
+
+    <class name="ParentCycle" alias="parent">
+
+        <id name="id" />
+
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="children" ref-alias="child" />
+        
+    </class>
+
+    <class name="ChildCycle" alias="child" root="false">
+
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="children" ref-alias="child" max-depth="3" />
+
+    </class>
+
+</compass-core-mapping>

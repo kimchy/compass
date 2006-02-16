@@ -1,0 +1,27 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.cache">
+
+    <class name="A" alias="a1">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a2">
+
+        <id name="id" />
+
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>

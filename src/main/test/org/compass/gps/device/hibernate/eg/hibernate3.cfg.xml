@@ -1,0 +1,22 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+        <property name="hibernate.connection.url">jdbc:hsqldb:mem:test</property>
+        <property name="hibernate.connection.username">sa</property>
+        <property name="hibernate.connection.password"></property>
+        
+        <property name="hibernate.transaction.factory_class">org.hibernate.transaction.JTATransactionFactory</property>
+        <property name="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JOTMTransactionManagerLookup</property>
+    
+        <mapping resource="org/compass/gps/device/hibernate/eg/Bid.hbm3.xml"/>
+        <mapping resource="org/compass/gps/device/hibernate/eg/User.hbm3.xml"/>
+        <mapping resource="org/compass/gps/device/hibernate/eg/AuctionItem.hbm3.xml"/>
+        
+    </session-factory>
+</hibernate-configuration>

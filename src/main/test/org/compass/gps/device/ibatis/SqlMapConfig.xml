@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig
+    PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+  <settings enhancementEnabled="true" lazyLoadingEnabled="true" errorTracingEnabled="false" maxRequests="32"   maxSessions="10"    maxTransactions="5"    useStatementNamespaces="false" />
+
+    <transactionManager type="JDBC">
+        <dataSource type="SIMPLE" >
+            <property name="JDBC.Driver" value="org.hsqldb.jdbcDriver"/>
+            <property name="JDBC.ConnectionURL" value="jdbc:hsqldb:mem:test"/>
+            <property name="JDBC.Username" value="sa"/>
+            <property name="JDBC.Password" value=""/>
+        </dataSource>
+    </transactionManager>
+
+  <sqlMap resource="org/compass/gps/device/ibatis/Contact.xml"/>
+
+</sqlMapConfig>

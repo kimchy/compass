@@ -1,0 +1,54 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.compass.core.converter;
+
+/**
+ * Provides the ability to lookup a converter based on it's type. The type is
+ * the actual <code>Class</code> that should be converted by the returned
+ * <code>Converter</code>.
+ *
+ * @author kimchy
+ * @see Converter
+ */
+public interface ConverterLookup {
+
+    /**
+     * Looks up a converter based on the <code>Class</code> type.
+     *
+     * @param type
+     * @return The converter that match for the given class type.
+     */
+    Converter lookupConverter(Class type);
+
+    /**
+     * Looks up a converter based on the converter name. The converter
+     * should have been registered with the converter lookup using the
+     * {@link #registerConverter(String, Converter)}.
+     *
+     * @param name
+     * @return The converter that match for the given name.
+     */
+    Converter lookupConverter(String name);
+
+    /**
+     * Registers a {@link Converter} under a converter name.
+     *
+     * @param converterName The converter name to be registered against
+     * @param converter The converter to use
+     */
+    void registerConverter(String converterName, Converter converter);
+}

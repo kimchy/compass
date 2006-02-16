@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="rsMapping" class="org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping">
+      <property name="alias"><value>result-set</value></property>
+      <property name="indexUnMappedColumns"><value>true</value></property>
+      <property name="selectQuery"><value>
+        select  p.id as parent_id, p.first_name as parent_first_name, p.last_name as parent_last_name, p.version as parent_version,
+                COALESCE(c.id, 0) as child_id, c.first_name as child_first_name, c.last_name child_last_name, COALESCE(c.version, 0) as child_version
+        from 
+                parent p left join child c on p.id = c.parent_id
+      </value></property>
+      <property name="versionQuery"><value>
+        select  p.id as parent_id, COALESCE(c.id, 0) as child_id, p.version as parent_version, COALESCE(c.version, 0) as child_version
+        from
+                parent p left join child c on p.id = c.parent_id
+      </value></property>
+      <property name="idMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping">
+            <property name="columnName"><value>parent_id</value></property>
+            <property name="propertyName"><value>parent_id</value></property>
+            <property name="columnNameForVersion"><value>p.id</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping">
+            <property name="columnName"><value>child_id</value></property>
+            <property name="propertyName"><value>child_id</value></property>
+            <property name="columnNameForVersion"><value>COALESCE(c.id, 0)</value></property>
+          </bean>
+        </list>
+      </property>
+      <property name="dataMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>parent_first_name</value></property>
+            <property name="propertyName"><value>parent_first_name</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>child_first_name</value></property>
+            <property name="propertyName"><value>child_first_name</value></property>
+            <property name="propertyStoreString"><value>compress</value></property>
+          </bean>
+        </list>
+      </property>
+      <property name="versionMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.VersionColumnMapping">
+            <property name="columnName"><value>parent_version</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.VersionColumnMapping">
+            <property name="columnName"><value>child_version</value></property>
+          </bean>
+        </list>
+      </property>
+    </bean>
+
+    <!-- Compass-->
+    <bean id="compass" class="org.compass.spring.LocalCompassBean">
+        <property name="mappingResolvers">
+            <list>
+                <bean class="org.compass.gps.device.jdbc.ResultSetResourceMappingResolver">
+                  <property name="mapping"><ref local="rsMapping" /></property>
+                  <property name="dataSource"><ref bean="dataSource" /></property>
+                </bean>
+            </list>
+        </property>
+        <property name="compassSettings">
+            <props>
+                <prop key="compass.engine.connection">target/testindex</prop>
+                <!-- This is the default transaction handling (just explicitly setting it) -->
+                <prop key="compass.transaction.factory">org.compass.core.transaction.LocalTransactionFactory</prop>
+            </props>
+        </property>
+    </bean>
+
+     <bean id="jdbcGpsDevice" class="org.compass.gps.device.jdbc.ResultSetJdbcGpsDevice">
+       <property name="name"><value>jdbcDevice</value></property>
+       <property name="dataSource"><ref bean="dataSource" /></property>
+       <property name="mirrorDataChanges"><value>true</value></property>
+       <property name="mappings">
+        <list>
+          <ref local="rsMapping" />
+        </list>
+       </property>
+     </bean>
+     
+     <bean id="gps" class="org.compass.gps.impl.SingleCompassGps" init-method="start" destroy-method="stop">
+       <property name="compass"><ref bean="compass" /></property>
+       <property name="gpsDevices">
+         <list>
+           <ref local="jdbcGpsDevice" />
+         </list>
+       </property>
+     </bean>
+
+</beans>

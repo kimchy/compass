@@ -1,0 +1,99 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.all">
+
+    <class name="A" alias="a1">
+        <id name="id" />
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a2" all="true" all-metadata="everything">
+        <id name="id" />
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a3" all="false">
+        <id name="id" />
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a4" all="true">
+        <id name="id" />
+        <constant exclude-from-all="true">
+            <meta-data>cvalue1</meta-data>
+            <meta-data-value>cValue11</meta-data-value>
+            <meta-data-value>cValue12</meta-data-value>
+        </constant>
+        <constant exclude-from-all="false">
+            <meta-data>cvalue2</meta-data>
+            <meta-data-value>cValue21</meta-data-value>
+            <meta-data-value>cValue22</meta-data-value>
+        </constant>
+        <property name="value1" exclude-from-all="true">
+            <meta-data>mvalue11</meta-data>
+            <meta-data>mvalue12</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue21</meta-data>
+            <meta-data exclude-from-all="true">mvalue22</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a5" all="true" all-term-vector="yes">
+        <id name="id" />
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a6" all="true" all-term-vector="positions">
+        <id name="id" />
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a7" all="true" all-term-vector="offsets">
+        <id name="id" />
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a8" all="true" all-term-vector="positions_offsets">
+        <id name="id" />
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+    </class>
+    
+</compass-core-mapping>

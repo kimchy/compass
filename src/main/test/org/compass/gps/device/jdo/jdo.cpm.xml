@@ -1,0 +1,35 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.gps.device.jdo">
+
+    <contract alias="common">
+        <id name="id" />
+        <property name="name">
+                <meta-data>name</meta-data>
+        </property>
+        <property name="description">
+                <meta-data>description</meta-data>
+        </property>
+        <property name="price">
+                <meta-data>price</meta-data>
+        </property>
+    </contract>
+
+    <class name="Product" alias="product" extends="common">
+    </class>
+
+    <class name="Book" alias="book" extends="common">
+        <property name="author">
+                <meta-data>author</meta-data>
+        </property>
+        <property name="isbn">
+                <meta-data>isbn</meta-data>
+        </property>
+        <property name="publisher">
+                <meta-data>publisher</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

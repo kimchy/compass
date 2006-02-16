@@ -1,0 +1,22 @@
+<!DOCTYPE compass-core-configuration PUBLIC
+    "-//Compass/Compass Core Configuration DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-configuration-1.0.dtd">
+
+<compass-core-configuration>
+
+    <compass>
+    
+        <setting name="compass.engine.connection">target/test-index-mirror</setting>
+        <setting name="compass.engine.optimizer">org.compass.core.lucene.engine.optimizer.type.NullOptimizer</setting>
+        <setting name="compass.engine.optimizer.schedule">false</setting>
+
+        <setting name="compass.transaction.factory">org.compass.core.transaction.JTASyncTransactionFactory</setting>
+        <setting name="compass.transaction.managerLookup">org.compass.core.transaction.manager.JOTM</setting>
+    
+        <mapping resource="org/compass/gps/device/hibernate/eg/User.cpm.xml" />
+        <mapping resource="org/compass/gps/device/hibernate/eg/Bid.cpm.xml" />
+     
+    </compass>
+
+</compass-core-configuration>
+

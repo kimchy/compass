@@ -1,0 +1,118 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.compass.core.config.process;
+
+import org.compass.core.config.CompassSettings;
+import org.compass.core.converter.ConverterLookup;
+import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.*;
+
+/**
+ * @author kimchy
+ */
+public class ValidatorMappingProcessor implements MappingProcessor {
+
+    public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
+                                  ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
+        ResourceMapping[] rootMappings = compassMapping.getRootMappings();
+        for (int i = 0; i < rootMappings.length; i++) {
+            ResourceMapping resourceMapping = rootMappings[i];
+            validateRootMapping(resourceMapping);
+        }
+        return compassMapping;
+    }
+
+    private void validateRootMapping(ResourceMapping resourceMapping) throws MappingException {
+        String[] resourcePropertyNames = resourceMapping.getResourcePropertyNames();
+        for (int i = 0; i < resourcePropertyNames.length; i++) {
+            String propertyName = resourcePropertyNames[i];
+            ResourcePropertyMapping[] resourcePropertyMapping = resourceMapping
+                    .getResourcePropertyMappings(propertyName);
+            validatieHasAtLeastOneId(resourceMapping);
+            validateDuplicateExcludeFromAll(resourceMapping, propertyName, resourcePropertyMapping);
+            validateDuplicateAnalyzer(resourceMapping, propertyName, resourcePropertyMapping);
+        }
+    }
+
+    private void validatieHasAtLeastOneId(ResourceMapping resourceMapping) {
+        ResourcePropertyMapping[] idMappings = resourceMapping.getIdMappings();
+        if (idMappings.length == 0) {
+            throw new MappingException("Mapping for alias [" + resourceMapping.getAlias() + "] has no id mappings defined. " +
+                    "Either you forgot to add id mappings for it, or it is a component mapping that requires not ids and it " +
+                    "is not configured with root=false");
+        }
+    }
+
+    private void validateDuplicateExcludeFromAll(ResourceMapping resourceMapping, String propertyName,
+                                                 ResourcePropertyMapping[] resourcePropertyMapping) throws MappingException {
+        if (resourcePropertyMapping.length == 1) {
+            return;
+        }
+        boolean excludeFromAll = resourcePropertyMapping[0].isExcludeFromAll();
+        for (int i = 1; i < resourcePropertyMapping.length; i++) {
+            if (excludeFromAll != resourcePropertyMapping[i].isExcludeFromAll()) {
+                throw new InvalidMappingException("Resource property / meta-data [" + propertyName + "] of alias ["
+                        + resourceMapping.getAlias() + "] has different exclude from all settings");
+            }
+        }
+    }
+
+    private void validateDuplicateAnalyzer(ResourceMapping resourceMapping, String propertyName,
+                                           ResourcePropertyMapping[] resourcePropertyMapping) throws MappingException {
+        if (resourcePropertyMapping.length == 1) {
+            return;
+        }
+        boolean first = true;
+        String lastAnalyzer = null;
+        for (int i = 0; i < resourcePropertyMapping.length; i++) {
+            ResourcePropertyMapping propertyMapping = resourcePropertyMapping[i];
+            // don't worry about internal properties, since they have nothing to
+            // do with the analyzer
+            if (propertyMapping.isInternal()) {
+                continue;
+            }
+            if (propertyMapping.getAnalyzer() != null) {
+                if (lastAnalyzer == null && !first) {
+                    // we passed several mappings with no analyzers, and now we
+                    // found one that has
+                    throw new InvalidMappingException("Resource property / meta-data [" + propertyName + "] of alias ["
+                            + resourceMapping.getAlias()
+                            + "] has an anlyzer set, and some do not. Please set for all of them the same analyzer.");
+                }
+                if (first) {
+                    lastAnalyzer = propertyMapping.getAnalyzer();
+                } else {
+                    if (!propertyMapping.getAnalyzer().equals(lastAnalyzer)) {
+                        throw new InvalidMappingException("Resource property / meta-data [" + propertyName
+                                + "] of alias [" + resourceMapping.getAlias()
+                                + "] has several anlyzers set. Please set for all of them the same analyzer.");
+                    }
+                }
+            } else {
+                if (lastAnalyzer != null) {
+                    throw new InvalidMappingException("Resource property / meta-data [" + propertyName + "] of alias ["
+                            + resourceMapping.getAlias()
+                            + "] has several anlyzers set. Please set for all of them the same analyzer.");
+                }
+            }
+            if (first) {
+                first = false;
+            }
+        }
+    }
+
+}

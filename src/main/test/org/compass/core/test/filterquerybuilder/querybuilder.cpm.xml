@@ -1,0 +1,24 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.filterquerybuilder">
+
+    <class name="A" alias="a">
+    
+        <id name="id" />
+        
+        <property name="value1">
+            <meta-data>mvalue1</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>mvalue2</meta-data>
+        </property>
+
+        <property name="date">
+            <meta-data converter-param="yyyyMMdd">date</meta-data>
+        </property>
+    
+    </class>
+</compass-core-mapping>

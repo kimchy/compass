@@ -1,0 +1,47 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component">
+
+    <class name="CFirst" alias="first">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+        
+        <component name="second" ref-alias="second" />
+        
+    </class>
+
+    <class name="CSecond" alias="second" root="false">
+    
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="third" ref-alias="third" />
+        
+    </class>
+
+    <class name="CThird" alias="third" root="false">
+    
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+        
+        <component name="fourth" ref-alias="fourth" />
+        
+    </class>
+    
+    <class name="CFourth" alias="fourth" root="false">
+    
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+        
+    </class>
+
+</compass-core-mapping>

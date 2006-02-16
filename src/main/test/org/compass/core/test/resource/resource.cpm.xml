@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping>
+
+    <resource alias="a">
+        
+        <resource-id name="id" />
+    
+    </resource>
+
+    <resource alias="b">
+        
+        <resource-id name="id1" />
+        <resource-id name="id2" />
+    
+    </resource>
+
+    <resource alias="c">
+        
+        <resource-id name="id" />
+
+        <resource-property name="value1" />
+    
+        <resource-property name="value2" store="yes" index="tokenized" />
+
+        <resource-property name="value3" store="compress" index="tokenized" />
+
+        <resource-property name="value4" store="yes" index="un_tokenized" />
+
+        <resource-property name="value5" store="yes" index="tokenized" converter-param="yyyy-MM-dd" />
+        
+        <resource-property name="value6" />
+    </resource>
+
+</compass-core-mapping>
+    

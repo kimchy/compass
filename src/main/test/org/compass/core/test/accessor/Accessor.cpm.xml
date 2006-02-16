@@ -1,0 +1,49 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.accessor">
+
+    <class name="A" alias="a">
+    
+        <id name="id" />
+        
+        <property name="propertyValue" accessor="property">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+        <property name="protectedPropertyValue" accessor="property">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+        <property name="privatePropertyValue" accessor="property">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+        <property name="packagePropertyValue" accessor="property">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+        <property name="fieldValue" accessor="field">
+            <meta-data>mvalue</meta-data>
+        </property>
+    
+        <property name="protectedFieldValue" accessor="field">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+        <property name="publicFieldValue" accessor="field">
+            <meta-data>mvalue</meta-data>
+        </property>
+        
+        <property name="packageFieldValue" accessor="field">
+            <meta-data>mvalue</meta-data>
+        </property>
+    </class>
+
+    <class name="B" alias="b">
+    
+        <id name="id" />
+
+    </class>
+</compass-core-mapping>

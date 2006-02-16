@@ -1,0 +1,117 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.property">
+
+    <class name="SimpleTypes" alias="simple-types">
+    
+        <id name="id" />
+        
+        <property name="OChar">
+            <meta-data>moChar</meta-data>
+        </property>
+
+        <property name="OString">
+            <meta-data>moString</meta-data>
+        </property>
+
+        <property name="OBoolean">
+            <meta-data>moBoolean</meta-data>
+        </property>
+        
+        <property name="OByte">
+            <meta-data>moByte</meta-data>
+        </property>
+        
+        <property name="OShort">
+            <meta-data>moShort</meta-data>
+        </property>
+        
+        <property name="OInteger">
+            <meta-data>moInteger</meta-data>
+        </property>
+        
+        <property name="OLong">
+            <meta-data>moLong</meta-data>
+        </property>
+
+        <property name="OFloat">
+            <meta-data>moFloat</meta-data>
+        </property>
+        
+        <property name="ODouble">
+            <meta-data>moDouble</meta-data>
+        </property>
+    
+        <property name="OBigDecimal">
+            <meta-data>moBigDecimal</meta-data>
+        </property>
+    
+        <property name="OBigInteger">
+            <meta-data>moBigInteger</meta-data>
+        </property>
+    
+        <property name="ODate">
+            <meta-data>moDate</meta-data>
+        </property>
+
+        <property name="OCalendar">
+            <meta-data>moCalendar</meta-data>
+        </property>
+    
+        <property name="SChar">
+            <meta-data>msChar</meta-data>
+        </property>
+
+        <property name="SChar">
+            <meta-data>msChar</meta-data>
+        </property>
+        
+        <property name="SBoolean">
+            <meta-data>msBoolean</meta-data>
+        </property>
+        
+        <property name="SByte">
+            <meta-data>msByte</meta-data>
+        </property>
+        
+        <property name="SShort">
+            <meta-data>msShort</meta-data>
+        </property>
+        
+        <property name="SInt">
+            <meta-data>msInt</meta-data>
+        </property>
+        
+        <property name="SLong">
+            <meta-data>msLong</meta-data>
+        </property>
+
+        <property name="SFloat">
+            <meta-data>msFloat</meta-data>
+        </property>
+        
+        <property name="SDouble">
+            <meta-data>msDouble</meta-data>
+        </property>
+        
+        <property name="OStringBuffer">
+            <meta-data>moStringBuffer</meta-data>
+        </property>
+    
+        <property name="OURL">
+            <meta-data>moURL</meta-data>
+        </property>
+
+        <property name="OFile">
+            <meta-data>moFile</meta-data>
+        </property>
+
+        <property name="OLocale">
+            <meta-data>moLocale</meta-data>
+        </property>
+    
+    </class>
+
+</compass-core-mapping>

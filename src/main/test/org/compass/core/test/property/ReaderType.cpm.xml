@@ -1,0 +1,17 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.property">
+
+    <class name="ReaderType" alias="reader-type">
+    
+        <id name="id" />
+        
+        <property name="reader" managed-id="false">
+            <meta-data>mreader</meta-data>
+        </property>
+    
+    </class>
+
+</compass-core-mapping>

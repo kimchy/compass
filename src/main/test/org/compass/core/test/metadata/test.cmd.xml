@@ -1,0 +1,40 @@
+<!DOCTYPE compass-core-meta-data PUBLIC 
+    "-//Compass/Compass Core Meta Data DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-meta-data-1.0.dtd">
+
+<compass-core-meta-data>
+
+    <meta-data-group id="testMDG" displayName="Test Meta Data Group">
+    
+        <description>Test Meta Data Description</description>       
+        <uri>http://test-meta-data</uri>
+        
+        <alias id="testAlias" displayName="Test Alias">
+            <description>Test Alias Description</description>
+            <uri>http://test-alias</uri>
+            <name>TestAlias</name>
+        </alias>
+
+        <meta-data id="testMD1" displayName="Test MD 1">
+            <description>Test MD 1 Description</description>
+            <uri>http://test-md-1</uri>
+            <name>testMD1</name>
+        </meta-data>
+        
+        <meta-data id="testMD2" displayName="Test MD 2">
+            <description>Test MD 2 Description</description>
+            <uri>http://test-md-2</uri>
+            <name format="yyyy-MM-dd">TestMD2</name>
+        </meta-data>
+
+        <meta-data id="testMD3" displayName="Test MD 3">
+            <description>Test MD 1 Description</description>
+            <uri>http://test-md-1</uri>
+            <name>TestMD3</name>
+            <value id="id-cval1">cval1</value>
+            <value id="id-cval2">cval2</value>
+        </meta-data>
+        
+    </meta-data-group>
+    
+</compass-core-meta-data>

@@ -1,0 +1,524 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.compass.core.config.binding;
+
+import org.compass.core.Property;
+import org.compass.core.config.CommonMetaDataLookup;
+import org.compass.core.config.ConfigurationException;
+import org.compass.core.converter.Converter;
+import org.compass.core.mapping.*;
+import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.rsem.RawResourceMapping;
+import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
+import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
+import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
+import org.compass.core.metadata.Alias;
+import org.compass.core.metadata.CompassMetaData;
+import org.compass.core.util.ClassUtils;
+import org.compass.core.util.DTDEntityResolver;
+import org.compass.core.util.config.ConfigurationHelper;
+import org.xml.sax.EntityResolver;
+
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
+/**
+ * @author kimchy
+ */
+public class XmlMappingBinding extends AbstractXmlMappingBinding {
+
+    private CommonMetaDataLookup valueLookup;
+
+    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData) {
+        super.setUpBinding(mapping, metaData);
+        this.valueLookup = new CommonMetaDataLookup(metaData);
+    }
+
+    protected EntityResolver doGetEntityResolver() {
+        return new DTDEntityResolver();
+    }
+
+    protected String getSuffix() {
+        return ".cpm.xml";
+    }
+
+    protected boolean doAddConfiguration(ConfigurationHelper doc) throws ConfigurationException, MappingException {
+        if (!doc.getName().equals("compass-core-mapping")) {
+            return false;
+        }
+
+        String defaultPackage = doc.getAttribute("package", null);
+        if (defaultPackage != null) {
+            defaultPackage = defaultPackage + ".";
+        } else {
+            defaultPackage = "";
+        }
+        ConfigurationHelper[] contractArr = doc.getChildren("contract");
+        for (int i = 0; i < contractArr.length; i++) {
+            ContractMapping contractMapping = new ContractMapping();
+            bindContract(contractArr[i], contractMapping);
+            mapping.addMapping(contractMapping);
+        }
+        ConfigurationHelper[] classArr = doc.getChildren("class");
+        for (int i = 0; i < classArr.length; i++) {
+            ConfigurationHelper classConf = classArr[i];
+            String alias = classConf.getAttribute("alias");
+            boolean newClassMapping = false;
+            ClassMapping classMapping;
+            AliasMapping aliasMapping = mapping.getAliasMapping(alias);
+            if (aliasMapping != null) {
+                if (!(aliasMapping instanceof ClassMapping)) {
+                    throw new MappingException("Defined searchable annotation on a class with alias [" + alias + "] but it" +
+                            " not of type class mapping");
+                }
+                classMapping = (ClassMapping) aliasMapping;
+            } else {
+                classMapping = new ClassMapping();
+                newClassMapping = true;
+            }
+            bindClass(classArr[i], classMapping, defaultPackage);
+            if (newClassMapping) {
+                mapping.addMapping(classMapping);
+            }
+        }
+        ConfigurationHelper[] resourceArr = doc.getChildren("resource");
+        for (int i = 0; i < resourceArr.length; i++) {
+            RawResourceMapping rawResourceMapping = new RawResourceMapping();
+            bindResource(resourceArr[i], rawResourceMapping);
+            mapping.addMapping(rawResourceMapping);
+        }
+
+        return true;
+    }
+
+    private void bindResource(ConfigurationHelper resourceConf, RawResourceMapping rawResourceMapping)
+            throws ConfigurationException {
+        String aliasValue = resourceConf.getAttribute("alias");
+        Alias alias = valueLookup.lookupAlias(aliasValue);
+        if (alias == null) {
+            rawResourceMapping.setAlias(aliasValue);
+        } else {
+            rawResourceMapping.setAlias(alias.getName());
+        }
+
+        String subIndex = resourceConf.getAttribute("sub-index", rawResourceMapping.getAlias());
+        rawResourceMapping.setSubIndex(subIndex);
+
+        String analyzer = resourceConf.getAttribute("analyzer", null);
+        rawResourceMapping.setAnalyzer(analyzer);
+
+        String sAllSupported = resourceConf.getAttribute("all", "true");
+        boolean allSupported = sAllSupported.equalsIgnoreCase("true");
+        rawResourceMapping.setAllSupported(allSupported);
+
+        String termVectorType = resourceConf.getAttribute("all-term-vector", null);
+        if (termVectorType == null) {
+            rawResourceMapping.setAllTermVector(null);
+        } else {
+            rawResourceMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
+        }
+
+        String allAnalyzer = resourceConf.getAttribute("all-analyzer", null);
+        rawResourceMapping.setAllAnalyzer(allAnalyzer);
+
+        if (rawResourceMapping.isAllSupported()) {
+            String allProperty = resourceConf.getAttribute("all-metadata", null);
+            rawResourceMapping.setAllProperty(allProperty);
+        }
+        rawResourceMapping.setRoot(true);
+        rawResourceMapping.setBoost(getBoost(resourceConf));
+
+        ConfigurationHelper[] ids = resourceConf.getChildren("resource-id");
+        for (int i = 0; i < ids.length; i++) {
+            RawResourcePropertyIdMapping rawIdPropertyMapping = new RawResourcePropertyIdMapping();
+            bindResourceProperty(ids[i], rawResourceMapping, rawIdPropertyMapping);
+            rawResourceMapping.addMapping(rawIdPropertyMapping);
+        }
+
+        ConfigurationHelper[] properties = resourceConf.getChildren("resource-property");
+        for (int i = 0; i < properties.length; i++) {
+            RawResourcePropertyMapping rawPropertyMapping = new RawResourcePropertyMapping();
+            bindResourceProperty(properties[i], rawResourceMapping, rawPropertyMapping);
+            rawResourceMapping.addMapping(rawPropertyMapping);
+        }
+
+        ConfigurationHelper analyzerConf = resourceConf.getChild("resource-analyzer", false);
+        if (analyzerConf != null) {
+            RawResourcePropertyAnalyzerController analyzerController = new RawResourcePropertyAnalyzerController();
+            bindResourceProperty(analyzerConf, rawResourceMapping, analyzerController);
+            analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
+            rawResourceMapping.addMapping(analyzerController);
+        }
+    }
+
+    private void bindResourceProperty(ConfigurationHelper resourcePropConf, RawResourceMapping resourceMapping,
+                                      RawResourcePropertyMapping propertyMapping) {
+        String name = valueLookup.lookupMetaDataName(resourcePropConf.getAttribute("name"));
+        propertyMapping.setBoost(getBoost(resourcePropConf, resourceMapping.getBoost()));
+        propertyMapping.setName(name);
+        propertyMapping.setPath(name);
+        bindConverter(resourcePropConf, propertyMapping, resourcePropConf.getAttribute("name"));
+        String storeType = resourcePropConf.getAttribute("store", "yes");
+        propertyMapping.setStore(Property.Store.fromString(storeType));
+        String indexType = resourcePropConf.getAttribute("index", "tokenized");
+        propertyMapping.setIndex(Property.Index.fromString(indexType));
+        String termVectorType = resourcePropConf.getAttribute("term-vector", "no");
+        propertyMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        String reverseType = resourcePropConf.getAttribute("reverse", "no");
+        propertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
+        propertyMapping.setInternal(false);
+        propertyMapping.setAnalyzer(resourcePropConf.getAttribute("analyzer", null));
+        boolean excludeFromAll = resourcePropConf.getAttributeAsBoolean("exclude-from-all", false);
+        propertyMapping.setExcludeFromAll(excludeFromAll);
+        boolean override = resourcePropConf.getAttributeAsBoolean("override", true);
+        propertyMapping.setOverrideByName(override);
+    }
+
+    private void bindContract(ConfigurationHelper contractConf, ContractMapping contractMapping)
+            throws ConfigurationException {
+        String aliasValue = contractConf.getAttribute("alias");
+        Alias alias = valueLookup.lookupAlias(aliasValue);
+        if (alias == null) {
+            contractMapping.setAlias(aliasValue);
+        } else {
+            contractMapping.setAlias(alias.getName());
+        }
+        bindExtends(contractConf, contractMapping);
+
+        bindClassMappingChildren(contractConf, contractMapping);
+    }
+
+    private void bindClass(ConfigurationHelper classConf, ClassMapping classMapping, String defaultPackage)
+            throws ConfigurationException {
+        String className = classConf.getAttribute("name");
+        classMapping.setName(defaultPackage + className);
+        try {
+            Class clazz = ClassUtils.forName(classMapping.getName());
+            classMapping.setClazz(clazz);
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException("Failed to find class [" + defaultPackage + classMapping.getName() + "]");
+        }
+
+        String aliasValue = classConf.getAttribute("alias");
+        Alias alias = valueLookup.lookupAlias(aliasValue);
+        if (alias == null) {
+            classMapping.setAlias(aliasValue);
+        } else {
+            classMapping.setAlias(alias.getName());
+        }
+
+        bindExtends(classConf, classMapping);
+
+        String subIndex = classConf.getAttribute("sub-index", classMapping.getAlias());
+        classMapping.setSubIndex(subIndex);
+
+        String analyzer = classConf.getAttribute("analyzer", null);
+        classMapping.setAnalyzer(analyzer);
+
+        boolean allSupported = classConf.getAttributeAsBoolean("all", true);
+        classMapping.setAllSupported(allSupported);
+
+        if (classMapping.isAllSupported()) {
+            String allProperty = classConf.getAttribute("all-metadata", null);
+            classMapping.setAllProperty(allProperty);
+        }
+
+        String termVectorType = classConf.getAttribute("all-term-vector", null);
+        if (termVectorType == null) {
+            classMapping.setAllTermVector(null);
+        } else {
+            classMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
+        }
+
+        String allAnalyzer = classConf.getAttribute("all-analyzer", null);
+        classMapping.setAllAnalyzer(allAnalyzer);
+
+        boolean poly = classConf.getAttributeAsBoolean("poly", false);
+        classMapping.setPoly(poly);
+
+        boolean root = classConf.getAttributeAsBoolean("root", true);
+        classMapping.setRoot(root);
+        classMapping.setBoost(getBoost(classConf));
+        bindConverter(classConf, classMapping);
+
+        bindClassMappingChildren(classConf, classMapping);
+    }
+
+    private void bindClassMappingChildren(ConfigurationHelper classConf, AliasMapping classMapping) {
+        ConfigurationHelper[] ids = classConf.getChildren("id");
+        for (int i = 0; i < ids.length; i++) {
+            ClassPropertyIdMapping idMapping = new ClassPropertyIdMapping();
+            bindClassProperty(ids[i], classMapping, idMapping);
+            classMapping.addMapping(idMapping);
+        }
+        ConfigurationHelper[] properties = classConf.getChildren("property");
+        for (int i = 0; i < properties.length; i++) {
+            ClassPropertyMapping classPropertyMapping = new ClassPropertyMapping();
+            bindClassProperty(properties[i], classMapping, classPropertyMapping);
+            classMapping.addMapping(classPropertyMapping);
+        }
+        ConfigurationHelper[] components = classConf.getChildren("component");
+        for (int i = 0; i < components.length; i++) {
+            ComponentMapping compMapping = new ComponentMapping();
+            bindComponent(components[i], classMapping, compMapping);
+            classMapping.addMapping(compMapping);
+        }
+        ConfigurationHelper[] references = classConf.getChildren("reference");
+        for (int i = 0; i < references.length; i++) {
+            ReferenceMapping referenceMapping = new ReferenceMapping();
+            bindReference(references[i], classMapping, referenceMapping);
+            classMapping.addMapping(referenceMapping);
+        }
+        ConfigurationHelper[] constants = classConf.getChildren("constant");
+        for (int i = 0; i < constants.length; i++) {
+            ConstantMetaDataMapping constantMapping = new ConstantMetaDataMapping();
+            bindConstant(constants[i], classMapping, constantMapping);
+            classMapping.addMapping(constantMapping);
+        }
+        ConfigurationHelper parentConf = classConf.getChild("parent", false);
+        if (parentConf != null) {
+            ParentMapping parentMapping = new ParentMapping();
+            bindParent(parentConf, classMapping, parentMapping);
+            classMapping.addMapping(parentMapping);
+        }
+
+        ConfigurationHelper analyzerConf = classConf.getChild("analyzer", false);
+        if (analyzerConf != null) {
+            ClassPropertyAnalyzerController analyzerController = new ClassPropertyAnalyzerController();
+            bindClassProperty(analyzerConf, classMapping, analyzerController);
+            analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
+            classMapping.addMapping(analyzerController);
+        }
+    }
+
+    private void bindReference(ConfigurationHelper referenceConf, AliasMapping aliasMapping,
+                               ReferenceMapping referenceMapping) {
+        String name = referenceConf.getAttribute("name");
+        referenceMapping.setName(name);
+
+        String refAlias = referenceConf.getAttribute("ref-alias");
+        referenceMapping.setRefAlias(valueLookup.lookupAliasName(refAlias));
+
+        referenceMapping.setColClassName(referenceConf.getAttribute("col-class", null));
+
+        String refCompAlias = referenceConf.getAttribute("ref-comp-alias", null);
+        if (refCompAlias != null) {
+            referenceMapping.setRefCompAlias(valueLookup.lookupAliasName(refCompAlias));
+        }
+
+        referenceMapping.setAccessor(referenceConf.getAttribute("accessor", null));
+        if (aliasMapping instanceof ClassMapping) {
+            referenceMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
+        }
+        referenceMapping.setPropertyName(name);
+    }
+
+    private void bindComponent(ConfigurationHelper componentConf, AliasMapping aliasMapping,
+                               ComponentMapping compMapping) {
+        String name = componentConf.getAttribute("name");
+        compMapping.setName(name);
+        String refAlias = componentConf.getAttribute("ref-alias");
+        compMapping.setRefAlias(valueLookup.lookupAliasName(refAlias));
+
+        compMapping.setColClassName(componentConf.getAttribute("col-class", null));
+
+        int maxDepth = componentConf.getAttributeAsInteger("max-depth", 5);
+        compMapping.setMaxDepth(maxDepth);
+
+        bindConverter(componentConf, compMapping);
+
+        compMapping.setAccessor(componentConf.getAttribute("accessor", null));
+        if (aliasMapping instanceof ClassMapping) {
+            compMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
+        }
+        compMapping.setPropertyName(name);
+
+        boolean override = componentConf.getAttributeAsBoolean("override", true);
+        compMapping.setOverrideByName(override);
+    }
+
+    private void bindParent(ConfigurationHelper parentConf, AliasMapping aliasMapping, ParentMapping parentMapping) {
+        String name = parentConf.getAttribute("name");
+        parentMapping.setName(name);
+        bindConverter(parentConf, parentMapping);
+
+        parentMapping.setAccessor(parentConf.getAttribute("accessor", null));
+        if (aliasMapping instanceof ClassMapping) {
+            parentMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
+        }
+        parentMapping.setPropertyName(name);
+    }
+
+    private void bindClassProperty(ConfigurationHelper classPropertyConf, AliasMapping aliasMapping,
+                                   ClassPropertyMapping classPropertyMapping) {
+        String name = classPropertyConf.getAttribute("name");
+        classPropertyMapping.setName(name);
+
+        String sClass = classPropertyConf.getAttribute("class", null);
+        classPropertyMapping.setClassName(sClass);
+
+        classPropertyMapping.setBoost(getBoost(classPropertyConf));
+
+        classPropertyMapping.setColClassName(classPropertyConf.getAttribute("col-class", null));
+
+        classPropertyMapping.setAccessor(classPropertyConf.getAttribute("accessor", null));
+        if (aliasMapping instanceof ClassMapping) {
+            classPropertyMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
+        }
+        classPropertyMapping.setPropertyName(name);
+
+        classPropertyMapping.setAnalyzer(classPropertyConf.getAttribute("analyzer", null));
+
+        boolean excludeFromAll = classPropertyConf.getAttributeAsBoolean("exclude-from-all", false);
+        classPropertyMapping.setExcludeFromAll(excludeFromAll);
+
+        String managedId = classPropertyConf.getAttribute("managed-id", "auto");
+        classPropertyMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(managedId));
+
+        String managedIdIndex = classPropertyConf.getAttribute("managed-id-index", null);
+        if (managedIdIndex != null) {
+            classPropertyMapping.setManagedIdIndex(Property.Index.fromString(managedIdIndex));
+        }
+
+        boolean override = classPropertyConf.getAttributeAsBoolean("override", true);
+        classPropertyMapping.setOverrideByName(override);
+
+        bindConverter(classPropertyConf, classPropertyMapping);
+
+        ConfigurationHelper[] metadatas = classPropertyConf.getChildren("meta-data");
+        for (int i = 0; i < metadatas.length; i++) {
+            ClassPropertyMetaDataMapping mdMapping = new ClassPropertyMetaDataMapping();
+            bindMetaData(metadatas[i], classPropertyMapping, mdMapping);
+            classPropertyMapping.addMapping(mdMapping);
+        }
+    }
+
+    private void bindConstant(ConfigurationHelper constantConf, AliasMapping classMapping,
+                              ConstantMetaDataMapping constantMapping) {
+        ConfigurationHelper metadataConf = constantConf.getChild("meta-data");
+        String metaDataValue = metadataConf.getValue().trim();
+        constantMapping.setName(valueLookup.lookupMetaDataName(metaDataValue));
+        constantMapping.setBoost(getBoost(metadataConf, 1.0f));
+        String storeType = metadataConf.getAttribute("store", "yes");
+        constantMapping.setStore(Property.Store.fromString(storeType));
+        String indexType = metadataConf.getAttribute("index", "tokenized");
+        constantMapping.setIndex(Property.Index.fromString(indexType));
+        String termVectorType = metadataConf.getAttribute("term-vector", "no");
+        constantMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+
+        constantMapping.setAnalyzer(constantConf.getAttribute("analyzer", null));
+
+        boolean excludeFromAll = constantConf.getAttributeAsBoolean("exclude-from-all", false);
+        constantMapping.setExcludeFromAll(excludeFromAll);
+
+        boolean override = constantConf.getAttributeAsBoolean("override", true);
+        constantMapping.setOverrideByName(override);
+
+        ConfigurationHelper[] values = constantConf.getChildren("meta-data-value");
+        for (int i = 0; i < values.length; i++) {
+            String metaDataValueValue = values[i].getValue().trim();
+            constantMapping.addMetaDataValue(valueLookup.lookupMetaDataValue(metaDataValueValue));
+        }
+    }
+
+    private void bindMetaData(ConfigurationHelper metadataConf, ClassPropertyMapping classPropertyMapping,
+                              ClassPropertyMetaDataMapping mdMapping) {
+        String name = valueLookup.lookupMetaDataName(metadataConf.getValue().trim());
+        mdMapping.setBoost(getBoost(metadataConf, classPropertyMapping.getBoost()));
+        mdMapping.setName(name);
+
+        mdMapping.setAccessor(classPropertyMapping.getAccessor());
+        mdMapping.setObjClass(classPropertyMapping.getObjClass());
+        mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
+
+        bindConverter(metadataConf, mdMapping, metadataConf.getValue().trim());
+        String storeType = metadataConf.getAttribute("store", "yes");
+        mdMapping.setStore(Property.Store.fromString(storeType));
+        String indexType = metadataConf.getAttribute("index", "tokenized");
+        mdMapping.setIndex(Property.Index.fromString(indexType));
+        String termVectorType = metadataConf.getAttribute("term-vector", "no");
+        mdMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        String reverseType = metadataConf.getAttribute("reverse", "no");
+        mdMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
+        mdMapping.setInternal(false);
+        mdMapping.setAnalyzer(metadataConf.getAttribute("analyzer", classPropertyMapping.getAnalyzer()));
+        boolean excludeFromAll = metadataConf.getAttributeAsBoolean("exclude-from-all", classPropertyMapping
+                .isExcludeFromAll());
+        mdMapping.setExcludeFromAll(excludeFromAll);
+    }
+
+    private void bindExtends(ConfigurationHelper conf, AliasMapping mapping) throws ConfigurationException {
+        String extendsAliases = conf.getAttribute("extends", null);
+        if (extendsAliases != null) {
+            ArrayList extendedMappings = new ArrayList();
+            StringTokenizer st = new StringTokenizer(extendsAliases, ",");
+            while (st.hasMoreTokens()) {
+                String extendedAlias = st.nextToken().trim();
+                Alias alias = valueLookup.lookupAlias(extendedAlias);
+                if (alias == null) {
+                    extendedMappings.add(extendedAlias);
+                } else {
+                    extendedMappings.add(alias.getName());
+                }
+            }
+            mapping.setExtendedMappings((String[]) extendedMappings.toArray(new String[extendedMappings.size()]));
+        }
+    }
+
+    private void bindConverter(ConfigurationHelper conf, Mapping mapping) {
+        bindConverter(conf, mapping, null);
+    }
+
+    private void bindConverter(ConfigurationHelper conf, Mapping mapping, String name) {
+        String converterName = conf.getAttribute("converter", null);
+        mapping.setConverterName(converterName);
+        if (converterName != null) {
+            try {
+                Converter converter = (Converter) ClassUtils.forName(converterName).newInstance();
+                mapping.setConverter(converter);
+            } catch (Exception e) {
+                // do nothing here, it might be a converter lookup name that was registered with Compass.
+            }
+        }
+        String defaultConverterParam = conf.getAttribute("converter-param", null);
+        if (defaultConverterParam != null) {
+            mapping.addConverterParam(Mapping.DEFAULT_PARAM, defaultConverterParam);
+        } else {
+            if (name != null) {
+                String format = valueLookup.lookupMetaDataFormat(name);
+                if (format != null) {
+                    mapping.addConverterParam(Mapping.DEFAULT_PARAM, format);
+                }
+            }
+        }
+        ConfigurationHelper[] converterParams = conf.getChildren("converter-param");
+        for (int i = 0; i < converterParams.length; i++) {
+            String paramName = converterParams[i].getAttribute("name");
+            String paramValue = converterParams[i].getValue().trim();
+            mapping.addConverterParam(paramName, paramValue);
+        }
+    }
+
+    private static float getBoost(ConfigurationHelper conf) {
+        return getBoost(conf, 1.0f);
+    }
+
+    private static float getBoost(ConfigurationHelper conf, float defaultBoost) {
+        return conf.getAttributeAsFloat("boost", defaultBoost);
+    }
+
+}

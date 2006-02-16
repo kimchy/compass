@@ -1,0 +1,72 @@
+<!DOCTYPE compass-core-configuration PUBLIC
+        "-//Compass/Compass Core Configuration DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-configuration-1.0.dtd">
+
+<compass-core-configuration>
+
+    <compass>
+
+        <setting name="compass.engine.connection">target/load</setting>
+
+        <!--MySql-->
+        <!--<setting name="compass.engine.connection">jdbc://jdbc:mysql:///test?emulateLocators=true</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.dialect">org.apache.lucene.store.jdbc.dialect.MySQLDialect</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.driverClass">com.mysql.jdbc.Driver</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.username">root</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.password"></setting>-->
+
+        <!--PostgreSQL-->
+        <!--<setting name="compass.engine.connection">jdbc://jdbc:postgresql:template1</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.dialect">org.apache.lucene.store.jdbc.dialect.PostgreSQLDialect</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.driverClass">org.postgresql.Driver</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.username">postgres</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.password">password</setting>-->
+
+        <!--HSQL-->
+        <!--<setting name="compass.engine.connection">jdbc://jdbc:hsqldb:mem:test</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.dialect">org.apache.lucene.store.jdbc.dialect.HSQLDialect</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.driverClass">org.hsqldb.jdbcDriver</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.username">sa</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.password"></setting>-->
+
+        <!--Oracle-->
+        <!--<setting name="compass.engine.connection">jdbc://jdbc:oracle:thin:@//localhost:1521/XE</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.dialect">org.apache.lucene.store.jdbc.dialect.OracleDialect</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.driverClass">oracle.jdbc.driver.OracleDriver</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.username">oracle</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.password">password1</setting>-->
+
+        <!--SQL Server-->
+        <!--<setting name="compass.engine.connection">jdbc://jdbc:jtds:sqlserver://localhost:1433/tempdb;tds=8.0;lastupdatecount=true</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.dialect">org.apache.lucene.store.jdbc.dialect.SQLServerDialect</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.driverClass">net.sourceforge.jtds.jdbc.Driver</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.username">sa</setting>-->
+        <!--<setting name="compass.engine.store.jdbc.connection.password">password1</setting>-->
+
+        <setting name="compass.engine.store.jdbc.connection.managed">false</setting>
+        <setting name="compass.engine.store.jdbc.connection.useCommitLocks">false</setting>
+        <setting name="compass.engine.store.jdbc.connection.autoCommit">false</setting>
+        <!--<setting name="compass.engine.store.jdbc.lockType">org.apache.lucene.store.jdbc.lock.SelectForUpdateLock</setting>-->
+
+        <setting name="copmass.engine.useCompoundFile">false</setting>
+
+        <setting name="compass.transaction.isolation.class">
+            org.compass.core.lucene.engine.transaction.ReadCommittedTransaction</setting>
+        <setting name="compass.engine.optimizer.type">
+            org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer</setting>
+        <setting name="compass.engine.optimizer.schedule">false</setting>
+
+        <!--<setting name="compass.engine.store.jdbc.fe.default.indexOutput.type">org.apache.lucene.store.jdbc.index.FileJdbcIndexOutput</setting>-->
+
+        <setting name="compass.engine.store.jdbc.connection.provider.class">
+            org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider</setting>
+
+        <!-- Settings for the batch insert
+        <setting name="compass.engine.maxBufferedDocs">200</setting>
+        <setting name="compass.engine.mergeFactor">5</property>
+        -->
+
+    </compass>
+
+</compass-core-configuration>
+

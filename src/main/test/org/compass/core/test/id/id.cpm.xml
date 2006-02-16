@@ -1,0 +1,34 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.id">
+
+    <class name="MultipleId" alias="multiple-id">
+    
+        <id name="id" />
+        <id name="id2" />
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+    </class>
+
+    <class name="SingleId" alias="single-id">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+    
+    </class>
+    
+    <class name="URIId" alias="uri">
+    
+        <id name="id">
+            <meta-data store="yes" index="un_tokenized">id</meta-data>
+        </id>
+    
+    </class>
+
+</compass-core-mapping>

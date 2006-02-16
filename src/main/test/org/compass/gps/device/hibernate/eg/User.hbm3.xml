@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping 
+    package="org.compass.gps.device.hibernate.eg">
+
+    <class name="User" table="AuctionUser3" lazy="true">
+        <id name="id">
+            <generator class="native"/>
+        </id>
+        <property name="userName" not-null="true"/>
+        <property name="password" column="`password`"/>
+        <property name="email"/>
+        <component name="name">
+            <property name="firstName"/>
+            <property name="initial" column="`initial`"/>
+            <property name="lastName"/>
+        </component>
+        <bag name="bids" lazy="true" inverse="true" cascade="save-update">
+            <key column="bidder"/>
+            <one-to-many class="Bid"/>
+        </bag>
+        <bag name="auctions" lazy="true" inverse="true" cascade="save-update">
+            <key column="seller"/>
+            <one-to-many class="AuctionItem"/>
+        </bag>
+    </class>
+    
+</hibernate-mapping>

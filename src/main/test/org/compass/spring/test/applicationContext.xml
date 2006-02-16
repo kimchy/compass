@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <!-- Compass-->
+    <bean id="compass" class="org.compass.spring.LocalCompassBean">
+        <property name="resourceLocations">
+            <list>
+                <value>classpath:org/compass/spring/test/A.cpm.xml</value>
+            </list>
+        </property>
+        <property name="compassSettings">
+            <props>
+                <prop key="compass.engine.connection">target/testindex</prop>
+                <!-- This is the default transaction handling (just explicitly setting it) -->
+                <prop key="compass.transaction.factory">org.compass.core.transaction.LocalTransactionFactory</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="testDAO" class="org.compass.spring.test.TestCompassDao">
+        <property name="compass"><ref local="compass"/></property>
+    </bean>
+</beans>

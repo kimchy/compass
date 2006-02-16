@@ -1,0 +1,29 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component">
+
+    <class name="SimpleRoot" alias="id-sr">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+        
+        <component name="firstComponent" ref-alias="id-sc" />
+        <component name="secondComponent" ref-alias="id-sc" />
+            
+    </class>
+    
+    <class name="SimpleComponent" alias="id-sc">
+        <id name="id">
+          <meta-data store="yes" index="un_tokenized" >id-sc</meta-data>
+        </id>
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

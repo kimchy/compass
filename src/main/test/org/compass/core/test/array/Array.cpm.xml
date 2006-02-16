@@ -1,0 +1,66 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.array">
+
+    <class name="SimpleArray" alias="sa">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+        
+        <property name="strings">
+            <meta-data>mvalue</meta-data>
+        </property>
+    
+    </class>
+    
+    <class name="A" alias="a">
+        
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>    
+
+        <component name="arrB" ref-alias="b" />
+        
+    </class>
+
+    <class name="B" alias="b" root="false">
+        
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>    
+
+        <property name="value2">
+            <meta-data>value2</meta-data>
+        </property>    
+    </class>
+    
+    <class name="X" alias="x">
+        
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>    
+
+        <reference name="cy" ref-alias="y" />
+        
+    </class>
+    
+    <class name="Y" alias="y">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>    
+        
+    </class>
+    
+</compass-core-mapping>

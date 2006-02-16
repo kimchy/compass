@@ -1,0 +1,172 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.compass.gps.device;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.compass.core.CompassCallbackWithoutResult;
+import org.compass.core.CompassException;
+import org.compass.core.CompassSession;
+import org.compass.core.impl.InternalCompassSession;
+import org.compass.gps.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * A general abstract device which can be used by all types of devices.
+ * <p>
+ * Provides support for device name, state management
+ * {@link AbstractGpsDevice#isRunning()}, as well as general helper methods.
+ * 
+ * @author kimchy
+ */
+public abstract class AbstractGpsDevice implements CompassGpsDevice {
+
+    protected Log log = LogFactory.getLog(getClass());
+
+    private String name;
+
+    protected CompassGpsInterfaceDevice compassGps;
+
+    private boolean started = false;
+
+    private boolean internalMirrorDataChanges = false;
+
+    private boolean performingIndexOperation = false;
+
+    private String[] filteredEntitiesForIndex;
+
+    private Map filteredEntitiesLookupForIndex;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public CompassGps getGps() {
+        return compassGps;
+    }
+
+    public void setGps(CompassGpsInterfaceDevice compassGps) {
+        this.compassGps = compassGps;
+    }
+
+    public void setFilteredEntitiesForIndex(String[] filteredEntitiesForIndex) {
+        this.filteredEntitiesForIndex = filteredEntitiesForIndex;
+    }
+
+    protected String buildMessage(String message) {
+        return "{" + name + "}: " + message;
+    }
+
+    protected boolean isFilteredForIndex(String entity) {
+        return (filteredEntitiesLookupForIndex != null && filteredEntitiesLookupForIndex.get(entity) != null);
+    }
+
+    public synchronized void index() throws CompassGpsException {
+        if (!isRunning()) {
+            throw new IllegalStateException(
+                    buildMessage("must be running in order to perform the index operation"));
+        }
+        try {
+            performingIndexOperation = true;
+            compassGps.executeForIndex(new CompassCallbackWithoutResult() {
+                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                    doIndex(session);
+                    ((InternalCompassSession) session).flush();
+                }
+            });
+        } finally {
+            performingIndexOperation = false;
+        }
+    }
+
+    /**
+     * Derived devices must implement the method to perform the actual indexing
+     * operation.
+     */
+    protected abstract void doIndex(CompassSession session) throws CompassGpsException;
+
+    public synchronized void start() throws CompassGpsException {
+        if (name == null) {
+            throw new IllegalArgumentException("Must set the name for the device");
+        }
+        if (compassGps == null) {
+            throw new IllegalArgumentException(
+                    buildMessage("Must set the compassGps for the device, or add it to an active CompassGps instance"));
+        }
+        if (!started) {
+            if (this instanceof MirrorDataChangesGpsDevice) {
+                internalMirrorDataChanges = ((MirrorDataChangesGpsDevice) this).isMirrorDataChanges();
+            }
+            // build the filtered enteties map
+            if (filteredEntitiesForIndex != null) {
+                filteredEntitiesLookupForIndex = new HashMap();
+                Object mark = new Object();
+                for (int i = 0; i < filteredEntitiesForIndex.length; i++) {
+                    filteredEntitiesLookupForIndex.put(filteredEntitiesForIndex[i], mark);
+                }
+            }
+            doStart();
+            started = true;
+        }
+    }
+
+    /**
+     * Derived devices can implement it in case of start event notification.
+     * 
+     * @throws CompassGpsException
+     */
+    protected void doStart() throws CompassGpsException {
+
+    }
+
+    public synchronized void stop() throws CompassGpsException {
+        if (started) {
+            doStop();
+            started = false;
+        }
+    }
+
+    /**
+     * Derived devices can implement it in case of stop event notification.
+     * 
+     * @throws CompassGpsException
+     */
+    protected void doStop() throws CompassGpsException {
+
+    }
+
+    public boolean isRunning() {
+        return started;
+    }
+
+    public boolean isPerformingIndexOperation() {
+        return performingIndexOperation;
+    }
+
+    public boolean shouldMirrorDataChanges() {
+        if (!internalMirrorDataChanges) {
+            return false;
+        }
+        return isRunning();
+    }
+}

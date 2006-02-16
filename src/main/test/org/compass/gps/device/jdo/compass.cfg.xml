@@ -1,0 +1,18 @@
+<!DOCTYPE compass-core-configuration PUBLIC
+    "-//Compass/Compass Core Configuration DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-configuration-1.0.dtd">
+
+<compass-core-configuration>
+
+    <compass>
+    
+        <setting name="compass.engine.connection">target/test-index</setting>
+        <setting name="compass.engine.optimizer">org.compass.core.lucene.engine.optimizer.type.NullOptimizer</setting>
+        <setting name="compass.engine.optimizer.schedule">false</setting>
+
+        <mapping resource="org/compass/gps/device/jdo/jdo.cpm.xml" />
+     
+    </compass>
+
+</compass-core-configuration>
+

@@ -1,0 +1,25 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.sort">
+
+    <class name="A" alias="a">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data index="un_tokenized">value</meta-data>
+        </property>
+
+        <property name="floatValue">
+            <meta-data index="un_tokenized">floatValue</meta-data>
+        </property>
+
+        <property name="intValue">
+            <meta-data index="un_tokenized">intValue</meta-data>
+        </property>
+    
+    </class>
+    
+</compass-core-mapping>

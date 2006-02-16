@@ -1,0 +1,126 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.property">
+
+    <class name="A" alias="a1">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="yes" index="tokenized">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a2">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="no" index="tokenized">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a3">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="no" index="tokenized">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a4">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="yes" index="un_tokenized">mvalue1</meta-data>
+        </property>
+
+    </class>
+    
+    <class name="A" alias="a5">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="compress" index="tokenized">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a6">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="yes" index="no">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a7">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="yes" index="tokenized" term-vector="no">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a8">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="yes" index="tokenized" term-vector="yes">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a9">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="yes" index="tokenized" term-vector="positions">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a10">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="yes" index="tokenized" term-vector="offsets">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a11">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="yes" index="tokenized" term-vector="positions_offsets">mvalue1</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a12">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data store="no">mvalue1</meta-data>
+        </property>
+
+    </class>
+</compass-core-mapping>
