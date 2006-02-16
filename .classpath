@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry output="target/classes" kind="src" path="src/main/src"/>
+	<classpathentry output="target/test-classes" kind="src" path="src/main/test"/>
+	<classpathentry output="target/classes" kind="src" path="src/tiger/src"/>
+	<classpathentry output="target/tiger-test-classes" kind="src" path="src/tiger/test"/>
+	<classpathentry output="target/sandbox/classes" kind="src" path="src/sandbox/src"/>
+	<classpathentry output="target/sandbox/test-classes" kind="src" path="src/sandbox/test"/>
+	<classpathentry output="samples/library/target/classes" kind="src" path="samples/library/src/java"/>
+	<classpathentry output="samples/library/target/classes" kind="src" path="samples/library/src/test"/>
+	<classpathentry output="samples/petclinic/target/classes" kind="src" path="samples/petclinic/src/java"/>
+	<classpathentry output="samples/petclinic/target/testclasses" kind="src" path="samples/petclinic/src/test"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate2.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/ibatis/ibatis-sqlmap-2.jar"/>
+	<classpathentry kind="lib" path="lib/ibatis/ibatis-common-2.jar"/>
+	<classpathentry kind="lib" path="lib/ant/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="lib/ant/ant-junit.jar"/>
+	<classpathentry kind="lib" path="lib/ant/ant.jar"/>
+	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.6rc1.jar"/>
+	<classpathentry kind="lib" path="lib/c3p0/c3p0-0.9.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/cglib/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j/jaxen-1.1-beta-7.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/rowset.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/mail.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jta.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jstl.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jms.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jdbc2_0-stdext.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/ejb.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/connector.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/activation.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-taglibs/standard.jar"/>
+	<classpathentry kind="lib" path="lib/jdo/jdo2.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-pool.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-dbcp.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-mock.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring.jar"/>
+	<classpathentry kind="lib" path="lib/sunfsjndi/providerutil-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/sunfsjndi/fscontext-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/jotm/jotm-jrmp-stub.jar"/>
+	<classpathentry kind="lib" path="lib/jotm/jotm-carol.jar"/>
+	<classpathentry kind="lib" path="lib/jotm/jotm.jar"/>
+	<classpathentry kind="lib" path="lib/jpox/jpox-enhancer.jar"/>
+	<classpathentry kind="lib" path="lib/jpox/jpox.jar"/>
+	<classpathentry kind="lib" path="lib/jpox/bcel-5.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit/junit.jar"/>
+	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/ojb/db-ojb-1.0.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/odmg/odmg-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/jboss-archive-browsing.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/javassist.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/jpa/persistence.jar"/>
+	<classpathentry kind="lib" path="lib/lucene/lucene-snowball.jar"/>
+	<classpathentry kind="lib" path="lib/lucene/lucene-highlighter.jar"/>
+	<classpathentry kind="lib" path="lib/lucene/lucene-core.jar"/>
+	<classpathentry kind="lib" path="lib/lucene/lucene-analyzers.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

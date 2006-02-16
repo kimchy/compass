@@ -1,0 +1,949 @@
+<?xml version="1.0"?>
+
+<!--
+  Build file for the Compass.
+
+  This script requires a "lib" directory containing the necessary third party JAR files.
+  See "project.properties" for the definitions of the properties used in this file.
+
+  Building Compass requires JDK 1.5+; the releases are built with Sun's JDK 1.5.0.
+	The test suite is able to run on JDK 1.4 and 1.3 as well.
+
+  Note: To successfully run the tests on JDK < 1.5.0, you need to use Xerces or any
+	other JAXP parser that properly supports XML includes. A simple way to achieve this
+	is to put xml-apis.jar and xercesImpl.jar into your "JAVA_HOME/jre/lib/ext" directory.
+-->
+
+<project name="compass" default="usage" basedir=".">
+
+	<property file="project.properties"/>
+    <property file="build.properties"/>
+
+
+	<!--
+		Set up properties that indicate whether we're building on JDK 1.5.
+		Currently simply checks whether the Java version is not 1.3 or 1.4,
+		due to the lack of a greater-than comparator in Ant.
+	-->
+
+	<condition property="tiger.available">
+		<not>
+			<or>
+				<equals arg1="${ant.java.version}" arg2="1.3"/>
+				<equals arg1="${ant.java.version}" arg2="1.4"/>
+			</or>
+		</not>
+	</condition>
+
+	<path id="all-libs">
+
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+
+	</path>
+	
+	<target name="usage">
+
+		<echo message=""/>
+		<echo message="Compass build script"/>
+		<echo message="-----------------------------------------"/>
+		<echo message=""/>
+		<echo message="Among the available targets are:"/>
+		<echo message=""/>
+		<echo message="build    --> build all; don't create JARs"/>
+		<echo message="alljars  --> create all JAR files"/>
+		<echo message="tests    --> run tests"/>
+		<echo message=""/>
+
+	</target>
+
+
+	<target name="clean" description="Clean all output dirs (dist, javadocs, classes, test-classes, etc)">
+
+		<delete dir="${target.classes.dir}"/>
+		<delete dir="${target.testclasses.dir}"/>
+		<delete dir="${target.tigertestclasses.dir}"/>
+		<delete dir="${target.clover.dir}"/>
+		<delete dir="${target.junit.reports.dir}"/>
+		<delete dir="${target.junit.summary.dir}"/>
+		<delete dir="${target.release.dir}"/>
+		<delete dir="${target.otherclasses.dir}"/>
+
+		<!-- Just kill target dir (it's safer). No need at this point to keep it. -->
+		<delete dir="${target.dir}"/>
+
+		<delete dir="${dist.dir}"/>
+		<delete dir="${javadoc.dir}"/>
+		<delete dir="${dist.ref.dir}/html" />
+		<delete dir="${dist.ref.dir}/html_single" />
+		<delete dir="${dist.ref.dir}/pdf" />
+
+	</target>
+
+
+	<!--
+		Compile the main source tree.
+		This task depends on the Commons Attributes compile step,
+		as some classes must ship with attributes.
+	-->
+	<target name="buildmain" description="Compile main source tree java files into class files">
+
+		<mkdir dir="${target.classes.dir}"/>
+		<mkdir dir="${target.classes.dir}/META-INF"/>
+
+		<javac destdir="${target.classes.dir}" source="1.4" target="1.4" debug="${debug}"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${main.src.dir}"/>
+			<classpath refid="all-libs"/>
+		</javac>
+
+		<copy todir="${target.classes.dir}" preservelastmodified="true">
+			<fileset dir="${main.src.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.handlers"/>
+				<include name="**/*.schemas"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.xsd"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+
+	<!--
+		Compile the JDK 1.5 source tree.
+	-->
+	<target name="buildtiger" depends="buildmain" description="Compile JDK 1.5 source tree java files into class files">
+
+		<javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${tiger.src.dir}"/>
+			<classpath refid="all-libs"/>
+		</javac>
+
+	</target>
+
+
+	<!--
+		Compile the main, JDK 1.5, and AspectJ sources.
+	-->
+	<target name="build" depends="buildmain,buildtiger"
+					description="Compile main, and JDK 1.5 sources"/>
+
+
+	<target name="initdist" description="Initialize the distribution directory">
+
+		<mkdir dir="${dist.dir}"/>
+		<mkdir dir="${dist.dir}/modules"/>
+
+	</target>
+
+
+	<target name="fulljar" depends="build,initdist" description="Create full JAR file with all Compass classes">
+
+        <delete file="${dist.dir}/${ant.project.name}.jar"/>
+        <jar-module includes="META-INF/**,org/apache/lucene/**,org/compass/**"
+                    name="${ant.project.name}" target-dir="${dist.dir}"/>
+
+	</target>
+
+
+    <target name="modulejars" depends="build,initdist"
+            description="Create module-specific JAR files (part of compass.jar)">
+
+        <jar-module name="${ant.project.name}-core" includes="org/apache/lucene/**,org/compass/core/**" />
+        <jar-module name="${ant.project.name}-vocabulary" includes="org/compass/vocabulary/**" />
+        <jar-module name="${ant.project.name}-gps" includes="org/compass/gps/**" />
+        <jar-module name="${ant.project.name}-spring" includes="org/compass/spring/**" />
+        <jar-module name="${ant.project.name}-annotations" includes="org/compass/annotations/**" />
+
+    </target>
+
+    <macrodef name="jar-module">
+        <attribute name="includes" />
+        <attribute name="name" />
+        <attribute name="target-dir" default="${dist.dir}/modules"/>
+        <sequential>
+            <jar jarfile="@{target-dir}/@{name}.jar" basedir="${target.classes.dir}" includes="@{includes}">
+                <manifest>
+                    <attribute name="Implementation-Title" value="${compass-title}"/>
+                    <attribute name="Implementation-Version" value="${compass-version}"/>
+                    <attribute name="Compass-Version" value="${compass-version}"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
+
+
+    <target name="srczip" depends="initdist" description="Create source ZIP (containing Java sources)">
+
+		<delete file="${dist.dir}/compass-src.zip"/>
+
+		<zip zipfile="${dist.dir}/compass-src.zip">
+			<fileset dir="${main.src.dir}">
+                <include name="org/apache/lucene/**"/>
+				<include name="org/compass/**"/>
+			</fileset>
+		</zip>
+
+	</target>
+
+
+	<target name="distfiles" depends="initdist" description="Copy dtd, tld and co to dist directory">
+
+		<copy file="${main.src.dir}/org/compass/core/compass-core-configuration-1.0.dtd"
+					todir="${dist.dir}" preservelastmodified="true"/>
+
+        <copy file="${main.src.dir}/org/compass/core/compass-core-mapping-1.0.dtd"
+                    todir="${dist.dir}" preservelastmodified="true"/>
+
+        <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data-1.0.dtd"
+                    todir="${dist.dir}" preservelastmodified="true"/>
+	</target>
+
+
+	<target name="alljars" depends="fulljar,modulejars,srczip"
+					description="Create all JAR files"/>
+
+
+	<!--
+		Convenience targets, needed for the automated build process. Convenience targets are
+		made up of the individual targets called, separated by an underscore.
+	-->
+	<target name="clean_alljars" depends="clean, alljars"/>
+
+
+	<!--
+		Generate javadoc for the main and JDK 1.5 sources.
+	-->
+	<target name="javadoc" description="Generate framework Javadocs">
+
+		<delete dir="${javadoc.dir}"/>
+		<mkdir dir="${javadoc.dir}"/>
+
+		<javadoc sourcepath="${main.src.dir}" destdir="${javadoc.dir}" windowtitle="Compass" breakiterator="true"
+						 source="1.5" access="package" author="true" version="true" use="true" defaultexcludes="true">
+			<doctitle><![CDATA[<h1>Compass</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright (c) 2002-2006 The Compass Project.</i>]]></bottom>
+			<classpath refid="all-libs"/>
+			<packageset dir="${main.src.dir}">
+                <include name="org/apache/lucene/**"/>
+				<include name="org/compass/**"/>
+			</packageset>
+			<packageset dir="${tiger.src.dir}">
+				<include name="org/compass/**"/>
+			</packageset>
+			<!-- Unfortunately, jDocs have switched off their package listing, so we can't link to jDocs :( -->
+			<link href="http://java.sun.com/j2ee/1.4/docs/api"/>
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+			<link href="http://www.junit.org/junit/javadoc/"/>
+			<link href="http://logging.apache.org/log4j/docs/api/"/>
+		</javadoc>
+
+	</target>
+
+
+	<!--
+		Compile the main test tree.
+	-->
+	<target name="buildmaintests" depends="build"
+					description="Compile test source tree java files into class files">
+
+		<mkdir dir="${target.testclasses.dir}"/>
+
+		<javac destdir="${target.testclasses.dir}" source="1.3" target="1.3" debug="${debug}"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${main.test.dir}"/>
+			<classpath refid="all-libs"/>
+			<classpath location="${target.classes.dir}"/>
+		</javac>
+
+		<!-- Pick up config files from test directory -->
+		<copy todir="${target.testclasses.dir}" preservelastmodified="true">
+			<fileset dir="${main.test.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+                <include name="**/*.jdo"/>
+			</fileset>
+		</copy>
+
+        <!-- Enhance JDO using JPox -->
+        <path id="jpox.classpath">
+            <path refid="all-libs"/>
+            <path location="${target.testclasses.dir}"/>
+        </path>
+        <taskdef name="enhancer" classname="org.jpox.enhancer.tools.EnhancerTask">
+            <classpath refid="all-libs"/>
+        </taskdef>
+        <enhancer classpathref="jpox.classpath"
+            dir="${target.testclasses.dir}"
+            verbose="false">
+            <sysproperty key="log4j.configuration" value="file:${target.testclasses.dir}/log4j.properties"/>
+        </enhancer>
+
+    </target>
+
+
+	<target name="buildtigertests" depends="buildmaintests"
+					description="Compile JDK 1.5 test java files into class files">
+
+		<mkdir dir="${target.tigertestclasses.dir}"/>
+
+		<javac destdir="${target.tigertestclasses.dir}" source="1.5" target="1.5" debug="${debug}"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${tiger.test.dir}"/>
+			<classpath refid="all-libs"/>
+			<classpath location="${target.classes.dir}"/>
+			<classpath location="${target.testclasses.dir}"/>
+		</javac>
+
+		<!-- Pick up config files from test directory -->
+		<copy todir="${target.tigertestclasses.dir}" preservelastmodified="true">
+			<fileset dir="${tiger.test.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+	
+	<target name="buildtests" depends="buildmaintests,buildtigertests"
+					description="Compile main, and JDK 1.5 test sources"/>
+
+
+	<target name="maintests" depends="buildtests" description="Run main tests">
+
+		<mkdir dir="${target.junit.reports.dir}"/>
+
+		<junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
+
+			<jvmarg line="-Djava.awt.headless=true -Xmx128m -XX:MaxPermSize=128m"/>
+            <!-- Needed since the order of the jar loading is unknown, and Lucene SegmentReader might -->
+            <!-- be loaded before compass (should not happen in actual apps)) -->
+            <sysproperty key="org.apache.lucene.SegmentReader.class" value="org.apache.lucene.index.CompassSegmentReader"/>
+
+            <!-- Must go first to ensure any jndi.properties files etc take precedence  -->
+			<classpath location="${target.testclasses.dir}"/>
+			<classpath location="${target.classes.dir}"/>
+
+			<!-- Need files loaded as resources -->
+			<classpath location="${test.dir}"/>
+
+			<classpath refid="all-libs"/>
+
+			<formatter type="plain" usefile="false"/>
+
+			<batchtest fork="yes" todir="${target.junit.reports.dir}">
+				<fileset dir="${target.testclasses.dir}" includes="${test.includes}" excludes="${test.excludes}"/>
+			</batchtest>
+
+		</junit>
+
+	</target>
+
+
+	<target name="tigertests" depends="buildtests" if="tiger.available" description="Run JDK 1.5 tests">
+
+		<mkdir dir="${target.junit.reports.dir}"/>
+
+		<junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
+
+			<jvmarg line="-Djava.awt.headless=true -Xmx128m -XX:MaxPermSize=128m"/>
+            <!-- Needed since the order of the jar loading is unknown, and Lucene SegmentReader might -->
+            <!-- be loaded before compass (should not happen in actual apps)) -->
+            <sysproperty key="org.apache.lucene.SegmentReader.class" value="org.apache.lucene.index.CompassSegmentReader"/>
+
+			<!-- Must go first to ensure any jndi.properties files etc take precedence  -->
+			<classpath location="${target.tigertestclasses.dir}"/>
+			<classpath location="${target.testclasses.dir}"/>
+			<classpath location="${target.classes.dir}"/>
+
+			<!-- Need files loaded as resources -->
+			<classpath location="${test.dir}"/>
+
+			<classpath refid="all-libs"/>
+
+			<formatter type="plain" usefile="false"/>
+
+			<batchtest fork="yes" todir="${target.junit.reports.dir}">
+				<fileset dir="${target.tigertestclasses.dir}" includes="${test.includes}" excludes="${test.excludes}"/>
+			</batchtest>
+
+		</junit>
+
+	</target>
+
+
+	<!--
+		Run test suite. This and clover.tests take their includes and excludes from
+		"build.properties". However it's possible to run specific tests by passing in
+		the "test.includes" and (optionally) "test.excludes" properties through the
+		command line, as below:
+			ant tests -Dtest.includes=org/compass/core/**/*Tests
+	-->
+	<target name="tests" depends="maintests,tigertests" description="Run tests"/>
+
+
+	<!--
+		Run test suite and generate test summary, for both main and tiger tests.
+		Does not halt on failure or error, in contrast to the "tests" target above.
+	-->
+	<target name="testsummary" depends="buildtests" description="Run tests and generate test summary">
+
+		<mkdir dir="${target.junit.reports.dir}"/>
+		<mkdir dir="${target.junit.summary.dir}"/>
+
+		<junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="no" haltonerror="no">
+
+			<jvmarg line="-Djava.awt.headless=true"/>
+
+			<!-- Must go first to ensure any jndi.properties files etc take precedence  -->
+			<classpath location="${target.tigertestclasses.dir}"/>
+			<classpath location="${target.testclasses.dir}"/>
+			<classpath location="${target.classes.dir}"/>
+
+			<!-- Need files loaded as resources -->
+			<classpath location="${test.dir}"/>
+
+			<classpath refid="all-libs"/>
+
+			<formatter type="plain" usefile="false"/>
+			<formatter type="xml"/>
+
+			<batchtest fork="yes" todir="${target.junit.reports.dir}">
+				<fileset dir="${target.testclasses.dir}" includes="${test.includes}" excludes="${test.excludes}"/>
+				<fileset dir="${target.tigertestclasses.dir}" includes="${test.includes}" excludes="${test.excludes}"/>
+			</batchtest>
+
+		</junit>
+
+		<junitreport todir="${target.junit.reports.dir}">
+			<fileset dir="${target.junit.reports.dir}">
+				<include name="TEST-*.xml"/>
+			</fileset>
+			<report todir="${target.junit.summary.dir}"/>
+		</junitreport>
+
+	</target>
+
+
+	<target name="clean_tests" depends="clean,tests"/>
+
+
+	<target name="clover.build" description="Compile main source tree java files WITH CLOVER into class files">
+
+		<!-- switch on Clover by specifying it as the compiler to use -->
+		<property name="build.compiler" value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+
+		<mkdir dir="${target.clover.dir}"/>
+
+		<javac destdir="${target.clover.dir}" source="1.3" target="1.3" debug="${debug}"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${main.src.dir}"/>
+			<classpath refid="all-libs"/>
+		</javac>
+
+		<copy todir="${target.clover.dir}" preservelastmodified="true">
+			<fileset dir="${main.src.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.handlers"/>
+				<include name="**/*.schemas"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.xsd"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+
+	<target name="clover.buildtiger" description="Compile main source tree java files WITH CLOVER into class files">
+
+		<!-- switch on Clover by specifying it as the compiler to use -->
+		<property name="build.compiler" value="org.apache.tools.ant.taskdefs.CloverCompilerAdapter"/>
+
+		<mkdir dir="${target.clover.dir}"/>
+
+		<javac destdir="${target.clover.dir}" source="1.5" target="1.5" debug="${debug}"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${tiger.src.dir}"/>
+			<classpath refid="all-libs"/>
+		</javac>
+
+		<copy todir="${target.clover.dir}" preservelastmodified="true">
+			<fileset dir="${tiger.src.dir}">
+				<include name="**/*.properties"/>
+				<include name="**/*.handlers"/>
+				<include name="**/*.schemas"/>
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+				<include name="**/*.xsd"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+
+	<target name="clover.tests" depends="buildtests,clover.build,clover.buildtiger" description="Run Clover tests">
+
+		<property name="reports.dir" value="${target.junit.reports.dir}"/>
+
+		<mkdir dir="${reports.dir}"/>
+
+		<junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
+
+			<jvmarg line="-Djava.awt.headless=true"/>
+
+			<!-- Must go first to ensure the jndi.properties takes precedence  -->
+			<classpath location="${target.testclasses.dir}"/>
+			<classpath location="${target.clover.dir}"/>
+
+			<!-- Need files loaded as resources -->
+			<classpath location="${test.dir}"/>
+
+			<classpath refid="all-libs"/>
+
+			<formatter type="plain" usefile="false"/>
+			<formatter type="xml"/>
+
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${target.testclasses.dir}" includes="${test.includes}" excludes="${test.excludes}"/>
+			</batchtest>
+
+		</junit>
+
+	</target>
+
+
+	<!--
+		Run test suite under Clover coverage analysis, and bring up
+		Clover's Swing browser to display the results.
+	-->
+	<target name="clover.swing" depends="clover.tests" description="Run Clover tests and launch Swing coverage viewer">
+
+		<echo>Launching Clover coverage viewer</echo>
+
+		<java classname="com.cortexeb.tools.clover.reporters.jfc.Viewer" fork="yes">
+			<arg value="${clover.initstring}"/>
+			<classpath refid="all-libs"/>
+		</java>
+
+	</target>
+
+
+	<!--
+		Run test suite under Clover coverage analysis, and use Clover
+		to generate Javadoc/style HTML results that may be browsed later.
+	-->
+	<target name="clover.html" depends="clover.tests" description="Run Clover tests and generate HTML coverage reports">
+
+		<java classname="com.cenqua.clover.reporters.html.HtmlReporter" fork="yes">
+			<arg line="-o '${target.clover.html.dir}' -i '${clover.initstring}' -t 'Compass'"/>
+			<classpath refid="all-libs"/>
+		</java>
+
+	</target>
+
+
+	<target name="doc.clean" description="Delete temporary and distribution directories for docs">
+
+		<delete dir="${basedir}/${dist.ref.dir}/pdf"/>
+		<delete dir="${basedir}/${dist.ref.dir}/html_single"/>
+		<delete dir="${basedir}/${dist.ref.dir}/html"/>
+        <delete dir="${basedir}/${dist.ref.dir}/lib"/>
+
+	</target>
+
+
+	<target name="doc.prepare" description="Extra preparation for the documentation">
+
+        <unzip src="${basedir}/${doc.ref.dir}/docbook-reference-libs.zip"
+               dest="${basedir}/${doc.ref.dir}/" />
+
+        <fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
+			<condition>
+				<not>
+					<available file="${basedir}/${doc.ref.dir}/lib"/>
+				</not>
+			</condition>
+		</fail>
+
+    </target>
+
+
+	<target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
+
+		<mkdir dir="${basedir}/${dist.ref.dir}/pdf/images"/>
+
+		<copy todir="${basedir}/${dist.ref.dir}/pdf/images">
+			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
+				<include name="*.gif"/>
+				<include name="*.svg"/>
+				<include name="*.jpg"/>
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${doc.ref.dir}">
+			<classpath>
+				<fileset dir="${basedir}/${doc.ref.dir}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="-o"/>
+			<arg value="${basedir}/${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+			<arg value="${basedir}/${doc.ref.dir}/src/compass.xml"/>
+			<arg value="${basedir}/${doc.ref.dir}/styles/fopdf.xsl"/>
+		</java>
+
+		<java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${doc.ref.dir}">
+			<classpath>
+				<fileset dir="${basedir}/${doc.ref.dir}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="${basedir}/${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+			<arg value="${basedir}/${dist.ref.dir}/pdf/compass-reference.pdf"/>
+		</java>
+
+		<delete file="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+
+	</target>
+
+
+	<target name="doc.html" depends="doc.prepare" description="Compile reference documentation to chunked html">
+
+		<mkdir dir="${dist.ref.dir}/html/images"/>
+
+		<copy todir="${basedir}/${dist.ref.dir}/html/images">
+			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
+				<include name="*.gif"/>
+				<include name="*.svg"/>
+				<include name="*.jpg"/>
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}/html/">
+			<classpath>
+				<fileset dir="${basedir}/${doc.ref.dir}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="${basedir}/${doc.ref.dir}/src/compass.xml"/>
+			<arg value="${basedir}/${doc.ref.dir}/styles/html_chunk.xsl"/>
+		</java>
+
+	</target>
+
+
+	<target name="doc.htmlsingle" description="Compile reference documentation to single html">
+
+		<mkdir dir="${dist.ref.dir}/html_single/images"/>
+
+		<copy todir="${basedir}/${dist.ref.dir}/html_single/images">
+			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
+				<include name="*.gif"/>
+				<include name="*.svg"/>
+				<include name="*.jpg"/>
+			</fileset>
+		</copy>
+
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${doc.ref.dir}">
+			<classpath>
+				<fileset dir="${basedir}/${doc.dir}/reference/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<arg value="-o"/>
+			<arg value="${basedir}/${dist.ref.dir}/html_single/index.html"/>
+			<arg value="${basedir}/${doc.ref.dir}/src/compass.xml"/>
+			<arg value="${basedir}/${doc.ref.dir}/styles/html.xsl"/>
+		</java>
+
+	</target>
+
+
+	<target name="doc.all" depends="doc.html,doc.htmlsingle,doc.pdf"
+					description="Generate and copy reference documentation"/>
+
+
+	<target name="release" depends="alljars,distfiles,javadoc,doc.all" description="Generate release zips">
+
+		<mkdir dir="${target.release.dir}"/>
+
+		<delete file="${target.release.dir}/${release.zip}"/>
+		<delete file="${target.release.dir}/${release-with-dependencies.zip}"/>
+
+		<fileset id="main" dir=".">
+			<include name="dist/**"/>
+			<exclude name="dist/*.zip"/>
+			<include name="docs/**"/>
+			<exclude name="docs/reference/*"/>
+			<exclude name="docs/reference/src/**"/>
+			<exclude name="docs/reference/images/**"/>
+			<exclude name="docs/reference/styles/**"/>
+			<exclude name="docs/reference/lib/**"/>
+			<exclude name="docs/reference/html/**"/>
+			<exclude name="docs/reference/pdf/images/**"/>
+			<include name="src/**"/>
+			<include name="*.bat"/>
+			<include name="*.txt"/>
+			<include name="*.xml"/>
+			<include name="*.properties"/>
+            <exclude name="build.properties"/>
+		</fileset>
+
+		<zip zipfile="${target.release.dir}/${release.zip}">
+			<zipfileset refid="main" prefix="${release.path}"/>
+		</zip>
+
+		<zip zipfile="${target.release.dir}/${release-with-dependencies.zip}">
+			<zipfileset refid="main" prefix="${release.path}"/>
+			<zipfileset dir="." prefix="${release.path}">
+				<include name="lib/*.txt"/>
+				<include name="lib/ant/**"/>
+                <include name="lib/antlr/**"/>
+                <include name="lib/c3p0/**"/>
+                <include name="lib/cglib/**"/>
+                <include name="lib/dom4j/**"/>
+                <include name="lib/hibernate/**"/>
+                <include name="lib/hsqldb/**"/>
+                <include name="lib/ibatis/**"/>
+                <include name="lib/j2ee/**"/>
+                <include name="lib/jakarta-commons/**"/>
+                <include name="lib/jakarta-taglibs/**"/>
+                <include name="lib/jdo/**"/>
+                <include name="lib/jotm/**"/>
+                <include name="lib/junit/**"/>
+                <include name="lib/log4j/**"/>
+                <include name="lib/lucene/**"/>
+                <include name="lib/odmg/**"/>
+                <include name="lib/ojb/**"/>
+                <include name="lib/spring/**"/>
+                <include name="lib/sunfsjndi/**"/>
+			</zipfileset>
+		</zip>
+
+	</target>
+
+
+	<target name="clean_release" depends="clean, release"/>
+
+
+	<target name="sandbox.clean" description="Clean sandbox output dirs">
+
+		<delete dir="${sandbox.target.classes.dir}"/>
+		<delete dir="${sandbox.target.testclasses.dir}"/>
+		<delete dir="${sandbox.target.junit.reports.dir}"/>
+		<delete dir="${sandbox.target.junit.summary.dir}"/>
+
+		<!-- Just kill target dir (it's safer). No need at this point to keep it. -->
+		<delete dir="${sandbox.target.dir}"/>
+
+	</target>
+
+
+	<target name="sandbox.build" description="Compile sandbox source tree java files into class files">
+
+		<echo message="WARNING: To keep things speedy, there's no Ant dependency on the build target"/>
+
+		<mkdir dir="${sandbox.target.classes.dir}"/>
+		<mkdir dir="${sandbox.target.classes.dir}/META-INF"/>
+
+		<javac destdir="${sandbox.target.classes.dir}" source="1.3" target="1.3" debug="${debug}"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${sandbox.src.dir}"/>
+			<classpath refid="all-libs"/>
+			<classpath location="${target.classes.dir}"/>
+		</javac>
+
+		<copy todir="${sandbox.target.classes.dir}" preservelastmodified="true">
+			<fileset dir="${sandbox.src.dir}">
+				<include name="**/*.xml"/>
+				<include name="**/*.dtd"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+
+	<target name="sandbox.jar" depends="sandbox.build,initdist" description="Create jar with sandbox classes">
+
+		<delete file="${dist.dir}/compass-sandbox.jar"/>
+
+		<jar jarfile="${dist.dir}/compass-sandbox.jar">
+			<fileset dir="${sandbox.target.classes.dir}">
+				<include name="META-INF/**"/>
+                <include name="org/apache/lucene/**"/>
+				<include name="org/compass/**"/>
+			</fileset>
+			<manifest>
+				<attribute name="Implementation-Title" value="${compass-title}"/>
+				<attribute name="Implementation-Version" value="${compass-version}"/>
+				<attribute name="Compass-Version" value="${compass-version}"/>
+			</manifest>
+		</jar>
+
+	</target>
+
+
+	<target name="sandbox.srczip" depends="initdist" description="Create sandbox source ZIP (containing Java sources)">
+
+		<delete file="${dist.dir}/compass-sandbox-src.zip"/>
+
+		<zip zipfile="${dist.dir}/compass-sandbox-src.zip">
+			<fileset dir="${sandbox.src.dir}">
+                <include name="org/apache/lucene/**"/>
+				<include name="org/compass/**"/>
+			</fileset>
+		</zip>
+
+	</target>
+
+
+	<target name="sandbox.buildtests" depends=""
+					description="Compile test source tree Java files into class files">
+
+		<mkdir dir="${sandbox.target.testclasses.dir}"/>
+
+		<javac destdir="${sandbox.target.testclasses.dir}" source="1.3" target="1.3" debug="${debug}"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${sandbox.test.dir}"/>
+			<classpath refid="all-libs"/>
+			<classpath location="${target.classes.dir}"/>
+			<classpath location="${sandbox.target.classes.dir}"/>
+			<classpath location="${target.testclasses.dir}"/>
+		</javac>
+
+		<!-- Pick up logging config from test directory -->
+		<copy todir="${sandbox.target.testclasses.dir}" preservelastmodified="true">
+			<fileset dir="${sandbox.test.dir}">
+				<include name="**/*.properties"/>
+			</fileset>
+			<fileset dir="${sandbox.test.dir}">
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+
+	</target>
+
+
+	<!--
+		Run test suite. This and Clover test target take their includes and excludes
+		from build.properties. However it's possible to run specific tests by passing in
+		the test.includes and (optionally) test.excludes properties through the command line, as below:
+			ant tests -Dtest.includes=org/compass/core/**/*Tests
+	-->
+	<target name="sandbox.tests" depends="sandbox.build,sandbox.buildtests" description="Run tests">
+
+		<property name="sandbox.reports.dir" value="${sandbox.target.junit.reports.dir}"/>
+
+		<mkdir dir="${sandbox.reports.dir}"/>
+
+		<junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
+
+            <!-- Needed since the order of the jar loading is unknown, and Lucene SegmentReader might -->
+            <!-- be loaded before compass (should not happen in actual apps)) -->
+            <sysproperty key="org.apache.lucene.SegmentReader.class" value="org.apache.lucene.index.CompassSegmentReader"/>
+
+            <!-- Must go first to ensure any jndi.properties files etc take precedence  -->
+			<classpath location="${sandbox.target.testclasses.dir}"/>
+			<classpath location="${sandbox.target.classes.dir}"/>
+			<classpath location="${target.testclasses.dir}"/>
+
+			<!-- Need files loaded as resources -->
+			<classpath location="${sandbox.test.dir}"/>
+
+			<classpath refid="all-libs"/>
+			<classpath location="${target.classes.dir}"/>
+
+			<formatter type="plain" usefile="false"/>
+			<formatter type="xml"/>
+
+			<batchtest fork="yes" todir="${sandbox.reports.dir}">
+				<fileset dir="${sandbox.target.testclasses.dir}" includes="${test.includes}" excludes="${test.excludes}"/>
+			</batchtest>
+
+		</junit>
+
+	</target>
+
+
+	<target name="sandbox.testsummary" depends="sandbox.build,sandbox.buildtests"
+					description="Run tests and generate test summary">
+
+		<property name="sandbox.reports.dir" value="${sandbox.target.junit.reports.dir}"/>
+
+		<mkdir dir="${sandbox.reports.dir}"/>
+
+		<property name="reports.dir" value="${sandbox.reports.dir}"/>
+		<property name="summary.dir" value="${sandbox.reports.dir}/reports"/>
+
+		<mkdir dir="${reports.dir}"/>
+		<mkdir dir="${summary.dir}"/>
+
+		<junit printsummary="yes" haltonfailure="no" haltonerror="no">
+			<jvmarg line="-Djava.awt.headless=true"/>
+
+			<!-- Must go first to ensure any jndi.properties files etc take precedence  -->
+			<classpath location="${sandbox.target.testclasses.dir}"/>
+			<classpath location="${sandbox.target.classes.dir}"/>
+			<classpath location="${target.testclasses.dir}"/>
+			<!-- Need files loaded as resources -->
+			<classpath location="${sandbox.test.dir}"/>
+
+			<classpath refid="all-libs"/>
+			<classpath location="${target.classes.dir}"/>
+
+			<formatter type="plain" usefile="false"/>
+			<formatter type="xml"/>
+
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${sandbox.target.testclasses.dir}" includes="${test.includes}" excludes="${test.excludes}"/>
+			</batchtest>
+
+		</junit>
+
+		<junitreport todir="${reports.dir}">
+
+			<fileset dir="${reports.dir}">
+				<include name="TEST-*.xml"/>
+			</fileset>
+			<report todir="${summary.dir}"/>
+
+		</junitreport>
+
+	</target>
+
+
+	<target name="sandbox.clean_tests" depends="sandbox.clean, sandbox.tests"/>
+
+
+	<target name="sandbox.javadoc" description="Generate framework Javadocs">
+
+		<mkdir dir="${sandbox.javadoc.dir}"/>
+
+		<javadoc sourcepath="${sandbox.src.dir}" destdir="${sandbox.javadoc.dir}" windowtitle="Compass"
+						 additionalparam="-breakiterator" source="1.3" access="package" author="true" version="true" use="true"
+						 defaultexcludes="true">
+			<doctitle><![CDATA[<h1>Compass Sandbox</h1>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright (c) 2003-2006 The Compass Project.</i>]]></bottom>
+			<classpath refid="all-libs"/>
+			<classpath location="${target.classes.dir}"/>
+			<packageset dir="${sandbox.src.dir}">
+                <include name="org/apache/lucene/**"/>
+				<include name="org/compass/**"/>
+			</packageset>
+			<!-- Unfortunately, jDocs have switched off their package listing, so we can't link to jDocs :( -->
+			<link href="http://java.sun.com/j2ee/1.4/docs/api"/>
+			<link href="http://java.sun.com/j2se/1.4.2/docs/api"/>
+			<link href="http://www.junit.org/junit/javadoc/"/>
+			<link href="http://logging.apache.org/log4j/docs/api/"/>
+		</javadoc>
+
+	</target>
+
+
+</project>
