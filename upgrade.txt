@@ -1,0 +1,98 @@
+COMPASS UPGRADE DOCUMENTETION (Please see Compass JIRA for more information)
+============================================================================
+
+VERSION 0.9.0 ()
+================
+
+1. Package name changed back to org.compass from org.compassframework.
+   Due to the move to Open Symphony, the name Compass is back, without the Framework part.
+2. DTD Location changed.
+   http://static.compassframework.org/dtd/ prefix should now state: http://www.opensymphony.com/compass/dtd.
+
+VERSION 0.8.1 (Jan 22, 2006)
+============================
+
+None.
+
+VERSION 0.8.0 (Jan 02, 2006)
+============================
+
+1. Spring Transaction Manager.
+   If using compass with a spring transaction manager (and probably using SpringSyncTransactionFactory),
+   the transaction manager must be injected to the LocalCompassBean.
+   The transactionManager property was removed from the CompassIndexController and CompassSearchController,
+   now there is only one place to define the transactionManager that compass will integrate with, and that
+   is the transactionManager of the LocalCompassBean.
+2. CompassGps index Operation.
+   When performing the index operation, it is very important in the new version NOT to perform it within an
+   already running transaction. For LocalTransactionFactory, no outer LocalTransaction should be started.
+   For JTATransactionFactory, no JTA transaction must be started, or no CMT transaction defined for the method
+   level. For SpringSyncTransactionFactory, no spring transaction should be started before, and the executing
+   method should not be wrapped with a transaction (using transaction proxy).
+
+VERSION 0.7.0 (Dec 22, 2005)
+============================
+
+1. Actual Index directory moved to index sub directory.
+   If specifying a file system location for the index, the sub indexes will be created under a directory
+   called index (within the configured path). If you wish to use the same index from version 0.6.2, it is
+   possible, but you will need to manually create the index directory, and move all the other directories
+   into it.
+
+
+VERSION 0.6.2 (Nov 22, 2005)
+============================
+
+1. Index control moved from Compass.
+   A new interface called SearchEngineIndexManager will now handle all index related operations (like
+   delete, verify). It is reachable from the Compass instance.
+2. Minor API change in CompassDetachedHits.
+   The toHits, toDatas, and toResources, were change and the to part was changed to get, for simpler usage
+   in scripting langs (or JSP's).
+3. CompassGps index functionality changed.
+   CompassGps no longer has the deleteIndexBeforeIndex property, the two implementation will now gracefully
+   replace the online index with the content of the index operation. Please consult the documentation for
+   more information.
+
+VERSION 0.6.1 (Sep 30, 2005)
+============================
+
+1. The mapping definition name excludeFromAll is changed to exclude-from-all.
+2. The mapping definition name managedId is changed to managed-id.
+3. CompassQueryBuilder#eq changed to CompassQueryBuilder#term
+4. CompassQueryBuilder#eqAlias changed to CompassQueryBuilder#alias
+5. CompassHits refactored to CompassHitsOperations, CompassHits and CompassDetachedHits. A better separation
+   between the notion of hits (CompassHits) which can be used within a transactional context, and detached
+   hits (CompassDetachedHits), that can be used outside of a transactional context. The CompassHitsOperations
+   interface is used for operations that can be done on both hits. Also, several method were renamed/removed
+   as per the general contract of hits (i.e. getScore(int n) removed and only score(int n) left).
+6. The setting compass.engine.optimizer changed to compass.engine.optimizer.type.
+
+
+VERSION 0.6 (Sep 30, 2005)
+==========================
+
+1. Package name changed from org.compass to org.compassframework.
+2. DTD location changed to http://static.compassframework.org/dtd/compass-core-mapping-1.0.dtd.
+3. The settings for the analyzer used was changed. Compass can now be configured with multiple
+   analyzers, and they can be referenced. The new setting looks like: compass.analyzer.(analyzer name).*,
+   with two internal analyzers called default and search. Please read more at the Search Analyzer section
+   in the documentation.
+4. Removed the DefaultCompassGps, which had two compass instances with the confusing names of compass
+   and batchCompass. There will be two implementation of CompassGps now: a) DualCompassGps: Will act the
+   same as DefaultCompassGps, but will have better names for the two compass instances: indexCompass and
+   mirrorCompass. b) SingleCompassGps: Based on the fact that 0.6 version allows to set the transaction
+   isolation when starting a new transaction, it will only have a single Compass instance. When indexing,
+   the transaction will begin with the batch_insert transaction isolation, and when mirroring, using the
+   configured transaction isolation. It is a simpler solution which should work in most cases, and have
+   better memory performance.
+
+VERSION 0.5
+===========
+
+None.
+
+VERSION 0.4
+===========
+
+Intial release
