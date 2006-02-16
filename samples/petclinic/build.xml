@@ -1,0 +1,346 @@
+<?xml version="1.0"?>
+
+<project name="petclinic" basedir="." default="usage">
+
+    <property name="name" value="petclinic"/>
+
+    <property name="war.dir" value="war"/>
+    <property name="src.dir" value="src/java"/>
+    <property name="build.dir" value="target/classes"/>
+    <property name="docs.dir" value="${war.dir}/docs"/>
+    <property name="webclasses.dir" value="${war.dir}/WEB-INF/classes"/>
+    <property name="weblib.dir" value="${war.dir}/WEB-INF/lib"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="db.dir" value="db"/>
+
+    <property name="testsrc.dir" value="src/test"/>
+    <property name="testbuild.dir" value="target/testclasses"/>
+    <property name="testreports.dir" value="junit-reports"/>
+    <property name="testhtml.dir" value="${testreports.dir}/html"/>
+
+    <property file="build.properties"/>
+
+    <property name="compass.root" value="../../"/>
+
+    <path id="master-classpath">
+
+        <fileset dir="${compass.root}/dist">
+            <include name="compass.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/lucene">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/jakarta-commons">
+            <include name="commons-logging.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/junit">
+            <include name="junit.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/hibernate">
+            <include name="hibernate3.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/j2ee">
+            <include name="jdbc2_0-stdext.jar"/>
+            <include name="servlet-api.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/ojb">
+            <include name="db-ojb-*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/spring">
+            <include name="spring.jar"/>
+        </fileset>
+
+    </path>
+
+
+    <path id="test-classpath">
+
+        <fileset dir="${db.dir}/mysql">
+            <include name="mysql*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/antlr">
+            <include name="antlr*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/cglib">
+            <include name="cglib*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/dom4j">
+            <include name="dom4j*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/ehcache">
+            <include name="ehcache*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/hsqldb">
+            <include name="hsqldb.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/j2ee">
+            <include name="jdbc2_0-stdext.jar"/>
+            <include name="jta.jar"/>
+            <include name="servlet-api.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/jakarta-commons">
+            <include name="commons-dbcp.jar"/>
+            <include name="commons-collections.jar"/>
+            <include name="commons-lang.jar"/>
+            <include name="commons-pool.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/log4j">
+            <include name="log4j-*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/spring">
+            <include name="spring-mock.jar"/>
+        </fileset>
+
+    </path>
+
+
+    <target name="usage">
+
+        <echo message=""/>
+        <echo message="Petclinic build file"/>
+        <echo message="------------------------------------------------------"/>
+        <echo message=""/>
+        <echo message="Available targets are:"/>
+        <echo message=""/>
+        <echo message="clean    --> Clean output dirs"/>
+        <echo message="build    --> Compile main Java sources and copy libraries"/>
+        <echo message="docs     --> Create complete Javadoc documentation"/>
+        <echo message="warfile  --> Build the web application archive"/>
+        <echo message="setupDB  --> Initialize the database"/>
+        <echo message="tests    --> Run tests using initialized database"/>
+        <echo message="all      --> Clean, build, docs, warfile, tests"/>
+        <echo message=""/>
+
+    </target>
+
+
+    <target name="clean" description="Clean output dirs (build, docs, testbuild, testreports, weblib, dist)">
+
+        <delete dir="${build.dir}"/>
+        <delete dir="${docs.dir}"/>
+        <delete>
+            <fileset dir="${webclasses.dir}">
+                <include name="*.hbm.xml"/>
+                <include name="*.cpm.xml"/>
+                <include name="OJB*.*"/>
+            </fileset>
+        </delete>
+        <delete dir="${weblib.dir}"/>
+        <delete dir="${testbuild.dir}"/>
+        <delete dir="${testreports.dir}"/>
+        <delete dir="${dist.dir}"/>
+
+    </target>
+
+
+    <target name="build" description="Compile main source tree java files into class files, generate jar files">
+
+        <mkdir dir="${build.dir}"/>
+
+        <javac destdir="${build.dir}" source="1.3" target="1.3" debug="true"
+                deprecation="false" optimize="false" failonerror="true">
+            <src path="${src.dir}"/>
+            <classpath refid="master-classpath"/>
+        </javac>
+
+        <copy todir="${build.dir}" preservelastmodified="true">
+            <fileset dir="${src.dir}">
+                <include name="**/*.xml"/>
+                <include name="**/*.dtd"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${webclasses.dir}" preservelastmodified="true">
+            <fileset dir="${src.dir}">
+                <include name="*.hbm.xml"/>
+                <include name="*.cpm.xml"/>
+                <include name="OJB*.*"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="${weblib.dir}"/>
+
+        <jar jarfile="${weblib.dir}/${name}.jar" compress="true">
+            <fileset dir="${build.dir}">
+                <include name="**"/>
+            </fileset>
+        </jar>
+
+        <copy todir="${weblib.dir}" preservelastmodified="true" flatten="true">
+            <fileset dir="${compass.root}/dist">
+                <include name="compass.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/lucene">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${db.dir}/mysql">
+                <include name="mysql*.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/antlr">
+                <include name="antlr*.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/cglib">
+                <include name="cglib*.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/dom4j">
+                <include name="dom4j*.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/ehcache">
+                <include name="ehcache*.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/hibernate">
+                <include name="hibernate3.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/hsqldb">
+                <include name="hsqldb.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/j2ee">
+                <include name="jstl.jar"/>
+                <include name="jta.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/jakarta-commons">
+                <include name="commons-collections.jar"/>
+                <include name="commons-dbcp.jar"/>
+                <include name="commons-lang.jar"/>
+                <include name="commons-logging.jar"/>
+                <include name="commons-pool.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/jakarta-taglibs">
+                <include name="standard.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/ojb">
+                <include name="db-ojb-*.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/odmg">
+                <include name="odmg-*.jar"/>
+            </fileset>
+            <fileset dir="${compass.root}/lib/spring">
+                <include name="spring.jar"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+
+    <target name="docs" description="Create complete Javadoc documentation">
+
+        <delete dir="${docs.dir}"/>
+
+        <mkdir dir="${docs.dir}"/>
+
+        <javadoc sourcepath="${src.dir}" destdir="${docs.dir}" windowtitle="Petclinic"
+                source="1.3" author="true" version="true" use="true" packagenames="*">
+            <doctitle><![CDATA[<h1>Petclinic</h1>]]></doctitle>
+            <bottom><![CDATA[<i>kimchy, Ken Krebs and Juergen Hoeller, 2003-2004.</i>]]></bottom>
+            <classpath refid="master-classpath"/>
+        </javadoc>
+
+    </target>
+
+
+    <target name="dist" depends="warfile">
+        <!--
+            Delegate to warfile target by depending on it. dist is just to offer
+            a generic target name across all Spring sample apps that may be used
+            for autobuilds testing.
+        -->
+    </target>
+
+
+    <target name="warfile" depends="build,docs" description="Build the web application archive">
+
+        <mkdir dir="${dist.dir}"/>
+
+        <war warfile="${dist.dir}/${name}.war" basedir="${war.dir}" webxml="${war.dir}/WEB-INF/web.xml">
+            <include name="*"/>
+            <include name="docs/**"/>
+            <include name="html/**"/>
+            <include name="styles/**"/>
+            <include name="images/**"/>
+            <include name="WEB-INF/*.*"/>
+            <exclude name="WEB-INF/web.xml"/>
+            <include name="WEB-INF/classes/*.*"/>
+            <include name="WEB-INF/lib/**"/>
+            <include name="WEB-INF/jsp/**"/>
+            <exclude name="**/.*"/>
+        </war>
+
+    </target>
+
+
+    <target name="setupHSQL" description="Set up HSQL database properties" if="useHSQL">
+
+        <property name="db.driver" value="${hsql.driver}"/>
+        <property name="db.url" value="${hsql.url}"/>
+        <property name="db.user" value="${hsql.user}"/>
+        <property name="db.pw" value="${hsql.pw}"/>
+
+    </target>
+
+
+    <target name="setupMYSQL" description="Set up MYSQL database properties" if="useMYSQL">
+
+        <property name="db.driver" value="${mysql.driver}"/>
+        <property name="db.url" value="${mysql.url}"/>
+        <property name="db.user" value="${mysql.user}"/>
+        <property name="db.pw" value="${mysql.pw}"/>
+
+    </target>
+
+
+    <target name="setupDB" depends="setupHSQL,setupMYSQL" description="Initialize the selected database">
+
+        <ant dir="${db.dir}"/>
+
+    </target>
+
+
+    <target name="tests" depends="build" description="Run tests">
+
+        <delete dir="${testbuild.dir}"/>
+        <mkdir dir="${testbuild.dir}"/>
+        <delete dir="${testreports.dir}"/>
+        <mkdir dir="${testreports.dir}"/>
+        <delete dir="${testhtml.dir}"/>
+        <mkdir dir="${testhtml.dir}"/>
+
+        <copy todir="${testbuild.dir}" preservelastmodified="true">
+            <fileset dir="${testsrc.dir}">
+                <include name="**/*.xml"/>
+                <include name="**/*.dtd"/>
+            </fileset>
+        </copy>
+
+        <javac srcdir="${testsrc.dir}" destdir="${testbuild.dir}" deprecation="true">
+            <classpath path="${build.dir}"/>
+            <classpath refid="master-classpath"/>
+            <classpath refid="test-classpath"/>
+        </javac>
+
+        <junit printsummary="true" fork="yes">
+            <formatter type="xml"/>
+            <test name="org.compass.sample.petclinic.OwnerTests" todir="${testreports.dir}"/>
+            <test name="org.compass.sample.petclinic.hibernate.HibernateClinicTests" todir="${testreports.dir}"/>
+            <test name="org.compass.sample.petclinic.ojb.PersistenceBrokerClinicTests" todir="${testreports.dir}"/>
+            <test name="org.compass.sample.petclinic.jdbc.JdbcClinicTests" todir="${testreports.dir}"/>
+            <classpath path="${build.dir}"/>
+            <classpath path="${src.dir}"/>
+            <classpath path="${testbuild.dir}"/>
+            <classpath path="${testsrc.dir}"/>
+            <classpath refid="master-classpath"/>
+            <classpath refid="test-classpath"/>
+        </junit>
+
+        <junitreport todir="${testhtml.dir}">
+            <fileset dir="${testreports.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${testhtml.dir}"/>
+        </junitreport>
+
+    </target>
+
+
+    <target name="all" depends="clean,build,docs,warfile,tests" description="Clean,build,docs,warfile,tests"/>
+
+</project>
