@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for PetClinic on JDBC.
+	-->
+<beans>
+
+	<!-- ========================= RESOURCE DEFINITIONS ========================= -->
+  
+	<!-- Configurer that replaces ${...} placeholders with values from a properties file -->
+	<!-- (in this case, JDBC-related settings for the dataSource definition below) -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="/WEB-INF/jdbc.properties"/>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+	</bean>
+
+	<!-- 
+		Simple local DataSource that works in any environment.
+		This uses the JDBC DriverManager to obtain connections, and does NOT perform connection
+		pooling. Connection pooling is essential to all real-world applications.
+		This definition is good for getting started, as it introduces no dependencies beyond
+		the JDK, but DriverManagerDataSource is not intended for production usage.
+	 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	
+	<!-- 
+		Alternative local DataSource that works in any environment, and offers much better performance.
+		Uses Apache Commons DBCP for connection pooling. See Commons DBCP documentation
+		for the required JAR files. See the PetStore sample application also shipped with
+		Spring, for an example of Commons DBCP usage and the necessary build script.
+		Alternatively you can use another connection pool such as C3P0, similarly configured
+		using Spring.
+		A standalone connection pool such as Commons DBCP is a good choice for use outside an
+		application server environment, including web applications running in a web container without
+		JTA, or integration testing using the org.springframework.test package.
+	 -->
+	<!--
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+	-->
+
+	<!-- JNDI DataSource for J2EE environments -->
+	<!--
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/petclinic"/>
+	</bean>
+	-->
+
+	<!-- Transaction manager for a single JDBC DataSource (alternative to JTA) -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!-- Transaction manager that delegates to JTA (for a transactional JNDI DataSource) -->
+	<!--
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>
+	-->
+
+
+     <!-- COMPASS START -->
+
+    <!-- The pet mapping is a result set mapping between pet and the pet type -->
+    <!-- The type version column is coalesce since it might be null if there is no type entry for a pet (it is a left join op) -->
+    
+    <bean id="petMapping" class="org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping">
+      <property name="alias"><value>${petclinic.pet}</value></property>
+      <property name="indexUnMappedColumns"><value>false</value></property>
+      <property name="selectQuery"><value>
+        select  p.id as pet_id, p.name as pet_name, p.birth_date as pet_birth_date, p.version as pet_version, 
+                COALESCE(t.id, 0) as type_id, t.name as type_name, COALESCE(t.version, convert('1970-01-01', timestamp)) as type_version
+        from    pets p left join types t on p.type_id = t.id
+      </value></property>
+      <property name="versionQuery"><value>
+        select  p.id as pet_id, p.version as pet_version, 
+                COALESCE(t.id, 0) as type_id, COALESCE(t.version, convert('1970-01-01', timestamp)) as type_version
+        from    pets p left join types t on p.type_id = t.id
+      </value></property>
+      <property name="idMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping">
+            <property name="columnName"><value>pet_id</value></property>
+            <property name="propertyName"><value>ID</value></property>
+            <property name="columnNameForVersion"><value>p.id</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping">
+            <property name="columnName"><value>type_id</value></property>
+            <property name="propertyName"><value>type_id</value></property>
+            <property name="columnNameForVersion"><value>COALESCE(t.id, 0)</value></property>
+          </bean>
+        </list>
+      </property>
+      <property name="dataMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>pet_name</value></property>
+            <property name="propertyName"><value>${petclinic.name}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>pet_birth_date</value></property>
+            <property name="propertyName"><value>${petclinic.birthdate}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>type_name</value></property>
+            <property name="propertyName"><value>${petclinic.petType}</value></property>
+          </bean>
+        </list>
+      </property>
+      <property name="versionMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.VersionColumnMapping">
+            <property name="columnName"><value>pet_version</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.VersionColumnMapping">
+            <property name="columnName"><value>type_version</value></property>
+          </bean>
+        </list>
+      </property>
+    </bean>
+    
+    <!-- The mapping resolver can automatically generate the resource mapping definitions -->
+    
+    <bean id="petMappingResolver" class="org.compass.gps.device.jdbc.ResultSetResourceMappingResolver">
+        <property name="mapping"><ref local="petMapping" /></property>
+    </bean>
+
+    <!-- The owner mapping uses the table mapping (which is simpler than the result set mapping) -->
+
+    <bean id="ownerMapping" class="org.compass.gps.device.jdbc.mapping.TableToResourceMapping">
+      <property name="alias"><value>${petclinic.owner}</value></property>
+      <property name="tableName"><value>OWNERS</value></property>
+      <property name="indexUnMappedColumns"><value>false</value></property>
+      <property name="dataMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>first_name</value></property>
+            <property name="propertyName"><value>${petclinic.firstName}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>last_name</value></property>
+            <property name="propertyName"><value>${petclinic.lastName}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>address</value></property>
+            <property name="propertyName"><value>${petclinic.address}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>city</value></property>
+            <property name="propertyName"><value>${petclinic.city}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>telephone</value></property>
+            <property name="propertyName"><value>${petclinic.telephone}</value></property>
+          </bean>
+        </list>
+      </property>
+      <property name="versionMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.VersionColumnMapping">
+            <property name="columnName"><value>version</value></property>
+          </bean>
+        </list>
+      </property>
+    </bean>
+
+    <bean id="ownerMappingResolver" class="org.compass.gps.device.jdbc.ResultSetResourceMappingResolver">
+        <property name="mapping"><ref local="ownerMapping" /></property>
+        <property name="dataSource"><ref bean="dataSource" /></property>
+    </bean>
+
+    <!-- Vet mapping uses table mappings -->
+
+    <bean id="vetMapping" class="org.compass.gps.device.jdbc.mapping.TableToResourceMapping">
+      <property name="alias"><value>${petclinic.vet}</value></property>
+      <property name="tableName"><value>VETS</value></property>
+      <property name="indexUnMappedColumns"><value>false</value></property>
+      <property name="dataMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>first_name</value></property>
+            <property name="propertyName"><value>${petclinic.firstName}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>last_name</value></property>
+            <property name="propertyName"><value>${petclinic.lastName}</value></property>
+          </bean>
+        </list>
+      </property>
+      <property name="versionMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.VersionColumnMapping">
+            <property name="columnName"><value>version</value></property>
+          </bean>
+        </list>
+      </property>
+    </bean>
+
+    <bean id="vetMappingResolver" class="org.compass.gps.device.jdbc.ResultSetResourceMappingResolver">
+        <property name="mapping"><ref local="vetMapping" /></property>
+        <property name="dataSource"><ref bean="dataSource" /></property>
+    </bean>
+
+    <!-- The visit mappings, uses join between a the visit and the pet -->
+
+    <bean id="visitMapping" class="org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping">
+      <property name="alias"><value>${petclinic.visit}</value></property>
+      <property name="indexUnMappedColumns"><value>false</value></property>
+      <property name="selectQuery"><value>
+        select  v.id as visit_id, v.visit_date as visit_date, v.description as visit_description, v.version as visit_version, 
+                COALESCE(p.id, 0) as pet_id, p.name as pet_name, COALESCE(p.version, convert('1970-01-01', timestamp)) as pet_version
+        from    visits v left join pets p on v.pet_id = p.id
+      </value></property>
+      <property name="versionQuery"><value>
+        select  v.id as visit_id, v.version as visit_version, 
+                COALESCE(p.id, 0) as pet_id, COALESCE(p.version, convert('1970-01-01', timestamp)) as pet_version
+        from    visits v left join pets p on v.pet_id = p.id
+      </value></property>
+      <property name="idMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping">
+            <property name="columnName"><value>visit_id</value></property>
+            <property name="propertyName"><value>ID</value></property>
+            <property name="columnNameForVersion"><value>v.id</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping">
+            <property name="columnName"><value>pet_id</value></property>
+            <property name="propertyName"><value>pet_id</value></property>
+            <property name="columnNameForVersion"><value>COALESCE(p.id, 0)</value></property>
+          </bean>
+        </list>
+      </property>
+      <property name="dataMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>visit_date</value></property>
+            <property name="propertyName"><value>${petclinic.date}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>visit_description</value></property>
+            <property name="propertyName"><value>${petclinic.description}</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping">
+            <property name="columnName"><value>pet_name</value></property>
+            <property name="propertyName"><value>${petclinic.name}</value></property>
+          </bean>
+        </list>
+      </property>
+      <property name="versionMappings">
+        <list>
+          <bean class="org.compass.gps.device.jdbc.mapping.VersionColumnMapping">
+            <property name="columnName"><value>visit_version</value></property>
+          </bean>
+          <bean class="org.compass.gps.device.jdbc.mapping.VersionColumnMapping">
+            <property name="columnName"><value>pet_version</value></property>
+          </bean>
+        </list>
+      </property>
+    </bean>
+    
+    <!-- The mapping resolver can automatically generate the resource mapping definitions -->
+    
+    <bean id="visitMappingResolver" class="org.compass.gps.device.jdbc.ResultSetResourceMappingResolver">
+        <property name="mapping"><ref local="visitMapping" /></property>
+    </bean>
+
+
+    <bean id="compass" class="org.compass.spring.LocalCompassBean">
+        <property name="resourceLocations">
+            <list>
+                <value>classpath:org/compass/sample/petclinic/petclinic.cmd.xml</value>
+            </list>
+        </property>
+        <property name="mappingResolvers">
+            <list>
+                <ref local="petMappingResolver" />
+                <ref local="ownerMappingResolver" />
+                <ref local="vetMappingResolver" />
+                <ref local="visitMappingResolver" />
+            </list>
+        </property>
+        <property name="compassSettings">
+            <props>
+                <prop key="compass.engine.connection">file://${user.home}/compass/petclinic</prop>
+                <!-- Use Local Transaction for mirroring -->
+            </props>
+        </property>
+        <property name="transactionManager">
+            <ref local="transactionManager" />
+        </property>
+    </bean>
+
+     <bean id="jdbcGpsDevice" class="org.compass.gps.device.jdbc.ResultSetJdbcGpsDevice">
+       <property name="name"><value>jdbcDevice</value></property>
+       <property name="dataSource"><ref bean="dataSource" /></property>
+       <property name="mirrorDataChanges"><value>true</value></property>
+       <property name="snapshotPersister">
+          <bean class="org.compass.gps.device.jdbc.snapshot.FSJdbcSnapshotPersister">
+            <property name="path" value="${user.home}/compass/petclinic/jdbc-snapshot" />
+          </bean>
+       </property>
+       <property name="mappings">
+        <list>
+          <ref local="petMapping" />
+          <ref local="ownerMapping" />
+          <ref local="vetMapping" />
+          <ref local="visitMapping" />
+        </list>
+       </property>
+     </bean>
+
+     <bean id="scheduledJdbcGpsDevice" class="org.compass.gps.device.ScheduledMirrorGpsDevice">
+     	<property name="gpsDevice"><ref local="jdbcGpsDevice" /></property>
+     	<property name="period"><value>10000</value></property>
+     </bean>
+     
+     <bean id="compassGps" class="org.compass.gps.impl.SingleCompassGps" init-method="start" destroy-method="stop">
+       <property name="compass"><ref bean="compass" /></property>
+       <property name="gpsDevices">
+         <list>
+           <ref local="scheduledJdbcGpsDevice" />
+         </list>
+       </property>
+     </bean>
+     
+     <!-- COMPASS END -->
+
+
+	<!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
+
+	<!-- PetClinic's central data access object: HSQL JDBC implementation -->
+	<!-- (only initialized when referenced by the "clinic" proxy) -->
+	<bean id="hsqlClinic" class="org.compass.sample.petclinic.jdbc.HsqlJdbcClinic" lazy-init="true">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!-- PetClinic's central data access object: MySQL JDBC implementation -->
+	<!-- (only initialized when referenced by the "clinic" proxy) -->
+	<bean id="mysqlClinic" class="org.compass.sample.petclinic.jdbc.MySQLJdbcClinic" lazy-init="true">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!--
+		- Transactional proxy for PetClinic's central data access facade.
+		- Implements the CachingClinic management interface.
+		-
+		- Note that in a real-life app with multiple transaction proxies,
+		- you will probably want to use parent and child bean definitions
+		- as described in the manual, to reduce duplication.
+    -->
+	<bean id="clinic" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="target" ref="${petclinic.jdbcImplBeanName}"/>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+		<property name="preInterceptors" ref="callMonitor"/>
+	</bean>
+
+	<!-- Call monitoring interceptor that monitors call count and call invocation time -->
+	<!-- Implements the CallMonitor management interface -->
+	<bean id="callMonitor" class="org.compass.sample.petclinic.jmx.CallMonitoringInterceptor"/>
+
+
+	<!-- ========================= JMX EXPORTER DEFINITION ========================= -->
+
+	<!--
+	  - Exporter that exposes both the CachingClinic and the CallMonitor via JMX.
+		-
+		- By default, the standard MBeanServerFactory.findMBeanServer method will be used
+		- to determine the MBeanServer. Unfortunately, this does not work on WebLogic <= 8.1:
+		- you need to comment in the WebLogicMBeanServerFactoryBean definition on WebLogic,
+		- specifying appropriate configuration values there.
+		-
+		- Note that you need to comment in the "defaultCurrencyTimeLimit" value on JBoss 3.x.
+    -->
+	<bean id="jmxExporter" class="org.springframework.jmx.export.MBeanExporter">
+		<property name="beans">
+			<map>
+				<entry key="petclinic:service=clinic" value-ref="clinic"/>
+				<entry key="petclinic:service=callMonitor" value-ref="callMonitor"/>
+			</map>
+		</property>
+		<property name="assembler">
+			<bean class="org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler">
+				<property name="interfaceMappings">
+					<props>
+						<prop key="petclinic:service=clinic">org.compass.sample.petclinic.jdbc.CachingClinic</prop>
+						<prop key="petclinic:service=callMonitor">org.compass.sample.petclinic.jmx.CallMonitor</prop>
+					</props>
+				</property>
+				<!-- Comment the following in on JBoss 3.x, which doesn't follow -->
+				<!-- the JMX 1.2 recommendation for currencyTimeLimit behavior. -->
+				<!--
+				<property name="defaultCurrencyTimeLimit" value="0"/>
+				-->
+			</bean>
+		</property>
+		<!-- Comment the following in on WebLogic <= 8.1, which doesn't support -->
+		<!-- the standard MBeanServerFactory.findMBeanServer lookup mechanism. -->
+		<!--
+		<property name="server">
+			<bean class="org.springframework.jmx.support.WebLogicMBeanServerFactoryBean">
+				<property name="username" value="weblogic"/>
+				<property name="password" value="weblogic"/>
+				<property name="serverUrl" value="t3://localhost:7001"/>
+				<property name="serverName" value="server"/>
+			</bean>
+		</property>
+		-->
+	</bean>
+
+</beans>
