@@ -78,7 +78,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
 
     private void secondPass(RawResourceMapping resourceMapping) {
         for (Iterator it = resourceMapping.mappingsIt(); it.hasNext();) {
-            secondPassConverter((Mapping) it.next());
+            secondPassConverter((Mapping) it.next(), false);
         }
     }
 
@@ -274,17 +274,21 @@ public class DefaultMappingProcessor implements MappingProcessor {
     }
 
     private void secondPassConverter(Mapping mapping) {
+        secondPassConverter(mapping, true);
+    }
+
+    private void secondPassConverter(Mapping mapping, boolean forceConverter) {
         if (mapping.getConverter() == null) {
             if (mapping.getConverterName() != null) {
                 String converterName = mapping.getConverterName();
                 mapping.setConverter(converterLookup.lookupConverter(converterName));
-                if (mapping.getConverter() == null) {
+                if (mapping.getConverter() == null && forceConverter) {
                     throw new ConfigurationException("Failed to find converter [" + converterName + "] for mapping " +
                             "[" + mapping.getName() + "]");
                 }
             } else {
                 mapping.setConverter(converterLookup.lookupConverter(mapping.getClass()));
-                if (mapping.getConverter() == null) {
+                if (mapping.getConverter() == null && forceConverter) {
                     throw new ConfigurationException("Failed to find converter for class [" + mapping.getClass() + "]" +
                             " for mapping [" + mapping.getName() + "]");
                 }

@@ -449,7 +449,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String format = metadataConf.getAttribute("format", null);
         if (mdMapping.getConverter() == null) {
             if (format == null) {
-                valueLookup.lookupMetaDataFormat(metadataConf.getValue().trim());
+                format = valueLookup.lookupMetaDataFormat(metadataConf.getValue().trim());
             }
             if (format != null) {
                 mdMapping.setConverter(new MetaDataFormatDelegateConverter(format));
