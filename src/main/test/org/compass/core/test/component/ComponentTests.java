@@ -22,8 +22,8 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.impl.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyIdMapping;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -42,7 +42,7 @@ public class ComponentTests extends AbstractTestCase {
 
         CompassMapping mapping = session.getMapping();
         ClassMapping firstMapping = (ClassMapping) mapping.getRootMappingByClass(CFirst.class);
-        ClassPropertyIdMapping[] idMappings = firstMapping.getClassPropertyIdMappings();
+        ClassIdPropertyMapping[] idMappings = firstMapping.getClassPropertyIdMappings();
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
         assertEquals(1, resourcePropertyMappings.length);

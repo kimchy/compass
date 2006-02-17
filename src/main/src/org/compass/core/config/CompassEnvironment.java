@@ -114,6 +114,8 @@ public class CompassEnvironment {
 
                 public static final String PRIMITIVE_BYTE_ARRAY = "primitivebytearray";
 
+                public static final String OBJECT_BYTE_ARRAY = "objectbytearray";
+
                 public static final String INPUT_STREAM = "inputstream";
 
                 public static final String LOCALE = "locale";
@@ -172,6 +174,8 @@ public class CompassEnvironment {
                 public static final String READER = "reader";
 
                 public static final String PRIMITIVE_BYTE_ARRAY = "primitivebytearray";
+
+                public static final String OBJECT_BYTE_ARRAY = "objectbytearray";
 
                 public static final String INPUT_STREAM = "inputstream";
 

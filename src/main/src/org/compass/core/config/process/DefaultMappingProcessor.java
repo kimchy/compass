@@ -168,7 +168,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
         // mapping and add only internal ids
         refClass.clearMappings();
         for (Iterator it = ids.iterator(); it.hasNext();) {
-            ClassPropertyIdMapping idMapping = (ClassPropertyIdMapping) it.next();
+            ClassIdPropertyMapping idMapping = (ClassIdPropertyMapping) it.next();
             idMapping.clearMappings();
             // create the internal id
             MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping);

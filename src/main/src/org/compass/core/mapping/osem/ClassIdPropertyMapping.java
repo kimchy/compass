@@ -25,10 +25,10 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class ClassPropertyIdMapping extends ClassPropertyMapping implements ResourceIdMappingProvider {
+public class ClassIdPropertyMapping extends ClassPropertyMapping implements ResourceIdMappingProvider {
 
     public ResourcePropertyMapping[] getIdMappings() {
-        return new ResourcePropertyMapping[] { getIdMapping() };
+        return new ResourcePropertyMapping[]{getIdMapping()};
     }
 
     /**
@@ -40,7 +40,7 @@ public class ClassPropertyIdMapping extends ClassPropertyMapping implements Reso
     }
 
     public Mapping copy() {
-        ClassPropertyIdMapping copy = new ClassPropertyIdMapping();
+        ClassIdPropertyMapping copy = new ClassIdPropertyMapping();
         super.copy(copy);
         return copy;
     }

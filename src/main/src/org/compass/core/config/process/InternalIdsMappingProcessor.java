@@ -16,6 +16,10 @@
 
 package org.compass.core.config.process;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 import org.compass.core.Property;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
@@ -25,10 +29,6 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.*;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author kimchy
@@ -90,7 +90,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         for (Iterator it = classPropertyMappings.iterator(); it.hasNext();) {
             ClassPropertyMapping classPropertyMapping = (ClassPropertyMapping) it.next();
             boolean mustBeUnTokenized = false;
-            if (classPropertyMapping instanceof ClassPropertyIdMapping) {
+            if (classPropertyMapping instanceof ClassIdPropertyMapping) {
                 mustBeUnTokenized = true;
             }
             if (classPropertyMapping.isIdPropertySet()) {

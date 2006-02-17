@@ -16,12 +16,12 @@
 
 package org.compass.core.mapping.osem;
 
-import org.compass.core.mapping.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import org.compass.core.mapping.*;
 
 /**
  * @author kimchy
@@ -38,7 +38,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private ClassPropertyMapping[] classPropertyMappings;
 
-    private ClassPropertyIdMapping[] classPropertyIdMappings;
+    private ClassIdPropertyMapping[] classPropertyIdMappings;
 
     private HashMap pathMappings;
 
@@ -62,7 +62,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     /**
      * Post process by using the dynamic find operations to cache them.
-     * 
+     *
      * @throws MappingException
      */
     protected void doPostProcess() throws MappingException {
@@ -75,7 +75,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         findList = callback.getClassPropertyMappings();
         classPropertyMappings = (ClassPropertyMapping[]) findList.toArray(new ClassPropertyMapping[findList.size()]);
         findList = findClassPropertyIdMappings();
-        classPropertyIdMappings = (ClassPropertyIdMapping[]) findList.toArray(new ClassPropertyIdMapping[findList
+        classPropertyIdMappings = (ClassIdPropertyMapping[]) findList.toArray(new ClassIdPropertyMapping[findList
                 .size()]);
         pathMappings = callback.getPathMappings();
     }
@@ -88,20 +88,20 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         return classPropertyMappings;
     }
 
-    public ClassPropertyIdMapping[] getClassPropertyIdMappings() {
+    public ClassIdPropertyMapping[] getClassPropertyIdMappings() {
         return classPropertyIdMappings;
     }
 
     /**
-     * Dynamically finds all the {@link ClassPropertyIdMapping}s for the class.
-     * 
-     * @return A list of the class {@link ClassPropertyIdMapping}s.
+     * Dynamically finds all the {@link ClassIdPropertyMapping}s for the class.
+     *
+     * @return A list of the class {@link ClassIdPropertyMapping}s.
      */
     public List findClassPropertyIdMappings() {
         ArrayList idMappingList = new ArrayList();
         for (Iterator it = mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
-            if (m instanceof ClassPropertyIdMapping) {
+            if (m instanceof ClassIdPropertyMapping) {
                 idMappingList.add(m);
             }
         }

@@ -7,8 +7,8 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.impl.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyIdMapping;
 
 /**
  * @author kimchy
@@ -25,7 +25,7 @@ public class IdTests extends AbstractAnnotationsTestCase {
 
         CompassMapping mapping = session.getMapping();
         ClassMapping AMApping = (ClassMapping) mapping.getRootMappingByAlias("A");
-        ClassPropertyIdMapping[] idMappings = AMApping.getClassPropertyIdMappings();
+        ClassIdPropertyMapping[] idMappings = AMApping.getClassPropertyIdMappings();
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
         assertEquals(1, resourcePropertyMappings.length);

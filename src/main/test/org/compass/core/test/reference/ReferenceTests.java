@@ -22,8 +22,8 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.impl.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyIdMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.test.AbstractTestCase;
 
@@ -33,17 +33,17 @@ import org.compass.core.test.AbstractTestCase;
 public class ReferenceTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "reference/Reference.cpm.xml" };
+        return new String[]{"reference/Reference.cpm.xml"};
     }
-    
+
     public void testMappings() {
-        
+
         InternalCompassSession session = (InternalCompassSession) openSession();
-        
+
         CompassMapping mapping = session.getMapping();
         ClassMapping xMapping = (ClassMapping) mapping.getRootMappingByAlias("x");
         ClassMapping yMapping = ((ReferenceMapping) xMapping.getMapping("y")).getRefClassMapping();
-        ClassPropertyIdMapping[] idMappings = yMapping.getClassPropertyIdMappings();
+        ClassIdPropertyMapping[] idMappings = yMapping.getClassPropertyIdMappings();
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
         assertEquals(1, resourcePropertyMappings.length);
@@ -69,7 +69,7 @@ public class ReferenceTests extends AbstractTestCase {
         assertNotNull(resourcePropertyMapping);
         assertEquals("id", resourcePropertyMapping.getName());
         assertEquals("$/x/y/id", resourcePropertyMapping.getPath());
-        
+
         session.close();
     }
 
@@ -172,7 +172,7 @@ public class ReferenceTests extends AbstractTestCase {
         cyclic2 = (Cyclic2) session.load(Cyclic2.class, id);
         assertNotNull(cyclic2.getCyclic1());
         assertEquals("cyclic1", cyclic2.getCyclic1().getValue());
-        
+
         tr.commit();
         session.close();
     }
@@ -190,7 +190,7 @@ public class ReferenceTests extends AbstractTestCase {
 
         cyclic1 = (Cyclic1) session.load(Cyclic1.class, id);
         assertNull(cyclic1.getCyclic2());
-        
+
         tr.commit();
         session.close();
     }

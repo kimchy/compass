@@ -261,7 +261,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     private void bindClassMappingChildren(ConfigurationHelper classConf, AliasMapping classMapping) {
         ConfigurationHelper[] ids = classConf.getChildren("id");
         for (int i = 0; i < ids.length; i++) {
-            ClassPropertyIdMapping idMapping = new ClassPropertyIdMapping();
+            ClassIdPropertyMapping idMapping = new ClassIdPropertyMapping();
             bindClassProperty(ids[i], classMapping, idMapping);
             classMapping.addMapping(idMapping);
         }

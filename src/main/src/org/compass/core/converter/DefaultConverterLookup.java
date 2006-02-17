@@ -78,6 +78,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.INPUT_STREAM, InputStreamConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.LOCALE, LocaleConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.PRIMITIVE_BYTE_ARRAY, PrimitiveByteArrayConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.OBJECT_BYTE_ARRAY, ObjectByteArrayConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.READER, ReaderConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.SQL_DATE, SqlDateConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.SQL_TIME, SqlTimeConverter.class);
@@ -126,6 +127,8 @@ public class DefaultConverterLookup implements ConverterLookup {
                 Locale.class, new LocaleConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.PRIMITIVE_BYTE_ARRAY,
                 byte[].class, new PrimitiveByteArrayConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.OBJECT_BYTE_ARRAY,
+                Byte[].class, new ObjectByteArrayConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.READER,
                 Reader.class, new ReaderConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.SQL_DATE,
@@ -140,7 +143,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_PROPERTY,
                 ClassPropertyMapping.class, new ClassPropertyMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_ID_PROPERTY,
-                ClassPropertyIdMapping.class, new ClassPropertyMappingConverter());
+                ClassIdPropertyMapping.class, new ClassPropertyMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COMPONENT,
                 ComponentMapping.class, new ComponentMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COLLECTION,

@@ -33,8 +33,8 @@ import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyIdMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.metadata.Alias;
@@ -183,7 +183,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                                           AnnotatedElement annotatedElement, ClassMapping classMapping) {
 
         if (annotation instanceof SearchableId) {
-            ClassPropertyIdMapping classPropertyMapping = new ClassPropertyIdMapping();
+            ClassIdPropertyMapping classPropertyMapping = new ClassIdPropertyMapping();
             classPropertyMapping.setAccessor(accessor);
             classPropertyMapping.setName(name);
             classPropertyMapping.setObjClass(classMapping.getClazz());
@@ -204,7 +204,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     /**
      * Need to be almost exactly as <code>bindClassPropertyMapping</code>.
      */
-    private void bindClassPropertyIdMapping(SearchableId searchableProp, ClassPropertyIdMapping classPropertyMapping,
+    private void bindClassPropertyIdMapping(SearchableId searchableProp, ClassIdPropertyMapping classPropertyMapping,
                                             AnnotatedElement annotatedElement) throws MappingException {
 
         classPropertyMapping.setBoost(searchableProp.boost());
