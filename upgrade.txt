@@ -1,4 +1,4 @@
-COMPASS UPGRADE DOCUMENTETION (Please see Compass JIRA for a complete changelog)
+COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
 VERSION 0.9.0 ()
@@ -8,6 +8,22 @@ VERSION 0.9.0 ()
    Due to the move to Open Symphony, the name Compass is back, without the Framework part.
 2. DTD Location changed.
    http://static.compassframework.org/dtd/ prefix should now state: http://www.opensymphony.com/compass/dtd.
+3. Converters Support Enhancements and Changes.
+   a) Removed converter-param from all the different mapping definitions in the Compass Core DTD.
+   b) The converter element no longer points to an implementation class of the Converter class. Instead, it
+      acts as a lookup name for a Converter (which was registered under the name).
+   c) Since the converter-param was mostly used for formatting Dates and Numbers, the format attribute was
+      added to the DTD, allowing for quick setting of the format, without going through the hassle of 
+      defining a new Converter and registering it. Note, that it must be set only on formatting converters.
+   c) Old way of registering new converters still works (CompassConfiguration#registerConverter).
+   d) You can now configure new converters using Compass configuration settings. The converter setting is
+      compass.converter.[converter name].[settings]. For example, to register a new DateConverter, two settings
+      must be set, compass.converter.mydate.type=date, and compass.converter.mydate.format=yyyy-MM-dd. Now,
+      you can use the mydate converter lookup name in the converter mapping attribute.
+   e) You can now override default converters that comes with compass. They are registered under Compass
+      default names. For example, to change the format for all Dates, simple provide the settings
+      compass.converter.date.format=yyyy-MM-dd.
+   For more information, please check the reference documentation.
 
 VERSION 0.8.1 (Jan 22, 2006)
 ============================

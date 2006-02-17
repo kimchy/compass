@@ -22,7 +22,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
-import org.compass.core.converter.ParameterConverter;
+import org.compass.core.converter.DelegateConverter;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
@@ -62,48 +62,19 @@ public abstract class MappingProcessorUtils {
         if (mdMapping.getConverter() == null) {
 
             if (mdMapping.getConverterName() != null) {
-                mdMapping.setConverter(converterLookup.lookupConverter(mdMapping.getConverterName()));
+                String converterName = mdMapping.getConverterName();
+                mdMapping.setConverter(converterLookup.lookupConverter(converterName));
+                if (mdMapping.getConverter() == null) {
+                    throw new ConfigurationException("Failed to find converter [" + converterName + "] for property " +
+                            "[" + classPropertyMapping.getName() + "]");
+                }
             } else {
-
-                String className = classPropertyMapping.getClassName();
-                Class clazz = null;
-
-                try {
-                    if (className != null) {
-                        clazz = ClassUtils.forName(className);
-                    }
-                } catch (ClassNotFoundException e) {
-                    throw new MappingException("Failed to find class [" + className + "]", e);
-                }
-
-                Converter converter;
-                if (clazz == null) {
-                    clazz = classPropertyMapping.getGetter().getReturnType();
-                    converter = converterLookup.lookupConverter(clazz);
-                    // Not sure how pretty it is, but here we go
-                    // if we did not set a converter for the array type, see if we
-                    // set a converter to the component type, and than we use the
-                    // array mapping as well
-                    if (converter == null && clazz.isArray()) {
-                        clazz = clazz.getComponentType();
-                        converter = converterLookup.lookupConverter(clazz);
-                    }
-                } else {
-                    converter = converterLookup.lookupConverter(clazz);
-                }
-
-                if (converter == null) {
-                    throw new MappingException("No converter defined for type ["
-                            + classPropertyMapping.getGetter().getReturnType().getName() + "]");
-                }
-
+                Converter converter = resolveConverterByClass(classPropertyMapping, converterLookup);
                 mdMapping.setConverter(converter);
-
             }
-
-            if (mdMapping.getConverter() instanceof ParameterConverter) {
-                ((ParameterConverter) mdMapping.getConverter()).addParameter(mdMapping);
-            }
+        } else if (mdMapping.getConverter() instanceof DelegateConverter) {
+            Converter converter = resolveConverterByClass(classPropertyMapping, converterLookup);
+            ((DelegateConverter) mdMapping.getConverter()).setDelegatedConverter(converter);
         }
 
         if (mdMapping.isInternal()) {
@@ -113,6 +84,41 @@ public abstract class MappingProcessorUtils {
         } else {
             mdMapping.setPath(mdMapping.getName());
         }
+    }
+
+    private static Converter resolveConverterByClass(ClassPropertyMapping classPropertyMapping, ConverterLookup converterLookup) {
+        String className = classPropertyMapping.getClassName();
+        Class clazz = null;
+
+        try {
+            if (className != null) {
+                clazz = ClassUtils.forName(className);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new MappingException("Failed to find class [" + className + "]", e);
+        }
+
+        Converter converter;
+        if (clazz == null) {
+            clazz = classPropertyMapping.getGetter().getReturnType();
+            converter = converterLookup.lookupConverter(clazz);
+            // Not sure how pretty it is, but here we go
+            // if we did not set a converter for the array type, see if we
+            // set a converter to the component type, and than we use the
+            // array mapping as well
+            if (converter == null && clazz.isArray()) {
+                clazz = clazz.getComponentType();
+                converter = converterLookup.lookupConverter(clazz);
+            }
+        } else {
+            converter = converterLookup.lookupConverter(clazz);
+        }
+
+        if (converter == null) {
+            throw new MappingException("No converter defined for type ["
+                    + classPropertyMapping.getGetter().getReturnType().getName() + "]");
+        }
+        return converter;
     }
 
 }

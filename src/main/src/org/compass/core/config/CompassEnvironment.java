@@ -19,7 +19,7 @@ package org.compass.core.config;
 /**
  * Compass environment settings constants class. Additional environemnt setting
  * can be found at: {@link org.compass.core.lucene.LuceneEnvironment}.
- * 
+ *
  * @author kimchy
  */
 public class CompassEnvironment {
@@ -40,6 +40,196 @@ public class CompassEnvironment {
      */
     public static final String NAME = "compass.name";
 
+    /**
+     * Converter settings
+     */
+    public abstract class Converter {
+
+        /**
+         * The prefix used for converter groups.
+         */
+        public static final String PREFIX = "compass.converter";
+
+        /**
+         * The fully qualified class name of the {@link Converter} implementation.
+         */
+        public static final String TYPE = "type";
+
+        /**
+         * The class that the converter will be registered under, ADVANCE USAGE.
+         */
+        public static final String REGISTER_CLASS = "registerClass";
+
+        /**
+         * Default compass short hand types. It means that instead of defining a converter of
+         * type <code>org.compass.converter.basic.DateConverter</code>, you can use the
+         * shorthand name.
+         */
+        public abstract class DefaultTypes {
+
+            public abstract class Simple {
+
+                public static final String DATE = "date";
+
+                public static final String CALENDAR = "calendar";
+
+                public static final String LONG = "long";
+
+                public static final String BOOLEAN = "boolean";
+
+                public static final String BYTE = "byte";
+
+                public static final String CHAR = "char";
+
+                public static final String DOUBLE = "double";
+
+                public static final String FLOAT = "float";
+
+                public static final String INTEGER = "int";
+
+                public static final String SHORT = "short";
+
+                public static final String STRING = "string";
+
+                public static final String STRINGBUFFER = "stringbuffer";
+
+                public static final String URL = "url";
+
+                public static final String BIGDECIMAL = "bigdecimal";
+
+                public static final String BIGINTEGER = "biginteger";
+            }
+
+            public abstract class Extendend {
+
+                public static final String FILE = "file";
+
+                public static final String SQL_DATE = "sqldate";
+
+                public static final String SQL_TIME = "sqltime";
+
+                public static final String SQL_TIMESTAMP = "sqltimestamp";
+
+                public static final String READER = "reader";
+
+                public static final String PRIMITIVE_BYTE_ARRAY = "primitivebytearray";
+
+                public static final String INPUT_STREAM = "inputstream";
+
+                public static final String LOCALE = "locale";
+            }
+
+        }
+
+        /**
+         * The default name types that compass default converters will be registered under.
+         */
+        public abstract class DefaultTypeNames {
+
+            public abstract class Simple {
+
+                public static final String DATE = "date";
+
+                public static final String CALENDAR = "calendar";
+
+                public static final String LONG = "long";
+
+                public static final String BOOLEAN = "boolean";
+
+                public static final String BYTE = "byte";
+
+                public static final String CHAR = "char";
+
+                public static final String DOUBLE = "double";
+
+                public static final String FLOAT = "float";
+
+                public static final String INTEGER = "int";
+
+                public static final String SHORT = "short";
+
+                public static final String STRING = "string";
+
+                public static final String STRINGBUFFER = "stringbuffer";
+
+                public static final String URL = "url";
+
+                public static final String BIGDECIMAL = "bigdecimal";
+
+                public static final String BIGINTEGER = "biginteger";
+            }
+
+            public abstract class Extendend {
+
+                public static final String FILE = "file";
+
+                public static final String SQL_DATE = "sqldate";
+
+                public static final String SQL_TIME = "sqltime";
+
+                public static final String SQL_TIMESTAMP = "sqltimestamp";
+
+                public static final String READER = "reader";
+
+                public static final String PRIMITIVE_BYTE_ARRAY = "primitivebytearray";
+
+                public static final String INPUT_STREAM = "inputstream";
+
+                public static final String LOCALE = "locale";
+            }
+
+            public abstract class Mapping {
+
+                public static final String CLASS = "classMapping";
+
+                public static final String CLASS_PROPERTY = "classPropertyMapping";
+
+                public static final String CLASS_ID_PROPERTY = "classIdPropertyMapping";
+
+                public static final String COMPONENT = "component";
+
+                public static final String REFERENCE = "referenceMapping";
+
+                public static final String COLLECTION = "collectionMapping";
+
+                public static final String ARRAY = "arrayMapping";
+
+                public static final String CONSTANT = "constantMapping";
+
+                public static final String PARENT = "parentMapping";
+            }
+        }
+
+        /**
+         * Formatted settings that apply to all the default date and number types.
+         */
+        public abstract class Format {
+
+            /**
+             * The format itself. For data format structure, please see
+             * {@link java.text.SimpleDateFormat}. For number formats
+             * please see {@link java.text.DecimalFormat}.
+             */
+            public static final String FORMAT = "format";
+
+            /**
+             * The locale used with the formatters.
+             */
+            public static final String LOCALE = "format.locale";
+
+            /**
+             * The minimum pool size. Formatters are pooled for better
+             * performance.
+             */
+            public static final String MIN_POOL_SIZE = "format.minPoolSize";
+
+            /**
+             * The maximum pool size. Formatters are pooled for better
+             * performance.
+             */
+            public static final String MAX_POOL_SIZE = "format.maxPoolSize";
+        }
+    }
 
     /* JNDI Settings */
     public abstract class Jndi {
@@ -65,9 +255,9 @@ public class CompassEnvironment {
         public static final String PREFIX = "compass.jndi";
 
     }
-    
+
     /* Transaction Settings */
-    
+
     public abstract class Transaction {
 
         /**
@@ -79,9 +269,9 @@ public class CompassEnvironment {
         /**
          * For transaction factories that uses synchronization, commits the transaction in the
          * <code>beforeCompletion</code> stage. Relevant transaction factories are JTA and Spring.
-         * <p>
+         * <p/>
          * Can have <code>true</code> or <code>false</code> values, defaults to <code>false</code>.
-         * <p>
+         * <p/>
          * <b>Must</b> be set when using a jdbc based index, and <b>must not</b> be used in other cases!.
          */
         public static final String COMMIT_BEFORE_COMPLETION = "compass.transaction.commitBeforeCompletion";

@@ -16,6 +16,10 @@
 
 package org.compass.core.config.process;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
@@ -23,10 +27,6 @@ import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.*;
 import org.compass.core.mapping.osem.*;
 import org.compass.core.util.ClassUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * @author kimchy
@@ -103,8 +103,8 @@ public class CollectionMappingProcessor implements MappingProcessor {
             Converter converter = converterLookup.lookupConverter(objectMapping.getGetter().getReturnType());
             if (converter == null) {
                 // there is no converter assigned to that array, use the array
-                // mapping to converter each element inside, otherwise the
-                // converter will be responsible to converter the whole array
+                // mapping to convert each element inside, otherwise the
+                // converter will be responsible to convert the whole array
                 collectionMapping = new ArrayMapping();
                 String colClassName = objectMapping.getColClassName();
                 if (colClassName != null) {

@@ -22,7 +22,7 @@ import org.compass.core.converter.Converter;
  * A general interface for all things Mapping in compass. Has a name and a path, where the
  * name is usually the "logical name" of the mapping, and the path is the actual name which
  * it will be saved under in the search engine.
- * <p>
+ * <p/>
  * Also provides general support for converters attached to the mappings, which can have
  * parameters associated with them.
  *
@@ -55,12 +55,6 @@ public interface Mapping {
     void setPath(String path);
 
     /**
-     * Converter parameters are associated with a converter by being attached to a name.
-     * This is the value of the default converter parameter.
-     */
-    public static final String DEFAULT_PARAM = "$default";
-
-    /**
      * Returns the conveter associated with the mapping. The converter is responsible for
      * marshalling and unmarshalling the Mapping from and to the Search Engine.
      */
@@ -85,21 +79,6 @@ public interface Mapping {
      * converter associated with it.
      */
     void setConverterName(String name);
-
-    /**
-     * Adds a converter parameter to the converter.
-     */
-    void addConverterParam(String paramName, String paramValue);
-
-    /**
-     * Returns the default converter parameter.
-     */
-    String getConverterParam();
-
-    /**
-     * Returns the converter parameter value based on the parameter name.
-     */
-    String getConverterParam(String paramName);
 
     /**
      * Returns <code>true</code> if the Mapping controlls the fact that if it has no value, it's

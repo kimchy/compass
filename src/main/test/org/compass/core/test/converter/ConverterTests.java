@@ -20,6 +20,8 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -28,7 +30,14 @@ import org.compass.core.test.AbstractTestCase;
 public class ConverterTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "converter/Converter.cpm.xml" };
+        return new String[]{"converter/Converter.cpm.xml"};
+    }
+
+    protected void addSettings(CompassSettings settings) {
+        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX,
+                "sample",
+                new String[]{CompassEnvironment.Converter.TYPE, "seperator"},
+                new String[]{SampleConverter.class.getName(), "XXX1"});
     }
 
     protected void addExtraConf(CompassConfiguration conf) {
@@ -37,6 +46,9 @@ public class ConverterTests extends AbstractTestCase {
         conf.registerConverter("yyy", sampleConverter);
     }
 
+    /**
+     * Here we test the Sample Converter as one set using Compass Settings
+     */
     public void testConverter() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
@@ -57,11 +69,14 @@ public class ConverterTests extends AbstractTestCase {
         assertEquals("test2", tsv.getValue2());
 
         Resource resource = session.loadResource("a", id);
-        assertEquals("test1XXXtest2", resource.get("mvalue"));
+        assertEquals("test1XXX1test2", resource.get("mvalue"));
 
         tr.commit();
     }
 
+    /**
+     * Here we test teh Sample Converter as one that was registered.
+     */
     public void testConverterYYY() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();

@@ -1,22 +1,22 @@
-<!DOCTYPE compass-core-mapping PUBLIC 
-    "-//Compass/Compass Core Mapping DTD 1.0//EN"
-    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
 
 <compass-core-mapping package="org.compass.core.test.converter">
 
     <class name="A" alias="a">
-    
-        <id name="id" />
-        
+
+        <id name="id"/>
+
         <property name="value" managed-id="false">
-            <meta-data converter="org.compass.core.test.converter.SampleConverter">mvalue</meta-data>
+            <meta-data converter="sample">mvalue</meta-data>
         </property>
-    
+
     </class>
 
     <class name="A" alias="a1">
 
-        <id name="id" />
+        <id name="id"/>
 
         <property name="value" managed-id="false">
             <meta-data converter="yyy">mvalue</meta-data>

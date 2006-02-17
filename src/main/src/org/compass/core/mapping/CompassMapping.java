@@ -16,18 +16,18 @@
 
 package org.compass.core.mapping;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
 /**
  * @author kimchy
  */
-public class CompassMapping extends AbstractMapping implements Mapping {
+public class CompassMapping {
 
     /**
      * A simple lookup class, for a given path, will provide simple access to
@@ -78,19 +78,21 @@ public class CompassMapping extends AbstractMapping implements Mapping {
 
     private ResourceMapping[] rootMappingsArr = new ResourceMapping[0];
 
-    private final ConverterLookup converterLookup;
+    private ConverterLookup converterLookup;
 
     private final HashMap cachedRootMappignsByClass = new HashMap();
 
     private final NullResourceMapping nullResourceMappingEntryInCache = new NullResourceMapping();
 
-    public CompassMapping(ConverterLookup converterLookup) {
-        this.converterLookup = converterLookup;
+    private String path;
+
+    public CompassMapping() {
     }
 
-    public Mapping copy() {
-        CompassMapping copy = new CompassMapping(this.converterLookup);
-        super.copy(copy);
+    public CompassMapping copy(ConverterLookup converterLookup) {
+        CompassMapping copy = new CompassMapping();
+        copy.converterLookup = converterLookup;
+        copy.setPath(getPath());
         for (Iterator it = mappings.values().iterator(); it.hasNext();) {
             AliasMapping copyMapping = (AliasMapping) ((AliasMapping) it.next()).copy();
             copy.addMapping(copyMapping);
@@ -265,5 +267,13 @@ public class CompassMapping extends AbstractMapping implements Mapping {
 
     public ConverterLookup getConverterLookup() {
         return converterLookup;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package org.compass.core.config;
+package org.compass.core.converter.basic;
 
-import org.compass.core.CompassException;
+import org.compass.core.converter.Converter;
 
 /**
- * A general setting for objects that can be configured.
- *
  * @author kimchy
  */
-public interface CompassConfigurable {
+public interface FormatConverter extends Converter {
 
-    /**
-     * Configure using the given settings.
-     *
-     * @param settings The settings for the configured object
-     * @throws CompassException
-     */
-    void configure(CompassSettings settings) throws CompassException;
+    void setFormat(String format);
+
+    FormatConverter copy();
 }

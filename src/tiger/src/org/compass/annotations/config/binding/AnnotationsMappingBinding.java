@@ -16,11 +16,19 @@
 
 package org.compass.annotations.config.binding;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+
 import org.compass.annotations.*;
 import org.compass.core.Property;
 import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.binding.MappingBindingSupport;
+import org.compass.core.converter.MetaDataFormatDelegateConverter;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
@@ -33,13 +41,6 @@ import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.StringUtils;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 
 /**
  * @author kimchy
@@ -238,6 +239,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setTermVector(convert(searchableProp.termVector()));
             mdMapping.setReverse(convert(searchableProp.reverse()));
 
+            // TODO Pass the correct format
+            handleFormat(mdMapping, name, null);
+
             if (StringUtils.hasLength(searchableProp.analyzer())) {
                 mdMapping.setAnalyzer(searchableProp.analyzer());
             }
@@ -296,6 +300,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setTermVector(convert(searchableProp.termVector()));
             mdMapping.setReverse(convert(searchableProp.reverse()));
 
+            // TODO Pass the correct format
+            handleFormat(mdMapping, name, null);
+
             mdMapping.setInternal(false);
 
             if (StringUtils.hasLength(searchableProp.analyzer())) {
@@ -331,6 +338,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         mdMapping.setIndex(convert(searchableMetaData.index()));
         mdMapping.setTermVector(convert(searchableMetaData.termVector()));
         mdMapping.setReverse(convert(searchableMetaData.reverse()));
+
+        // TODO Pass the correct format
+        handleFormat(mdMapping, name, null);
 
         mdMapping.setInternal(false);
 
@@ -412,5 +422,16 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             return Property.Index.UN_TOKENIZED;
         }
         throw new IllegalArgumentException("Failed to convert index [" + index + "]");
+    }
+
+    private void handleFormat(ClassPropertyMetaDataMapping mdMapping, String name, String format) {
+        if (mdMapping.getConverter() == null) {
+            if (format == null) {
+                format = valueLookup.lookupMetaDataFormat(name);
+            }
+            if (format != null) {
+                mdMapping.setConverter(new MetaDataFormatDelegateConverter(format));
+            }
+        }
     }
 }

@@ -17,20 +17,17 @@
 package org.compass.core.converter.basic;
 
 import java.text.DecimalFormat;
-import java.text.Format;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Locale;
 
+import org.compass.core.config.CompassConfigurable;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.ParameterConverter;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
-public abstract class AbstractNumberConverter extends AbstractBasicConverter implements ParameterConverter {
+public abstract class AbstractNumberConverter extends AbstractFormatConverter implements CompassConfigurable {
 
     private static class NumberFormatter implements ThreadSafeFormat.FormatterFactory {
 
@@ -38,17 +35,12 @@ public abstract class AbstractNumberConverter extends AbstractBasicConverter imp
 
         private Locale locale;
 
-        public NumberFormatter(String format) {
-            this(format, null);
-        }
-
-        public NumberFormatter(String format, Locale locale) {
+        public void configure(String format, Locale locale) {
             this.format = format;
             this.locale = locale;
         }
 
-        public Format create() {
-            // TODO find how to support locale
+        public java.text.Format create() {
             if (locale != null) {
                 return new DecimalFormat(format);
             }
@@ -57,13 +49,8 @@ public abstract class AbstractNumberConverter extends AbstractBasicConverter imp
 
     }
 
-    private HashMap formats = new HashMap();
-
-    public void addParameter(Mapping mapping) {
-        if (mapping.getConverterParam() != null) {
-            formats.put(mapping.getConverterParam(), new ThreadSafeFormat(4, 20,
-                    new AbstractNumberConverter.NumberFormatter(mapping.getConverterParam())));
-        }
+    protected ThreadSafeFormat.FormatterFactory doCreateFormatterFactory() {
+        return new AbstractNumberConverter.NumberFormatter();
     }
 
     protected abstract Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping);
@@ -76,34 +63,21 @@ public abstract class AbstractNumberConverter extends AbstractBasicConverter imp
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         try {
-            String converterParam = resourcePropertyMapping.getConverterParam();
-            if (converterParam == null) {
-                return defaultFromString(str, resourcePropertyMapping);
+            if (hasFormatter) {
+                return fromNumber((Number) formatter.parse(str));
             } else {
-                return fromNumber((Number) getFormat(converterParam).parse(str));
+                return defaultFromString(str, resourcePropertyMapping);
             }
         } catch (ParseException e) {
-            throw new ConversionException("Failed to parse date [" + str + "]", e);
+            throw new ConversionException("Failed to parse number [" + str + "]", e);
         }
     }
 
     public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
-        if (resourcePropertyMapping != null && resourcePropertyMapping.getConverterParam() != null) {
-            return getFormat(resourcePropertyMapping.getConverterParam()).format(o);
+        if (hasFormatter) {
+            return formatter.format(o);
         } else {
             return defaultToString(o, resourcePropertyMapping);
         }
     }
-
-    private ThreadSafeFormat getFormat(String converterParam) throws ConversionException {
-        ThreadSafeFormat format = (ThreadSafeFormat) formats.get(converterParam);
-        if (format == null) {
-            synchronized (formats) {
-                format = new ThreadSafeFormat(4, 20, new AbstractNumberConverter.NumberFormatter(converterParam));
-                formats.put(converterParam, format);
-            }
-        }
-        return format;
-    }
-
 }

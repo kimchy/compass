@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.converter.DefaultConverterLookup;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -102,7 +101,7 @@ public abstract class AbstractEngineTests extends TestCase {
         ((MockResourceMapping) multipleIdMapping).addId(id2);
         ((MockResourceMapping) multipleIdMapping).addId(id3);
 
-        CompassMapping mapping = new CompassMapping(new DefaultConverterLookup());
+        CompassMapping mapping = new CompassMapping();
         mapping.addMapping((AliasMapping) singleIdMapping);
         mapping.addMapping((AliasMapping) multipleIdMapping);
 
@@ -125,7 +124,7 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource getSingleIdResource(SearchEngine searchEngine) {
-        String ids[] = new String[] { VALUE_ID1 };
+        String ids[] = new String[]{VALUE_ID1};
         return searchEngine.get(ids, ALIAS_SINGLE);
     }
 
@@ -135,7 +134,7 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource getSingleId2Resource(SearchEngine searchEngine) {
-        String ids[] = new String[] { VALUE_ID1_2 };
+        String ids[] = new String[]{VALUE_ID1_2};
         return searchEngine.get(ids, ALIAS_SINGLE);
     }
 
@@ -145,7 +144,7 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource getMulitIdResource(SearchEngine searchEngine) {
-        String ids[] = new String[] { VALUE_ID2, VALUE_ID3 };
+        String ids[] = new String[]{VALUE_ID2, VALUE_ID3};
         return searchEngine.get(ids, ALIAS_MUTLI);
     }
 
@@ -155,7 +154,7 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource getMulitId2Resource(SearchEngine searchEngine) {
-        String ids[] = new String[] { VALUE_ID2_2, VALUE_ID3_2 };
+        String ids[] = new String[]{VALUE_ID2_2, VALUE_ID3_2};
         return searchEngine.get(ids, ALIAS_MUTLI);
     }
 

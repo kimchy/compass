@@ -1,92 +1,138 @@
-<!DOCTYPE compass-core-mapping PUBLIC 
-    "-//Compass/Compass Core Mapping DTD 1.0//EN"
-    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
 
 <compass-core-mapping package="org.compass.core.test.formatter">
 
     <class name="A" alias="a">
-        
-        <id name="id" />
-        
+
+        <id name="id"/>
+
         <property name="intVal">
-                <meta-data>intSimple</meta-data>
-                <meta-data converter-param="0,000">intFormatted</meta-data>
+            <meta-data>intSimple</meta-data>
+            <meta-data converter="myint">intFormatted</meta-data>
         </property>
 
         <property name="shortVal">
-                <meta-data>shortSimple</meta-data>
-                <meta-data converter-param="0,000">shortFormatted</meta-data>
+            <meta-data>shortSimple</meta-data>
+            <meta-data converter="myshort">shortFormatted</meta-data>
         </property>
 
         <property name="longVal">
-                <meta-data>longSimple</meta-data>
-                <meta-data converter-param="0,000">longFormatted</meta-data>
+            <meta-data>longSimple</meta-data>
+            <meta-data converter="mylong">longFormatted</meta-data>
         </property>
 
         <property name="bigIntegerVal">
-                <meta-data>bigIntegerSimple</meta-data>
-                <meta-data converter-param="0,000">bigIntegerFormatted</meta-data>
+            <meta-data>bigIntegerSimple</meta-data>
+            <meta-data converter="mybiginteger">bigIntegerFormatted</meta-data>
         </property>
 
         <property name="doubleVal">
-                <meta-data>doubleSimple</meta-data>
-                <meta-data converter-param="0,000.00">doubleFormatted</meta-data>
+            <meta-data>doubleSimple</meta-data>
+            <meta-data converter="mydouble">doubleFormatted</meta-data>
         </property>
-        
+
         <property name="floatVal">
-                <meta-data>floatSimple</meta-data>
-                <meta-data converter-param="0,000.00">floatFormatted</meta-data>
+            <meta-data>floatSimple</meta-data>
+            <meta-data converter="myfloat">floatFormatted</meta-data>
         </property>
 
         <property name="bigDecimalVal">
-                <meta-data>bigDecimalSimple</meta-data>
-                <meta-data converter-param="0,000.00">bigDecimalFormatted</meta-data>
+            <meta-data>bigDecimalSimple</meta-data>
+            <meta-data converter="mybigdecimal">bigDecimalFormatted</meta-data>
         </property>
 
         <property name="dateVal">
             <meta-data>dateSimple</meta-data>
-            <meta-data converter-param="yyyy-MM-dd-HH">dateFormatted</meta-data>
+            <meta-data converter="mydate">dateFormatted</meta-data>
         </property>
-        
+
     </class>
 
     <class name="A" alias="a1">
 
-        <id name="id" />
+        <id name="id"/>
 
         <property name="intVal">
-                <meta-data converter-param="0,000">intFormatted</meta-data>
+            <meta-data converter="myint">intFormatted</meta-data>
         </property>
 
         <property name="shortVal">
-                <meta-data>shortSimple</meta-data>
-                <meta-data converter-param="0,000">shortFormatted</meta-data>
+            <meta-data converter="myshort">shortFormatted</meta-data>
         </property>
 
         <property name="longVal">
-                <meta-data converter-param="0,000">longFormatted</meta-data>
+            <meta-data converter="mylong">longFormatted</meta-data>
         </property>
 
         <property name="bigIntegerVal">
-                <meta-data converter-param="0,000">bigIntegerFormatted</meta-data>
+            <meta-data converter="mybiginteger">bigIntegerFormatted</meta-data>
         </property>
 
         <property name="doubleVal">
-                <meta-data converter-param="0,000.00">doubleFormatted</meta-data>
+            <meta-data converter="mydouble">doubleFormatted</meta-data>
         </property>
 
         <property name="floatVal">
-                <meta-data converter-param="0,000.00">floatFormatted</meta-data>
+            <meta-data converter="myfloat">floatFormatted</meta-data>
         </property>
 
         <property name="bigDecimalVal">
-                <meta-data converter-param="0,000.00">bigDecimalFormatted</meta-data>
+            <meta-data converter="mybigdecimal">bigDecimalFormatted</meta-data>
         </property>
 
         <property name="dateVal">
-            <meta-data converter-param="yyyy-MM-dd-HH">dateFormatted</meta-data>
+            <meta-data converter="mydate">dateFormatted</meta-data>
         </property>
     </class>
+
+    <class name="A" alias="a2">
+
+        <id name="id"/>
+
+        <property name="intVal">
+            <meta-data>intSimple</meta-data>
+            <meta-data format="0,000">intFormatted</meta-data>
+        </property>
+
+        <property name="shortVal">
+            <meta-data>shortSimple</meta-data>
+            <meta-data format="0,000">shortFormatted</meta-data>
+        </property>
+
+        <property name="longVal">
+            <meta-data>longSimple</meta-data>
+            <meta-data format="0,000">longFormatted</meta-data>
+        </property>
+
+        <property name="bigIntegerVal">
+            <meta-data>bigIntegerSimple</meta-data>
+            <meta-data format="0,000">bigIntegerFormatted</meta-data>
+        </property>
+
+        <property name="doubleVal">
+            <meta-data>doubleSimple</meta-data>
+            <meta-data format="0,000.00">doubleFormatted</meta-data>
+        </property>
+
+        <property name="floatVal">
+            <meta-data>floatSimple</meta-data>
+            <meta-data format="0,000.00">floatFormatted</meta-data>
+        </property>
+
+        <property name="bigDecimalVal">
+            <meta-data>bigDecimalSimple</meta-data>
+            <meta-data format="0,000.00">bigDecimalFormatted</meta-data>
+        </property>
+
+        <property name="dateVal">
+            <meta-data>dateSimple</meta-data>
+            <meta-data format="yyyy-MM-dd-HH">dateFormatted</meta-data>
+        </property>
+
+    </class>
+
 
 </compass-core-mapping>
     

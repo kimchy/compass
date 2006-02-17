@@ -19,11 +19,9 @@ package org.compass.core.test.resource;
 import java.io.StringReader;
 import java.util.Calendar;
 
-import org.compass.core.CompassHits;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
-import org.compass.core.Property;
-import org.compass.core.Resource;
+import org.compass.core.*;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.impl.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -36,12 +34,20 @@ import org.compass.core.test.AbstractTestCase;
 public class ResourceTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "resource/resource.cpm.xml" };
+        return new String[]{"resource/resource.cpm.xml"};
     }
-    
+
+    protected void addSettings(CompassSettings settings) {
+        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX,
+                "mydate",
+                new String[]{CompassEnvironment.Converter.TYPE, CompassEnvironment.Converter.Format.FORMAT},
+                new String[]{CompassEnvironment.Converter.DefaultTypes.Simple.DATE, "yyyy-MM-dd"});
+
+    }
+
     public void testMapping() {
         InternalCompassSession session = (InternalCompassSession) openSession();
-        
+
         CompassMapping mapping = session.getMapping();
         ResourceMapping resourceMapping = mapping.getResourceMappingByAlias("a");
         ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getMappingByPath("id");
@@ -76,13 +82,13 @@ public class ResourceTests extends AbstractTestCase {
         r = session.getResource("a", "1");
         assertEquals("this is a test", r.get("mvalue"));
 
-        r = session.getResource("a", new String[] { "1" });
+        r = session.getResource("a", new String[]{"1"});
         assertEquals("this is a test", r.get("mvalue"));
 
         r = session.getResource("a", id);
         assertEquals("this is a test", r.get("mvalue"));
 
-        r = session.getResource("a", new Property[] { id });
+        r = session.getResource("a", new Property[]{id});
         assertEquals("this is a test", r.get("mvalue"));
 
         r = session.getResource("a", r);
@@ -112,10 +118,10 @@ public class ResourceTests extends AbstractTestCase {
 
         session.save(r);
 
-        r = session.getResource("b", new String[] { "1", "2" });
+        r = session.getResource("b", new String[]{"1", "2"});
         assertEquals("this is a test", r.get("mvalue"));
 
-        r = session.getResource("b", new Property[] { id1, id2 });
+        r = session.getResource("b", new Property[]{id1, id2});
         assertEquals("this is a test", r.get("mvalue"));
 
         r = session.getResource("b", r);
@@ -127,7 +133,7 @@ public class ResourceTests extends AbstractTestCase {
 
         tr.commit();
     }
-    
+
     public void testSimplePropertyMapping() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
@@ -142,7 +148,7 @@ public class ResourceTests extends AbstractTestCase {
         cal.set(2000, 1, 1);
         r.addProperty("value5", cal.getTime());
         r.addProperty("value6", new StringReader("reader"));
-        
+
         session.save(r);
 
         r = session.getResource("c", "1");
@@ -159,7 +165,7 @@ public class ResourceTests extends AbstractTestCase {
         assertTrue(prop.isStored());
         assertTrue(prop.isTokenized());
         assertFalse(prop.isCompressed());
-        
+
         prop = r.getProperty("value3");
         assertEquals("this is a test", prop.getStringValue());
         assertTrue(prop.isIndexed());
@@ -180,7 +186,7 @@ public class ResourceTests extends AbstractTestCase {
         assertTrue(prop.isStored());
         assertTrue(prop.isTokenized());
         assertFalse(prop.isCompressed());
-        
+
         CompassHits hits = session.find("value6:reader");
         assertEquals(1, hits.length());
 

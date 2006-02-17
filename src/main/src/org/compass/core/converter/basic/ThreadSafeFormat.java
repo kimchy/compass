@@ -18,24 +18,28 @@ package org.compass.core.converter.basic;
 
 import java.text.Format;
 import java.text.ParseException;
+import java.util.Locale;
 
 /**
  * Wrapper around <code>java.text.Format</code> that can be called by multiple
  * threads concurrently.
- * <p>
+ * <p/>
  * Format has a high overhead in creating and is not thread safe. To make best
  * use of resources, the ThreadSafeFormat provides a dynamically sizing pool of
  * instances, each of which will only be called by a single thread at a time.
- * <p>
+ * <p/>
  * The pool has a maximum capacity, to limit overhead. If all instances in the
  * pool are in use and another is required, it shall block until one becomes
  * available.
- * 
+ *
  * @author kimchy
  */
 public class ThreadSafeFormat {
 
     public static interface FormatterFactory {
+
+        void configure(String format, Locale locale);
+
         Format create();
     }
 

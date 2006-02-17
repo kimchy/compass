@@ -16,6 +16,11 @@
 
 package org.compass.core.config;
 
+import java.io.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
@@ -36,9 +41,6 @@ import org.compass.core.metadata.impl.DefaultCompassMetaData;
 import org.compass.core.util.DTDEntityResolver;
 import org.compass.core.util.config.ConfigurationHelper;
 import org.compass.core.util.config.XmlConfigurationHelperBuilder;
-
-import java.io.*;
-import java.net.URL;
 
 /**
  * Used to configure <code>Compass</code> instances.
@@ -76,14 +78,12 @@ public class CompassConfiguration {
 
     private CompassSettings settings;
 
-    private ConverterLookup converterLookup;
-
     private CompassMappingBinding mappingBinding;
 
-    public CompassConfiguration() {
-        converterLookup = new DefaultConverterLookup();
+    private HashMap temporaryConvertersByName = new HashMap();
 
-        mapping = new CompassMapping(converterLookup);
+    public CompassConfiguration() {
+        mapping = new CompassMapping();
         metaData = new DefaultCompassMetaData();
 
         settings = new CompassSettings();
@@ -126,7 +126,7 @@ public class CompassConfiguration {
      * @return <code>CompassConfiguration</code> for method chaining
      */
     public CompassConfiguration setConnection(String connection) {
-        settings.setSetting(CompassEnvironment.CONNECTION,  connection);
+        settings.setSetting(CompassEnvironment.CONNECTION, connection);
         return this;
     }
 
@@ -139,7 +139,7 @@ public class CompassConfiguration {
      * @return The configuration
      */
     public CompassConfiguration registerConverter(String converterName, Converter converter) {
-        this.converterLookup.registerConverter(converterName, converter);
+        this.temporaryConvertersByName.put(converterName, converter);
         return this;
     }
 
@@ -156,9 +156,17 @@ public class CompassConfiguration {
      */
     public Compass buildCompass() throws CompassException {
 
-        CompassMapping copyCompassMapping = (CompassMapping) mapping.copy();
-
         CompassSettings copySettings = settings.copy();
+
+        ConverterLookup converterLookup = new DefaultConverterLookup();
+        converterLookup.configure(copySettings);
+        for (Iterator it = temporaryConvertersByName.keySet().iterator(); it.hasNext();) {
+            String converterName = (String) it.next();
+            Converter converter = (Converter) temporaryConvertersByName.get(converterName);
+            converterLookup.registerConverter(converterName, converter);
+        }
+
+        CompassMapping copyCompassMapping = (CompassMapping) mapping.copy(converterLookup);
 
         PropertyNamingStrategyFactory propertyNamingStrategyFactory = new DefaultPropertyNamingStrategyFactory();
         PropertyNamingStrategy propertyNamingStrategy = propertyNamingStrategyFactory.createNamingStrategy(copySettings);

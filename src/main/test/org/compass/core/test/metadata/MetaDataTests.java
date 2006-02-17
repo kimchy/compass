@@ -20,12 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import junit.framework.TestCase;
-
-import org.compass.core.Compass;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
-import org.compass.core.Property;
-import org.compass.core.Resource;
+import org.compass.core.*;
 import org.compass.core.config.CompassConfiguration;
 
 public class MetaDataTests extends TestCase {

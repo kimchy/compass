@@ -16,10 +16,13 @@
 
 package org.compass.core.config.binding;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 import org.compass.core.Property;
 import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.config.ConfigurationException;
-import org.compass.core.converter.Converter;
+import org.compass.core.converter.MetaDataFormatDelegateConverter;
 import org.compass.core.mapping.*;
 import org.compass.core.mapping.osem.*;
 import org.compass.core.mapping.rsem.RawResourceMapping;
@@ -32,9 +35,6 @@ import org.compass.core.util.ClassUtils;
 import org.compass.core.util.DTDEntityResolver;
 import org.compass.core.util.config.ConfigurationHelper;
 import org.xml.sax.EntityResolver;
-
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 /**
  * @author kimchy
@@ -171,7 +171,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         propertyMapping.setBoost(getBoost(resourcePropConf, resourceMapping.getBoost()));
         propertyMapping.setName(name);
         propertyMapping.setPath(name);
-        bindConverter(resourcePropConf, propertyMapping, resourcePropConf.getAttribute("name"));
+        bindConverter(resourcePropConf, propertyMapping);
         String storeType = resourcePropConf.getAttribute("store", "yes");
         propertyMapping.setStore(Property.Store.fromString(storeType));
         String indexType = resourcePropConf.getAttribute("index", "tokenized");
@@ -445,7 +445,24 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         mdMapping.setObjClass(classPropertyMapping.getObjClass());
         mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
-        bindConverter(metadataConf, mdMapping, metadataConf.getValue().trim());
+        bindConverter(metadataConf, mdMapping);
+        String format = metadataConf.getAttribute("format", null);
+        if (mdMapping.getConverter() == null) {
+            if (format == null) {
+                valueLookup.lookupMetaDataFormat(metadataConf.getValue().trim());
+            }
+            if (format != null) {
+                mdMapping.setConverter(new MetaDataFormatDelegateConverter(format));
+            }
+        } else {
+            // just validate that both are not set, since it makes no sense
+            if (format != null) {
+                throw new ConfigurationException("Both converter and format are set for property [" +
+                        classPropertyMapping.getName() + "], you should choose one or the other (since converter will" +
+                        "not use the format defined)");
+            }
+        }
+
         String storeType = metadataConf.getAttribute("store", "yes");
         mdMapping.setStore(Property.Store.fromString(storeType));
         String indexType = metadataConf.getAttribute("index", "tokenized");
@@ -480,37 +497,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     }
 
     private void bindConverter(ConfigurationHelper conf, Mapping mapping) {
-        bindConverter(conf, mapping, null);
-    }
-
-    private void bindConverter(ConfigurationHelper conf, Mapping mapping, String name) {
         String converterName = conf.getAttribute("converter", null);
         mapping.setConverterName(converterName);
-        if (converterName != null) {
-            try {
-                Converter converter = (Converter) ClassUtils.forName(converterName).newInstance();
-                mapping.setConverter(converter);
-            } catch (Exception e) {
-                // do nothing here, it might be a converter lookup name that was registered with Compass.
-            }
-        }
-        String defaultConverterParam = conf.getAttribute("converter-param", null);
-        if (defaultConverterParam != null) {
-            mapping.addConverterParam(Mapping.DEFAULT_PARAM, defaultConverterParam);
-        } else {
-            if (name != null) {
-                String format = valueLookup.lookupMetaDataFormat(name);
-                if (format != null) {
-                    mapping.addConverterParam(Mapping.DEFAULT_PARAM, format);
-                }
-            }
-        }
-        ConfigurationHelper[] converterParams = conf.getChildren("converter-param");
-        for (int i = 0; i < converterParams.length; i++) {
-            String paramName = converterParams[i].getAttribute("name");
-            String paramValue = converterParams[i].getValue().trim();
-            mapping.addConverterParam(paramName, paramValue);
-        }
     }
 
     private static float getBoost(ConfigurationHelper conf) {

@@ -16,6 +16,8 @@
 
 package org.compass.core.converter;
 
+import org.compass.core.config.CompassConfigurable;
+
 /**
  * Provides the ability to lookup a converter based on it's type. The type is
  * the actual <code>Class</code> that should be converted by the returned
@@ -24,7 +26,7 @@ package org.compass.core.converter;
  * @author kimchy
  * @see Converter
  */
-public interface ConverterLookup {
+public interface ConverterLookup extends CompassConfigurable {
 
     /**
      * Looks up a converter based on the <code>Class</code> type.
@@ -48,7 +50,7 @@ public interface ConverterLookup {
      * Registers a {@link Converter} under a converter name.
      *
      * @param converterName The converter name to be registered against
-     * @param converter The converter to use
+     * @param converter     The converter to use
      */
     void registerConverter(String converterName, Converter converter);
 }

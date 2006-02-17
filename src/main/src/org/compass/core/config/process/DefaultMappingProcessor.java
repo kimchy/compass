@@ -16,19 +16,20 @@
 
 package org.compass.core.config.process;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.ConverterLookup;
-import org.compass.core.converter.ParameterConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.marshall.MarshallingEnvironment;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author kimchy
@@ -67,13 +68,21 @@ public class DefaultMappingProcessor implements MappingProcessor {
             if (m instanceof ClassMapping) {
                 clearRootClassMappingState();
                 secondPass((ClassMapping) m, compassMapping);
+            } else if (m instanceof RawResourceMapping) {
+                secondPass((RawResourceMapping) m);
             }
         }
 
         return compassMapping;
     }
 
-    private void secondPass(ClassMapping classMapping, Mapping fatherMapping) {
+    private void secondPass(RawResourceMapping resourceMapping) {
+        for (Iterator it = resourceMapping.mappingsIt(); it.hasNext();) {
+            secondPassConverter((Mapping) it.next());
+        }
+    }
+
+    private void secondPass(ClassMapping classMapping, CompassMapping fatherMapping) {
         classMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), classMapping.getAlias()));
         secondPass(classMapping, false);
     }
@@ -267,14 +276,19 @@ public class DefaultMappingProcessor implements MappingProcessor {
     private void secondPassConverter(Mapping mapping) {
         if (mapping.getConverter() == null) {
             if (mapping.getConverterName() != null) {
-                mapping.setConverter(converterLookup.lookupConverter(mapping.getConverterName()));
+                String converterName = mapping.getConverterName();
+                mapping.setConverter(converterLookup.lookupConverter(converterName));
+                if (mapping.getConverter() == null) {
+                    throw new ConfigurationException("Failed to find converter [" + converterName + "] for mapping " +
+                            "[" + mapping.getName() + "]");
+                }
             } else {
                 mapping.setConverter(converterLookup.lookupConverter(mapping.getClass()));
+                if (mapping.getConverter() == null) {
+                    throw new ConfigurationException("Failed to find converter for class [" + mapping.getClass() + "]" +
+                            " for mapping [" + mapping.getName() + "]");
+                }
             }
-        }
-
-        if (mapping.getConverter() instanceof ParameterConverter) {
-            ((ParameterConverter) mapping.getConverter()).addParameter(mapping);
         }
     }
 

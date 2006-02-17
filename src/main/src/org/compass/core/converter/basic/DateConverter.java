@@ -19,18 +19,15 @@ package org.compass.core.converter.basic;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.Locale;
 
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.ParameterConverter;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
-public class DateConverter extends AbstractBasicConverter implements ParameterConverter {
+public class DateConverter extends AbstractFormatConverter {
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-S-a";
 
@@ -40,11 +37,7 @@ public class DateConverter extends AbstractBasicConverter implements ParameterCo
 
         private Locale locale;
 
-        public DateFormatter(String format) {
-            this(format, null);
-        }
-
-        public DateFormatter(String format, Locale locale) {
+        public void configure(String format, Locale locale) {
             this.format = format;
             this.locale = locale;
         }
@@ -57,50 +50,23 @@ public class DateConverter extends AbstractBasicConverter implements ParameterCo
         }
     }
 
-    private final ThreadSafeFormat defaultFormat;
-
-    private final HashMap formats = new HashMap();
-
-    public DateConverter() {
-        this.defaultFormat = new ThreadSafeFormat(4, 20, new DateConverter.DateFormatter(DEFAULT_DATE_FORMAT));
+    protected String doGetDefaultFormat() {
+        return DEFAULT_DATE_FORMAT;
     }
 
-    public void addParameter(Mapping mapping) {
-        if (mapping.getConverterParam() != null) {
-            formats.put(mapping.getConverterParam(), new ThreadSafeFormat(4, 20, new DateConverter.DateFormatter(
-                    mapping.getConverterParam())));
-        }
+    protected ThreadSafeFormat.FormatterFactory doCreateFormatterFactory() {
+        return new DateConverter.DateFormatter();
     }
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
         try {
-            String converterParam = resourcePropertyMapping.getConverterParam();
-            if (converterParam == null) {
-                return defaultFormat.parse(str);
-            } else {
-                return getFormat(converterParam).parse(str);
-            }
+            return formatter.parse(str);
         } catch (ParseException e) {
             throw new ConversionException("Failed to parse date [" + str + "]", e);
         }
     }
 
     public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
-        if (resourcePropertyMapping != null && resourcePropertyMapping.getConverterParam() != null) {
-            return getFormat(resourcePropertyMapping.getConverterParam()).format(o);
-        } else {
-            return defaultFormat.format(o);
-        }
-    }
-
-    private ThreadSafeFormat getFormat(String converterParam) throws ConversionException {
-        ThreadSafeFormat format = (ThreadSafeFormat) formats.get(converterParam);
-        if (format == null) {
-            synchronized (formats) {
-                format = new ThreadSafeFormat(4, 20, new DateConverter.DateFormatter(converterParam));
-                formats.put(converterParam, format);
-            }
-        }
-        return format;
+        return formatter.format(o);
     }
 }

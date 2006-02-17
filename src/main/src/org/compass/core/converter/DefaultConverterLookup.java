@@ -22,54 +22,20 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 
-import org.compass.core.converter.basic.BigDecimalConverter;
-import org.compass.core.converter.basic.BigIntegerConverter;
-import org.compass.core.converter.basic.BooleanConverter;
-import org.compass.core.converter.basic.ByteConverter;
-import org.compass.core.converter.basic.CalendarConverter;
-import org.compass.core.converter.basic.CharConverter;
-import org.compass.core.converter.basic.DateConverter;
-import org.compass.core.converter.basic.DoubleConverter;
-import org.compass.core.converter.basic.FloatConverter;
-import org.compass.core.converter.basic.IntConverter;
-import org.compass.core.converter.basic.LongConverter;
-import org.compass.core.converter.basic.ShortConverter;
-import org.compass.core.converter.basic.StringBufferConverter;
-import org.compass.core.converter.basic.StringConverter;
-import org.compass.core.converter.basic.URLConverter;
-import org.compass.core.converter.extended.FileConverter;
-import org.compass.core.converter.extended.InputStreamConverter;
-import org.compass.core.converter.extended.LocaleConverter;
-import org.compass.core.converter.extended.ObjectByteArrayConverter;
-import org.compass.core.converter.extended.PrimitiveByteArrayConverter;
-import org.compass.core.converter.extended.ReaderConverter;
-import org.compass.core.converter.extended.SqlDateConverter;
-import org.compass.core.converter.extended.SqlTimeConverter;
-import org.compass.core.converter.extended.SqlTimestampConverter;
-import org.compass.core.converter.mapping.osem.ArrayMappingConverter;
-import org.compass.core.converter.mapping.osem.ClassMappingConverter;
-import org.compass.core.converter.mapping.osem.ClassPropertyMappingConverter;
-import org.compass.core.converter.mapping.osem.CollectionMappingConverter;
-import org.compass.core.converter.mapping.osem.ComponentMappingConverter;
-import org.compass.core.converter.mapping.osem.ConstantMappingConverter;
-import org.compass.core.converter.mapping.osem.ParentMappingConverter;
-import org.compass.core.converter.mapping.osem.ReferenceMappingConverter;
-import org.compass.core.mapping.osem.ArrayMapping;
-import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyIdMapping;
-import org.compass.core.mapping.osem.ClassPropertyMapping;
-import org.compass.core.mapping.osem.CollectionMapping;
-import org.compass.core.mapping.osem.ComponentMapping;
-import org.compass.core.mapping.osem.ConstantMetaDataMapping;
-import org.compass.core.mapping.osem.ParentMapping;
-import org.compass.core.mapping.osem.ReferenceMapping;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
+import org.compass.core.converter.basic.*;
+import org.compass.core.converter.extended.*;
+import org.compass.core.converter.mapping.osem.*;
+import org.compass.core.mapping.osem.*;
+import org.compass.core.util.ClassUtils;
 
 /**
  * Acts as a <code>Converter</code> registry based on all the converters
@@ -79,63 +45,201 @@ import org.compass.core.mapping.osem.ReferenceMapping;
  */
 public class DefaultConverterLookup implements ConverterLookup {
 
+    private static final Log log = LogFactory.getLog(DefaultConverterLookup.class);
+
+
     // not synchronized since the assumption is that no changes are made after
     // theh constructor
-    private final HashMap converters = new HashMap();
+    private final HashMap convertersByClass = new HashMap();
 
     private final HashMap cachedConvertersByClassType = new HashMap();
 
     private final HashMap convertersByName = new HashMap();
 
-    public DefaultConverterLookup() {
-        // mapping converters
-        addConverter(ClassMapping.class, new ClassMappingConverter());
-        addConverter(ClassPropertyMapping.class, new ClassPropertyMappingConverter());
-        addConverter(ClassPropertyIdMapping.class, new ClassPropertyMappingConverter());
-        addConverter(ComponentMapping.class, new ComponentMappingConverter());
-        addConverter(CollectionMapping.class, new CollectionMappingConverter());
-        addConverter(ArrayMapping.class, new ArrayMappingConverter());
-        addConverter(ReferenceMapping.class, new ReferenceMappingConverter());
-        addConverter(ConstantMetaDataMapping.class, new ConstantMappingConverter());
-        addConverter(ParentMapping.class, new ParentMappingConverter());
+    private final HashMap defaultConveterTypes = new HashMap();
 
-        // simple types converters
-        addConverter(BigDecimal.class, new BigDecimalConverter());
-        addConverter(BigInteger.class, new BigIntegerConverter());
-        addConverter(Boolean.class, new BooleanConverter());
-        addConverter(boolean.class, new BooleanConverter());
-        addConverter(Byte.class, new ByteConverter());
-        addConverter(byte.class, new ByteConverter());
-        addConverter(Character.class, new CharConverter());
-        addConverter(char.class, new CharConverter());
-        addConverter(Date.class, new DateConverter());
-        addConverter(Calendar.class, new CalendarConverter());
-        addConverter(Double.class, new DoubleConverter());
-        addConverter(double.class, new DoubleConverter());
-        addConverter(Float.class, new FloatConverter());
-        addConverter(float.class, new FloatConverter());
-        addConverter(Integer.class, new IntConverter());
-        addConverter(int.class, new IntConverter());
-        addConverter(Long.class, new LongConverter());
-        addConverter(long.class, new LongConverter());
-        addConverter(Short.class, new ShortConverter());
-        addConverter(short.class, new ShortConverter());
-        addConverter(String.class, new StringConverter());
-        addConverter(StringBuffer.class, new StringBufferConverter());
-        addConverter(URL.class, new URLConverter());
-        // extended
-        addConverter(File.class, new FileConverter());
-        addConverter(java.sql.Date.class, new SqlDateConverter());
-        addConverter(Time.class, new SqlTimeConverter());
-        addConverter(Timestamp.class, new SqlTimestampConverter());
-        addConverter(Reader.class, new ReaderConverter());
-        addConverter(byte[].class, new PrimitiveByteArrayConverter());
-        addConverter(Byte[].class, new ObjectByteArrayConverter());
-        addConverter(InputStream.class, new InputStreamConverter());
-        addConverter(Locale.class, new LocaleConverter());
+    public DefaultConverterLookup() {
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BIGDECIMAL, BigDecimalConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BIGINTEGER, BigIntegerConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BOOLEAN, BooleanConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BYTE, ByteConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.CALENDAR, CalendarConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.CHAR, CharConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.DATE, DateConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.DOUBLE, DoubleConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.FLOAT, FloatConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.INTEGER, IntConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.LONG, LongConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.SHORT, ShortConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRING, StringConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRINGBUFFER, StringBufferConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.URL, URLConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.FILE, FileConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.INPUT_STREAM, InputStreamConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.LOCALE, LocaleConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.PRIMITIVE_BYTE_ARRAY, PrimitiveByteArrayConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.READER, ReaderConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.SQL_DATE, SqlDateConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.SQL_TIME, SqlTimeConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.SQL_TIMESTAMP, SqlTimestampConverter.class);
+    }
+
+    public void configure(CompassSettings settings) throws CompassException {
+        Map converterGroups = settings.getSettingGroups(CompassEnvironment.Converter.PREFIX);
+        // add basic types
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.BIGDECIMAL,
+                BigDecimal.class, new BigDecimalConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.BIGINTEGER,
+                BigInteger.class, new BigIntegerConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.BOOLEAN,
+                new Class[]{Boolean.class, boolean.class}, new BooleanConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.BYTE,
+                new Class[]{Byte.class, byte.class}, new ByteConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.CHAR,
+                new Class[]{Character.class, char.class}, new CharConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.DATE,
+                Date.class, new DateConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.CALENDAR,
+                Calendar.class, new CalendarConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.DOUBLE,
+                new Class[]{Double.class, double.class}, new DoubleConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.FLOAT,
+                new Class[]{Float.class, float.class}, new FloatConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.INTEGER,
+                new Class[]{Integer.class, int.class}, new IntConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.LONG,
+                new Class[]{Long.class, long.class}, new LongConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.SHORT,
+                new Class[]{Short.class, short.class}, new ShortConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.STRING,
+                String.class, new StringConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.STRINGBUFFER,
+                StringBuffer.class, new StringBufferConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.URL,
+                URL.class, new URLConverter());
+        // add extended types
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.FILE,
+                File.class, new FileConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.INPUT_STREAM,
+                InputStream.class, new InputStreamConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.LOCALE,
+                Locale.class, new LocaleConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.PRIMITIVE_BYTE_ARRAY,
+                byte[].class, new PrimitiveByteArrayConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.READER,
+                Reader.class, new ReaderConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.SQL_DATE,
+                java.sql.Date.class, new SqlDateConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.SQL_TIME,
+                java.sql.Time.class, new SqlTimeConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.SQL_TIMESTAMP,
+                java.sql.Timestamp.class, new SqlTimestampConverter());
+        // add mapping converters
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS,
+                ClassMapping.class, new ClassMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_PROPERTY,
+                ClassPropertyMapping.class, new ClassPropertyMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_ID_PROPERTY,
+                ClassPropertyIdMapping.class, new ClassPropertyMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COMPONENT,
+                ComponentMapping.class, new ComponentMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COLLECTION,
+                CollectionMapping.class, new CollectionMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.ARRAY,
+                ArrayMapping.class, new ArrayMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.REFERENCE,
+                ReferenceMapping.class, new ReferenceMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CONSTANT,
+                ConstantMetaDataMapping.class, new ConstantMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.PARENT,
+                ParentMapping.class, new ParentMappingConverter());
+
+        // now configure all the none default converters
+        for (Iterator it = converterGroups.keySet().iterator(); it.hasNext();) {
+            String converterName = (String) it.next();
+            CompassSettings converterSettings = (CompassSettings) converterGroups.get(converterName);
+            if (log.isInfoEnabled()) {
+                log.info("Conveter [" + converterName + "] building...");
+            }
+            String converterClassType = converterSettings.getSetting(CompassEnvironment.Converter.TYPE);
+            if (converterClassType == null) {
+                throw new ConfigurationException("Must define a class type for converter [" + converterName + "]");
+            }
+            Converter converter;
+            try {
+                Class converterClass = (Class) defaultConveterTypes.get(converterClassType);
+                if (converterClass == null) {
+                    converterClass = ClassUtils.forName(converterClassType);
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Converter [" + converterName + "] is of type [" + converterClass.getName() + "]");
+                }
+                converter = (Converter) converterClass.newInstance();
+            } catch (Exception e) {
+                throw new ConfigurationException("Failed to create converter type [" + converterClassType +
+                        " for converter [" + converterName + "]", e);
+            }
+            if (converter instanceof CompassConfigurable) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Conveter [" + converterName + "] implements CompassConfigurable, configuring...");
+                }
+                ((CompassConfigurable) converter).configure(converterSettings);
+            }
+            convertersByName.put(converterName, converter);
+            String registerClass = converterSettings.getSetting(CompassEnvironment.Converter.REGISTER_CLASS);
+            if (registerClass != null) {
+                try {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Converter [" + converterName + "] registered under register type [" +
+                                registerClass + "]");
+                    }
+                    cachedConvertersByClassType.put(ClassUtils.forName(registerClass), converter);
+                    convertersByClass.put(registerClass, converter);
+                } catch (Exception e) {
+                    throw new ConfigurationException("Failed to create register class [" + registerClass + "] " +
+                            " for converter [" + converterName + "]", e);
+                }
+            }
+        }
+    }
+
+    private void addDefaultConverter(Map converterGroups, String name, Class type, Converter converter) {
+        addDefaultConverter(converterGroups, name, new Class[]{type}, converter);
+    }
+
+    private void addDefaultConverter(Map converterGroups, String name, Class[] types, Converter converter) {
+        CompassSettings converterSettings = (CompassSettings) converterGroups.remove(name);
+        if (converterSettings == null) {
+            converterSettings = new CompassSettings();
+        }
+        String converterType = converterSettings.getSetting(CompassEnvironment.Converter.TYPE);
+        if (converterType != null) {
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("Converter [" + name + "] (default) configured with a non default type [" +
+                            converterType + "]");
+                }
+                converter = (Converter) ClassUtils.forName(converterType).newInstance();
+            } catch (Exception e) {
+                throw new ConfigurationException("Failed to create converter type [" + converterType + "] for " +
+                        "converter name [" + name + "]");
+            }
+        }
+        if (converter instanceof CompassConfigurable) {
+            ((CompassConfigurable) converter).configure(converterSettings);
+        }
+        convertersByName.put(name, converter);
+        for (int i = 0; i < types.length; i++) {
+            Class type = types[i];
+            convertersByClass.put(type.getName(), converter);
+            cachedConvertersByClassType.put(type, converter);
+        }
     }
 
     public void registerConverter(String converterName, Converter converter) {
+        if (log.isInfoEnabled()) {
+            log.info("Converter [" + converterName + "] registered");
+        }
         convertersByName.put(converterName, converter);
     }
 
@@ -167,13 +271,13 @@ public class DefaultConverterLookup implements ConverterLookup {
     }
 
     private Converter actualConverterLookup(Class type) {
-        Converter c = (Converter) converters.get(type.getName());
+        Converter c = (Converter) convertersByClass.get(type.getName());
         if (c != null) {
             return c;
         }
         Class[] interfaces = type.getInterfaces();
         for (int i = 0; i < interfaces.length; i++) {
-            c = (Converter) converters.get(interfaces[i].getName());
+            c = (Converter) convertersByClass.get(interfaces[i].getName());
             if (c != null) {
                 return c;
             }
@@ -190,7 +294,5 @@ public class DefaultConverterLookup implements ConverterLookup {
     }
 
     public void addConverter(Class type, Converter converter) {
-        converters.put(type.getName(), converter);
-        cachedConvertersByClassType.put(type, converter);
     }
 }

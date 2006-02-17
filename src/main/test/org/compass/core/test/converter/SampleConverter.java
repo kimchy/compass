@@ -16,15 +16,22 @@
 
 package org.compass.core.test.converter;
 
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.basic.AbstractBasicConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
-public class SampleConverter extends AbstractBasicConverter {
+public class SampleConverter extends AbstractBasicConverter implements CompassConfigurable {
 
-    private String seperator = "XXX";
+    private String seperator;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        seperator = settings.getSetting("seperator", "XXX");
+    }
 
     public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
         A.TwoStringsValue value = (A.TwoStringsValue) o;

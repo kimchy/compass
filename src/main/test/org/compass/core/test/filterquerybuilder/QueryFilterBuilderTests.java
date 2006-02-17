@@ -18,22 +18,25 @@ package org.compass.core.test.filterquerybuilder;
 
 import java.util.Calendar;
 
-import org.compass.core.CompassHits;
-import org.compass.core.CompassQueryBuilder;
-import org.compass.core.CompassQueryFilterBuilder;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
+import org.compass.core.*;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class QueryFilterBuilderTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "filterquerybuilder/querybuilder.cpm.xml" };
+        return new String[]{"filterquerybuilder/querybuilder.cpm.xml"};
+    }
+
+    protected void addSettings(CompassSettings settings) {
+        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX,
+                CompassEnvironment.Converter.DefaultTypes.Simple.DATE,
+                new String[]{CompassEnvironment.Converter.Format.FORMAT},
+                new String[]{"yyyy-MM-dd-HH"});
     }
 
     private void setUpData(CompassSession session) {
