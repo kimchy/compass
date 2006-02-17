@@ -37,15 +37,13 @@ public class DTDEntityResolver implements EntityResolver, Serializable {
      * loading.
      */
     public DTDEntityResolver() {
-        // backward compatibility
-        resourceLoader = this.getClass().getClassLoader();
+        resourceLoader = Thread.currentThread().getContextClassLoader();
     }
 
     /**
      * Set the class loader used to load resouces
-     * 
-     * @param resourceLoader
-     *            class loader to use
+     *
+     * @param resourceLoader class loader to use
      */
     public DTDEntityResolver(ClassLoader resourceLoader) {
         this.resourceLoader = resourceLoader;

@@ -16,11 +16,7 @@
 
 package org.compass.core.metadata.ant;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -66,7 +62,7 @@ public class MetaDataTask extends Task {
                 continue;
             }
             File srcFile = new File(dir, files[i]);
-            ConfigurationHelper conf = null;
+            ConfigurationHelper conf;
             try {
                 XmlConfigurationHelperBuilder builder = new XmlConfigurationHelperBuilder();
                 builder.setEntityResolver(entityResolver);
