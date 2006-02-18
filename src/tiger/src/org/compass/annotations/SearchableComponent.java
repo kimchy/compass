@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.metadata;
+package org.compass.annotations;
 
-import org.compass.annotations.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author kimchy
  */
-@Searchable
-public class A {
+@Target({ElementType.METHOD, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface SearchableComponent {
 
-    @SearchableId
-    private int id;
+    /**
+     * The reference alias that points to the searchable class. Not required
+     * since most of the times it can be automatically detected.
+     */
+    String refAlias() default "";
 
-    @SearchableProperty
-    @SearchableMetaDatas({@SearchableMetaData(name = "value1"), @SearchableMetaData(name = "value2")})
-    private String value;
+    boolean override() default true;
 
-    public int getId() {
-        return id;
-    }
+    int maxDepth() default 5;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    String converter() default "";
 }

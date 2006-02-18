@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.metadata;
+package org.compass.annotations.test.component;
+
+import java.util.ArrayList;
 
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
 import org.compass.core.CompassHits;
@@ -25,29 +27,44 @@ import org.compass.core.config.CompassConfiguration;
 /**
  * @author kimchy
  */
-public class MetaDataTests extends AbstractAnnotationsTestCase {
+public class ComponentTests extends AbstractAnnotationsTestCase {
 
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addClass(A.class);
+        conf.addClass(A.class).addClass(B.class);
     }
 
-    public void testMultipleMetaDatas() throws Exception {
+    public void testSimpleComponent() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.setId(1);
-        a.setValue("value");
+        a.id = 1;
+        a.value = "avalue";
+
+        B b = new B();
+        b.value = "bvalue";
+        a.b = b;
+
+        ArrayList<B> bValues = new ArrayList<B>();
+        bValues.add(new B("bvalue1"));
+        bValues.add(new B("bvalue2"));
+        a.bValues = bValues;
+
         session.save(a);
 
         a = (A) session.load(A.class, 1);
-        assertEquals("value", a.getValue());
+        assertEquals("avalue", a.value);
+        assertEquals("bvalue", a.b.value);
+        assertEquals("bvalue1", a.bValues.get(0).value);
+        assertEquals("bvalue2", a.bValues.get(1).value);
 
-        CompassHits hits = session.find("value:value");
-        assertEquals(0, hits.length());
-        hits = session.find("value1:value");
+        CompassHits hits = session.find("bvalue");
         assertEquals(1, hits.length());
-        hits = session.find("value2:value");
+        a = (A) hits.data(0);
+        assertEquals("avalue", a.value);
+        assertEquals("bvalue", a.b.value);
+
+        hits = session.find("bvalue1");
         assertEquals(1, hits.length());
 
         tr.commit();

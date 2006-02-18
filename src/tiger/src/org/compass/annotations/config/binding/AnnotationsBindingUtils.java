@@ -16,6 +16,10 @@
 
 package org.compass.annotations.config.binding;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+
 import org.compass.annotations.*;
 import org.compass.core.Property;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -25,6 +29,27 @@ import org.compass.core.mapping.osem.ClassPropertyMapping;
  * @author kimchy
  */
 public abstract class AnnotationsBindingUtils {
+
+    public static String getCollectionParameterClassName(Class<?> clazz, Type type) {
+        Class retVal = getCollectionParameterClass(clazz, type);
+        if (retVal == null) {
+            return null;
+        }
+        return retVal.getName();
+    }
+
+    public static Class getCollectionParameterClass(Class<?> clazz, Type type) {
+        if (Collection.class.isAssignableFrom(clazz)) {
+            if (type instanceof ParameterizedType) {
+                ParameterizedType paramType = (ParameterizedType) type;
+                Type[] actualTypeArguments = paramType.getActualTypeArguments();
+                if (actualTypeArguments != null && actualTypeArguments.length == 1) {
+                    return (Class) actualTypeArguments[0];
+                }
+            }
+        }
+        return null;
+    }
 
     public static ClassPropertyMapping.ManagedId convert(ManagedId managedId) throws IllegalArgumentException {
         if (managedId == ManagedId.AUTO) {

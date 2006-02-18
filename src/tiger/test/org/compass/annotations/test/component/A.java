@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.metadata;
+package org.compass.annotations.test.component;
 
-import org.compass.annotations.*;
+import java.util.List;
+
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableComponent;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
@@ -25,25 +30,14 @@ import org.compass.annotations.*;
 public class A {
 
     @SearchableId
-    private int id;
+    long id;
 
     @SearchableProperty
-    @SearchableMetaDatas({@SearchableMetaData(name = "value1"), @SearchableMetaData(name = "value2")})
-    private String value;
+    String value;
 
-    public int getId() {
-        return id;
-    }
+    @SearchableComponent
+    B b;
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    @SearchableComponent
+    List<B> bValues;
 }

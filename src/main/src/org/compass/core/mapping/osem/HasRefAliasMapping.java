@@ -28,4 +28,8 @@ public interface HasRefAliasMapping extends ObjectMapping {
     ClassMapping getRefClassMapping();
 
     void setRefClassMapping(ClassMapping refClassMapping);
+
+    Class getRefClass();
+
+    void setRefClass(Class refClass);
 }

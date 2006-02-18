@@ -78,8 +78,7 @@ public abstract class MappingProcessorUtils {
         }
 
         if (mdMapping.isInternal()) {
-            // Thats the key, save it directly under the class property mapping
-            // path
+            // Thats the key, save it directly under the class property mapping path
             mdMapping.setPath(classPropertyMapping.getPath());
         } else {
             mdMapping.setPath(mdMapping.getName());

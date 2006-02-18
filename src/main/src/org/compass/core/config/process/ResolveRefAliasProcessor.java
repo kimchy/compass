@@ -62,7 +62,10 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
             mapping.setRefClassMapping(refClassMapping);
             return;
         }
-        Class clazz = mapping.getGetter().getReturnType();
+        Class clazz = mapping.getRefClass();
+        if (clazz == null) {
+            clazz = mapping.getGetter().getReturnType();
+        }
         if (clazz == null) {
             throw new MappingException("This should not happen");
         }

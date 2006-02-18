@@ -21,7 +21,7 @@ VERSION 0.9.0 ()
       must be set, compass.converter.mydate.type=date, and compass.converter.mydate.format=yyyy-MM-dd. Now,
       you can use the mydate converter lookup name in the converter mapping attribute.
    e) You can now override default converters that comes with compass. They are registered under Compass
-      default names. For example, to change the format for all Dates, simple provide the settings
+      default names. For example, to change the format for all Dates, simply provide the setting
       compass.converter.date.format=yyyy-MM-dd.
    For more information, please check the reference documentation.
 4. Component and Reference mapping ref-alias is no longer required. Under certain conditions, Compass can infer

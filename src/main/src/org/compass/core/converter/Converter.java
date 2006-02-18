@@ -22,7 +22,7 @@ import org.compass.core.marshall.MarshallingContext;
 
 /**
  * A converter is responsible for performing conversion between the actual
- * object and the resource.
+ * object and the resource. Must be thread safe.
  * 
  * @author kimchy
  */

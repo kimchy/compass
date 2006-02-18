@@ -23,11 +23,7 @@ import org.compass.core.mapping.OverrideByNameMapping;
 /**
  * @author kimchy
  */
-public class ComponentMapping extends AbstractAccessorMapping implements OverrideByNameMapping, HasRefAliasMapping {
-
-    private String refAlias;
-
-    private ClassMapping refClassMapping;
+public class ComponentMapping extends AbstractRefAliasMapping implements OverrideByNameMapping, HasRefAliasMapping {
 
     private boolean overrideByName = true;
 
@@ -38,8 +34,6 @@ public class ComponentMapping extends AbstractAccessorMapping implements Overrid
     public Mapping copy() {
         ComponentMapping copy = new ComponentMapping();
         super.copy(copy);
-        copy.setRefAlias(getRefAlias());
-        copy.setRefClassMapping(getRefClassMapping());
         copy.setOverrideByName(isOverrideByName());
         copy.setMaxDepth(getMaxDepth());
         return copy;
@@ -47,22 +41,6 @@ public class ComponentMapping extends AbstractAccessorMapping implements Overrid
 
     public boolean canBeCollectionWrapped() {
         return true;
-    }
-
-    public String getRefAlias() {
-        return refAlias;
-    }
-
-    public void setRefAlias(String refAlias) {
-        this.refAlias = refAlias;
-    }
-
-    public ClassMapping getRefClassMapping() {
-        return refClassMapping;
-    }
-
-    public void setRefClassMapping(ClassMapping refClassMapping) {
-        this.refClassMapping = refClassMapping;
     }
 
     public boolean isOverrideByName() {

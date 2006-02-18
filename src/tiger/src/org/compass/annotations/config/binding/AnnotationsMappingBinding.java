@@ -17,10 +17,7 @@
 package org.compass.annotations.config.binding;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 
 import org.compass.annotations.*;
@@ -47,6 +44,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
     private CompassMapping mapping;
 
+    private ClassMapping classMapping;
+
     public void setUpBinding(CompassMapping mapping, CompassMetaData metaData) {
         this.mapping = mapping;
         this.valueLookup = new CommonMetaDataLookup(metaData);
@@ -72,12 +71,11 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         // try and check is the class mapping is already defined
         // if it is, we will add mapping definitions on top of it
         boolean newClassMapping = false;
-        ClassMapping classMapping;
         AliasMapping aliasMapping = mapping.getAliasMapping(alias);
         if (aliasMapping != null) {
             if (!(aliasMapping instanceof ClassMapping)) {
-                throw new MappingException("Defined searchable annotation on a class with alias [" + alias + "] but it" +
-                        " not of type class mapping");
+                throw new MappingException("Defined searchable annotation on a class with alias [" + alias + "] which" +
+                        " has other mapping definitions, but it not of type class mapping");
             }
             classMapping = (ClassMapping) aliasMapping;
         } else {
@@ -135,31 +133,34 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         bindConverter(classMapping, searchable.converter());
 
-        processAnnotatedClass(annotationClass, classMapping);
+        processAnnotatedClass(annotationClass);
 
         if (newClassMapping) {
             mapping.addMapping(classMapping);
         }
 
+        classMapping = null;
+
         return true;
     }
 
-    private void processAnnotatedClass(Class<?> clazz, ClassMapping classMapping) {
+    private void processAnnotatedClass(Class<?> clazz) {
         if (clazz.equals(Class.class)) {
             return;
         }
         Class<?> superClazz = clazz.getSuperclass();
         if (superClazz != null && !superClazz.equals(Object.class)) {
-            processAnnotatedClass(superClazz, classMapping);
+            processAnnotatedClass(superClazz);
         }
         Class<?>[] interfaces = clazz.getInterfaces();
         for (Class<?> anInterface : interfaces) {
-            processAnnotatedClass(anInterface, classMapping);
+            processAnnotatedClass(anInterface);
         }
 
         for (Field field : clazz.getDeclaredFields()) {
             for (Annotation annotation : field.getAnnotations()) {
-                processsAnnotatedElement(ClassUtils.getShortNameForField(field), "field", annotation, field, classMapping);
+                processsAnnotatedElement(ClassUtils.getShortNameForField(field), "field", field.getType(),
+                        field.getGenericType(), annotation, field);
             }
         }
         for (Method method : clazz.getDeclaredMethods()) {
@@ -171,38 +172,83 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                     (method.getName().startsWith("get") || method.getName().startsWith("is"))) {
 
                 for (Annotation annotation : method.getAnnotations()) {
-                    processsAnnotatedElement(ClassUtils.getShortNameForMethod(method), "property", annotation, method, classMapping);
+                    processsAnnotatedElement(ClassUtils.getShortNameForMethod(method), "property", method.getReturnType(),
+                            method.getGenericReturnType(), annotation, method);
                 }
             }
         }
     }
 
-    private void processsAnnotatedElement(String name, String accessor, Annotation annotation,
-                                          AnnotatedElement annotatedElement, ClassMapping classMapping) {
+    private void processsAnnotatedElement(String name, String accessor, Class<?> clazz, Type type, Annotation annotation,
+                                          AnnotatedElement annotatedElement) {
         if (annotation instanceof SearchableId) {
             ClassIdPropertyMapping classPropertyMapping = new ClassIdPropertyMapping();
-            bindObjectMapping(classPropertyMapping, accessor, name, classMapping);
-            bindClassPropertyIdMapping((SearchableId) annotation, classPropertyMapping, annotatedElement);
+            SearchableId searchableId = (SearchableId) annotation;
+            bindObjectMapping(classPropertyMapping, accessor, name);
+            bindClassPropertyIdMapping(searchableId, classPropertyMapping, annotatedElement, clazz, type);
             classMapping.addMapping(classPropertyMapping);
         } else if (annotation instanceof SearchableProperty) {
             ClassPropertyMapping classPropertyMapping = new ClassPropertyMapping();
-            bindObjectMapping(classPropertyMapping, accessor, name, classMapping);
-            bindClassPropertyMapping((SearchableProperty) annotation, classPropertyMapping, annotatedElement);
+            SearchableProperty searchableProperty = (SearchableProperty) annotation;
+            bindObjectMapping(classPropertyMapping, accessor, name);
+            bindClassPropertyMapping(searchableProperty, classPropertyMapping, annotatedElement, clazz, type);
             classMapping.addMapping(classPropertyMapping);
+        } else if (annotation instanceof SearchableComponent) {
+            ComponentMapping componentMapping = new ComponentMapping();
+            SearchableComponent searchableComponent = (SearchableComponent) annotation;
+            bindObjectMapping(componentMapping, accessor, name);
+            bindComponent(searchableComponent, componentMapping, annotatedElement, clazz, type);
+            classMapping.addMapping(componentMapping);
+        } else if (annotation instanceof SearchableReference) {
+            ReferenceMapping referenceMapping = new ReferenceMapping();
+            SearchableReference searchableReference = (SearchableReference) annotation;
+            bindObjectMapping(referenceMapping, accessor, name);
+            bindReference(searchableReference, referenceMapping, annotatedElement, clazz, type);
+            classMapping.addMapping(referenceMapping);
         }
+    }
+
+    private void bindReference(SearchableReference searchableReference, ReferenceMapping referenceMapping,
+                               AnnotatedElement annotatedElement, Class<?> clazz, Type type) {
+
+        bindConverter(referenceMapping, searchableReference.converter());
+
+        if (StringUtils.hasLength(searchableReference.refAlias())) {
+            referenceMapping.setRefAlias(valueLookup.lookupAliasName(searchableReference.refAlias()));
+        } else {
+           referenceMapping.setRefClass(AnnotationsBindingUtils.getCollectionParameterClass(clazz, type));
+        }
+
+        if (StringUtils.hasLength(searchableReference.refComponentAlias())) {
+            referenceMapping.setRefCompAlias(searchableReference.refComponentAlias());
+        }
+    }
+
+    private void bindComponent(SearchableComponent searchableComponent, ComponentMapping componentMapping,
+                               AnnotatedElement annotatedElement, Class<?> clazz, Type type) {
+
+        bindConverter(componentMapping, searchableComponent.converter());
+
+        if (StringUtils.hasLength(searchableComponent.refAlias())) {
+            componentMapping.setRefAlias(valueLookup.lookupAliasName(searchableComponent.refAlias()));
+        } else {
+            componentMapping.setRefClass(AnnotationsBindingUtils.getCollectionParameterClass(clazz, type));
+        }
+
+        componentMapping.setMaxDepth(searchableComponent.maxDepth());
+
+        componentMapping.setOverrideByName(searchableComponent.override());
     }
 
     /**
      * Need to be almost exactly as <code>bindClassPropertyMapping</code>.
      */
     private void bindClassPropertyIdMapping(SearchableId searchableProp, ClassIdPropertyMapping classPropertyMapping,
-                                            AnnotatedElement annotatedElement) throws MappingException {
+                                            AnnotatedElement annotatedElement, Class<?> clazz, Type type) throws MappingException {
 
         bindConverter(classPropertyMapping, searchableProp.propertyConverter());
 
-        if (!searchableProp.type().equals(Object.class)) {
-            classPropertyMapping.setClassName(searchableProp.type().getName());
-        }
+        // No need for type in property id, since it will not be a collection
 
         classPropertyMapping.setBoost(searchableProp.boost());
         classPropertyMapping.setManagedId(AnnotationsBindingUtils.convert(searchableProp.managedId()));
@@ -260,23 +306,22 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
      * Need to be almost exactly as <code>bindClassPropertyIdMapping</code>.
      */
     private void bindClassPropertyMapping(SearchableProperty searchableProp, ClassPropertyMapping classPropertyMapping,
-                                          AnnotatedElement annotatedElement) throws MappingException {
+                                          AnnotatedElement annotatedElement, Class<?> clazz, Type type) throws MappingException {
 
         bindConverter(classPropertyMapping, searchableProp.propertyConverter());
 
         if (!searchableProp.type().equals(Object.class)) {
             classPropertyMapping.setClassName(searchableProp.type().getName());
+        } else {
+            // check if it is a colleciton. If it is, try to infer the
+            // type using generics
+            classPropertyMapping.setClassName(AnnotationsBindingUtils.getCollectionParameterClassName(clazz, type));
         }
 
         classPropertyMapping.setBoost(searchableProp.boost());
         classPropertyMapping.setManagedId(AnnotationsBindingUtils.convert(searchableProp.managedId()));
         classPropertyMapping.setManagedIdIndex(AnnotationsBindingUtils.convert(searchableProp.managedIdIndex()));
         classPropertyMapping.setOverrideByName(searchableProp.override());
-
-        Class collectionClass = searchableProp.collectionClass();
-        if (!collectionClass.equals(Object.class)) {
-            classPropertyMapping.setColClassName(collectionClass.getName());
-        }
 
         SearchableMetaData metaData = annotatedElement.getAnnotation(SearchableMetaData.class);
         SearchableMetaDatas metaDatas = annotatedElement.getAnnotation(SearchableMetaDatas.class);
@@ -363,7 +408,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         mapping.setConverterName(converter);
     }
 
-    private void bindObjectMapping(ObjectMapping objectMapping, String accessor, String name, ClassMapping classMapping) {
+    private void bindObjectMapping(ObjectMapping objectMapping, String accessor, String name) {
         objectMapping.setAccessor(accessor);
         objectMapping.setName(name);
         objectMapping.setObjClass(classMapping.getClazz());

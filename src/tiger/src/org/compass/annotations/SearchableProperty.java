@@ -32,9 +32,11 @@ public @interface SearchableProperty {
 
     ManagedIdIndex managedIdIndex() default ManagedIdIndex.NA;
 
+    /**
+     * The class type of the property. Mainly used for <code>Collection</code> properties, without
+     * specific Generic type parameter.
+     */
     Class type() default Object.class;
-
-    Class collectionClass() default Object.class;
 
     boolean override() default true;
 
