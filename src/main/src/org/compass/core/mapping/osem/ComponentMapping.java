@@ -23,12 +23,12 @@ import org.compass.core.mapping.OverrideByNameMapping;
 /**
  * @author kimchy
  */
-public class ComponentMapping extends AbstractAccessorMapping implements OverrideByNameMapping {
+public class ComponentMapping extends AbstractAccessorMapping implements OverrideByNameMapping, HasRefAliasMapping {
 
     private String refAlias;
 
     private ClassMapping refClassMapping;
-    
+
     private boolean overrideByName = true;
 
     // the depth of cyclic component mappings allowed

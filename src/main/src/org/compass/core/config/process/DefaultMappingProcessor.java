@@ -150,8 +150,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
     private boolean secondPass(ReferenceMapping referenceMapping, Mapping fatherMapping) {
         referenceMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), referenceMapping.getName()));
         secondPassConverter(referenceMapping);
-        ClassMapping pointerClass = (ClassMapping) compassMapping.getResourceMappingByAlias(referenceMapping
-                .getRefAlias());
+        ClassMapping pointerClass = referenceMapping.getRefClassMapping();
 
         if (pointerClass == null) {
             throw new MappingException("Failed to locate mapping for reference ref-alias ["
@@ -220,19 +219,14 @@ public class DefaultMappingProcessor implements MappingProcessor {
 
         compMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), compMapping.getName()));
         secondPassConverter(compMapping);
-        ClassMapping refClass = (ClassMapping) compassMapping.getResourceMappingByAlias(compMapping.getRefAlias());
+        ClassMapping refClassMapping = compMapping.getRefClassMapping();
 
-        if (refClass == null) {
-            throw new MappingException("Failed to locate mapping for component ref-alias [" + compMapping.getRefAlias()
-                    + "]");
-        }
+        refClassMapping = (ClassMapping) refClassMapping.copy();
+        refClassMapping.setPath(compMapping.getPath());
+        secondPass(refClassMapping, false);
+        refClassMapping.setRoot(false);
 
-        refClass = (ClassMapping) refClass.copy();
-        refClass.setPath(compMapping.getPath());
-        secondPass(refClass, false);
-        refClass.setRoot(false);
-
-        compMapping.setRefClassMapping(refClass);
+        compMapping.setRefClassMapping(refClassMapping);
 
         chainedComponents.remove(compMapping);
 

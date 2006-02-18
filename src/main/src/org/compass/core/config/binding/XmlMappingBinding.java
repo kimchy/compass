@@ -310,7 +310,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String name = referenceConf.getAttribute("name");
         referenceMapping.setName(name);
 
-        String refAlias = referenceConf.getAttribute("ref-alias");
+        String refAlias = referenceConf.getAttribute("ref-alias", null);
         referenceMapping.setRefAlias(valueLookup.lookupAliasName(refAlias));
 
         referenceMapping.setColClassName(referenceConf.getAttribute("col-class", null));
@@ -331,7 +331,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                                ComponentMapping compMapping) {
         String name = componentConf.getAttribute("name");
         compMapping.setName(name);
-        String refAlias = componentConf.getAttribute("ref-alias");
+        String refAlias = componentConf.getAttribute("ref-alias", null);
         compMapping.setRefAlias(valueLookup.lookupAliasName(refAlias));
 
         compMapping.setColClassName(componentConf.getAttribute("col-class", null));

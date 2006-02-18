@@ -73,6 +73,29 @@ public class ReferenceTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testInferMappings() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.setId(new Long(1));
+        a.setValue("avalue");
+        B b = new B();
+        b.setId(new Long(1));
+        b.setValue("bvalue");
+        a.setB(b);
+
+        session.save("b", b);
+        session.save("a", a);
+
+        a = (A) session.load("a", new Long(1));
+        assertEquals("avalue", a.getValue());
+        assertEquals("bvalue", a.getB().getValue());
+
+        tr.commit();
+        session.close();
+    }
+
     public void testXY() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();

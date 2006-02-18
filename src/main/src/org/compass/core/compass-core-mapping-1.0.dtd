@@ -117,7 +117,7 @@
 <!ELEMENT component EMPTY
 >
     <!ATTLIST component name CDATA #REQUIRED>
-    <!ATTLIST component ref-alias CDATA #REQUIRED>
+    <!ATTLIST component ref-alias CDATA #IMPLIED>
     <!ATTLIST component override (true|false) "true">
     <!ATTLIST component max-depth CDATA #IMPLIED>
     <!ATTLIST component col-class CDATA #IMPLIED>
@@ -127,7 +127,7 @@
 <!ELEMENT reference EMPTY
 >
     <!ATTLIST reference name CDATA #REQUIRED>
-    <!ATTLIST reference ref-alias CDATA #REQUIRED>
+    <!ATTLIST reference ref-alias CDATA #IMPLIED>
     <!ATTLIST reference col-class CDATA #IMPLIED>
     <!ATTLIST reference ref-comp-alias CDATA #IMPLIED>
     <!ATTLIST reference converter CDATA #IMPLIED>

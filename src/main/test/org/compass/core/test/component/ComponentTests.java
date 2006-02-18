@@ -34,7 +34,7 @@ public class ComponentTests extends AbstractTestCase {
     protected String[] getMappings() {
         return new String[]{"component/C.cpm.xml", "component/SimpleRoot.cpm.xml",
                 "component/SimpleComponent.cpm.xml", "component/id-component.cpm.xml", "component/Cyclic.cpm.xml",
-                "component/SelfCycle.cpm.xml"};
+                "component/SelfCycle.cpm.xml", "component/InferRefAlias.cpm.xml"};
     }
 
     public void testMappings() {
@@ -87,6 +87,33 @@ public class ComponentTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testInferRefAlias() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = new Long(1);
+
+        SimpleRoot root = new SimpleRoot();
+        root.setId(id);
+        root.setValue("test");
+        SimpleComponent first = new SimpleComponent();
+        first.setValue("test1");
+        root.setFirstComponent(first);
+        SimpleComponent second = new SimpleComponent();
+        second.setValue("test2");
+        root.setSecondComponent(second);
+        session.save("sr-infer", root);
+
+        root = (SimpleRoot) session.load("sr-infer", id);
+        assertEquals("test", root.getValue());
+        assertNotNull(root.getFirstComponent());
+        assertEquals("test1", root.getFirstComponent().getValue());
+        assertNotNull(root.getSecondComponent());
+        assertEquals("test2", root.getSecondComponent().getValue());
+
+        tr.commit();
+    }
+
     public void testRoot() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
@@ -120,33 +147,33 @@ public class ComponentTests extends AbstractTestCase {
 
         Long id = new Long(1);
 
-        SimpleRoot root = new SimpleRoot();
+        SimpleRootId root = new SimpleRootId();
         root.setId(id);
         root.setValue("test");
-        SimpleComponent first = new SimpleComponent();
+        SimpleComponentId first = new SimpleComponentId();
         first.setId(new Long(1));
         first.setValue("test1");
         root.setFirstComponent(first);
-        SimpleComponent second = new SimpleComponent();
+        SimpleComponentId second = new SimpleComponentId();
         second.setId(new Long(2));
         second.setValue("test2");
         root.setSecondComponent(second);
         session.save("id-sr", root);
 
-        root = new SimpleRoot();
+        root = new SimpleRootId();
         root.setId(new Long(2));
         root.setValue("test");
-        first = new SimpleComponent();
+        first = new SimpleComponentId();
         first.setId(new Long(3));
         first.setValue("test1");
         root.setFirstComponent(first);
-        second = new SimpleComponent();
+        second = new SimpleComponentId();
         second.setId(new Long(4));
         second.setValue("test2");
         root.setSecondComponent(second);
         session.save("id-sr", root);
 
-        root = (SimpleRoot) session.load("id-sr", id);
+        root = (SimpleRootId) session.load("id-sr", id);
         assertEquals("test", root.getValue());
         assertNotNull(root.getFirstComponent());
         assertEquals("test1", root.getFirstComponent().getValue());
@@ -155,7 +182,7 @@ public class ComponentTests extends AbstractTestCase {
 
         CompassHits hits = session.find("id-sc:2");
         assertEquals(1, hits.getLength());
-        root = (SimpleRoot) hits.data(0);
+        root = (SimpleRootId) hits.data(0);
         assertEquals("test", root.getValue());
         assertNotNull(root.getFirstComponent());
         assertEquals("test1", root.getFirstComponent().getValue());

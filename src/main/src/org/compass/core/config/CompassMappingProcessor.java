@@ -16,13 +16,13 @@
 
 package org.compass.core.config;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.compass.core.config.process.*;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * @author kimchy
@@ -34,6 +34,7 @@ public class CompassMappingProcessor implements MappingProcessor {
     public CompassMappingProcessor() {
         mappingProcessors.add(new ResolveExtendsMappingProcessor());
         mappingProcessors.add(new PropertyAccessorMappingProcessor());
+        mappingProcessors.add(new ResolveRefAliasProcessor());
         mappingProcessors.add(new CollectionMappingProcessor());
         mappingProcessors.add(new DefaultMappingProcessor());
         mappingProcessors.add(new InternalIdsMappingProcessor());

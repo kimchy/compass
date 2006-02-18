@@ -23,7 +23,7 @@ import org.compass.core.mapping.OverrideByNameMapping;
 /**
  * @author kimchy
  */
-public class ReferenceMapping extends AbstractAccessorMapping implements OverrideByNameMapping {
+public class ReferenceMapping extends AbstractAccessorMapping implements OverrideByNameMapping, HasRefAliasMapping {
 
     private String refAlias;
 

@@ -17,6 +17,7 @@
 package org.compass.core.mapping;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.compass.core.converter.ConverterLookup;
@@ -76,6 +77,8 @@ public class CompassMapping {
 
     private final HashMap rootMappingsByClass = new HashMap();
 
+    private final HashMap mappingsByClass = new HashMap();
+
     private ResourceMapping[] rootMappingsArr = new ResourceMapping[0];
 
     private ConverterLookup converterLookup;
@@ -83,6 +86,8 @@ public class CompassMapping {
     private final HashMap cachedRootMappignsByClass = new HashMap();
 
     private final NullResourceMapping nullResourceMappingEntryInCache = new NullResourceMapping();
+
+    private HashSet hasMutipleClassMappingByClass = new HashSet();
 
     private String path;
 
@@ -106,6 +111,8 @@ public class CompassMapping {
         rootMappingsByClass.clear();
         rootMappingsArr = new ResourceMapping[0];
         cachedRootMappignsByClass.clear();
+        hasMutipleClassMappingByClass.clear();
+        mappingsByClass.clear();
     }
 
     public ResourcePropertyLookup getResourcePropertyLookup(String name) {
@@ -124,11 +131,10 @@ public class CompassMapping {
                 if (resourceMapping instanceof ClassMapping) {
                     ClassMapping cMapping = (ClassMapping) mapping;
                     if (rootMappingsByClass.get(cMapping.getName()) != null) {
-                        // should we log it?
-                        // log.warn("Multiple mappings are mapped to [" +
-                        // cMapping.getName() + "]");
+                        hasMutipleClassMappingByClass.add(cMapping.getName());
                     }
                     rootMappingsByClass.put(cMapping.getName(), mapping);
+                    mappingsByClass.put(cMapping.getName(), cMapping);
                 }
                 ResourceMapping[] result = new ResourceMapping[rootMappingsArr.length + 1];
                 int i;
@@ -137,6 +143,11 @@ public class CompassMapping {
                 }
                 result[i] = resourceMapping;
                 rootMappingsArr = result;
+            } else {
+                if (resourceMapping instanceof ClassMapping) {
+                    ClassMapping cMapping = (ClassMapping) mapping;
+                    mappingsByClass.put(cMapping.getName(), cMapping);
+                }
             }
         }
     }
@@ -197,6 +208,14 @@ public class CompassMapping {
         return (rootMappingsByAlias.get(alias) instanceof RawResourceMapping);
     }
 
+    public boolean hasMultipleClassMapping(String className) {
+        return hasMutipleClassMappingByClass.contains(className);
+    }
+
+    public ClassMapping getClassMappingByClass(String className) {
+        return (ClassMapping) mappingsByClass.get(className);
+    }
+
     /**
      * Finds a root mapping by the class name. If a root mapping is not found
      * for the class name, than searches for mappings for the interfaces, if not
@@ -215,7 +234,7 @@ public class CompassMapping {
         return doGetResourceMappingByClass(clazz, false);
     }
 
-    public ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx) throws MappingException {
+    private ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx) throws MappingException {
         // not the most thread safe caching, but suffiecient for our needs (I think),
         // seems waste to use a thread safe collection
         ResourceMapping rm = (ResourceMapping) cachedRootMappignsByClass.get(clazz);
@@ -242,7 +261,7 @@ public class CompassMapping {
         }
     }
 
-    public ResourceMapping doGetActualResourceMappingByClass(Class clazz) {
+    private ResourceMapping doGetActualResourceMappingByClass(Class clazz) {
         ResourceMapping rm = (ResourceMapping) rootMappingsByClass.get(clazz.getName());
         if (rm != null) {
             return rm;
