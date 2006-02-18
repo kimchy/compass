@@ -467,7 +467,6 @@ public class Author {
       managed-id="auto|true|false"
       managed-id="[compass.managedId.index setting]|no|un_tokenized"
       exclude-from-all="false|true"
-      col-class="fully qualified class of the collection class"
       converter="converter lookup name"
 >
    (meta-data)*
@@ -495,15 +494,11 @@ public class Author {
               </row>
               <row>
                 <entry>class (optional)</entry>
-                <entry>An explicit definition of the class of the property, helps for certain converters (especially for <literal>java.util.Collection</literal> type properties).</entry>
+                <entry>An explicit definition of the class of the property, helps for certain converters (especially for <literal>java.util.Collection</literal> type properties, since it applies to the collection elements).</entry>
               </row>
               <row>
                 <entry>analyzer (optional, defaults to the class mapping analyzer decision scheme)</entry>
                 <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data mappings defined for the given property. Defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
-              </row>
-              <row>
-                <entry>col-class (optional)</entry>
-                <entry>The collection class that will be used when un-marshaling. Serves two purposes, improve performance since Compass::Core does not need to save the collection class, and in case of collection proxies, you might need to defined the actual collection (i.e. in case of Hibernate). Only applies if mapping to a <literal>java.util.Collection</literal> and it's implementations.</entry>
               </row>
               <row>
                 <entry>override (optional, defaults to <literal>true</literal>)</entry>
@@ -655,7 +650,7 @@ public class Author {
             </row>
             <row>
               <entry>converter (optional)</entry>
-              <entry>The global converter lookup name registered with the configuration.</entry>
+              <entry>The global converter lookup name registered with the configuration. Note, that in case of a <literal>Collection</literal> property, the converter will be applied to the collection elements (Compass has it's own converter for Collections).</entry>
             </row>
             <row>
               <entry>format (optional)</entry>
@@ -705,11 +700,6 @@ public class Author {
               <row>
                 <entry>ref-alias (optional)</entry>
                 <entry>The class mapping alias that defines the component. This is an optional attribute since under some conditions, compass can infer the correct reference alias.</entry>
-              </row>
-              <row>
-                <entry>col-class (optional)</entry>
-                <entry>The collection class that will be used when un-marshaling. Serves two purposes, improve performance since Compass::Core does not need to save the collection class, and in case of collection proxies, you might need to defined the actual collection (i.e. in case of Hibernate). Only applies if mapping to a <literal>java.util.Collection</literal> and it's
-                implementations.</entry>
               </row>
               <row>
                 <entry>override (optional, defaults to <literal>true</literal>)</entry>
@@ -778,11 +768,6 @@ public class Author {
               <row>
                 <entry>ref-alias (optional)</entry>
                 <entry>The class mapping alias that defines the reference. This is an optional attribute since under some conditions, compass can infer the correct reference alias.</entry>
-              </row>
-              <row>
-                <entry>col-class (optional)</entry>
-                <entry>The collection class that will be used when un-marshaling. Serves two purposes, improve performance since Compass::Core does not need to save the collection class, and
-                in case of collection proxies, you might need to defined the actual collection (i.e. in case of Hibernate). Only applies if mapping to a <literal>java.util.Collection</literal> and it's implementations.</entry>
               </row>
               <row>
                 <entry>ref-comp-alias</entry>
