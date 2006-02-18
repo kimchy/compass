@@ -43,4 +43,15 @@ public @interface SearchableMetaData {
     String analyzer() default "";
 
     boolean exceludeFromAll() default false;
+
+    /**
+     * The converter lookup name.
+     */
+    String converter() default "";
+
+    /**
+     * The format to apply to the value. Only applies to format-able converters
+     * (like dates and numbers).
+     */
+    String format() default "";
 }

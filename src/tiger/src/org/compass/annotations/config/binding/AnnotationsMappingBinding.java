@@ -24,19 +24,15 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import org.compass.annotations.*;
-import org.compass.core.Property;
 import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.binding.MappingBindingSupport;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.ClassIdPropertyMapping;
-import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyMapping;
-import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.*;
 import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
@@ -101,7 +97,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         classMapping.setSubIndex(subIndex);
 
         String[] extend = searchable.extend();
-        if (extend.length != 0 && (StringUtils.hasLength(extend[0]))) {
+        if (extend.length != 0) {
             ArrayList<String> extendedMappings = new ArrayList<String>();
             for (String extendedAlias : extend) {
                 Alias extendedAliasLookup = valueLookup.lookupAlias(extendedAlias);
@@ -126,7 +122,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 if (StringUtils.hasLength(allMetaData.analyzer())) {
                     classMapping.setAllAnalyzer(allMetaData.analyzer());
                 }
-                classMapping.setAllTermVector(convert(allMetaData.termVector()));
+                classMapping.setAllTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
             }
         }
 
@@ -136,6 +132,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchable.analyzer())) {
             classMapping.setAnalyzer(searchable.analyzer());
         }
+
+        bindConverter(classMapping, searchable.converter());
 
         processAnnotatedClass(annotationClass, classMapping);
 
@@ -181,21 +179,14 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
     private void processsAnnotatedElement(String name, String accessor, Annotation annotation,
                                           AnnotatedElement annotatedElement, ClassMapping classMapping) {
-
         if (annotation instanceof SearchableId) {
             ClassIdPropertyMapping classPropertyMapping = new ClassIdPropertyMapping();
-            classPropertyMapping.setAccessor(accessor);
-            classPropertyMapping.setName(name);
-            classPropertyMapping.setObjClass(classMapping.getClazz());
-            classPropertyMapping.setPropertyName(name);
+            bindObjectMapping(classPropertyMapping, accessor, name, classMapping);
             bindClassPropertyIdMapping((SearchableId) annotation, classPropertyMapping, annotatedElement);
             classMapping.addMapping(classPropertyMapping);
         } else if (annotation instanceof SearchableProperty) {
             ClassPropertyMapping classPropertyMapping = new ClassPropertyMapping();
-            classPropertyMapping.setName(name);
-            classPropertyMapping.setAccessor(accessor);
-            classPropertyMapping.setObjClass(classMapping.getClazz());
-            classPropertyMapping.setPropertyName(name);
+            bindObjectMapping(classPropertyMapping, accessor, name, classMapping);
             bindClassPropertyMapping((SearchableProperty) annotation, classPropertyMapping, annotatedElement);
             classMapping.addMapping(classPropertyMapping);
         }
@@ -207,17 +198,21 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     private void bindClassPropertyIdMapping(SearchableId searchableProp, ClassIdPropertyMapping classPropertyMapping,
                                             AnnotatedElement annotatedElement) throws MappingException {
 
+        bindConverter(classPropertyMapping, searchableProp.propertyConverter());
+
+        if (!searchableProp.type().equals(Object.class)) {
+            classPropertyMapping.setClassName(searchableProp.type().getName());
+        }
+
         classPropertyMapping.setBoost(searchableProp.boost());
-        classPropertyMapping.setManagedId(convert(searchableProp.managedId()));
-        classPropertyMapping.setManagedIdIndex(convert(searchableProp.managedIdIndex()));
+        classPropertyMapping.setManagedId(AnnotationsBindingUtils.convert(searchableProp.managedId()));
+        classPropertyMapping.setManagedIdIndex(AnnotationsBindingUtils.convert(searchableProp.managedIdIndex()));
         classPropertyMapping.setOverrideByName(searchableProp.override());
 
         SearchableMetaData metaData = annotatedElement.getAnnotation(SearchableMetaData.class);
         SearchableMetaDatas metaDatas = annotatedElement.getAnnotation(SearchableMetaDatas.class);
 
-        boolean hasMetaDataAnnotations = metaData != null || metaDatas != null;
-
-        // check if we need to create a metadata because of the SearchProperty
+        // check if we need to create a metadata because of the SearchId
         // here we differ from the searchProperty mapping, since it is perfectly
         // fine not to create one if there are no meta-data definitions (an internal
         // one will be created during the process phase)
@@ -234,13 +229,14 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setObjClass(classPropertyMapping.getObjClass());
             mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
-            mdMapping.setStore(convert(searchableProp.store()));
-            mdMapping.setIndex(convert(searchableProp.index()));
-            mdMapping.setTermVector(convert(searchableProp.termVector()));
-            mdMapping.setReverse(convert(searchableProp.reverse()));
+            bindConverter(mdMapping, searchableProp.converter());
 
-            // TODO Pass the correct format
-            handleFormat(mdMapping, name, null);
+            mdMapping.setStore(AnnotationsBindingUtils.convert(searchableProp.store()));
+            mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableProp.index()));
+            mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableProp.termVector()));
+            mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableProp.reverse()));
+
+            handleFormat(mdMapping, name, searchableProp.format());
 
             if (StringUtils.hasLength(searchableProp.analyzer())) {
                 mdMapping.setAnalyzer(searchableProp.analyzer());
@@ -266,9 +262,15 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     private void bindClassPropertyMapping(SearchableProperty searchableProp, ClassPropertyMapping classPropertyMapping,
                                           AnnotatedElement annotatedElement) throws MappingException {
 
+        bindConverter(classPropertyMapping, searchableProp.propertyConverter());
+
+        if (!searchableProp.type().equals(Object.class)) {
+            classPropertyMapping.setClassName(searchableProp.type().getName());
+        }
+
         classPropertyMapping.setBoost(searchableProp.boost());
-        classPropertyMapping.setManagedId(convert(searchableProp.managedId()));
-        classPropertyMapping.setManagedIdIndex(convert(searchableProp.managedIdIndex()));
+        classPropertyMapping.setManagedId(AnnotationsBindingUtils.convert(searchableProp.managedId()));
+        classPropertyMapping.setManagedIdIndex(AnnotationsBindingUtils.convert(searchableProp.managedIdIndex()));
         classPropertyMapping.setOverrideByName(searchableProp.override());
 
         Class collectionClass = searchableProp.collectionClass();
@@ -291,17 +293,18 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setName(valueLookup.lookupMetaDataName(name));
             mdMapping.setBoost(classPropertyMapping.getBoost());
 
+            bindConverter(mdMapping, searchableProp.converter());
+
             mdMapping.setAccessor(classPropertyMapping.getAccessor());
             mdMapping.setObjClass(classPropertyMapping.getObjClass());
             mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
-            mdMapping.setStore(convert(searchableProp.store()));
-            mdMapping.setIndex(convert(searchableProp.index()));
-            mdMapping.setTermVector(convert(searchableProp.termVector()));
-            mdMapping.setReverse(convert(searchableProp.reverse()));
+            mdMapping.setStore(AnnotationsBindingUtils.convert(searchableProp.store()));
+            mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableProp.index()));
+            mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableProp.termVector()));
+            mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableProp.reverse()));
 
-            // TODO Pass the correct format
-            handleFormat(mdMapping, name, null);
+            handleFormat(mdMapping, name, searchableProp.format());
 
             mdMapping.setInternal(false);
 
@@ -330,17 +333,18 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         mdMapping.setName(valueLookup.lookupMetaDataName(name));
         mdMapping.setBoost(classPropertyMapping.getBoost());
 
+        bindConverter(classPropertyMapping, searchableMetaData.converter());
+
         mdMapping.setAccessor(classPropertyMapping.getAccessor());
         mdMapping.setObjClass(classPropertyMapping.getObjClass());
         mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
-        mdMapping.setStore(convert(searchableMetaData.store()));
-        mdMapping.setIndex(convert(searchableMetaData.index()));
-        mdMapping.setTermVector(convert(searchableMetaData.termVector()));
-        mdMapping.setReverse(convert(searchableMetaData.reverse()));
+        mdMapping.setStore(AnnotationsBindingUtils.convert(searchableMetaData.store()));
+        mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableMetaData.index()));
+        mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableMetaData.termVector()));
+        mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableMetaData.reverse()));
 
-        // TODO Pass the correct format
-        handleFormat(mdMapping, name, null);
+        handleFormat(mdMapping, name, searchableMetaData.format());
 
         mdMapping.setInternal(false);
 
@@ -352,79 +356,24 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         classPropertyMapping.addMapping(mdMapping);
     }
 
-    private ClassPropertyMapping.ManagedId convert(ManagedId managedId) {
-        if (managedId == ManagedId.AUTO) {
-            return ClassPropertyMapping.ManagedId.AUTO;
-        } else if (managedId == ManagedId.TRUE) {
-            return ClassPropertyMapping.ManagedId.TRUE;
-        } else if (managedId == ManagedId.FALSE) {
-            return ClassPropertyMapping.ManagedId.FALSE;
+    private void bindConverter(Mapping mapping, String converter) {
+        if (!StringUtils.hasLength(converter)) {
+            return;
         }
-        throw new IllegalArgumentException("Failed to convert managedId [" + managedId + "]");
+        mapping.setConverterName(converter);
     }
 
-    private Property.TermVector convert(TermVector termVector) {
-        if (termVector == TermVector.NO) {
-            return Property.TermVector.NO;
-        } else if (termVector == TermVector.YES) {
-            return Property.TermVector.YES;
-        } else if (termVector == TermVector.WITH_POSITIONS) {
-            return Property.TermVector.WITH_POSITIONS;
-        } else if (termVector == TermVector.WITH_OFFSETS) {
-            return Property.TermVector.WITH_OFFSETS;
-        } else if (termVector == TermVector.WITH_POSITIONS_OFFESTS) {
-            return Property.TermVector.WITH_POSITIONS_OFFSETS;
-        }
-        throw new IllegalArgumentException("Failed to convert termVectory [" + termVector + "]");
-    }
-
-    private ResourcePropertyMapping.ReverseType convert(Reverse reverse) {
-        if (reverse == Reverse.NO) {
-            return ResourcePropertyMapping.ReverseType.NO;
-        } else if (reverse == Reverse.READER) {
-            return ResourcePropertyMapping.ReverseType.READER;
-        } else if (reverse == Reverse.STRING) {
-            return ResourcePropertyMapping.ReverseType.STRING;
-        }
-        throw new IllegalArgumentException("Failed to convert reverse [" + reverse + "]");
-    }
-
-    private Property.Store convert(Store store) {
-        if (store == Store.NO) {
-            return Property.Store.NO;
-        } else if (store == Store.YES) {
-            return Property.Store.YES;
-        } else if (store == Store.COMPRESS) {
-            return Property.Store.COMPRESS;
-        }
-        throw new IllegalArgumentException("Failed to convert store [" + store + "]");
-    }
-
-    private Property.Index convert(Index index) {
-        if (index == Index.NO) {
-            return Property.Index.NO;
-        } else if (index == Index.TOKENIZED) {
-            return Property.Index.TOKENIZED;
-        } else if (index == Index.UN_TOKENIZED) {
-            return Property.Index.UN_TOKENIZED;
-        }
-        throw new IllegalArgumentException("Failed to convert index [" + index + "]");
-    }
-
-    private Property.Index convert(ManagedIdIndex index) {
-        if (index == ManagedIdIndex.NA) {
-            return null;
-        } else if (index == ManagedIdIndex.NO) {
-            return Property.Index.NO;
-        } else if (index == ManagedIdIndex.TOKENIZED) {
-            return Property.Index.TOKENIZED;
-        } else if (index == ManagedIdIndex.UN_TOKENIZED) {
-            return Property.Index.UN_TOKENIZED;
-        }
-        throw new IllegalArgumentException("Failed to convert index [" + index + "]");
+    private void bindObjectMapping(ObjectMapping objectMapping, String accessor, String name, ClassMapping classMapping) {
+        objectMapping.setAccessor(accessor);
+        objectMapping.setName(name);
+        objectMapping.setObjClass(classMapping.getClazz());
+        objectMapping.setPropertyName(name);
     }
 
     private void handleFormat(ClassPropertyMetaDataMapping mdMapping, String name, String format) {
+        if (!StringUtils.hasLength(format)) {
+            return;
+        }
         if (mdMapping.getConverter() == null) {
             if (format == null) {
                 format = valueLookup.lookupMetaDataFormat(name);

@@ -1,28 +1,23 @@
 <chapter id="core-osem">
-    <title>OSEM</title>
+  <title>OSEM</title>
 
-    <sect1 id="osem-introduction">
-        <title>Introduction</title>
+  <sect1 id="osem-introduction">
+    <title>Introduction</title>
 
-        <para>
-            Compass::Core provides the ability to map Java Objects to the underlying Search Engine through simple XML
-            mapping files, we call this technology OSEM (Object Search Engine Mapping). OSEM provides a rich syntax for
-            describing Object attributes and relationships. The OSEM files are used by Compass to extract the required
-            property from the Object model at run-time and inserting the required meta-data into the Search Engine
-            index.
-        </para>
+    <para>
+      Compass::Core provides the ability to map Java Objects to the underlying Search Engine through simple XML mapping files, we call this technology OSEM (Object Search Engine Mapping). OSEM provides a rich syntax for
+      describing Object attributes and relationships. The OSEM files are used by Compass to extract the required property from the Object model at run-time and inserting the required meta-data into the Search Engine index.
+    </para>
 
-    </sect1>
+  </sect1>
 
-    <sect1 id="SearchableClasses">
-        <title>Searchable Classes</title>
+  <sect1 id="SearchableClasses">
+    <title>Searchable Classes</title>
 
-        <para>
-            Searchable classes are normally classes representing the state of the application, implementing the entities
-            with the business model. Compass works best if the classes follow the simple Plain Old Java Object (POJO)
-            programming model. The following class is an example of a searchable class:
+    <para>
+      Searchable classes are normally classes representing the state of the application, implementing the entities with the business model. Compass works best if the classes follow the simple Plain Old Java Object (POJO) programming model. The following class is an example of a searchable class:
 
-            <programlisting><![CDATA[import java.util.Date;
+      <programlisting><![CDATA[import java.util.Date;
 import java.util.Set;
 
 public class Author {
@@ -68,89 +63,58 @@ public class Author {
       this.books.add(book);
    }
 } ]]></programlisting>
-        </para>
+    </para>
 
-        <para>
-            Compass works non-intrusive with application Objects, these Objects must follow several rules:
-        </para>
+    <para>
+      Compass works non-intrusive with application Objects, these Objects must follow several rules:
+    </para>
 
-        <sect2>
-            <title>Implement a Default Constructor</title>
+    <sect2>
+      <title>Implement a Default Constructor</title>
 
-            <para>
-                <literal>Author</literal>
-                has an implicit default (no-argument) constructor. All persistent classes must have a default
-                constructor (which may be non-public) so Compass::Core can instantiate using
-                <literal>Constructor.newInstance()</literal>
-                .
-            </para>
+      <para>
+        <literal>Author</literal> has an implicit default (no-argument) constructor. All persistent classes must have a default constructor (which may be non-public) so Compass::Core can instantiate using <literal>Constructor.newInstance()</literal>.
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2>
-            <title>Provide Property Identifier(s)</title>
+    <sect2>
+      <title>Provide Property Identifier(s)</title>
 
-            <para>
-                OSEM requires that any mapped Object will define one or more properties (JavaBean properties) that
-                identifies the class. The id properties can be called anything, and it's type can be any primitive type,
-                primitive "wrapper" type,
-                <literal>java.lang.String</literal>
-                or
-                <literal>java.util.Date</literal>
-                .
-            </para>
+      <para>
+        OSEM requires that any mapped Object will define one or more properties (JavaBean properties) that identifies the class. The id properties can be called anything, and it's type can be any primitive type, primitive "wrapper" type, <literal>java.lang.String</literal> or <literal>java.util.Date</literal>.
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2>
-            <title>Declare Accessors and Mutators (Optional)</title>
+    <sect2>
+      <title>Declare Accessors and Mutators (Optional)</title>
 
-            <para>
-                Even though Compass can directly persist instance variables, it is usually better to decouple this
-                implementation detail from the Search Engine mechanism. Compass::Core recognizes JavaBean style property
-                (
-                <literal>getFoo</literal>
-                ,
-                <literal>isFoo</literal>
-                , and
-                <literal>setFoo</literal>
-                ). This mechanism works with any level of visibility.
-            </para>
+      <para>
+        Even though Compass can directly persist instance variables, it is usually better to decouple this implementation detail from the Search Engine mechanism. Compass::Core recognizes JavaBean style property (<literal>getFoo</literal>, <literal>isFoo</literal>, and <literal>setFoo</literal>). This mechanism works with any level of visibility.
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2>
-            <title>Implementing equals() and hashCode()</title>
+    <sect2>
+      <title>Implementing equals() and hashCode()</title>
 
-            <para>
-                You have to override the
-                <literal>equals()</literal>
-                and
-                <literal>hashCode()</literal>
-                methods if you intend to mix objects of persistent classes (e.g. in a
-                <literal>Set</literal>
-                ). You can implement it by
-                using the identifier of both objects, but note that Compass::Core works best with surrogate identifier
-                (and will provide a way to automatically generate them), thus it is best to implement the methods using
-                business keys.
-            </para>
+      <para>
+        You have to override the <literal>equals()</literal> and <literal>hashCode()</literal> methods if you intend to mix objects of persistent classes (e.g. in a <literal>Set</literal>). You can implement it by
+        using the identifier of both objects, but note that Compass::Core works best with surrogate identifier (and will provide a way to automatically generate them), thus it is best to implement the methods using business keys.
+      </para>
 
-        </sect2>
+    </sect2>
 
-    </sect1>
+  </sect1>
 
-    <sect1 id="Mapping">
-        <title>Mapping</title>
+  <sect1 id="Mapping">
+    <title>Mapping</title>
 
-        <para>
-            Object/Search Engine mappings are defined in an XML document. The mapping language is Java centric, meaning
-            that mappings are constructed around the classes themselves and not internal
-            <literal>Resources</literal>
-            . A possible OSEM file for the previous
-            <literal>Author</literal>
-            class example follows:
+    <para>
+      Object/Search Engine mappings are defined in an XML document. The mapping language is Java centric, meaning that mappings are constructed around the classes themselves and not internal <literal>Resources</literal>.   A possible OSEM file for the previous <literal>Author</literal> class example follows:
 
-            <programlisting><![CDATA[<?xml version="1.0"?>
+     <programlisting><![CDATA[<?xml version="1.0"?>
 <!DOCTYPE compass-core-mapping PUBLIC
     "-//Compass/Compass Core Mapping DTD 1.0//EN"
     "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
@@ -192,122 +156,86 @@ public class Author {
 
 </compass-core-mapping>]]></programlisting>
 
-        </para>
+    </para>
 
-        <para>
-            The above example defines the mapping for
-            <literal>Author</literal>
-            and
-            <literal>Book</literal>
-            classes. It introduces some key Compass mapping concepts and syntax. Before explaining the concepts, it is
-            essential that the terminology used is clearly understood.
-        </para>
+    <para>
+      The above example defines the mapping for <literal>Author</literal> and <literal>Book</literal> classes.  It introduces some key Compass mapping concepts and syntax. Before explaining the concepts, it is essential that the terminology used is clearly understood.
+    </para>
 
-        <para>
-            The first issue to address is the usage of the term Property. Because of its common usage as a concept in
-            Java and Compass (to express Search Engine and Semantic terminology), special care has been taken to clearly
-            prefix the meaning. A class
-            <literal>Property</literal>
-            refers to a Java
-            class attribute. A
-            <literal>Resource Property</literal>
-            refers in Compass to Search Engine meta-data, which contains the values of the mapped class
-            <literal>Property</literal>
-            value. In previous OSEM example, the value of class
-            <literal>Property</literal>
-            "name" is mapped to two
-            <literal>Resource Property</literal>
-            instances called "name" and "authorname", each containing the value of the class
-            <literal>Property</literal>
-            "name".
-        </para>
+    <para>
+      The first issue to address is the usage of the term Property. Because of its common usage as a concept in Java and Compass (to express Search Engine and Semantic terminology), special care has been taken to clearly prefix the meaning. A class <literal>Property</literal> refers to a Java
+      class attribute. A <literal>Resource Property</literal> refers in Compass to Search Engine meta-data, which contains the values of the mapped class <literal>Property</literal> value. In previous OSEM example, the value of class <literal>Property</literal> "name" is mapped to two <literal>Resource Property</literal> instances called "name" and "authorname", each containing the value of the class <literal>Property</literal> "name".
+    </para>
 
-        <para>
-            The OSEM example above shows:
+    <para>
+      The OSEM example above shows:
 
-            <itemizedlist>
-                <listitem>
-                    <para>
-                        The unique class identifier, which maps to the "id" class property.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>
-                        Constant meta data, a feature that allows Compass to insert extra meta data and values (not
-                        expressed in the Object). Compass::Core will save the
-                        <literal>Resource Property</literal>
-                        "type" with the specified values "person" and "author".
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>
-                        The mappings for the class
-                        <literal>Property</literal>
-                        "name" saved with two
-                        <literal>Resource Property</literal>
-                        called "name" and "authorName".
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>
-                        A dependency between Author and Book managed using a
-                        <literal>component</literal>
-                        mapping.
-                    </para>
-                </listitem>
-            </itemizedlist>
-        </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            The unique class identifier, which maps to the "id" class property.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Constant meta data, a feature that allows Compass to insert extra meta data and values (not expressed in the Object). Compass::Core will save the <literal>Resource Property</literal> "type" with the specified values "person" and "author".</para>
+        </listitem>
+        <listitem>
+          <para>
+            The mappings for the class <literal>Property</literal> "name" saved with two <literal>Resource Property</literal> called "name" and "authorName".
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            A dependency between Author and Book managed using a <literal> component</literal> mapping.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </para>
 
-        <para>
-            Each of these concepts are explained in detail in the following sections.
-        </para>
+    <para>
+      Each of these concepts are explained in detail in the following sections.
+    </para>
 
-        <para>
-            All XML mappings should declare the doctype shown. The actual DTD may be found at the URL above, or in the
-            compass-core-x.x.x.jar. Compass will always look for the DTD in the classpath first.
-        </para>
+    <para>
+      All XML mappings should declare the doctype shown. The actual DTD may be found at the URL above, or in the compass-core-x.x.x.jar. Compass will always look for the DTD in the classpath first.
+    </para>
 
-        <sect2 id="compass-core-mapping">
-            <title>compass-core-mapping</title>
+    <sect2 id="compass-core-mapping">
+      <title>compass-core-mapping</title>
 
-            <para>
-                The main element which holds all the rest of the mappings definitions.
+      <para>
+        The main element which holds all the rest of the mappings definitions.
 
-                <programlisting><![CDATA[<compass-core-mapping package="packageName"/>
+        <programlisting><![CDATA[<compass-core-mapping package="packageName"/>
         ]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>package (optional)</entry>
-                                <entry>Specifies a package prefix for unqualified class names in the mapping
-                                    document.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>package (optional)</entry>
+                <entry>Specifies a package prefix for unqualified class names in the mapping document.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="class">
-            <title>class</title>
+    <sect2 id="class">
+      <title>class</title>
 
-            <para>
-                Declaring a searchable class using the
-                <literal>class</literal>
-                element.
-                <programlisting><![CDATA[<class
+      <para>
+          Declaring a searchable class using the <literal>class</literal> element.
+<programlisting><![CDATA[<class
         name="className"
         alias="alias"
         sub-index="sub index name"
@@ -328,189 +256,100 @@ public class Author {
     (property|component|reference|constant)*
 </class>]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>name</entry>
-                                <entry>The fully qualified class name (or relative if the package is declared in
-                                    <literal>compass-core-mapping</literal>
-                                    ).
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>alias</entry>
-                                <entry>The alias of the
-                                    <literal>Resource</literal>
-                                    that will be mapped to the class.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>sub-index (optional, defaults to the
-                                    <literal>alias</literal>
-                                    value)
-                                </entry>
-                                <entry>The name of the sub-index that the alias will map to.</entry>
-                            </row>
-                            <row>
-                                <entry>analyzer (optional, defaults to the
-                                    <literal>default</literal>
-                                    analyzer)
-                                </entry>
-                                <entry>The name of the analyzer that will be used to analyze
-                                    <literal>TOKENIZED</literal>
-                                    properties. Defaults to the
-                                    <literal>default</literal>
-                                    analyzer which is one of the internal analyzers that comes with Compass. Note, that
-                                    when using the
-                                    <literal>analyzer</literal>
-                                    mapping (a child mapping of class mapping) (for a property value that controls the
-                                    analyzer), the analyzer attribute will have no effects.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>root (optional, defaults to
-                                    <literal>true</literal>
-                                    )
-                                </entry>
-                                <entry>Specifies if the class is a "root" class or not.</entry>
-                            </row>
-                            <row>
-                                <entry>poly (optional, defaults to
-                                    <literal>false</literal>
-                                    )
-                                </entry>
-                                <entry>Specifies if the class will be enabled to support polymorphism.</entry>
-                            </row>
-                            <row>
-                                <entry>extends (optional)</entry>
-                                <entry>A comma seperated list of aliases to extend. Can extend a
-                                    <literal>class</literal>
-                                    mapping or a
-                                    <literal>contract</literal>
-                                    mapping. Note that can extend more than one
-                                    <literal>class/contract</literal>
-                                </entry>
-                                mapping.
-                            </row>
-                            <row>
-                                <entry>boost (optional, defaults to
-                                    <literal>1.0</literal>
-                                    )
-                                </entry>
-                                <entry>Specifies the boost level for the class.</entry>
-                            </row>
-                            <row>
-                                <entry>all (optional, defaults to
-                                    <literal>true</literal>
-                                    )
-                                </entry>
-                                <entry>Specifies if the class will support the "all" feature.</entry>
-                            </row>
-                            <row>
-                                <entry>all-term-vector (optional, defaults to configuration setting
-                                    <literal>compass.property.all.termVector</literal>
-                                    )
-                                </entry>
-                                <entry>The term vector value of the all property.</entry>
-                            </row>
-                            <row>
-                                <entry>all-metadata (optional, defaults to configuration setting
-                                    <literal>compass.property.all</literal>
-                                    )
-                                </entry>
-                                <entry>The name of the all property.</entry>
-                            </row>
-                            <row>
-                                <entry>all-analyzer (optional, defaults to configuration setting
-                                    <literal>compass.engine.all.analyzer</literal>
-                                    , which in turn, defaults to the
-                                    <literal>default</literal>
-                                    analyzer)
-                                </entry>
-                                <entry>The name of the analyzer that will be used to analyze the all property.</entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>name</entry>
+              <entry>The fully qualified class name (or relative if the package is declared in <literal>compass-core-mapping</literal>).</entry>
+            </row>
+            <row>
+              <entry>alias</entry>
+              <entry>The alias of the <literal>Resource</literal> that will be mapped to the class.</entry>
+            </row>
+            <row>
+              <entry>sub-index (optional, defaults to the <literal>alias</literal> value)</entry>
+              <entry>The name of the sub-index that the alias will map to.</entry>
+            </row>
+            <row>
+              <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
+              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>analyzer</literal> mapping (a child mapping of class mapping) (for a property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
+            </row>
+            <row>
+              <entry>root (optional, defaults to <literal>true</literal>)</entry>
+              <entry>Specifies if the class is a "root" class or not.</entry>
+            </row>
+            <row>
+              <entry>poly (optional, defaults to <literal>false</literal>)</entry>
+              <entry>Specifies if the class will be enabled to support polymorphism.</entry>
+            </row>
+            <row>
+              <entry>extends (optional)</entry>
+              <entry>A comma seperated list of aliases to extend. Can extend a <literal>class</literal> mapping or a <literal>contract</literal> mapping. Note that can extend more than one <literal>class/contract</literal></entry> mapping.
+            </row>
+            <row>
+              <entry>boost (optional, defaults to <literal>1.0</literal>)</entry>
+              <entry>Specifies the boost level for the class.</entry>
+            </row>
+            <row>
+              <entry>all (optional, defaults to <literal>true</literal>)</entry>
+              <entry>Specifies if the class will support the "all" feature.</entry>
+            </row>
+            <row>
+              <entry>all-term-vector (optional, defaults to configuration setting <literal>compass.property.all.termVector</literal>)</entry>
+              <entry>The term vector value of the all property.</entry>
+            </row>
+            <row>
+              <entry>all-metadata (optional, defaults to configuration setting <literal>compass.property.all</literal>)</entry>
+              <entry>The name of the all property.</entry>
+            </row>
+            <row>
+              <entry>all-analyzer (optional, defaults to configuration setting <literal>compass.engine.all.analyzer</literal>, which in turn, defaults to the <literal>default</literal> analyzer)</entry>
+              <entry>The name of the analyzer that will be used to analyze the all property.</entry>
+            </row>
+            <row>
+              <entry>converter (optional)</entry>
+              <entry>The global converter lookup name registered with the configuration.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
 
-                <para>
-                    Root classes have their own index within the search engine index directory. Classes with a
-                    dependency to Root class, that don't require an index (i.e. component) should set
-                    <literal>root</literal>
-                    to false. You can control the sub-index that the root classes will map to using
-                    the
-                    <literal>sub-index</literal>
-                    attribute, otherwise it will create a sub-index based on the alias name.
-                </para>
+        <para>
+          Root classes have their own index within the search engine index directory. Classes with a dependency to Root class, that don't require an index (i.e. component) should set <literal>root</literal> to false. You can control the sub-index that the root classes will map to using
+          the <literal>sub-index</literal> attribute, otherwise it will create a sub-index based on the alias name.
+        </para>
 
-                <para>
-                    If the class can be mapped to several classes (i.e. it is an interface or an abstract class), than
-                    set
-                    <literal>poly</literal>
-                    to
-                    <literal>true</literal>
-                    . This means Compass will persist the fully qualified class in the index.
-                </para>
+        <para>
+          If the class can be mapped to several classes (i.e. it is an interface or an abstract class), than set <literal>poly</literal> to <literal>true</literal>. This means Compass will persist the fully qualified class in the index.
+        </para>
 
-                <para>
-                    You can set the boost level at the class level, which is applied to all class meta data (override by
-                    specifying at meta data level).
-                </para>
+        <para>
+          You can set the boost level at the class level, which is applied to all class meta data (override by specifying at meta data level).
+        </para>
 
-                <para>
-                    The
-                    <literal>class</literal>
-                    mapping can extend other
-                    <literal>class</literal>
-                    mappings (more than one), as well as
-                    <literal>contract</literal>
-                    mappings. All the mappings that are defined within the
-                    <literal>class</literal>
-                    mapping or the
-                    <literal>contract</literal>
-                    mapping will be inherited from the extended mappings. You can add any defined mappings by defining
-                    the same mappings in the
-                    <literal>class</literal>
-                    mappings, except for id mappings, which will be overridden. Note that any xml attributes (like root,
-                    sub-index, ...) that are defined within the extended mappings are not inherited.
-                </para>
+        <para>
+          The <literal>class</literal> mapping can extend other <literal>class</literal> mappings (more than one), as well as <literal>contract</literal> mappings. All the mappings that are defined within the <literal>class</literal> mapping or the <literal>contract</literal> mapping will be inherited from the extended mappings. You can add any defined mappings by defining the same mappings in the <literal>class</literal> mappings, except for id mappings, which will be overridden. Note that any xml attributes (like root, sub-index, ...) that are defined within the extended mappings are not inherited.
+        </para>
 
-                <para>
-                    The default behavior of the searchable class will support the "all" feature, which means that
-                    compass will create an "all" meta-data which represents all the other meta-data (with several
-                    exceptions, like
-                    <literal>Reader</literal>
-                    class property). The name of the "all" meta-data will default to the compass setting, but you can
-                    also set it using the
-                    <literal>all-metadata</literal>
-                    attribute.
-                </para>
+        <para>
+          The default behavior of the searchable class will support the "all" feature, which means that compass will create an "all" meta-data which represents all the other meta-data (with several exceptions, like
+          <literal>Reader</literal> class property). The name of the "all" meta-data will default to the compass setting, but you can also set it using the <literal>all-metadata</literal> attribute.
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="contract">
-            <title>contract</title>
+    <sect2 id="contract">
+      <title>contract</title>
 
-            <para>
-                Declaring a searchable contract using the
-                <literal>contract</literal>
-                element.
-                <programlisting><![CDATA[<contract
+      <para>
+        Declaring a searchable contract using the <literal>contract</literal> element.
+<programlisting><![CDATA[<contract
         alias="alias"
 >
     (id)*,
@@ -518,55 +357,39 @@ public class Author {
     (property|component|reference|constant)*
 </contract>]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>alias</entry>
-                                <entry>The alias of the contract. Will be used as the alias name in the
-                                    <literal>class</literal>
-                                    mapping extended attribute
-                                </entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+              <row>
+                  <entry>alias</entry>
+                  <entry>The alias of the contract. Will be used as the alias name in the <literal>class</literal> mapping extended attribute</entry>
+              </row>
+          </tbody>
+        </tgroup></table>
 
-                <para>
-                    A contract acts as an interface in the Java language. You can define the same mappings within it
-                    that you can define in the
-                    <literal>class</literal>
-                    mapping, without defining the class that it will map to.
-                </para>
+        <para>
+          A contract acts as an interface in the Java language. You can define the same mappings within it that you can define in the <literal>class</literal> mapping, without defining the class that it will map to.
+        </para>
 
-                <para>
-                    If you have several classes that have similar properties, you can define a
-                    <literal>contract</literal>
-                    that joins the properties definition, and than extend the contract within the mapped classes (even
-                    if you don't have a concrete interface or class in your Java definition).
-                </para>
+        <para>
+          If you have several classes that have similar properties, you can define a <literal>contract</literal> that joins the properties definition, and than extend the contract within the mapped classes (even if you don't have a concrete interface or class in your Java definition).
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="id">
-            <title>id</title>
+    <sect2 id="id">
+      <title>id</title>
 
-            <para>
-                Declaring a searchable id class property (a.k.a JavaBean property) of a class using the
-                <literal>id</literal>
-                element.
+      <para>
+        Declaring a searchable id class property (a.k.a JavaBean property) of a class using the <literal>id</literal> element.
 
-                <programlisting><![CDATA[<id
+<programlisting><![CDATA[<id
       name="property name"
       accessor="property|field"
       boost="boost value for the class property"
@@ -579,145 +402,63 @@ public class Author {
 </id>
 ]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>name</entry>
-                                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase
-                                    letter.</entry>
-                            </row>
-                            <row>
-                                <entry>accessor (optional, defaults to
-                                    <literal>property</literal>
-                                    )
-                                </entry>
-                                <entry>The strategy to access the class property value.
-                                    <literal>property</literal>
-                                    access using the Java Bean accessor methods, while
-                                    <literal>field</literal>
-                                    directly access the class fields.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>boost (optional, default to
-                                    <literal>1.0f</literal>
-                                    )
-                                </entry>
-                                <entry>The boost level that will be propagated to all the meta-data defined within the
-                                    id.</entry>
-                            </row>
-                            <row>
-                                <entry>class (optional)</entry>
-                                <entry>An explicit definition of the class of the property, helps for certain
-                                    converters.</entry>
-                            </row>
-                            <row>
-                                <entry>managed-id (optional, defaults to
-                                    <literal>auto</literal>
-                                    )
-                                </entry>
-                                <entry>The strategy for creating or using a class property meta-data id (which maps to a
-                                    <literal>Resource</literal>
-                                    <literal>Property</literal>
-                                    ).
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>exclude-from-all (optional, defaults to
-                                    <literal>false</literal>
-                                    )
-                                </entry>
-                                <entry>Excludes the class property from participating in the "all" meta-data, unless
-                                    specified in the meta-data level.</entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+            <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>name</entry>
+              <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+            </row>
+            <row>
+              <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+              <entry>The strategy to access the class property value. <literal>property</literal> access using the Java Bean accessor methods, while <literal>field</literal> directly access the class fields.</entry>
+            </row>
+            <row>
+              <entry>boost (optional, default to <literal>1.0f</literal>)</entry>
+              <entry>The boost level that will be propagated to all the meta-data defined within the id.</entry>
+            </row>
+            <row>
+              <entry>class (optional)</entry>
+              <entry>An explicit definition of the class of the property, helps for certain converters.</entry>
+            </row>
+            <row>
+              <entry>managed-id (optional, defaults to <literal>auto</literal>)</entry>
+              <entry>The strategy for creating or using a class property meta-data id (which maps to a <literal>Resource</literal> <literal>Property</literal>).</entry>
+            </row>
+            <row>
+              <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
+              <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level.</entry>
+            </row>
+            <row>
+              <entry>converter (optional)</entry>
+              <entry>The global converter lookup name registered with the configuration.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
 
-                <para>
-                    The id mapping is used to map the class property that identifies the class. You can define several
-                    id properties, even though we recommend using one. You can use the id mapping for all the Java
-                    primitive types (i.e.
-                    <literal>int</literal>
-                    ), Java primitive wrapper types (i.e.
-                    <literal>Integer</literal>
-                    ) and the
-                    <literal>String</literal>
-                    type.
-                </para>
+        <para>
+          The id mapping is used to map the class property that identifies the class. You can define several id properties, even though we recommend using one. You can use the id mapping for all the Java primitive types (i.e. <literal>int</literal>), Java primitive wrapper types (i.e. <literal>Integer</literal>) and the <literal>String</literal> type.
+        </para>
 
-                <para>
-                    Compass::Core requires that
-                    <literal>id</literal>
-                    and
-                    <literal>property</literal>
-                    mappings will be identifiable on the root class (
-                    <literal>Resource</literal>
-                    ) level. Compass does that by either using one of the
-                    <literal>meta-data</literal>
-                    names (which is unique within ALL of the
-                    <literal>meta-data</literal>
-                    in the
-                    <literal>class</literal>
-                    mapping), or creating an internal one. Compass will create an internal one if no
-                    <literal>meta-data</literal>
-                    is defined in the
-                    <literal>id</literal>
-                    or
-                    <literal>property</literal>
-                    mapping. You can control it by using the
-                    <literal>managed-id</literal>
-                    , the value
-                    <literal>auto</literal>
-                    leaves the id assignment / creation as Compass's responsibility. Compass will analyse all the
-                    different meta-data defined in the mappings and will decide if it needs to create an internal id for
-                    an
-                    <literal>id</literal>
-                    or a
-                    <literal>property</literal>
-                    mapping. The
-                    <literal>true</literal>
-                    option will always create an internal id for the
-                    <literal>id</literal>
-                    or
-                    <literal>property</literal>
-                    and the
-                    <literal>false</literal>
-                    option will always take the first
-                    <literal>meta-data</literal>
-                    and use it as the
-                    <literal>id</literal>
-                    or
-                    <literal>property</literal>
-                    id.
-                </para>
+        <para>
+          Compass::Core requires that <literal>id</literal> and <literal>property</literal> mappings will be identifiable on the root class (<literal>Resource</literal>) level. Compass does that by either using one of the <literal>meta-data</literal> names (which is unique within ALL of the <literal>meta-data</literal> in the <literal>class</literal> mapping), or creating an internal one. Compass will create an internal one if no <literal>meta-data</literal> is defined in the <literal>id</literal> or <literal>property</literal> mapping. You can control it by using the <literal>managed-id</literal>, the value <literal>auto</literal> leaves the id assignment / creation as Compass's responsibility. Compass will analyse all the different meta-data defined in the mappings and will decide if it needs to create an internal id for an <literal>id</literal> or a <literal>property</literal> mapping. The <literal>true</literal> option will always create an internal id for the <literal>id</literal> or <literal>property</literal> and the <literal>false</literal> option will always take the first <literal>meta-data</literal> and use it as the <literal>id</literal> or <literal>property</literal> id.
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="property">
-            <title>property</title>
+    <sect2 id="property">
+      <title>property</title>
 
-            <para>
-                Declaring a searchable class property (a.k.a JavaBean property) of a class using the
-                <literal>property</literal>
-                element.
+      <para>
+        Declaring a searchable class property (a.k.a JavaBean property) of a class using the <literal>property</literal> element.
 
-                <programlisting><![CDATA[<property
+<programlisting><![CDATA[<property
       name="property name"
       accessor="property|field"
       boost="boost value for the property"
@@ -732,175 +473,89 @@ public class Author {
    (meta-data)*
 </property>]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>name</entry>
-                                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase
-                                    letter.</entry>
-                            </row>
-                            <row>
-                                <entry>accessor (optional, defaults to
-                                    <literal>property</literal>
-                                    )
-                                </entry>
-                                <entry>The strategy to access the class property value.
-                                    <literal>property</literal>
-                                    means accessing using the Java Bean accessor methods, while
-                                    <literal>field</literal>
-                                    directly accesses the class fields.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>boost (optional, default to
-                                    <literal>1.0f</literal>
-                                    )
-                                </entry>
-                                <entry>The boost level that will be propagated to all the meta-data defined within the
-                                    class property.</entry>
-                            </row>
-                            <row>
-                                <entry>class (optional)</entry>
-                                <entry>An explicit definition of the class of the property, helps for certain converters
-                                    (especially for
-                                    <literal>java.util.Collection</literal>
-                                    type properties).
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>analyzer (optional, defaults to the class mapping analyzer decision
-                                    scheme)</entry>
-                                <entry>The name of the analyzer that will be used to analyze
-                                    <literal>TOKENIZED</literal>
-                                    meta-data mappings defined for the given property. Defaults to the class mapping
-                                    analyzer decision scheme based on the analyzer set, or the
-                                    <literal>analyzer</literal>
-                                    mapping property.
-                                </entry>
-                                .
-                            </row>
-                            <row>
-                                <entry>col-class (optional)</entry>
-                                <entry>The collection class that will be used when un-marshaling. Serves two purposes,
-                                    improve performance since Compass::Core does not need to save the collection class,
-                                    and in case of collection proxies, you might need to defined the actual collection
-                                    (i.e. in case of Hibernate). Only applies if mapping to a
-                                    <literal>java.util.Collection</literal>
-                                    and it's implementations.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>override (optional, defaults to
-                                    <literal>true</literal>
-                                    )
-                                </entry>
-                                <entry>If there is another definition with the same mapping name, if it will be
-                                    overridden or added as additional mapping. Mainly used to override definitions made
-                                    in extended mappings.</entry>
-                            </row>
-                            <row>
-                                <entry>managed-id (optional, defaults to
-                                    <literal>auto</literal>
-                                    )
-                                </entry>
-                                <entry>The strategy for creating or using a class property meta-data id (which maps to a
-                                    <literal>Resource</literal>
-                                    <literal>Property</literal>
-                                    .
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>managed-id-index (optional, defaults to
-                                    <literal>compass.managedId.index</literal>
-                                    setting, which defaults to
-                                    <literal>no</literal>
-                                    )
-                                </entry>
-                                <entry>Can be either
-                                    <literal>un_tokenized</literal>
-                                    or
-                                    <literal>no</literal>
-                                    . It is the index setting that will be used when creating an internal managed id for
-                                    a class property mapping (if it is not a property id, if it is, it will always be
-                                    <literal>un_tokenized</literal>
-                                    ).
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>exclude-from-all (optional, defaults to
-                                    <literal>false</literal>
-                                    )
-                                </entry>
-                                <entry>Excludes the class property from participating in the "all" meta-data, unless
-                                    specified in the meta-data level.</entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> means accessing using the Java Bean accessor methods, while <literal>field</literal> directly accesses the class fields.</entry>
+              </row>
+              <row>
+                <entry>boost (optional, default to <literal>1.0f</literal>)</entry>
+                <entry>The boost level that will be propagated to all the meta-data defined within the class property.</entry>
+              </row>
+              <row>
+                <entry>class (optional)</entry>
+                <entry>An explicit definition of the class of the property, helps for certain converters (especially for <literal>java.util.Collection</literal> type properties).</entry>
+              </row>
+              <row>
+                <entry>analyzer (optional, defaults to the class mapping analyzer decision scheme)</entry>
+                <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data mappings defined for the given property. Defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+              </row>
+              <row>
+                <entry>col-class (optional)</entry>
+                <entry>The collection class that will be used when un-marshaling. Serves two purposes, improve performance since Compass::Core does not need to save the collection class, and in case of collection proxies, you might need to defined the actual collection (i.e. in case of Hibernate). Only applies if mapping to a <literal>java.util.Collection</literal> and it's implementations.</entry>
+              </row>
+              <row>
+                <entry>override (optional, defaults to <literal>true</literal>)</entry>
+                <entry>If there is another definition with the same mapping name, if it will be overridden or added as additional mapping. Mainly used to override definitions made in extended mappings.</entry>
+              </row>
+              <row>
+                <entry>managed-id (optional, defaults to <literal>auto</literal>)</entry>
+                <entry>The strategy for creating or using a class property meta-data id (which maps to a <literal>Resource</literal> <literal>Property</literal>.</entry>
+              </row>
+              <row>
+                <entry>managed-id-index (optional, defaults to <literal>compass.managedId.index</literal> setting, which defaults to <literal>no</literal>)</entry>
+                <entry>Can be either <literal>un_tokenized</literal> or <literal>no</literal>. It is the index setting that will be used when creating an internal managed id for a class property mapping (if it is not a property id, if it is, it will always be <literal>un_tokenized</literal>).</entry>
+              </row>
+              <row>
+                <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
+                <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
-                <para>
-                    Compass::Core maps a class property to a set of meta-data (
-                    <literal>Resource Property</literal>
-                    ).
-                </para>
+        <para>
+          Compass::Core maps a class property to a set of meta-data (<literal>Resource Property</literal>).
+        </para>
 
-                <para>
-                    You can map all internal Java primitive data types, primitive wrappers and most of the common Java
-                    classes (i.e.
-                    <literal>Date</literal>
-                    and
-                    <literal>Calendar</literal>
-                    ). You can also map Arrays and Collections of these data types. When mapping a
-                    <literal>Collection</literal>
-                    , you must specify the object class (like
-                    <literal>java.lang.String</literal>
-                    ) in the class mapping property.
-                </para>
+        <para>
+          You can map all internal Java primitive data types, primitive wrappers and most of the common Java classes (i.e. <literal>Date</literal> and <literal>Calendar</literal>). You can also map Arrays and Collections of these data types. When mapping a <literal>Collection</literal>, you must specify the object class (like <literal>java.lang.String</literal>) in the class mapping property.
+        </para>
 
-                <para>
-                    The same rules for managed-id that apply for the
-                    <literal>id</literal>
-                    mapping, also applies for
-                    <literal>property</literal>
-                    mappings.
-                </para>
+        <para>
+          The same rules for managed-id that apply for the <literal>id</literal> mapping, also applies for <literal>property</literal> mappings.
+        </para>
 
-                <para>
-                    Note, that you can define a property with no
-                    <literal>meta-data</literal>
-                    mapping within it. It means that it will not be searchable, but the property value will be stored
-                    when persisting the object to the search engine, and it will be loaded from it as well (unless it is
-                    of type
-                    <literal>java.io.Reader</literal>
-                    ).
-                </para>
+        <para>
+          Note, that you can define a property with no <literal>meta-data</literal> mapping within it. It means that it will not be searchable, but the property value will be stored when persisting the object to the search engine, and it will be loaded from it as well (unless it is of type <literal>java.io.Reader</literal>).
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="analyzer">
-            <title>analyzer</title>
+    <sect2 id="analyzer">
+      <title>analyzer</title>
 
-            <para>
-                Declaring an analyzer controller property (a.k.a JavaBean property) of a class using the
-                <literal>analyzer</literal>
-                element.
+      <para>
+        Declaring an analyzer controller property (a.k.a JavaBean property) of a class using the <literal>analyzer</literal> element.
 
-                <programlisting><![CDATA[<analyzer
+<programlisting><![CDATA[<analyzer
       name="property name"
       null-analyzer="analyzer name if value is null"
       accessor="property|field"
@@ -908,93 +563,53 @@ public class Author {
 >
 </analyzer>]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>name</entry>
-                                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase
-                                    letter.</entry>
-                            </row>
-                            <row>
-                                <entry>accessor (optional, defaults to
-                                    <literal>property</literal>
-                                    )
-                                </entry>
-                                <entry>The strategy to access the class property value.
-                                    <literal>property</literal>
-                                    means accessing using the Java Bean accessor methods, while
-                                    <literal>field</literal>
-                                    directly accesses the class fields.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>null-analyzer (optional, defaults to error in case of a
-                                    <literal>null</literal>
-                                    value)
-                                </entry>
-                                <entry>The name of the analyzer that will be used if the property has the
-                                    <literal>null</literal>
-                                    value.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> means accessing using the Java Bean accessor methods, while <literal>field</literal> directly accesses the class fields.</entry>
+              </row>
+              <row>
+                <entry>null-analyzer (optional, defaults to error in case of a <literal>null</literal> value)</entry>
+                <entry>The name of the analyzer that will be used if the property has the <literal>null</literal> value.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
-                <para>
-                    The analyzer class property mapping, controls the analyzer that will be used when indexing the class
-                    data (the underlying
-                    <literal>Resource</literal>
-                    ). If the mapping is defined, it will override the class mapping analyzer attribute setting.
-                </para>
+        <para>
+          The analyzer class property mapping, controls the analyzer that will be used when indexing the class data (the underlying <literal>Resource</literal>). If the mapping is defined, it will override the class mapping analyzer attribute setting.
+        </para>
 
-                <para>
-                    If, for example, Compass is configured to have two additional analyzers, called
-                    <literal>an1</literal>
-                    (and have settings in the form of
-                    <literal>compass.engine.analyzer.an1.*</literal>
-                    ), and another called
-                    <literal>an2</literal>
-                    . The values that the class property can hold are:
-                    <literal>default</literal>
-                    (which is an internal Compass analyzer, that can be configured as well),
-                    <literal>an1</literal>
-                    and
-                    <literal>an2</literal>
-                    . If the analyzer will have a
-                    <literal>null</literal>
-                    value, and it is applicable with the application, than a
-                    <literal>null-analyzer</literal>
-                    can be configured that will be used in that case. If the class property has a value, but there is
-                    not matching analyzer, an exception will be thrown.
-                </para>
+        <para>
+          If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the class property can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, than a <literal>null-analyzer</literal> can be configured that will be used in that case. If the class property has a value, but there is not matching analyzer, an exception will be thrown.
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="meta-data">
-            <title>meta-data</title>
+    <sect2 id="meta-data">
+      <title>meta-data</title>
 
-            <para>
-                Declaring and using the
-                <literal>meta-data</literal>
-                element.
+      <para>
+        Declaring and using the <literal>meta-data</literal> element.
 
-                <programlisting><![CDATA[<meta-data
+ <programlisting><![CDATA[<meta-data
       store="yes|no|compress"
       index="tokenized|un_tokenized|no"
       boost="boost value for the meta-data"
@@ -1006,138 +621,68 @@ public class Author {
 >
 </meta-data>]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>store (optional, defaults to
-                                    <literal>yes</literal>
-                                    )
-                                </entry>
-                                <entry>If the value of the class property that the meta-data maps to, is going to be
-                                    stored in the index.</entry>
-                            </row>
-                            <row>
-                                <entry>index (optional, defaults to
-                                    <literal>tokenized</literal>
-                                    )
-                                </entry>
-                                <entry>If the value of the class property that the meta-data maps to, is going to be
-                                    indexed (searchable). If it does, than controls if the value is going to be broken
-                                    down and analysed
-                                    (
-                                    <literal>tokenized</literal>
-                                    ), or is going to be used as is (
-                                    <literal>un_tokenized</literal>
-                                    ).
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>boost (optional, defaults to
-                                    <literal>1.0f</literal>
-                                    )
-                                </entry>
-                                <entry>Controls the boost level for the
-                                    <literal>meta-data</literal>
-                                    .
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>analyzer (optional, defaults to the parent analyzer)</entry>
-                                <entry>The name of the analyzer that will be used to analyze
-                                    <literal>TOKENIZED</literal>
-                                    meta-data. Defaults to the parent property mapping, which in turn defaults to the
-                                    class mapping analyzer decision scheme based on the analyzer set, or the
-                                    <literal>analyzer</literal>
-                                    mapping property.
-                                </entry>
-                                .
-                            </row>
-                            <row>
-                                <entry>reverse (optional, defaults to
-                                    <literal>no</literal>
-                                    )
-                                </entry>
-                                <entry>The meta-data will have it's value reversed. Can have the values of
-                                    <literal>no</literal>
-                                    - no reverse will happen,
-                                    <literal>string</literal>
-                                    - the reverse will happen and the value stored will be a reversed string, and
-                                    <literal>reader</literal>
-                                    - a special reader will wrap the string and reverse it. The
-                                    <literal>reader</literal>
-                                    option is more perform ant, but the
-                                    <literal>store</literal>
-                                    and
-                                    <literal>index</literal>
-                                    settings will be discarded.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>exclude-from-all (optional, defaults to the parent's
-                                    <literal>exclude-from-all</literal>
-                                    value)
-                                </entry>
-                                <entry>Excludes the meta-data from participating in the "all" meta-data.</entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                            <row>
-                                <entry>format (optional)</entry>
-                                <entry>Allows for quickly setting a format for format-able types (dates, and numbers),
-                                    without creating/registering a specialized converter under a lookup name.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>store (optional, defaults to <literal>yes</literal>)</entry>
+              <entry>If the value of the class property that the meta-data maps to, is going to be stored in the index.</entry>
+            </row>
+            <row>
+              <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
+              <entry>If the value of the class property that the meta-data maps to, is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analysed
+              (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+            </row>
+            <row>
+              <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
+              <entry>Controls the boost level for the <literal>meta-data</literal>.</entry>
+            </row>
+            <row>
+              <entry>analyzer (optional, defaults to the parent analyzer)</entry>
+              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+            </row>
+            <row>
+              <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
+              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more perform ant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
+            </row>
+            <row>
+              <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
+              <entry>Excludes the meta-data from participating in the "all" meta-data.</entry>
+            </row>
+            <row>
+              <entry>converter (optional)</entry>
+              <entry>The global converter lookup name registered with the configuration.</entry>
+            </row>
+            <row>
+              <entry>format (optional)</entry>
+              <entry>Allows for quickly setting a format for format-able types (dates, and numbers), without creating/registering a specialized converter under a lookup name.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
 
-                <para>
-                    The element
-                    <literal>meta-data</literal>
-                    is a
-                    <literal>Property</literal>
-                    within a
-                    <literal>Resource</literal>
-                    .
-                </para>
+        <para>
+          The element <literal>meta-data</literal> is a <literal>Property</literal> within a <literal>Resource</literal>.
+        </para>
 
-                <para>
-                    You can control the format of the marshalled values when mapping a
-                    <literal>java.lang.Number</literal>
-                    (or the equivalent primitive value) using the format provided by the
-                    <literal>java.text.DecimalFormat</literal>
-                    . You can also format a
-                    <literal>java.util.Date</literal>
-                    using the format provided by
-                    <literal>java.text.SimpleDateFormat</literal>
-                    . You set the format string in the
-                    <literal>format</literal>
-                    attribute.
-                </para>
+        <para>
+          You can control the format of the marshalled values when mapping a <literal>java.lang.Number</literal> (or the equivalent primitive value) using the format provided by the <literal>java.text.DecimalFormat</literal>. You can also format a <literal>java.util.Date</literal> using the format provided by <literal>java.text.SimpleDateFormat</literal>. You set the format string in the <literal>format</literal> attribute.
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="component">
-            <title>component</title>
+    <sect2 id="component">
+      <title>component</title>
 
-            <para>
-                Declaring and using the
-                <literal>component</literal>
-                element.
+      <para>
+        Declaring and using the <literal>component</literal> element.
 
-                <programlisting><![CDATA[<component
+<programlisting><![CDATA[<component
       name="the class property name"
       ref-alias="name of the alias"
       accessor="property|field"
@@ -1145,108 +690,70 @@ public class Author {
 >
 </component>]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>name</entry>
-                                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase
-                                    letter.</entry>
-                            </row>
-                            <row>
-                                <entry>ref-alias</entry>
-                                <entry>The class mapping alias that defines the component.</entry>
-                            </row>
-                            <row>
-                                <entry>col-class (optional)</entry>
-                                <entry>The collection class that will be used when un-marshaling. Serves two purposes,
-                                    improve performance since Compass::Core does not need to save the collection class,
-                                    and in case of collection proxies, you might need to defined the actual collection
-                                    (i.e. in case of Hibernate). Only applies if mapping to a
-                                    <literal>java.util.Collection</literal>
-                                    and it's
-                                    implementations.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>override (optional, defaults to
-                                    <literal>true</literal>
-                                    )
-                                </entry>
-                                <entry>If there is another definition with the same mapping name, if it will be
-                                    overridden or added as additional mapping. Mainly used to override definitions made
-                                    in extended mappings.</entry>
-                            </row>
-                            <row>
-                                <entry>accessor (optional, defaults to
-                                    <literal>property</literal>
-                                    )
-                                </entry>
-                                <entry>The strategy to access the class property value.
-                                    <literal>property</literal>
-                                    access using the Java Bean accessor methods, while
-                                    <literal>field</literal>
-                                    directly access the class fields.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>ref-alias (optional)</entry>
+                <entry>The class mapping alias that defines the component. This is an optional attribute since under some conditions, compass can infer the correct reference alias.</entry>
+              </row>
+              <row>
+                <entry>col-class (optional)</entry>
+                <entry>The collection class that will be used when un-marshaling. Serves two purposes, improve performance since Compass::Core does not need to save the collection class, and in case of collection proxies, you might need to defined the actual collection (i.e. in case of Hibernate). Only applies if mapping to a <literal>java.util.Collection</literal> and it's
+                implementations.</entry>
+              </row>
+              <row>
+                <entry>override (optional, defaults to <literal>true</literal>)</entry>
+                <entry>If there is another definition with the same mapping name, if it will be overridden or added as additional mapping. Mainly used to override definitions made in extended mappings.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> access using the Java Bean accessor methods, while <literal>field</literal> directly access the class fields.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
-                <para>
-                    The component element defines a class dependency within the root class. The dependency name is
-                    identified by the
-                    <literal>ref-alias</literal>
-                    , which can be non-rootable or have no
-                    <literal>id</literal>
-                    mappings.
-                </para>
+        <para>
+          The component element defines a class dependency within the root class. The dependency name is identified by the <literal>ref-alias</literal>, which can be non-rootable or have no <literal>id</literal> mappings.
+        </para>
 
-                <para>
-                    An embedded class means that all the mappings (meta-data values) defined in the referenced class are
-                    stored within the alias of the root class. It means that a search that will hit one of the component
-                    mapped meta-datas, will return it's owning class.
-                </para>
+        <para>
+          An embedded class means that all the mappings (meta-data values) defined in the referenced class are stored within the alias of the root class. It means that a search that will hit one of the component mapped meta-datas, will return it's owning class.
+        </para>
 
-                <para>
-                    The type of the JavaBean property can be the class mapping class itself, an
-                    <literal>Array</literal>
-                    or
-                    <literal>Collection</literal>
-                    .
-                </para>
+        <para>
+          The type of the JavaBean property can be the class mapping class itself, an <literal>Array</literal> or <literal>Collection</literal>.
+        </para>
 
-                <para>
-                    Support for cyclic mapping (from one component to it's parent class) is implemented using the
-                    <literal>parent</literal>
-                    mapping.
-                </para>
+        <para>
+          Support for cyclic mapping (from one component to it's parent class) is implemented using the <literal>parent</literal> mapping.
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="reference">
-            <title>reference</title>
+    <sect2 id="reference">
+      <title>reference</title>
 
-            <para>
-                Declaring and using the
-                <literal>reference</literal>
-                element.
+      <para>
+        Declaring and using the <literal>reference</literal> element.
 
-                <programlisting><![CDATA[<reference
+ <programlisting><![CDATA[<reference
         name="the class property name"
         ref-alias="name of the alias"
         ref-comp-alias="name of an optional alias mapped as component"
@@ -1256,105 +763,70 @@ public class Author {
 </reference>
 ]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>name</entry>
-                                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase
-                                    letter.</entry>
-                            </row>
-                            <row>
-                                <entry>ref-alias</entry>
-                                <entry>The class mapping alias that defines the reference.</entry>
-                            </row>
-                            <row>
-                                <entry>col-class (optional)</entry>
-                                <entry>The collection class that will be used when un-marshaling. Serves two purposes,
-                                    improve performance since Compass::Core does not need to save the collection class,
-                                    and
-                                    in case of collection proxies, you might need to defined the actual collection (i.e.
-                                    in case of Hibernate). Only applies if mapping to a
-                                    <literal>java.util.Collection</literal>
-                                    and it's implementations.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>ref-comp-alias</entry>
-                                <entry>The class mapping alias that defines a "shadow component". Will marshal a
-                                    component like mapping based on the alias into the current class. Note, it's best to
-                                    create a dedicated class mapping (with root="false") that only holds the required
-                                    information. Based on the information, if you search for it, you will be able to get
-                                    as part of your hits the encompassing class. Note as well, that when changing the
-                                    referenced class, for it to be reflected as part of the ref-comp-alias you will have
-                                    to save all the relevant encompassing classes.</entry>
-                            </row>
-                            <row>
-                                <entry>accessor (optional, defaults to
-                                    <literal>property</literal>
-                                    )
-                                </entry>
-                                <entry>The strategy to access the class property value.
-                                    <literal>property</literal>
-                                    access using the Java Bean accessor methods, while
-                                    <literal>field</literal>
-                                    directly access the class fields.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>ref-alias (optional)</entry>
+                <entry>The class mapping alias that defines the reference. This is an optional attribute since under some conditions, compass can infer the correct reference alias.</entry>
+              </row>
+              <row>
+                <entry>col-class (optional)</entry>
+                <entry>The collection class that will be used when un-marshaling. Serves two purposes, improve performance since Compass::Core does not need to save the collection class, and
+                in case of collection proxies, you might need to defined the actual collection (i.e. in case of Hibernate). Only applies if mapping to a <literal>java.util.Collection</literal> and it's implementations.</entry>
+              </row>
+              <row>
+                <entry>ref-comp-alias</entry>
+                <entry>The class mapping alias that defines a "shadow component". Will marshal a component like mapping based on the alias into the current class. Note, it's best to create a dedicated class mapping (with root="false") that only holds the required information. Based on the information, if you search for it, you will be able to get as part of your hits the encompassing class. Note as well, that when changing the referenced class, for it to be reflected as part of the ref-comp-alias you will have to save all the relevant encompassing classes.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> access using the Java Bean accessor methods, while <literal>field</literal> directly access the class fields.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
-                <para>
-                    The reference element defines a "pointer" to a class dependency identified in
-                    <literal>ref-alias</literal>
-                    .
-                </para>
+        <para>
+          The reference element defines a "pointer" to a class dependency identified in <literal>ref-alias</literal>.
+        </para>
 
-                <para>
-                    The type of the JavaBean property can be the class mapping class itself, an
-                    <literal>Array</literal>
-                    of it, or a
-                    <literal>Collection</literal>
-                    .
-                </para>
+        <para>
+          The type of the JavaBean property can be the class mapping class itself, an <literal>Array</literal> of it, or a <literal>Collection</literal>.
+        </para>
 
-                <para>
-                    Currently there is no support for lazy behavior or cascading. It means that when saving an object,
-                    it will not persist the object defined references and when loading an object, it will load all it's
-                    references. Future versions will support lazy and cascading features.
-                </para>
+        <para>
+          Currently there is no support for lazy behavior or cascading. It means that when saving an object, it will not persist the object defined references and when loading an object, it will load all it's references. Future versions will support lazy and cascading features.
+        </para>
 
-                <para>
-                    Compass::Core supports cyclic references, which means that two classes can have a cyclic reference
-                    defined between them.
-                </para>
+        <para>
+          Compass::Core supports cyclic references, which means that two classes can have a cyclic reference defined between them.
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="parent">
-            <title>parent</title>
+    <sect2 id="parent">
+      <title>parent</title>
 
-            <para>
-                Declaring and using the
-                <literal>parent</literal>
-                element.
+      <para>
+        Declaring and using the <literal>parent</literal> element.
 
-                <programlisting><![CDATA[<parent
+ <programlisting><![CDATA[<parent
         name="the class property name"
         accessor="property|field"
         converter="converter lookup name"
@@ -1362,64 +834,46 @@ public class Author {
 </reference>
 ]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>name</entry>
-                                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase
-                                    letter.</entry>
-                            </row>
-                            <row>
-                                <entry>accessor (optional, defaults to
-                                    <literal>property</literal>
-                                    )
-                                </entry>
-                                <entry>The strategy to access the class property value.
-                                    <literal>property</literal>
-                                    access using the Java Bean accessor methods, while
-                                    <literal>field</literal>
-                                    directly access the class fields.
-                                </entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> access using the Java Bean accessor methods, while <literal>field</literal> directly access the class fields.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
-                <para>
-                    The parent mapping provides support for cyclic mappings for components. If the component class
-                    mapping wish to map the enclosing class, the parent mapping can be used to map to it. The parent
-                    mapping will not marshal (persist the data to the search engine) the parent object, it will only
-                    initialize it when loading the parent object from the search engine.
-                </para>
+        <para>
+          The parent mapping provides support for cyclic mappings for components. If the component class mapping wish to map the enclosing class, the parent mapping can be used to map to it. The parent mapping will not marshal (persist the data to the search engine) the parent object, it will only initialize it when loading the parent object from the search engine.
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-        <sect2 id="constant">
-            <title>constant</title>
+    <sect2 id="constant">
+      <title>constant</title>
 
-            <para>
-                Declaring a constant set of
-                <literal>meta-data</literal>
-                using the
+      <para>
+        Declaring a constant set of <literal>meta-data</literal> using the
 
-                <literal>constant</literal>
-                element.
-                <programlisting><![CDATA[<constant
+        <literal>constant</literal> element.
+ <programlisting><![CDATA[<constant
           exclude-from-all="false|true"
           converter="converter lookup name"
     >
@@ -1427,62 +881,39 @@ public class Author {
    meta-data-value+
 </reference>]]></programlisting>
 
-                <table>
-                    <tgroup cols="2">
-                        <colspec colname="c1" colwidth="3*"/>
-                        <colspec colname="c2" colwidth="5*"/>
-                        <thead>
-                            <row>
-                                <entry>Attribute</entry>
-                                <entry>Description</entry>
-                            </row>
-                        </thead>
-                        <tbody>
-                            <row>
-                                <entry>exclude-from-all (optional, defaults to
-                                    <literal>false</literal>
-                                    )
-                                </entry>
-                                <entry>Excludes the constant meta-data and all it's values from participating in the
-                                    "all" feature.</entry>
-                            </row>
-                            <row>
-                                <entry>override (optional, defaults to
-                                    <literal>true</literal>
-                                    )
-                                </entry>
-                                <entry>If there is another definition with the same mapping name, if it will be
-                                    overridden or added as additional mapping. Mainly used to override definitions made
-                                    in extended mappings.</entry>
-                            </row>
-                            <row>
-                                <entry>converter (optional)</entry>
-                                <entry>The global converter lookup name registered with the configuration.</entry>
-                            </row>
-                        </tbody>
-                    </tgroup>
-                </table>
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
+                <entry>Excludes the constant meta-data and all it's values from participating in the "all" feature.</entry>
+              </row>
+              <row>
+                <entry>override (optional, defaults to <literal>true</literal>)</entry>
+                <entry>If there is another definition with the same mapping name, if it will be overridden or added as additional mapping. Mainly used to override definitions made in extended mappings.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
-                <para>
-                    If you wish to define a set of constant meta data that will be embedded within the searchable class
-                    (
-                    <literal>Resource</literal>
-                    ), you can use the
-                    <literal>constant</literal>
-                    element. You define the usual
-                    <literal>meta-data</literal>
-                    element followed by one or more
-                    <literal>meta-data-value</literal>
-                    elements with the value that maps to the
-                    <literal>meta-data</literal>
-                    within it.
-                </para>
+        <para>
+          If you wish to define a set of constant meta data that will be embedded within the searchable class (<literal>Resource</literal>), you can use the <literal>constant</literal> element. You define the usual <literal>meta-data</literal> element followed by one or more<literal>meta-data-value</literal> elements with the value that maps to the <literal>meta-data</literal> within it.
+        </para>
 
-            </para>
+      </para>
 
-        </sect2>
+    </sect2>
 
-    </sect1>
+  </sect1>
 
 </chapter>
 

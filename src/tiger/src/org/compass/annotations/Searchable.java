@@ -42,5 +42,7 @@ public @interface Searchable {
 
     String analyzer() default "";
 
-    String[] extend() default "";
+    String[] extend() default {};
+
+    String converter() default "";
 }

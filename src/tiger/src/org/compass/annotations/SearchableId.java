@@ -34,6 +34,14 @@ public @interface SearchableId {
 
     boolean override() default true;
 
+    Class type() default Object.class;
+
+    /**
+     * Converter that will apply to the property mapping. Not the generated
+     * meta-data.
+     */
+    String propertyConverter() default "";
+
     // Generated MetaData definitions
 
     String name() default "";
@@ -51,4 +59,12 @@ public @interface SearchableId {
     String analyzer() default "";
 
     boolean exceludeFromAll() default false;
+
+    String converter() default "";
+
+    /**
+     * The format to apply to the value. Only applies to format-able converters
+     * (like dates and numbers).
+     */
+    String format() default "";
 }

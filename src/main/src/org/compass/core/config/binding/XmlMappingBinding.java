@@ -320,6 +320,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             referenceMapping.setRefCompAlias(valueLookup.lookupAliasName(refCompAlias));
         }
 
+        bindConverter(referenceConf, referenceMapping);
+
         referenceMapping.setAccessor(referenceConf.getAttribute("accessor", null));
         if (aliasMapping instanceof ClassMapping) {
             referenceMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());

@@ -32,9 +32,17 @@ public @interface SearchableProperty {
 
     ManagedIdIndex managedIdIndex() default ManagedIdIndex.NA;
 
+    Class type() default Object.class;
+
     Class collectionClass() default Object.class;
 
     boolean override() default true;
+
+    /**
+     * Converter that will apply to the property mapping. Not the generated
+     * meta-data.
+     */
+    String propertyConverter() default "";
 
     // Generated MetaData definitions
 
@@ -53,4 +61,12 @@ public @interface SearchableProperty {
     String analyzer() default "";
 
     boolean exceludeFromAll() default false;
+
+    String converter() default "";
+
+    /**
+     * The format to apply to the value. Only applies to format-able converters
+     * (like dates and numbers).
+     */
+    String format() default "";
 }
