@@ -16,9 +16,7 @@
 
 package org.compass.core.config.process;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.Converter;
@@ -26,7 +24,6 @@ import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.*;
 import org.compass.core.mapping.osem.*;
-import org.compass.core.util.ClassUtils;
 
 /**
  * @author kimchy
@@ -82,40 +79,26 @@ public class CollectionMappingProcessor implements MappingProcessor {
      */
     private Mapping checkCollection(ObjectMapping objectMapping) throws MappingException {
         AbstractCollectionMapping collectionMapping = null;
-        if (Collection.class.isAssignableFrom(objectMapping.getGetter().getReturnType())) {
+        Class collectionClass = objectMapping.getGetter().getReturnType();
+        if (Collection.class.isAssignableFrom(collectionClass)) {
             collectionMapping = new CollectionMapping();
-            String colClassName = objectMapping.getColClassName();
-            if (colClassName != null) {
-                try {
-                    Class colClass = ClassUtils.forName(colClassName);
-                    if (!Collection.class.isAssignableFrom(colClass)) {
-                        throw new MappingException("The col-class [" + colClassName
-                                + "] defined is not of type java.util.Collection for ["
-                                + objectMapping.getGetter() + "]");
-                    }
-                    collectionMapping.setColClass(colClass);
-                } catch (ClassNotFoundException e) {
-                    throw new MappingException("Failed to create collection class [" + colClassName + "] for ["
-                            + objectMapping.getGetter() + "]");
-                }
+            if (List.class.isAssignableFrom(collectionClass)) {
+                collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.LIST);
+            } else if (SortedSet.class.isAssignableFrom(collectionClass)) {
+                collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.SORTED_SET);
+            } else if (Set.class.isAssignableFrom(collectionClass)) {
+                collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.SET);
+            } else {
+                collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.UNKNOWN);
             }
-        } else if (objectMapping.getGetter().getReturnType().isArray()) {
+        } else if (collectionClass.isArray()) {
             Converter converter = converterLookup.lookupConverter(objectMapping.getGetter().getReturnType());
             if (converter == null) {
                 // there is no converter assigned to that array, use the array
                 // mapping to convert each element inside, otherwise the
                 // converter will be responsible to convert the whole array
                 collectionMapping = new ArrayMapping();
-                String colClassName = objectMapping.getColClassName();
-                if (colClassName != null) {
-                    try {
-                        Class colClass = ClassUtils.forName(colClassName);
-                        collectionMapping.setColClass(colClass);
-                    } catch (ClassNotFoundException e) {
-                        throw new MappingException("Failed to create array component class [" + colClassName
-                                + "] for [" + objectMapping.getGetter() + "]");
-                    }
-                }
+                collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.NOT_REQUIRED);
             }
         }
         if (collectionMapping != null) {

@@ -18,6 +18,7 @@ package org.compass.core.converter.mapping.osem;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.accessor.Getter;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.CollectionResourceWrapper;
@@ -25,7 +26,6 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.marshall.MarshallingContext;
-import org.compass.core.util.ClassUtils;
 
 /**
  * 
@@ -41,8 +41,9 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
 
-        if (colMapping.getColClass() == null) {
-            Property p = searchEngine.createProperty(colMapping.getColClassPath(), getColClass(root),
+        if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
+            Property p = searchEngine.createProperty(colMapping.getCollectionTypePath(),
+                    AbstractCollectionMapping.CollectionType.toString(getRuntimeCollectionType(root)),
                     Property.Store.YES, Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
         }
@@ -61,7 +62,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         context.removeHandleNulls(colMapping.getPath());
     }
 
-    protected abstract String getColClass(Object root);
+    protected abstract AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root);
 
     protected abstract void marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
             MarshallingContext context);
@@ -79,24 +80,19 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         }
         String sColSize = pColSize.getStringValue();
 
-        Class colClass = colMapping.getColClass();
-        if (colClass == null) {
-            Property pColClassName = resource.getProperty(colMapping.getColClassPath());
-            if (pColClassName == null) {
-                throw new ConversionException("Expected to find the collection/array class name store in the resource"
-                        + " since no col-class mapping parameter defined");
+        AbstractCollectionMapping.CollectionType collectionType = colMapping.getCollectionType();
+        if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
+            // try and read the collection from the index
+            Property pColllectionType = resource.getProperty(colMapping.getCollectionTypePath());
+            if (pColllectionType == null) {
+                throw new ConversionException("Expected to find the collection/arraytype stored in the resource");
             }
-            try {
-                colClass = ClassUtils.forName(pColClassName.getStringValue());
-            } catch (ClassNotFoundException e) {
-                throw new ConversionException("Failed to create collection / array class [" + pColClassName.getStringValue()
-                        + "]");
-            }
+            collectionType = AbstractCollectionMapping.CollectionType.fromString(pColllectionType.getStringValue());
         }
 
-        int size = Integer.valueOf(sColSize).intValue();
+        int size = Integer.parseInt(sColSize);
         
-        Object col = createColObject(colClass, size);
+        Object col = createColObject(colMapping.getGetter(), collectionType, size);
         
         // for null values in enteties within the collection, they must be saved
         // so the order will be maintained
@@ -105,8 +101,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         CollectionResourceWrapper crw = new CollectionResourceWrapper(resource);
         Mapping elementMapping = colMapping.getElementMapping();
         for (int i = 0; i < size; i++) {
-            Object value = elementMapping.getConverter().unmarshall(crw, elementMapping,
-                    context);
+            Object value = elementMapping.getConverter().unmarshall(crw, elementMapping, context);
             if (value != null) {
                 addValue(col, i, value);
             }
@@ -117,7 +112,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         return col;
     }
     
-    protected abstract Object createColObject(Class colClass, int size);
+    protected abstract Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size);
     
     protected abstract void addValue(Object col, int index, Object value);
 }

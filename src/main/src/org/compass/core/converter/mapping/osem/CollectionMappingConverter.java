@@ -16,26 +16,21 @@
 
 package org.compass.core.converter.mapping.osem;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 import org.compass.core.Resource;
+import org.compass.core.accessor.Getter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.marshall.MarshallingContext;
-import org.compass.core.marshall.MarshallingException;
 
 /**
  * @author kimchy
  */
 public class CollectionMappingConverter extends AbstractCollectionMappingConverter {
 
-    protected String getColClass(Object root) {
-        return root.getClass().getName();
-    }
-
     protected void marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
-            MarshallingContext context) {
+                                       MarshallingContext context) {
         Mapping elementMapping = colMapping.getElementMapping();
         Collection col = (Collection) root;
         for (Iterator it = col.iterator(); it.hasNext();) {
@@ -56,11 +51,28 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
         return actualSize;
     }
 
-    protected Object createColObject(Class colClass, int size) {
-        try {
-            return colClass.newInstance();
-        } catch (Exception e) {
-            throw new MarshallingException("Failed to create class [" + colClass.getName() + "] for unmarshalling", e);
+    protected AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root) {
+        if (root instanceof List) {
+            return AbstractCollectionMapping.CollectionType.LIST;
+        } else if (root instanceof SortedSet) {
+            return AbstractCollectionMapping.CollectionType.SORTED_SET;
+        } else if (root instanceof Set) {
+            return AbstractCollectionMapping.CollectionType.SET;
+        } else {
+            throw new IllegalStateException("Compass does not support collection class [" + root.getClass().getName()
+                    + "], please consider using either List or Set implementations");
+        }
+    }
+
+    protected Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size) {
+        if (collectionType == AbstractCollectionMapping.CollectionType.LIST) {
+            return new ArrayList(size);
+        } else if (collectionType == AbstractCollectionMapping.CollectionType.SET) {
+            return new HashSet(size);
+        } else if (collectionType == AbstractCollectionMapping.CollectionType.SORTED_SET) {
+            return new TreeSet();
+        } else {
+            throw new IllegalStateException("Should not happen, internal compass error");
         }
     }
 

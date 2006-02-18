@@ -37,13 +37,10 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
 
     private Setter setter;
 
-    private String colClassName;
-
     protected void copy(AbstractAccessorMapping copy) {
         super.copy(copy);
         copy.setGetter(getGetter());
         copy.setSetter(getSetter());
-        copy.setColClassName(getColClassName());
         copy.setAccessor(getAccessor());
         copy.setObjClass(getObjClass());
         copy.setPropertyName(getPropertyName());
@@ -63,14 +60,6 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
 
     public void setSetter(Setter setter) {
         this.setter = setter;
-    }
-
-    public String getColClassName() {
-        return colClassName;
-    }
-
-    public void setColClassName(String colClassName) {
-        this.colClassName = colClassName;
     }
 
     public String getAccessor() {

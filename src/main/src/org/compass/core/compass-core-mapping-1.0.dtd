@@ -98,7 +98,6 @@
     <!ATTLIST property class CDATA #IMPLIED>
     <!ATTLIST property analyzer CDATA #IMPLIED>
     <!ATTLIST property override (true|false) "true">
-    <!ATTLIST property col-class CDATA #IMPLIED>
     <!ATTLIST property accessor (field|property) "property">
     <!ATTLIST property managed-id (auto|true|false) "auto">
     <!ATTLIST property managed-id-index (no|un_tokenized) #IMPLIED>
@@ -120,7 +119,6 @@
     <!ATTLIST component ref-alias CDATA #IMPLIED>
     <!ATTLIST component override (true|false) "true">
     <!ATTLIST component max-depth CDATA #IMPLIED>
-    <!ATTLIST component col-class CDATA #IMPLIED>
     <!ATTLIST component converter CDATA #IMPLIED>
     <!ATTLIST component accessor (field|property) "property">
 
@@ -128,7 +126,6 @@
 >
     <!ATTLIST reference name CDATA #REQUIRED>
     <!ATTLIST reference ref-alias CDATA #IMPLIED>
-    <!ATTLIST reference col-class CDATA #IMPLIED>
     <!ATTLIST reference ref-comp-alias CDATA #IMPLIED>
     <!ATTLIST reference converter CDATA #IMPLIED>
     <!ATTLIST reference accessor (field|property) "property">

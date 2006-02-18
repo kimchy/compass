@@ -23,7 +23,7 @@ public class MarshallingEnvironment {
 
     public static final String PROPERTY_CLASS = "class";
 
-    public static final String PROPERTY_COLLECTION_CLASS = "colClass";
+    public static final String PROPERTY_COLLECTION_TYPE = "colType";
 
     public static final String PROPERTY_COLLECTION_SIZE = "colSize";
 

@@ -5,11 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.compass.core.CompassHits;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
-import org.compass.core.Property;
-import org.compass.core.Resource;
+import org.compass.core.*;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -74,19 +70,19 @@ public class CollectionTests extends AbstractTestCase {
         assertEquals("test1", list.get(0));
         assertEquals("test2", list.get(1));
 
-        boolean foundStoredClass = false;
+        boolean foundStoredClassType = false;
         Resource resource = result.resource(0);
         Property[] properties = resource.getProperties();
         for (int i = 0; i < properties.length; i++) {
             String value = properties[i].getStringValue();
             if (value != null) {
-                if (value.indexOf("ArrayList") != -1) {
-                    foundStoredClass = true;
+                if (value.indexOf("list") != -1) {
+                    foundStoredClassType = true;
                 }
             }
         }
-        if (!foundStoredClass) {
-            fail("Failed to find stored collection class");
+        if (!foundStoredClassType) {
+            fail("Failed to find stored collection class type");
         }
 
         session.delete(o);

@@ -19,6 +19,7 @@ package org.compass.core.converter.mapping.osem;
 import java.lang.reflect.Array;
 
 import org.compass.core.Resource;
+import org.compass.core.accessor.Getter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -27,10 +28,6 @@ import org.compass.core.marshall.MarshallingContext;
  * @author kimchy
  */
 public class ArrayMappingConverter extends AbstractCollectionMappingConverter {
-
-    protected String getColClass(Object root) {
-        return root.getClass().getComponentType().getName();
-    }
 
     protected void marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
             MarshallingContext context) {
@@ -54,8 +51,12 @@ public class ArrayMappingConverter extends AbstractCollectionMappingConverter {
         return actualSize;
     }
 
-    protected Object createColObject(Class colClass, int size) {
-        return Array.newInstance(colClass, size);
+    protected AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root) {
+        throw new IllegalStateException("Should not be called, internal compass error");
+    }
+
+    protected Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size) {
+        return Array.newInstance(getter.getReturnType().getComponentType(), size);
     }
 
     protected void addValue(Object col, int index, Object value) {

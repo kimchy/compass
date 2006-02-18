@@ -313,8 +313,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String refAlias = referenceConf.getAttribute("ref-alias", null);
         referenceMapping.setRefAlias(valueLookup.lookupAliasName(refAlias));
 
-        referenceMapping.setColClassName(referenceConf.getAttribute("col-class", null));
-
         String refCompAlias = referenceConf.getAttribute("ref-comp-alias", null);
         if (refCompAlias != null) {
             referenceMapping.setRefCompAlias(valueLookup.lookupAliasName(refCompAlias));
@@ -335,8 +333,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         compMapping.setName(name);
         String refAlias = componentConf.getAttribute("ref-alias", null);
         compMapping.setRefAlias(valueLookup.lookupAliasName(refAlias));
-
-        compMapping.setColClassName(componentConf.getAttribute("col-class", null));
 
         int maxDepth = componentConf.getAttributeAsInteger("max-depth", 5);
         compMapping.setMaxDepth(maxDepth);

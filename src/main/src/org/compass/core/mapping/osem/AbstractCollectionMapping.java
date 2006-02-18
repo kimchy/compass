@@ -18,13 +18,61 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.util.Parameter;
 
 /**
  * @author kimchy
  */
 public abstract class AbstractCollectionMapping extends AbstractAccessorMapping implements OverrideByNameMapping {
 
-    private String colClassPath;
+    public static final class CollectionType extends Parameter {
+
+        private CollectionType(String name) {
+            super(name);
+        }
+
+        public static final CollectionType NOT_REQUIRED = new CollectionType("NOT_REQUIRED");
+
+        public static final CollectionType UNKNOWN = new CollectionType("UNKNOWN");
+
+        public static final CollectionType SET = new CollectionType("SET");
+
+        public static final CollectionType LIST = new CollectionType("LIST");
+
+        public static final CollectionType SORTED_SET = new CollectionType("SORTED_SET");
+
+        public static String toString(CollectionType collectionType) {
+            if (collectionType == CollectionType.NOT_REQUIRED) {
+                return "na";
+            } else if (collectionType == CollectionType.UNKNOWN) {
+                return "unknown";
+            } else if (collectionType == CollectionType.SET) {
+                return "set";
+            } else if (collectionType == CollectionType.LIST) {
+                return "list";
+            } else if (collectionType == CollectionType.SORTED_SET) {
+                return "sortset";
+            }
+            throw new IllegalArgumentException("Can't find collection type for [" + collectionType + "]");
+        }
+
+        public static CollectionType fromString(String collectionType) {
+            if ("na".equalsIgnoreCase(collectionType)) {
+                return CollectionType.NOT_REQUIRED;
+            } else if ("unknown".equalsIgnoreCase(collectionType)) {
+                return CollectionType.UNKNOWN;
+            } else if ("set".equalsIgnoreCase(collectionType)) {
+                return CollectionType.SET;
+            } else if ("list".equalsIgnoreCase(collectionType)) {
+                return CollectionType.LIST;
+            } else if ("sortset".equalsIgnoreCase(collectionType)) {
+                return CollectionType.SORTED_SET;
+            }
+            throw new IllegalArgumentException("Can't find collection type for [" + collectionType + "]");
+        }
+    }
+
+    private String collectionTypePath;
 
     private String colSizePath;
 
@@ -32,15 +80,15 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
 
     private boolean overrideByName;
 
-    private Class colClass;
+    private CollectionType collectionType;
 
     public void copy(AbstractCollectionMapping copy) {
         super.copy(copy);
         copy.setElementMapping(getElementMapping());
-        copy.setColClassPath(getColClassPath());
+        copy.setCollectionTypePath(getCollectionTypePath());
         copy.setColSizePath(getColSizePath());
         copy.setOverrideByName(isOverrideByName());
-        copy.setColClass(getColClass());
+        copy.setCollectionType(getCollectionType());
     }
 
     public boolean canBeCollectionWrapped() {
@@ -55,12 +103,12 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
         this.elementMapping = elementMapping;
     }
 
-    public String getColClassPath() {
-        return colClassPath;
+    public String getCollectionTypePath() {
+        return collectionTypePath;
     }
 
-    public void setColClassPath(String colClassPath) {
-        this.colClassPath = colClassPath;
+    public void setCollectionTypePath(String collectionTypePath) {
+        this.collectionTypePath = collectionTypePath;
     }
 
     public String getColSizePath() {
@@ -79,11 +127,11 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
         this.overrideByName = overrideByName;
     }
 
-    public Class getColClass() {
-        return colClass;
+    public CollectionType getCollectionType() {
+        return collectionType;
     }
 
-    public void setColClass(Class colClass) {
-        this.colClass = colClass;
+    public void setCollectionType(CollectionType collectionType) {
+        this.collectionType = collectionType;
     }
 }

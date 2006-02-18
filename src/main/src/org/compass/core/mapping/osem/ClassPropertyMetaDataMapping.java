@@ -36,15 +36,11 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
 
     private Setter setter;
 
-    // Not used, here to comply with ObjectMapping
-    private String colClassName;
-
     public Mapping copy() {
         ClassPropertyMetaDataMapping copy = new ClassPropertyMetaDataMapping();
         super.copy(copy);
         copy.setSetter(getSetter());
         copy.setGetter(getGetter());
-        copy.setColClassName(getColClassName());
         copy.setAccessor(getAccessor());
         copy.setObjClass(getObjClass());
         copy.setPropertyName(getPropertyName());
@@ -73,14 +69,6 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
 
     public boolean canActAsPRopertyId() {
         return ReverseType.NO == getReverse();
-    }
-
-    public String getColClassName() {
-        return colClassName;
-    }
-
-    public void setColClassName(String colClassName) {
-        this.colClassName = colClassName;
     }
 
     public String getAccessor() {

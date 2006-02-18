@@ -16,6 +16,7 @@
 
 package org.compass.core.config.process;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.compass.core.config.CompassSettings;
@@ -71,8 +72,13 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
         }
         ClassMapping refClassMapping = compassMapping.getClassMappingByClass(clazz.getName());
         if (refClassMapping == null) {
-            throw new MappingException("Tried to resolve ref-alias for property [" + mapping.getName() + "] in alias [" +
-                    classMapping.getAlias() + "], but no class mapping was found for [" + clazz.getName() + "]");
+            if (Collection.class.isAssignableFrom(mapping.getGetter().getReturnType())) {
+                throw new MappingException("Failed to resolve ref-alias for collection property [" + mapping.getName() + "] in alias [" +
+                        classMapping.getAlias() + "]. You must set the ref-alias for it, or use Java 5 generics for the collection type.");
+            } else {
+                throw new MappingException("Tried to resolve ref-alias for property [" + mapping.getName() + "] in alias [" +
+                        classMapping.getAlias() + "], but no class mapping was found for [" + clazz.getName() + "]");
+            }
         }
         if (compassMapping.hasMultipleClassMapping(clazz.getName())) {
             throw new MappingException("Tried to resolve ref-alias for property [" + mapping.getName() + "] in alias [" +

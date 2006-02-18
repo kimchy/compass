@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE compass-core-mapping PUBLIC 
+<!DOCTYPE compass-core-mapping PUBLIC
     "-//Compass/Compass Core Mapping DTD 1.0//EN"
     "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
 
@@ -23,7 +23,7 @@
         <property name="lastName">
             <meta-data>${petclinic.lastName}</meta-data>
         </property>
-        
+
         <property name="address">
             <meta-data>${petclinic.address}</meta-data>
         </property>
@@ -38,19 +38,19 @@
     </contract>
 
     <class name="Vet" alias="${petclinic.vet}" extends="person">
-    
+
         <component name="specialtiesInternal" ref-alias="${petclinic.specialty}" col-class="java.util.HashSet" />
 
     </class>
-    
+
     <class name="Specialty" alias="${petclinic.specialty}" root="false">
         <property name="name">
             <meta-data>${petclinic.specialty}</meta-data>
         </property>
     </class>
-    
+
     <class name="Owner" alias="${petclinic.owner}" extends="person">
-    
+
         <property name="firstName">
             <meta-data>${petclinic.firstName}</meta-data>
         </property>
@@ -58,7 +58,7 @@
         <property name="lastName">
             <meta-data>${petclinic.lastName}</meta-data>
         </property>
-        
+
         <property name="address">
             <meta-data>${petclinic.address}</meta-data>
         </property>
@@ -70,11 +70,11 @@
         <property name="telephone">
             <meta-data>${petclinic.telephone}</meta-data>
         </property>
-        
-        <reference name="petsInternal" ref-alias="${petclinic.pet}" col-class="java.util.HashSet"  />
-        
+
+        <reference name="petsInternal" ref-alias="${petclinic.pet}"  />
+
     </class>
-    
+
     <class name="Pet" alias="${petclinic.pet}" extends="named-entity">
 
         <property name="birthDate">
@@ -85,8 +85,8 @@
 
         <reference name="owner" ref-alias="${petclinic.owner}" />
 
-        <reference name="visitsInternal" ref-alias="${petclinic.visit}" col-class="java.util.HashSet"  />
-        
+        <reference name="visitsInternal" ref-alias="${petclinic.visit}"  />
+
     </class>
 
     <class name="Visit" alias="${petclinic.visit}" extends="entity">
@@ -100,9 +100,9 @@
         </property>
 
         <reference name="pet" ref-alias="${petclinic.pet}" />
-        
+
     </class>
-    
+
     <class name="PetType" alias="${petclinic.petType}" root="false">
         <property name="name">
             <meta-data>${petclinic.petType}</meta-data>

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 
+import org.compass.core.config.ConfigurationException;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
@@ -37,7 +38,6 @@ public class DTDEntityResolver implements EntityResolver, Serializable {
      * loading.
      */
     public DTDEntityResolver() {
-        resourceLoader = Thread.currentThread().getContextClassLoader();
     }
 
     /**
@@ -58,10 +58,12 @@ public class DTDEntityResolver implements EntityResolver, Serializable {
         }
         if (systemId != null && systemId.startsWith(URL)) {
             // Search for DTD
-            InputStream dtdStream = resourceLoader.getResourceAsStream("org/compass/core/"
-                    + systemId.substring(URL.length()));
+            String location = "/org/compass/core/" + systemId.substring(URL.length());
+            InputStream dtdStream = resourceLoader == null ?
+                    getClass().getResourceAsStream(location) : resourceLoader.getResourceAsStream(location);
             if (dtdStream == null) {
-                return null;
+                throw new ConfigurationException("DTD system id [" + systemId + "] not found at [" + location + "], " +
+                        "please check it has the correct location. Have you included compass in your class path?");
             } else {
                 InputSource source = new InputSource(dtdStream);
                 source.setPublicId(publicId);
@@ -69,8 +71,8 @@ public class DTDEntityResolver implements EntityResolver, Serializable {
                 return source;
             }
         } else {
-            // use the default behaviour
-            return null;
+            throw new ConfigurationException("DTD system id [" + systemId + "] not found, please check it has the " +
+                    "correct location");
         }
     }
 

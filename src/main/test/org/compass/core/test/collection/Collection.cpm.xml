@@ -27,7 +27,7 @@
             <meta-data>mvalue</meta-data>
         </property>    
     
-        <property name="strings" class="java.lang.String" col-class="java.util.ArrayList">
+        <property name="strings" class="java.lang.String">
             <meta-data>mvalue</meta-data>
             <meta-data>svalue</meta-data>
         </property>

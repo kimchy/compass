@@ -139,8 +139,8 @@ public class DefaultMappingProcessor implements MappingProcessor {
         collectionMapping.setElementMapping(elementMappingCopy);
 
         collectionMapping.setPath(elementMappingCopy.getPath());
-        collectionMapping.setColClassPath(namingStrategy.buildPath(collectionMapping.getPath(),
-                MarshallingEnvironment.PROPERTY_COLLECTION_CLASS));
+        collectionMapping.setCollectionTypePath(namingStrategy.buildPath(collectionMapping.getPath(),
+                MarshallingEnvironment.PROPERTY_COLLECTION_TYPE));
         collectionMapping.setColSizePath(namingStrategy.buildPath(collectionMapping.getPath(),
                 MarshallingEnvironment.PROPERTY_COLLECTION_SIZE));
 

@@ -26,6 +26,7 @@ VERSION 0.9.0 ()
    For more information, please check the reference documentation.
 4. Component and Reference mapping ref-alias is no longer required. Under certain conditions, Compass can infer
    the class mapping associated with the class property return type.
+5. col-class mapping is no longer required and removed from the mapping definitions.
 
 VERSION 0.8.1 (Jan 22, 2006)
 ============================

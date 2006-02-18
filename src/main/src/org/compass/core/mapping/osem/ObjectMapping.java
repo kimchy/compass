@@ -40,16 +40,12 @@ public interface ObjectMapping extends Mapping {
     void setPropertyName(String propertyName);
 
     Getter getGetter();
-    
+
     void setGetter(Getter getter);
-    
+
     Setter getSetter();
-    
+
     void setSetter(Setter setter);
 
     boolean canBeCollectionWrapped();
-
-    String getColClassName();
-
-    void setColClassName(String colClassName);
 }
