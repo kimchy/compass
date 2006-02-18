@@ -24,6 +24,8 @@ VERSION 0.9.0 ()
       default names. For example, to change the format for all Dates, simple provide the settings
       compass.converter.date.format=yyyy-MM-dd.
    For more information, please check the reference documentation.
+4. Component and Reference mapping ref-alias is no longer required. Under certain conditions, Compass can infer
+   the class mapping associated with the class property return type.
 
 VERSION 0.8.1 (Jan 22, 2006)
 ============================
