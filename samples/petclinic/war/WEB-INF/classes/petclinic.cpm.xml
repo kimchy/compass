@@ -39,7 +39,7 @@
 
     <class name="Vet" alias="${petclinic.vet}" extends="person">
 
-        <component name="specialtiesInternal" ref-alias="${petclinic.specialty}" col-class="java.util.HashSet" />
+        <component name="specialtiesInternal" ref-alias="${petclinic.specialty}" />
 
     </class>
 
