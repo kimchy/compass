@@ -21,22 +21,13 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import javax.sql.DataSource;
 
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.DirectoryTemplate;
-import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.store.IndexOutput;
-import org.apache.lucene.store.Lock;
-import org.apache.lucene.store.MultiDeleteDirectory;
+import org.apache.lucene.store.*;
 import org.apache.lucene.store.jdbc.dialect.Dialect;
+import org.apache.lucene.store.jdbc.dialect.DialectResolver;
 import org.apache.lucene.store.jdbc.handler.FileEntryHandler;
 import org.apache.lucene.store.jdbc.lock.JdbcLock;
 import org.apache.lucene.store.jdbc.lock.NoOpLock;
@@ -99,6 +90,20 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
 
     private JdbcTemplate jdbcTemplate;
 
+
+    /**
+     * Creates a new jdbc directory.  Creates new {@link JdbcDirectorySettings} using it's default values.
+     * Uses {@link DialectResolver} to try and automatically reolve the {@link Dialect}.
+     *
+     * @param dataSource The data source to use
+     * @param tableName  The table name
+     * @throws JdbcStoreException
+     */
+    public JdbcDirectory(DataSource dataSource, String tableName) throws JdbcStoreException {
+        Dialect dialect = new DialectResolver().getDialect(dataSource);
+        initialize(dataSource, new JdbcTable(new JdbcDirectorySettings(), dialect, tableName));
+    }
+
     /**
      * Creates a new jdbc directory. Creates new {@link JdbcDirectorySettings} using it's default values.
      *
@@ -107,7 +112,20 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
      * @param tableName  The table name
      */
     public JdbcDirectory(DataSource dataSource, Dialect dialect, String tableName) {
-        this(dataSource, new JdbcTable(new JdbcDirectorySettings(), dialect, tableName));
+        initialize(dataSource, new JdbcTable(new JdbcDirectorySettings(), dialect, tableName));
+    }
+
+    /**
+     * Creates a new jdbc directory. Uses {@link DialectResolver} to try and automatically reolve the {@link Dialect}.
+     *
+     * @param dataSource The data source to use
+     * @param settings   The settings to configure the directory
+     * @param tableName  The table name that will be used
+     */
+    public JdbcDirectory(DataSource dataSource, JdbcDirectorySettings settings, String tableName)
+            throws JdbcStoreException {
+        Dialect dialect = new DialectResolver().getDialect(dataSource);
+        initialize(dataSource, new JdbcTable(settings, dialect, tableName));
     }
 
     /**
@@ -119,7 +137,7 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
      * @param tableName  The table name that will be used
      */
     public JdbcDirectory(DataSource dataSource, Dialect dialect, JdbcDirectorySettings settings, String tableName) {
-        this(dataSource, new JdbcTable(settings, dialect, tableName));
+        initialize(dataSource, new JdbcTable(settings, dialect, tableName));
     }
 
     /**
@@ -129,6 +147,10 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
      * @param table      The Jdbc table definitions
      */
     public JdbcDirectory(DataSource dataSource, JdbcTable table) {
+        initialize(dataSource, table);
+    }
+
+    private void initialize(DataSource dataSource, JdbcTable table) {
         this.dataSource = dataSource;
         this.jdbcTemplate = new JdbcTemplate(dataSource, table.getSettings());
         this.dialect = table.getDialect();
@@ -145,7 +167,8 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
                 fileEntryHandler.configure(this);
                 fileEntryHandlers.put(name, fileEntryHandler);
             } catch (Exception e) {
-                throw new IllegalArgumentException("Failed to create FileEntryHandler  [" + feSettings.getSetting(JdbcFileEntrySettings.FILE_ENTRY_HANDLER_TYPE) + "]");
+                throw new IllegalArgumentException("Failed to create FileEntryHandler  [" +
+                        feSettings.getSetting(JdbcFileEntrySettings.FILE_ENTRY_HANDLER_TYPE) + "]");
             }
         }
     }
@@ -204,7 +227,7 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
             //e.printStackTrace();
         }
         jdbcTemplate.executeUpdate(table.sqlCreate());
-        ((JdbcLock)createLock()).initializeDatabase(this);
+        ((JdbcLock) createLock()).initializeDatabase(this);
     }
 
     /**

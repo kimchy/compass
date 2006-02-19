@@ -19,14 +19,13 @@ package org.apache.lucene.store.jdbc;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
-
 import javax.sql.DataSource;
 
 import junit.framework.TestCase;
-
 import org.apache.lucene.store.jdbc.datasource.DriverManagerDataSource;
 import org.apache.lucene.store.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.apache.lucene.store.jdbc.dialect.Dialect;
+import org.apache.lucene.store.jdbc.dialect.DialectResolver;
 import org.apache.lucene.store.jdbc.support.JdbcTemplate;
 
 /**
@@ -46,8 +45,6 @@ public abstract class AbstractJdbcDirectoryTests extends TestCase {
 		if (testPropsFile.exists()) {
 			testProps.load(new FileInputStream(testPropsFile));
 		}
-		dialect = testProps.getProperty("compass.engine.store.jdbc.dialect",
-				"org.apache.lucene.store.jdbc.dialect.HSQLDialect");
 		String url = testProps.getProperty("compass.engine.connection");
 		if (url == null || !url.startsWith("jdbc://")) {
 			url = "jdbc:hsqldb:mem:test";
@@ -61,13 +58,17 @@ public abstract class AbstractJdbcDirectoryTests extends TestCase {
 		DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource(driver, url, username, password,
 				false);
 		this.dataSource = new TransactionAwareDataSourceProxy(driverManagerDataSource);
-		this.jdbcTemplate = new JdbcTemplate(dataSource, new JdbcDirectorySettings());
+        dialect = testProps.getProperty("compass.engine.store.jdbc.dialect");
+        this.jdbcTemplate = new JdbcTemplate(dataSource, new JdbcDirectorySettings());
 	}
 
 	protected void tearDown() throws Exception {
 	}
 
-	protected Dialect createDialect() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+	protected Dialect createDialect() throws Exception {
+        if (dialect == null) {
+            return new DialectResolver().getDialect(dataSource);
+        }
 		return (Dialect) Class.forName(dialect).newInstance();
 	}
 }

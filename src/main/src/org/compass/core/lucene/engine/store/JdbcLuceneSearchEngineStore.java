@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.apache.lucene.store.Directory;
@@ -32,10 +31,12 @@ import org.apache.lucene.store.jdbc.JdbcStoreException;
 import org.apache.lucene.store.jdbc.datasource.DataSourceUtils;
 import org.apache.lucene.store.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.apache.lucene.store.jdbc.dialect.Dialect;
+import org.apache.lucene.store.jdbc.dialect.DialectResolver;
 import org.apache.lucene.store.jdbc.index.FetchPerTransactionJdbcIndexInput;
 import org.apache.lucene.store.jdbc.support.JdbcTable;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.event.SearchEngineEventManager;
@@ -74,15 +75,6 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
     }
 
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) throws CompassException {
-        String dialectClassName = null;
-        try {
-            dialectClassName = settings.getSetting(LuceneEnvironment.JdbcStore.DIALECT);
-            dialect =
-                    (Dialect) ClassUtils.forName(dialectClassName).newInstance();
-        } catch (Exception e) {
-            throw new CompassException("Failed to configure dialect [" + dialectClassName + "]");
-        }
-
         String dataSourceProviderClassName = settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
                 DriverManagerDataSourceProvider.class.getName());
         try {
@@ -93,6 +85,22 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         } catch (Exception e) {
             throw new CompassException("Failed to configure data source provider [" + dataSourceProviderClassName + "]", e);
         }
+
+        String dialectClassName = settings.getSetting(LuceneEnvironment.JdbcStore.DIALECT, null);
+        if (dialectClassName == null) {
+            try {
+                dialect = new DialectResolver().getDialect(dataSource);
+            } catch (JdbcStoreException e) {
+                throw new ConfigurationException("Failed to auto detect dialect", e);
+            }
+        } else {
+            try {
+                dialect = (Dialect) ClassUtils.forName(dialectClassName).newInstance();
+            } catch (Exception e) {
+                throw new ConfigurationException("Failed to configure dialect [" + dialectClassName + "]");
+            }
+        }
+
 
         managed = settings.getSettingAsBoolean(LuceneEnvironment.JdbcStore.MANAGED, false);
         if (!managed) {
