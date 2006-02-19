@@ -2,7 +2,7 @@ package org.compass.annotations.test.analyzer;
 
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
-import org.compass.annotations.SearchableAnalyzer;
+import org.compass.annotations.SearchableAnalyzerProperty;
 import org.compass.annotations.SearchableProperty;
 
 /**
@@ -14,7 +14,7 @@ public class A {
     @SearchableId
     int id;
 
-    @SearchableAnalyzer
+    @SearchableAnalyzerProperty
     String analyzer;
 
     @SearchableProperty

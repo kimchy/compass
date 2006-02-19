@@ -208,21 +208,21 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindObjectMapping(referenceMapping, accessor, name);
             bindReference(searchableReference, referenceMapping, clazz, type);
             classMapping.addMapping(referenceMapping);
-        } else if (annotation instanceof SearchableAnalyzer) {
+        } else if (annotation instanceof SearchableAnalyzerProperty) {
             ClassPropertyAnalyzerController analyzerMapping = new ClassPropertyAnalyzerController();
-            SearchableAnalyzer searchableAnalyzer = (SearchableAnalyzer) annotation;
+            SearchableAnalyzerProperty searchableAnalyzerProperty = (SearchableAnalyzerProperty) annotation;
             bindObjectMapping(analyzerMapping, accessor, name);
-            bindAnalyzer(searchableAnalyzer, analyzerMapping, clazz, type);
+            bindAnalyzer(searchableAnalyzerProperty, analyzerMapping, clazz, type);
             classMapping.addMapping(analyzerMapping);
         }
     }
 
-    private void bindAnalyzer(SearchableAnalyzer searchableAnalyzer, ClassPropertyAnalyzerController analyzerMapping,
+    private void bindAnalyzer(SearchableAnalyzerProperty searchableAnalyzerProperty, ClassPropertyAnalyzerController analyzerMapping,
                                Class<?> clazz, Type type) {
-        bindConverter(analyzerMapping, searchableAnalyzer.converter(), clazz, type);
+        bindConverter(analyzerMapping, searchableAnalyzerProperty.converter(), clazz, type);
 
-        if (StringUtils.hasLength(searchableAnalyzer.nullAnalyzer())) {
-            analyzerMapping.setNullAnalyzer(searchableAnalyzer.nullAnalyzer());
+        if (StringUtils.hasLength(searchableAnalyzerProperty.nullAnalyzer())) {
+            analyzerMapping.setNullAnalyzer(searchableAnalyzerProperty.nullAnalyzer());
         }
     }
 

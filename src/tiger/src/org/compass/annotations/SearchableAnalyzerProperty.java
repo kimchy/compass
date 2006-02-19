@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SearchableAnalyzer {
+public @interface SearchableAnalyzerProperty {
 
     String nullAnalyzer() default "";
 
