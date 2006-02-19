@@ -16,8 +16,6 @@
 
 package org.compass.core.transaction;
 
-import javax.transaction.TransactionManager;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassEnvironment;
@@ -32,11 +30,6 @@ public final class TransactionManagerLookupFactory {
     private static final Log log = LogFactory.getLog(TransactionManagerLookupFactory.class);
 
     private TransactionManagerLookupFactory() {
-    }
-
-    public static TransactionManager getTransactionManager(CompassSettings settings) throws TransactionException {
-        log.debug("obtaining TransactionManager");
-        return getTransactionManagerLookup(settings).getTransactionManager(settings);
     }
 
     public static TransactionManagerLookup getTransactionManagerLookup(CompassSettings settings)
