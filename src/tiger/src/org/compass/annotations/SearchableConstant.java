@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SearchableConstantMetaData {
+public @interface SearchableConstant {
 
     String name();
 

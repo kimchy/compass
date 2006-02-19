@@ -139,16 +139,16 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         bindConverter(classMapping, searchable.converter());
 
-        SearchableConstantMetaData searchableConstantMetaData =
-                annotationClass.getAnnotation(SearchableConstantMetaData.class);
-        if (searchableConstantMetaData != null) {
-            bindConstantMetaData(searchableConstantMetaData);
+        SearchableConstant searchableConstant =
+                annotationClass.getAnnotation(SearchableConstant.class);
+        if (searchableConstant != null) {
+            bindConstantMetaData(searchableConstant);
         }
 
-        SearchableConstantMetaDatas searchableConstantMetaDatas =
-                annotationClass.getAnnotation(SearchableConstantMetaDatas.class);
-        if (searchableConstantMetaDatas != null) {
-            for (SearchableConstantMetaData metaData : searchableConstantMetaDatas.value()) {
+        SearchableConstants searchableConstants =
+                annotationClass.getAnnotation(SearchableConstants.class);
+        if (searchableConstants != null) {
+            for (SearchableConstant metaData : searchableConstants.value()) {
                 bindConstantMetaData(metaData);
             }
         }
@@ -449,19 +449,19 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         classPropertyMapping.addMapping(mdMapping);
     }
 
-    private void bindConstantMetaData(SearchableConstantMetaData searchableConstantMetaData) {
+    private void bindConstantMetaData(SearchableConstant searchableConstant) {
         ConstantMetaDataMapping constantMapping  = new ConstantMetaDataMapping();
-        constantMapping.setName(valueLookup.lookupMetaDataName(searchableConstantMetaData.name()));
-        constantMapping.setBoost(searchableConstantMetaData.boost());
-        constantMapping.setStore(AnnotationsBindingUtils.convert(searchableConstantMetaData.store()));
-        constantMapping.setIndex(AnnotationsBindingUtils.convert(searchableConstantMetaData.index()));
-        constantMapping.setTermVector(AnnotationsBindingUtils.convert(searchableConstantMetaData.termVector()));
-        if (StringUtils.hasLength(searchableConstantMetaData.analyzer())) {
-            constantMapping.setAnalyzer(searchableConstantMetaData.analyzer());
+        constantMapping.setName(valueLookup.lookupMetaDataName(searchableConstant.name()));
+        constantMapping.setBoost(searchableConstant.boost());
+        constantMapping.setStore(AnnotationsBindingUtils.convert(searchableConstant.store()));
+        constantMapping.setIndex(AnnotationsBindingUtils.convert(searchableConstant.index()));
+        constantMapping.setTermVector(AnnotationsBindingUtils.convert(searchableConstant.termVector()));
+        if (StringUtils.hasLength(searchableConstant.analyzer())) {
+            constantMapping.setAnalyzer(searchableConstant.analyzer());
         }
-        constantMapping.setExcludeFromAll(searchableConstantMetaData.exceludeFromAll());
-        constantMapping.setOverrideByName(searchableConstantMetaData.override());
-        for (String value : searchableConstantMetaData.values()) {
+        constantMapping.setExcludeFromAll(searchableConstant.exceludeFromAll());
+        constantMapping.setOverrideByName(searchableConstant.override());
+        for (String value : searchableConstant.values()) {
             constantMapping.addMetaDataValue(valueLookup.lookupMetaDataValue(value));
         }
         classMapping.addMapping(constantMapping);
