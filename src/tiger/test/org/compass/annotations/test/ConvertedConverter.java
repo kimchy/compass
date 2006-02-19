@@ -26,12 +26,12 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class ConverterdConverter extends AbstractBasicConverter implements CompassConfigurable {
+public class ConvertedConverter extends AbstractBasicConverter implements CompassConfigurable {
 
     private String separator;
 
     public void configure(CompassSettings settings) throws CompassException {
-        separator = settings.getSetting("separatpr", "/");
+        separator = settings.getSetting("separator", "/");
     }
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {

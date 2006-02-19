@@ -149,6 +149,21 @@ public class CompassMappingBinding implements MappingBinding {
         return hasAddedResource;
     }
 
+    public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
+        boolean hasAddedResource = false;
+        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
+            MappingBinding mappingBinding = (MappingBinding) it.next();
+            boolean retVal = mappingBinding.addPackage(packageName);
+            if (retVal) {
+                hasAddedResource = true;
+            }
+        }
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match package [" + packageName + "]");
+        }
+        return hasAddedResource;
+    }
+
     public boolean addClass(Class clazz) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
         for (Iterator it = mappingBindings.iterator(); it.hasNext();) {

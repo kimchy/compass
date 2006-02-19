@@ -7,7 +7,7 @@ import org.compass.annotations.SearchableClassConverter;
 /**
  * @author kimchy
  */
-@SearchableClassConverter(ConverterdConverter.class)
+@SearchableClassConverter(ConvertedConverter.class)
 public class Converted implements Serializable {
 
     public Converted() {

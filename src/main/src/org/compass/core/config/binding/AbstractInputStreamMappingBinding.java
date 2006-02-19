@@ -123,6 +123,11 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
         }
     }
 
+    public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
+        // nothing for us to do here
+        return false;
+    }
+
     public boolean addClass(Class clazz) throws ConfigurationException, MappingException {
         String fileName = clazz.getName().replace('.', '/') + getSuffix();
         InputStream rsrc = clazz.getClassLoader().getResourceAsStream(fileName);

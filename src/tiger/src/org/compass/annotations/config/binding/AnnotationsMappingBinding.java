@@ -21,10 +21,7 @@ import java.lang.reflect.*;
 import java.util.ArrayList;
 
 import org.compass.annotations.*;
-import org.compass.core.config.CommonMetaDataLookup;
-import org.compass.core.config.CompassConfigurable;
-import org.compass.core.config.CompassSettings;
-import org.compass.core.config.ConfigurationException;
+import org.compass.core.config.*;
 import org.compass.core.config.binding.MappingBindingSupport;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
@@ -55,6 +52,40 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         this.mapping = mapping;
         this.valueLookup = new CommonMetaDataLookup(metaData);
         this.settings = settings;
+    }
+
+    public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
+        Package pckg = null;
+        try {
+            pckg = ClassUtils.forName(packageName + ".package-info").getPackage();
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+        if (pckg.isAnnotationPresent(SearchableConverter.class)) {
+            bindConverter(pckg.getAnnotation(SearchableConverter.class));
+        }
+        if (pckg.isAnnotationPresent(SearchableConverters.class)) {
+            SearchableConverters searchableConverters = pckg.getAnnotation(SearchableConverters.class);
+            for (SearchableConverter searchableConverter : searchableConverters.value()) {
+                bindConverter(searchableConverter);
+            }
+        }
+        return true;
+    }
+
+    private void bindConverter(SearchableConverter searchableConverter) throws ConfigurationException, MappingException {
+        String[] settingsNames = new String[searchableConverter.settings().length + 1];
+        String[] settingsValues = new String[searchableConverter.settings().length + 1];
+        int i = 0;
+        for (; i < searchableConverter.settings().length; i++) {
+            SearchableConverterSetting converterSetting = searchableConverter.settings()[i];
+            settingsNames[i] = converterSetting.name();
+            settingsValues[i] = converterSetting.value();
+        }
+        settingsNames[i] = CompassEnvironment.Converter.TYPE;
+        settingsValues[i] = searchableConverter.type().getName();
+        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, searchableConverter.name(),
+                settingsNames, settingsValues);
     }
 
 
@@ -474,6 +505,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     private void bindConverter(Mapping mapping, String converterName, Class<?> clazz, Type type) {
         if (StringUtils.hasLength(converterName)) {
             mapping.setConverterName(converterName);
+            return;
         }
         if (clazz == null) {
             return;

@@ -78,7 +78,7 @@ public class CompassConfiguration {
 
     private CompassSettings settings;
 
-    private CompassMappingBinding mappingBinding;
+    protected CompassMappingBinding mappingBinding;
 
     private HashMap temporaryConvertersByName = new HashMap();
 
@@ -166,7 +166,7 @@ public class CompassConfiguration {
             converterLookup.registerConverter(converterName, converter);
         }
 
-        CompassMapping copyCompassMapping = (CompassMapping) mapping.copy(converterLookup);
+        CompassMapping copyCompassMapping = mapping.copy(converterLookup);
 
         PropertyNamingStrategyFactory propertyNamingStrategyFactory = new DefaultPropertyNamingStrategyFactory();
         PropertyNamingStrategy propertyNamingStrategy = propertyNamingStrategyFactory.createNamingStrategy(copySettings);
@@ -394,6 +394,17 @@ public class CompassConfiguration {
     public CompassConfiguration addFile(File file) throws ConfigurationException {
         log.info("Mapping file [" + file.getAbsolutePath() + "]");
         mappingBinding.addFile(file);
+        return this;
+    }
+
+    /**
+     * Read annotated package definitions.
+     *
+     * @param packageName The package name to load
+     */
+    public CompassConfiguration addPackage(String packageName) throws ConfigurationException {
+        log.info("Mapping package [" + packageName + "]");
+        mappingBinding.addPackage(packageName);
         return this;
     }
 

@@ -42,6 +42,8 @@ public interface MappingBinding {
 
     boolean addDirectory(File dir) throws ConfigurationException, MappingException;
 
+    boolean addPackage(String packageName) throws ConfigurationException, MappingException;
+
     boolean addJar(File jar) throws ConfigurationException, MappingException;
 
     boolean addFile(String filePath) throws ConfigurationException, MappingException;

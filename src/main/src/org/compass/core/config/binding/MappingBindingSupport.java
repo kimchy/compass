@@ -64,6 +64,10 @@ public class MappingBindingSupport implements MappingBinding {
         return false;
     }
 
+    public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
+        return false;
+    }
+
     public boolean addClass(Class clazz) throws ConfigurationException, MappingException {
         return false;
     }
