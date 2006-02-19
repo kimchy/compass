@@ -18,8 +18,8 @@ package org.compass.core.transaction.manager;
 
 import javax.transaction.TransactionManager;
 
-import org.compass.core.CompassException;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.transaction.TransactionException;
 import org.compass.core.transaction.TransactionManagerLookup;
 
 /**
@@ -29,12 +29,12 @@ import org.compass.core.transaction.TransactionManagerLookup;
  */
 public class JOTM implements TransactionManagerLookup {
 
-    public TransactionManager getTransactionManager(CompassSettings settings) throws CompassException {
+    public TransactionManager getTransactionManager(CompassSettings settings) throws TransactionException {
         try {
             Class clazz = Class.forName("org.objectweb.jotm.Current");
             return (TransactionManager) clazz.getMethod("getTransactionManager", null).invoke(null, null);
         } catch (Exception e) {
-            throw new CompassException("Could not obtain JOTM transaction manager instance", e);
+            throw new TransactionException("Could not obtain JOTM transaction manager instance", e);
         }
     }
 

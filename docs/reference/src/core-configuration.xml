@@ -362,7 +362,7 @@
       </para>
 
       <para>
-        Although the J2EE specification does not provide a standard way to reference a JTA <literal>TransactionManager</literal>, to register with a transaction synchronization service, Compass provides several lookups which can be set with a <literal>compass.transaction.managerLookup</literal> setting (thanks hibernate!).
+        Although the J2EE specification does not provide a standard way to reference a JTA <literal>TransactionManager</literal>, to register with a transaction synchronization service, Compass provides several lookups which can be set with a <literal>compass.transaction.managerLookup</literal> setting (thanks hibernate!). The setting is not required since Compass will try to auto-detect the JTA environment.
       </para>
 
       <para>
@@ -897,7 +897,7 @@
           <tbody>
             <row>
               <entry>compass.engine.store.jdbc.dialect</entry>
-              <entry>Mandatory. The fully qualified class name of the dialect (the database type) that the index will be stored at. Please refer to Lucene Jdbc Directory appendix for a list of the currently supported dialects.</entry>
+              <entry>Optional. The fully qualified class name of the dialect (the database type) that the index will be stored at. Please refer to Lucene Jdbc Directory appendix for a list of the currently supported dialects. If not set, Compass will try to auto-detect it based on the Database meta-data.</entry>
             </row>
             <row>
               <entry>compass.engine.store.jdbc.managed</entry>

@@ -41,16 +41,16 @@ public class WebSphere implements TransactionManagerLookup {
             try {
                 clazz = Class.forName("com.ibm.ws.Transaction.TransactionManagerFactory");
                 version = 5;
-                log.info("WebSphere 5.1");
+                log.debug("Found WebSphere 5.1+");
             } catch (Exception e) {
                 try {
                     clazz = Class.forName("com.ibm.ejs.jts.jta.TransactionManagerFactory");
                     version = 5;
-                    log.info("WebSphere 5.0");
+                    log.debug("Found WebSphere 5.0");
                 } catch (Exception e2) {
                     clazz = Class.forName("com.ibm.ejs.jts.jta.JTSXA");
                     version = 4;
-                    log.info("WebSphere 4");
+                    log.debug("Found WebSphere 4");
                 }
             }
 

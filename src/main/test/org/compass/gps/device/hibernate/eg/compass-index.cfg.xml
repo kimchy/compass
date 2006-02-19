@@ -14,7 +14,6 @@
         <setting name="compass.converter.date.format">yyyy/MM/dd</setting>
 
         <setting name="compass.transaction.factory">org.compass.core.transaction.JTASyncTransactionFactory</setting>
-        <setting name="compass.transaction.managerLookup">org.compass.core.transaction.manager.JOTM</setting>
 
         <mapping resource="org/compass/gps/device/hibernate/eg/User.cpm.xml"/>
         <mapping resource="org/compass/gps/device/hibernate/eg/Bid.cpm.xml"/>

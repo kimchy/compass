@@ -9,8 +9,7 @@
         <setting name="compass.engine.connection">target/testindex</setting>
         <setting name="compass.engine.optimizer.type">org.compass.core.lucene.engine.optimizer.NullOptimizer</setting>
         <setting name="compass.transaction.factory">org.compass.core.transaction.JTASyncTransactionFactory</setting>
-        <setting name="compass.transaction.managerLookup">org.compass.core.transaction.manager.JOTM</setting>
-    
+
         <mapping resource="org/compass/core/test/transaction/A.cpm.xml" />
         
     </compass>

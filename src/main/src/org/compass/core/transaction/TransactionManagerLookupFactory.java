@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
+import org.compass.core.transaction.manager.*;
 
 /**
  * @author kimchy
@@ -29,6 +30,9 @@ public final class TransactionManagerLookupFactory {
 
     private static final Log log = LogFactory.getLog(TransactionManagerLookupFactory.class);
 
+    private static Class[] autoDetectOrder = {WebSphere.class, Weblogic.class, JOnAS.class, JOTM.class, JBoss.class,
+            Orion.class, Resin.class, OC4J.class, JRun4.class};
+
     private TransactionManagerLookupFactory() {
     }
 
@@ -36,16 +40,38 @@ public final class TransactionManagerLookupFactory {
             throws TransactionException {
         String tmLookupClass = settings.getSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP);
         if (tmLookupClass == null) {
-            log.info("No TransactionManagerLookup configured");
+            // try and auto detect the transaction manager
+            log.info("JTA Transaction Manager Lookup setting not found, auto detecting....");
+            for (int i = 0; i < autoDetectOrder.length; i++) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Trying [" + autoDetectOrder[i].getName() + "]");
+                }
+                TransactionManagerLookup tmLookup = detect(autoDetectOrder[i], settings);
+                if (tmLookup != null) {
+                    log.info("Detected JTA Transaction Manager [" + autoDetectOrder[i].getName() + "]");
+                    return tmLookup;
+                }
+            }
             return null;
         } else {
-            log.info("instantiating TransactionManagerLookup [" + tmLookupClass + "]");
+            log.info("Instantiating TransactionManagerLookup [" + tmLookupClass + "]");
             try {
                 return (TransactionManagerLookup) ClassUtils.forName(tmLookupClass).newInstance();
             } catch (Exception e) {
-                log.error("Could not instantiate TransactionManagerLookup", e);
                 throw new TransactionException("Could not instantiate TransactionManagerLookup");
             }
         }
+    }
+
+    private static TransactionManagerLookup detect(Class tmClass, CompassSettings settings) {
+        try {
+            TransactionManagerLookup tmLookup = (TransactionManagerLookup) tmClass.newInstance();
+            if (tmLookup.getTransactionManager(settings) != null) {
+                return tmLookup;
+            }
+        } catch (Exception e) {
+            // do nothing here
+        }
+        return null;
     }
 }
