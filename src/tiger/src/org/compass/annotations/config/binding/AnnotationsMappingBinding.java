@@ -208,6 +208,21 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindObjectMapping(referenceMapping, accessor, name);
             bindReference(searchableReference, referenceMapping, clazz, type);
             classMapping.addMapping(referenceMapping);
+        } else if (annotation instanceof SearchableAnalyzer) {
+            ClassPropertyAnalyzerController analyzerMapping = new ClassPropertyAnalyzerController();
+            SearchableAnalyzer searchableAnalyzer = (SearchableAnalyzer) annotation;
+            bindObjectMapping(analyzerMapping, accessor, name);
+            bindAnalyzer(searchableAnalyzer, analyzerMapping, clazz, type);
+            classMapping.addMapping(analyzerMapping);
+        }
+    }
+
+    private void bindAnalyzer(SearchableAnalyzer searchableAnalyzer, ClassPropertyAnalyzerController analyzerMapping,
+                               Class<?> clazz, Type type) {
+        bindConverter(analyzerMapping, searchableAnalyzer.converter(), clazz, type);
+
+        if (StringUtils.hasLength(searchableAnalyzer.nullAnalyzer())) {
+            analyzerMapping.setNullAnalyzer(searchableAnalyzer.nullAnalyzer());
         }
     }
 
