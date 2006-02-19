@@ -52,6 +52,8 @@ public abstract class MappingProcessorUtils {
         internalIdMapping.setBoost(1.0f);
         internalIdMapping.setGetter(classPropertyMapping.getGetter());
         internalIdMapping.setSetter(classPropertyMapping.getSetter());
+        internalIdMapping.setConverter(classPropertyMapping.getManagedIdConverter());
+        internalIdMapping.setConverterName(classPropertyMapping.getManagedIdConverterName());
         process(internalIdMapping, classPropertyMapping, converterLookup);
         int propertyIndex = classPropertyMapping.addMapping(internalIdMapping);
         classPropertyMapping.setIdPropertyIndex(propertyIndex);

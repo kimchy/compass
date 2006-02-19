@@ -64,6 +64,13 @@ public @interface SearchableProperty {
 
     boolean exceludeFromAll() default false;
 
+    /**
+     * Converter of the generated meta-data. If the property is a <code>Collection</code,
+     * the converter of the collection element type.
+     * <p>
+     * This converter will also be used for an internal meta-data id (if required to be
+     * generated).
+     */
     String converter() default "";
 
     /**

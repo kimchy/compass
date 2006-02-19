@@ -1,7 +1,9 @@
 package org.compass.annotations.test.id;
 
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
+import org.compass.annotations.test.Converted;
 import org.compass.core.CompassHits;
+import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.impl.InternalCompassSession;
@@ -16,7 +18,7 @@ import org.compass.core.mapping.osem.ClassMapping;
 public class IdTests extends AbstractAnnotationsTestCase {
 
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addClass(A.class);
+        conf.addClass(A.class).addClass(B.class);
     }
 
     public void testIdsPaths() throws Exception {
@@ -44,6 +46,21 @@ public class IdTests extends AbstractAnnotationsTestCase {
 
         CompassHits hits = session.find("value");
         assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testConvertedId() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        B b = new B();
+        b.id = new Converted("value1", "value2");
+
+        session.save(b);
+
+        session.load(B.class, b.id);
 
         tr.commit();
         session.close();

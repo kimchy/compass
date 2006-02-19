@@ -17,6 +17,7 @@
 package org.compass.core.mapping.osem;
 
 import org.compass.core.Property;
+import org.compass.core.converter.Converter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.util.Parameter;
@@ -86,6 +87,10 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private ManagedId managedId = ManagedId.AUTO;
 
+    private Converter managedIdConverter;
+
+    private String managedIdConverterName;
+
     private boolean excludeFromAll = false;
 
     private String analyzer;
@@ -116,6 +121,8 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         mapping.setAccessor(getAccessor());
         mapping.setObjClass(getObjClass());
         mapping.setPropertyName(getPropertyName());
+        mapping.setManagedIdConverter(getManagedIdConverter());
+        mapping.setManagedIdConverterName(getManagedIdConverterName());
     }
 
     public Mapping copy() {
@@ -231,4 +238,21 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }
+
+    public Converter getManagedIdConverter() {
+        return managedIdConverter;
+    }
+
+    public void setManagedIdConverter(Converter managedIdConverter) {
+        this.managedIdConverter = managedIdConverter;
+    }
+
+    public String getManagedIdConverterName() {
+        return managedIdConverterName;
+    }
+
+    public void setManagedIdConverterName(String managedIdConverterName) {
+        this.managedIdConverterName = managedIdConverterName;
+    }
+
 }

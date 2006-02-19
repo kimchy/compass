@@ -21,16 +21,23 @@ import java.util.List;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
+import org.compass.annotations.test.Converted;
 
 /**
  * @author kimchy
  */
 @Searchable
-public class A {
+public class B {
 
     @SearchableId
-    long id;
+    int id;
+
+    @SearchableProperty(name = "test")
+    Converted converted1;
+
+    @SearchableProperty(name = "test")
+    Converted converted2;
 
     @SearchableProperty
-    List<String> values;
+    List<Converted> convertedValues;
 }
