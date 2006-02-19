@@ -90,7 +90,7 @@ public class CompassConfiguration {
 
         mappingBinding = new CompassMappingBinding();
         addMappingBindings(mappingBinding);
-        mappingBinding.setUpBinding(mapping, metaData);
+        mappingBinding.setUpBinding(mapping, metaData, settings);
     }
 
     protected void addMappingBindings(CompassMappingBinding mappingBinding) {

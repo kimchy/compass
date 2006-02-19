@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 import org.compass.core.Property;
 import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
 import org.compass.core.mapping.*;
 import org.compass.core.mapping.osem.*;
@@ -43,8 +44,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
     private CommonMetaDataLookup valueLookup;
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData) {
-        super.setUpBinding(mapping, metaData);
+    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
+        super.setUpBinding(mapping, metaData, settings);
         this.valueLookup = new CommonMetaDataLookup(metaData);
     }
 

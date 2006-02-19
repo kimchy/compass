@@ -38,9 +38,9 @@ public class CompassMappingBinding implements MappingBinding {
         this.mappingBindings.add(mappingBinding);
     }
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData) {
+    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
         for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            ((MappingBinding) it.next()).setUpBinding(mapping, metaData);
+            ((MappingBinding) it.next()).setUpBinding(mapping, metaData, settings);
         }
     }
 

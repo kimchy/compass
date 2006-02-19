@@ -16,22 +16,23 @@
 
 package org.compass.core.config.binding;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.InputStreamMappingResolver;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.metadata.CompassMetaData;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-
 /**
  * @author kimchy
  */
 public class MappingBindingSupport implements MappingBinding {
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData) {
+    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
 
     }
 

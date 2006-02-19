@@ -16,17 +16,18 @@
 
 package org.compass.core.config.binding;
 
-import org.compass.core.config.ConfigurationException;
-import org.compass.core.config.InputStreamMappingResolver;
-import org.compass.core.mapping.CompassMapping;
-import org.compass.core.mapping.MappingException;
-import org.compass.core.metadata.CompassMetaData;
-
 import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+
+import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
+import org.compass.core.config.InputStreamMappingResolver;
+import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.MappingException;
+import org.compass.core.metadata.CompassMetaData;
 
 /**
  * @author kimchy
@@ -37,9 +38,12 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
 
     protected CompassMetaData metaData;
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData) {
+    protected CompassSettings settings;
+
+    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
         this.mapping = mapping;
         this.metaData = metaData;
+        this.settings = settings;
     }
 
     public boolean addResource(String path) throws ConfigurationException, MappingException {
