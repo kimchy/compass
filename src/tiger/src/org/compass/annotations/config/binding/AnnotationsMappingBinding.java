@@ -78,9 +78,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         String[] settingsValues = new String[searchableConverter.settings().length + 1];
         int i = 0;
         for (; i < searchableConverter.settings().length; i++) {
-            SearchableConverterSetting converterSetting = searchableConverter.settings()[i];
-            settingsNames[i] = converterSetting.name();
-            settingsValues[i] = converterSetting.value();
+            SearchableSetting setting = searchableConverter.settings()[i];
+            settingsNames[i] = setting.name();
+            settingsValues[i] = setting.value();
         }
         settingsNames[i] = CompassEnvironment.Converter.TYPE;
         settingsValues[i] = searchableConverter.type().getName();
@@ -539,7 +539,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (converter instanceof CompassConfigurable) {
             CompassSettings settings = new CompassSettings();
             for (int i = 0; i < searchableClassConverter.settings().length; i++) {
-                SearchableConverterSetting setting = searchableClassConverter.settings()[i];
+                SearchableSetting setting = searchableClassConverter.settings()[i];
                 settings.setSetting(setting.name(), setting.value());
             }
             ((CompassConfigurable) converter).configure(settings);

@@ -627,6 +627,12 @@
             </fileset>
         </copy>
 
+        <copy todir="${basedir}/${dist.ref.dir}/html/">
+            <fileset dir="${basedir}/${doc.ref.dir}/styles">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
+
         <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}/html/">
             <classpath>
                 <fileset dir="${basedir}/${doc.ref.dir}/lib">
@@ -649,6 +655,12 @@
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${basedir}/${dist.ref.dir}/html/">
+            <fileset dir="${basedir}/${doc.ref.dir}/styles">
+                <include name="*.css"/>
             </fileset>
         </copy>
 
