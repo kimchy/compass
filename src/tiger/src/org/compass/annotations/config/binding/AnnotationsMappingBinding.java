@@ -232,6 +232,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
     private void processsAnnotatedElement(String name, String accessor, Class<?> clazz, Type type, Annotation annotation,
                                           AnnotatedElement annotatedElement) {
+
         if (annotation instanceof SearchableId) {
             ClassIdPropertyMapping classPropertyMapping = new ClassIdPropertyMapping();
             SearchableId searchableId = (SearchableId) annotation;
@@ -265,8 +266,23 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         }
     }
 
+    private void validateAnnotatedElement(AnnotatedElement annotatedElement, String name) throws MappingException {
+        Class[] topLevelFieldAnnotations = new Class[]{SearchableId.class, SearchableProperty.class,
+                SearchableComponent.class, SearchableReference.class, SearchableAnalyzerProperty.class};
+        int numberOfTopLevel = 0;
+        for (Class<?> annClass : topLevelFieldAnnotations) {
+            if (annotatedElement.isAnnotationPresent((Class<? extends Annotation>) annClass)) {
+                numberOfTopLevel++;
+            }
+        }
+        if (numberOfTopLevel > 1) {
+            throw new MappingException("Class [" + classMapping.getClazz().getName() + "] field [" +
+                    name + "] has more than one top level annotation (" + topLevelFieldAnnotations + ")");
+        }
+    }
+
     private void bindAnalyzer(SearchableAnalyzerProperty searchableAnalyzerProperty, ClassPropertyAnalyzerController analyzerMapping,
-                               Class<?> clazz, Type type) {
+                              Class<?> clazz, Type type) {
         bindConverter(analyzerMapping, searchableAnalyzerProperty.converter(), clazz, type);
 
         if (StringUtils.hasLength(searchableAnalyzerProperty.nullAnalyzer())) {
@@ -481,7 +497,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     }
 
     private void bindConstantMetaData(SearchableConstant searchableConstant) {
-        ConstantMetaDataMapping constantMapping  = new ConstantMetaDataMapping();
+        ConstantMetaDataMapping constantMapping = new ConstantMetaDataMapping();
         constantMapping.setName(valueLookup.lookupMetaDataName(searchableConstant.name()));
         constantMapping.setBoost(searchableConstant.boost());
         constantMapping.setStore(AnnotationsBindingUtils.convert(searchableConstant.store()));
