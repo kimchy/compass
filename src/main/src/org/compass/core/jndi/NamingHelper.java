@@ -38,11 +38,10 @@ public abstract class NamingHelper {
 
     public static InitialContext getInitialContext(CompassSettings settings) throws NamingException {
         Hashtable hash = getJndiProperties(settings);
-        log.info("JNDI InitialContext properties [" + hash + "]");
         try {
             return (hash.size() == 0) ? new InitialContext() : new InitialContext(hash);
         } catch (NamingException e) {
-            log.error("Could not obtain initial context", e);
+            log.error("Could not obtain initial context with settings [" + hash + "]", e);
             throw e;
         }
     }
