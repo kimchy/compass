@@ -128,7 +128,7 @@ public class DirectPropertyAccessor implements PropertyAccessor {
 
     private static Field getField(Class clazz, String name) throws PropertyNotFoundException {
         if (clazz == null || clazz == Object.class) {
-            throw new PropertyNotFoundException("field not found: " + name);
+            throw new PropertyNotFoundException("field not found [" + name + "]");
         }
         Field field;
         try {
