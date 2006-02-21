@@ -17,7 +17,6 @@
 package org.compass.core.engine.event;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.compass.core.engine.SearchEngineException;
 
@@ -46,8 +45,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (Iterator it = lifecycleListeners.iterator(); it.hasNext();) {
-            ((SearchEngineLifecycleEventListener) it.next()).beforeBeginTransaction();
+        for (int i = 0; i < lifecycleListeners.size(); i++) {
+            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).beforeBeginTransaction();
         }
     }
 
@@ -55,8 +54,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (Iterator it = lifecycleListeners.iterator(); it.hasNext();) {
-            ((SearchEngineLifecycleEventListener) it.next()).afterBeginTransaction();
+        for (int i = 0; i < lifecycleListeners.size(); i++) {
+            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).afterBeginTransaction();
         }
     }
 
@@ -64,8 +63,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (Iterator it = lifecycleListeners.iterator(); it.hasNext();) {
-            ((SearchEngineLifecycleEventListener) it.next()).afterPrepare();
+        for (int i = 0; i < lifecycleListeners.size(); i++) {
+            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).afterPrepare();
         }
     }
 
@@ -73,8 +72,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (Iterator it = lifecycleListeners.iterator(); it.hasNext();) {
-            ((SearchEngineLifecycleEventListener) it.next()).afterCommit(onePhase);
+        for (int i = 0; i < lifecycleListeners.size(); i++) {
+            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).afterCommit(onePhase);
         }
     }
 
@@ -82,8 +81,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (Iterator it = lifecycleListeners.iterator(); it.hasNext();) {
-            ((SearchEngineLifecycleEventListener) it.next()).afterRollback();
+        for (int i = 0; i < lifecycleListeners.size(); i++) {
+            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).afterRollback();
         }
     }
 
@@ -91,8 +90,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (Iterator it = lifecycleListeners.iterator(); it.hasNext();) {
-            ((SearchEngineLifecycleEventListener) it.next()).close();
+        for (int i = 0; i < lifecycleListeners.size(); i++) {
+            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).close();
         }
     }
 }

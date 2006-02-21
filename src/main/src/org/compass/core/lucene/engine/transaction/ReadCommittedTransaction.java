@@ -16,6 +16,11 @@
 
 package org.compass.core.lucene.engine.transaction;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -36,11 +41,6 @@ import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.util.FieldInvoker;
 import org.compass.core.util.ResourceHelper;
 import org.compass.core.util.StringUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * A better implementation of the read committed transaction support. Uses the
@@ -130,8 +130,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         }
 
         public void firstPhase() throws SearchEngineException {
-            for (Iterator it = transIndexList.iterator(); it.hasNext();) {
-                TransIndexWrapper wrapper = (TransIndexWrapper) it.next();
+            for (int i = 0; i < transIndexList.size(); i++) {
+                TransIndexWrapper wrapper = (TransIndexWrapper) transIndexList.get(i);
                 try {
                     wrapper.transIndex.firstPhase();
                 } catch (IOException ex) {
@@ -142,8 +142,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         }
 
         public void secondPhase() throws SearchEngineException {
-            for (Iterator it = transIndexList.iterator(); it.hasNext();) {
-                TransIndexWrapper wrapper = (TransIndexWrapper) it.next();
+            for (int i = 0; i < transIndexList.size(); i++) {
+                TransIndexWrapper wrapper = (TransIndexWrapper) transIndexList.get(i);
                 try {
                     wrapper.transIndex.secondPhase();
                 } catch (IOException ex) {
@@ -170,8 +170,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
         public void close() throws SearchEngineException {
             Exception e = null;
-            for (Iterator it = transIndexList.iterator(); it.hasNext();) {
-                TransIndexWrapper wrapper = (TransIndexWrapper) it.next();
+            for (int i = 0; i < transIndexList.size(); i++) {
+                TransIndexWrapper wrapper = (TransIndexWrapper) transIndexList.get(i);
                 try {
                     wrapper.transIndex.close();
                 } catch (IOException ex) {
@@ -230,8 +230,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                     // a hack so the index reader won't acquire a writer lock,
                     // since we already hold it when we locked the writer
                     indexReaderDirectoryOwner.set(indexReader, Boolean.FALSE);
-                    for (Iterator it2 = deletes.iterator(); it2.hasNext();) {
-                        int docNum = ((Integer) it2.next()).intValue();
+                    for (int j = 0; j < deletes.size(); j++) {
+                        int docNum = ((Integer) deletes.get(j)).intValue();
                         indexReader.deleteDocument(docNum);
                     }
                 } catch (Exception ex) {

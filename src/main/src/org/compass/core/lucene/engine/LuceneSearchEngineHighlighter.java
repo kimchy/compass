@@ -18,7 +18,6 @@ package org.compass.core.lucene.engine;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -276,9 +275,9 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
         closed = true;
 
         if (indexHolders != null) {
-            for (Iterator it = indexHolders.iterator(); it.hasNext();) {
-                LuceneScheduledSearchEngineIndexManager.LuceneIndexHolder indexHolder = (LuceneScheduledSearchEngineIndexManager.LuceneIndexHolder) it
-                        .next();
+            for (int i = 0; i < indexHolders.size(); i++) {
+                LuceneScheduledSearchEngineIndexManager.LuceneIndexHolder indexHolder =
+                        (LuceneScheduledSearchEngineIndexManager.LuceneIndexHolder) indexHolders.get(i);
                 indexHolder.release();
             }
         }

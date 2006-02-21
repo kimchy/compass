@@ -17,7 +17,6 @@
 package org.compass.core.lucene.engine.transaction;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -37,7 +36,7 @@ import org.compass.core.mapping.ResourceMapping;
  * A base class for all Lucene based transactions. Provides helper methods for
  * Lucene index transaction management, and default state management for the
  * transcational operations.
- * 
+ *
  * @author kimchy
  */
 public abstract class AbstractTransaction implements LuceneSearchEngineTransaction {
@@ -124,9 +123,9 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
     }
 
     protected void closeHits() throws SearchEngineException {
-        for (Iterator it = delegateClose.iterator(); it.hasNext();) {
+        for (int i = 0; i < delegateClose.size(); i++) {
             try {
-                ((LuceneDelegatedClose) it.next()).close();
+                ((LuceneDelegatedClose) delegateClose.get(i)).close();
             } catch (Exception e) {
                 // swallow the exception
             }

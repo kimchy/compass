@@ -16,7 +16,6 @@
 
 package org.compass.core.lucene.engine;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.compass.core.engine.SearchEngineException;
@@ -57,9 +56,9 @@ public abstract class AbstractLuceneSearchEngineHits implements SearchEngineHits
         }
 
         if (indexHolders != null) {
-            for (Iterator it = indexHolders.iterator(); it.hasNext();) {
+            for (int i = 0; i < indexHolders.size(); i++) {
                 LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
-                        (LuceneSearchEngineIndexManager.LuceneIndexHolder) it.next();
+                        (LuceneSearchEngineIndexManager.LuceneIndexHolder) indexHolders.get(i);
                 indexHolder.release();
             }
         }

@@ -16,6 +16,11 @@
 
 package org.apache.lucene.index;
 
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Vector;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -31,12 +36,6 @@ import org.compass.core.Resource;
 import org.compass.core.impl.ResourceIdKey;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSettings;
-
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * Provides a transactional index based on Lucene IndexWriter. <p/> Maintains a
@@ -388,9 +387,9 @@ public class TransIndex {
         transCreates.clear();
 
         // close all the transactional index readers that are opened
-        for (Iterator it = transReaders.iterator(); it.hasNext();) {
+        for (int i = 0; i < transReaders.size(); i++) {
             try {
-                ((IndexReader) it.next()).close();
+                ((IndexReader) transReaders.get(i)).close();
             } catch (IOException ex) {
                 // swallow this one
                 log.warn("Failed to close transaction index readers, ignoring", ex);

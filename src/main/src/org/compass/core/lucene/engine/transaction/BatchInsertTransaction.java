@@ -19,7 +19,6 @@ package org.compass.core.lucene.engine.transaction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriter;
@@ -133,8 +132,8 @@ public class BatchInsertTransaction extends AbstractTransaction {
 
         public void closeIndexWriters(boolean withDirs, boolean withOptimize) throws SearchEngineException {
             Exception e = null;
-            for (Iterator it = writers.iterator(); it.hasNext();) {
-                IndexWriterWrapper writer = (IndexWriterWrapper) it.next();
+            for (int i = 0; i < writers.size(); i++) {
+                IndexWriterWrapper writer = (IndexWriterWrapper) writers.get(i);
                 try {
                     if (withOptimize) {
                         optimizeIndexWriter(writer);
