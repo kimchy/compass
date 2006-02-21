@@ -5,19 +5,12 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import org.compass.core.converter.Converter;
-
 /**
- *
  * @author kimchy
  */
-@Target(ElementType.PACKAGE)
+@Target({ElementType.PACKAGE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SearchableConverter {
+public @interface SearchableAnalyzers {
 
-    String name();
-
-    Class<? extends Converter> type();
-
-    SearchableSetting[] settings() default {};
+    SearchableAnalyzer[] value();
 }

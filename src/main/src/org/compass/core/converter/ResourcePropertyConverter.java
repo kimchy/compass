@@ -23,7 +23,7 @@ import org.compass.core.mapping.ResourcePropertyMapping;
  *
  * @author kimchy
  */
-public interface ResourcePropertyConverter {
+public interface ResourcePropertyConverter extends Converter {
 
     /**
      * @param str

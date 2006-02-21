@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.compass.core.converter.Converter;
+
 /**
  * @author kimchy
  */
@@ -12,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchableClassConverter {
 
-    Class value();
+    Class<? extends Converter> value();
 
     SearchableSetting[] settings() default {};
 }

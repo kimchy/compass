@@ -19,6 +19,7 @@ package org.compass.core.lucene.engine.analyzer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -107,10 +108,15 @@ public class DefaultLuceneAnalyzerFactory implements LuceneAnalyzerFactory {
             stopWords = stopWords.substring(1);
         }
         StringTokenizer st = new StringTokenizer(stopWords, ",");
-        String[] arrStopWords = new String[st.countTokens()];
-        for (int i = 0; st.hasMoreTokens(); i++) {
-            arrStopWords[i] = st.nextToken().trim();
+        ArrayList listStopWords = new ArrayList();
+        while (st.hasMoreTokens()) {
+            String stopword = st.nextToken().trim();
+            if (StringUtils.hasLength(stopword)) {
+                listStopWords.add(stopword);
+            }
         }
+        String[] arrStopWords = (String[]) listStopWords.toArray(new String[listStopWords.size()]);
+        
         if (addStopWords) {
             if (log.isTraceEnabled()) {
                 log.trace("Analyzer [" + analyzerName + "] uses default stop words ["

@@ -34,6 +34,9 @@ import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.StringUtils;
+import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerFactory;
+import org.apache.lucene.analysis.Analyzer;
 
 /**
  * @author kimchy
@@ -70,7 +73,58 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 bindConverter(searchableConverter);
             }
         }
+        if (pckg.isAnnotationPresent(SearchableAnalyzer.class)) {
+            bindAnalyzer(pckg.getAnnotation(SearchableAnalyzer.class));
+        }
+        if (pckg.isAnnotationPresent(SearchableAnalyzers.class)) {
+            SearchableAnalyzers searchableAnalyzers = pckg.getAnnotation(SearchableAnalyzers.class);
+            for (SearchableAnalyzer searchableAnalyzer : searchableAnalyzers.value()) {
+                bindAnalyzer(searchableAnalyzer);
+            }
+        }
         return true;
+    }
+
+    private void bindAnalyzer(SearchableAnalyzer searchableAnalyzer) throws ConfigurationException, MappingException {
+        ArrayList<String> settingsNames = new ArrayList<String>();
+        ArrayList<String> settingsValues = new ArrayList<String>();
+
+        settingsNames.add(LuceneEnvironment.Analyzer.TYPE);
+        if (searchableAnalyzer.type() == AnalyzerType.ClassName) {
+            if (Analyzer.class.equals(searchableAnalyzer.analyzerClass())) {
+                throw new ConfigurationException("SearchableAnalyzer [" + searchableAnalyzer.name() + "] has " +
+                        "type of [" + AnalyzerType.ClassName + "] but does not set analyzerClass");
+            }
+            settingsValues.add(searchableAnalyzer.analyzerClass().getName());
+        } else {
+            settingsValues.add(searchableAnalyzer.type().toString());
+        }
+
+        if (searchableAnalyzer.type() == AnalyzerType.Snowball) {
+            settingsNames.add(LuceneEnvironment.Analyzer.Snowball.NAME_TYPE);
+            settingsValues.add(searchableAnalyzer.snowballType().toString());
+        }
+
+        if (!LuceneAnalyzerFactory.class.equals(searchableAnalyzer.factory())) {
+            settingsNames.add(LuceneEnvironment.Analyzer.FACTORY);
+            settingsValues.add(searchableAnalyzer.factory().getName());
+        }
+
+        if (searchableAnalyzer.stopWords().length > 0) {
+            StringBuffer sb = new StringBuffer();
+            if (searchableAnalyzer.addStopWords()) {
+                sb.append("+");
+            }
+            for (String stopword : searchableAnalyzer.stopWords()) {
+                sb.append(stopword).append(",");
+            }
+            settingsNames.add(LuceneEnvironment.Analyzer.STOPWORDS);
+            settingsValues.add(sb.toString());
+        }
+
+        settings.setGroupSettings(LuceneEnvironment.Analyzer.PREFIX, searchableAnalyzer.name(),
+                settingsNames.toArray(new String[settingsNames.size()]),
+                settingsValues.toArray(new String[settingsValues.size()]));
     }
 
     private void bindConverter(SearchableConverter searchableConverter) throws ConfigurationException, MappingException {
