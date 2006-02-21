@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Target({ElementType.PACKAGE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SearchableAnalyzers {
+public @interface SearchConverters {
 
-    SearchableAnalyzer[] value();
+    SearchConverter[] value();
 }

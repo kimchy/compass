@@ -14,7 +14,7 @@ import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerFactory;
  */
 @Target(ElementType.PACKAGE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SearchableAnalyzer {
+public @interface SearchAnalyzer {
 
     String name();
 
