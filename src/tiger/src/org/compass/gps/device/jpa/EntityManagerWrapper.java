@@ -24,7 +24,7 @@ import javax.persistence.EntityManagerFactory;
  * <code>EntityManager</code>s, as well as any transactions control (such as JPA resource local
  * <code>EntityTransaction<code>).
  * <p>
- * Use by {@link JpaGpsDevice} when performing the index operation.
+ * Used by {@link JpaGpsDevice} when performing the index operation.
  *
  * @author kimchy
  */
@@ -48,7 +48,7 @@ public interface EntityManagerWrapper {
      * Returns the <code>EntityManager</code> opened by the wrapper open operation.
      *
      * @return The current <code>EntityManager</code>
-     * @throws IllegalStateException If no called between the open and close* operations
+     * @throws IllegalStateException If not called between the open and close* operations
      */
     EntityManager getEntityManager() throws IllegalStateException;
 

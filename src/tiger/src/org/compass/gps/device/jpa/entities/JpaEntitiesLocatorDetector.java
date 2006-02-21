@@ -28,7 +28,7 @@ import javax.persistence.EntityManagerFactory;
  * <p>
  * Currently support the following JPA implementations: Hibernate.
  * <p/>
- * Assume that the <code>EntityManagerFactory</code> is the native one, since the
+ * Assumes that the <code>EntityManagerFactory</code> is the native one, since the
  * {@link org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor} of the
  * {@link org.compass.gps.device.jpa.JpaGpsDevice} was used to extract it.
  * 

@@ -51,19 +51,19 @@ import java.util.List;
  * use the {@link JpaEntitiesLocatorDetector} to auto detect the correct locator (which defaults
  * to the ({@link org.compass.gps.device.jpa.entities.DefaultJpaEntitiesLocator}).
  * <p>
- * Mirroring cane be done in two ways. The first one is using JPA official API, implemeting an
+ * Mirroring can be done in two ways. The first one is using JPA official API, implemeting an
  * Entity Lifecycle listener and specifing it for each entity class via annotations. Compass
- * compass with helper base clases for it, {@link AbstractCompassJpaEntityListener} and
+ * comes with helper base clases for it, {@link AbstractCompassJpaEntityListener} and
  * {@link AbstractDeviceJpaEntityListener}. As far as integrating Compass with JPA for mirroring,
  * this is the less preferable way. The second option for mirroring is to use the {@link JpaEntityLifecycleInjector},
  * which will use the internal JPA implementation to inject global lifecycle event listerens (sadly, there
  * is no option to do that with the <code>EntityManagerFactory</code> API). If the {@link #setInjectEntityLifecycleListener(boolean)}
- * is set to <code>true</code> (defaults to <code>false</code>), the device will try to use to use the injector
+ * is set to <code>true</code> (defaults to <code>false</code>), the device will try to use the injector
  * to inject global event listeners. If no {@link JpaEntityLifecycleInjector} is defined, the device will try
  * to autodetect the injector based on the current support for specific JPA implementations using the
- * {@link JpaEntityLifecycleInjectorDetector}. See its javadoc for a list of the current JPA implementations.
+ * {@link JpaEntityLifecycleInjectorDetector}. See its javadoc for a list of the current JPA implementations supported.
  * <p>
- * Mirroring cane be turned off using the {@link #setMirrorDataChanges(boolean)} to <code>false</code>. It
+ * Mirroring can be turned off using the {@link #setMirrorDataChanges(boolean)} to <code>false</code>. It
  * defaults to <code>true<code>.
  * <p>
  * The device allows for {@link NativeEntityManagerFactoryExtractor} to be set, for applications that use a
