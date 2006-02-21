@@ -53,13 +53,13 @@ public class LocalTransaction extends AbstractTransaction {
 
     public void join() throws CompassException {
         if (log.isDebugEnabled()) {
-            log.debug("Joining an existing local transcation");
+            log.debug("Joining an existing local transcation on therad [" + Thread.currentThread().getName() + "]");
         }
     }
 
     public void begin() throws CompassException {
         if (log.isDebugEnabled()) {
-            log.debug("Starting a new local transcation");
+            log.debug("Starting a new local transcation on thread [" + Thread.currentThread().getName() + "]");
         }
         session.getSearchEngine().begin(transactionIsolation);
         state = STARTED;
@@ -71,13 +71,14 @@ public class LocalTransaction extends AbstractTransaction {
         }
 
         if (state == UNKNOWN) {
-            log.debug("commit called, not committing the transaction since within a local transaction");
+            log.debug("Not committing the transaction since within a local transaction on therad ["
+                    + Thread.currentThread().getName() + "]");
             return;
         }
 
         // commit called by the high level local transaction
         if (log.isDebugEnabled()) {
-            log.debug("Committing local transaction");
+            log.debug("Committing local transaction on thread [" + Thread.currentThread().getName() + "]");
         }
 
         CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());
@@ -90,11 +91,12 @@ public class LocalTransaction extends AbstractTransaction {
     protected void doRollback() throws CompassException {
         if (state == UNKNOWN) {
             if (log.isDebugEnabled()) {
-                log.debug("Rolling back local transaction, which exists within another local transaction");
+                log.debug("Rolling back local transaction, which exists within another local transaction "
+                        + " on thread [" + Thread.currentThread().getName() + "]");
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Rolling back local transaction");
+                log.debug("Rolling back local transaction on thread [" + Thread.currentThread().getName() + "]");
             }
 
             CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());

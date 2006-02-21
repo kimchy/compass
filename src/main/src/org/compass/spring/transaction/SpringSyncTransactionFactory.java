@@ -16,9 +16,6 @@
 
 package org.compass.spring.transaction;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction.TransactionIsolation;
@@ -31,6 +28,9 @@ import org.compass.core.transaction.TransactionException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
@@ -57,8 +57,10 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
 	protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
 			throws CompassException {
-		return new SpringSyncTransaction();
-	}
+        SpringSyncTransaction tr = new SpringSyncTransaction();
+		tr.join();
+        return tr;
+    }
 
 	protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
 		TransactionSynchronization sync = lookupTransactionSynchronization();

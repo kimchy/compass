@@ -16,14 +16,6 @@
 
 package org.compass.core.transaction;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
@@ -33,6 +25,10 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.impl.InternalCompassSession;
 import org.compass.core.jndi.NamingHelper;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.transaction.*;
 
 /**
  * Factory for <code>JTATransaction</code>.
@@ -57,7 +53,6 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
 		try {
 			context = NamingHelper.getInitialContext(settings);
 		} catch (NamingException ne) {
-			log.error("Could not obtain initial context", ne);
 			throw new CompassException("Could not obtain initial context", ne);
 		}
 
@@ -89,8 +84,10 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
 	}
 
 	protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
-		return new JTASyncTransaction(lookupUserTransaction());
-	}
+        JTASyncTransaction tx = new JTASyncTransaction(lookupUserTransaction());
+        tx.join();
+        return tx;
+    }
 
 	protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
 		UserTransaction ut = lookupUserTransaction();

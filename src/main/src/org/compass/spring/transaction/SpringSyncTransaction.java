@@ -78,7 +78,17 @@ public class SpringSyncTransaction extends AbstractTransaction {
 		setBegun(true);
 	}
 
-	protected void doCommit() throws CompassException {
+    /**
+     * Called by factory when already in a running compass transaction
+     */
+    public void join() throws CompassException {
+        controllingNewTransaction = false;
+        if (log.isDebugEnabled()) {
+            log.debug("Joining an existing compass transcation on therad [" + Thread.currentThread().getName() + "]");
+        }
+    }
+
+    protected void doCommit() throws CompassException {
 		if (!controllingNewTransaction) {
 			if (log.isDebugEnabled()) {
 				log.debug("Not controlling the new transaction creation");

@@ -16,8 +16,6 @@
 
 package org.compass.core.lucene.engine.optimizer;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.LuceneSegmentsMerger;
 import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.apache.lucene.store.Directory;
@@ -27,6 +25,8 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+
+import java.io.IOException;
 
 /**
  * @author kimchy
@@ -50,8 +50,8 @@ public class AdaptiveOptimizer extends AbstractLuceneSearchEngineOptimizer imple
     public boolean needOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
         if (indexInfo.size() >= mergeFactor) {
             if (log.isDebugEnabled()) {
-                log.debug("Need to optimize sub-index [" + subIndex + "]. Optimizing " + indexInfo.size()
-                        + " segments into one segment.");
+                log.debug("Need to optimize sub-index [" + subIndex + "]. Number of segments " + indexInfo.size()
+                        + " is larger than [" + mergeFactor + "]");
             }
             return true;
         }
