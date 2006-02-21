@@ -658,7 +658,7 @@
             </fileset>
         </copy>
 
-        <copy todir="${basedir}/${dist.ref.dir}/html/">
+        <copy todir="${basedir}/${dist.ref.dir}/html_single/">
             <fileset dir="${basedir}/${doc.ref.dir}/styles">
                 <include name="*.css"/>
             </fileset>
