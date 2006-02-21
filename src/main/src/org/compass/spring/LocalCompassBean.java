@@ -16,17 +16,6 @@
 
 package org.compass.spring;
 
-import java.io.File;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
@@ -39,6 +28,7 @@ import org.compass.core.impl.InternalCompass;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.jdbc.ExternalDataSourceProvider;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -46,10 +36,20 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.sql.DataSource;
+import java.io.File;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * @author kimchy
  */
-public class LocalCompassBean implements FactoryBean, InitializingBean, DisposableBean {
+public class LocalCompassBean implements FactoryBean, InitializingBean, DisposableBean, BeanNameAware {
 
     protected static final Log log = LogFactory.getLog(LocalCompassBean.class);
 
@@ -72,6 +72,12 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
     private Map convertersByName;
 
     private Compass compass;
+
+    private String beanName;
+
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
 
     /**
      * Set the location of the Compass XML config file, for example as classpath
@@ -229,8 +235,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
                 config.registerConverter(converterName, (Converter) convertersByName.get(converterName));
             }
         }
+        if (config.getSettings().getSetting(CompassEnvironment.NAME) == null) {
+            config.getSettings().setSetting(CompassEnvironment.NAME, beanName);
+        }
 
-        log.info("Building new Compass");
         this.compass = newCompass(config);
         this.compass = (Compass) Proxy.newProxyInstance(SpringCompassInvocationHandler.class.getClassLoader(),
                 new Class[]{InternalCompass.class}, new SpringCompassInvocationHandler(this.compass));

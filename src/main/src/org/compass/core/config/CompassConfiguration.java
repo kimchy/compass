@@ -16,11 +16,6 @@
 
 package org.compass.core.config;
 
-import java.io.*;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
@@ -41,6 +36,11 @@ import org.compass.core.metadata.impl.DefaultCompassMetaData;
 import org.compass.core.util.DTDEntityResolver;
 import org.compass.core.util.config.ConfigurationHelper;
 import org.compass.core.util.config.XmlConfigurationHelperBuilder;
+
+import java.io.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Used to configure <code>Compass</code> instances.
@@ -271,7 +271,7 @@ public class CompassConfiguration {
     protected CompassConfiguration doConfigure(ConfigurationHelper conf) throws ConfigurationException {
 
         ConfigurationHelper compassConf = conf.getChild("compass");
-        String name = compassConf.getAttribute("name", null);
+        String name = compassConf.getAttribute("name", "default");
         if (name != null) {
             settings.setSetting(CompassEnvironment.NAME, name);
         }
@@ -313,8 +313,6 @@ public class CompassConfiguration {
      * arbitrary mechanism.
      */
     protected InputStream getConfigurationInputStream(String resource) throws ConfigurationException {
-
-        log.info("Configuration resource [" + resource + "]");
 
         InputStream stream = CompassEnvironment.class.getResourceAsStream(resource);
         if (stream == null)

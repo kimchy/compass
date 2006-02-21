@@ -16,12 +16,6 @@
 
 package org.compass.core.lucene.engine.store;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -38,6 +32,13 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.util.StringUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @author kimchy
@@ -278,6 +279,6 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     public String toString() {
-        return "STORE[" + connectionString + "]";
+        return "store [" + connectionString + "] sub-indexes [" + StringUtils.arrayToCommaDelimitedString(subIndexes) + "]";
     }
 }

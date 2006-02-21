@@ -16,13 +16,6 @@
 
 package org.compass.core.lucene.engine.store;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import javax.sql.DataSource;
-
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcDirectorySettings;
@@ -47,6 +40,13 @@ import org.compass.core.lucene.engine.store.jdbc.DataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.util.ClassUtils;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author kimchy
@@ -80,6 +80,9 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         try {
             dataSourceProvider =
                     (DataSourceProvider) ClassUtils.forName(dataSourceProviderClassName).newInstance();
+            if (log.isDebugEnabled()) {
+                log.debug("Using data source provider [" + dataSourceProvider.getClass().getName() + "]");
+            }
             dataSourceProvider.configure(url, settings);
             this.dataSource = dataSourceProvider.getDataSource();
         } catch (Exception e) {
@@ -100,9 +103,15 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
                 throw new ConfigurationException("Failed to configure dialect [" + dialectClassName + "]");
             }
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Using dialect [" + dialect.getClass().getName() + "]");
+        }
 
 
         managed = settings.getSettingAsBoolean(LuceneEnvironment.JdbcStore.MANAGED, false);
+        if (log.isDebugEnabled()) {
+            log.debug("Using managed [" + managed + "]");
+        }
         if (!managed) {
             this.dataSource = new TransactionAwareDataSourceProxy(this.dataSource);
         }
@@ -118,13 +127,25 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         jdbcSettings.setValueColumnLengthInK(settings.getSettingAsInt(LuceneEnvironment.JdbcStore.DDL.VALUE_LENGTH, jdbcSettings.getValueColumnLengthInK()));
 
         jdbcSettings.setUseCommitLocks(settings.getSettingAsBoolean(LuceneEnvironment.JdbcStore.USE_COMMIT_LOCKS, jdbcSettings.isUseCommitLocks()));
+        if (log.isDebugEnabled()) {
+            log.debug("Using commit locks [" + jdbcSettings.isUseCommitLocks() + "]");
+        }
         jdbcSettings.setDeleteMarkDeletedDelta(settings.getSettingAsLong(LuceneEnvironment.JdbcStore.DELETE_MARK_DELETED_DELTA, jdbcSettings.getDeleteMarkDeletedDelta()));
+        if (log.isDebugEnabled()) {
+            log.debug("Using delete mark deleted older than [" + jdbcSettings.getDeleteMarkDeletedDelta() + "ms]");
+        }
         jdbcSettings.setQueryTimeout(settings.getSettingAsInt(LuceneEnvironment.Transaction.LOCK_TIMEOUT, jdbcSettings.getQueryTimeout()));
+        if (log.isDebugEnabled()) {
+            log.debug("Using query timeout (transaction lock timeout) [" + jdbcSettings.getQueryTimeout() + "ms]");
+        }
 
         try {
             jdbcSettings.setLockClass(settings.getSettingAsClass(LuceneEnvironment.JdbcStore.LOCK_TYPE, jdbcSettings.getLockClass()));
         } catch (ClassNotFoundException e) {
             throw new CompassException("Failed to create jdbc lock class [" + settings.getSetting(LuceneEnvironment.JdbcStore.LOCK_TYPE) + "]");
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Using lock strategy [" + jdbcSettings.getLockClass().getName() + "]");
         }
 
         if (dialect.supportTransactionalScopedBlobs() &&
@@ -132,6 +153,13 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
               // Use FetchPerTransaction is dialect supports it
             jdbcSettings.getDefaultFileEntrySettings().setClassSetting(JdbcFileEntrySettings.INDEX_INPUT_TYPE_SETTING,
                     FetchPerTransactionJdbcIndexInput.class);
+            if (log.isDebugEnabled()) {
+                log.debug("Using transactional blobs (dialect supports it)");
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Using non transactional blobs (dialect does not supports it)");
+            }
         }
 
         Map fileEntries = settings.getSettingGroups(LuceneEnvironment.JdbcStore.FileEntry.PREFIX);

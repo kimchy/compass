@@ -16,9 +16,6 @@
 
 package org.compass.core.lucene.engine.manager;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
@@ -32,6 +29,9 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.util.LuceneUtils;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * @author kimchy
@@ -64,11 +64,17 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void createIndex() throws SearchEngineException {
+        if (log.isDebugEnabled()) {
+            log.debug("Creating index " + searchEngineStore);
+        }
         clearCache();
         searchEngineStore.createIndex();
     }
 
     public void deleteIndex() throws SearchEngineException {
+        if (log.isDebugEnabled()) {
+            log.debug("Deleting index " + searchEngineStore);
+        }
         clearCache();
         searchEngineStore.deleteIndex();
     }
@@ -179,6 +185,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void notifyAllToClearCache() throws SearchEngineException {
+        if (log.isDebugEnabled()) {
+            log.debug("Global notification to clear cache");
+        }
         // here we sync on globalCache since we do not want to collide with the other sync methods
         String[] subIndexes = searchEngineStore.getSubIndexes();
         // just update the last modified time, others will see the change and update
@@ -392,6 +401,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 throw new SearchEngineException("Failed to check last modified on global index chache", e);
             }
             if (lastModifiled[i] < lastMod) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Global notification to clear cache detected, clearing cache...");
+                }
                 lastModifiled[i] = lastMod;
                 clearCache(subIndexes[i]);
             }
@@ -429,6 +441,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void compoundIndex() throws SearchEngineException {
+        if (log.isDebugEnabled()) {
+            log.debug("Compounding index " + searchEngineStore);
+        }
         String[] subIndexes = searchEngineStore.getSubIndexes();
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
@@ -442,6 +457,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void unCompoundIndex() throws SearchEngineException {
+        if (log.isDebugEnabled()) {
+            log.debug("UnCompounding index " + searchEngineStore);
+        }
         String[] subIndexes = searchEngineStore.getSubIndexes();
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);

@@ -16,26 +16,17 @@
 
 package org.compass.core.jndi;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-
-import javax.naming.Context;
-import javax.naming.InvalidNameException;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.event.EventContext;
-import javax.naming.event.NamespaceChangeListener;
-import javax.naming.event.NamingEvent;
-import javax.naming.event.NamingExceptionEvent;
-import javax.naming.event.NamingListener;
-import javax.naming.spi.ObjectFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.util.FastHashMap;
+
+import javax.naming.*;
+import javax.naming.event.*;
+import javax.naming.spi.ObjectFactory;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * Resolves <code>Compass</code> JNDI lookups and deserialization
@@ -111,14 +102,13 @@ public class CompassObjectFactory implements ObjectFactory {
             log.info("Not binding compass to JNDI, no JNDI name configured");
         } else {
 
-            log.info("Binding compass under [" + name + "]");
+            if (log.isInfoEnabled()) {
+                log.info("Binding compass to JNDI under [" + name + "]");
+            }
 
             try {
                 Context ctx = NamingHelper.getInitialContext(settings);
                 NamingHelper.bind(ctx, name, instance);
-                if (log.isInfoEnabled()) {
-                    log.info("Bound compass to JNDI name [" + name + "]");
-                }
                 ((EventContext) ctx).addNamingListener(name, EventContext.OBJECT_SCOPE, LISTENER);
             } catch (InvalidNameException ine) {
                 log.error("Invalid JNDI name [" + name + "]", ine);
@@ -143,9 +133,6 @@ public class CompassObjectFactory implements ObjectFactory {
             try {
                 Context ctx = NamingHelper.getInitialContext(settings);
                 ctx.unbind(name);
-                if (log.isInfoEnabled()) {
-                    log.info("Unbound compass from JNDI name [" + name + "]");
-                }
             } catch (InvalidNameException ine) {
                 log.error("Invalid JNDI name [" + name + "]", ine);
             } catch (NamingException ne) {
