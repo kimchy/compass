@@ -82,7 +82,32 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 bindAnalyzer(searchAnalyzer);
             }
         }
+        if (pckg.isAnnotationPresent(SearchAnalyzerFilter.class)) {
+            bindAnalyzerFilter(pckg.getAnnotation(SearchAnalyzerFilter.class));
+        }
+        if (pckg.isAnnotationPresent(SearchAnalyzerFilters.class)) {
+            SearchAnalyzerFilters searchAnalyzerFilters = pckg.getAnnotation(SearchAnalyzerFilters.class);
+            for (SearchAnalyzerFilter searchAnalyzerFilter : searchAnalyzerFilters.value()) {
+                bindAnalyzerFilter(searchAnalyzerFilter);
+            }
+        }
         return true;
+    }
+
+    private void bindAnalyzerFilter(SearchAnalyzerFilter searchAnalyzerFilter) throws ConfigurationException, MappingException {
+        ArrayList<String> settingsNames = new ArrayList<String>();
+        ArrayList<String> settingsValues = new ArrayList<String>();
+        settingsNames.add(LuceneEnvironment.AnalyzerFilter.TYPE);
+        settingsValues.add(searchAnalyzerFilter.type().getName());
+
+        for (SearchSetting setting : searchAnalyzerFilter.settings()) {
+            settingsNames.add(setting.name());
+            settingsValues.add(setting.value());
+        }
+
+        settings.setGroupSettings(LuceneEnvironment.AnalyzerFilter.PREFIX, searchAnalyzerFilter.name(),
+                settingsNames.toArray(new String[settingsNames.size()]),
+                settingsValues.toArray(new String[settingsValues.size()]));
     }
 
     private void bindAnalyzer(SearchAnalyzer searchAnalyzer) throws ConfigurationException, MappingException {
@@ -120,6 +145,11 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             }
             settingsNames.add(LuceneEnvironment.Analyzer.STOPWORDS);
             settingsValues.add(sb.toString());
+        }
+
+        for (SearchSetting setting : searchAnalyzer.settings()) {
+            settingsNames.add(setting.name());
+            settingsValues.add(setting.value());
         }
 
         settings.setGroupSettings(LuceneEnvironment.Analyzer.PREFIX, searchAnalyzer.name(),
