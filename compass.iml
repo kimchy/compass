@@ -4,7 +4,10 @@
   <component name="NewModuleRootManager">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/docs/reference/html" />
+      <excludeFolder url="file://$MODULE_DIR$/docs/reference/html_single" />
       <excludeFolder url="file://$MODULE_DIR$/docs/reference/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/docs/reference/pdf" />
       <excludeFolder url="file://$MODULE_DIR$/samples/library/target" />
       <excludeFolder url="file://$MODULE_DIR$/samples/petclinic/junit-reports" />
       <excludeFolder url="file://$MODULE_DIR$/samples/petclinic/target" />
