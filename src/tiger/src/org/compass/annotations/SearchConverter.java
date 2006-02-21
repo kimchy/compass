@@ -19,5 +19,5 @@ public @interface SearchConverter {
 
     Class<? extends Converter> type();
 
-    SearchableSetting[] settings() default {};
+    SearchSetting[] settings() default {};
 }

@@ -38,5 +38,5 @@ public @interface SearchAnalyzer {
      */
     boolean addStopWords() default true;
 
-    SearchableSetting[] settings() default {};
+    SearchSetting[] settings() default {};
 }

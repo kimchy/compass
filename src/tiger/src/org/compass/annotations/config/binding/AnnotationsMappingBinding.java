@@ -132,7 +132,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         String[] settingsValues = new String[searchConverter.settings().length + 1];
         int i = 0;
         for (; i < searchConverter.settings().length; i++) {
-            SearchableSetting setting = searchConverter.settings()[i];
+            SearchSetting setting = searchConverter.settings()[i];
             settingsNames[i] = setting.name();
             settingsValues[i] = setting.value();
         }
@@ -609,7 +609,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (converter instanceof CompassConfigurable) {
             CompassSettings settings = new CompassSettings();
             for (int i = 0; i < searchableClassConverter.settings().length; i++) {
-                SearchableSetting setting = searchableClassConverter.settings()[i];
+                SearchSetting setting = searchableClassConverter.settings()[i];
                 settings.setSetting(setting.name(), setting.value());
             }
             ((CompassConfigurable) converter).configure(settings);
