@@ -16,15 +16,14 @@
 
 package org.compass.annotations.config.binding;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-
+import org.apache.lucene.analysis.Analyzer;
 import org.compass.annotations.*;
 import org.compass.core.config.*;
 import org.compass.core.config.binding.MappingBindingSupport;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
+import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerFactory;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
@@ -34,9 +33,10 @@ import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.StringUtils;
-import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerFactory;
-import org.apache.lucene.analysis.Analyzer;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.ArrayList;
 
 /**
  * @author kimchy
@@ -58,7 +58,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     }
 
     public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
-        Package pckg = null;
+        Package pckg;
         try {
             pckg = ClassUtils.forName(packageName + ".package-info").getPackage();
         } catch (ClassNotFoundException e) {
@@ -317,21 +317,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindObjectMapping(analyzerMapping, accessor, name);
             bindAnalyzer(searchableAnalyzerProperty, analyzerMapping, clazz, type);
             classMapping.addMapping(analyzerMapping);
-        }
-    }
-
-    private void validateAnnotatedElement(AnnotatedElement annotatedElement, String name) throws MappingException {
-        Class[] topLevelFieldAnnotations = new Class[]{SearchableId.class, SearchableProperty.class,
-                SearchableComponent.class, SearchableReference.class, SearchableAnalyzerProperty.class};
-        int numberOfTopLevel = 0;
-        for (Class<?> annClass : topLevelFieldAnnotations) {
-            if (annotatedElement.isAnnotationPresent((Class<? extends Annotation>) annClass)) {
-                numberOfTopLevel++;
-            }
-        }
-        if (numberOfTopLevel > 1) {
-            throw new MappingException("Class [" + classMapping.getClazz().getName() + "] field [" +
-                    name + "] has more than one top level annotation (" + topLevelFieldAnnotations + ")");
         }
     }
 
