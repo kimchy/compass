@@ -6,6 +6,7 @@
 
     <compass>
 
+        <setting name="compass.cache.first">org.compass.core.cache.first.NullFirstLevelCache</setting>
         <setting name="compass.engine.connection">target/test-index</setting>
 
         <!--MySql-->
