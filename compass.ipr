@@ -4,19 +4,8 @@
     <defaultAnt bundledAnt="true" />
   </component>
   <component name="CodeStyleSettingsManager">
-    <option name="PER_PROJECT_SETTINGS">
-      <value>
-        <option name="IMPORT_LAYOUT_TABLE">
-          <value>
-            <package name="java" withSubpackages="true" />
-            <package name="javax" withSubpackages="true" />
-            <emptyLine />
-            <package name="" withSubpackages="true" />
-          </value>
-        </option>
-      </value>
-    </option>
-    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
+    <option name="PER_PROJECT_SETTINGS" />
+    <option name="USE_PER_PROJECT_SETTINGS" value="false" />
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
@@ -190,6 +179,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/compass.iml" filepath="$PROJECT_DIR$/compass.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/tiger/tiger.iml" filepath="$PROJECT_DIR$/src/tiger/tiger.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" />

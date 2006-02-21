@@ -23,7 +23,7 @@ import org.compass.core.test.AbstractTestCase;
 /**
  * @author kimchy
  */
-public class AbstractAnnotationsTestCase extends AbstractTestCase {
+public abstract class AbstractAnnotationsTestCase extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[0];
