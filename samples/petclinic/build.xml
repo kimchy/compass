@@ -15,7 +15,7 @@
 
     <property name="testsrc.dir" value="src/test"/>
     <property name="testbuild.dir" value="target/testclasses"/>
-    <property name="testreports.dir" value="junit-reports"/>
+    <property name="testreports.dir" value="target/junit-reports"/>
     <property name="testhtml.dir" value="${testreports.dir}/html"/>
 
     <property file="build.properties"/>
