@@ -189,22 +189,22 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using Spring's Log4jConfigurer
 
 * lucene/lucene-analyzers.jar
-- Lucene 1.9 RC1 Dev (http://lucene.apache.org)
+- Lucene 1.9 RC1 (http://lucene.apache.org)
 - required for building the framework
 - required at runtime if using extended analyzers
 
 * lucene/lucene-core.jar
-- Lucene 1.9 RC1 Dev (http://lucene.apache.org)
+- Lucene 1.9 RC1 (http://lucene.apache.org)
 - required for building the framework
 - required at runtime
 
 * lucene/lucene-highlighter.jar
-- Lucene 1.9 RC1 Dev (http://lucene.apache.org)
+- Lucene 1.9 RC1 (http://lucene.apache.org)
 - required for building the framework
 - required at runtime if using highlighter features
 
 * lucene/lucene-snowball.jar
-- Lucene 1.9 RC1 Dev (http://lucene.apache.org)
+- Lucene 1.9 RC1 (http://lucene.apache.org)
 - required for building the framework
 - required at runtime if using the snowball analyzer features
 
