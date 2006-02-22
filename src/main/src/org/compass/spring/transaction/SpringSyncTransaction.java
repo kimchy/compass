@@ -32,51 +32,66 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 public class SpringSyncTransaction extends AbstractTransaction {
 
-	private static final Log log = LogFactory.getLog(SpringSyncTransaction.class);
+    private static final Log log = LogFactory.getLog(SpringSyncTransaction.class);
 
-	private TransactionStatus status;
+    private TransactionStatus status;
 
-	private boolean controllingNewTransaction = false;
+    /**
+     * This flag means if this transaction controls the COMPASS transaction (i.e. it is the top level compass
+     * transaction)
+     */
+    private boolean controllingNewTransaction = false;
 
-	private boolean commitFailed;
+    private boolean commitFailed;
 
-	private PlatformTransactionManager transactionManager;
+    private PlatformTransactionManager transactionManager;
 
-	public void begin(PlatformTransactionManager transactionManager, InternalCompassSession session,
-			TransactionIsolation transactionIsolation, boolean commitBeforeCompletion) {
-		if (log.isDebugEnabled()) {
-			log.debug("Beginning Spring sycn transaction, and a new compass transaction");
-		}
+    public void begin(PlatformTransactionManager transactionManager, InternalCompassSession session,
+                      TransactionIsolation transactionIsolation, boolean commitBeforeCompletion) {
 
-		this.transactionManager = transactionManager;
+        this.transactionManager = transactionManager;
 
-		// the factory called begin, so we are in charge, if we were not, than
-		// it would not call begin
-		controllingNewTransaction = true;
+        // the factory called begin, so we are in charge, if we were not, than
+        // it would not call begin (we are in charge of the COMPASS transaction,
+        // the spring one is handled later)
+        controllingNewTransaction = true;
 
-		if (transactionManager != null) {
-			DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-			transactionDefinition.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
-			boolean readOnly = false;
-			if (transactionIsolation == TransactionIsolation.READ_ONLY_READ_COMMITTED) {
-				readOnly = true;
-			}
-			transactionDefinition.setReadOnly(readOnly);
-			status = transactionManager.getTransaction(transactionDefinition);
-		}
+        if (transactionManager != null) {
+            DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+            transactionDefinition.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
+            boolean readOnly = false;
+            if (transactionIsolation == TransactionIsolation.READ_ONLY_READ_COMMITTED) {
+                readOnly = true;
+            }
+            transactionDefinition.setReadOnly(readOnly);
+            status = transactionManager.getTransaction(transactionDefinition);
+        }
 
-		session.getSearchEngine().begin(transactionIsolation);
+        session.getSearchEngine().begin(transactionIsolation);
 
-		SpringTransactionSynchronization sync;
-		if (transactionManager != null) {
-			sync = new SpringTransactionSynchronization(session, status.isNewTransaction(), commitBeforeCompletion);
-		} else {
-			sync = new SpringTransactionSynchronization(session, false, commitBeforeCompletion);
-		}
-		TransactionSynchronizationManager.registerSynchronization(sync);
+        SpringTransactionSynchronization sync;
+        if (transactionManager != null) {
+            if (log.isDebugEnabled()) {
+                if (status.isNewTransaction()) {
+                    log.debug("Beginning new Spring transaction, and a new compass transaction on therad ["
+                            + Thread.currentThread().getName() + "]");
+                } else {
+                    log.debug("Joining Spring transaction, and starting a new compass transaction on therad ["
+                            + Thread.currentThread().getName() + "]");
+                }
+            }
+            sync = new SpringTransactionSynchronization(session, status.isNewTransaction(), commitBeforeCompletion);
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Joining Spring transaction, and starting a new compass transaction on therad ["
+                        + Thread.currentThread().getName() + "]");
+            }
+            sync = new SpringTransactionSynchronization(session, false, commitBeforeCompletion);
+        }
+        TransactionSynchronizationManager.registerSynchronization(sync);
 
-		setBegun(true);
-	}
+        setBegun(true);
+    }
 
     /**
      * Called by factory when already in a running compass transaction
@@ -89,136 +104,145 @@ public class SpringSyncTransaction extends AbstractTransaction {
     }
 
     protected void doCommit() throws CompassException {
-		if (!controllingNewTransaction) {
-			if (log.isDebugEnabled()) {
-				log.debug("Not controlling the new transaction creation");
-			}
-			return;
-		}
+        if (!controllingNewTransaction) {
+            if (log.isDebugEnabled()) {
+                log.debug("Not committing transaction since compass does not control it on thread ["
+                        + Thread.currentThread().getName() + "]");
+            }
+            return;
+        }
 
-		if (transactionManager == null) {
-			// do nothing, it could only get here if the spring transaction was
-			// started and we synch on it
-			return;
-		}
+        if (transactionManager == null) {
+            // do nothing, it could only get here if the spring transaction was
+            // started and we synch on it
+            return;
+        }
 
-		if (status.isNewTransaction()) {
-			if (log.isDebugEnabled()) {
-				log.debug("Committing transaction started by us");
-			}
-			try {
-				transactionManager.commit(status);
-			} catch (Exception e) {
-				commitFailed = true;
-				// so the transaction is already rolled back, by JTA spec
-				log.error("Commit failed", e);
-				throw new TransactionException("Commit failed", e);
-			}
-		} else {
-			if (log.isDebugEnabled()) {
-				log.debug("Commit called, let Spring synchronization work for us");
-			}
-		}
-	}
+        if (status.isNewTransaction()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Committing transaction controlled by compass on therad ["
+                        + Thread.currentThread().getName() + "]");
+            }
+            try {
+                transactionManager.commit(status);
+            } catch (Exception e) {
+                commitFailed = true;
+                // so the transaction is already rolled back, by JTA spec
+                throw new TransactionException("Commit failed", e);
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Commit called, let Spring synchronization commit the transaciton on therad ["
+                        + Thread.currentThread().getName() + "]");
+            }
+        }
+    }
 
-	protected void doRollback() throws CompassException {
+    protected void doRollback() throws CompassException {
 
-		if (transactionManager == null) {
-			// do nothing, it could only get here if the spring transaction was
-			// started and we synch on it
-			return;
-		}
+        if (transactionManager == null) {
+            // do nothing, it could only get here if the spring transaction was
+            // started and we synch on it
+            return;
+        }
 
-		try {
-			if (status.isNewTransaction()) {
-				if (log.isDebugEnabled()) {
-					log.debug("Rolling back transaction started by us");
-				}
-				if (!commitFailed)
-					transactionManager.rollback(status);
-			} else {
-				if (log.isDebugEnabled()) {
-					log.debug("Roll back called, mark it as rolled back");
-				}
-				status.setRollbackOnly();
-			}
-		} catch (Exception e) {
-			log.error("Rollback failed", e);
-			throw new TransactionException("Rollback failed with exception", e);
-		}
-	}
+        try {
+            if (status.isNewTransaction()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Rolling back Spring transaction controlled by compass on therad ["
+                            + Thread.currentThread().getName() + "]");
+                }
+                if (!commitFailed)
+                    transactionManager.rollback(status);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Marking Spring transaction as rolled back since compass controlls it on thread [" +
+                            Thread.currentThread().getName() + "]");
+                }
+                status.setRollbackOnly();
+            }
+        } catch (Exception e) {
+            throw new TransactionException("Rollback failed with exception", e);
+        }
+    }
 
-	public boolean wasRolledBack() throws CompassException {
-		throw new TransactionException("Not supported");
-	}
+    public boolean wasRolledBack() throws CompassException {
+        throw new TransactionException("Not supported");
+    }
 
-	public boolean wasCommitted() throws CompassException {
-		throw new TransactionException("Not supported");
-	}
+    public boolean wasCommitted() throws CompassException {
+        throw new TransactionException("Not supported");
+    }
 
-	public static class SpringTransactionSynchronization implements TransactionSynchronization {
+    public static class SpringTransactionSynchronization implements TransactionSynchronization {
 
-		private InternalCompassSession session;
+        private InternalCompassSession session;
 
-		private boolean compassControledTransaction;
+        private boolean compassControledTransaction;
 
-		private boolean commitBeforeCompletion;
+        private boolean commitBeforeCompletion;
 
-		public SpringTransactionSynchronization(InternalCompassSession session, boolean compassControledTransaction,
-				boolean commitBeforeCompletion) {
-			this.session = session;
-			this.compassControledTransaction = compassControledTransaction;
-			this.commitBeforeCompletion = commitBeforeCompletion;
-		}
+        public SpringTransactionSynchronization(InternalCompassSession session, boolean compassControledTransaction,
+                                                boolean commitBeforeCompletion) {
+            this.session = session;
+            this.compassControledTransaction = compassControledTransaction;
+            this.commitBeforeCompletion = commitBeforeCompletion;
+        }
 
-		public void suspend() {
-		}
+        public void suspend() {
+        }
 
-		public void resume() {
-		}
+        public void resume() {
+        }
 
-		public void beforeCommit(boolean readOnly) {
-		}
+        public void beforeCommit(boolean readOnly) {
+        }
 
-		public void beforeCompletion() {
-			if (!commitBeforeCompletion) {
-				return;
-			}
-			session.getSearchEngine().commit(true);
-		}
+        public void beforeCompletion() {
+            if (!commitBeforeCompletion) {
+                return;
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Committing compass transaction using Spring synchronization beforeCompletion on therad [" +
+                        Thread.currentThread().getName() + "]");
+            }
+            session.getSearchEngine().commit(true);
+        }
 
-		public void afterCompletion(int status) {
-			try {
-				if (status == STATUS_COMMITTED) {
-					if (log.isDebugEnabled()) {
-						log.debug("Committing compass transaction using spring synchronization");
-					}
-					if (!commitBeforeCompletion) {
-						session.getSearchEngine().commit(true);
-					}
-				} else if (status == STATUS_ROLLED_BACK) {
-					if (log.isDebugEnabled()) {
-						log.debug("Rolling back compass transaction using spring synchronization");
-					}
-					session.getSearchEngine().rollback();
-				}
-			} catch (Exception e) {
-				log.error("Exception occured when sync with transaction", e);
-				// TODO swallow??????
-			} finally {
-				CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());
-				holder.removeSession(this);
-				session.evictAll();
-				// close the session AFTER we cleared it from the transaction,
-				// so it will be actually closed. Also close it only if we do
-				// not contoll the transaction
-				// (otherwise it will be closed by the calling template)
-				if (!compassControledTransaction) {
-					session.close();
-				}
-			}
-		}
+        public void afterCompletion(int status) {
+            try {
+                if (status == STATUS_COMMITTED) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Committing compass transaction using Spring synchronization afterCompletion on therad [" +
+                                Thread.currentThread().getName() + "]");
+                    }
+                    if (!commitBeforeCompletion) {
+                        session.getSearchEngine().commit(true);
+                    }
+                } else if (status == STATUS_ROLLED_BACK) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Rolling back compass transaction using Spring synchronization afterCompletion on therad [" +
+                                Thread.currentThread().getName() + "]");
+                    }
+                    session.getSearchEngine().rollback();
+                }
+            } catch (Exception e) {
+                log.error("Exception occured when sync with transaction", e);
+                // TODO swallow??????
+            } finally {
+                CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());
+                holder.removeSession(this);
+                session.evictAll();
+                // close the session AFTER we cleared it from the transaction,
+                // so it will be actually closed. Also close it only if we do
+                // not contoll the transaction
+                // (otherwise it will be closed by the calling template)
+                if (!compassControledTransaction) {
+                    session.close();
+                }
+            }
+        }
 
-	}
+    }
 
 }

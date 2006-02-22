@@ -16,12 +16,11 @@
 
 package org.compass.core.transaction;
 
+import javax.transaction.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.impl.InternalCompassSession;
-
-import javax.transaction.*;
 
 /**
  * Implements a basic transaction strategy for JTA transactions. Instances check
@@ -127,7 +126,8 @@ public class JTASyncTransaction extends AbstractTransaction {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Commit called, let JTA synchronization work for us");
+                log.debug("Commit called, let JTA synchronization commit the transaciton on therad ["
+                        + Thread.currentThread().getName() + "]");
             }
         }
     }

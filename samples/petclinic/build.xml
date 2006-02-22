@@ -208,6 +208,9 @@
             <fileset dir="${compass.root}/lib/jakarta-taglibs">
                 <include name="standard.jar"/>
             </fileset>
+            <fileset dir="${compass.root}/lib/log4j">
+                <include name="log4j*.jar"/>
+            </fileset>
             <fileset dir="${compass.root}/lib/ojb">
                 <include name="db-ojb-*.jar"/>
             </fileset>

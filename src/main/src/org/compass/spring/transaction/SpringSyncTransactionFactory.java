@@ -16,6 +16,7 @@
 
 package org.compass.spring.transaction;
 
+import java.util.List;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction.TransactionIsolation;
@@ -28,9 +29,6 @@ import org.compass.core.transaction.TransactionException;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-
-import java.util.Iterator;
-import java.util.List;
 
 public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
@@ -90,8 +88,8 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 			}
 		}
 		List syncs = TransactionSynchronizationManager.getSynchronizations();
-		for (Iterator it = syncs.iterator(); it.hasNext();) {
-			Object sync = it.next();
+		for (int i = 0; i < syncs.size(); i++) {
+			Object sync = syncs.get(i);
 			if (sync instanceof SpringSyncTransaction.SpringTransactionSynchronization) {
 				return (TransactionSynchronization) sync;
 			}

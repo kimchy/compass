@@ -18,7 +18,7 @@
 	  - Location of the Log4J config file, for initialization and refresh checks.
 	  - Applied by Log4jConfigListener.
 	-->
-	<context-param>
+    <context-param>
 		<param-name>log4jConfigLocation</param-name>
 		<param-value>/WEB-INF/log4j.properties</param-value>
 	</context-param>
