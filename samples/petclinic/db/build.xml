@@ -13,8 +13,8 @@
          onerror="continue">  
 
 			<classpath>
-				<fileset dir="../../../modules/gps">
-					<include name="lib/hsqldb-*.jar"/>
+				<fileset dir="../../../lib">
+					<include name="hsqldb/hsqldb.jar"/>
 				</fileset>
 			</classpath>
 

@@ -184,6 +184,8 @@ public class LuceneSearchEngine implements SearchEngine {
         }
         if (transactionIsolation == TransactionIsolation.READ_COMMITTED) {
             transaction = new ReadCommittedTransaction();
+        } else if (transactionIsolation == TransactionIsolation.READ_ONLY_READ_COMMITTED) {
+            transaction = new ReadCommittedTransaction();
         } else if (transactionIsolation == TransactionIsolation.BATCH_INSERT) {
             transaction = new BatchInsertTransaction();
         } else if (transactionIsolation == TransactionIsolation.SERIALIZABLE) {

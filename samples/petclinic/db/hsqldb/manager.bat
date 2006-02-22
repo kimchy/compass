@@ -1,2 +1,2 @@
-java -classpath ..\..\..\..\modules\gps\lib\hsqldb-1.7.3.0.jar org.hsqldb.util.DatabaseManager
+java -classpath ..\..\..\..\lib/hsqldb/hsqldb.jar org.hsqldb.util.DatabaseManager
 
