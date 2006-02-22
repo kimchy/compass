@@ -156,6 +156,7 @@ public class ResultSetSnapshotEventListener implements JdbcSnapshotEventListener
                         } else {
                             session.save(resource);
                         }
+                        session.evictAll();
                     }
                 } catch (SQLException e) {
                     throw new JdbcGpsDeviceException("Failed to execute query for create/update", e);

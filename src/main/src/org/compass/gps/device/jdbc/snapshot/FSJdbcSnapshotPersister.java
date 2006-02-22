@@ -24,6 +24,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.compass.gps.device.jdbc.JdbcGpsDeviceException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A FS (File System) based snapshot persister. The persister will store and
@@ -38,6 +40,8 @@ import org.compass.gps.device.jdbc.JdbcGpsDeviceException;
  */
 public class FSJdbcSnapshotPersister implements JdbcSnapshotPersister {
 
+    private static final Log log = LogFactory.getLog(FSJdbcSnapshotPersister.class);
+
     private String path;
 
     public FSJdbcSnapshotPersister() {
@@ -51,9 +55,15 @@ public class FSJdbcSnapshotPersister implements JdbcSnapshotPersister {
     public JdbcSnapshot load() throws JdbcGpsDeviceException {
         File file = new File(path);
         if (!file.exists()) {
+            if (log.isDebugEnabled()) {
+                log.debug("No snapshot data found at [" + path + "], creating a new one");
+            }
             return new JdbcSnapshot();
         }
         try {
+            if (log.isDebugEnabled()) {
+                log.debug("Snapshot data found at [" + path + "], loading [" + file.length() + "bytes]");
+            }
             ObjectInputStream objStream = new ObjectInputStream(new FileInputStream(path));
             return (JdbcSnapshot) objStream.readObject();
         } catch (Exception e) {
@@ -67,6 +77,10 @@ public class FSJdbcSnapshotPersister implements JdbcSnapshotPersister {
             objStream.writeObject(snapshot);
             objStream.flush();
             objStream.close();
+            if (log.isDebugEnabled()) {
+                File file = new File(path);
+                log.debug("Saved snapshot data to [" + path + "] size [" + file.length() + "bytes]");
+            }
         } catch (IOException e) {
             throw new JdbcGpsDeviceException("Failed to save jdbc snapshot", e);
         }

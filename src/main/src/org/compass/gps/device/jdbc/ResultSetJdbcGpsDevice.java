@@ -175,6 +175,9 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
             for (Iterator it = mappings.iterator(); it.hasNext();) {
                 ResultSetToResourceMapping mapping = (ResultSetToResourceMapping) it.next();
                 if (mapping.supportsVersioning() && snapshot.getAliasSnapshot(mapping.getAlias()) == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(buildMessage("Alias [" + mapping.getAlias() + "] not found in snapshot data, creating..."));
+                    }
                     JdbcAliasSnapshot aliasSnapshot = new JdbcAliasSnapshot(mapping.getAlias());
                     snapshot.putAliasSnapshot(aliasSnapshot);
                 }
@@ -364,7 +367,6 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
                 snapshot.putAliasSnapshot(newAliasSnapshot);
             }
         } catch (SQLException e) {
-            log.error("Failed while mirroring data changes", e);
             throw new JdbcGpsDeviceException(buildMessage("Failed while mirroring data changes"), e);
         } finally {
             JdbcUtils.closeResultSet(rs);
