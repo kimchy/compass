@@ -50,6 +50,10 @@ public class LuceneScheduledSearchEngineIndexManager implements LuceneSearchEngi
         thread = new IndexManagerScheduledThread(settings.getIndexManagerScheduleInterval());
         thread.setDaemon(true);
         thread.setName("Compass Index Manager");
+        if (log.isInfoEnabled()) {
+            log.info("Starting scheduled index manager with period [" + settings.getIndexManagerScheduleInterval()
+                    + "ms] daemon [true]");
+        }
         thread.start();
     }
 

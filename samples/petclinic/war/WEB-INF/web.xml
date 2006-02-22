@@ -59,11 +59,9 @@
 	  - This web app specifies "petclinic.root" (see log4j.properties file).
 	-->
 	<!-- Leave the listener commented-out if using JBoss -->
-	<!--
 	<listener>
 		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
 	</listener>
-	-->
 	<!--
 	  - Loads the root application context of this web app at startup,
 	  - by default from "/WEB-INF/applicationContext.xml".
