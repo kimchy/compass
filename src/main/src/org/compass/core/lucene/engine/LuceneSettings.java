@@ -169,7 +169,7 @@ public class LuceneSettings {
         maxMergeDocs = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, Integer.MAX_VALUE);
         useCompoundFile = settings.getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, true);
         if (log.isDebugEnabled()) {
-            log.debug("Using compound [" + useCompoundFile + "]");
+            log.debug("Using compound format [" + useCompoundFile + "]");
         }
 
         // batch insert transaction settings
@@ -183,7 +183,7 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Using cach invalidation interval [" + cacheInvalidationInterval + "ms]");
         }
-        indexManagerScheduleInterval = (long) (settings.getSettingAsFloat(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 10.0f) * 1000);
+        indexManagerScheduleInterval = (long) (settings.getSettingAsFloat(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60.0f) * 1000);
         if (log.isDebugEnabled()) {
             log.debug("Using index maanger schedule interval [" + indexManagerScheduleInterval + "ms]");
         }

@@ -168,6 +168,9 @@ public class LuceneSearchEngineScheduledOptimizer implements LuceneSearchEngineO
                 } catch (InterruptedException e) {
                     break;
                 }
+                if (log.isDebugEnabled()) {
+                    log.debug("Checking for index optimization");
+                }
                 try {
                     optimizerTemplate.optimize();
                 } catch (Exception e) {

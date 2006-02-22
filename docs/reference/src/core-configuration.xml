@@ -837,7 +837,7 @@
             </row>
               <row>
                 <entry>compass.engine.indexManagerScheduleInterval</entry>
-                <entry>The index manager schedule interval (in seconds) where different actions related to index manager will happen (such as global cache interval invalidation checks - see <literal>SearchEngineIndexManager#notifyAllToClearCache</literal> and <literal>SearchEngineIndexManager#checkAndClearIfNotifiedAllToClearCache</literal>). Defaults to 10 seconds.
+                <entry>The index manager schedule interval (in seconds) where different actions related to index manager will happen (such as global cache interval invalidation checks - see <literal>SearchEngineIndexManager#notifyAllToClearCache</literal> and <literal>SearchEngineIndexManager#checkAndClearIfNotifiedAllToClearCache</literal>). Defaults to 60 seconds.
                 </entry>
               </row>
           </tbody>

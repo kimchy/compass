@@ -180,6 +180,9 @@ public class LuceneScheduledSearchEngineIndexManager implements LuceneSearchEngi
                     break;
                 }
                 try {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Checking for global cache invalidation");
+                    }
                     indexManager.checkAndClearIfNotifiedAllToClearCache();
                 } catch (Exception e) {
                     if (log.isDebugEnabled()) {
