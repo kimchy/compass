@@ -16,11 +16,11 @@
 
 package org.apache.lucene.store.jdbc.index;
 
-import java.io.IOException;
-
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcFileEntrySettings;
+
+import java.io.IOException;
 
 /**
  * A simple base class that performs index output memory based buffering. The buffer size can be configured
@@ -71,8 +71,41 @@ public abstract class JdbcBufferedIndexOutput extends IndexOutput implements Jdb
      * @see org.apache.lucene.store.IndexInput#readBytes(byte[],int,int)
      */
     public void writeBytes(byte[] b, int length) throws IOException {
-        for (int i = 0; i < length; i++)
-            writeByte(b[i]);
+        int bytesLeft = bufferSize - bufferPosition;
+        // is there enough space in the buffer?
+        if (bytesLeft >= length) {
+            // we add the data to the end of the buffer
+            System.arraycopy(b, 0, buffer, bufferPosition, length);
+            bufferPosition += length;
+            // if the buffer is full, flush it
+            if (bufferSize - bufferPosition == 0)
+                flush();
+        } else {
+            // is data larger then buffer?
+            if (length > bufferSize) {
+                // we flush the buffer
+                if (bufferPosition > 0)
+                    flush();
+                // and write data at once
+                flushBuffer(b, length);
+            } else {
+                // we fill/flush the buffer (until the input is written)
+                int pos = 0; // position in the input data
+                int pieceLength;
+                while (pos < length) {
+                    pieceLength = (length - pos < bytesLeft) ? length - pos : bytesLeft;
+                    System.arraycopy(b, pos, buffer, bufferPosition, pieceLength);
+                    pos += pieceLength;
+                    bufferPosition += pieceLength;
+                    // if the buffer is full, flush it
+                    bytesLeft = bufferSize - bufferPosition;
+                    if (bytesLeft == 0) {
+                        flush();
+                        bytesLeft = bufferSize;
+                    }
+                }
+            }
+        }
     }
 
     /**

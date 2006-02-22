@@ -16,16 +16,16 @@
 
 package org.apache.lucene.store.jdbc.index;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
-
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcFileEntrySettings;
 import org.apache.lucene.store.jdbc.support.InputStreamBlob;
 import org.apache.lucene.store.jdbc.support.JdbcTemplate;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
 
 /**
  * An <code>IndexOutput</code> implemenation that stores all the data written to it in memory, and flushes it
@@ -117,27 +117,27 @@ public class RAMJdbcIndexOutput extends JdbcBufferedIndexOutput {
     }
 
     public void flushBuffer(byte[] src, int len) {
-        int bufferNumber = pointer / bufferSize;
-        int bufferOffset = pointer % bufferSize;
-        int bytesInBuffer = bufferSize - bufferOffset;
-        int bytesToCopy = bytesInBuffer >= len ? len : bytesInBuffer;
+        byte[] buffer;
+        int bufferPos = 0;
+        while (bufferPos != len) {
+            int bufferNumber = pointer / bufferSize;
+            int bufferOffset = pointer % bufferSize;
+            int bytesInBuffer = bufferSize - bufferOffset;
+            int remainInSrcBuffer = len - bufferPos;
+            int bytesToCopy = bytesInBuffer >= remainInSrcBuffer ? remainInSrcBuffer : bytesInBuffer;
 
-        if (bufferNumber == file.buffers.size())
-            file.buffers.add(new byte[bufferSize]);
+            if (bufferNumber == file.buffers.size()) {
+                buffer = new byte[bufferSize];
+                file.buffers.add(buffer);
+            } else {
+                buffer = (byte[]) file.buffers.get(bufferNumber);
+            }
 
-        byte[] buffer = (byte[]) file.buffers.get(bufferNumber);
-        System.arraycopy(src, 0, buffer, bufferOffset, bytesToCopy);
-
-        if (bytesToCopy < len) {              // not all in one buffer
-            int srcOffset = bytesToCopy;
-            bytesToCopy = len - bytesToCopy;          // remaining bytes
-            bufferNumber++;
-            if (bufferNumber == file.buffers.size())
-                file.buffers.add(new byte[bufferSize]);
-            buffer = (byte[]) file.buffers.get(bufferNumber);
-            System.arraycopy(src, srcOffset, buffer, 0, bytesToCopy);
+            System.arraycopy(src, bufferPos, buffer, bufferOffset, bytesToCopy);
+            bufferPos += bytesToCopy;
+            pointer += bytesToCopy;
         }
-        pointer += len;
+
         if (pointer > file.length)
             file.length = pointer;
     }
