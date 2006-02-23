@@ -21,6 +21,7 @@
 <!ENTITY gps-introduction  SYSTEM "gps-introduction.xml">
 <!ENTITY gps-jdbc  SYSTEM "gps-jdbc.xml">
 <!ENTITY gps-hibernate  SYSTEM "gps-hibernate.xml">
+<!ENTITY gps-jpa  SYSTEM "gps-jpa.xml">
 <!ENTITY gps-jdo  SYSTEM "gps-jdo.xml">
 <!ENTITY gps-ojb  SYSTEM "gps-ojb.xml">
 <!ENTITY gps-ibatis  SYSTEM "gps-ibatis.xml">
@@ -136,6 +137,7 @@
     &gps-introduction;
     &gps-jdbc;
     &gps-hibernate;
+    &gps-jpa;
     &gps-jdo;
     &gps-ojb;
     &gps-ibatis;

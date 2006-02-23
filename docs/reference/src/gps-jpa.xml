@@ -1,0 +1,80 @@
+<chapter id="gps-jpa">
+    <title>JPA (Java Persistence API)</title>
+
+    <sect1 id="jpa-introduction">
+      <title>Introduction</title>
+
+      <para>
+        The Jpa Gps Device provides support for database indexing through the use of the Java Persistence API (Jpa), part of the EJB3 standard. If your application uses Jpa, it couldn't be easier to integrate Compass into your application.
+      </para>
+
+      <para>
+        Jpa Gps Device utilizes Compass::Core OSEM feature (Object to Search Engine Mappings) and Jpa feature (Object to Relational Mappings) to provide simple database indexing. As well as Jpa support for life-cycle event based system to provide real time mirroring of data changes done through Jpa (see notes about real time mirroring later on). The path data travels through the system is:  Database -- Jpa (Entity Manager) -- Objects -- Compass::Gps -- Compass::Core (Search Engine).
+      </para>
+
+    </sect1>
+
+    <sect1 id="jpa-conifguration">
+      <title>Configuration</title>
+
+      <para>
+        When configuring the Jpa device, one must instantiate <literal>JpaGpsDevice</literal>. After instantiating the device, it must be initialized by an <literal>EntityManagerFactory</literal>. This is the only required parameter to the <literal>JpaGpsDevice</literal>. For tighter integration with the actual implementation of Jpa (i.e. Hibernate), and frameworks that wrap it (i.e. Spring), the device allows for abstractions on top of it. Each one will be explained in the next sections, though in the spirit of compass, it already comes with implementations for popular Jpa implementations.
+      </para>
+
+      <para>
+        Here is a code sample of how to configure the Jpa device:
+<programlisting><![CDATA[Compass compass = ... // set compass instance
+CompassGps gps = new SingleCompassGps(compass);
+CompassGpsDevice jpaDevice =
+     new JpaGpsDevice("jpa", entityManagerFactory);
+gps.addDevice(jpaDevice);
+.... // configure other devices
+gps.start();
+]]></programlisting>
+      </para>
+      
+      <para>
+         The device performs all it's operations using its <literal>EntityManagerWrapper</literal>. The Jpa support comes with three different implementations: <literal>JtaEntityManagerWrapper</literal> which will only work within a JTA environment, <literal>ResourceLocalEntityManagerWrapper</literal> for resource local transactions, and <literal>DefaultEntityManagerWrapper</literal> which works with both JTA and resource local environments. The <literal>DefaultEntityManagerWrapper</literal> is the default implementation of the <literal>EntityManagerWrapper</literal> the device will use.
+      </para>
+      
+      <para>
+         Several frameworks (like Spring) sometimes wrap (proxy) the actual <literal>EntityManagerFactory</literal>. Some features of the Jpa device require the actual implementation of the <literal>EntityManagerFactory</literal>. This features are the ones that integrate tightly with the implementation of the <literal>EntityManagerFactory</literal>, which are described later in the chapter. The device allows to set <literal>NativeEntityManagerFactoryExtractor</literal>, which is responsible for extracting the actual implementation.
+      </para>
+
+    </sect1>
+
+    <sect1 id="jpa-index">
+      <title>Index Operation</title>
+
+      <para>
+        Jpa Gps device provides the ability to index a database. It automatically supports all different Jpa implementations. Compass will index objects (or their matching database tables in the Jpa mappings) specified in both the Jpa mappings and Compass::Core mappings (OSEM) files.
+      </para>
+
+      <para>
+        When indexing Compass::Gps, the Jpa device can be configured with a <literal>fetchCount</literal>. The <literal>fetchCount</literal> parameter controls the pagination process of indexing a class (and it's represented table) so in case of large tables, the memory level can be controlled.
+      </para>
+      
+      <para>
+         The device allows to set a <literal>JpaEntitiesLocator</literal>, which is responsible for extracting all the entities that are mapped in both Compass and Jpa <literal>EntityManager</literal>. The default implementation <literal>DefaultJpaEntitiesLocator</literal> uses Annotations to determine if a class is mapped to the database. Most of the times, this will suffice, but for applications that use both annotations and xml definitions, a tighter integration with the Jpa implementation is required, with a specialized implementation of the locator. Compass comes with several specialized implementations of a locator, and auto-detect the one to use (defaulting to the default implementation if none is found). Note, that this is one of the cases where the actual <literal>EntityManagerFactory</literal> is required, so if the application is using a framework that wraps the <literal>EntityManagerFactory</literal>, a <literal>NativeEntityManagerFactoryExtractor</literal> should be provided.
+      </para>
+
+    </sect1>
+
+    <sect1 id="jpa-datamirroring">
+      <title>Real Time Data Mirroring</title>
+
+      <para>
+         The Jpa specification allows for declaring life-cycle event listeners either on the actual domain model using annotations, or in the persistence settings. The <literal>EntityManagerFactory</literal> API does not allow for a way to register global listeners programatically. Compass comes with two abstract support classes to ease the definition of listeners. The first is the <literal>AbstractCompassJpaEntityListener</literal>, which requires the implementation to implement the <literal>getCompass</literal> which will fetch the actual compass instance (probably from Jndi). The second is the <literal>AbstractDeviceJpaEntityListener</literal>, which requires the implementation to implement the <literal>getDevice</literal> which will fetch the Jpa Gps Device.
+      </para>
+      
+      <para>
+         With several Jpa implementation, Compass can automatically register life-cycle event listeners based on the actual implementation API's (like Hibernate event listeners support). In order to enable it, the <literal>injectEntityLifecycleListener</literal> must be set to <literal>true</literal> (defaults to <literal>false</literal>), and an implementation of <literal>JpaEntityLifecycleInjector</literal> can be provided. Compass can auto-detect a proper injector based on the currently provided internal injector implementations. The auto-detection will happen if no implementation for the injector is provided, and the inject flag is set to true. Note, that this is one of the cases where the actual <literal>EntityManagerFactory</literal> is required, so if the application is using a framework that wraps the <literal>EntityManagerFactory</literal>, a <literal>NativeEntityManagerFactoryExtractor</literal> should be provided.
+      </para>
+
+      <para>
+        An important point when configuring the Jpa device is that both the application and the Jpa device must use the same <literal>EntityManagerFactory</literal>.
+      </para>
+
+    </sect1>
+
+</chapter>
