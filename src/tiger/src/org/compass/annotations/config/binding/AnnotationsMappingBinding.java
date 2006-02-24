@@ -359,7 +359,17 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindObjectMapping(analyzerMapping, accessor, name);
             bindAnalyzer(searchableAnalyzerProperty, analyzerMapping, clazz, type);
             classMapping.addMapping(analyzerMapping);
+        } else if (annotation instanceof SearchableParent) {
+            ParentMapping parentMapping = new ParentMapping();
+            SearchableParent searchableParent = (SearchableParent) annotation;
+            bindObjectMapping(parentMapping, accessor, name);
+            bindParent(searchableParent, parentMapping, clazz, type);
+            classMapping.addMapping(parentMapping);
         }
+    }
+
+    private void bindParent(SearchableParent searchableParent, ParentMapping parentMapping, Class<?> clazz, Type type) {
+        bindConverter(parentMapping, searchableParent.converter(), clazz, type);
     }
 
     private void bindAnalyzer(SearchableAnalyzerProperty searchableAnalyzerProperty, ClassPropertyAnalyzerController analyzerMapping,
