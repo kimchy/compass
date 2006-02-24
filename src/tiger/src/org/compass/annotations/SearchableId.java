@@ -35,7 +35,7 @@ public @interface SearchableId {
     boolean override() default true;
 
     /**
-     * Converter that will apply to the property mapping. Not the generated
+     * Converter that will apply to the id mapping. Not the generated
      * meta-data.
      */
     String idConverter() default "";

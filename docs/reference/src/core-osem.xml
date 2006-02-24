@@ -273,7 +273,7 @@ public class Author {
             </row>
             <row>
               <entry>sub-index (optional, defaults to the <literal>alias</literal> value)</entry>
-              <entry>The name of the sub-index that the alias will map to.</entry>
+              <entry>The name of the sub-index that the alias will map to. When joining several searchable classes into the same index, the search will be much faster, but updates perform locks on the sub index level, so it might slow it down.</entry>
             </row>
             <row>
               <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
@@ -281,11 +281,11 @@ public class Author {
             </row>
             <row>
               <entry>root (optional, defaults to <literal>true</literal>)</entry>
-              <entry>Specifies if the class is a "root" class or not.</entry>
+              <entry>Specifies if the class is a "root" class or not. You should define the searchable class with false if it only acts as mapping definitions for a component mapping.</entry>
             </row>
             <row>
               <entry>poly (optional, defaults to <literal>false</literal>)</entry>
-              <entry>Specifies if the class will be enabled to support polymorphism.</entry>
+              <entry>Specifies if the class will be enabled to support polymorphism. This is the less prefable way to map an inheritance tree, since the extends attribute can be used to statically extend base classes or contracts.</entry>
             </row>
             <row>
               <entry>extends (optional)</entry>
@@ -297,7 +297,7 @@ public class Author {
             </row>
             <row>
               <entry>all (optional, defaults to <literal>true</literal>)</entry>
-              <entry>Specifies if the class will support the "all" feature.</entry>
+              <entry>Controls if the searchable class will create it's own internal "all" meta-data. The "all" meta-data holds searchable information of all the class searchable content.</entry>
             </row>
             <row>
               <entry>all-term-vector (optional, defaults to configuration setting <literal>compass.property.all.termVector</literal>)</entry>
@@ -313,7 +313,7 @@ public class Author {
             </row>
             <row>
               <entry>converter (optional)</entry>
-              <entry>The global converter lookup name registered with the configuration.</entry>
+              <entry>The global converter lookup name registered with the configuration. Responsible for converting the <literal>ClassMapping</literal> definition. Defaults to compass internal <literal>ClassMappingConverter</literal>.</entry>
             </row>
           </tbody>
         </tgroup></table>

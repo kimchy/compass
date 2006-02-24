@@ -59,24 +59,106 @@
     <!ATTLIST contract extends CDATA #IMPLIED>
     <!ATTLIST contract analyzer CDATA #IMPLIED>
 
-<!ELEMENT class ( 
+<!--
+    Marks a class as searchable.
+
+    A searchable class is assoiated with an alias, and allows to perform full text search on it's
+    mapped properties/fields.
+-->
+<!ELEMENT class (
     id*,
     parent?,
     (analyzer?),
     (property|component|reference|constant)*
 )>
+    <!--
+        The fully qualified class name (or relative if the package is declared in compass-core-mapping).
+    -->
     <!ATTLIST class name CDATA #REQUIRED>
+    <!--
+        The alias of the Resource that will be mapped to the class.
+
+        The alias can be used to reference the class when performing search operations,
+        or for other mappings to extend it.
+    -->
     <!ATTLIST class alias    CDATA #REQUIRED>
+    <!--
+        The sub index the searchable class will be saved to. A sub index is a fully functional index.
+
+        When joining several searchable classes into the same index, the search will be much faster,
+        but updates perform locks on the sub index level, so it might slow it down.
+
+        Defaults to the class alias value.
+    -->
     <!ATTLIST class sub-index CDATA #IMPLIED>
+    <!--
+        The name of the analyzer that will be used to analyze TOKENIZED properties.
+
+        Defaults to the default analyzer which is one of the internal analyzers that comes with Compass.
+
+        Note, that when using the analyzer mapping (a child mapping of class mapping)
+        (for a property value that controls the analyzer), the analyzer attribute will have no effects.
+    -->
     <!ATTLIST class analyzer CDATA #IMPLIED>
+    <!--
+        A comma seperated list of aliases to extend. Can extend a class mapping or a contract mapping.
+        Note that can extend more than one class/contract.
+    -->
     <!ATTLIST class extends CDATA #IMPLIED>
+    <!--
+        Specifies if the class is a "root" class or not.
+
+        You should define the searchable class with false if it only acts as mapping
+        definitions for a component mapping.
+    -->
     <!ATTLIST class root (true|false) "true">
+    <!--
+        Specifies if the class will be enabled to support polymorphism.
+
+        This is the less prefable way to map an inheritance tree, since the extends attribute
+        can be used to statically extend base classes or contracts.
+
+        Defaults to false.
+    -->
     <!ATTLIST class poly (true|false) "false">
+    <!--
+        Controls if the searchable class will create it's own internal "all" meta-data.
+        The "all" meta-data holds searchable information of all the class searchable content.
+
+        Defaults to true.
+    -->
     <!ATTLIST class all (true|false) "true">
+    <!--
+        The name of the all meta-data.
+
+        Defaults to configuration setting compass.property.all .
+    -->
     <!ATTLIST class all-metadata CDATA #IMPLIED>
+    <!--
+        The term vector value of the all meta-data.
+
+        Defaults to configuration setting compass.property.all.termVector .
+    -->
     <!ATTLIST class all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
+    <!--
+        The name of the analyzer that will be used to analyze the all meta-data.
+
+        Defaults to configuration setting compass.engine.all.analyzer, which in turn,
+        defaults to the default analyzer.
+    -->
     <!ATTLIST class all-analyzer CDATA #IMPLIED>
+    <!--
+        The global converter lookup name registered with the configuration. Responsible for converting
+        the ClassMapping definition.
+
+        Defaults to compass internal ClassMappingConverter.
+    -->
     <!ATTLIST class converter CDATA #IMPLIED>
+    <!--
+        Specifies the boost level for the class.
+
+        Defaults to 1.0.
+    -->
     <!ATTLIST class boost CDATA #IMPLIED>
 
 <!ELEMENT id (

@@ -1,7 +1,10 @@
 package org.compass.annotations;
 
 /**
+ * The type of the snowball analyzer.
+ *
  * @author kimchy
+ * @see org.compass.annotations.SearchAnalyzer#snowballType()
  */
 public enum SnowballType {
     Danish,

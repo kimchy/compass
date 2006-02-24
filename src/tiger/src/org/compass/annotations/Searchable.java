@@ -86,6 +86,11 @@ import java.lang.annotation.Target;
  * the {@link org.compass.core.mapping.osem.ClassMapping} definitions.
  *
  * @author kimchy
+ * @see SearchableId
+ * @see SearchableProperty
+ * @see SearchableComponent
+ * @see SearchableReference
+ * @see SearchableAnalyzerProperty
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -106,7 +111,7 @@ public @interface Searchable {
      * <p/>
      * When joining several searchalbe classes into the same index,
      * the search will be much faster, but updates perform locks on the sub index
-     * level, so it might slow it down
+     * level, so it might slow it down.
      * <p/>
      * Defaults to the searchable class {@link #alias()} value.
      */
@@ -137,7 +142,7 @@ public @interface Searchable {
 
     /**
      * Used to mapped polymprphic inheritance tree. This is the less prefable way to map
-     * an inhertiance tree, since the fact that a searchable class automatically
+     * an inheritance tree, since the fact that a searchable class automatically
      * inhertis all it's base class and interface mappings, means that the same result can be
      * acheived by marking the all the inheritance tree classes as {@link Searchable}, in a
      * more performant way.
