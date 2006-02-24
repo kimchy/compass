@@ -17,10 +17,28 @@
 package org.compass.annotations;
 
 /**
+ * Specifies whether and how a meta-data proeprty should be indexed.
+ *
  * @author kimchy
  */
 public enum Index {
+    /**
+     * Do not index the property value. This property can thus not be searched, but one
+     * can still access its contents provided it is {@link Store stored}.
+     */
     NO,
+
+    /**
+     * Index the property's value so it can be searched. An Analyzer will be used to
+     * tokenize and possibly further normalize the text before its terms will be stored
+     * in the index. This is useful for common text.
+     */
     TOKENIZED,
+
+    /**
+     * Index the property's value without using an Analyzer, so it can be searched.
+     * As no analyzer is used the value will be stored as a single term. This is
+     * useful for unique Ids like product numbers.
+     */
     UN_TOKENIZED
 }

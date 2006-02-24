@@ -4,6 +4,7 @@
   <component name="NewModuleRootManager">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/docs/api" />
       <excludeFolder url="file://$MODULE_DIR$/docs/reference/html" />
       <excludeFolder url="file://$MODULE_DIR$/docs/reference/html_single" />
       <excludeFolder url="file://$MODULE_DIR$/docs/reference/lib" />

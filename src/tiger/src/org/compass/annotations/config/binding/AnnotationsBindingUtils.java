@@ -115,8 +115,6 @@ public abstract class AnnotationsBindingUtils {
             return null;
         } else if (index == ManagedIdIndex.NO) {
             return Property.Index.NO;
-        } else if (index == ManagedIdIndex.TOKENIZED) {
-            return Property.Index.TOKENIZED;
         } else if (index == ManagedIdIndex.UN_TOKENIZED) {
             return Property.Index.UN_TOKENIZED;
         }

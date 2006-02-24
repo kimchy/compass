@@ -22,6 +22,14 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassMappingBinding;
 
 /**
+ * A specialized Compass configuration that can handle classes that have
+ * search annotations. Allows for integration with other xml mappings
+ * (annotations can extend contracts defined in xml files), and also provides
+ * the ability to override annotations definition by having a mapping file
+ * matching the class with <code>cpm.ann.xml</code> suffix. If the annotated
+ * class also have a <code>cpm.xml</code> mapping definitions, both mappings
+ * will be joined, with the <code>cpm.xml</code> read first.
+ *
  * @author kimchy
  */
 public class CompassAnnotationsConfiguration extends CompassConfiguration {

@@ -17,10 +17,26 @@
 package org.compass.annotations;
 
 /**
+ * Specifies whether and how a meta-data property will be stored.
+ *
  * @author kimchy
  */
 public enum Store {
+    /**
+     * Do not store the property value in the index.
+     */
     NO,
+
+    /**
+     * Store the original property value in the index. This is useful for short texts
+     * like a document's title which should be displayed with the results. The value
+     * is stored in its original form, i.e. no analyzer is used before it is stored.
+     */
     YES,
+    
+    /**
+     * Store the original property value in the index in a compressed form. This is
+     * useful for long documents and for binary valued fields.
+     */
     COMPRESS
 }

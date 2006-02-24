@@ -17,10 +17,29 @@
 package org.compass.annotations;
 
 /**
+ * For class proeprties ({@link SearchableProperty}, and {@link SearchableId}, Compass
+ * might require an internal meta-data to be created, so it can identify the correct
+ * value that match the property. Compass can create this internal meta-data automatcially by
+ * analyzing all the properties in the class using the {@link #AUTO} option. It can also
+ * not create the internal meta-data using {@link #FALSE}, or always create the intenal
+ * meta-data using {@link #TRUE}.
+ *
  * @author kimchy
  */
 public enum ManagedId {
+    /**
+     * Compass will analyzer all the class mappings, and only create an
+     * internal id if one is required.
+     */
     AUTO,
+
+    /**
+     * Compass will always create an intenral meta-data for the property.
+     */
     TRUE,
+    
+    /**
+     * Compass will never create an internal meta-data for the property.
+     */
     FALSE
 }

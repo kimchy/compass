@@ -21,26 +21,27 @@ import java.io.Serializable;
 import org.compass.core.util.Parameter;
 
 /**
- * The basic Compass meta data holder. A property is a name value pair
- * representing the mapped object attribute and value. Can be used to fetch meta
- * data values from a resource in an abstract way.
- * <p>
+ * The basic Compass meta data holder. A property is a name value pair representing the mapped object attribute and
+ * value. Can be used to fetch meta data values from a resource in an abstract way.
+ * <p/>
  * As an example:
- * 
+ * <p/>
  * <pre>
  * resource.getProperty(&quot;authorName&quot;).getStringValue();
  * </pre>
- * 
+ * <p/>
  * </p>
- * <p>
- * Note that there are internal properties (that compass uses for the marshlling
- * of objects) and meta data properties.
+ * <p/>
+ * Note that there are internal properties (that compass uses for the marshlling of objects) and meta data properties.
  * </p>
- * 
+ *
  * @author kimchy
  */
 public interface Property extends Serializable {
 
+    /**
+     * Specifies whether and how a meta-data property will be stored.
+     */
     public static final class Store extends Parameter {
 
         private static final long serialVersionUID = 3833746603143278642L;
@@ -49,20 +50,21 @@ public interface Property extends Serializable {
             super(name);
         }
 
-        /** Do not store the property value in the index. */
+        /**
+         * Do not store the property value in the index.
+         */
         public static final Store NO = new Store("NO");
 
         /**
-         * Store the original property value in the index. This is useful for
-         * short texts like a document's title which should be displayed with
-         * the results. The value is stored in its original form, i.e. no
-         * analyzer is used before it is stored.
+         * Store the original property value in the index. This is useful for short texts like a document's title which
+         * should be displayed with the results. The value is stored in its original form, i.e. no analyzer is used
+         * before it is stored.
          */
         public static final Store YES = new Store("YES");
 
         /**
-         * Store the original property value in the index in a compressed form.
-         * This is useful for long documents and for binary valued fields.
+         * Store the original property value in the index in a compressed form. This is useful for long documents and
+         * for binary valued fields.
          */
         public static final Store COMPRESS = new Store("COMPRESS");
 
@@ -89,6 +91,9 @@ public interface Property extends Serializable {
         }
     }
 
+    /**
+     * Specifies whether and how a meta-data property should be indexed.
+     */
     public static final class Index extends Parameter {
 
         private static final long serialVersionUID = 3761973756863985718L;
@@ -98,23 +103,20 @@ public interface Property extends Serializable {
         }
 
         /**
-         * Do not index the property value. This property can thus not be
-         * searched, but one can still access its contents provided it is
-         * {@link Property.Store stored}.
+         * Do not index the property value. This property can thus not be searched, but one can still access its
+         * contents provided it is {@link Property.Store stored}.
          */
         public static final Index NO = new Index("NO");
 
         /**
-         * Index the property's value so it can be searched. An Analyzer will be
-         * used to tokenize and possibly further normalize the text before its
-         * terms will be stored in the index. This is useful for common text.
+         * Index the property's value so it can be searched. An Analyzer will be used to tokenize and possibly further
+         * normalize the text before its terms will be stored in the index. This is useful for common text.
          */
         public static final Index TOKENIZED = new Index("TOKENIZED");
 
         /**
-         * Index the property's value without using an Analyzer, so it can be
-         * searched. As no analyzer is used the value will be stored as a single
-         * term. This is useful for unique Ids like product numbers.
+         * Index the property's value without using an Analyzer, so it can be searched. As no analyzer is used the value
+         * will be stored as a single term. This is useful for unique Ids like product numbers.
          */
         public static final Index UN_TOKENIZED = new Index("UN_TOKENIZED");
 
@@ -141,6 +143,9 @@ public interface Property extends Serializable {
         }
     }
 
+    /**
+     * Specifies whether and how a meta-data property should have term vectors.
+     */
     public static final class TermVector extends Parameter {
 
         private static final long serialVersionUID = 3256728372590948921L;
@@ -155,28 +160,28 @@ public interface Property extends Serializable {
         public static final TermVector NO = new TermVector("NO");
 
         /**
-         * Store the term vectors of each document. A term vector is a list of
-         * the document's terms and their number of occurences in that document.
+         * Store the term vectors of each document. A term vector is a list of the document's terms and their number of
+         * occurences in that document.
          */
         public static final TermVector YES = new TermVector("YES");
 
         /**
          * Store the term vector + token position information
-         * 
+         *
          * @see #YES
          */
         public static final TermVector WITH_POSITIONS = new TermVector("WITH_POSITIONS");
 
         /**
          * Store the term vector + Token offset information
-         * 
+         *
          * @see #YES
          */
         public static final TermVector WITH_OFFSETS = new TermVector("WITH_OFFSETS");
 
         /**
          * Store the term vector + Token position and offset information
-         * 
+         *
          * @see #YES
          * @see #WITH_POSITIONS
          * @see #WITH_OFFSETS
@@ -216,51 +221,48 @@ public interface Property extends Serializable {
 
     /**
      * Returns the name of the property.
-     * 
+     *
      * @return the name of the property
      */
     String getName();
 
     /**
      * Returns the string value of the proerty.
-     * 
+     *
      * @return the string value
      */
     String getStringValue();
 
     /**
-     * Returns the binary values of the property. Only valid if
-     * <code>isBinary</code> is true.
-     * 
+     * Returns the binary values of the property. Only valid if <code>isBinary</code> is true.
+     *
      * @return the binary value
      */
     byte[] getBinaryValue();
 
     /**
      * Returns the boost for the property.
-     * 
+     *
      * @return the boost value
      */
     float getBoost();
 
     /**
-     * Sets the boost level for the property. The boost value can be specified
-     * in the mapping file to influence the order of search results.
-     * 
+     * Sets the boost level for the property. The boost value can be specified in the mapping file to influence the
+     * order of search results.
+     *
      * @param boost
      */
     void setBoost(float boost);
 
     /**
-     * True iff the value of the field is to be indexed, so that it may be
-     * searched on.
+     * True iff the value of the field is to be indexed, so that it may be searched on.
      */
     boolean isIndexed();
 
     /**
-     * True iff the value of the field is to be stored in the index for return
-     * with search hits. It is an error for this to be true if a field is
-     * Reader-valued.
+     * True iff the value of the field is to be stored in the index for return with search hits. It is an error for this
+     * to be true if a field is Reader-valued.
      */
     boolean isStored();
 
@@ -270,18 +272,15 @@ public interface Property extends Serializable {
     boolean isCompressed();
 
     /**
-     * True iff the value of the field should be tokenized as text prior to
-     * indexing. Un-tokenized fields are indexed as a single word and may not be
-     * Reader-valued.
+     * True iff the value of the field should be tokenized as text prior to indexing. Un-tokenized fields are indexed as
+     * a single word and may not be Reader-valued.
      */
     boolean isTokenized();
 
     /**
-     * True iff the term or terms used to index this field are stored as a term
-     * vector, available from TODO. These methods do not provide access to the
-     * original content of the field, only to terms used to index it. If the
-     * original content must be preserved, use the <code>stored</code>
-     * attribute instead.
+     * True iff the term or terms used to index this field are stored as a term vector, available from TODO. These
+     * methods do not provide access to the original content of the field, only to terms used to index it. If the
+     * original content must be preserved, use the <code>stored</code> attribute instead.
      */
     boolean isTermVectorStored();
 

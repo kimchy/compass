@@ -17,12 +17,42 @@
 package org.compass.annotations;
 
 /**
+ * Specifies whether and how a meta-data property should have term vectors.
+ *
  * @author kimchy
  */
 public enum TermVector {
+    /**
+     * Do not store term vectors.
+     */
     NO,
+
+    /**
+     * Store the term vectors of each document. A term vector is a list of
+     * the document's terms and their number of occurences in that document.
+     */
     YES,
+
+    /**
+     * Store the term vector + token position information
+     *
+     * @see #YES
+     */
     WITH_POSITIONS,
+
+    /**
+     * Store the term vector + Token offset information
+     *
+     * @see #YES
+     */
     WITH_OFFSETS,
+
+    /**
+     * Store the term vector + Token position and offset information
+     *
+     * @see #YES
+     * @see #WITH_POSITIONS
+     * @see #WITH_OFFSETS
+     */
     WITH_POSITIONS_OFFESTS
 }

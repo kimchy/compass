@@ -38,7 +38,7 @@ public @interface SearchableId {
      * Converter that will apply to the property mapping. Not the generated
      * meta-data.
      */
-    String propertyConverter() default "";
+    String idConverter() default "";
 
     // Generated MetaData definitions
 

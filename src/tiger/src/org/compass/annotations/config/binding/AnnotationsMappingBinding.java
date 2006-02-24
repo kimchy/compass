@@ -16,6 +16,9 @@
 
 package org.compass.annotations.config.binding;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.ArrayList;
 import org.apache.lucene.analysis.Analyzer;
 import org.compass.annotations.*;
 import org.compass.core.config.*;
@@ -33,10 +36,6 @@ import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.StringUtils;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.ArrayList;
 
 /**
  * @author kimchy
@@ -215,20 +214,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         }
         classMapping.setSubIndex(subIndex);
 
-        String[] extend = searchable.extend();
-        if (extend.length != 0) {
-            ArrayList<String> extendedMappings = new ArrayList<String>();
-            for (String extendedAlias : extend) {
-                Alias extendedAliasLookup = valueLookup.lookupAlias(extendedAlias);
-                if (extendedAliasLookup == null) {
-                    extendedMappings.add(extendedAlias);
-                } else {
-                    extendedMappings.add(extendedAliasLookup.getName());
-                }
-            }
-            classMapping.setExtendedMappings(extendedMappings.toArray(new String[extendedMappings.size()]));
-        }
-
         SearchableAllMetaData allMetaData = annotationClass.getAnnotation(SearchableAllMetaData.class);
         if (allMetaData == null) {
             classMapping.setAllSupported(searchable.all());
@@ -279,6 +264,10 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         return true;
     }
 
+    /**
+     * Recursivly process the class to find all it's annotations. Lower level
+     * class/interfaces with annotations will be added first.
+     */
     private void processAnnotatedClass(Class<?> clazz) {
         if (clazz.equals(Class.class)) {
             return;
@@ -290,6 +279,29 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         Class<?>[] interfaces = clazz.getInterfaces();
         for (Class<?> anInterface : interfaces) {
             processAnnotatedClass(anInterface);
+        }
+
+        // handles recursive extends and the original extend
+        if (clazz.isAnnotationPresent(Searchable.class)) {
+            Searchable searchable = clazz.getAnnotation(Searchable.class);
+            String[] extend = searchable.extend();
+            if (extend.length != 0) {
+                ArrayList<String> extendedMappings = new ArrayList<String>();
+                if (classMapping.getExtendedMappings() != null) {
+                    for (String extendedAlias : classMapping.getExtendedMappings()) {
+                        extendedMappings.add(extendedAlias);
+                    }
+                }
+                for (String extendedAlias : extend) {
+                    Alias extendedAliasLookup = valueLookup.lookupAlias(extendedAlias);
+                    if (extendedAliasLookup == null) {
+                        extendedMappings.add(extendedAlias);
+                    } else {
+                        extendedMappings.add(extendedAliasLookup.getName());
+                    }
+                }
+                classMapping.setExtendedMappings(extendedMappings.toArray(new String[extendedMappings.size()]));
+            }
         }
 
         for (Field field : clazz.getDeclaredFields()) {
@@ -397,7 +409,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     private void bindClassPropertyIdMapping(SearchableId searchableProp, ClassIdPropertyMapping classPropertyMapping,
                                             Class<?> clazz, Type type, AnnotatedElement annotatedElement) throws MappingException {
 
-        bindConverter(classPropertyMapping, searchableProp.propertyConverter());
+        bindConverter(classPropertyMapping, searchableProp.idConverter());
 
         // No need for type in property id, since it will not be a collection
 

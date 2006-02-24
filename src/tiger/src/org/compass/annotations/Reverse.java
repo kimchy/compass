@@ -17,10 +17,28 @@
 package org.compass.annotations;
 
 /**
+ * Specifies whether and how the meta-data proeprty should value will be revered.
+ *
  * @author kimchy
  */
 public enum Reverse {
+    /**
+     * No reversing will happen on the meta-data value.
+     */
     NO,
+
+    /**
+     * A special reader will wrap the actual string value,
+     * and reverse it. More performant than the {@link #STRING}
+     * option, but means that it will always be {@link Index#TOKENIZED}
+     * and {@link Store#NO}.
+     */
     READER,
+
+    /**
+     * A new string will be used to hold the reverse value of the meta-data.
+     * Less performant than the {@link #READER} option, but allows to control
+     * the {@link Index} and the {@link Store}.
+     */
     STRING
 }
