@@ -21,10 +21,13 @@ import org.apache.lucene.analysis.TokenStream;
 import org.compass.core.config.CompassConfigurable;
 
 /**
- * A Lucen token filter provider. Can be used with Lucene analyzers in order to
+ * A Lucene token filter provider. Can be used with Lucene analyzers in order to
  * further filter out (or add additional tokens) during the analysis process.
  *
  * @author kimchy
+ * @see TokenFilter
+ * @see org.compass.core.lucene.engine.analyzer.synonym.SynonymFilter
+ * @see org.compass.core.lucene.engine.analyzer.synonym.SynonymAnalyzerTokenFilterProvider
  */
 public interface LuceneAnalyzerTokenFilterProvider extends CompassConfigurable {
 

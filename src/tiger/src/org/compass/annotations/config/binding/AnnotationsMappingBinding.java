@@ -19,6 +19,7 @@ package org.compass.annotations.config.binding;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.compass.annotations.*;
 import org.compass.core.config.*;
@@ -26,7 +27,6 @@ import org.compass.core.config.binding.MappingBindingSupport;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerFactory;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
@@ -127,11 +127,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (searchAnalyzer.type() == AnalyzerType.Snowball) {
             settingsNames.add(LuceneEnvironment.Analyzer.Snowball.NAME_TYPE);
             settingsValues.add(searchAnalyzer.snowballType().toString());
-        }
-
-        if (!LuceneAnalyzerFactory.class.equals(searchAnalyzer.factory())) {
-            settingsNames.add(LuceneEnvironment.Analyzer.FACTORY);
-            settingsValues.add(searchAnalyzer.factory().getName());
         }
 
         if (searchAnalyzer.stopWords().length > 0) {

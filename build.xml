@@ -553,23 +553,23 @@
 
     <target name="doc.clean" description="Delete temporary and distribution directories for docs">
 
-        <delete dir="${basedir}/${reference.dir}/pdf"/>
-        <delete dir="${basedir}/${reference.dir}/html_single"/>
-        <delete dir="${basedir}/${reference.dir}/html"/>
-        <delete dir="${basedir}/${reference.dir}/lib"/>
+        <delete dir="${reference.dir}/pdf"/>
+        <delete dir="${reference.dir}/html_single"/>
+        <delete dir="${reference.dir}/html"/>
+        <delete dir="${reference.dir}/lib"/>
 
     </target>
 
 
     <target name="doc.prepare" description="Extra preparation for the documentation">
 
-        <unzip src="${basedir}/${reference.dir}/docbook-reference-libs.zip"
-               dest="${basedir}/${reference.dir}/"/>
+        <unzip src="${reference.dir}/docbook-reference-libs.zip"
+               dest="${reference.dir}/"/>
 
         <fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
             <condition>
                 <not>
-                    <available file="${basedir}/${reference.dir}/lib"/>
+                    <available file="${reference.dir}/lib"/>
                 </not>
             </condition>
         </fail>
@@ -579,10 +579,10 @@
 
     <target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
 
-        <mkdir dir="${basedir}/${reference.dir}/pdf/images"/>
+        <mkdir dir="${reference.dir}/pdf/images"/>
 
-        <copy todir="${basedir}/${reference.dir}/pdf/images">
-            <fileset dir="${basedir}/${reference.dir}/src/images">
+        <copy todir="${reference.dir}/pdf/images">
+            <fileset dir="${reference.dir}/src/images">
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
@@ -591,24 +591,24 @@
 
         <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${reference.dir}">
             <classpath>
-                <fileset dir="${basedir}/${reference.dir}/lib">
+                <fileset dir="${reference.dir}/lib">
                     <include name="**/*.jar"/>
                 </fileset>
             </classpath>
             <arg value="-o"/>
-            <arg value="${basedir}/${reference.dir}/pdf/docbook_fop.tmp"/>
-            <arg value="${basedir}/${reference.dir}/src/compass.xml"/>
-            <arg value="${basedir}/${reference.dir}/styles/fopdf.xsl"/>
+            <arg value="${reference.dir}/pdf/docbook_fop.tmp"/>
+            <arg value="${reference.dir}/src/compass.xml"/>
+            <arg value="${reference.dir}/styles/fopdf.xsl"/>
         </java>
 
         <java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${reference.dir}">
             <classpath>
-                <fileset dir="${basedir}/${reference.dir}/lib">
+                <fileset dir="${reference.dir}/lib">
                     <include name="**/*.jar"/>
                 </fileset>
             </classpath>
-            <arg value="${basedir}/${reference.dir}/pdf/docbook_fop.tmp"/>
-            <arg value="${basedir}/${reference.dir}/pdf/compass-reference.pdf"/>
+            <arg value="${reference.dir}/pdf/docbook_fop.tmp"/>
+            <arg value="${reference.dir}/pdf/compass-reference.pdf"/>
         </java>
 
         <delete file="${reference.dir}/pdf/docbook_fop.tmp"/>
@@ -620,28 +620,28 @@
 
         <mkdir dir="${reference.dir}/html/images"/>
 
-        <copy todir="${basedir}/${reference.dir}/html/images">
-            <fileset dir="${basedir}/${reference.dir}/src/images">
+        <copy todir="${reference.dir}/html/images">
+            <fileset dir="${reference.dir}/src/images">
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
             </fileset>
         </copy>
 
-        <copy todir="${basedir}/${reference.dir}/html/">
-            <fileset dir="${basedir}/${reference.dir}/styles">
+        <copy todir="${reference.dir}/html/">
+            <fileset dir="${reference.dir}/styles">
                 <include name="*.css"/>
             </fileset>
         </copy>
 
         <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${reference.dir}/html/">
             <classpath>
-                <fileset dir="${basedir}/${reference.dir}/lib">
+                <fileset dir="${reference.dir}/lib">
                     <include name="**/*.jar"/>
                 </fileset>
             </classpath>
-            <arg value="${basedir}/${reference.dir}/src/compass.xml"/>
-            <arg value="${basedir}/${reference.dir}/styles/html_chunk.xsl"/>
+            <arg value="${reference.dir}/src/compass.xml"/>
+            <arg value="${reference.dir}/styles/html_chunk.xsl"/>
         </java>
 
     </target>
@@ -651,16 +651,16 @@
 
         <mkdir dir="${reference.dir}/html_single/images"/>
 
-        <copy todir="${basedir}/${reference.dir}/html_single/images">
-            <fileset dir="${basedir}/${reference.dir}/src/images">
+        <copy todir="${reference.dir}/html_single/images">
+            <fileset dir="${reference.dir}/src/images">
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
             </fileset>
         </copy>
 
-        <copy todir="${basedir}/${reference.dir}/html_single/">
-            <fileset dir="${basedir}/${reference.dir}/styles">
+        <copy todir="${reference.dir}/html_single/">
+            <fileset dir="${reference.dir}/styles">
                 <include name="*.css"/>
             </fileset>
         </copy>
@@ -672,9 +672,9 @@
                 </fileset>
             </classpath>
             <arg value="-o"/>
-            <arg value="${basedir}/${reference.dir}/html_single/index.html"/>
-            <arg value="${basedir}/${reference.dir}/src/compass.xml"/>
-            <arg value="${basedir}/${reference.dir}/styles/html.xsl"/>
+            <arg value="${reference.dir}/html_single/index.html"/>
+            <arg value="${reference.dir}/src/compass.xml"/>
+            <arg value="${reference.dir}/styles/html.xsl"/>
         </java>
 
     </target>

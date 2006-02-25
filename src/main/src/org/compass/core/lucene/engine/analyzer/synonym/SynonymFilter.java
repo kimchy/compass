@@ -24,6 +24,9 @@ import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 
 /**
+ * A synonym provider which uses {@link SynonymLookupProvider} to provide
+ * synonyms for a given value.
+ *
  * @author kimchy
  */
 public class SynonymFilter extends TokenFilter {

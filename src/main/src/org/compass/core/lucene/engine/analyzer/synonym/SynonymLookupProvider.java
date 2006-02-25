@@ -21,6 +21,11 @@ import org.compass.core.config.CompassConfigurable;
 /**
  * An implementation for a synonym lookup. Provides a list of synonyms
  * for a given value.
+ * <p/>
+ * Most of the time, the synonym data will be lookup up during the configuration
+ * process ({@link #configure(org.compass.core.config.CompassSettings)}, using the
+ * dedicated settings that will "point" to the location of the synonym data
+ * (i.e. a simple file path location for synonyms).
  *
  * @author kimchy
  */

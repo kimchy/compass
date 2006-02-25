@@ -26,7 +26,13 @@ import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerTokenFilterProvider
 import org.compass.core.util.ClassUtils;
 
 /**
+ * A synonym analyzer token filter provider. Uses the {@link SynonymFilter}
+ * to return synonyms. The {@link SynonymFilter} in turn uses the {@link SynonymLookupProvider}
+ * which should be provided in order to lookup synonyms for a given value.
+ *
  * @author kimchy
+ * @see SynonymFilter
+ * @see SynonymLookupProvider
  */
 public class SynonymAnalyzerTokenFilterProvider implements LuceneAnalyzerTokenFilterProvider {
 
@@ -35,13 +41,15 @@ public class SynonymAnalyzerTokenFilterProvider implements LuceneAnalyzerTokenFi
     public void configure(CompassSettings settings) throws CompassException {
         String lookupProviderClassName = settings.getSetting(LuceneEnvironment.AnalyzerFilter.Synonym.LOOKUP);
         if (lookupProviderClassName == null) {
-            throw new SearchEngineException("Failed to locate synonym lookup provider");
+            throw new SearchEngineException("Failed to locate synonym lookup provider, verify that you set the [" +
+                    LuceneEnvironment.AnalyzerFilter.Synonym.LOOKUP + "] setting for the group");
         }
         try {
             synonymLookupProvider = (SynonymLookupProvider) ClassUtils.forName(lookupProviderClassName).newInstance();
         } catch (Exception e) {
             throw new SearchEngineException("Failed to create lookup synonym provider [" + lookupProviderClassName + "]", e);
         }
+        synonymLookupProvider.configure(settings);
     }
 
     public TokenFilter createTokenFilter(TokenStream tokenStream) {

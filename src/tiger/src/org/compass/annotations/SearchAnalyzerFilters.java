@@ -6,11 +6,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Defines a collection of {@link SearchAnalyzerFilter}s.
+ * Set on package definition (<code>package-info.java</code>).
+ *
  * @author kimchy
  */
 @Target({ElementType.PACKAGE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchAnalyzerFilters {
 
+    /**
+     * A collection of search analyzer filters.
+     */
     SearchAnalyzerFilter[] value();
 }
