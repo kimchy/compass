@@ -19,6 +19,7 @@ package org.compass.core.converter.basic;
 import java.text.Format;
 import java.text.ParseException;
 import java.util.Locale;
+import org.compass.core.converter.ConversionException;
 
 /**
  * Wrapper around <code>java.text.Format</code> that can be called by multiple
@@ -93,8 +94,7 @@ public class ThreadSafeFormat {
                 try {
                     mutex.wait();
                 } catch (InterruptedException e) {
-                    throw new RuntimeException("Interrupted whilst waiting " + "for a free item in the pool : "
-                            + e.getMessage());
+                    throw new ConversionException("Interrupted whilst waiting for a free item in the pool", e);
                 }
             }
             result = pool[nextAvailable];

@@ -16,6 +16,11 @@
 
 package org.compass.core.test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
@@ -23,12 +28,6 @@ import org.compass.core.cache.first.NullFirstLevelCache;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  * @author kimchy
@@ -63,7 +62,7 @@ public abstract class AbstractTestCase extends TestCase {
 		for (int i = 0; i < mappings.length; i++) {
 			conf.addResource(getPackagePrefix() + mappings[i], AbstractTestCase.class.getClassLoader());
 		}
-		conf.getSettings().setSetting(CompassEnvironment.FIRST_LEVEL_CACHE, NullFirstLevelCache.class.getName());
+		conf.getSettings().setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, NullFirstLevelCache.class.getName());
 		addSettings(conf.getSettings());
 		addExtraConf(conf);
 		return conf.buildCompass();

@@ -144,7 +144,7 @@ public class ReplaceIndexTests extends TestCase {
 		for (int i = 0; i < mappings.length; i++) {
 			conf.addResource("org/compass/core/test/" + mappings[i], AbstractTestCase.class.getClassLoader());
 		}
-		conf.getSettings().setSetting(CompassEnvironment.FIRST_LEVEL_CACHE, NullFirstLevelCache.class.getName());
+		conf.getSettings().setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, NullFirstLevelCache.class.getName());
 		conf.getSettings().addSettings(actualSettings);
 		compass = conf.buildCompass();
 		try {

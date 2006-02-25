@@ -83,17 +83,16 @@ public class LuceneSettings {
             log.debug("Using connection [" + connection + "]");
         }
         // the alias property
-        aliasProperty = settings.getSetting(CompassEnvironment.ALIAS_PROPERTY,
-                CompassEnvironment.DEFAULT_ALIAS_PROPERTY);
+        aliasProperty = settings.getSetting(CompassEnvironment.Alias.NAME, CompassEnvironment.Alias.DEFAULT_NAME);
         if (log.isDebugEnabled()) {
             log.debug("Using alias property [" + aliasProperty + "]");
         }
         // get the all property
-        allProperty = settings.getSetting(CompassEnvironment.ALL_PROPERTY, CompassEnvironment.DEFAULT_ALL_PROPERTY);
+        allProperty = settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME);
         if (log.isDebugEnabled()) {
             log.debug("Using default all property [" + allProperty + "]");
         }
-        String allPropertyTermVectorSettings = settings.getSetting(CompassEnvironment.ALL_PROPERTY_TERM_VECTOR, "no");
+        String allPropertyTermVectorSettings = settings.getSetting(CompassEnvironment.All.TERM_VECTOR, "no");
         if (log.isDebugEnabled()) {
             log.debug("Using all property term vector [" + allPropertyTermVectorSettings + "]");
         }

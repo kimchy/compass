@@ -39,7 +39,7 @@ public class FirstCacheTests extends AbstractTestCase {
 
     protected void addSettings(CompassSettings settings) {
         super.addSettings(settings);
-        settings.setSetting(CompassEnvironment.FIRST_LEVEL_CACHE, DefaultFirstLevelCache.class.getName());
+        settings.setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, DefaultFirstLevelCache.class.getName());
     }
 
     public void testResourceCache() {

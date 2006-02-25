@@ -56,7 +56,7 @@ public class AllTests extends AbstractTestCase {
         assertEquals("test1", a.getValue1());
         assertEquals("test2", a.getValue2());
 
-        result = session.find(CompassEnvironment.DEFAULT_ALL_PROPERTY + ":test2");
+        result = session.find(CompassEnvironment.All.DEFAULT_NAME + ":test2");
         assertEquals(1, result.getLength());
         a = (A) result.data(0);
         assertEquals("test1", a.getValue1());
@@ -91,7 +91,7 @@ public class AllTests extends AbstractTestCase {
         assertEquals("test1", a.getValue1());
         assertEquals("test2", a.getValue2());
 
-        result = session.find(CompassEnvironment.DEFAULT_ALL_PROPERTY + ":test2");
+        result = session.find(CompassEnvironment.All.DEFAULT_NAME + ":test2");
         assertEquals(0, result.getLength());
 
         tr.commit();
@@ -111,7 +111,7 @@ public class AllTests extends AbstractTestCase {
         CompassHits result = session.find("test2");
         assertEquals(0, result.getLength());
 
-        result = session.find(CompassEnvironment.DEFAULT_ALL_PROPERTY + ":test2");
+        result = session.find(CompassEnvironment.All.DEFAULT_NAME + ":test2");
         assertEquals(0, result.getLength());
 
         tr.commit();

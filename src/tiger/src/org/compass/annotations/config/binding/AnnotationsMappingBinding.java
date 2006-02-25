@@ -214,20 +214,16 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         }
         classMapping.setSubIndex(subIndex);
 
+        classMapping.setAllSupported(searchable.all());
         SearchableAllMetaData allMetaData = annotationClass.getAnnotation(SearchableAllMetaData.class);
-        if (allMetaData == null) {
-            classMapping.setAllSupported(searchable.all());
-        } else {
-            classMapping.setAllSupported(allMetaData.enable());
-            if (classMapping.isAllSupported()) {
-                if (StringUtils.hasLength(allMetaData.name())) {
-                    classMapping.setAllProperty(allMetaData.name());
-                }
-                if (StringUtils.hasLength(allMetaData.analyzer())) {
-                    classMapping.setAllAnalyzer(allMetaData.analyzer());
-                }
-                classMapping.setAllTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
+        if (allMetaData != null) {
+            if (StringUtils.hasLength(allMetaData.name())) {
+                classMapping.setAllProperty(allMetaData.name());
             }
+            if (StringUtils.hasLength(allMetaData.analyzer())) {
+                classMapping.setAllAnalyzer(allMetaData.analyzer());
+            }
+            classMapping.setAllTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
         }
 
         classMapping.setBoost(searchable.boost());

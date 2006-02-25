@@ -351,53 +351,77 @@ public class CompassEnvironment {
     }
 
     /**
-     * The name of the "all" property.
+     * Settetings relating to the "all" property.
      */
-    public static final String ALL_PROPERTY = "compass.property.all";
+    public abstract class All {
 
-    /**
-     * The default name for the "all" property.
-     */
-    public static final String DEFAULT_ALL_PROPERTY = "all";
+        /**
+         * Controls the name of the "all" property.
+         */
+        public static final String NAME = "compass.property.all";
 
-    /**
-     * The term vector the will be used with the all property. Can be one out
-     * of: <code>no</code>, <code>yes</code>, <code>positions</code>,
-     * <code>offsets</code>, <code>positions_offsets</code>.
-     */
-    public static final String ALL_PROPERTY_TERM_VECTOR = "compass.property.all.termVector";
+        /**
+         * The default name for the "all" property.
+         */
+        public static final String DEFAULT_NAME = "all";
 
-    /**
-     * The name of the "alias" proeprty.
-     */
-    public static final String ALIAS_PROPERTY = "compass.property.alias";
+        /**
+         * The term vector the will be used with the all property. Can be one out
+         * of: <code>no</code>, <code>yes</code>, <code>positions</code>,
+         * <code>offsets</code>, <code>positions_offsets</code>.
+         */
+        public static final String TERM_VECTOR = "compass.property.all.termVector";
 
-    /**
-     * The default name for the "alias" property.
-     */
-    public static final String DEFAULT_ALIAS_PROPERTY = "alias";
+    }
 
-    /**
-     * The naming strategy that will be used to save internal resource
-     * properties within a resource. A fully qualified class name of the naming
-     * strategy.
-     */
-    public static final String NAMING_STRATEGY = "compass.property.naming";
+    public abstract class Alias {
 
-    /**
-     * The fully qualified class name of the naming factory.
-     */
-    public static final String NAMING_STRATEGY_FACTORY = "compass.property.naming.factory";
+        /**
+         * The name of the "alias" proeprty.
+         */
+        public static final String NAME = "compass.property.alias";
 
-    /**
-     * Sets the first level cache class.
-     */
-    public static final String FIRST_LEVEL_CACHE = "compass.cache.first";
+        /**
+         * The default name for the "alias" property.
+         */
+        public static final String DEFAULT_NAME = "alias";
+    }
 
-    /**
-     * A setting for managed id index feature. When an internal managed id is
-     * created, it's index setting will be created using this global setting (if
-     * not defined locally in the mapping file).
-     */
-    public static final String MANAGED_ID_INDEX = "compass.managedId.index";
+    public abstract class NamingStrategy {
+
+        /**
+         * The naming strategy that will be used to save internal resource
+         * properties within a resource. A fully qualified class name of the naming
+         * strategy.
+         */
+        public static final String TYPE = "compass.property.naming";
+
+        /**
+         * The fully qualified class name of the naming factory.
+         */
+        public static final String FACTORY_TYPE = "compass.property.naming.factory";
+    }
+
+
+    public abstract class Cache {
+
+        public abstract class FirstLevel {
+
+            /**
+             * Sets the first level cache class.
+             */
+            public static final String TYPE = "compass.cache.first";
+        }
+    }
+
+    public abstract class ManagedId {
+
+        /**
+         * A setting for managed id index feature. When an internal managed id is
+         * created, it's index setting will be created using this global setting (if
+         * not defined locally in the mapping file).
+         */
+        public static final String INDEX = "compass.managedId.index";
+    }
+
 }

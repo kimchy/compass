@@ -26,14 +26,14 @@ import org.compass.core.util.ClassUtils;
  * to create naming strategies that has default constructor, and no
  * initialization requirements.
  * <p>
- * Uses the {@link org.compass.core.config.CompassEnvironment#NAMING_STRATEGY}
+ * Uses the {@link org.compass.core.config.CompassEnvironment.NamingStrategy#TYPE}
  * setting for the fully qualified class name of the property naming strategy.
  * If non is set, defaults to the
  * {@link org.compass.core.engine.naming.DefaultPropertyNamingStrategy}
  * <p>
  * The {@link org.compass.core.config.CompassConfiguration} creates the factory,
  * which can be set using the
- * {@link org.compass.core.config.CompassEnvironment#NAMING_STRATEGY_FACTORY}
+ * {@link org.compass.core.config.CompassEnvironment.NamingStrategy#FACTORY_TYPE}
  * setting, and defaults to this class as the factory.
  * 
  * @author kimchy
@@ -42,13 +42,13 @@ public class DefaultPropertyNamingStrategyFactory implements PropertyNamingStrat
 
     public PropertyNamingStrategy createNamingStrategy(CompassSettings settings) {
         PropertyNamingStrategy namingStrategy;
-        String namingStrategySetting = settings.getSetting(CompassEnvironment.NAMING_STRATEGY,
+        String namingStrategySetting = settings.getSetting(CompassEnvironment.NamingStrategy.TYPE,
                 DefaultPropertyNamingStrategy.class.getName());
         try {
             namingStrategy = (PropertyNamingStrategy) ClassUtils.forName(namingStrategySetting).newInstance();
         } catch (Exception e) {
             throw new SearchEngineException("Cannot create naming Strategy [" + namingStrategySetting
-                    + "]. Please verify the naming setting at [" + CompassEnvironment.NAMING_STRATEGY + "]", e);
+                    + "]. Please verify the naming setting at [" + CompassEnvironment.NamingStrategy.TYPE + "]", e);
         }
         return namingStrategy;
     }

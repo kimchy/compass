@@ -41,10 +41,10 @@ public abstract class MappingProcessorUtils {
         internalIdMapping.setStore(Property.Store.YES);
         Property.Index index = classPropertyMapping.getManagedIdIndex();
         if (index == null) {
-            String indexSetting = settings.getSetting(CompassEnvironment.MANAGED_ID_INDEX, "no");
+            String indexSetting = settings.getSetting(CompassEnvironment.ManagedId.INDEX, "no");
             index = Property.Index.fromString(indexSetting);
             if (index == Property.Index.TOKENIZED) {
-                throw new ConfigurationException("Set the setting [" + CompassEnvironment.MANAGED_ID_INDEX
+                throw new ConfigurationException("Set the setting [" + CompassEnvironment.ManagedId.INDEX
                         + "] with value of [tokenized], must be either [no] or [un_tokenized]");
             }
         }

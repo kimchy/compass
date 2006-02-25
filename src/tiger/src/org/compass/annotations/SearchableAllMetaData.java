@@ -22,17 +22,38 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * For {@link Searchable} classes, allows to control the "all" meta-data
+ * definitions per searchable class.
+ * <p/>
+ * The "all" meta-data is an internal meta-data, which holds
+ * searchable information of all the class searchable content.
+ * <p/>
+ * The definitions here are per searchable class definitions. For global
+ * control of the "all" meta-data see {@link org.compass.core.config.CompassEnvironment.All}
+ * settings.
+ * <p/>
+ * To enable or disable the "all" meta-data, see {@link Searchable#all}.
+ *
  * @author kimchy
+ * @see Searchable
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchableAllMetaData {
 
+    /**
+     * The name of the "all" meta-data that will be created.
+     * Defaults to the global setting.
+     */
     String name() default "";
 
-    boolean enable() default true;
-
+    /**
+     * The term vector for the "all" meta-data.
+     */
     TermVector termVector() default TermVector.NO;
 
+    /**
+     * The analyzer that will be used on the "all" meta-data.
+     */
     String analyzer() default "";
 }
