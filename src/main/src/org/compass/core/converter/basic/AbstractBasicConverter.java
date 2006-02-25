@@ -102,7 +102,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
      * during the unmarshall process.
      *
      * @param context
-     * @param value The value to check for <code>null</code> value.
+     * @param value   The value to check for <code>null</code> value.
      * @return <code>true</code> if the value represents a null value.
      */
     protected boolean isNullValue(MarshallingContext context, String value) {
