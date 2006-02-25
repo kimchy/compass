@@ -34,22 +34,26 @@ public class ScheduledMirrorGpsDeviceTests extends TestCase {
         mockDevice.setName("mockDevice");
         mockDevice.clear();
         ScheduledMirrorGpsDevice scheduledDevice = new ScheduledMirrorGpsDevice(mockDevice);
-        scheduledDevice.setPeriod(100);
+        scheduledDevice.setPeriod(50);
         
         gps.addGpsDevice(scheduledDevice);
         
         scheduledDevice.start();
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
         }
         assertTrue(mockDevice.isPerformMirroringCalled());
 
         scheduledDevice.stop();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+        }
         mockDevice.clear();
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
         }
         assertFalse(mockDevice.isPerformMirroringCalled());
