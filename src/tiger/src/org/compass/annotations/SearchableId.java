@@ -22,45 +22,134 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
+ * Specifes a searchable id on property or field of the {@link Searchable} class.
+ * <p/>
+ * Each searchable class must have at least one id annotation. The type
+ * of the field/property can be a simple type, or a custom class. In case
+ * of a custom class, there should be a specialized converter associtaed
+ * with it, with the preferable way of defining the converter is to use
+ * the {@link SearchableClassConverter} annotating the custom class.
+ * <p/>
+ * A searchable class can have more than one searchable id associated with it.
+ * <p/>
+ * For simple usage, the annotation can create a {@link SearchableMetaData} automatically
+ * (without explicitly defining one on the field/property).
+ * It will only be created if the {@link #name()} is set to a value. Most of
+ * the attributes that can control the meta-data are provided in the searchable
+ * id as well, they are marked in the java doc.
+ * <p/>
+ * Note, that if the {@link #name()} is not set, no defined {@link SearchableMetaData}
+ * will be created, and Compass will end up generating an internal meta-data for it.
+ * For additional meta-datas, use the {@link SearchableMetaData} or {@link SearchableMetaDatas}.
+ * <p/>
+ * Compass might require an internal meta-data to be created, so it can identify the correct
+ * value that match the property/field. Controlling the creation and specifics of the intenal
+ * meta-data id can be done using {@link #managedId()} and {@link #managedIdIndex()}.
+ *
  * @author kimchy
+ * @see Searchable
+ * @see SearchableClassConverter
+ * @see SearchableMetaData
+ * @see SearchableMetaDatas
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RUNTIME)
 public @interface SearchableId {
 
+    /**
+     * Controls if the internal meta-data id creation.
+     */
     ManagedId managedId() default ManagedId.AUTO;
 
+    /**
+     * If the internal meta-data id is created, controls it's
+     * index parameter.
+     */
     ManagedIdIndex managedIdIndex() default ManagedIdIndex.NA;
 
+    /**
+     * If there is already an existing id with the same field/property name defined,
+     * will override it.
+     */
     boolean override() default true;
 
     /**
-     * Converter that will apply to the id mapping. Not the generated
-     * meta-data.
+     * Converter that will apply to the id mapping
+     * ({@link org.compass.core.mapping.osem.ClassIdPropertyMapping}).
+     * Defaults to the {@link org.compass.core.mapping.osem.ClassPropertyMapping}.
      */
     String idConverter() default "";
 
     // Generated MetaData definitions
 
+    /**
+     * The name of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#name()}.
+     * <p/>
+     * The meta-data will be auto generated only if the name has a value.
+     */
     String name() default "";
 
+    /**
+     * The boost of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#boost()}.
+     * <p/>
+     * The meta-data will be auto generated only if the name has a value.
+     */
     float boost() default 1.0f;
 
+    /**
+     * The store of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#store()}.
+     * <p/>
+     * The meta-data will be auto generated only if the name has a value.
+     */
     Store store() default Store.YES;
 
+    /**
+     * The index of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#index()}.
+     * <p/>
+     * The meta-data will be auto generated only if the name has a value.
+     */
     Index index() default Index.UN_TOKENIZED;
 
+    /**
+     * The termVector of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#termVector()}.
+     * <p/>
+     * The meta-data will be auto generated only if the name has a value.
+     */
     TermVector termVector() default TermVector.NO;
 
+    /**
+     * The reverse of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#reverse()}.
+     * <p/>
+     * The meta-data will be auto generated only if the name has a value.
+     */
     Reverse reverse() default Reverse.NO;
 
+    /**
+     * The analyzer of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#analyzer()}.
+     * <p/>
+     * The meta-data will be auto generated only if the name has a value.
+     */
     String analyzer() default "";
 
+    /**
+     * The execlude from all of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#excludeFromAll()}.
+     * <p/>
+     * The meta-data will be auto generated only if the name has a value.
+     */
     boolean exceludeFromAll() default false;
 
     /**
-     * Converter of the generated meta-data. If the property is a <code>Collection</code,
-     * the converter of the collection element type.
+     * The converter of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#converter()}.
+     * The meta-data will be auto generated only if the name has a value.
      * <p>
      * This converter will also be used for an internal meta-data id (if required to be
      * generated).
@@ -68,8 +157,12 @@ public @interface SearchableId {
     String converter() default "";
 
     /**
-     * The format to apply to the value. Only applies to format-able converters
-     * (like dates and numbers).
+     * The format of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#format()}.
+     * The meta-data will be auto generated only if the name has a value.
+     * <p>
+     * This format will also be used for an internal meta-data id (if required to be
+     * generated).
      */
     String format() default "";
 }

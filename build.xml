@@ -235,9 +235,9 @@
             <packageset dir="${tiger.src.dir}">
                 <include name="org/compass/**"/>
             </packageset>
-            <!-- Unfortunately, jDocs have switched off their package listing, so we can't link to jDocs :( -->
             <link href="http://java.sun.com/j2ee/1.4/docs/api"/>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link href="http://lucene.apache.org/java/docs/api/" />
             <link href="http://www.junit.org/junit/javadoc/"/>
             <link href="http://logging.apache.org/log4j/docs/api/"/>
         </javadoc>

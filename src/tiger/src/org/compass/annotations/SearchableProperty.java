@@ -22,14 +22,56 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Specifes a searchable id on property or field of the {@link Searchable} class.
+ * <p/>
+ * The searchable property will automatically create a {@link SearchableMetaData},
+ * with its name being the field/property name. It will not be created if the
+ * {@link #name()} is not set AND there are either {@link SearchableMetaData} or
+ * {@link SearchableMetaDatas} annotating the class field/property. Most of
+ * the attributes that can control the meta-data are provided in the searchable
+ * property as well, they are marked in the java doc.
+ * <p/>
+ * The searchable meta-data is meant to handle basic types (which usually translate to
+ * a String saved in the search engine). The conversion is done using converters, with
+ * Compass providing converters for most basic types. A specialized Converter can be
+ * associated with the auto generated meta-data using {@link #converter()}. The
+ * specialized converter will implement the {@link org.compass.core.converter.Converter}
+ * interface, usually extending the {@link org.compass.core.converter.basic.AbstractBasicConverter}.
+ * <p/>
+ * Another way of defining a converter for a class can be done using the {@link SearchableClassConverter}
+ * to annotate the class that needs conversion, with Compass auto detecting it.
+ * <p/>
+ * Note, that most of the time, a specialized converter for user classes will not be needed,
+ * since the {@link SearchableComponent} usually makes more sense to use.
+ * <p/>
+ * The searchalbe property can annotate a {@link java.util.Collection} type field/property,
+ * supporting either {@link java.util.List} or {@link java.util.Set}. The searchable property
+ * will try and automatically identify the element type using generics, but if the collection
+ * is not defined with generics, {@link #type()} should be used to hint for the collection
+ * element type.
+ * <p/>
+ * The searchable property can annotate an array as well, with the array element type used for
+ * Converter lookups.
+ * <p/>
+ * Compass might require an internal meta-data to be created, so it can identify the correct
+ * value that match the property/field. Controlling the creation and specifics of the intenal
+ * meta-data id can be done using {@link #managedId()} and {@link #managedIdIndex()}.
+ *
  * @author kimchy
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchableProperty {
 
+    /**
+     * Controls if the internal meta-data id creation.
+     */
     ManagedId managedId() default ManagedId.AUTO;
 
+    /**
+     * If the internal meta-data id is created, controls it's
+     * index parameter.
+     */
     ManagedIdIndex managedIdIndex() default ManagedIdIndex.NA;
 
     /**
@@ -38,6 +80,10 @@ public @interface SearchableProperty {
      */
     Class type() default Object.class;
 
+    /**
+     * If there is already an existing id with the same field/property name defined,
+     * will override it.
+     */
     boolean override() default true;
 
     /**
@@ -48,25 +94,91 @@ public @interface SearchableProperty {
 
     // Generated MetaData definitions
 
+    /**
+     * The name of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#name()}.
+     * If no value is defined, will default to the class field/property name.
+     * <p/>
+     * The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
     String name() default "";
 
+    /**
+     * The boost of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#boost()}.
+     * <p/>
+     * The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
     float boost() default 1.0f;
 
+    /**
+     * The store of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#store()}.
+     * <p/>
+     * The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
     Store store() default Store.YES;
 
+    /**
+     * The index of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#index()}.
+     * <p/>
+     * The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
     Index index() default Index.TOKENIZED;
 
+    /**
+     * The termVector of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#termVector()}.
+     * <p/>
+     * The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
     TermVector termVector() default TermVector.NO;
 
+    /**
+     * The reverse of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#reverse()}.
+     * <p/>
+     * The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
     Reverse reverse() default Reverse.NO;
 
+    /**
+     * The analyzer of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#analyzer()}.
+     * <p/>
+     * The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
     String analyzer() default "";
 
+    /**
+     * The execlude from all of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#excludeFromAll()}.
+     * <p/>
+     * The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
     boolean exceludeFromAll() default false;
 
     /**
-     * Converter of the generated meta-data. If the property is a <code>Collection</code,
-     * the converter of the collection element type.
+     * The converter of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#converter()}.
+     * The meta-data will be auto generated only if the name has a value.
      * <p>
      * This converter will also be used for an internal meta-data id (if required to be
      * generated).
@@ -74,8 +186,12 @@ public @interface SearchableProperty {
     String converter() default "";
 
     /**
-     * The format to apply to the value. Only applies to format-able converters
-     * (like dates and numbers).
+     * The format of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#format()}.
+     * The meta-data will be auto generated only if the name has a value.
+     * <p>
+     * This format will also be used for an internal meta-data id (if required to be
+     * generated).
      */
     String format() default "";
 }
