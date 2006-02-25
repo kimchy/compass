@@ -39,6 +39,14 @@ public class LuceneSearchEngineAnalyzerHelper implements SearchEngineAnalyzerHel
         return this;
     }
 
+    public CompassToken analyzeSingle(String text) throws SearchEngineException {
+        CompassToken[] tokens = analyze(text);
+        if (tokens == null || tokens.length == 0) {
+            return null;
+        }
+        return tokens[0];
+    }
+
     public CompassToken[] analyze(String text) {
         return analyze(new StringReader(text));
     }

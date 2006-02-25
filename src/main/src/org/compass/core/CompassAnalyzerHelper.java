@@ -47,6 +47,15 @@ public interface CompassAnalyzerHelper {
     CompassAnalyzerHelper setAnalyzer(Resource resource) throws CompassException;
 
     /**
+     * Analyzes the given text, returning the first token.
+     *
+     * @param text The text to analyze
+     * @return The first token.
+     * @throws CompassException
+     */
+    CompassToken analyzeSingle(String text) throws CompassException;
+
+    /**
      * Analyzes the given text, returning a set of tokens.
      *
      * @param text The text to analyze

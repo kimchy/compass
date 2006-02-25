@@ -49,6 +49,10 @@ public class DefaultCompassAnalyzerHelper implements CompassAnalyzerHelper {
         return this;
     }
 
+    public CompassToken analyzeSingle(String text) throws CompassException {
+        return analyzerHelper.analyzeSingle(text);
+    }
+
     public CompassToken[] analyze(String text) throws CompassException {
         return analyzerHelper.analyze(text);
     }

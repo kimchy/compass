@@ -29,7 +29,7 @@ import org.compass.core.config.CompassConfiguration;
 public class ComponentTests extends AbstractAnnotationsTestCase {
 
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addClass(A.class).addClass(B.class);
+        conf.addClass(A.class).addClass(B.class).addClass(User.class).addClass(Community.class);
     }
 
     public void testSimpleComponent() {
@@ -93,11 +93,49 @@ public class ComponentTests extends AbstractAnnotationsTestCase {
         assertEquals(1, hits.length());
 
         query = session.queryBuilder().term("A.bValues.value", "bvalue1");
-        hits = query.setAliases(new String[] {"A"}).hits();
+        hits = query.setAliases(new String[]{"A"}).hits();
         assertEquals(1, hits.length());
 
         tr.commit();
         session.close();
     }
+
+    public void testUserCommunities() {
+        User u = new User();
+        u.setUserName("ploppy");
+        u.setCommunities(new HashSet<Community>());
+        Community testCommunity = new Community("testCommunity");
+        Community root = new Community("root");
+        u.getCommunities().add(root);
+        u.getCommunities().add(testCommunity);
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+        session.save(u);
+
+        CompassQueryBuilder builder = session.queryBuilder();
+        CompassQueryBuilder.CompassBooleanQueryBuilder booleanQuery = builder.bool();
+        booleanQuery.addShould(builder.term("userName", "ploppy"));
+        CompassQueryBuilder.CompassBooleanQueryBuilder communityQuery = builder.bool();
+        communityQuery.addShould(builder.term("User.communities.name", "root"));
+        booleanQuery.addMust(communityQuery.toQuery());
+        CompassQuery compassQuery = booleanQuery.toQuery().setAliases(new String[]{"User"});
+        CompassHits hits = compassQuery.hits();
+        assertEquals(1, hits.length());
+
+        booleanQuery = builder.bool();
+        booleanQuery.addShould(builder.term("userName", "ploppy"));
+        communityQuery = builder.bool();
+        communityQuery.addShould(builder.term("User.communities.name",
+                session.analyzerHelper().analyzeSingle("testCommunity").getTermText()));
+        booleanQuery.addMust(communityQuery.toQuery());
+        compassQuery = booleanQuery.toQuery().setAliases(new String[]{"User"});
+        hits = compassQuery.hits();
+        assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
 
 }
