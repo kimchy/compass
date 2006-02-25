@@ -11,8 +11,8 @@
           <value>
             <package name="java" withSubpackages="true" />
             <package name="javax" withSubpackages="true" />
-            <package name="" withSubpackages="true" />
             <emptyLine />
+            <package name="" withSubpackages="true" />
           </value>
         </option>
       </value>
