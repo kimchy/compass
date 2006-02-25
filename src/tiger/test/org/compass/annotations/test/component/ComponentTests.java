@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
 import org.compass.core.CompassHits;
+import org.compass.core.CompassQuery;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
@@ -77,6 +78,11 @@ public class ComponentTests extends AbstractAnnotationsTestCase {
         assertEquals("bvalue", a.b.value);
 
         hits = session.find("bvalue1");
+        assertEquals(1, hits.length());
+
+        // this only works because B value is defined with ManageIdIndex.UN_TOKENIZED
+        CompassQuery query = session.queryBuilder().term("A.bValues.value", "bvalue1");
+        hits = query.hits();
         assertEquals(1, hits.length());
 
         tr.commit();

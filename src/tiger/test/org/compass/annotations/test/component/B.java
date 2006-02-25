@@ -1,5 +1,6 @@
 package org.compass.annotations.test.component;
 
+import org.compass.annotations.ManagedIdIndex;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableProperty;
 
@@ -17,6 +18,6 @@ public class B {
         this.value = value;
     }
 
-    @SearchableProperty(name = "bValue")
+    @SearchableProperty(name = "bValue", managedIdIndex = ManagedIdIndex.UN_TOKENIZED)
     String value;
 }
