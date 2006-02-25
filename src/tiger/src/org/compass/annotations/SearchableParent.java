@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies a parent reference for cyclic components.
+ * Specifies a parent reference for {@link SearchableComponent}.
  * <p/>
  * If a {@link SearchableComponent} has a reference it it's parent,
  * the annotation will make sure that this reference will be initalized
