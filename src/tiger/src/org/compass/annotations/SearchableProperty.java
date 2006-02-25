@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifes a searchable id on property or field of the {@link Searchable} class.
+ * Specifies a searchable property on property or field of the {@link Searchable} class.
  * <p/>
  * The searchable property will automatically create a {@link SearchableMetaData},
  * with its name being the field/property name. It will not be created if the
@@ -173,7 +173,7 @@ public @interface SearchableProperty {
      * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
      * {@link #name()} is not set.
      */
-    boolean exceludeFromAll() default false;
+    boolean excludeFromAll() default false;
 
     /**
      * The converter of the auto generated {@link SearchableMetaData}. Maps to

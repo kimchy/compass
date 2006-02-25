@@ -42,7 +42,7 @@ public interface JdbcSnapshotPersister {
     /**
      * Loads the jdbc snapshot from the store.
      * 
-     * @return
+     * @return The jdbc snapshot
      * @throws JdbcGpsDeviceException
      */
     JdbcSnapshot load() throws JdbcGpsDeviceException;

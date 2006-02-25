@@ -33,7 +33,8 @@ public class CompassSearchCommand {
     /**
      * Returns the query that will be executed by
      * <code>Compass<code> in the search operation.
-     * @return
+     *
+     * @return The query for the search operation
      */
     public String getQuery() {
         return query;
@@ -53,7 +54,7 @@ public class CompassSearchCommand {
      * Returns the page paramter if using the {@link CompassSearchController}
      * pagination feature.
      * 
-     * @return
+     * @return The current page number
      */
     public Integer getPage() {
         return page;

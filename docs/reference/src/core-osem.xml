@@ -680,6 +680,7 @@ public class Author {
 <programlisting><![CDATA[<component
       name="the class property name"
       ref-alias="name of the alias"
+      max-depth="the depth of cyclic component mappings allowed"
       accessor="property|field"
       converter="converter lookup name"
 >
@@ -700,6 +701,10 @@ public class Author {
               <row>
                 <entry>ref-alias (optional)</entry>
                 <entry>The class mapping alias that defines the component. This is an optional attribute since under some conditions, compass can infer the correct reference alias.</entry>
+              </row>
+              <row>
+                <entry>max-depth (optional, defaults to 5)</entry>
+                <entry>The depth of cyclic component mappings allowed.</entry>
               </row>
               <row>
                 <entry>override (optional, defaults to <literal>true</literal>)</entry>

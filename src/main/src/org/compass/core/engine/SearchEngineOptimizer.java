@@ -21,7 +21,7 @@ package org.compass.core.engine;
  * <p>
  * Using it, one can controll the lifecycle of the optimizer using the
  * <code>start()</code> and <code>stop()</code> methods (note that does not
- * means that it will start a scheduled optimizer, it depends on the
+ * mean that it will start a scheduled optimizer, it depends on the
  * configuration supplied).
  * <p>
  * You can also check if the search engine required optimization using the
@@ -62,7 +62,7 @@ public interface SearchEngineOptimizer {
      * Returns <code>true</code> if the search engine index required
      * optimization (depends on the optimizer configured).
      * 
-     * @return
+     * @return <code>true</code> if the search engine index requires optimization.
      * @throws SearchEngineException
      */
     boolean needOptimization() throws SearchEngineException;

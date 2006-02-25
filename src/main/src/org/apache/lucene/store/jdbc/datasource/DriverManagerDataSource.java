@@ -230,7 +230,7 @@ public class DriverManagerDataSource extends AbstractDataSource {
     /**
      * Getting a connection using the nasty static from DriverManager is
      * extracted into a protected method to allow for easy unit testing.
-     * <p>
+     * <p/>
      * Note, that it sets the auto commit to false
      *
      * @see java.sql.DriverManager#getConnection(String, String, String)

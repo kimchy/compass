@@ -17,7 +17,6 @@
 package org.compass.gps.device.jdbc;
 
 import javax.sql.DataSource;
-
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 
@@ -33,7 +32,7 @@ public interface JdbcGpsDevice extends CompassGpsDevice {
      * Returns the Jdbc data source that will be used to connect to the
      * database.
      * 
-     * @return
+     * @return The data source used with the device
      */
     DataSource getDataSource();
 
@@ -49,7 +48,7 @@ public interface JdbcGpsDevice extends CompassGpsDevice {
      * Returns the fetch size that will be used when executing select queries
      * against the database. See <code>PreparedStatement#setFetchSize</code>.
      * 
-     * @return
+     * @return The fetch size for indexing and mirroring
      */
     int getFetchSize();
 
@@ -66,7 +65,7 @@ public interface JdbcGpsDevice extends CompassGpsDevice {
      * operations that might have different implementations based on the target
      * database.
      * 
-     * @return
+     * @return The dialect used by the device
      */
     JdbcDialect getDialect();
 

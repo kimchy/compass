@@ -49,8 +49,6 @@ public class CompassSearchResults {
 
         /**
          * Returns the hit number the page starts from.
-         * 
-         * @return
          */
         public int getFrom() {
             return from;
@@ -58,8 +56,6 @@ public class CompassSearchResults {
 
         /**
          * Sets the hit number the page starts from.
-         * 
-         * @param from
          */
         public void setFrom(int from) {
             this.from = from;
@@ -68,8 +64,6 @@ public class CompassSearchResults {
         /**
          * Returns <code>true</code> if the page is selected, i.e. the results
          * that are shown are part of the page.
-         * 
-         * @return
          */
         public boolean isSelected() {
             return selected;
@@ -77,8 +71,6 @@ public class CompassSearchResults {
 
         /**
          * Sets if the page is selected or not.
-         * 
-         * @param selected
          */
         public void setSelected(boolean selected) {
             this.selected = selected;
@@ -86,8 +78,6 @@ public class CompassSearchResults {
 
         /**
          * Returns the size of the hits in the page.
-         * 
-         * @return
          */
         public int getSize() {
             return size;
@@ -95,8 +85,6 @@ public class CompassSearchResults {
 
         /**
          * Sets the size of the hits in the page.
-         * 
-         * @param size
          */
         public void setSize(int size) {
             this.size = size;
@@ -104,8 +92,6 @@ public class CompassSearchResults {
 
         /**
          * Returns the hit number that the page ends at.
-         * 
-         * @return
          */
         public int getTo() {
             return to;
@@ -113,8 +99,6 @@ public class CompassSearchResults {
 
         /**
          * Sets the hit number that the page ends at.
-         * 
-         * @param to
          */
         public void setTo(int to) {
             this.to = to;
@@ -137,7 +121,7 @@ public class CompassSearchResults {
      * the hits (not using pagination) or only the hits that belong to the
      * selected page (if using pagination).
      * 
-     * @return
+     * @return The hits
      */
     public CompassHit[] getHits() {
         return hits;
@@ -147,7 +131,7 @@ public class CompassSearchResults {
      * Returns the time that it took to perform the search operation (in
      * milliseconds).
      * 
-     * @return
+     * @return How long it took to perform the serarch in milli-seconds.
      */
     public long getSearchTime() {
         return searchTime;
@@ -156,7 +140,7 @@ public class CompassSearchResults {
     /**
      * Returns the pages that construct all the results.
      * 
-     * @return
+     * @return The pages that holds all the results
      */
     public Page[] getPages() {
         return pages;

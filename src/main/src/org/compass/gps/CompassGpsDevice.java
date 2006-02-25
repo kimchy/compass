@@ -41,7 +41,7 @@ public interface CompassGpsDevice {
     /**
      * Returns the name associated with the device.
      * 
-     * @return
+     * @return The name of the device.
      */
     String getName();
 

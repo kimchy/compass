@@ -26,20 +26,23 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 public interface ResourcePropertyConverter extends Converter {
 
     /**
-     * @param str
-     * @param resourcePropertyMapping
-     * @return
+     * Converts from a String and into it's Object representation.
+     *
+     * @param str The string to convert from
+     * @param resourcePropertyMapping The resource property mapping
+     * @return Theh object converterd from the String
      * @throws ConversionException
      */
     Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException;
 
     /**
-     * Note that toString must be able to handle a <code>null</code>
-     * resourcePropertyMapping.
+     * Converts the Object into a String.
      *
-     * @param o
-     * @param resourcePropertyMapping
-     * @return
+     * Note that toString must be able to handle a <code>null</code> resourcePropertyMapping.
+     *
+     * @param o The Object to convert from
+     * @param resourcePropertyMapping The resource proeprty mapping
+     * @return The String converted from the Object
      * @throws ConversionException
      */
     String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException;

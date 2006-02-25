@@ -67,8 +67,6 @@ public class SpringOjbGpsDeviceInterceptor implements MethodInterceptor, Initial
     /**
      * Removes the <code>SpringOjbGpsDevice</code> to be used to attach and
      * remove OJB lifecycle event listeners.
-     * 
-     * @return
      */
     public SpringOjbGpsDevice getOjbGpsDevice() {
         return ojbGpsDevice;

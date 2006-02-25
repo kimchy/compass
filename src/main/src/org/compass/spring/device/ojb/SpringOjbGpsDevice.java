@@ -28,17 +28,16 @@ import org.springframework.orm.ojb.PersistenceBrokerTemplate;
  * <code>OjbFactoryUtils</code> to get the current
  * <code>PersistenceBroker</code> for batch indexing (the <code>index()</code>
  * operation).
- * <p>
+ * <p/>
  * You can provide the <code>PersistenceBrokerTemplate</code>, though it is
  * not required since it is created the same way the
  * <code>PersistenceBrokerDaoSupport</code> does.
- * <p>
+ * <p/>
  * Can be used with
- * {@link org.compass.spring.device.ojb.SpringOjbGpsDeviceInterceptor} to
+ * {@link SpringOjbGpsDeviceInterceptor} to
  * provide real-time data mirroring without the need to write any code.
- * 
+ *
  * @author kimchy
- * 
  */
 public class SpringOjbGpsDevice extends OjbGpsDevice {
 
@@ -47,11 +46,10 @@ public class SpringOjbGpsDevice extends OjbGpsDevice {
     protected PersistenceBrokerTemplate createPersistenceBrokerTemplate() {
         return new PersistenceBrokerTemplate();
     }
-    
+
     /**
-     * Uses Spring
-     * <code>PersistenceBrokerTemplate<code> and <code>OjbFactoryUtils</code>
-     *  to get OJB <code>PersistenceBroker</code>
+     * Uses Spring <code>PersistenceBrokerTemplate<code> and <code>OjbFactoryUtils</code>
+     * to get OJB <code>PersistenceBroker</code>
      */
     protected PersistenceBroker doGetIndexPersistentBroker() throws CompassGpsException {
         return OjbFactoryUtils.getPersistenceBroker(persistenceBrokerTemplate.getPbKey(), persistenceBrokerTemplate
@@ -59,8 +57,7 @@ public class SpringOjbGpsDevice extends OjbGpsDevice {
     }
 
     /**
-     * Retusn the Spring's <code>PersistenceBrokerTemplate<code>.
-     * @return
+     * Returns the Spring's <code>PersistenceBrokerTemplate<code>.
      */
     public PersistenceBrokerTemplate getPersistenceBrokerTemplate() {
         return persistenceBrokerTemplate;
@@ -68,10 +65,11 @@ public class SpringOjbGpsDevice extends OjbGpsDevice {
 
     /**
      * Sets Spring's
-     * <code>PersistenceBrokerTemplate<code> to be used to fetch OJB 
+     * <code>PersistenceBrokerTemplate<code> to be used to fetch OJB
      * <code>PersistenceBroker</code> for batch indexing (the <code>index()</code> operation).
-     * <p>
+     * <p/>
      * This is an optional parameter, since the <code>PersistenceBrokerTemplate</code> can be automatically created.
+     *
      * @param persistenceBrokerTemplate
      */
     public void setPersistenceBrokerTemplate(PersistenceBrokerTemplate persistenceBrokerTemplate) {

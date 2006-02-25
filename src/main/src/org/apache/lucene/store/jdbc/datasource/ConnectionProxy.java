@@ -21,17 +21,16 @@ import java.sql.Connection;
 /**
  * Subinterface of Connection to be implemented by connection proxies. Allows
  * access to the target connection.
- * 
- * <p>
+ * <p/>
  * Initial version taken from Spring.
- * 
+ *
  * @author kimchy
  */
 public interface ConnectionProxy extends Connection {
 
     /**
      * Return the target connection of this proxy.
-     * <p>
+     * <p/>
      * This will typically either be the native JDBC Connection or a wrapper
      * from a connection pool.
      */
@@ -41,7 +40,6 @@ public interface ConnectionProxy extends Connection {
      * If the given Jdbc Connection actually controls the connection.
      *
      * @see TransactionAwareDataSourceProxy
-     * @see SingleConnectionDataSource
      * @see DataSourceUtils#releaseConnection(java.sql.Connection)
      */
     boolean controlConnection();

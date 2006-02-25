@@ -180,14 +180,14 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
     }
 
     /**
-     * @see {@link org.compass.gps.MirrorDataChangesGpsDevice#isMirrorDataChanges()}
+     * @see org.compass.gps.MirrorDataChangesGpsDevice#isMirrorDataChanges()
      */
     public boolean isMirrorDataChanges() {
         return mirrorDataChanges;
     }
 
     /**
-     * @see {@link org.compass.gps.MirrorDataChangesGpsDevice#setMirrorDataChanges(boolean)}
+     * @see org.compass.gps.MirrorDataChangesGpsDevice#setMirrorDataChanges(boolean)
      */
     public void setMirrorDataChanges(boolean mirrorDataChanges) {
         this.mirrorDataChanges = mirrorDataChanges;

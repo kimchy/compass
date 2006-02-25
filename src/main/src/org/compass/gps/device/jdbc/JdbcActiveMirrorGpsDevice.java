@@ -41,7 +41,7 @@ public interface JdbcActiveMirrorGpsDevice extends JdbcGpsDevice, ActiveMirrorGp
      * Returns the jdbc snapshot event listener that will handle database change
      * events.
      * 
-     * @return
+     * @return The jdbc snapshot event listener.
      */
     JdbcSnapshotEventListener getSnapshotEventListener();
 
@@ -57,7 +57,7 @@ public interface JdbcActiveMirrorGpsDevice extends JdbcGpsDevice, ActiveMirrorGp
      * Returns the snapshot persister that will persist and load the snapshot
      * information.
      * 
-     * @return
+     * @return The Jdbc snapshot persister.
      */
     JdbcSnapshotPersister getSnapshotPersister();
 
@@ -74,7 +74,7 @@ public interface JdbcActiveMirrorGpsDevice extends JdbcGpsDevice, ActiveMirrorGp
      * <p>
      * Note that it is persisted when the gps device stops.
      * 
-     * @return
+     * @return <code>true</code> if the snapshot should be persisted after each mirroring operation.
      */
     boolean isSaveSnapshotAfterMirror();
 

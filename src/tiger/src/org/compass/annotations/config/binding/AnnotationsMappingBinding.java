@@ -462,7 +462,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             if (StringUtils.hasLength(searchableProp.analyzer())) {
                 mdMapping.setAnalyzer(searchableProp.analyzer());
             }
-            mdMapping.setExcludeFromAll(searchableProp.exceludeFromAll());
+            mdMapping.setExcludeFromAll(searchableProp.excludeFromAll());
 
             classPropertyMapping.addMapping(mdMapping);
         }
@@ -537,7 +537,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             if (StringUtils.hasLength(searchableProp.analyzer())) {
                 mdMapping.setAnalyzer(searchableProp.analyzer());
             }
-            mdMapping.setExcludeFromAll(searchableProp.exceludeFromAll());
+            mdMapping.setExcludeFromAll(searchableProp.excludeFromAll());
 
             classPropertyMapping.addMapping(mdMapping);
         }
@@ -578,7 +578,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchableMetaData.analyzer())) {
             mdMapping.setAnalyzer(searchableMetaData.analyzer());
         }
-        mdMapping.setExcludeFromAll(searchableMetaData.exceludeFromAll());
+        mdMapping.setExcludeFromAll(searchableMetaData.excludeFromAll());
 
         classPropertyMapping.addMapping(mdMapping);
     }

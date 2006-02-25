@@ -42,7 +42,7 @@ public abstract class AbstractCompassGpsCommandController extends AbstractComman
     /**
      * Returns the <code>CompassGps</code>.
      * 
-     * @return
+     * @return The Compass Gps
      */
     public CompassGps getCompassGps() {
         return compassGps;

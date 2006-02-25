@@ -35,7 +35,7 @@ public class CompassIndexResults {
      * Returns the time it took to index using <code>CompassGps</code>. Tims
      * is in milli-seconds.
      * 
-     * @return
+     * @return How long it took to index in milli-seconds
      */
     public long getIndexTime() {
         return indexTime;

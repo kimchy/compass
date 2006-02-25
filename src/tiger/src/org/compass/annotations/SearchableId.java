@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Specifes a searchable id on property or field of the {@link Searchable} class.
+ * Specifies a searchable id on property or field of the {@link Searchable} class.
  * <p/>
  * Each searchable class must have at least one id annotation. The type
  * of the field/property can be a simple type, or a custom class. In case
@@ -144,7 +144,7 @@ public @interface SearchableId {
      * <p/>
      * The meta-data will be auto generated only if the name has a value.
      */
-    boolean exceludeFromAll() default false;
+    boolean excludeFromAll() default false;
 
     /**
      * The converter of the auto generated {@link SearchableMetaData}. Maps to

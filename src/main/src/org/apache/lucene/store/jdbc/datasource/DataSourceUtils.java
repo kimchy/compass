@@ -16,14 +16,8 @@
 
 package org.apache.lucene.store.jdbc.datasource;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import java.sql.*;
 import javax.sql.DataSource;
-
 import org.apache.lucene.store.jdbc.JdbcStoreException;
 
 /**
@@ -180,7 +174,7 @@ public abstract class DataSourceUtils {
      * 
      * @param metaData
      * @param columnName
-     * @return
+     * @return Column index for the given column name
      * @throws java.sql.SQLException
      */
     public static int getColumnIndexFromColumnName(ResultSetMetaData metaData, String columnName) throws SQLException {

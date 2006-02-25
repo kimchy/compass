@@ -16,14 +16,8 @@
 
 package org.compass.gps.device.jdbc;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import java.sql.*;
 import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,7 +36,7 @@ public abstract class JdbcUtils {
      * exception with a Jdbc device exception.
      * 
      * @param dataSource
-     * @return
+     * @return A connection from the datasource.
      * @throws JdbcGpsDeviceException
      */
     public static Connection getConnection(DataSource dataSource) throws JdbcGpsDeviceException {
@@ -57,8 +51,7 @@ public abstract class JdbcUtils {
      * Close the given JDBC connection and ignore any thrown exception. This is
      * useful for typical finally blocks in manual JDBC code.
      * 
-     * @param stmt
-     *            the JDBC Statement to close
+     * @param con The JDBC Connection to close
      */
     public static void closeConnection(Connection con) {
         if (con != null) {
@@ -76,8 +69,7 @@ public abstract class JdbcUtils {
      * Close the given JDBC Statement and ignore any thrown exception. This is
      * useful for typical finally blocks in manual JDBC code.
      * 
-     * @param stmt
-     *            the JDBC Statement to close
+     * @param stmt The JDBC Statement to close
      */
     public static void closeStatement(Statement stmt) {
         if (stmt != null) {
@@ -95,8 +87,7 @@ public abstract class JdbcUtils {
      * Close the given JDBC ResultSet and ignore any thrown exception. This is
      * useful for typical finally blocks in manual JDBC code.
      * 
-     * @param rs
-     *            the JDBC ResultSet to close
+     * @param rs the JDBC ResultSet to close
      */
     public static void closeResultSet(ResultSet rs) {
         if (rs != null) {
@@ -116,11 +107,6 @@ public abstract class JdbcUtils {
      * returned.
      * <p>
      * <code>-1</code> is returned if none is found.
-     * 
-     * @param metaData
-     * @param columnName
-     * @return
-     * @throws SQLException
      */
     public static int getColumnIndexFromColumnName(ResultSetMetaData metaData, String columnName) throws SQLException {
         for (int i = 1; i <= metaData.getColumnCount(); i++) {

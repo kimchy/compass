@@ -277,7 +277,7 @@ public class LuceneEnvironment {
         public static final String TYPE = "type";
 
         /**
-         * The synonym type, used to set the {@link TYPE} to
+         * The synonym type, used to set the {@link #TYPE} to
          * {@link org.compass.core.lucene.engine.analyzer.synonym.SynonymAnalyzerTokenFilterProvider}.
          */
         public static final String SYNONYM_TYPE = "synonym";

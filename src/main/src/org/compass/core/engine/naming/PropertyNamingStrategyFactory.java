@@ -22,13 +22,12 @@ import org.compass.core.config.CompassSettings;
  * The property naming strategy factory. Used to create property naming
  * strategies. Created by the
  * {@link org.compass.core.config.CompassConfiguration} and can be set using the
- * {@link org.compass.core.config.CompassEnvironment#NAMING_STRATEGY_FACTORY}
+ * {@link org.compass.core.config.CompassEnvironment.NamingStrategy#FACTORY_TYPE}
  * setting by setting the fully qulified class name of the factory. Defaults to
- * the
- * {@link org.compass.core.engine.naming.DefaultPropertyNamingStrategyFactory}
- * 
- * @see org.compass.core.engine.naming.PropertyNamingStrategy
+ * the {@link DefaultPropertyNamingStrategyFactory}
+ *
  * @author kimchy
+ * @see PropertyNamingStrategy
  */
 public interface PropertyNamingStrategyFactory {
 

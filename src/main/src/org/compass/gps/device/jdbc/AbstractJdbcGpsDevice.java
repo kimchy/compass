@@ -21,9 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.sql.DataSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
@@ -167,7 +165,7 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
             JdbcUtils.closeStatement(ps);
             JdbcUtils.closeConnection(connection);
         }
-        
+
         if (log.isInfoEnabled()) {
             log.info("{" + getName() + "}: Finished indexing the database");
         }
@@ -238,13 +236,6 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
      * return the actual data to be saved using the <code>CompassSession</code>.
      * The return value can be either an OSEM enables object, a
      * <code>Resource</code>, or an array of one of them.
-     *
-     * @param description
-     * @param rs
-     * @param session
-     * @return
-     * @throws SQLException
-     * @throws CompassException
      */
     protected Object processRowValue(Object description, ResultSet rs, CompassSession session) throws SQLException,
             CompassException {
@@ -254,11 +245,6 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
     /**
      * Returns an array of the {@link IndexExecution} that should be executed
      * it's respective <code>ResultSet</code> should be indexed.
-     *
-     * @param connection
-     * @return
-     * @throws SQLException
-     * @throws JdbcGpsDeviceException
      */
     protected abstract IndexExecution[] doGetIndexExecutions(Connection connection) throws SQLException,
             JdbcGpsDeviceException;

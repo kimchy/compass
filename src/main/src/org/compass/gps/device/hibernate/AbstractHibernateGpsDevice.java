@@ -18,7 +18,6 @@ package org.compass.gps.device.hibernate;
 
 import java.util.Iterator;
 import java.util.List;
-
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.gps.CompassGpsException;
@@ -104,7 +103,7 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
      * Returns all the hibernate class info (the hibernate mapped classes and
      * their count).
      *
-     * @return
+     * @return Hibernate class informtion
      * @throws HibernateGpsDeviceException
      */
     protected abstract HibernateClassInfo[] doGetHibernateClassesInfo() throws HibernateGpsDeviceException;
@@ -112,12 +111,6 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
     /**
      * Returns the data that maps to the given class info, paginated with from
      * and count.
-     *
-     * @param info
-     * @param from
-     * @param count
-     * @return
-     * @throws HibernateGpsDeviceException
      */
     protected abstract List doGetObjects(HibernateClassInfo info, int from, int count,
                                          HibernateSessionWrapper sessionWrapper) throws HibernateGpsDeviceException;

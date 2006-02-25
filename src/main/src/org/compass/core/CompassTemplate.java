@@ -18,7 +18,6 @@ package org.compass.core;
 
 import java.io.Reader;
 import java.io.Serializable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassTransaction.TransactionIsolation;
@@ -121,7 +120,7 @@ public class CompassTemplate implements CompassOperations {
 	 * Executes the compass callback within a session and a transaction context.
 	 * Applies the given transaction isolation level.
 	 * 
-	 * @param The transaction isolation
+	 * @param transactionIsolation The transaction isolation
 	 * @param action The action to execute witin a compass transaction
 	 * @return An object as the result of the compass action
 	 * @throws CompassException

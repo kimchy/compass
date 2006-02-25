@@ -21,9 +21,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-
 import javax.sql.DataSource;
-
 import org.compass.gps.device.jdbc.JdbcGpsDeviceException;
 import org.compass.gps.device.jdbc.JdbcUtils;
 
@@ -68,14 +66,13 @@ public class TableToResourceMapping extends ResultSetToResourceMapping implement
     }
 
     /**
-     * Creates a new table to <code>Resource</code> mapping with the given
+     * Creates a new table to {@link org.compass.core.Resource} mapping with the given
      * table name and alias.
      * <p>
-     * Indexing of unmapped columns is diasabled by default.
+     * Indexing of unmapped columns is disabled by default.
      * 
-     * @param dataSource
-     * @param tableName
-     * @param alias
+     * @param tableName The table name
+     * @param alias The {@link org.compass.core.Resource} alias
      */
     public TableToResourceMapping(String tableName, String alias) {
         setAlias(alias);

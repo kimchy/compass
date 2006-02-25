@@ -35,7 +35,7 @@ public class CompassIndexCommand {
      * Returns the <code>doIndex</code> commnand property, which instructs the
      * {@link CompassIndexController} to performs the index operation.
      * 
-     * @return
+     * @return <code>true</code> if the index operation should be performed
      */
     public String getDoIndex() {
         return doIndex;
@@ -45,7 +45,7 @@ public class CompassIndexCommand {
      * Sets the <code>doIndex</code> commnand property, which instructs the
      * {@link CompassIndexController} to performs the index operation.
      * 
-     * @param doIndex
+     * @param doIndex <code>true</code> if the index operation should be performed
      */
     public void setDoIndex(String doIndex) {
         this.doIndex = doIndex;

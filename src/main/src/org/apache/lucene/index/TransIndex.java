@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Vector;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -224,7 +223,7 @@ public class TransIndex {
      * close it since the trans index will close it when the
      * <code>close()</code> method is called.
      *
-     * @return
+     * @return Full index reader with transactional data
      * @throws IOException
      */
     public IndexReader[] getFullIndexReaderAsArray() throws IOException {
@@ -249,7 +248,7 @@ public class TransIndex {
      * close it since the trans index will close it when the
      * <code>close()</code> method is called.
      *
-     * @return
+     * @return Full index reader with transactional data.
      * @throws IOException
      */
     public IndexReader getFullIndexReader() throws IOException {

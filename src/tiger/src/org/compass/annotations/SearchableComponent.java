@@ -22,21 +22,59 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Specifies a searchable component on property or field of the {@link Searchable} class.
+ * <p/>
+ * A searchable component is a class field/property that reference another class, which
+ * content need to be embedded into the content of its {@link Searchable} class. It will
+ * results in searches performed on the component class to return the component field/property
+ * searchable class.
+ * <p/>
+ * The referenced class must have searchable definitions, defined either using annotations
+ * or other means (like xml).
+ * <p/>
+ * Compass will try to automatically identify the searchable class mapping definitions that
+ * map to the component class. If the mappings can not be automatically identified, the
+ * {@link #refAlias()} should be used to reference the alias that has the searchable class
+ * mapping definition.
+ * <p/>
+ * The searchalbe component can annotate a {@link java.util.Collection} type field/property,
+ * supporting either {@link java.util.List} or {@link java.util.Set}. The searchable component
+ * will try and automatically identify the element type using generics, but if the collection
+ * is not defined with generics, {@link #refAlias()} should be used to reference the component
+ * searchable class mapping definitions.
+ * <p/>
+ * The searchable compoent can annotate an array as well, with the array element type used for
+ * refernced searchable class mapping definitions.
+ *
  * @author kimchy
+ * @see Searchable
+ * @see SearchableReference
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchableComponent {
 
     /**
-     * The reference alias that points to the searchable class. Not required
-     * since most of the times it can be automatically detected.
+     * The reference alias that points to the searchable class (either defined using
+     * annotations or xml). Not required since most of the times it can be automatically
+     * detected.
      */
     String refAlias() default "";
 
+    /**
+     * Should the component definitions override an already existing component definitions
+     * for the same field/property.
+     */
     boolean override() default true;
 
+    /**
+     * The depth of cyclic component references allowed.
+     */
     int maxDepth() default 5;
 
+    /**
+     * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ComponentMapping}.
+     * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.ComponentMappingConverter}.
+     */
     String converter() default "";
 }

@@ -44,9 +44,9 @@ public abstract class AbstractCompassCommandController extends AbstractCommandCo
     }
 
     /**
-     * Returns <code>Compass</code>.
+     * Returns <code>Compass</code> instance.
      * 
-     * @return
+     * @return The compass isntance.
      */
     public Compass getCompass() {
         return compass;
@@ -65,7 +65,7 @@ public abstract class AbstractCompassCommandController extends AbstractCommandCo
      * Returns a <code>CompassTemplate</code> that wraps the injected
      * <code>Compass</code> instance.
      * 
-     * @return
+     * @return Compass template that wraps the injected Compass instance.
      */
     protected CompassTemplate getCompassTemplate() {
         return this.compassTemplate;

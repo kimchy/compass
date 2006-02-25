@@ -50,15 +50,14 @@ public abstract class CompassDaoSupport implements InitializingBean {
     }
 
     /**
-     * Creates a new CompassTemplate based on the provided Compass. Subclasses
-     * can override it to create a subclass of CompassTemplate, or change the
-     * configuration.
+     * Creates a new {@link CompassTemplate} based on the provided {@link Compass}. Subclasses
+     * can override it to create a subclass of CompassTemplate, or change the configuration.
      * <p>
      * The method is only called when initializing the dao with Compass instance
      * and not a CompassTemplate instance.
      * 
      * @param compass
-     * @return
+     * @return A new {@link CompassTemplate} warpping the given {@link Compass} instance.
      */
     protected CompassTemplate createCompassTemplate(Compass compass) {
         return new CompassTemplate(compass);
@@ -67,7 +66,7 @@ public abstract class CompassDaoSupport implements InitializingBean {
     /**
      * Returns the Compass used by the DAO.
      * 
-     * @return
+     * @return compass instance used by the DAO
      */
     public final Compass getCompass() {
         return (this.compassTemplate != null) ? this.compassTemplate.getCompass() : null;
@@ -87,7 +86,7 @@ public abstract class CompassDaoSupport implements InitializingBean {
      * Returns the CompassTemplate for this DAO. Pre-initialized with Compass or
      * set explicitly.
      * 
-     * @return
+     * @return The compass template for the DAO
      */
     public final CompassTemplate getCompassTemplate() {
         return compassTemplate;

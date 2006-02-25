@@ -19,7 +19,6 @@ package org.compass.gps.device.jdbc.dialect;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import org.compass.gps.device.jdbc.mapping.ColumnMapping;
 import org.compass.gps.device.jdbc.mapping.VersionColumnMapping;
 
@@ -35,44 +34,24 @@ public interface JdbcDialect {
     /**
      * Returns the String value for the given column index. Will return
      * <code>null</code> if the column value is <code>null</code>.
-     * 
-     * @param rs
-     * @param columnIndex
-     * @return
-     * @throws SQLException
      */
     String getStringValue(ResultSet rs, int columnIndex) throws SQLException;
 
     /**
      * Returns the String value for the given column mapping. Will return
      * <code>null</code> if the column value is <code>null</code>.
-     * 
-     * @param rs
-     * @param mapping
-     * @return
-     * @throws SQLException
      */
     String getStringValue(ResultSet rs, ColumnMapping mapping) throws SQLException;
 
     /**
      * Returns the version value of the given version mapping. It is always a
      * long value.
-     * 
-     * @param rs
-     * @param versionMapping
-     * @return
-     * @throws SQLException
      */
     Long getVersion(ResultSet rs, VersionColumnMapping versionMapping) throws SQLException;
 
     /**
      * Sets the paremeter value for the given parameter index and the
      * <code>PreparedStatement</code>.
-     * 
-     * @param ps
-     * @param paramIndex
-     * @param value
-     * @throws SQLException
      */
     void setParameter(PreparedStatement ps, int paramIndex, String value) throws SQLException;
 }

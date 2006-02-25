@@ -66,7 +66,7 @@ public @interface SearchableMetaData {
     String name();
 
     /**
-     * The boost level for the specific meta-data. Will cause hits
+     * The boost level for the meta-data. Will cause hits
      * based on this meta-data to rank higher.
      */
     float boost() default 1.0f;
@@ -105,7 +105,7 @@ public @interface SearchableMetaData {
      *
      * @see Searchable#enableAll
      */
-    boolean exceludeFromAll() default false;
+    boolean excludeFromAll() default false;
 
     /**
      * The converter lookup name for the given meta-data.
