@@ -166,7 +166,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
     }
 
     public Setter getSetter(Class theClass, String propertyName) throws PropertyNotFoundException {
-        return createSetter(theClass, propertyName);
+        return getSetterOrNull(theClass, propertyName);
     }
 
     private static Setter createSetter(Class theClass, String propertyName) throws PropertyNotFoundException {

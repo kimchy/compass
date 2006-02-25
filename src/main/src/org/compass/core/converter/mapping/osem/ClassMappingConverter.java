@@ -119,12 +119,16 @@ public class ClassMappingConverter implements Converter {
                 Mapping m = (Mapping) mappingsIt.next();
                 if (m instanceof ObjectMapping) {
                     Setter setter = ((ObjectMapping) m).getSetter();
+                    if (setter == null) {
+                        continue;
+                    }
                     Object value = m.getConverter().unmarshall(resource, m, context);
-                    if (value != null) {
-                        setter.set(obj, value);
-                        if (m.controlsObjectNullability()) {
-                            isNullClass = false;
-                        }
+                    if (value == null) {
+                        continue;
+                    }
+                    setter.set(obj, value);
+                    if (m.controlsObjectNullability()) {
+                        isNullClass = false;
                     }
                 } else {
                     m.getConverter().unmarshall(resource, m, context);

@@ -46,4 +46,17 @@
         <id name="id" />
 
     </class>
+
+    <class name="C" alias="c">
+
+        <id name="id" />
+
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+        <property name="specialValue">
+            <meta-data>special</meta-data>
+        </property>
+    </class>
 </compass-core-mapping>

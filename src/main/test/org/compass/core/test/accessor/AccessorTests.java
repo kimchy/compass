@@ -18,6 +18,7 @@ package org.compass.core.test.accessor;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.Resource;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -78,6 +79,28 @@ public class AccessorTests extends AbstractTestCase {
         session = openSession();
         tr = session.beginTransaction();
         o = (B) session.load(B.class, id);
+        tr.commit();
+        session.close();
+    }
+
+    public void testNoSetter() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = new Long(1);
+        C o = new C(id);
+        o.setValue("value");
+        session.save(o);
+        tr.commit();
+        session.close();
+
+        session = openSession();
+        tr = session.beginTransaction();
+
+        o = (C) session.load(C.class, id);
+        Resource resource = session.loadResource(C.class, id);
+        assertEquals("value special", resource.get("special"));
+
         tr.commit();
         session.close();
     }
