@@ -225,7 +225,7 @@
 
         <javadoc sourcepath="${main.src.dir}" destdir="${javadoc.dir}" windowtitle="Compass" breakiterator="true"
                  source="1.5" access="package" author="true" version="true" use="true" defaultexcludes="true"
-                 stylesheetfile="${docs.dir}/jdstyle.css">
+                 stylesheetfile="${docs.dir}/javadoc/jdstyle.css">
             <doctitle><![CDATA[<h1>Compass</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright (c) 2004-2006 The Compass Project.</i>]]></bottom>
             <classpath refid="all-libs"/>
