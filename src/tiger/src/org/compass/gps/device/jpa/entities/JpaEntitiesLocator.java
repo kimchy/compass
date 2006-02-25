@@ -32,7 +32,7 @@ import javax.persistence.EntityManagerFactory;
  *
  * @author kimchy
  * @see JpaEntitiesLocatorDetector
- * @see org.compass.gps.device.jpa.hibernate.HibernateJpaEntitiesLocator
+ * @see org.compass.gps.device.jpa.entities.HibernateJpaEntitiesLocator
  */
 public interface JpaEntitiesLocator {
 

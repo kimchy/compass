@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.jpa.hibernate;
+package org.compass.gps.device.jpa.entities;
 
 import org.compass.gps.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jpa.JpaGpsDevice;

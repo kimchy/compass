@@ -30,14 +30,14 @@ public interface MirrorDataChangesGpsDevice extends CompassGpsDevice {
     /**
      * Should the device perform real time data mirroring.
      * 
-     * @return
+     * @return <code>true</code> if the device mirror data changes
      */
     public boolean isMirrorDataChanges();
 
     /**
      * Sets if the device will perform real time data changes mirroring.
      * 
-     * @param mirrorDataChanges
+     * @param mirrorDataChanges Should the device mirror data changes
      */
     public void setMirrorDataChanges(boolean mirrorDataChanges);
 }

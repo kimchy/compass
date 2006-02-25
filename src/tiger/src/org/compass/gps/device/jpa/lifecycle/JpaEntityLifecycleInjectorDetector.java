@@ -40,7 +40,7 @@ public abstract class JpaEntityLifecycleInjectorDetector {
             throws JpaGpsDeviceException {
         String injectorClassName = null;
         if (entityManagerFactory.getClass().getName().equals("org.hibernate.ejb.EntityManagerFactoryImpl")) {
-            injectorClassName = "org.compass.gps.device.jpa.hibernate.HibernateJpaEntityLifecycleInjector";
+            injectorClassName = "org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityLifecycleInjector";
         }
         if (injectorClassName == null) {
             return null;

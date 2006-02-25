@@ -16,16 +16,18 @@
 
 package org.compass.gps.device.jpa.entities;
 
+import javax.persistence.EntityManagerFactory;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-
-import javax.persistence.EntityManagerFactory;
 
 /**
  * A {@link JpaEntitiesLocator} detector. Tries to check for the actual implementation of JPA
  * <code>EntityManagerFactory</code>, and based on it, check if the current set of actual JPA
  * implementations is one of compass supported ones (like Hibernate).
- * <p>
+ * <p/>
+ * If no implementation is found for the native <code>EntityManagerFactory</code> implementation,
+ * uses the {@link DefaultJpaEntitiesLocator}.
+ * <p/>
  * Currently support the following JPA implementations: Hibernate.
  * <p/>
  * Assumes that the <code>EntityManagerFactory</code> is the native one, since the
@@ -40,7 +42,7 @@ public abstract class JpaEntitiesLocatorDetector {
     public static JpaEntitiesLocator detectLocator(EntityManagerFactory entityManagerFactory) {
         String locatorClassName = DefaultJpaEntitiesLocator.class.getName();
         if (entityManagerFactory.getClass().getName().equals("org.hibernate.ejb.EntityManagerFactoryImpl")) {
-            locatorClassName = "org.compass.gps.device.jpa.hibernate.HibernateJpaEntitiesLocator";
+            locatorClassName = "org.compass.gps.device.jpa.entities.HibernateJpaEntitiesLocator";
         }
         try {
             Class locatorClass = ClassUtils.forName(locatorClassName);

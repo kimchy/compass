@@ -31,7 +31,7 @@ import javax.persistence.EntityManagerFactory;
  * {@link JpaGpsDevice} was used to extract it.
  *
  * @author kimchy
- * @see org.compass.gps.device.jpa.hibernate.HibernateJpaEntityLifecycleInjector
+ * @see org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityLifecycleInjector
  * @see JpaEntityLifecycleInjectorDetector
  */
 public interface JpaEntityLifecycleInjector {
