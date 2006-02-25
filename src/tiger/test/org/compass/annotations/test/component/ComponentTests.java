@@ -17,7 +17,7 @@
 package org.compass.annotations.test.component;
 
 import java.util.ArrayList;
-
+import java.util.HashSet;
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
@@ -50,6 +50,11 @@ public class ComponentTests extends AbstractAnnotationsTestCase {
         bValues.add(new B("bvalue2"));
         a.bValues = bValues;
 
+        HashSet<B> bValuesSet = new HashSet<B>();
+        bValuesSet.add(new B("bvalueset1"));
+        bValuesSet.add(new B("bvalueset2"));
+        a.bValuesSet = bValuesSet;
+
         session.save(a);
 
         a = (A) session.load(A.class, 1);
@@ -57,8 +62,15 @@ public class ComponentTests extends AbstractAnnotationsTestCase {
         assertEquals("bvalue", a.b.value);
         assertEquals("bvalue1", a.bValues.get(0).value);
         assertEquals("bvalue2", a.bValues.get(1).value);
+        assertEquals(2, a.bValuesSet.size());
 
         CompassHits hits = session.find("bvalue");
+        assertEquals(1, hits.length());
+        a = (A) hits.data(0);
+        assertEquals("avalue", a.value);
+        assertEquals("bvalue", a.b.value);
+
+        hits = session.find("bValue:bvalueset1");
         assertEquals(1, hits.length());
         a = (A) hits.data(0);
         assertEquals("avalue", a.value);

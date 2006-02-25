@@ -75,9 +75,9 @@
 
         <delete dir="${dist.dir}"/>
         <delete dir="${javadoc.dir}"/>
-        <delete dir="${dist.ref.dir}/html"/>
-        <delete dir="${dist.ref.dir}/html_single"/>
-        <delete dir="${dist.ref.dir}/pdf"/>
+        <delete dir="${reference.dir}/html"/>
+        <delete dir="${reference.dir}/html_single"/>
+        <delete dir="${reference.dir}/pdf"/>
 
     </target>
 
@@ -224,9 +224,10 @@
         <mkdir dir="${javadoc.dir}"/>
 
         <javadoc sourcepath="${main.src.dir}" destdir="${javadoc.dir}" windowtitle="Compass" breakiterator="true"
-                 source="1.5" access="package" author="true" version="true" use="true" defaultexcludes="true">
+                 source="1.5" access="package" author="true" version="true" use="true" defaultexcludes="true"
+                 stylesheetfile="${docs.dir}/jdstyle.css">
             <doctitle><![CDATA[<h1>Compass</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright (c) 2002-2006 The Compass Project.</i>]]></bottom>
+            <bottom><![CDATA[<i>Copyright (c) 2004-2006 The Compass Project.</i>]]></bottom>
             <classpath refid="all-libs"/>
             <packageset dir="${main.src.dir}">
                 <include name="org/apache/lucene/**"/>
@@ -552,23 +553,23 @@
 
     <target name="doc.clean" description="Delete temporary and distribution directories for docs">
 
-        <delete dir="${basedir}/${dist.ref.dir}/pdf"/>
-        <delete dir="${basedir}/${dist.ref.dir}/html_single"/>
-        <delete dir="${basedir}/${dist.ref.dir}/html"/>
-        <delete dir="${basedir}/${dist.ref.dir}/lib"/>
+        <delete dir="${basedir}/${reference.dir}/pdf"/>
+        <delete dir="${basedir}/${reference.dir}/html_single"/>
+        <delete dir="${basedir}/${reference.dir}/html"/>
+        <delete dir="${basedir}/${reference.dir}/lib"/>
 
     </target>
 
 
     <target name="doc.prepare" description="Extra preparation for the documentation">
 
-        <unzip src="${basedir}/${doc.ref.dir}/docbook-reference-libs.zip"
-               dest="${basedir}/${doc.ref.dir}/"/>
+        <unzip src="${basedir}/${reference.dir}/docbook-reference-libs.zip"
+               dest="${basedir}/${reference.dir}/"/>
 
         <fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
             <condition>
                 <not>
-                    <available file="${basedir}/${doc.ref.dir}/lib"/>
+                    <available file="${basedir}/${reference.dir}/lib"/>
                 </not>
             </condition>
         </fail>
@@ -578,69 +579,69 @@
 
     <target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
 
-        <mkdir dir="${basedir}/${dist.ref.dir}/pdf/images"/>
+        <mkdir dir="${basedir}/${reference.dir}/pdf/images"/>
 
-        <copy todir="${basedir}/${dist.ref.dir}/pdf/images">
-            <fileset dir="${basedir}/${doc.ref.dir}/src/images">
+        <copy todir="${basedir}/${reference.dir}/pdf/images">
+            <fileset dir="${basedir}/${reference.dir}/src/images">
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
             </fileset>
         </copy>
 
-        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${doc.ref.dir}">
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${reference.dir}">
             <classpath>
-                <fileset dir="${basedir}/${doc.ref.dir}/lib">
+                <fileset dir="${basedir}/${reference.dir}/lib">
                     <include name="**/*.jar"/>
                 </fileset>
             </classpath>
             <arg value="-o"/>
-            <arg value="${basedir}/${dist.ref.dir}/pdf/docbook_fop.tmp"/>
-            <arg value="${basedir}/${doc.ref.dir}/src/compass.xml"/>
-            <arg value="${basedir}/${doc.ref.dir}/styles/fopdf.xsl"/>
+            <arg value="${basedir}/${reference.dir}/pdf/docbook_fop.tmp"/>
+            <arg value="${basedir}/${reference.dir}/src/compass.xml"/>
+            <arg value="${basedir}/${reference.dir}/styles/fopdf.xsl"/>
         </java>
 
-        <java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${doc.ref.dir}">
+        <java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${reference.dir}">
             <classpath>
-                <fileset dir="${basedir}/${doc.ref.dir}/lib">
+                <fileset dir="${basedir}/${reference.dir}/lib">
                     <include name="**/*.jar"/>
                 </fileset>
             </classpath>
-            <arg value="${basedir}/${dist.ref.dir}/pdf/docbook_fop.tmp"/>
-            <arg value="${basedir}/${dist.ref.dir}/pdf/compass-reference.pdf"/>
+            <arg value="${basedir}/${reference.dir}/pdf/docbook_fop.tmp"/>
+            <arg value="${basedir}/${reference.dir}/pdf/compass-reference.pdf"/>
         </java>
 
-        <delete file="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
+        <delete file="${reference.dir}/pdf/docbook_fop.tmp"/>
 
     </target>
 
 
     <target name="doc.html" depends="doc.prepare" description="Compile reference documentation to chunked html">
 
-        <mkdir dir="${dist.ref.dir}/html/images"/>
+        <mkdir dir="${reference.dir}/html/images"/>
 
-        <copy todir="${basedir}/${dist.ref.dir}/html/images">
-            <fileset dir="${basedir}/${doc.ref.dir}/src/images">
+        <copy todir="${basedir}/${reference.dir}/html/images">
+            <fileset dir="${basedir}/${reference.dir}/src/images">
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
             </fileset>
         </copy>
 
-        <copy todir="${basedir}/${dist.ref.dir}/html/">
-            <fileset dir="${basedir}/${doc.ref.dir}/styles">
+        <copy todir="${basedir}/${reference.dir}/html/">
+            <fileset dir="${basedir}/${reference.dir}/styles">
                 <include name="*.css"/>
             </fileset>
         </copy>
 
-        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}/html/">
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${reference.dir}/html/">
             <classpath>
-                <fileset dir="${basedir}/${doc.ref.dir}/lib">
+                <fileset dir="${basedir}/${reference.dir}/lib">
                     <include name="**/*.jar"/>
                 </fileset>
             </classpath>
-            <arg value="${basedir}/${doc.ref.dir}/src/compass.xml"/>
-            <arg value="${basedir}/${doc.ref.dir}/styles/html_chunk.xsl"/>
+            <arg value="${basedir}/${reference.dir}/src/compass.xml"/>
+            <arg value="${basedir}/${reference.dir}/styles/html_chunk.xsl"/>
         </java>
 
     </target>
@@ -648,32 +649,32 @@
 
     <target name="doc.htmlsingle" description="Compile reference documentation to single html">
 
-        <mkdir dir="${dist.ref.dir}/html_single/images"/>
+        <mkdir dir="${reference.dir}/html_single/images"/>
 
-        <copy todir="${basedir}/${dist.ref.dir}/html_single/images">
-            <fileset dir="${basedir}/${doc.ref.dir}/src/images">
+        <copy todir="${basedir}/${reference.dir}/html_single/images">
+            <fileset dir="${basedir}/${reference.dir}/src/images">
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
             </fileset>
         </copy>
 
-        <copy todir="${basedir}/${dist.ref.dir}/html_single/">
-            <fileset dir="${basedir}/${doc.ref.dir}/styles">
+        <copy todir="${basedir}/${reference.dir}/html_single/">
+            <fileset dir="${basedir}/${reference.dir}/styles">
                 <include name="*.css"/>
             </fileset>
         </copy>
 
-        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${doc.ref.dir}">
+        <java classname="com.icl.saxon.StyleSheet" fork="true" dir="${reference.dir}">
             <classpath>
-                <fileset dir="${basedir}/${doc.dir}/reference/lib">
+                <fileset dir="${reference.dir}/lib">
                     <include name="**/*.jar"/>
                 </fileset>
             </classpath>
             <arg value="-o"/>
-            <arg value="${basedir}/${dist.ref.dir}/html_single/index.html"/>
-            <arg value="${basedir}/${doc.ref.dir}/src/compass.xml"/>
-            <arg value="${basedir}/${doc.ref.dir}/styles/html.xsl"/>
+            <arg value="${basedir}/${reference.dir}/html_single/index.html"/>
+            <arg value="${basedir}/${reference.dir}/src/compass.xml"/>
+            <arg value="${basedir}/${reference.dir}/styles/html.xsl"/>
         </java>
 
     </target>

@@ -17,7 +17,6 @@
 package org.compass.core.config.process;
 
 import java.util.*;
-
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
@@ -108,6 +107,7 @@ public class CollectionMappingProcessor implements MappingProcessor {
             collectionMapping.setSetter(objectMapping.getSetter());
             collectionMapping.setName(objectMapping.getName());
             collectionMapping.setPath(objectMapping.getPath());
+            collectionMapping.setPropertyName(objectMapping.getPropertyName());
             if (objectMapping instanceof OverrideByNameMapping) {
                 collectionMapping.setOverrideByName(((OverrideByNameMapping) objectMapping).isOverrideByName());
             } else {

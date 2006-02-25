@@ -17,6 +17,6 @@ public class B {
         this.value = value;
     }
 
-    @SearchableProperty
+    @SearchableProperty(name = "bValue")
     String value;
 }

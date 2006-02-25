@@ -17,7 +17,7 @@
 package org.compass.annotations.test.component;
 
 import java.util.List;
-
+import java.util.Set;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableComponent;
 import org.compass.annotations.SearchableId;
@@ -40,4 +40,7 @@ public class A {
 
     @SearchableComponent
     List<B> bValues;
+
+    @SearchableComponent
+    Set<B> bValuesSet;
 }
