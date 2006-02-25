@@ -52,9 +52,9 @@ public class ThreadSafeFormat {
 
     private int nextAvailable = 0;
 
-    private Object mutex = new Object();
+    private final Object mutex = new Object();
 
-    private FormatterFactory formatterFactory;
+    private final FormatterFactory formatterFactory;
 
     public ThreadSafeFormat(int initialPoolSize, int maxPoolSize, FormatterFactory formatterFactory) {
         this.initialPoolSize = initialPoolSize;

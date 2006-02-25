@@ -38,7 +38,7 @@ import java.lang.annotation.Target;
  * <p/>
  * A searchable class creates an internal "all" meta-data, which holds
  * searchable information of all the class searchable content. You can
- * control if it will be created or not using {@link #all()}, and control
+ * control if it will be created or not using {@link #enableAll()}, and control
  * the "all" property using the {@link SearchableAllMetaData} annotation.
  * <p/>
  * A searchable class can have constant meta-data associated with it. They
@@ -131,7 +131,7 @@ public @interface Searchable {
      * If using the "all" meta-data, it can be controlled using the
      * {@link SearchableAllMetaData} annotation.
      */
-    boolean all() default true;
+    boolean enableAll() default true;
 
     /**
      * Defines if the searchable class is a root class. A root class is a top

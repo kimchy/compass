@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * control of the "all" meta-data see {@link org.compass.core.config.CompassEnvironment.All}
  * settings.
  * <p/>
- * To enable or disable the "all" meta-data, see {@link Searchable#all}.
+ * To enable or disable the "all" meta-data, see {@link Searchable#enableAll}.
  *
  * @author kimchy
  * @see Searchable

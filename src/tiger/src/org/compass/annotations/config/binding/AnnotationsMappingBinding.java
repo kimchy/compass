@@ -214,7 +214,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         }
         classMapping.setSubIndex(subIndex);
 
-        classMapping.setAllSupported(searchable.all());
+        classMapping.setAllSupported(searchable.enableAll());
         SearchableAllMetaData allMetaData = annotationClass.getAnnotation(SearchableAllMetaData.class);
         if (allMetaData != null) {
             if (StringUtils.hasLength(allMetaData.name())) {
