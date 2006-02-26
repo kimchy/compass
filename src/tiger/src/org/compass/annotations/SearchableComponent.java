@@ -37,14 +37,14 @@ import java.lang.annotation.Target;
  * {@link #refAlias()} should be used to reference the alias that has the searchable class
  * mapping definition.
  * <p/>
- * The searchalbe component can annotate a {@link java.util.Collection} type field/property,
+ * The searchable component can annotate a {@link java.util.Collection} type field/property,
  * supporting either {@link java.util.List} or {@link java.util.Set}. The searchable component
  * will try and automatically identify the element type using generics, but if the collection
  * is not defined with generics, {@link #refAlias()} should be used to reference the component
  * searchable class mapping definitions.
  * <p/>
- * The searchable compoent can annotate an array as well, with the array element type used for
- * refernced searchable class mapping definitions.
+ * The searchable component can annotate an array as well, with the array element type used for
+ * referenced searchable class mapping definitions.
  *
  * @author kimchy
  * @see Searchable

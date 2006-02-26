@@ -112,7 +112,82 @@ public class Author {
     </sect2>
 
   </sect1>
+  
+  <sect1 id="osem-ann-mapping-annotations">
+     <title>Mapping Annotations</title>
+     
+     <para>
+        The annotations are well documented in Compass javadocs. The following sections will try and explain important aspects of using different annotations. For full documentation, please consult the javadocs.
+     </para>
+     
+     <sect2 id="osem-ann-searchable">
+        <title>@Searchable</title>
 
+        <para>
+           The <literal>@Searchable</literal> annotation marks a class as searchable. It allows to perform full text search on its annotated fields/properties. The searchable class is associated with an alias, which defaults to the shorthand name of the class.
+        </para>
+     </sect2>
+
+     <sect2 id="osem-ann-searchableid">
+        <title>@SearchableId</title>
+
+        <para>
+           Each <literal>@Searchable</literal> class must have at least one annotated field/property with <literal>@SearchableId</literal>. The type of the <literal>@SearchableId</literal> can be either one of Java primitive types, their corresponding wrappers, or a user defined class. In case of a user defined class, the defined class should have a specialized converter associated with it, with the preferable way of associating a <literal>Converter</literal> is to use the <literal>@SearchableClassConverter</literal> annotating the custom class (Compass will automatically identify the <literal>Converter</literal>). Also note, the <literal>Converter</literal> will most of times create a String representation of the custom class, meaning it is preferable to extend Compass <literal>AbstractBasicConverter</literal>.
+        </para>
+        
+        <para>
+           It is important to understand how meta-datas are created when using the <literal>@SearchableId</literal> annotation. When the annotation is used without any parameters, no meta-data will be created. As a result, Compass will created it's own internal managed meta-data. If the <literal>name</literal> parameter is set, Compass will create a meta-data associated with the name (Compass might still create an additional internal meta-data). The annotation allows for all the aspects of the meta-data to be controlled using the <literal>@SearchableId</literal> annotation (the parameters are clearly defined in the javadoc, and match the <literal>@SearchableMetaData</literal> parameters). For more than one meta-data, use the <literal>@SearchableMetaData</literal> and <literal>@SearchableMetaDatas</literal> annotations on top of the <literal>@SearchableId</literal> annotation.
+        </para>
+     </sect2>
+     
+     <sect2 id="osem-ann-searchableproperty">
+        <title>@SearchableProperty</title>
+
+        <para>
+           Defines a searchable property on a <literal>@Searchable</literal> class field/property. The <literal>@SearchableProperty</literal> is meant to handle basic types (which usually translate to a String saved in the search engine index).
+        </para>
+        
+        <para>
+           Again, it is important to understand how meta-datas are created when using the <literal>@SearchableProperty</literal> annotation. If no parameters are set, the searchable property will automatically create a searchable meta-data (not Compass internal meta-data, which might be created as well), with its name being the class field/property name. It will NOT create a meta-data automatically if the <literal>name</literal> is NOT set AND there are either <literal>@SearchableMetaData</literal> or <literal>@SearchableMetaDatas</literal> annotating the class field/property. You can control the auto-generated meta-data using the searchable property parameters (clearly marked in the javadoc), and they map one to one with the <literal>@SearchableMetaData</literal> parameters.
+        </para>
+        
+        <para>
+           The searchable property can annotate a Java <literal>Collection</literal> type field/property (with its element a basic type), supporting Java <literal>List</literal> and <literal>Set</literal>. Compass will try and auto identify the type if using Generics, and if the collection does not use generics, the <literal>type</literal> parameter should be used to explicitly define the collection element type. It can also annotation an Array type field/property (with its element a basic type).
+        </para>
+     </sect2>
+     
+     <sect2 id="osem-ann-searchablecomponent">
+        <title>@SearchableComponent</title>
+        
+        <para>
+           A searchable component is a class field/property that reference another class, which content need to be embedded into the content of its <literal>Searchable</literal> class. It will results in searches performed on the component class to return the component field/property searchable class. The referenced class must have searchable definitions, defined either using annotations or other means (like xml).
+        </para>
+        
+        <para>
+           The searchable component can annotate a Java <literal>Collection</literal> type field/property, supporting either <literal>List</literal> or <literal>Set</literal>. The searchable component will try and automatically identify the element type using generics, but if the collection is not defined with generics, <literal>refAlias</literal> parameter should be used to reference the component searchable class mapping definitions. The searchable component can annotate an array as well, with the array element type used for referenced searchable class mapping definitions.
+        </para>
+     </sect2>
+
+     <sect2 id="osem-ann-searchablereference">
+        <title>@SearchableReference</title>
+        
+        <para>
+           A searchable reference is a class field/property that reference another class, and the relationship need to be stored by Compass so it can be traversed when getting the class from the index. Compass will end up saving only the ids of the referenced class in the search engine index.
+        </para>
+        
+        <para>
+           The searchable reference can annotate a Java <literal>Collection</literal> type field/property, supporting either <literal>List</literal> or <literal>Set</literal>. The searchable reference will try and automatically identify the element type using generics, but if the collection is not defined with generics, <literal>refAlias</literal> parameter should be used to reference the referenced searchable class mapping definitions. The searchable reference can annotate an array as well, with the array element type used for referenced searchable class mapping definitions.
+        </para>
+     </sect2>
+  </sect1>
+
+  <sect1 id="osem-ann-config-annotations">
+     <title>Configuration Annotations</title>
+     
+     <para>
+        Compass also allows using annotation for certain configuration settings. The annotations are defined on a package level (package-info.java). Some of the configuration annotations are <literal>@SearchAnalyzer</literal>, <literal>@SearchAnalyzerFilter</literal>, and <literal>@SearchConverter</literal>. Please see the javadocs for more information.
+     </para>
+  </sect1>
 </chapter>
 
 

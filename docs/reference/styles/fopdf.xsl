@@ -104,7 +104,7 @@
                       Custom Footer
     ################################################### -->     
 
-    <!-- This footer prints the Spring Framework version number on the left side -->
+    <!-- This footer prints Compass version number on the left side -->
     <xsl:template name="footer.content">
         <xsl:param name="pageclass" select="''"/>
         <xsl:param name="sequence" select="''"/>
@@ -114,7 +114,7 @@
         <xsl:variable name="Version">
             <xsl:choose>
                 <xsl:when test="//releaseinfo">
-                        <xsl:text>Spring Framework </xsl:text><xsl:value-of select="//releaseinfo"/>
+                        <xsl:text>Compass </xsl:text><xsl:value-of select="//releaseinfo"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <!-- nop -->

@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * the attributes that can control the meta-data are provided in the searchable
  * property as well, they are marked in the java doc.
  * <p/>
- * The searchable meta-data is meant to handle basic types (which usually translate to
+ * The searchable property/meta-data is meant to handle basic types (which usually translate to
  * a String saved in the search engine). The conversion is done using converters, with
  * Compass providing converters for most basic types. A specialized Converter can be
  * associated with the auto generated meta-data using {@link #converter()}. The

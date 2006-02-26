@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
  * the "all" property using the {@link SearchableAllMetaData} annotation.
  * <p/>
  * A searchable class can have constant meta-data associated with it. They
- * can be defined using the {@link SearchableConstant} and the {@link SearchableConstants}.
+ * can be defined using the {@link SearchableConstant} and {@link SearchableConstants}.
  * <p/>
  * Searchable class can have annotations defined on either it's fields, or
  * on the field getter accessor. The possible annotions for them are:

@@ -12,12 +12,12 @@ import java.lang.annotation.Target;
  * relationship need to be stored by Compass so it can be traversed when getting the class
  * from the index.
  * <p/>
- * Compass will end up saving only the ids of the referenced clas in the search engine index.
+ * Compass will end up saving only the ids of the referenced class in the search engine index.
  * <p/>
- * The searchalbe component can annotate a {@link java.util.Collection} type field/property,
- * supporting either {@link java.util.List} or {@link java.util.Set}. The searchable component
+ * The searchalbe reference can annotate a {@link java.util.Collection} type field/property,
+ * supporting either {@link java.util.List} or {@link java.util.Set}. The searchable refrence
  * will try and automatically identify the element type using generics, but if the collection
- * is not defined with generics, {@link #refAlias()} should be used to reference the component
+ * is not defined with generics, {@link #refAlias()} should be used to reference the referenced
  * searchable class mapping definitions.
  * <p/>
  * The searchable compoent can annotate an array as well, with the array element type used for
