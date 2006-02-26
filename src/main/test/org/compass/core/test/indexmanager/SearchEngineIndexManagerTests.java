@@ -93,9 +93,14 @@ public class SearchEngineIndexManagerTests extends AbstractTestCase {
         assertTrue(indexManager.isCached());
         assertTrue(indexManager.isCached("a1"));
         assertTrue(indexManager.isCached("a2"));
-        Thread.sleep(2000);
+        Thread.sleep(3000);
         indexManager.notifyAllToClearCache();
-        Thread.sleep(2000);
+        for (int i = 0; i < 20; i++) {
+            Thread.sleep(500);
+            if (!indexManager.isCached()) {
+                break;
+            }
+        }
         assertFalse(indexManager.isCached());
         assertFalse(indexManager.isCached("a1"));
         assertFalse(indexManager.isCached("a2"));

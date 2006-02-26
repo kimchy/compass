@@ -40,6 +40,8 @@ public class Hibernate3GpsDeviceTests extends AbstractHibernateGpsDeviceTests {
 
     private User mainBidder;
 
+    private User userToDelete;
+
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -56,6 +58,11 @@ public class Hibernate3GpsDeviceTests extends AbstractHibernateGpsDeviceTests {
         // set up the initial set of data
         Session s = sessionFactory.openSession();
         Transaction tx = s.beginTransaction();
+
+        userToDelete = new User();
+        userToDelete.setUserName("deleteme");
+        userToDelete.setName(new Name("delete", null, "me"));
+        s.save(userToDelete);
 
         User seller = new User();
         seller.setUserName("oldirty");
@@ -138,22 +145,20 @@ public class Hibernate3GpsDeviceTests extends AbstractHibernateGpsDeviceTests {
         // find all the bids
         CompassSession sess = mirrorCompass.openSession();
         CompassTransaction tr = sess.beginTransaction();
-        CompassHits bids = sess.find("alias:bid");
-        assertEquals(7, bids.getLength());
+        User user = (User) sess.get(User.class, userToDelete.getId());
+        assertNotNull(user);
 
         // delete all the bids using hibernate
         Session hibSess = sessionFactory.openSession();
         Transaction hibTrans = hibSess.beginTransaction();
-        for (int i = 0; i < bids.getLength(); i++) {
-            Bid bid = (Bid) hibSess.load(Bid.class, ((Bid) bids.data(i)).getId());
-            hibSess.delete(bid);
-        }
+        user = (User) hibSess.load(User.class, userToDelete.getId());
+        hibSess.delete(user);
         hibTrans.commit();
         hibSess.close();
 
         // check that it was reflected in compass
-        bids = sess.find("alias:bid");
-        assertEquals(0, bids.getLength());
+        user = (User) sess.get(User.class, userToDelete.getId());
+        assertNull(user);
         tr.commit();
         sess.close();
     }
