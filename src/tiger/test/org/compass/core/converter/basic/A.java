@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.id;
+package org.compass.core.converter.basic;
 
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
-import org.compass.annotations.test.Converted;
+import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
  */
 @Searchable
-public class B {
+public class A {
 
     @SearchableId
-    Converted id;
+    int id;
+
+    @SearchableProperty
+    AType value1;
+
+    @SearchableProperty
+    AType value2;
 }

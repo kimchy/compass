@@ -246,6 +246,15 @@ public class DefaultConverterLookup implements ConverterLookup {
         convertersByName.put(converterName, converter);
     }
 
+    public void registerConverter(String converterName, Converter converter, Class registerType) {
+        if (log.isInfoEnabled()) {
+            log.info("Converter [" + converterName + "] registered with type [" + registerType + "]");
+        }
+        convertersByName.put(converterName, converter);
+        convertersByClass.put(registerType.getName(), converter);
+        cachedConvertersByClassType.put(registerType, converter);
+    }
+
     public Converter lookupConverter(String name) {
         Converter converter = (Converter) convertersByName.get(name);
         if (converter == null) {

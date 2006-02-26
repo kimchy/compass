@@ -16,6 +16,11 @@
 
 package org.compass.core.config;
 
+import java.io.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
@@ -36,11 +41,6 @@ import org.compass.core.metadata.impl.DefaultCompassMetaData;
 import org.compass.core.util.DTDEntityResolver;
 import org.compass.core.util.config.ConfigurationHelper;
 import org.compass.core.util.config.XmlConfigurationHelperBuilder;
-
-import java.io.*;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Used to configure <code>Compass</code> instances.
@@ -159,6 +159,7 @@ public class CompassConfiguration {
         CompassSettings copySettings = settings.copy();
 
         ConverterLookup converterLookup = new DefaultConverterLookup();
+        registerExtraConverters(converterLookup);
         converterLookup.configure(copySettings);
         for (Iterator it = temporaryConvertersByName.keySet().iterator(); it.hasNext();) {
             String converterName = (String) it.next();
@@ -178,6 +179,10 @@ public class CompassConfiguration {
 
         return new DefaultCompass(copyCompassMapping, converterLookup, copyMetaData, propertyNamingStrategy,
                 copySettings);
+    }
+
+    protected void registerExtraConverters(ConverterLookup converterLookup) {
+
     }
 
     /**

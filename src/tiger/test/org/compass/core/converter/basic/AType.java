@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.id;
-
-import org.compass.annotations.Searchable;
-import org.compass.annotations.SearchableId;
-import org.compass.annotations.test.Converted;
+package org.compass.core.converter.basic;
 
 /**
  * @author kimchy
  */
-@Searchable
-public class B {
-
-    @SearchableId
-    Converted id;
+public enum AType {
+    TEST1,
+    TEST2
 }

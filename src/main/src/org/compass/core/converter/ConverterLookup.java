@@ -53,4 +53,14 @@ public interface ConverterLookup extends CompassConfigurable {
      * @param converter     The converter to use
      */
     void registerConverter(String converterName, Converter converter);
+
+    /**
+     * Registers a {@link Converter} under the converter name. Also associates
+     * the converter with the given name.
+     *
+     * @param converterName The converter name to be registered against
+     * @param converter     The converter to use
+     * @param registerType  The type to associate the converter with
+     */
+    void registerConverter(String converterName, Converter converter, Class registerType);
 }
