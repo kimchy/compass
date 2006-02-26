@@ -16,9 +16,12 @@
 
 package org.compass.core.load.simple;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
+import java.util.Properties;
 
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
@@ -51,6 +54,12 @@ public class LoadTester {
         printer.println("Run: Number Of Cycles[" + numberOfCycles + "] Number Per Cycle [" + numberPerCycle + "]");
         CompassConfiguration conf = new CompassConfiguration();
         conf.configure("org/compass/core/load/simple/compass.cfg.xml");
+        File testPropsFile = new File("compass.test.properties");
+        if (testPropsFile.exists()) {
+            Properties testProps = new Properties();
+            testProps.load(new FileInputStream(testPropsFile));
+            conf.getSettings().addSettings(testProps);
+        }
         conf.addClass(A.class);
         runTest("Default", conf.buildCompass(), printer);
     }

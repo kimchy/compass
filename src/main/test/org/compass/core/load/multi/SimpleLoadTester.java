@@ -16,14 +16,12 @@
 
 package org.compass.core.load.multi;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Date;
+import java.util.Properties;
 
-import org.compass.core.Compass;
-import org.compass.core.CompassCallbackWithoutResult;
-import org.compass.core.CompassException;
-import org.compass.core.CompassHits;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTemplate;
+import org.compass.core.*;
 import org.compass.core.config.CompassConfiguration;
 
 /**
@@ -119,7 +117,7 @@ public class SimpleLoadTester {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         int numberOfRuns = 5;
         long numberOfCycles = 200;
@@ -127,6 +125,12 @@ public class SimpleLoadTester {
 
         CompassConfiguration conf = new CompassConfiguration();
         conf.configure("org/compass/core/load/multi/compass.cfg.xml");
+        File testPropsFile = new File("compass.test.properties");
+        if (testPropsFile.exists()) {
+            Properties testProps = new Properties();
+            testProps.load(new FileInputStream(testPropsFile));
+            conf.getSettings().addSettings(testProps);
+        }
         conf.addClass(A.class);
 
         Compass compass = conf.buildCompass();
