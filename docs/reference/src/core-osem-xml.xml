@@ -1,17 +1,16 @@
-<chapter id="core-osem">
-  <title>OSEM</title>
+<chapter id="core-osem-xml">
+  <title>OSEM - XML</title>
 
-  <sect1 id="osem-introduction">
+  <sect1 id="osem-xml-introduction">
     <title>Introduction</title>
 
     <para>
-      Compass::Core provides the ability to map Java Objects to the underlying Search Engine through simple XML mapping files, we call this technology OSEM (Object Search Engine Mapping). OSEM provides a rich syntax for
-      describing Object attributes and relationships. The OSEM files are used by Compass to extract the required property from the Object model at run-time and inserting the required meta-data into the Search Engine index.
+      Compass::Core provides the ability to map Java Objects to the underlying Search Engine through simple XML mapping files, we call this technology OSEM (Object Search Engine Mapping). OSEM provides a rich syntax for describing Object attributes and relationships. The OSEM files are used by Compass to extract the required property from the Object model at run-time and inserting the required meta-data into the Search Engine index.
     </para>
 
   </sect1>
 
-  <sect1 id="SearchableClasses">
+  <sect1 id="osem-xml-searchableclasses">
     <title>Searchable Classes</title>
 
     <para>
@@ -108,7 +107,7 @@ public class Author {
 
   </sect1>
 
-  <sect1 id="Mapping">
+  <sect1 id="osem-xml-mapping">
     <title>Mapping</title>
 
     <para>

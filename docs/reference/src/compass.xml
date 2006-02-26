@@ -6,7 +6,8 @@
 <!ENTITY core-introduction  SYSTEM "core-introduction.xml">
 <!ENTITY core-configuration  SYSTEM "core-configuration.xml">
 <!ENTITY core-searchengine  SYSTEM "core-searchengine.xml">
-<!ENTITY core-osem  SYSTEM "core-osem.xml">
+<!ENTITY core-osem-xml  SYSTEM "core-osem-xml.xml">
+<!ENTITY core-osem-annotations  SYSTEM "core-osem-annotations.xml">
 <!ENTITY core-commonmetadata  SYSTEM "core-commonmetadata.xml">
 <!ENTITY core-resourcemapping  SYSTEM "core-resourcemapping.xml">
 <!ENTITY core-transaction  SYSTEM "core-transaction.xml">
@@ -90,7 +91,7 @@
         </listitem>
         <listitem>
           <para>
-            Synchronise data changes between Search Engine and datasource.
+            Synchronize data changes between Search Engine and datasource.
           </para>
         </listitem>
         <listitem>
@@ -113,7 +114,8 @@
     &core-introduction;
     &core-configuration;
     &core-searchengine;
-    &core-osem;
+    &core-osem-xml;
+    &core-osem-annotations;
     &core-commonmetadata;
     &core-resourcemapping;
     &core-transaction;

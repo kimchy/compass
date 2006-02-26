@@ -1,0 +1,118 @@
+<chapter id="core-osem-annotations">
+  <title>OSEM - Annotations</title>
+
+  <sect1 id="osem-ann-introduction">
+    <title>Introduction</title>
+
+    <para>
+      Compass::Core provides the ability to map Java Objects to the underlying Search Engine through Java 5 annotations, we call this technology OSEM (Object Search Engine Mapping). OSEM provides a rich syntax for describing Object attributes and relationships. OSEM definitions are used by Compass to extract the required property from the Object model at run-time and inserting the required meta-data into the Search Engine index.
+    </para>
+
+  </sect1>
+
+  <sect1 id="osem-ann-searchableclasses">
+    <title>Searchable Classes</title>
+
+    <para>
+      Searchable classes are normally classes representing the state of the application, implementing the entities with the business model. Compass works best if the classes follow the simple Plain Old Java Object (POJO) programming model. The following class is an example of a searchable class (with Compass annotations):
+
+      <programlisting><![CDATA[import java.util.Date;
+import java.util.Set;
+
+@Searchable
+public class Author {
+   @SearchableId
+   private Long id; // identifier
+   private String name;
+   private Date birthday;
+   private Set books;
+
+   private void setId(Long id) {
+      this.id = id;
+   }
+
+   public Long getId() {
+      return this.id;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   @SearchableProperty
+   public String getName() {
+      return this.name;
+   }
+
+   public void setBirthday(Date birthday) {
+      this.birthday = birthday;
+   }
+
+   @SearchableProperty(name = "birthdayOrig")
+   @SearchableMetaData(name = "birthday" format = "yyyy-MM-dd")
+   public Date getBirthday() {
+      return this.birtday;
+   }
+
+   // @SearchableReference
+   @SearchableComponent
+   public void setBooks(Set<Book> books) {
+      this.books = books;
+   }
+
+   public Set<Book> getBooks() {
+      return this.books;
+   }
+
+   // addBook not needed by Compass::Core
+   public void addBook(Book book) {
+      this.books.add(book);
+   }
+} ]]></programlisting>
+    </para>
+
+    <para>
+      Compass works non-intrusive with application Objects, these Objects must follow several rules:
+    </para>
+
+    <sect2>
+      <title>Implement a Default Constructor</title>
+
+      <para>
+        <literal>Author</literal> has an implicit default (no-argument) constructor. All persistent classes must have a default constructor (which may be non-public) so Compass::Core can instantiate using <literal>Constructor.newInstance()</literal>.
+      </para>
+
+    </sect2>
+
+    <sect2>
+      <title>Provide Property Identifier(s)</title>
+
+      <para>
+        OSEM requires that any mapped Object will define one or more properties (JavaBean properties) that identifies the class. The id properties can be called anything, and it's type can be any primitive type, primitive "wrapper" type, <literal>java.lang.String</literal> or <literal>java.util.Date</literal>. For special cases, the id can be a user defined class, with the class annotated with <literal>@SearchableClassConverter</literal> and a user defined <literal>Converter</literal> (usually extends Compass <literal>AbstractBasicConverter</literal>) responsible for converting to class to a String.
+      </para>
+
+    </sect2>
+
+    <sect2>
+      <title>Declare Accessors and Mutators (Optional)</title>
+
+      <para>
+        Even though Compass can directly persist instance variables, it is usually better to decouple this implementation detail from the Search Engine mechanism. Compass::Core recognizes JavaBean style property (<literal>getFoo</literal>, <literal>isFoo</literal>, and <literal>setFoo</literal>). This mechanism works with any level of visibility.
+      </para>
+
+    </sect2>
+
+    <sect2>
+      <title>Implementing equals() and hashCode()</title>
+
+      <para>
+        You have to override the <literal>equals()</literal> and <literal>hashCode()</literal> methods if you intend to mix objects of persistent classes (e.g. in a <literal>Set</literal>). You can implement it by using the identifier of both objects, but note that Compass::Core works best with surrogate identifier (and will provide a way to automatically generate them), thus it is best to implement the methods using business keys.
+      </para>
+
+    </sect2>
+
+  </sect1>
+
+</chapter>
+
+

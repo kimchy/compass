@@ -5,12 +5,15 @@
     <title>Introduction</title>
 
     <para>
-      The common meta-data feature of Compass::Core provides a way to externalize the definition of meta-data names and aliases used in OSEM files, especially useful if your application has a large domain model with many OSEM files. Another advantage of this mechanism is the ability to add
-      extra information to the meta data (i.e. a long description) and the ability to specify the format for the meta-data definition, removing the need to explicitly define formats in the OSEM file (like <literal>...converterParam="yyyy/MM/dd"..</literal>).
+      The common meta-data feature of Compass::Core provides a way to externalize the definition of meta-data names and aliases used in OSEM files, especially useful if your application has a large domain model with many OSEM files. Another advantage of this mechanism is the ability to add extra information to the meta data (i.e. a long description) and the ability to specify the format for the meta-data definition, removing the need to explicitly define formats in the OSEM file (like <literal>...format="yyyy/MM/dd"..</literal>).
     </para>
 
     <para>
-        By centralising your meta-data, other tools can take advantage of this information and extend this knowledge (i.e. adding semantic meaning to the data). Compass::Core provides a common meta-data Ant task that generates a Java class containing constant values of the information described in the Common meta-data file, allowing programmatic access to this information from within the application (see Library class in sample application).
+        By centralizing your meta-data, other tools can take advantage of this information and extend this knowledge (i.e. adding semantic meaning to the data). Compass::Core provides a common meta-data Ant task that generates a Java class containing constant values of the information described in the Common meta-data file, allowing programmatic access to this information from within the application (see Library class in sample application).
+    </para>
+    
+    <para>
+        Note, the common meta-data support in Compass is completely optional for applications.
     </para>
 
   </sect1>
