@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="compass-opensymphony" default="usage" basedir=".">
+<project name="compass" default="usage" basedir=".">
 
     <import file="build.xml" />
 
@@ -33,6 +33,19 @@
         </copy>
         <copy todir="${docs.dir}/versions/${compass-version}/pdf">
             <fileset dir="${reference.dir}/pdf" />
+        </copy>
+        <copy todir="${docs.dir}/versions/${compass-version}/release">
+            <fileset dir="${target.release.dir}" />
+        </copy>
+        <copy todir="${docs.dir}/versions/${compass-version}/dtd">
+            <fileset dir="${dist.dir}">
+                <include name="*.dtd"/>
+            </fileset>
+        </copy>
+        <copy todir="${docs.dir}/versions/${compass-version}/schema">
+            <fileset dir="${dist.dir}">
+                <include name="*.xsd"/>
+            </fileset>
         </copy>
     </target>
 </project>

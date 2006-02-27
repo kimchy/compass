@@ -156,7 +156,7 @@
             <title>OSEM</title>
 
             <para>
-                One of the main features of Compass is <link linkend="core-osem">OSEM</link> (Object / Search Engine Mapping), and it is heavily used in the petclinic sample. OSEM maps Java objects (domain model) to the underlying search engine using simple mapping definitions.
+                One of the main features of Compass is OSEM (Object / Search Engine Mapping), and it is heavily used in the petclinic sample. OSEM maps Java objects (domain model) to the underlying search engine using simple mapping definitions.
             </para>
 
             <para>
