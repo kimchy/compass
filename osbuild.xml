@@ -1,48 +1,50 @@
 <?xml version="1.0"?>
 
-<project name="compass" default="usage" basedir=".">
+<project name="compass-os" default="usage" basedir=".">
 
     <import file="build.xml" />
 
-
     <!-- in Anthill, the docs should be the Intranet copyDir -->
     <target name="init-anthill" if="anthill.copyDir">
-        <property name="docs.dir" value="${anthill.copyDir}"/>
+        <property name="os.docs.dir" value="${anthill.copyDir}"/>
+        <echo>Anthill Docs [${os.docs.dir}]</echo>
     </target>
 
     <!-- when building Standalone, the docs should be the normal place -->
     <target name="init-standalone" unless="anthill.copyDir">
+        <property name="os.docs.dir" value="${docs.dir}"/>
+        <echo>Standalone Docs [${os.docs.dir}]</echo>
     </target>
 
     <target name="docs" depends="init-anthill, init-standalone">
         <antcall target="release" />
         <!-- Copy the web site -->
-        <copy todir="${docs.dir}" preservelastmodified="true">
+        <copy todir="${os.docs.dir}" preservelastmodified="true">
             <fileset dir="${basedir}/site" />
         </copy>
         <!-- Clean and copy the dist docs per version -->
-        <delete dir="${docs.dir}/versions/${compass-version}" />
-        <copy todir="${docs.dir}/versions/${compass-version}/api">
+        <delete dir="${os.docs.dir}/versions/${compass-version}" />
+        <copy todir="${os.docs.dir}/versions/${compass-version}/api">
             <fileset dir="${javadoc.dir}" />
         </copy>
-        <copy todir="${docs.dir}/versions/${compass-version}/html">
+        <copy todir="${os.docs.dir}/versions/${compass-version}/html">
             <fileset dir="${reference.dir}/html" />
         </copy>
-        <copy todir="${docs.dir}/versions/${compass-version}/html_single">
+        <copy todir="${os.docs.dir}/versions/${compass-version}/html_single">
             <fileset dir="${reference.dir}/html_single" />
         </copy>
-        <copy todir="${docs.dir}/versions/${compass-version}/pdf">
+        <copy todir="${os.docs.dir}/versions/${compass-version}/pdf">
             <fileset dir="${reference.dir}/pdf" />
         </copy>
-        <copy todir="${docs.dir}/versions/${compass-version}/release">
+        <copy todir="${os.docs.dir}/versions/${compass-version}/release">
             <fileset dir="${target.release.dir}" />
         </copy>
-        <copy todir="${docs.dir}/versions/${compass-version}/dtd">
+        <copy todir="${os.docs.dir}/versions/${compass-version}/dtd">
             <fileset dir="${dist.dir}">
                 <include name="*.dtd"/>
             </fileset>
         </copy>
-        <copy todir="${docs.dir}/versions/${compass-version}/schema">
+        <copy todir="${os.docs.dir}/versions/${compass-version}/schema">
             <fileset dir="${dist.dir}">
                 <include name="*.xsd"/>
             </fileset>

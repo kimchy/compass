@@ -143,9 +143,9 @@
 
     <target name="fulljar" depends="build,initdist" description="Create full JAR file with all Compass classes">
 
-        <delete file="${dist.dir}/${ant.project.name}.jar"/>
+        <delete file="${dist.dir}/${compass-name}.jar"/>
         <jar-module includes="META-INF/**,org/apache/lucene/**,org/compass/**"
-                    name="${ant.project.name}" target-dir="${dist.dir}"/>
+                    name="${compass-name}" target-dir="${dist.dir}"/>
 
     </target>
 
@@ -153,11 +153,11 @@
     <target name="modulejars" depends="build,initdist"
             description="Create module-specific JAR files (part of compass.jar)">
 
-        <jar-module name="${ant.project.name}-core" includes="org/apache/lucene/**,org/compass/core/**"/>
-        <jar-module name="${ant.project.name}-vocabulary" includes="org/compass/vocabulary/**"/>
-        <jar-module name="${ant.project.name}-gps" includes="org/compass/gps/**"/>
-        <jar-module name="${ant.project.name}-spring" includes="org/compass/spring/**"/>
-        <jar-module name="${ant.project.name}-annotations" includes="org/compass/annotations/**"/>
+        <jar-module name="${compass-name}-core" includes="org/apache/lucene/**,org/compass/core/**"/>
+        <jar-module name="${compass-name}-vocabulary" includes="org/compass/vocabulary/**"/>
+        <jar-module name="${compass-name}-gps" includes="org/compass/gps/**"/>
+        <jar-module name="${compass-name}-spring" includes="org/compass/spring/**"/>
+        <jar-module name="${compass-name}-annotations" includes="org/compass/annotations/**"/>
 
     </target>
 
