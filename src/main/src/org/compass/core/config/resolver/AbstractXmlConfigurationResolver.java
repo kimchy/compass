@@ -25,7 +25,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.ConfigurationException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.w3c.dom.Document;
 import org.xml.sax.*;
 
@@ -69,18 +68,18 @@ public abstract class AbstractXmlConfigurationResolver extends AbstractInputStre
             Document doc = builder.parse(inputSource);
             doProcess(doc, config);
         } catch (ParserConfigurationException ex) {
-            throw new BeanDefinitionStoreException(
+            throw new ConfigurationException(
                     "Parser configuration exception parsing XML from [" + resourceName + "]", ex);
         }
         catch (SAXParseException ex) {
-            throw new BeanDefinitionStoreException(
+            throw new ConfigurationException(
                     "Line [" + ex.getLineNumber() + "] in XML document from [" + resourceName + "] is invalid", ex);
         }
         catch (SAXException ex) {
-            throw new BeanDefinitionStoreException("XML document from [" + resourceName + "] is invalid", ex);
+            throw new ConfigurationException("XML document from [" + resourceName + "] is invalid", ex);
         }
         catch (IOException ex) {
-            throw new BeanDefinitionStoreException("IOException parsing XML document from [" + resourceName + "]", ex);
+            throw new ConfigurationException("IOException parsing XML document from [" + resourceName + "]", ex);
         }
 
     }
