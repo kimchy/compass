@@ -16,7 +16,8 @@
 
 package org.compass.core.config;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,6 +29,8 @@ import org.compass.core.CompassException;
 import org.compass.core.config.binding.XmlMappingBinding;
 import org.compass.core.config.binding.XmlMetaDataBinding;
 import org.compass.core.config.process.MappingProcessor;
+import org.compass.core.config.resolver.ConfigurationResolver;
+import org.compass.core.config.resolver.SmartConfigurationResolver;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.DefaultConverterLookup;
@@ -38,9 +41,6 @@ import org.compass.core.impl.DefaultCompass;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
-import org.compass.core.util.DTDEntityResolver;
-import org.compass.core.util.config.ConfigurationHelper;
-import org.compass.core.util.config.XmlConfigurationHelperBuilder;
 
 /**
  * Used to configure <code>Compass</code> instances.
@@ -79,6 +79,8 @@ public class CompassConfiguration {
     private CompassSettings settings;
 
     protected CompassMappingBinding mappingBinding;
+
+    protected ConfigurationResolver configurationResolver = new SmartConfigurationResolver();
 
     private HashMap temporaryConvertersByName = new HashMap();
 
@@ -198,18 +200,15 @@ public class CompassConfiguration {
 
     /**
      * Use the mappings and properties specified in the given application
-     * resource. The resource is found via
-     * {@link CompassConfiguration#getConfigurationInputStream(String)}.
+     * resource.
      *
      * @param resource The compass configuration resource path
      * @return <code>CompassConfiguration</code> for method chaining
      */
     public CompassConfiguration configure(String resource) throws ConfigurationException {
-        if (log.isInfoEnabled()) {
-            log.info("Configuring from resource [" + resource + "]");
-        }
-        InputStream stream = getConfigurationInputStream(resource);
-        return doConfigure(stream, resource);
+        log.info("Configuring from resource [" + resource + "]");
+        configurationResolver.configure(resource, this);
+        return this;
     }
 
     /**
@@ -220,12 +219,9 @@ public class CompassConfiguration {
      * @throws ConfigurationException
      */
     public CompassConfiguration configure(URL url) throws ConfigurationException {
-        log.info("Configuring from url [" + url.toString() + "]");
-        try {
-            return doConfigure(url.openStream(), url.toString());
-        } catch (IOException ioe) {
-            throw new ConfigurationException("could not configure from URL [" + url.toString() + "]", ioe);
-        }
+        log.info("Configuring from url [" + url.toExternalForm() + "]");
+        configurationResolver.configure(url, this);
+        return this;
     }
 
     /**
@@ -238,107 +234,8 @@ public class CompassConfiguration {
      */
     public CompassConfiguration configure(File configFile) throws ConfigurationException {
         log.info("Configuring from file [" + configFile.getAbsolutePath() + "]");
-        try {
-            return doConfigure(new FileInputStream(configFile), configFile.toString());
-        } catch (FileNotFoundException fnfe) {
-            throw new ConfigurationException(
-                    "Could not find configuration file [" + configFile.getAbsolutePath() + "]", fnfe);
-        }
-    }
-
-    /**
-     * Use the mappings and properties specified in the given application
-     * resource.
-     *
-     * @param stream       Inputstream to be read from
-     * @param resourceName The name to use in warning/error messages
-     * @return A configuration configured via the stream
-     */
-    protected CompassConfiguration doConfigure(InputStream stream, String resourceName) throws ConfigurationException {
-
-        ConfigurationHelper conf = null;
-        try {
-            XmlConfigurationHelperBuilder builder = new XmlConfigurationHelperBuilder();
-            builder.setEntityResolver(new DTDEntityResolver());
-            conf = builder.build(stream, resourceName);
-        } finally {
-            try {
-                stream.close();
-            } catch (IOException ioe) {
-                log.error("Could not close stream on [" + resourceName + "]", ioe);
-            }
-        }
-
-        return doConfigure(conf);
-
-    }
-
-    protected CompassConfiguration doConfigure(ConfigurationHelper conf) throws ConfigurationException {
-
-        ConfigurationHelper compassConf = conf.getChild("compass");
-        String name = compassConf.getAttribute("name", "default");
-        if (name != null) {
-            settings.setSetting(CompassEnvironment.NAME, name);
-        }
-
-        addSettings(compassConf);
-
-        ConfigurationHelper[] elements = compassConf.getChildren();
-        for (int i = 0; i < elements.length; i++) {
-            String elemname = elements[i].getName();
-            if ("mapping".equals(elemname) || "meta-data".equals(elemname)) {
-                String rsrc = elements[i].getAttribute("resource", null);
-                String file = elements[i].getAttribute("file", null);
-                String jar = elements[i].getAttribute("jar", null);
-                if (rsrc != null) {
-                    addResource(rsrc);
-                } else if (jar != null) {
-                    addJar(new File(jar));
-                } else {
-                    if (file == null)
-                        throw new ConfigurationException(
-                                "<mapping> or <meta-data> element in configuration specifies no attributes");
-                    addFile(file);
-                }
-            }
-        }
-
-        log.info("Configured Compass [" + name + "]");
-        if (log.isDebugEnabled()) {
-            log.debug("--with settings [" + settings + "]");
-        }
-
+        configurationResolver.configure(configFile, this);
         return this;
-
-    }
-
-    /**
-     * Get the configuration file as an <code>InputStream</code>. Might be
-     * overridden by subclasses to allow the configuration to be located by some
-     * arbitrary mechanism.
-     */
-    protected InputStream getConfigurationInputStream(String resource) throws ConfigurationException {
-
-        InputStream stream = CompassEnvironment.class.getResourceAsStream(resource);
-        if (stream == null)
-            stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
-        if (stream == null) {
-            log.warn(resource + " not found");
-            throw new ConfigurationException(resource + " not found");
-        }
-        return stream;
-
-    }
-
-    private void addSettings(ConfigurationHelper conf) {
-        ConfigurationHelper[] settingsConf = conf.getChildren("setting");
-        for (int i = 0; i < settingsConf.length; i++) {
-            String name = settingsConf[i].getAttribute("name");
-            String value = settingsConf[i].getValue("").trim();
-            settings.setSetting(name, value);
-            if (!name.startsWith("compass"))
-                settings.setSetting("compass." + name, value);
-        }
     }
 
     /**
