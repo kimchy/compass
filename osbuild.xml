@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<project name="compass-opensymphony" default="usage" basedir=".">
+
+    <import file="build.xml" />
+
+
+    <!-- in Anthill, the docs should be the Intranet copyDir -->
+    <target name="init-anthill" if="anthill.copyDir">
+        <property name="docs.dir" value="${anthill.copyDir}"/>
+    </target>
+
+    <!-- when building Standalone, the docs should be the normal place -->
+    <target name="init-standalone" unless="anthill.copyDir">
+    </target>
+
+    <target name="docs" depends="init-anthill, init-standalone">
+        <antcall target="release" />
+        <!-- Copy the web site -->
+        <copy todir="${docs.dir}" preservelastmodified="true">
+            <fileset dir="${basedir}/site" />
+        </copy>
+        <!-- Clean and copy the dist docs per version -->
+        <delete dir="${docs.dir}/versions/${compass-version}" />
+        <copy todir="${docs.dir}/versions/${compass-version}/api">
+            <fileset dir="${javadoc.dir}" />
+        </copy>
+        <copy todir="${docs.dir}/versions/${compass-version}/html">
+            <fileset dir="${reference.dir}/html" />
+        </copy>
+        <copy todir="${docs.dir}/versions/${compass-version}/html_single">
+            <fileset dir="${reference.dir}/html_single" />
+        </copy>
+        <copy todir="${docs.dir}/versions/${compass-version}/pdf">
+            <fileset dir="${reference.dir}/pdf" />
+        </copy>
+    </target>
+</project>
