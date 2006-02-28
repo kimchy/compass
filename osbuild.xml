@@ -19,8 +19,18 @@
     <target name="docs" depends="init-anthill, init-standalone">
         <antcall target="release" />
         <!-- Copy the web site -->
-        <copy todir="${os.docs.dir}" preservelastmodified="true">
+        <copy todir="${os.docs.dir}" overwrite="true">
             <fileset dir="${basedir}/site" />
+        </copy>
+        <copy todir="${os.docs.dir}/dtd" overwrite="true">
+            <fileset dir="${dist.dir}">
+                <include name="*.dtd"/>
+            </fileset>
+        </copy>
+        <copy todir="${os.docs.dir}/schema" overwrite="true">
+            <fileset dir="${dist.dir}">
+                <include name="*.xsd"/>
+            </fileset>
         </copy>
         <!-- Clean and copy the dist docs per version -->
         <delete dir="${os.docs.dir}/versions/${compass-version}" />

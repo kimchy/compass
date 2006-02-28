@@ -79,6 +79,9 @@
         <delete dir="${reference.dir}/html_single"/>
         <delete dir="${reference.dir}/pdf"/>
 
+        <ant antfile="${samples.dir}/library/build.xml" target="clean" dir="${samples.dir}/library/" inheritall="false" />
+        <ant antfile="${samples.dir}/petclinic/build.xml" target="clean" dir="${samples.dir}/petclinic/" inheritall="false" />
+
     </target>
 
 
@@ -201,6 +204,10 @@
 
         <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data-1.0.dtd"
               todir="${dist.dir}" preservelastmodified="true"/>
+
+        <copy todir="${dist.dir}/lucene">
+            <fileset dir="${lib.dir}/lucene" />
+        </copy>
     </target>
 
 
@@ -706,12 +713,21 @@
             <exclude name="docs/reference/lib/**"/>
             <exclude name="docs/reference/html/**"/>
             <exclude name="docs/reference/pdf/images/**"/>
+            <exclude name="docs/javadoc/**"/>
+            <exclude name="docs/versions/**"/>
+            <exclude name="docs/content/**"/>
+            <exclude name="docs/index.html"/>
+            <exclude name="docs/meta.xml"/>
             <include name="src/**"/>
+            <include name="samples/**"/>
             <include name="*.bat"/>
             <include name="*.txt"/>
             <include name="*.xml"/>
+            <exclude name="osbuild.xml"/>
             <include name="*.properties"/>
             <exclude name="build.properties"/>
+            <exclude name="compass.test.properties"/>
+            <exclude name="**/*.iml"/>
         </fileset>
 
         <zip zipfile="${target.release.dir}/${release.zip}">
@@ -727,6 +743,7 @@
                 <include name="lib/c3p0/**"/>
                 <include name="lib/cglib/**"/>
                 <include name="lib/dom4j/**"/>
+                <include name="lib/ehcache/**"/>
                 <include name="lib/hibernate/**"/>
                 <include name="lib/hsqldb/**"/>
                 <include name="lib/ibatis/**"/>
@@ -736,6 +753,7 @@
                 <include name="lib/jdo/**"/>
                 <include name="lib/jotm/**"/>
                 <include name="lib/jpa/**"/>
+                <include name="lib/jpox/**"/>
                 <include name="lib/junit/**"/>
                 <include name="lib/log4j/**"/>
                 <include name="lib/lucene/**"/>

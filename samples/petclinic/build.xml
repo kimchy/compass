@@ -129,7 +129,11 @@
         <delete dir="${testbuild.dir}"/>
         <delete dir="${testreports.dir}"/>
         <delete dir="${dist.dir}"/>
+        <delete dir="${basedir}/target"/>
 
+        <delete file="${db.dir}/hsqldb/petclinic.log"/>
+        <delete file="${db.dir}/hsqldb/petclinic.properties"/>
+        <delete file="${db.dir}/hsqldb/petclinic.script"/>
     </target>
 
 

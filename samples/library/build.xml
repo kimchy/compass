@@ -49,6 +49,7 @@
     
     <target name="clean" description="cleans the output directory (build)">
         <delete dir="${build.dir}" />
+        <delete dir="${basedir}/target" />
     </target>
     
     <target name="copy-resources" 
