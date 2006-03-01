@@ -159,7 +159,7 @@
         <jar-module name="${compass-name}-core" includes="org/apache/lucene/**,org/compass/core/**"/>
         <jar-module name="${compass-name}-vocabulary" includes="org/compass/vocabulary/**"/>
         <jar-module name="${compass-name}-gps" includes="org/compass/gps/**"/>
-        <jar-module name="${compass-name}-spring" includes="org/compass/spring/**"/>
+        <jar-module name="${compass-name}-spring" includes="META-INF/**,org/compass/spring/**"/>
         <jar-module name="${compass-name}-annotations" includes="org/compass/annotations/**"/>
 
     </target>
@@ -197,13 +197,19 @@
     <target name="distfiles" depends="initdist" description="Copy dtd, tld and co to dist directory">
 
         <copy file="${main.src.dir}/org/compass/core/compass-core-configuration-1.0.dtd"
-              todir="${dist.dir}" preservelastmodified="true"/>
+              todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
         <copy file="${main.src.dir}/org/compass/core/compass-core-mapping-1.0.dtd"
-              todir="${dist.dir}" preservelastmodified="true"/>
+              todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
         <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data-1.0.dtd"
-              todir="${dist.dir}" preservelastmodified="true"/>
+              todir="${dist.dir}/dtd" preservelastmodified="true"/>
+
+        <copy file="${main.src.dir}/org/compass/core/compass-core-config.xsd"
+              todir="${dist.dir}/xsd" preservelastmodified="true"/>
+
+        <copy file="${main.src.dir}/org/compass/spring/config/spring-compass-core-config.xsd"
+              todir="${dist.dir}/xsd" preservelastmodified="true"/>
 
         <copy todir="${dist.dir}/lucene">
             <fileset dir="${lib.dir}/lucene" />

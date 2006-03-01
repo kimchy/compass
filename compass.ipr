@@ -37,6 +37,9 @@
       <entry name="?*.html" />
       <entry name="?*.dtd" />
       <entry name="?*.tld" />
+      <entry name="?*.xsd" />
+      <entry name="?*.handlers" />
+      <entry name="?*.schemas" />
     </wildcardResourcePatterns>
   </component>
   <component name="DataSourceManagerImpl" />

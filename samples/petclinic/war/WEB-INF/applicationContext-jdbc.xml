@@ -127,7 +127,7 @@
       </property>
     </bean>
     
-    <!-- The mapping resolver can automatically generate the resource mapping definitions -->
+    <!-- The mapping builder can automatically generate the resource mapping definitions -->
     
     <bean id="petMappingResolver" class="org.compass.gps.device.jdbc.ResultSetResourceMappingResolver">
         <property name="mapping"><ref local="petMapping" /></property>
@@ -266,7 +266,7 @@
       </property>
     </bean>
     
-    <!-- The mapping resolver can automatically generate the resource mapping definitions -->
+    <!-- The mapping builder can automatically generate the resource mapping definitions -->
     
     <bean id="visitMappingResolver" class="org.compass.gps.device.jdbc.ResultSetResourceMappingResolver">
         <property name="mapping"><ref local="visitMapping" /></property>

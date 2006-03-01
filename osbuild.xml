@@ -12,7 +12,7 @@
 
     <!-- when building Standalone, the docs should be the normal place -->
     <target name="init-standalone" unless="anthill.copyDir">
-        <property name="os.docs.dir" value="${docs.dir}"/>
+        <property name="os.docs.dir" value="${basedir}/osdocs"/>
         <echo>Standalone Docs [${os.docs.dir}]</echo>
     </target>
 
