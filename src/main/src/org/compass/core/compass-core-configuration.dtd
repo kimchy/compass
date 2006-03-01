@@ -2,7 +2,7 @@
 
 <!DOCTYPE compass-core-configuration PUBLIC
     "-//Compass/Compass Core Configuration DTD 1.0//EN"
-    "http://www.opensymphony.com/compass/dtd/compass-core-configuration-1.0.dtd">
+    "http://www.opensymphony.com/compass/dtd/compass-core-configuration.dtd">
 -->
 
 <!ELEMENT compass-core-configuration (compass)>

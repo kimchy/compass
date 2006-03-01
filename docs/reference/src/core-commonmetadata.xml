@@ -28,7 +28,7 @@
 <programlisting><![CDATA[<?xml version="1.0"?>
 <!DOCTYPE compass-core-meta-data PUBLIC
     "-//Compass/Compass Core Meta Data DTD 1.0//EN"
-    "http://www.opensymphony.com/compass/dtd/compass-core-meta-data-1.0.dtd">
+    "http://www.opensymphony.com/compass/dtd/compass-core-meta-data.dtd">
 
 <compass-core-meta-data>
 
@@ -129,7 +129,7 @@
 <programlisting><![CDATA[<?xml version="1.0"?>
 <!DOCTYPE compass-core-mapping PUBLIC
     "-//Compass/Compass Core Mapping DTD 1.0//EN"
-    "http://www.opensymphony.com/compass/dtd/compass-core-mapping-1.0.dtd">
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
 
 <compass-core-mapping package="org.compass.sample.library">
 

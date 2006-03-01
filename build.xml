@@ -196,13 +196,13 @@
 
     <target name="distfiles" depends="initdist" description="Copy dtd, tld and co to dist directory">
 
-        <copy file="${main.src.dir}/org/compass/core/compass-core-configuration-1.0.dtd"
+        <copy file="${main.src.dir}/org/compass/core/compass-core-configuration.dtd"
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
-        <copy file="${main.src.dir}/org/compass/core/compass-core-mapping-1.0.dtd"
+        <copy file="${main.src.dir}/org/compass/core/compass-core-mapping.dtd"
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
-        <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data-1.0.dtd"
+        <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data.dtd"
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
         <copy file="${main.src.dir}/org/compass/core/compass-core-config.xsd"

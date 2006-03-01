@@ -2,7 +2,7 @@
 
 <!DOCTYPE compass-core-meta-data PUBLIC 
     "-//Compass/Compass Core Meta Data DTD 1.0//EN"
-    "http://www.opensymphony.com/compass/dtd/compass-core-meta-data-1.0.dtd">
+    "http://www.opensymphony.com/compass/dtd/compass-core-meta-data.dtd">
 -->
 <!ELEMENT compass-core-meta-data (
     meta-data-group* 

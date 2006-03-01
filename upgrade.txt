@@ -8,6 +8,7 @@ VERSION 0.9.0 ()
    Due to the move to Open Symphony, the name Compass is back, without the Framework part.
 2. DTD Location changed.
    http://static.compassframework.org/dtd/ prefix should now state: http://www.opensymphony.com/compass/dtd.
+   The -1.0 version was removed.
 3. Converters Support Enhancements and Changes.
    a) Removed converter-param from all the different mapping definitions in the Compass Core DTD.
    b) The converter element no longer points to an implementation class of the Converter class. Instead, it
@@ -96,7 +97,7 @@ VERSION 0.6 (Sep 30, 2005)
 ==========================
 
 1. Package name changed from org.compass to org.compassframework.
-2. DTD location changed to http://static.compassframework.org/dtd/compass-core-mapping-1.0.dtd.
+2. DTD location changed to http://static.compassframework.org/dtd/compass-core-mapping.dtd.
 3. The settings for the analyzer used was changed. Compass can now be configured with multiple
    analyzers, and they can be referenced. The new setting looks like: compass.analyzer.(analyzer name).*,
    with two internal analyzers called default and search. Please read more at the Search Analyzer section

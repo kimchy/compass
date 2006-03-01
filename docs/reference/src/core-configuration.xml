@@ -131,7 +131,7 @@
         And here is an example of the xml configuration file:
 <programlisting><![CDATA[<!DOCTYPE compass-core-configuration PUBLIC
 "-//Compass/Compass Core Configuration DTD 1.0//EN"
-"http://www.opensymphony.com/compass/dtd/compass-core-configuration-1.0.dtd">
+"http://www.opensymphony.com/compass/dtd/compass-core-configuration.dtd">
 
 <compass-core-configuration>
   <compass>
