@@ -30,7 +30,7 @@ import org.compass.core.CompassException;
 public interface InputStreamMappingResolver {
 
     /**
-     * Returns the name of the mapping resolver. For example, for compass-core-mapping it should end
+     * Returns the name of the mapping builder. For example, for compass-core-mapping it should end
      * with ".cpm.xml".
      */
     String getName();

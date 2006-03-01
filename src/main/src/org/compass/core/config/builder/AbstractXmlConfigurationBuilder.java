@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.config.resolver;
+package org.compass.core.config.builder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ import org.xml.sax.*;
 /**
  * @author kimchy
  */
-public abstract class AbstractXmlConfigurationResolver extends AbstractInputStreamConfigurationResolver {
+public abstract class AbstractXmlConfigurationBuilder extends AbstractInputStreamConfigurationBuilder {
 
     private class SimpleSaxErrorHandler implements ErrorHandler {
 

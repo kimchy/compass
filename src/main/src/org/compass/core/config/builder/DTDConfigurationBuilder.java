@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.config.resolver;
+package org.compass.core.config.builder;
 
 import java.io.File;
 
@@ -32,7 +32,7 @@ import org.xml.sax.EntityResolver;
 /**
  * @author kimchy
  */
-public class DTDConfigurationResolver extends AbstractXmlConfigurationResolver {
+public class DTDConfigurationBuilder extends AbstractXmlConfigurationBuilder {
 
     protected void doProcess(Document doc, CompassConfiguration config) throws ConfigurationException {
         Element root = doc.getDocumentElement();
@@ -64,10 +64,13 @@ public class DTDConfigurationResolver extends AbstractXmlConfigurationResolver {
                     String rsrc = DomUtils.getElementAttribute(ele, "resource", null);
                     String file = DomUtils.getElementAttribute(ele, "file", null);
                     String jar = DomUtils.getElementAttribute(ele, "jar", null);
+                    String pckg = DomUtils.getElementAttribute(ele, "package", null);
                     if (rsrc != null) {
                         config.addResource(rsrc);
                     } else if (jar != null) {
                         config.addJar(new File(jar));
+                    } else if (pckg != null) {
+                        config.addPackage(pckg);
                     } else {
                         if (file == null) {
                             throw new ConfigurationException(

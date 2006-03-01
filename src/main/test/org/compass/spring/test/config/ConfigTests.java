@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package org.compass.core.config.resolver;
+package org.compass.spring.test.config;
 
-import java.io.File;
-import java.net.URL;
-
-import org.compass.core.config.CompassConfiguration;
-import org.compass.core.config.ConfigurationException;
+import org.compass.core.Compass;
+import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
  * @author kimchy
  */
-public interface ConfigurationResolver {
+public class ConfigTests extends AbstractDependencyInjectionSpringContextTests {
 
-    void configure(String resource, CompassConfiguration config) throws ConfigurationException;
+    protected String[] getConfigLocations() {
+        return new String[] {"org/compass/spring/test/config/config.xml"};
+    }
 
-    void configure(URL url, CompassConfiguration config) throws ConfigurationException;
-
-    void configure(File file, CompassConfiguration config) throws ConfigurationException;
+    public void testNamespaceHandler() throws Exception {
+        Compass compass = (Compass) applicationContext.getBean("compass");
+    }
 }

@@ -189,7 +189,7 @@ public class CompassMappingBinding implements MappingBinding {
             }
         }
         if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match mapping resolver [" + mappingResolver + "]");
+            throw new ConfigurationException("No mapping match mapping builder [" + mappingResolver + "]");
         }
         return hasAddedResource;
     }

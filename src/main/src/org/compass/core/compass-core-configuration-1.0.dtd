@@ -14,6 +14,7 @@
 <!ATTLIST mapping resource CDATA #IMPLIED>
 <!ATTLIST mapping file CDATA #IMPLIED>
 <!ATTLIST mapping jar CDATA #IMPLIED>
+<!ATTLIST mapping package CDATA #IMPLIED>
 
 <!ELEMENT meta-data EMPTY> <!-- reference to a meta-data file -->
 <!ATTLIST meta-data resource CDATA #IMPLIED>

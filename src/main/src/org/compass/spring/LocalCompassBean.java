@@ -16,6 +16,16 @@
 
 package org.compass.spring;
 
+import java.io.File;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
@@ -35,16 +45,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.sql.DataSource;
-import java.io.File;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * @author kimchy
@@ -74,6 +74,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
     private Compass compass;
 
     private String beanName;
+
+    private CompassConfiguration config;
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
@@ -172,8 +174,15 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         this.convertersByName = convertersByName;
     }
 
+    public void setCompassConfiguration(CompassConfiguration config) {
+        this.config = config;
+    }
+
     public void afterPropertiesSet() throws Exception {
-        CompassConfiguration config = newConfiguration();
+        CompassConfiguration config = this.config;
+        if (config == null) {
+            config = newConfiguration();
+        }
 
         if (this.configLocation != null) {
             config.configure(this.configLocation.getURL());

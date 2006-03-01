@@ -19,7 +19,6 @@ package org.compass.gps.device.jdbc;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
-
 import javax.sql.DataSource;
 
 import org.compass.core.CompassException;
@@ -41,7 +40,7 @@ import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
  * {@link org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping}, and
  * the <code>DataSource</code>.
  * <p>
- * Using the mapping resolver helps automatically generate compass mapping files (<code>Resource</code>
+ * Using the mapping builder helps automatically generate compass mapping files (<code>Resource</code>
  * mappings) based on the configuration of the
  * {@link org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping} or one
  * of it's sub classes (like
@@ -64,7 +63,7 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
     private Property.TermVector allTermVector;
 
     /**
-     * Creates a new mapping resolver. Must set the
+     * Creates a new mapping builder. Must set the
      * {@link  #setMapping(ResultSetToResourceMapping)}, and the
      * {@link #setDataSource(DataSource)}.
      * 
@@ -74,7 +73,7 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
     }
 
     /**
-     * Creates a new mapping resolver, using the mapping and the data source.
+     * Creates a new mapping builder, using the mapping and the data source.
      * 
      * @param mapping
      *            The mapping that will be used to generate compass mapping

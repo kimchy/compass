@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.config.resolver;
+package org.compass.core.config.builder;
 
 import java.io.*;
 import java.net.URL;
@@ -28,7 +28,7 @@ import org.compass.core.config.ConfigurationException;
 /**
  * @author kimchy
  */
-public abstract class AbstractInputStreamConfigurationResolver implements ConfigurationResolver {
+public abstract class AbstractInputStreamConfigurationBuilder implements ConfigurationBuilder {
 
     protected Log log = LogFactory.getLog(getClass());
 

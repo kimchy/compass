@@ -28,9 +28,9 @@ import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.config.binding.XmlMappingBinding;
 import org.compass.core.config.binding.XmlMetaDataBinding;
+import org.compass.core.config.builder.ConfigurationBuilder;
+import org.compass.core.config.builder.SmartConfigurationBuilder;
 import org.compass.core.config.process.MappingProcessor;
-import org.compass.core.config.resolver.ConfigurationResolver;
-import org.compass.core.config.resolver.SmartConfigurationResolver;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.DefaultConverterLookup;
@@ -80,7 +80,7 @@ public class CompassConfiguration {
 
     protected CompassMappingBinding mappingBinding;
 
-    protected ConfigurationResolver configurationResolver = new SmartConfigurationResolver();
+    protected ConfigurationBuilder configurationBuilder = new SmartConfigurationBuilder();
 
     private HashMap temporaryConvertersByName = new HashMap();
 
@@ -207,7 +207,7 @@ public class CompassConfiguration {
      */
     public CompassConfiguration configure(String resource) throws ConfigurationException {
         log.info("Configuring from resource [" + resource + "]");
-        configurationResolver.configure(resource, this);
+        configurationBuilder.configure(resource, this);
         return this;
     }
 
@@ -220,7 +220,7 @@ public class CompassConfiguration {
      */
     public CompassConfiguration configure(URL url) throws ConfigurationException {
         log.info("Configuring from url [" + url.toExternalForm() + "]");
-        configurationResolver.configure(url, this);
+        configurationBuilder.configure(url, this);
         return this;
     }
 
@@ -234,7 +234,7 @@ public class CompassConfiguration {
      */
     public CompassConfiguration configure(File configFile) throws ConfigurationException {
         log.info("Configuring from file [" + configFile.getAbsolutePath() + "]");
-        configurationResolver.configure(configFile, this);
+        configurationBuilder.configure(configFile, this);
         return this;
     }
 
@@ -245,7 +245,7 @@ public class CompassConfiguration {
      * @param mappingResolver
      */
     public CompassConfiguration addMappingResover(InputStreamMappingResolver mappingResolver) throws ConfigurationException {
-        log.info("Mapping resolver [" + mappingResolver + "]");
+        log.info("Mapping builder [" + mappingResolver + "]");
         mappingBinding.addMappingResolver(mappingResolver);
         return this;
     }

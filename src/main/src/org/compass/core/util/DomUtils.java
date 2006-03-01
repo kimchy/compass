@@ -31,13 +31,17 @@ import org.w3c.dom.*;
  */
 public abstract class DomUtils {
 
+    public static String getElementAttribute(Element ele, String attributeName) {
+        return getElementAttribute(ele, attributeName, null);
+    }
+
     /**
      * Gets the attribute value from the element. If the attribute is <code>null</code>
      * or is an empty string, will return the defaultValue.
      */
     public static String getElementAttribute(Element ele, String attributeName, String defaultValue) {
         String value = ele.getAttribute(attributeName);
-        if (value == null || !StringUtils.hasText(attributeName)) {
+        if (value == null || !StringUtils.hasText(value)) {
             return defaultValue;
         }
         return value;

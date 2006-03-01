@@ -16,11 +16,7 @@
 
 package org.compass.gps.device.jdbc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,17 +27,8 @@ import org.compass.core.Resource;
 import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.impl.InternalCompass;
 import org.compass.gps.CompassGpsException;
-import org.compass.gps.device.jdbc.mapping.AutoGenerateMapping;
-import org.compass.gps.device.jdbc.mapping.ColumnMapping;
-import org.compass.gps.device.jdbc.mapping.ColumnToPropertyMapping;
-import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
-import org.compass.gps.device.jdbc.mapping.VersionColumnMapping;
-import org.compass.gps.device.jdbc.snapshot.ConfigureSnapshotEvent;
-import org.compass.gps.device.jdbc.snapshot.CreateAndUpdateSnapshotEvent;
-import org.compass.gps.device.jdbc.snapshot.DeleteSnapshotEvent;
-import org.compass.gps.device.jdbc.snapshot.JdbcAliasRowSnapshot;
-import org.compass.gps.device.jdbc.snapshot.JdbcAliasSnapshot;
-import org.compass.gps.device.jdbc.snapshot.JdbcSnapshot;
+import org.compass.gps.device.jdbc.mapping.*;
+import org.compass.gps.device.jdbc.snapshot.*;
 
 /**
  * A gps device that index a jdbc <code>ResultSet</code> to a set of Compass
@@ -120,12 +107,12 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
             if (!compassGps.hasMappingForEntityForMirror(rsMapping.getAlias())) {
                 throw new IllegalStateException(
                         buildMessage("No resource mapping defined in gps mirror compass for alias ["
-                                + rsMapping.getAlias() + "]. Did you defined a jdbc mapping resolver?"));
+                                + rsMapping.getAlias() + "]. Did you defined a jdbc mapping builder?"));
             }
             if (!compassGps.hasMappingForEntityForIndex(rsMapping.getAlias())) {
                 throw new IllegalStateException(
                         buildMessage("No resource mapping defined in gps index compass for alias ["
-                                + rsMapping.getAlias() + "]. Did you defined a jdbc mapping resolver?"));
+                                + rsMapping.getAlias() + "]. Did you defined a jdbc mapping builder?"));
             }
         }
         if (isAutoDetectVersionColumnSqlType()) {

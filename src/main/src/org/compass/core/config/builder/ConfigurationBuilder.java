@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.config.resolver;
+package org.compass.core.config.builder;
 
 import java.io.File;
 import java.net.URL;
@@ -25,17 +25,11 @@ import org.compass.core.config.ConfigurationException;
 /**
  * @author kimchy
  */
-public class SmartConfigurationResolver implements ConfigurationResolver {
+public interface ConfigurationBuilder {
 
-    public void configure(String resource, CompassConfiguration config) throws ConfigurationException {
-        new DTDConfigurationResolver().configure(resource, config);
-    }
+    void configure(String resource, CompassConfiguration config) throws ConfigurationException;
 
-    public void configure(URL url, CompassConfiguration config) throws ConfigurationException {
-        new DTDConfigurationResolver().configure(url, config);
-    }
+    void configure(URL url, CompassConfiguration config) throws ConfigurationException;
 
-    public void configure(File file, CompassConfiguration config) throws ConfigurationException {
-        new DTDConfigurationResolver().configure(file, config);
-    }
+    void configure(File file, CompassConfiguration config) throws ConfigurationException;
 }

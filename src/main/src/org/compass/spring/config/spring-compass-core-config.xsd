@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://www.opensymphony.com/compass/schema/spring-core-config"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.opensymphony.com/compass/schema/spring-core-config"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+
+    <xsd:element name="compass">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="compassType">
+                    <xsd:attribute name="txManager" type="xsd:string" use="optional" />
+                    <xsd:attribute name="dataSource" type="xsd:string" use="optional" />
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="compassType">
+        <xsd:sequence>
+            <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <!-- Mapping Types -->
+    <xsd:complexType name="mappingsType">
+        <xsd:choice>
+            <xsd:element name="resource">
+                <xsd:complexType>
+                    <xsd:attribute name="location" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="jar">
+                <xsd:complexType>
+                    <xsd:attribute name="path" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="file">
+                <xsd:complexType>
+                    <xsd:attribute name="path" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="package">
+                <xsd:complexType>
+                    <xsd:attribute name="name" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <!-- Settings Types -->
+    <xsd:complexType name="settingsType">
+        <xsd:sequence>
+            <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="settingType">
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+
+</xsd:schema>

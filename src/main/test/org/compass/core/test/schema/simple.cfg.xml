@@ -1,0 +1,12 @@
+<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+
+    <compass name="default">
+
+        <settings>
+            <setting name="compass.engine.connection" value="target/test-index" />
+        </settings>
+    </compass>
+
+</compass-core-config>
