@@ -18,6 +18,7 @@ package org.compass.core.lucene;
 
 import org.apache.lucene.store.jdbc.JdbcFileEntrySettings;
 import org.apache.lucene.store.jdbc.index.JdbcBufferedIndexInput;
+import org.apache.lucene.store.jdbc.index.JdbcBufferedIndexOutput;
 import org.apache.lucene.store.jdbc.index.RAMAndFileJdbcIndexOutput;
 
 /**
@@ -829,7 +830,7 @@ public class LuceneEnvironment {
             /**
              * The buffer size for implemenations of Lucene <code>IndexOutput</code> where applicable.
              */
-            public static final String INDEX_OUTPUT_BUFFER_SIZE = JdbcBufferedIndexInput.BUFFER_SIZE_SETTING;
+            public static final String INDEX_OUTPUT_BUFFER_SIZE = JdbcBufferedIndexOutput.BUFFER_SIZE_SETTING;
 
             /**
              * The fully qualifed class of the <code>IndexInput</code> implementation.

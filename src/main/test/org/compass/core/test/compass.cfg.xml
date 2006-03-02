@@ -13,7 +13,7 @@
                 </dataSourceProvider>
                 <fileEntries>
                     <fileEntry name="__default__">
-                        <setting name="indexOutput.bufferSize" value="15" />
+                        <indexOutput bufferSize="15" type="org.apache.lucene.store.jdbc.index.RAMJdbcIndexOutput" />
                     </fileEntry>
                 </fileEntries>
             </jdbc>

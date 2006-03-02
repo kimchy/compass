@@ -16,11 +16,11 @@
 
 package org.apache.lucene.store.jdbc.index;
 
+import java.io.IOException;
+
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcFileEntrySettings;
-
-import java.io.IOException;
 
 /**
  * A simple base class that performs index output memory based buffering. The buffer size can be configured
@@ -88,6 +88,7 @@ public abstract class JdbcBufferedIndexOutput extends IndexOutput implements Jdb
                     flush();
                 // and write data at once
                 flushBuffer(b, length);
+                bufferStart += length;
             } else {
                 // we fill/flush the buffer (until the input is written)
                 int pos = 0; // position in the input data

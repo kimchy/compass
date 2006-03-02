@@ -112,6 +112,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.CONNECTION, path);
             return;
         }
+        // --- RAM Connection ---
         child = DomUtils.getChildElementsByTagName(ele, "ram", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
@@ -122,6 +123,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.CONNECTION, path);
             return;
         }
+        // --- JDBC Connection --
         child = DomUtils.getChildElementsByTagName(ele, "jdbc", true);
         Element connEle = (Element) child.get(0);
         // managed
@@ -145,6 +147,30 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             for (Iterator it = child.iterator(); it.hasNext();) {
                 Element fileEntryEle = (Element) it.next();
                 SettingsHolder settingsHolder = processSettings(fileEntryEle);
+                // --- File Entry Index Input ---
+                child = DomUtils.getChildElementsByTagName(fileEntryEle, "indexInput", true);
+                if (child.size() == 1) {
+                    Element indexInputEle = (Element) child.get(0);
+                    settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_INPUT_TYPE);
+                    settingsHolder.values.add(DomUtils.getElementAttribute(indexInputEle, "type"));
+                    settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_INPUT_TYPE);
+                    settingsHolder.values.add(DomUtils.getElementAttribute(indexInputEle, "typeClass"));
+                    settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_INPUT_BUFFER_SIZE);
+                    settingsHolder.values.add(DomUtils.getElementAttribute(indexInputEle, "bufferSize"));
+                }
+                // --- File Entry Index Input ---
+                child = DomUtils.getChildElementsByTagName(fileEntryEle, "indexOutput", true);
+                if (child.size() == 1) {
+                    Element indexOutputEle = (Element) child.get(0);
+                    settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_TYPE);
+                    settingsHolder.values.add(DomUtils.getElementAttribute(indexOutputEle, "type"));
+                    settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_TYPE);
+                    settingsHolder.values.add(DomUtils.getElementAttribute(indexOutputEle, "typeClass"));
+                    settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_BUFFER_SIZE);
+                    settingsHolder.values.add(DomUtils.getElementAttribute(indexOutputEle, "bufferSize"));
+                    settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_THRESHOLD);
+                    settingsHolder.values.add(DomUtils.getElementAttribute(indexOutputEle, "threshold"));
+                }
                 settings.setGroupSettings(LuceneEnvironment.JdbcStore.FileEntry.PREFIX, DomUtils.getElementAttribute(fileEntryEle, "name"),
                         settingsHolder.names(), settingsHolder.values());
             }

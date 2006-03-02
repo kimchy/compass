@@ -314,7 +314,9 @@
           <root url="jar://$MODULE_DIR$/../../lib/lucene/lucene-core.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../../opensource/lucene/java/src/java" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">

@@ -192,6 +192,9 @@ public class CompassSettings {
             throw new IllegalArgumentException("The settings length must match the value length");
         }
         for (int i = 0; i < settings.length; i++) {
+            if (values[i] == null) {
+                continue;
+            }
             setSetting(settingPrefix + "." + groupName + "." + settings[i], values[i]);
         }
         return this;

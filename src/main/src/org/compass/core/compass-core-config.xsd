@@ -114,29 +114,29 @@
                     <xsd:sequence>
                         <xsd:element name="nameColumn" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:attribute name="name" type="xsd:string" />
-                                <xsd:attribute name="length" type="xsd:positiveInteger" />
+                                <xsd:attribute name="name" type="xsd:string" default="name_"/>
+                                <xsd:attribute name="length" type="xsd:positiveInteger"/>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="valueColumn" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:attribute name="name" type="xsd:string" />
-                                <xsd:attribute name="length" type="xsd:positiveInteger" />
+                                <xsd:attribute name="name" type="xsd:string" default="value_"/>
+                                <xsd:attribute name="length" type="xsd:positiveInteger"/>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="sizeColumn" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:attribute name="name" type="xsd:string" />
+                                <xsd:attribute name="name" type="xsd:string" default="size_"/>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="lastModifiedColumn" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:attribute name="name" type="xsd:string" />
+                                <xsd:attribute name="name" type="xsd:string" default="lf_"/>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="deletedColumn" minOccurs="0" maxOccurs="1">
                             <xsd:complexType>
-                                <xsd:attribute name="name" type="xsd:string" />
+                                <xsd:attribute name="name" type="xsd:string" default="deleted_"/>
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:sequence>
@@ -148,9 +148,49 @@
                         <xsd:element name="fileEntry" minOccurs="1" maxOccurs="unbounded">
                             <xsd:complexType>
                                 <xsd:sequence>
+                                    <xsd:element name="indexInput" minOccurs="0" maxOccurs="1">
+                                        <xsd:complexType>
+                                            <xsd:attribute name="type" use="optional">
+                                                <xsd:simpleType>
+                                                    <xsd:restriction base="xsd:string">
+                                                        <xsd:enumeration value="org.apache.lucene.store.jdbc.index.FetchOnBufferReadJdbcIndexInput"/>
+                                                        <xsd:enumeration value="org.apache.lucene.store.jdbc.index.FetchOnOpenJdbcIndexInput"/>
+                                                        <xsd:enumeration value="org.apache.lucene.store.jdbc.index.FetchPerTransactionJdbcIndexInput"/>
+                                                    </xsd:restriction>
+                                                </xsd:simpleType>
+                                            </xsd:attribute>
+                                            <xsd:attribute name="typeClass" type="xsd:string" use="optional" />
+                                            <xsd:attribute name="bufferSize" type="xsd:positiveInteger" use="optional" />
+                                        </xsd:complexType>
+                                    </xsd:element>
+                                    <xsd:element name="indexOutput" minOccurs="0" maxOccurs="1">
+                                        <xsd:complexType>
+                                            <xsd:attribute name="type" use="optional">
+                                                <xsd:simpleType>
+                                                    <xsd:restriction base="xsd:string">
+                                                        <xsd:enumeration value="org.apache.lucene.store.jdbc.index.RAMAndFileJdbcIndexOutput"/>
+                                                        <xsd:enumeration value="org.apache.lucene.store.jdbc.index.RAMJdbcIndexOutput"/>
+                                                    </xsd:restriction>
+                                                </xsd:simpleType>
+                                            </xsd:attribute>
+                                            <xsd:attribute name="typeClass" type="xsd:string" use="optional" />
+                                            <xsd:attribute name="bufferSize" type="xsd:positiveInteger" use="optional" />
+                                            <xsd:attribute name="threshold" type="xsd:positiveInteger" use="optional" />
+                                        </xsd:complexType>
+                                    </xsd:element>
                                     <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
                                 </xsd:sequence>
-                                <xsd:attribute name="name" use="required" />
+                                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                                <xsd:attribute name="type" use="optional">
+                                    <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                            <xsd:enumeration value="org.apache.lucene.store.jdbc.handler.NoOpFileEntryHandler"/>
+                                            <xsd:enumeration value="org.apache.lucene.store.jdbc.handler.MarkDeleteFileEntryHandler"/>
+                                            <xsd:enumeration value="org.apache.lucene.store.jdbc.handler.ActualDeleteFileEntryHandler"/>
+                                        </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:attribute>
+                                <xsd:attribute name="typeClass" type="xsd:string" use="optional" />
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:sequence>
@@ -179,8 +219,8 @@
             </xsd:simpleType>
         </xsd:attribute>
         <xsd:attribute name="useCommitLocks" type="booleanType" use="optional" default="false"/>
-        <xsd:attribute name="deleteMarkDeletedDelta" type="xsd:positiveInteger" use="optional" />
-        <xsd:attribute name="lockClass" type="xsd:string" use="optional" />
+        <xsd:attribute name="deleteMarkDeletedDelta" type="xsd:positiveInteger" use="optional"/>
+        <xsd:attribute name="lockClass" type="xsd:string" use="optional"/>
         <xsd:attribute name="lock" use="optional">
             <xsd:simpleType>
                 <xsd:restriction base="xsd:string">

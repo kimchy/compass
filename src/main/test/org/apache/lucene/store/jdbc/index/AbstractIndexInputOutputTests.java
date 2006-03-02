@@ -81,6 +81,14 @@ public abstract class AbstractIndexInputOutputTests extends AbstractJdbcDirector
         innertTestSizeWithinTransaction(2);
     }
 
+    public void testSize1() throws IOException {
+        innerTestSize(1);
+    }
+
+    public void testSize1WithinTransaction() throws IOException {
+        innertTestSizeWithinTransaction(1);
+    }
+
     public void testSize50() throws IOException {
         innerTestSize(50);
     }
