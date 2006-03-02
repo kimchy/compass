@@ -17,6 +17,6 @@ public class SchemaSimpleTests extends TestCase {
         CompassSettings settings = conf.getSettings();
 
         assertEquals(settings.getSetting(CompassEnvironment.NAME), "default");
-        assertEquals(settings.getSetting(CompassEnvironment.CONNECTION), "target/test-index");
+        assertEquals(settings.getSetting(CompassEnvironment.CONNECTION), "file://target/test-index");
     }
 }

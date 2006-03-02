@@ -18,7 +18,6 @@ package org.compass.core.lucene.engine.store.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
@@ -57,7 +56,12 @@ public class JndiDataSourceProvider extends AbstractDataSourceProvider {
         }
 
         public Connection getConnection(String username, String password) throws SQLException {
-            Connection conn = dataSource.getConnection(username, password);
+            Connection conn;
+            if (username == null) {
+                conn = dataSource.getConnection();
+            } else {
+                conn = dataSource.getConnection(username, password);
+            }
             if (conn.getAutoCommit() != autoCommit) {
                 conn.setAutoCommit(autoCommit);
             }

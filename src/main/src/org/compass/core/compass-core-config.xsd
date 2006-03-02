@@ -9,17 +9,208 @@
     <xsd:element name="compass-core-config">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="compass" type="compassType" minOccurs="1" maxOccurs="1" />
+                <xsd:element name="compass" type="compassType" minOccurs="1" maxOccurs="1"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
 
     <xsd:complexType name="compassType">
         <xsd:sequence>
-            <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1" />
-            <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="connection" type="connectionType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="jndi" type="jndiType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
-        <xsd:attribute name="name" type="xsd:string" use="required" />
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <!-- Connection -->
+    <xsd:complexType name="connectionType">
+        <xsd:choice>
+            <xsd:element name="file" type="fileConnType"/>
+            <xsd:element name="mmap" type="mmapConnType"/>
+            <xsd:element name="ram" type="ramConnType"/>
+            <xsd:element name="jdbc" type="jdbcConnType"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="fileConnType">
+        <xsd:attribute name="path" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="mmapConnType">
+        <xsd:attribute name="path" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="ramConnType">
+        <xsd:attribute name="path" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="jdbcConnType">
+        <xsd:sequence>
+            <xsd:element name="dataSourceProvider" minOccurs="1" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:choice>
+                        <xsd:element name="driverManager">
+                            <xsd:complexType>
+                                <xsd:attribute name="url" type="xsd:string" use="required"/>
+                                <xsd:attribute name="username" type="xsd:string" use="required"/>
+                                <xsd:attribute name="password" type="xsd:string" use="required"/>
+                                <xsd:attribute name="driverClass" type="xsd:string" use="required"/>
+                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="c3p0">
+                            <xsd:complexType>
+                                <xsd:attribute name="url" type="xsd:string" use="required"/>
+                                <xsd:attribute name="username" type="xsd:string" use="required"/>
+                                <xsd:attribute name="password" type="xsd:string" use="required"/>
+                                <xsd:attribute name="driverClass" type="xsd:string" use="required"/>
+                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="dbcp">
+                            <xsd:complexType>
+                                <xsd:attribute name="url" type="xsd:string" use="required"/>
+                                <xsd:attribute name="username" type="xsd:string" use="required"/>
+                                <xsd:attribute name="password" type="xsd:string" use="required"/>
+                                <xsd:attribute name="driverClass" type="xsd:string" use="required"/>
+                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false"/>
+                                <xsd:attribute name="defaultTransacitonIsolation" type="xsd:nonNegativeInteger"
+                                               use="optional" default="0"/>
+                                <xsd:attribute name="initialSize" type="xsd:nonNegativeInteger" use="optional"
+                                               default="0"/>
+                                <xsd:attribute name="maxActive" type="xsd:nonNegativeInteger" use="optional"
+                                               default="0"/>
+                                <xsd:attribute name="maxIdle" type="xsd:nonNegativeInteger" use="optional" default="0"/>
+                                <xsd:attribute name="minIdle" type="xsd:nonNegativeInteger" use="optional" default="0"/>
+                                <xsd:attribute name="maxWait" type="xsd:nonNegativeInteger" use="optional" default="0"/>
+                                <xsd:attribute name="maxOpenPreparedStatements" type="xsd:nonNegativeInteger"
+                                               use="optional" default="0"/>
+                                <xsd:attribute name="poolPreparedStatements" type="booleanType" use="optional"
+                                               default="false"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="jndi">
+                            <xsd:complexType>
+                                <xsd:attribute name="lookup" type="xsd:string" use="required"/>
+                                <xsd:attribute name="username" type="xsd:string" use="optional"/>
+                                <xsd:attribute name="password" type="xsd:string" use="optional"/>
+                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="external">
+                            <xsd:complexType>
+                                <xsd:attribute name="username" type="xsd:string" use="optional"/>
+                                <xsd:attribute name="password" type="xsd:string" use="optional"/>
+                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="ddl" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="nameColumn" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" />
+                                <xsd:attribute name="length" type="xsd:positiveInteger" />
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="valueColumn" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" />
+                                <xsd:attribute name="length" type="xsd:positiveInteger" />
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="sizeColumn" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" />
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="lastModifiedColumn" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" />
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="deletedColumn" minOccurs="0" maxOccurs="1">
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" />
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="fileEntries" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="fileEntry" minOccurs="1" maxOccurs="unbounded">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="name" use="required" />
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="managed" type="booleanType" use="optional" default="false"/>
+        <xsd:attribute name="dialectClass" type="xsd:string" use="optional"/>
+        <xsd:attribute name="dialect" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.DB2Dialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.DerbyDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.FirebirdDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.HSQLDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.InterbaseDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLInnoDBDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLMyISAMDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.Oracle8Dialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.OracleDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.PostgresDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.SQLServerDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.SybaseDialect"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="useCommitLocks" type="booleanType" use="optional" default="false"/>
+        <xsd:attribute name="deleteMarkDeletedDelta" type="xsd:positiveInteger" use="optional" />
+        <xsd:attribute name="lockClass" type="xsd:string" use="optional" />
+        <xsd:attribute name="lock" use="optional">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.lock.SelectForUpdateLock"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.lock.PhantomReadLock"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.lock.NoOpLock"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <!-- JNDI -->
+    <xsd:complexType name="jndiType">
+        <xsd:sequence>
+            <xsd:element name="environment" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="property" minOccurs="1" maxOccurs="unbounded">
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                                <xsd:attribute name="value" type="xsd:string" use="required"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="register" type="booleanType" default="false"/>
+        <xsd:attribute name="class" type="xsd:string" use="optional"/>
+        <xsd:attribute name="url" type="xsd:string" use="optional"/>
     </xsd:complexType>
 
     <!-- Mapping Types -->
@@ -27,22 +218,27 @@
         <xsd:choice>
             <xsd:element name="resource">
                 <xsd:complexType>
-                    <xsd:attribute name="location" type="xsd:string" use="required" />
+                    <xsd:attribute name="location" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="jar">
                 <xsd:complexType>
-                    <xsd:attribute name="path" type="xsd:string" use="required" />
+                    <xsd:attribute name="path" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="file">
                 <xsd:complexType>
-                    <xsd:attribute name="path" type="xsd:string" use="required" />
+                    <xsd:attribute name="path" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="dir">
+                <xsd:complexType>
+                    <xsd:attribute name="path" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="package">
                 <xsd:complexType>
-                    <xsd:attribute name="name" type="xsd:string" use="required" />
+                    <xsd:attribute name="name" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
         </xsd:choice>
@@ -51,7 +247,7 @@
     <!-- Settings Types -->
     <xsd:complexType name="settingsType">
         <xsd:sequence>
-            <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded" />
+            <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -60,5 +256,11 @@
         <xsd:attribute name="value" type="xsd:string" use="required"/>
     </xsd:complexType>
 
+    <xsd:simpleType name="booleanType">
+        <xsd:restriction base="xsd:NMTOKEN">
+            <xsd:enumeration value="true"/>
+            <xsd:enumeration value="false"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
 </xsd:schema>

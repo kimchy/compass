@@ -16,8 +16,11 @@
 
 package org.compass.core.lucene.engine.store.jdbc;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import javax.sql.DataSource;
 
+import org.apache.lucene.store.jdbc.datasource.AbstractDataSource;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassSettings;
 
@@ -30,6 +33,42 @@ import org.compass.core.config.CompassSettings;
  */
 public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
 
+    private static class UsernamePasswordDataSourceWrapper extends AbstractDataSource {
+
+        private DataSource dataSource;
+
+        private String username;
+
+        private String password;
+
+        private boolean autoCommit;
+
+        public UsernamePasswordDataSourceWrapper(DataSource dataSource, String username, String password, boolean autoCommit) {
+            this.dataSource = dataSource;
+            this.username = username;
+            this.password = password;
+            this.autoCommit = autoCommit;
+        }
+
+        public Connection getConnection() throws SQLException {
+            return getConnection(username, password);
+        }
+
+        public Connection getConnection(String username, String password) throws SQLException {
+            Connection conn;
+            if (username == null) {
+                conn = dataSource.getConnection();
+            } else {
+                conn = dataSource.getConnection(username, password);
+            }
+            if (conn.getAutoCommit() != autoCommit) {
+                conn.setAutoCommit(autoCommit);
+            }
+            return conn;
+        }
+    }
+
+
     private static ThreadLocal dataSourceHolder = new ThreadLocal();
 
     /**
@@ -40,7 +79,8 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
     }
 
     protected DataSource doCreateDataSource(String url, CompassSettings settings) throws CompassException {
-        return (DataSource) dataSourceHolder.get();
+        DataSource dataSource =  (DataSource) dataSourceHolder.get();
+        return new UsernamePasswordDataSourceWrapper(dataSource, username, password, autoCommit);
     }
 
     public void closeDataSource() {

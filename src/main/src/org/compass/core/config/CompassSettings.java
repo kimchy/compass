@@ -16,11 +16,7 @@
 
 package org.compass.core.config;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.compass.core.util.ClassUtils;
 
@@ -151,6 +147,9 @@ public class CompassSettings {
     }
 
     public CompassSettings setSetting(String setting, String value) {
+        if (value == null) {
+            return this;
+        }
         this.settings.setProperty(setting, value);
         return this;
     }

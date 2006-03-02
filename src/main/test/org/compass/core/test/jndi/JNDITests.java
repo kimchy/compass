@@ -18,16 +18,12 @@ package org.compass.core.test.jndi;
 
 import java.io.File;
 import java.util.Hashtable;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
-
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
-import org.compass.core.config.CompassEnvironment;
-import org.compass.core.impl.DefaultCompass;
 
 /**
  * @author kimchy
@@ -39,10 +35,6 @@ public class JNDITests extends TestCase {
         testJndiDir.mkdirs();
         String jndiPath = testJndiDir.toURL().toExternalForm();
         CompassConfiguration conf = new CompassConfiguration().configure("/org/compass/core/test/jndi/compass.cfg.xml");
-        conf.getSettings().setBooleanSetting(CompassEnvironment.Jndi.ENABLE, true);
-        conf.getSettings().setSetting(CompassEnvironment.Jndi.CLASS, "com.sun.jndi.fscontext.RefFSContextFactory");
-        conf.getSettings().setSetting(CompassEnvironment.Jndi.URL, jndiPath);
-        conf.getSettings().setSetting("TEST_SETTING_KEY", "TEST_SETTING_VALUE");
         Compass sessionFactory = conf.buildCompass();
 
         Hashtable env = new Hashtable(11);
@@ -51,8 +43,7 @@ public class JNDITests extends TestCase {
         Context initCtx = new InitialContext(env);
         Compass jndiFactory = (Compass) initCtx.lookup("compass/CompassFactory");
         assertNotNull(jndiFactory);
-        assertEquals("TEST_SETTING_VALUE", ((DefaultCompass) jndiFactory).getSettings().getSetting("TEST_SETTING_KEY"));
-        
+
         sessionFactory.close();
     }
 

@@ -47,6 +47,14 @@ public abstract class DomUtils {
         return value;
     }
 
+    public static boolean getElementAttributeAsBoolean(Element ele, String attributeName, boolean defaultValue) {
+        String sValue = getElementAttribute(ele, attributeName);
+        if (sValue == null) {
+            return defaultValue;
+        }
+        return Boolean.valueOf(sValue).booleanValue();
+    }
+
     /**
      * Retrieve all child elements of the given DOM element that match
      * the given element name. Only look at the direct child level of the

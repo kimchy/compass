@@ -16,6 +16,13 @@
 
 package org.compass.core.lucene.engine.store;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import javax.sql.DataSource;
+
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcDirectorySettings;
@@ -40,13 +47,6 @@ import org.compass.core.lucene.engine.store.jdbc.DataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.util.ClassUtils;
-
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * @author kimchy
@@ -165,10 +165,10 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         Map fileEntries = settings.getSettingGroups(LuceneEnvironment.JdbcStore.FileEntry.PREFIX);
         for (Iterator it = fileEntries.keySet().iterator(); it.hasNext();) {
             String fileEntryName = (String) it.next();
-            if (log.isInfoEnabled()) {
-                log.info("Configuring file entry [" + fileEntryName + "]");
-            }
             CompassSettings compassFeSettings = (CompassSettings) fileEntries.get(fileEntryName);
+            if (log.isInfoEnabled()) {
+                log.info("Configuring file entry [" + fileEntryName + "] with settings [" + compassFeSettings + "]");
+            }
             JdbcFileEntrySettings jdbcFileEntrySettings = jdbcSettings.getFileEntrySettingsWithoutDefault(fileEntryName);
             if (jdbcFileEntrySettings == null) {
                 jdbcFileEntrySettings = new JdbcFileEntrySettings();

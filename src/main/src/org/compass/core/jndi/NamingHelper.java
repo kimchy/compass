@@ -20,12 +20,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.Name;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
+import javax.naming.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -93,14 +88,15 @@ public abstract class NamingHelper {
         HashSet specialProps = new HashSet();
         specialProps.add(CompassEnvironment.Jndi.CLASS);
         specialProps.add(CompassEnvironment.Jndi.URL);
+        specialProps.add(CompassEnvironment.Jndi.ENABLE);
 
         Iterator iter = settings.keySet().iterator();
         Properties result = new Properties();
         while (iter.hasNext()) {
             String prop = (String) iter.next();
             if (prop.indexOf(CompassEnvironment.Jndi.PREFIX) > -1 && !specialProps.contains(prop)) {
-                result.setProperty(prop.substring(CompassEnvironment.Jndi.PREFIX.length() + 1), settings
-                        .getSetting(prop));
+                result.setProperty(prop.substring(CompassEnvironment.Jndi.PREFIX.length() + 1),
+                        settings.getSetting(prop));
             }
         }
 

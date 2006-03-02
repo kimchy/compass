@@ -16,9 +16,11 @@
 
 package org.compass.core.config.builder;
 
+import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,6 +30,7 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.util.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -70,29 +73,255 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 Method method;
                 try {
                     method = SchemaConfigurationBuilder.class.getMethod(methodName,
-                            new Class[]{Element.class, CompassSettings.class});
+                            new Class[]{Element.class, CompassConfiguration.class});
                 } catch (NoSuchMethodException e) {
                     throw new ConfigurationException("Compass failed to process node [" + nodeName + "], this is " +
                             "either a mailformed xml configuration (not validated against the xsd), or an internal" +
                             " bug in compass");
                 }
                 try {
-                    method.invoke(this, new Object[]{ele, config.getSettings()});
+                    method.invoke(this, new Object[]{ele, config});
                 } catch (InvocationTargetException e) {
-                    throw new ConfigurationException("Failed to invoke binding metod for node [" + nodeName + "]");
+                    throw new ConfigurationException("Failed to invoke binding metod for node [" + nodeName + "]", e);
                 } catch (IllegalAccessException e) {
-                    throw new ConfigurationException("Failed to access binding metod for node [" + nodeName + "]");
+                    throw new ConfigurationException("Failed to access binding metod for node [" + nodeName + "]", e);
                 }
             }
         }
     }
 
-    public void bindSettings(Element ele, CompassSettings settings) {
+    public void bindConnection(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        List child = DomUtils.getChildElementsByTagName(ele, "file", true);
+        if (child.size() == 1) {
+            Element connEle = (Element) child.get(0);
+            String path = DomUtils.getElementAttribute(connEle, "path");
+            if (!path.startsWith("file://")) {
+                path = "file://" + path;
+            }
+            settings.setSetting(CompassEnvironment.CONNECTION, path);
+            return;
+        }
+        child = DomUtils.getChildElementsByTagName(ele, "mmap", true);
+        if (child.size() == 1) {
+            Element connEle = (Element) child.get(0);
+            String path = DomUtils.getElementAttribute(connEle, "mmap");
+            if (!path.startsWith("mmap://")) {
+                path = "mmap://" + path;
+            }
+            settings.setSetting(CompassEnvironment.CONNECTION, path);
+            return;
+        }
+        child = DomUtils.getChildElementsByTagName(ele, "ram", true);
+        if (child.size() == 1) {
+            Element connEle = (Element) child.get(0);
+            String path = DomUtils.getElementAttribute(connEle, "ram");
+            if (!path.startsWith("ram://")) {
+                path = "ram://" + path;
+            }
+            settings.setSetting(CompassEnvironment.CONNECTION, path);
+            return;
+        }
+        child = DomUtils.getChildElementsByTagName(ele, "jdbc", true);
+        Element connEle = (Element) child.get(0);
+        // managed
+        settings.setSetting(LuceneEnvironment.JdbcStore.MANAGED, DomUtils.getElementAttribute(connEle, "managed", "false"));
+        // dialect
+        settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, DomUtils.getElementAttribute(connEle, "dialect"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, DomUtils.getElementAttribute(connEle, "dialectClass"));
+        // use commit locks
+        settings.setSetting(LuceneEnvironment.JdbcStore.USE_COMMIT_LOCKS, DomUtils.getElementAttribute(connEle, "useCommitLocks", "false"));
+        // delete mark deleted
+        settings.setSetting(LuceneEnvironment.JdbcStore.DELETE_MARK_DELETED_DELTA, DomUtils.getElementAttribute(connEle, "deleteMarkDeletedDelta"));
+        // lock
+        settings.setSetting(LuceneEnvironment.JdbcStore.LOCK_TYPE, DomUtils.getElementAttribute(connEle, "lock"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.LOCK_TYPE, DomUtils.getElementAttribute(connEle, "lockClass"));
+
+        // configure file entries
+        child = DomUtils.getChildElementsByTagName(connEle, "fileEntries", true);
+        if (child.size() == 1) {
+            Element fileEntriesEle = (Element) child.get(0);
+            child = DomUtils.getChildElementsByTagName(fileEntriesEle, "fileEntry", true);
+            for (Iterator it = child.iterator(); it.hasNext();) {
+                Element fileEntryEle = (Element) it.next();
+                SettingsHolder settingsHolder = processSettings(fileEntryEle);
+                settings.setGroupSettings(LuceneEnvironment.JdbcStore.FileEntry.PREFIX, DomUtils.getElementAttribute(fileEntryEle, "name"),
+                        settingsHolder.names(), settingsHolder.values());
+            }
+        }
+
+        // configure ddl
+        child = DomUtils.getChildElementsByTagName(connEle, "ddl", true);
+        if (child.size() == 1) {
+            Element ddlEle = (Element) child.get(0);
+            child = DomUtils.getChildElementsByTagName(ddlEle, "nameColumn", true);
+            if (child.size() == 1) {
+                Element nameColumnEle = (Element) child.get(0);
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.NAME_NAME, DomUtils.getElementAttribute(nameColumnEle, "name"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.NAME_LENGTH, DomUtils.getElementAttribute(nameColumnEle, "length"));
+            }
+            child = DomUtils.getChildElementsByTagName(ddlEle, "valueColumn", true);
+            if (child.size() == 1) {
+                Element valueColumnEle = (Element) child.get(0);
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.VALUE_NAME, DomUtils.getElementAttribute(valueColumnEle, "name"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.VALUE_LENGTH, DomUtils.getElementAttribute(valueColumnEle, "length"));
+            }
+            child = DomUtils.getChildElementsByTagName(ddlEle, "sizeColumn", true);
+            if (child.size() == 1) {
+                Element sizeColumnEle = (Element) child.get(0);
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.SIZE_NAME, DomUtils.getElementAttribute(sizeColumnEle, "name"));
+            }
+            child = DomUtils.getChildElementsByTagName(ddlEle, "lastModifiedColumn", true);
+            if (child.size() == 1) {
+                Element lastModifiedEle = (Element) child.get(0);
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.LAST_MODIFIED_NAME, DomUtils.getElementAttribute(lastModifiedEle, "name"));
+            }
+            child = DomUtils.getChildElementsByTagName(ddlEle, "deletedColumn", true);
+            if (child.size() == 1) {
+                Element deletedEle = (Element) child.get(0);
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.DELETED_NAME, DomUtils.getElementAttribute(deletedEle, "name"));
+            }
+        }
+
+        // configure the data source provider
+        child = DomUtils.getChildElementsByTagName(connEle, "dataSourceProvider", true);
+        Element dataSourceProviderEle = (Element) child.get(0);
+        // --- driverManager
+        child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "driverManager", true);
+        if (child.size() == 1) {
+            Element driverManagerEle = (Element) child.get(0);
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
+                    "org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider");
+            settings.setSetting(CompassEnvironment.CONNECTION,
+                    "jdbc://" + DomUtils.getElementAttribute(driverManagerEle, "url"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(driverManagerEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(driverManagerEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, DomUtils.getElementAttribute(driverManagerEle, "driverClass"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(driverManagerEle, "autoCommit", "false"));
+        }
+        child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "c3p0", true);
+        if (child.size() == 1) {
+            Element driverManagerEle = (Element) child.get(0);
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
+                    "org.compass.core.lucene.engine.store.jdbc.C3P0DataSourceProvider");
+            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + DomUtils.getElementAttribute(driverManagerEle, "url"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(driverManagerEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(driverManagerEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, DomUtils.getElementAttribute(driverManagerEle, "driverClass"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(driverManagerEle, "autoCommit", "false"));
+        }
+        child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "jndi", true);
+        if (child.size() == 1) {
+            Element jndiEle = (Element) child.get(0);
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
+                    "org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider");
+            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + DomUtils.getElementAttribute(jndiEle, "lookup"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(jndiEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(jndiEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(jndiEle, "autoCommit", "false"));
+        }
+        child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "dbcp", true);
+        if (child.size() == 1) {
+            Element dbcpEle = (Element) child.get(0);
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
+                    "org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider");
+            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + DomUtils.getElementAttribute(dbcpEle, "url"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(dbcpEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(dbcpEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, DomUtils.getElementAttribute(dbcpEle, "driverClass"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(dbcpEle, "autoCommit", "false"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.DEFAULT_TRANSACTION_ISOLATION, DomUtils.getElementAttribute(dbcpEle, "defaultTransactionIsolation"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.INITIAL_SIZE, DomUtils.getElementAttribute(dbcpEle, "initialSize"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_ACTIVE, DomUtils.getElementAttribute(dbcpEle, "maxActive"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_IDLE, DomUtils.getElementAttribute(dbcpEle, "maxIdle"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MIN_IDLE, DomUtils.getElementAttribute(dbcpEle, "minIdle"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_WAIT, DomUtils.getElementAttribute(dbcpEle, "maxWait"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_OPEN_PREPARED_STATEMENTS, DomUtils.getElementAttribute(dbcpEle, "maxOpenPreparedStatements"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.POOL_PREPARED_STATEMENTS, DomUtils.getElementAttribute(dbcpEle, "poolPreparedStatements"));
+        }
+        child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "external", true);
+        if (child.size() == 1) {
+            Element externalEle = (Element) child.get(0);
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
+                    "org.compass.core.lucene.engine.store.jdbc.ExternalDataSourceProvider");
+            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://");
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(externalEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(externalEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(externalEle, "autoCommit", "false"));
+        }
+    }
+
+    public void bindJndi(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        settings.setSetting(CompassEnvironment.Jndi.ENABLE, DomUtils.getElementAttribute(ele, "register", "false"));
+        settings.setSetting(CompassEnvironment.Jndi.CLASS, DomUtils.getElementAttribute(ele, "class"));
+        settings.setSetting(CompassEnvironment.Jndi.URL, DomUtils.getElementAttribute(ele, "url"));
+        List environments = DomUtils.getChildElementsByTagName(ele, "environment", true);
+        if (environments.size() == 1) {
+            Element environment = (Element) environments.get(0);
+            List properties = DomUtils.getChildElementsByTagName(environment, "property", true);
+            for (Iterator it = properties.iterator(); it.hasNext();) {
+                Element property = (Element) it.next();
+                String propertyName = CompassEnvironment.Jndi.PREFIX + "." + DomUtils.getElementAttribute(property, "name");
+                String propertyValue = DomUtils.getElementAttribute(property, "value");
+                settings.setSetting(propertyName, propertyValue);
+            }
+        }
+    }
+
+    public void bindSettings(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
         List domSettings = DomUtils.getChildElementsByTagName(ele, "setting", true);
         for (Iterator it = domSettings.iterator(); it.hasNext();) {
             Element eleSetting = (Element) it.next();
             settings.setSetting(DomUtils.getElementAttribute(eleSetting, "name"),
                     DomUtils.getElementAttribute(eleSetting, "value"));
+        }
+    }
+
+    public void bindMappings(Element ele, CompassConfiguration config) {
+        NodeList nl = ele.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (node instanceof Element) {
+                Element mappingEle = (Element) node;
+                String nodeName = mappingEle.getLocalName();
+                if ("resource".equals(nodeName)) {
+                    config.addResource(DomUtils.getElementAttribute(mappingEle, "location"));
+                } else if ("jar".equals(nodeName)) {
+                    config.addJar(new File(DomUtils.getElementAttribute(mappingEle, "path")));
+                } else if ("file".equals(nodeName)) {
+                    config.addFile(new File(DomUtils.getElementAttribute(mappingEle, "path")));
+                } else if ("dir".equals(nodeName)) {
+                    config.addDirectory(new File(DomUtils.getElementAttribute(mappingEle, "path")));
+                } else if ("package".equals(nodeName)) {
+                    config.addPackage(DomUtils.getElementAttribute(mappingEle, "name"));
+                }
+            }
+        }
+    }
+
+    private SettingsHolder processSettings(Element ele) {
+        SettingsHolder settingsHolder = new SettingsHolder();
+        List settings = DomUtils.getChildElementsByTagName(ele, "setting", true);
+        for (Iterator it = settings.iterator(); it.hasNext();) {
+            Element settingEle = (Element) it.next();
+            settingsHolder.names.add(DomUtils.getElementAttribute(settingEle, "name"));
+            settingsHolder.values.add(DomUtils.getElementAttribute(settingEle, "value"));
+        }
+        return settingsHolder;
+    }
+
+    private class SettingsHolder {
+        public ArrayList names = new ArrayList();
+        public ArrayList values = new ArrayList();
+
+        public String[] names() {
+            return (String[]) names.toArray(new String[names.size()]);
+        }
+
+        public String[] values() {
+            return (String[]) values.toArray(new String[values.size()]);
         }
     }
 

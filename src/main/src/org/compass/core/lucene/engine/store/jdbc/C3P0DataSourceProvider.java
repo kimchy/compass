@@ -17,18 +17,18 @@
 package org.compass.core.lucene.engine.store.jdbc;
 
 import java.beans.PropertyVetoException;
-
 import javax.sql.DataSource;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassSettings;
-
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
  * A c3p0 data source provider. Creates a new C3P0 pooled data source. For configuration, use a
  * file called c3p0.properties and storing it as a top-level resource in the same
  * CLASSPATH / classloader that loads c3p0's jar file.
+ * <p/>
+ * Will set the url, driverClass, user and password based on compass configuration settings.
  *
  * @author kimchy
  */
@@ -44,6 +44,7 @@ public class C3P0DataSourceProvider extends AbstractDataSourceProvider {
         dataSource.setJdbcUrl(url);
         dataSource.setUser(username);
         dataSource.setPassword(password);
+        dataSource.setAutoCommitOnClose(autoCommit);
         return dataSource;
     }
 }
