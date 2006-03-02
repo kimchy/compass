@@ -1,17 +1,23 @@
-<!DOCTYPE compass-core-configuration PUBLIC
-    "-//Compass/Compass Core Configuration DTD 1.0//EN"
-    "http://www.opensymphony.com/compass/dtd/compass-core-configuration.dtd">
+<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
 
-<compass-core-configuration>
+    <compass name="default">
 
-    <compass>
-    
-        <setting name="compass.engine.connection">target/testindex</setting>
-        <setting name="compass.transaction.factory">org.compass.spring.transaction.SpringSyncTransactionFactory</setting>
-    
-        <mapping resource="org/compass/spring/test/transaction/A.cpm.xml" />
-        
+        <connection>
+            <file path="target/testindex" />
+        </connection>
+
+        <transaction factory="org.compass.spring.transaction.SpringSyncTransactionFactory" />
+
+        <mappings>
+            <resource location="org/compass/spring/test/transaction/A.cpm.xml" />
+        </mappings>
+
+        <settings>
+            <setting name="compass.engine.optimizer.type" value="org.compass.core.lucene.engine.optimizer.NullOptimizer" />
+        </settings>
     </compass>
 
-</compass-core-configuration>
+</compass-core-config>
 

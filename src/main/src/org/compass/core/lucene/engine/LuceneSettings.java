@@ -21,8 +21,8 @@ import java.io.File;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Lock;
-import org.compass.core.Property;
 import org.compass.core.CompassTransaction.TransactionIsolation;
+import org.compass.core.Property;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
@@ -184,7 +184,7 @@ public class LuceneSettings {
         }
         indexManagerScheduleInterval = (long) (settings.getSettingAsFloat(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60.0f) * 1000);
         if (log.isDebugEnabled()) {
-            log.debug("Using index maanger schedule interval [" + indexManagerScheduleInterval + "ms]");
+            log.debug("Using index manager schedule interval [" + indexManagerScheduleInterval + "ms]");
         }
     }
 

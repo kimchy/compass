@@ -8,13 +8,14 @@
             <file path="target/testindex" />
         </connection>
 
+        <transaction factory="org.compass.core.transaction.JTASyncTransactionFactory" />
+
         <mappings>
             <resource location="org/compass/core/test/transaction/A.cpm.xml" />
         </mappings>
 
         <settings>
             <setting name="compass.engine.optimizer.type" value="org.compass.core.lucene.engine.optimizer.NullOptimizer" />
-            <setting name="compass.transaction.factory" value="org.compass.core.transaction.JTASyncTransactionFactory" />
         </settings>
     </compass>
 

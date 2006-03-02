@@ -17,11 +17,72 @@
     <xsd:complexType name="compassType">
         <xsd:sequence>
             <xsd:element name="connection" type="connectionType" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="transaction" type="transactionType" minOccurs="0" maxOccurs="1" />
             <xsd:element name="jndi" type="jndiType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <!-- Transaction -->
+    <xsd:complexType name="transactionType">
+        <xsd:sequence>
+            <xsd:element name="batchInsertSettings" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="maxMergeDocs" type="xsd:positiveInteger" use="optional" />
+                    <xsd:attribute name="mergeFactor" type="xsd:positiveInteger" use="optional" />
+                    <xsd:attribute name="maxBufferedDocs" type="xsd:positiveInteger" use="optional" />
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="jtaSettings" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="userTransactionName" type="xsd:string" use="optional" />
+                    <xsd:attribute name="managerLookup" use="optional">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="org.compass.core.transaction.manager.BEST"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.JBoss"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.JOnAS"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.JOTM"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.JRun4"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.OC4J"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.Orion"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.Resin"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.SunONE"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.Weblogic"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.WebSphere"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="managerLookupClass" type="xsd:string" use="optional" />
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="factory" use="optional" default="org.compass.core.transaction.LocalTransactionFactory">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="org.compass.core.transaction.LocalTransactionFactory"/>
+                    <xsd:enumeration value="org.compass.core.transaction.JTASyncTransactionFactory"/>
+                    <xsd:enumeration value="org.compass.spring.transaction.SpringSyncTransactionFactory"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="isolation" use="optional" default="read_committed">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="read_committed"/>
+                    <xsd:enumeration value="read_only_read_committed"/>
+                    <xsd:enumeration value="serializable"/>
+                    <xsd:enumeration value="batch_insert"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="commitBeforeCompletion" type="booleanType" use="optional" default="false" />
+        <xsd:attribute name="lockDir" type="xsd:string" use="optional" />
+        <xsd:attribute name="lockTimeout" type="xsd:positiveInteger" use="optional" />
+        <xsd:attribute name="commitTimeout" type="xsd:positiveInteger" use="optional" />
+        <xsd:attribute name="lockPollInterval" type="xsd:positiveInteger" use="optional" />
     </xsd:complexType>
 
     <!-- Connection -->

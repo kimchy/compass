@@ -90,6 +90,31 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         }
     }
 
+    public void bindTransaction(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        settings.setSetting(CompassEnvironment.Transaction.ISOLATION, DomUtils.getElementAttribute(ele, "isolation"));
+        settings.setSetting(CompassEnvironment.Transaction.FACTORY, DomUtils.getElementAttribute(ele, "factory"));
+        settings.setSetting(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, DomUtils.getElementAttribute(ele, "commitBeforeCompletion"));
+        settings.setSetting(LuceneEnvironment.Transaction.LOCK_DIR, DomUtils.getElementAttribute(ele, "lockDir"));
+        settings.setSetting(LuceneEnvironment.Transaction.COMMIT_TIMEOUT, DomUtils.getElementAttribute(ele, "commitTimeout"));
+        settings.setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, DomUtils.getElementAttribute(ele, "lockTimeout"));
+        settings.setSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, DomUtils.getElementAttribute(ele, "lockPollInterval"));
+        List child = DomUtils.getChildElementsByTagName(ele, "batchInsertSettings", true);
+        if (child.size() == 1) {
+            Element batchInsertEle = (Element) child.get(0);
+            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, DomUtils.getElementAttribute(batchInsertEle, "maxMergeDocs"));
+            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, DomUtils.getElementAttribute(batchInsertEle, "mergeFactor"));
+            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, DomUtils.getElementAttribute(batchInsertEle, "maxBufferedDocs"));
+        }
+        child = DomUtils.getChildElementsByTagName(ele, "jtaSettings", true);
+        if (child.size() == 1) {
+            Element jtaSettingsEle = (Element) child.get(0);
+            settings.setSetting(CompassEnvironment.Transaction.USER_TRANSACTION, DomUtils.getElementAttribute(jtaSettingsEle, "userTransactionName"));
+            settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, DomUtils.getElementAttribute(jtaSettingsEle, "managerLookup"));
+            settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, DomUtils.getElementAttribute(jtaSettingsEle, "managerLookupClass"));
+        }
+    }
+
     public void bindConnection(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
         List child = DomUtils.getChildElementsByTagName(ele, "file", true);
