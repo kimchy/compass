@@ -24,6 +24,7 @@
             <xsd:element name="connection" type="connectionType" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="transaction" type="transactionType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="jndi" type="jndiType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="cache" type="cacheType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
@@ -34,6 +35,52 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+    </xsd:complexType>
+
+    <!-- Cache -->
+    <xsd:complexType name="cacheType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Controls compass cahce settings.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="firstLevel" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        First level cahce strategy and settings.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="type" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Type of the first level cahce handling.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="org.compass.core.cache.first.NullFirstLevelCache">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            No first cahce will be used.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="org.compass.core.cache.first.DefaultFirstLevelCache">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Default first level cache handling, storing Resource and Objects in the
+                                            cahce per session.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
     </xsd:complexType>
 
     <!-- Transaction -->

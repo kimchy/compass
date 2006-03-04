@@ -10,6 +10,10 @@
 
         <transaction factory="org.compass.core.transaction.JTASyncTransactionFactory" />
 
+        <cache>
+            <firstLevel type="org.compass.core.cache.first.NullFirstLevelCache" />
+        </cache>
+
         <mappings>
             <resource location="org/compass/gps/device/hibernate/collection/collection.cpm.xml" />
         </mappings>
@@ -17,7 +21,6 @@
         <settings>
             <setting name="compass.engine.optimizer.type"
                      value="org.compass.core.lucene.engine.optimizer.NullOptimizer"/>
-            <!--<setting name="compass.cache.first" value="org.compass.core.cache.first.NullFirstLevelCache"/>-->
         </settings>
     </compass>
 

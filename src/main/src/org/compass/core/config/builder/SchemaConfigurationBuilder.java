@@ -91,6 +91,15 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         }
     }
 
+    public void bindCache(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        List child = DomUtils.getChildElementsByTagName(ele, "firstLevel", true);
+        if (child.size() == 1) {
+            Element firstLevelCacheEle = (Element) child.get(0);
+            settings.setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, DomUtils.getElementAttribute(firstLevelCacheEle, "type"));
+        }
+    }
+
     public void bindTransaction(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
         settings.setSetting(CompassEnvironment.Transaction.ISOLATION, DomUtils.getElementAttribute(ele, "isolation"));
