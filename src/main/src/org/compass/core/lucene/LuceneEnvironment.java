@@ -626,7 +626,7 @@ public class LuceneEnvironment {
          * finished. This is done regardless of what directory is in use. <p/>
          * Default value id <code>true</code>
          */
-        public static final String USE_COMPOUND_FILE = "copmass.engine.useCompoundFile";
+        public static final String USE_COMPOUND_FILE = "compass.engine.useCompoundFile";
 
         /**
          * The maximum number of terms that will be indexed for a single field in a

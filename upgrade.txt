@@ -32,6 +32,7 @@ VERSION 0.9.0 ()
    Compass will try to auto-detect the correct Dialect.
 7. compass.transaction.managerLookup is no longer required when using JTA. 
    Compass will try to auto-detect it based on the JTA implementation used.
+8. The setting for compound file format was wrongly named, changed to: compass.engine.useCompoundFile.
 
 VERSION 0.8.1 (Jan 22, 2006)
 ============================

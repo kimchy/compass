@@ -8,7 +8,7 @@
     </para>
 
     <para>
-      <emphasis>Compass</emphasis> provide access to search engine management functionality and <literal>CompassSession</literal>'s for managing data within the Search Engine. It is created using <literal> CompassConfiguration</literal> (loads configuration and mappings files). When <literal>Compass</literal> is created, it will either join an existing index or create a new one if none is available, then instantiates the configured Search Engine Optimizer. After this, an application will use <literal>Compass</literal> to obtain a <literal>CompassSession</literal> in order to start managing the data with the Search Engine. <literal>Compass</literal> is a heavyweight object, usually created at application startup and shared within an application for <literal>CopmassSession</literal> creation.
+      <emphasis>Compass</emphasis> provide access to search engine management functionality and <literal>CompassSession</literal>'s for managing data within the Search Engine. It is created using <literal> CompassConfiguration</literal> (loads configuration and mappings files). When <literal>Compass</literal> is created, it will either join an existing index or create a new one if none is available, then instantiates the configured Search Engine Optimizer. After this, an application will use <literal>Compass</literal> to obtain a <literal>CompassSession</literal> in order to start managing the data with the Search Engine. <literal>Compass</literal> is a heavyweight object, usually created at application startup and shared within an application for <literal>CompassSession</literal> creation.
     </para>
 
     <para>

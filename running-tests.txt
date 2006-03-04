@@ -16,7 +16,7 @@ compass.engine.store.jdbc.dialect=org.apache.lucene.store.jdbc.dialect.MySQLInno
 compass.engine.store.jdbc.connection.driverClass=com.mysql.jdbc.Driver
 compass.engine.store.jdbc.connection.username=root
 compass.engine.store.jdbc.connection.password=
-copmass.engine.useCompoundFile=false
+compass.engine.useCompoundFile=false
 # END TEST PROPERTIES
 
 

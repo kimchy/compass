@@ -48,7 +48,7 @@
         <setting name="compass.engine.store.jdbc.connection.autoCommit">false</setting>
         <!--<setting name="compass.engine.store.jdbc.lockType">org.apache.lucene.store.jdbc.lock.SelectForUpdateLock</setting>-->
 
-        <setting name="copmass.engine.useCompoundFile">false</setting>
+        <setting name="compass.engine.useCompoundFile">false</setting>
 
         <setting name="compass.transaction.isolation.class">
             org.compass.core.lucene.engine.transaction.ReadCommittedTransaction</setting>

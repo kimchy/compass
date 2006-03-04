@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.ConfigurationException;
-import org.springframework.beans.FatalBeanException;
 
 /**
  * @author kimchy
@@ -110,7 +109,7 @@ public class SmartConfigurationBuilder implements ConfigurationBuilder {
             return (isDtdValidated ? VALIDATION_DTD : VALIDATION_XSD);
         }
         catch (IOException ex) {
-            throw new FatalBeanException(
+            throw new ConfigurationException(
                     "Unable to determine validation mode for [" + resourceName +
                             "]. Did you attempt to load directly from a SAX InputSource?", ex);
         }

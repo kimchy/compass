@@ -826,7 +826,7 @@
               resources, excluding from the index terms that occur further in the resource. Defaults to 10,000 terms.</entry>
             </row>
             <row>
-              <entry>copmass.engine.useCompoundFile</entry>
+              <entry>compass.engine.useCompoundFile</entry>
               <entry>Turn on (<literal>true</literal>) or off (<literal>false</literal>) the use of compound files. If used lowers the number of files open, but have very small performance overhead. Defaults to <literal>true</literal>. Note, when compass starts up, it will validate that the current index structure maps the configured setting, and if it is not, it will automatically try and convert it to the correct structure.
               </entry>
             </row>
@@ -1038,7 +1038,7 @@
         </para>
 
         <para>
-            Setting file entry handlers is done using the following setting prefix: <literal>compass.engine.store.jdbc.fe.[name]</literal>. The name can be either <literal>default</literal> which is used for all unmapped files, it can be the full name of the file stored, or the suffix of the file (the last 3 charecters). Some of the currently supported settings are:
+            Setting file entry handlers is done using the following setting prefix: <literal>compass.engine.store.jdbc.fe.[name]</literal>. The name can be either <literal>__default__</literal> which is used for all unmapped files, it can be the full name of the file stored, or the suffix of the file (the last 3 charecters). Some of the currently supported settings are:
 
             <table>
               <title>File Entry Handler Settings</title>
