@@ -1,0 +1,24 @@
+<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+
+    <compass name="default">
+
+        <connection>
+            <file path="target/test-index"/>
+        </connection>
+
+        <transaction factory="org.compass.core.transaction.JTASyncTransactionFactory" />
+
+        <mappings>
+            <resource location="org/compass/gps/device/hibernate/collection/collection.cpm.xml" />
+        </mappings>
+
+        <settings>
+            <setting name="compass.engine.optimizer.type"
+                     value="org.compass.core.lucene.engine.optimizer.NullOptimizer"/>
+            <!--<setting name="compass.cache.first" value="org.compass.core.cache.first.NullFirstLevelCache"/>-->
+        </settings>
+    </compass>
+
+</compass-core-config>
