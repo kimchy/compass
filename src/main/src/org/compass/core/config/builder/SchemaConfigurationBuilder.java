@@ -31,6 +31,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.util.ClassUtils;
 import org.compass.core.util.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -330,7 +331,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         }
     }
 
-    public void bindMappings(Element ele, CompassConfiguration config) {
+    public void bindMappings(Element ele, CompassConfiguration config) throws Exception {
         NodeList nl = ele.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++) {
             Node node = nl.item(i);
@@ -339,6 +340,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 String nodeName = mappingEle.getLocalName();
                 if ("resource".equals(nodeName)) {
                     config.addResource(DomUtils.getElementAttribute(mappingEle, "location"));
+                } else if ("class".equals(nodeName)) {
+                    config.addClass(ClassUtils.forName(DomUtils.getElementAttribute(mappingEle, "name")));
                 } else if ("jar".equals(nodeName)) {
                     config.addJar(new File(DomUtils.getElementAttribute(mappingEle, "path")));
                 } else if ("file".equals(nodeName)) {

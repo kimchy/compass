@@ -402,7 +402,6 @@ public class CompassEnvironment {
         public static final String FACTORY_TYPE = "compass.property.naming.factory";
     }
 
-
     public abstract class Cache {
 
         public abstract class FirstLevel {

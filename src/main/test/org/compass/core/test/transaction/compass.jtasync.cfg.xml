@@ -11,7 +11,7 @@
         <transaction factory="org.compass.core.transaction.JTASyncTransactionFactory" />
 
         <mappings>
-            <resource location="org/compass/core/test/transaction/A.cpm.xml" />
+            <class name="org.compass.core.test.transaction.A" />
         </mappings>
 
         <settings>
