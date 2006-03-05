@@ -110,7 +110,20 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_FIELD_LENGTH, DomUtils.getElementAttribute(ele, "maxFieldLength"));
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, DomUtils.getElementAttribute(ele, "cacheInvalidationInterval"));
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, DomUtils.getElementAttribute(ele, "indexManagerScheduleInterval"));
-        List child = DomUtils.getChildElementsByTagName(ele, "optimizer", true);
+        settings.setSetting(LuceneEnvironment.DEFAULT_SEARCH, DomUtils.getElementAttribute(ele, "defaultSearch"));
+        List child = DomUtils.getChildElementsByTagName(ele, "aliasProperty", true);
+        if (child.size() == 1) {
+            Element aliasPropertyEle = (Element) child.get(0);
+            settings.setSetting(CompassEnvironment.Alias.NAME, DomUtils.getElementAttribute(aliasPropertyEle, "name"));
+        }
+        child = DomUtils.getChildElementsByTagName(ele, "allProperty", true);
+        if (child.size() == 1) {
+            Element allPropertyEle = (Element) child.get(0);
+            settings.setSetting(CompassEnvironment.All.NAME, DomUtils.getElementAttribute(allPropertyEle, "name"));
+            settings.setSetting(CompassEnvironment.All.TERM_VECTOR, DomUtils.getElementAttribute(allPropertyEle, "termVector"));
+            settings.setSetting(LuceneEnvironment.ALL_ANALYZER, DomUtils.getElementAttribute(allPropertyEle, "analyzer"));
+        }
+        child = DomUtils.getChildElementsByTagName(ele, "optimizer", true);
         if (child.size() == 1) {
             Element optimizerEle = (Element) child.get(0);
             settings.setSetting(LuceneEnvironment.Optimizer.TYPE, DomUtils.getElementAttribute(optimizerEle, "type"));

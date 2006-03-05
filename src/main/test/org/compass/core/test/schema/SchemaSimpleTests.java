@@ -23,6 +23,17 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testPropertiesSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/properties.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("alias1", settings.getSetting(CompassEnvironment.Alias.NAME));
+        assertEquals("all1", settings.getSetting(CompassEnvironment.All.NAME));
+        assertEquals("yes", settings.getSetting(CompassEnvironment.All.TERM_VECTOR));
+        assertEquals("analyzer1", settings.getSetting(LuceneEnvironment.ALL_ANALYZER));
+    }
+
     public void testAnalyzersSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/analyzers.cfg.xml");

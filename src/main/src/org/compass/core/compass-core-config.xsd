@@ -47,6 +47,63 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
+            <xsd:element name="aliasProperty" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Controls the alias property settings.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="name" type="xsd:string" use="optional" default="alias">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name of the alias property.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="allProperty" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Controls the all property settings. The all property is an intenral Compass property for each
+                        resource that holds all the content of a Resource (except for the exceluded ones).
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="name" type="xsd:string" use="optional" default="all">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name of the all property.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="termVector" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The TermVectory that will be used to store the all property.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="no"/>
+                                <xsd:enumeration value="yes"/>
+                                <xsd:enumeration value="positions"/>
+                                <xsd:enumeration value="offsets"/>
+                                <xsd:enumeration value="positions_offsets"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="analyzer" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The lookup name of the anayzer that will be use to analyzer the all property content. If
+                                not set, will default to Compass default analyzer.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
             <xsd:element name="analyzer" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
@@ -314,6 +371,14 @@
                 <xsd:documentation>
                     The index manager schedule interval (in seconds) where different actions related to index manager
                     will happen (such as global cache interval checks).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="defaultSearch" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The default search that will be used for non prefixed query values. Defaults to the value of the
+                    "all" property.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
