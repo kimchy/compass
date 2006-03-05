@@ -279,7 +279,7 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
     }
 
     /**
-     * Invocation handler that suppresses close calls on JDBC Connections.
+     * Invocation handler that handles close methods.
      */
     private class SpringCompassInvocationHandler implements InvocationHandler {
 
