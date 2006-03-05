@@ -56,7 +56,7 @@
             <firstLevel type="org.compass.core.cache.first.NullFirstLevelCache" />
         </cache>
 
-        <searchEngine useCompoundFile="false">
+        <searchEngine useCompoundFile="true">
             <optimizer type="org.compass.core.lucene.engine.optimizer.NullOptimizer" />
         </searchEngine>
     </compass>
