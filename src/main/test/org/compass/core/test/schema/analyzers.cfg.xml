@@ -14,6 +14,9 @@
                     <stopWord value="test" />
                 </stopWords>
             </analyzer>
+            <analyzerFilter name="test" type="org.compass.test.Test">
+                <setting name="setName" value="setValue" />
+            </analyzerFilter>
         </searchEngine>
     </compass>
 

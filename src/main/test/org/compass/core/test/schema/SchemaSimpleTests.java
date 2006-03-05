@@ -35,5 +35,13 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("Snowball", settings.getSetting(LuceneEnvironment.Analyzer.TYPE));
         assertEquals("Lovins", settings.getSetting(LuceneEnvironment.Analyzer.Snowball.NAME_TYPE));
         assertEquals("+test,", settings.getSetting(LuceneEnvironment.Analyzer.STOPWORDS));
+
+        settings = conf.getSettings();
+        groupSettings = settings.getSettingGroups(LuceneEnvironment.AnalyzerFilter.PREFIX);
+        assertEquals(1, groupSettings.size());
+        settings = (CompassSettings) groupSettings.get("test");
+        assertNotNull(settings);
+        assertEquals("org.compass.test.Test", settings.getSetting(LuceneEnvironment.AnalyzerFilter.TYPE));
+        assertEquals("setValue", settings.getSetting("setName"));
     }
 }

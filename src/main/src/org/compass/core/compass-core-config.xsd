@@ -176,6 +176,34 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
+            <xsd:element name="analyzerFilter" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        onfigures a LuceneAnalyzerTokenFilterProvider to be used within Compass.
+                        The LuceneAnalyzerTokenFilterProvider is registed under a lookup name, which can then be
+                        reference in in the analyzer definition (i.e. analyzer filters).
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name the analyzer filter will be registered under.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qulified class name of the LuceneAnalyzerTokenFilterProvider implementation.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
             <xsd:element name="optimizer" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation>

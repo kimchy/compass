@@ -68,6 +68,9 @@ public class CompassSettings {
     }
 
     public Map getSettingGroups(String settingPrefix) {
+        if (settingPrefix.charAt(settingPrefix.length() - 1) != '.') {
+            settingPrefix = settingPrefix + ".";
+        }
         Map group = (Map) groups.get(settingPrefix);
         if (group != null) {
             return group;
@@ -77,7 +80,7 @@ public class CompassSettings {
             for (Iterator it = settings.keySet().iterator(); it.hasNext();) {
                 String setting = (String) it.next();
                 if (setting.startsWith(settingPrefix)) {
-                    String nameValue = setting.substring(settingPrefix.length() + 1);
+                    String nameValue = setting.substring(settingPrefix.length());
                     int dotIndex = nameValue.indexOf('.');
                     if (dotIndex == -1) {
                         throw new ConfigurationException("Failed to get setting group for [" + settingPrefix

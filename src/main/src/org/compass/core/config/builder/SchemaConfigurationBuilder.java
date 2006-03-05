@@ -162,6 +162,15 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setGroupSettings(LuceneEnvironment.Analyzer.PREFIX, analyzerName,
                     settingsHolder.names(), settingsHolder.values());
         }
+        child = DomUtils.getChildElementsByTagName(ele, "analyzerFilter", true);
+        for (Iterator it = child.iterator(); it.hasNext();) {
+            Element analyzerFilterEle = (Element) it.next();
+            SettingsHolder settingsHolder = processSettings(analyzerFilterEle);
+            settingsHolder.names.add(LuceneEnvironment.AnalyzerFilter.TYPE);
+            settingsHolder.values.add(DomUtils.getElementAttribute(analyzerFilterEle, "type"));
+            settings.setGroupSettings(LuceneEnvironment.AnalyzerFilter.PREFIX, DomUtils.getElementAttribute(analyzerFilterEle, "name"),
+                    settingsHolder.names(), settingsHolder.values());
+        }
     }
 
     public void bindCache(Element ele, CompassConfiguration config) {
