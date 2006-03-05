@@ -91,6 +91,22 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         }
     }
 
+    public void bindSearchEngine(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, DomUtils.getElementAttribute(ele, "useCompoundFile"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_FIELD_LENGTH, DomUtils.getElementAttribute(ele, "maxFieldLength"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, DomUtils.getElementAttribute(ele, "cacheInvalidationInterval"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, DomUtils.getElementAttribute(ele, "indexManagerScheduleInterval"));
+        List child = DomUtils.getChildElementsByTagName(ele, "optimizer", true);
+        if (child.size() == 1) {
+            Element optimizerEle = (Element) child.get(0);
+            settings.setSetting(LuceneEnvironment.Optimizer.TYPE, DomUtils.getElementAttribute(optimizerEle, "type"));
+            settings.setSetting(LuceneEnvironment.Optimizer.SCHEDULE, DomUtils.getElementAttribute(optimizerEle, "schedule"));
+            settings.setSetting(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, DomUtils.getElementAttribute(optimizerEle, "mergeFactor"));
+            settings.setSetting(LuceneEnvironment.Optimizer.Aggressive.MERGE_FACTOR, DomUtils.getElementAttribute(optimizerEle, "mergeFactor"));
+        }
+    }
+
     public void bindCache(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
         List child = DomUtils.getChildElementsByTagName(ele, "firstLevel", true);

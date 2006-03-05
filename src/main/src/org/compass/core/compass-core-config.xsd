@@ -25,6 +25,7 @@
             <xsd:element name="transaction" type="transactionType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="jndi" type="jndiType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="cache" type="cacheType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="searchEngine" type="searchEngineType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
@@ -32,6 +33,129 @@
             <xsd:annotation>
                 <xsd:documentation>
                     The name of the Compass instance. Will be used as the registration name when using Jndi registation.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <!-- Search Engine -->
+    <xsd:complexType name="searchEngineType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Controls search engine level settings and configuration.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="optimizer" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Controls the optimizer that will be used to optimizer the search engine index. Optmizers are
+                        used to optimize the index for faster search. Optimizers can be controlled programatically, or
+                        scheduled.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="type" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the type of the optimizer that will be used by the Compass instance. Defaults to
+                                the adaptive optimizer.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When the number of segments exceeds that specified mergeFactor, the segments
+                                            will be merged from the last segment, until a segment with a higher resource
+                                            count will be encountered.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.AggressiveOptimizer">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When the number of segments exceeds that specified mergeFactor, all the
+                                            segments are merged into a single segment.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.NullOptimizer">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Performs no optimization. Will not be scheduled even if the scheduled flag
+                                            is true.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="schedule" type="booleanType" use="optional" default="true">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If the optimizer is going to be scheduled.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="scheduleInterval" type="xsd:float" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Determines the how often the optimizer will kick in (in seconds). Default is 10 seconds.
+                                Can be float number.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="mergeFactor" type="xsd:positiveInteger" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The merge factor for Adaptive and Aggressive optimizers.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="useCompoundFile" type="booleanType" use="optional" default="true">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Setting to turn on usage of a compound file. When on, multiple files for each segment are merged
+                    into a single file once the segment creation is finished. This is done regardless of what directory
+                    is in use.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="maxFieldLength" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The maximum number of terms that will be indexed for a single field in a document. This limits the
+                    amount of memory required for indexing, so that collections with very large files will not crash the
+                    indexing process by running out of memory. Note that this effectively truncates large documents,
+                    excluding from the index terms that occur further in the document. If you know your source documents
+                    are large, be sure to set this value high enough to accomodate the expected size. If you set it to
+                    Integer.MAX_VALUE, then the only limit is your memory, but you should anticipate an
+                    OutOfMemoryError. By default, no more than 10,000 terms will be indexed for a field.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="cacheInvalidationInterval" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Sets how often (in milliseconds) the index manager will check if the index cache needs to be
+                    invalidated. Defaults to 5000. Setting it to 0 means that the cache will check if it needs to be
+                    invalidated all the time. Setting it to -1 means that the cache will never check if it needs to be
+                    invalidated, note, that it is perfectly fine if a single instance is manipulating the index. It
+                    works, since the cache is invalidated when a transaction is committed and a dirty operation has
+                    occured.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="indexManagerScheduleInterval" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The index manager schedule interval (in seconds) where different actions related to index manager
+                    will happen (such as global cache interval checks).
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

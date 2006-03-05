@@ -52,11 +52,13 @@
             -->
         </connection>
 
-        <settings>
-            <setting name="compass.engine.optimizer.type"
-                     value="org.compass.core.lucene.engine.optimizer.NullOptimizer"/>
-            <setting name="compass.cache.first" value="org.compass.core.cache.first.NullFirstLevelCache"/>
-        </settings>
+        <cache>
+            <firstLevel type="org.compass.core.cache.first.NullFirstLevelCache" />
+        </cache>
+
+        <searchEngine useCompoundFile="false">
+            <optimizer type="org.compass.core.lucene.engine.optimizer.NullOptimizer" />
+        </searchEngine>
     </compass>
 
 </compass-core-config>
