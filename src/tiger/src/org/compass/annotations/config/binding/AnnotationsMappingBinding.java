@@ -597,7 +597,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchableConstant.analyzer())) {
             constantMapping.setAnalyzer(searchableConstant.analyzer());
         }
-        constantMapping.setExcludeFromAll(searchableConstant.exceludeFromAll());
+        constantMapping.setExcludeFromAll(searchableConstant.excludeFromAll());
         constantMapping.setOverrideByName(searchableConstant.override());
         for (String value : searchableConstant.values()) {
             constantMapping.addMetaDataValue(valueLookup.lookupMetaDataValue(value));

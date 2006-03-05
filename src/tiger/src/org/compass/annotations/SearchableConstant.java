@@ -66,7 +66,7 @@ public @interface SearchableConstant {
      *
      * @see Searchable#enableAll
      */
-    boolean exceludeFromAll() default false;
+    boolean excludeFromAll() default false;
 
     /**
      * Controls if the constant value should override the same constant defined
