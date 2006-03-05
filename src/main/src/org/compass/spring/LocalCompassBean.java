@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.InputStreamMappingResolver;
 import org.compass.core.converter.Converter;
@@ -254,7 +255,7 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
     }
 
     protected CompassConfiguration newConfiguration() {
-        return new CompassConfiguration();
+        return CompassConfigurationFactory.newConfiguration();
     }
 
     protected Compass newCompass(CompassConfiguration config) throws CompassException {
