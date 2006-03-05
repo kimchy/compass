@@ -91,6 +91,19 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         }
     }
 
+    public void bindConverters(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        List convertersEle = DomUtils.getChildElementsByTagName(ele, "converter");
+        for (Iterator it = convertersEle.iterator(); it.hasNext();) {
+            Element converterEle = (Element) it.next();
+            SettingsHolder settingsHolder = processSettings(converterEle);
+            settingsHolder.names.add(CompassEnvironment.Converter.TYPE);
+            settingsHolder.values.add(DomUtils.getElementAttribute(converterEle, "type"));
+            settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, DomUtils.getElementAttribute(converterEle, "name"),
+                    settingsHolder.names(), settingsHolder.values());
+        }
+    }
+
     public void bindSearchEngine(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, DomUtils.getElementAttribute(ele, "useCompoundFile"));

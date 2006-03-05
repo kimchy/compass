@@ -1,24 +1,29 @@
-<!DOCTYPE compass-core-configuration PUBLIC
-        "-//Compass/Compass Core Configuration DTD 1.0//EN"
-        "http://www.opensymphony.com/compass/dtd/compass-core-configuration.dtd">
+<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
 
-<compass-core-configuration>
+    <compass name="default">
 
-    <compass>
+        <connection>
+            <file path="target/test-index-index"/>
+        </connection>
 
-        <setting name="compass.engine.connection">target/test-index-index</setting>
-        <setting name="compass.engine.optimizer">org.compass.core.lucene.engine.optimizer.type.NullOptimizer</setting>
-        <setting name="compass.engine.optimizer.schedule">false</setting>
-        <setting name="compass.transaction.isolation">batch_insert</setting>
+        <transaction factory="org.compass.core.transaction.JTASyncTransactionFactory" isolation="batch_insert" />
 
-        <setting name="compass.converter.date.format">yyyy/MM/dd</setting>
+        <converters>
+            <converter name="date" type="org.compass.core.converter.basic.DateConverter">
+                <setting name="format" value="yyyy/MM/dd" />
+            </converter>
+        </converters>
 
-        <setting name="compass.transaction.factory">org.compass.core.transaction.JTASyncTransactionFactory</setting>
-
-        <mapping resource="org/compass/gps/device/hibernate/eg/User.cpm.xml"/>
-        <mapping resource="org/compass/gps/device/hibernate/eg/Bid.cpm.xml"/>
+        <searchEngine>
+            <optimizer type="org.compass.core.lucene.engine.optimizer.NullOptimizer"/>
+        </searchEngine>
+        
+        <mappings>
+            <resource location="org/compass/gps/device/hibernate/eg/User.cpm.xml" />
+            <resource location="org/compass/gps/device/hibernate/eg/Bid.cpm.xml" />
+        </mappings>
 
     </compass>
-
-</compass-core-configuration>
-
+</compass-core-config>

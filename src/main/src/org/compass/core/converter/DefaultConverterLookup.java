@@ -304,7 +304,4 @@ public class DefaultConverterLookup implements ConverterLookup {
         }
         return null;
     }
-
-    public void addConverter(Class type, Converter converter) {
-    }
 }

@@ -25,6 +25,7 @@
             <xsd:element name="transaction" type="transactionType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="jndi" type="jndiType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="cache" type="cacheType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="converters" type="convertersType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="searchEngine" type="searchEngineType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
@@ -159,6 +160,51 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+    </xsd:complexType>
+
+    <!-- Convertres -->
+    <xsd:complexType name="convertersType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures a set of converters to work with Compass.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="converter" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures a Converter bounded under the specified name with the given type.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Setting used to configure the Converter.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name of the Converter. Will be used as the converter lookup name. Can also be one of
+                                Compass default converter name, allowing to change default Converter types that comes
+                                with Compass.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qualified class name of the Converter. Must implement the Converter interface.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
     </xsd:complexType>
 
     <!-- Cache -->
@@ -1285,8 +1331,8 @@
                 Adds OSEM (Object to Search Engine Mapping) definition to the Compass instance.
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:choice>
-            <xsd:element name="resource">
+        <xsd:sequence>
+            <xsd:element name="resource" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
                         Loads mapping definition from the class path.
@@ -1302,7 +1348,7 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
-            <xsd:element name="class">
+            <xsd:element name="class" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
                         Loads mapping definition for a fully qualified class name.
@@ -1318,7 +1364,7 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
-            <xsd:element name="jar">
+            <xsd:element name="jar" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
                         Loads all the OSEM definitions found in a Jar file.
@@ -1334,7 +1380,7 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
-            <xsd:element name="file">
+            <xsd:element name="file" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
                         Loads OSEM definition from a file.
@@ -1350,7 +1396,7 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
-            <xsd:element name="dir">
+            <xsd:element name="dir" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
                         Loads all the OSEM definitions found in a directory.
@@ -1366,7 +1412,7 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
-            <xsd:element name="package">
+            <xsd:element name="package" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
                         The fully qualified package name to load annotations definitions from.
@@ -1382,7 +1428,7 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
-        </xsd:choice>
+        </xsd:sequence>
     </xsd:complexType>
 
     <!-- Settings Types -->
