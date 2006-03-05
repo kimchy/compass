@@ -166,7 +166,7 @@ public @interface SearchableProperty {
     String analyzer() default "";
 
     /**
-     * The execlude from all of the auto generated {@link SearchableMetaData}. Maps to
+     * The exclude from all of the auto generated {@link SearchableMetaData}. Maps to
      * {@link org.compass.annotations.SearchableMetaData#excludeFromAll()}.
      * <p/>
      * The meta-data will NOT be auto generated if the field/property have
