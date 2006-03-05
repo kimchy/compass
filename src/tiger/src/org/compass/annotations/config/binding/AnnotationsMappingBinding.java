@@ -114,10 +114,10 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         ArrayList<String> settingsValues = new ArrayList<String>();
 
         settingsNames.add(LuceneEnvironment.Analyzer.TYPE);
-        if (searchAnalyzer.type() == AnalyzerType.ClassName) {
+        if (searchAnalyzer.type() == AnalyzerType.CustomAnalyzer) {
             if (Analyzer.class.equals(searchAnalyzer.analyzerClass())) {
                 throw new ConfigurationException("SearchableAnalyzer [" + searchAnalyzer.name() + "] has " +
-                        "type of [" + AnalyzerType.ClassName + "] but does not set analyzerClass");
+                        "type of [" + AnalyzerType.CustomAnalyzer + "] but does not set analyzerClass");
             }
             settingsValues.add(searchAnalyzer.analyzerClass().getName());
         } else {
@@ -138,6 +138,15 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 sb.append(stopword).append(",");
             }
             settingsNames.add(LuceneEnvironment.Analyzer.STOPWORDS);
+            settingsValues.add(sb.toString());
+        }
+
+        if (searchAnalyzer.filters().length > 0) {
+            StringBuffer sb = new StringBuffer();
+            for (String filter : searchAnalyzer.filters()) {
+                sb.append(filter).append(",");
+            }
+            settingsNames.add(LuceneEnvironment.Analyzer.FILTERS);
             settingsValues.add(sb.toString());
         }
 

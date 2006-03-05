@@ -47,6 +47,135 @@
             </xsd:documentation>
         </xsd:annotation>
         <xsd:sequence>
+            <xsd:element name="analyzer" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures an Analyzer within Compass. The analyzer is bound to a lookup name, which can be used
+                        to reference the analyzer. Two internal names that Compass uses are: default and search.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="stopWords" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Allows adding stop words for the anlayzers, or completly replacing them.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="stopWord" minOccurs="0" maxOccurs="unbounded">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Sets a stop word.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:complexType>
+                                            <xsd:attribute name="value" type="xsd:string" use="required">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        The value for the stop word.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:attribute>
+                                        </xsd:complexType>
+                                    </xsd:element>
+                                </xsd:sequence>
+                                <xsd:attribute name="replace" type="booleanType" default="false">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Replace the set of stop words that comes with certain analyzers.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Configures additonal settings for the analyzer. Mainly used with custom analyzers.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name the analyzer will bind to.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                One of the internal analyzer types that comes with Compass. A CustomAnalyzer type is
+                                also provided for custom analyzers, which can be defined in the analyzerClass type.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="Standard"/>
+                                <xsd:enumeration value="Simple"/>
+                                <xsd:enumeration value="Whitespace"/>
+                                <xsd:enumeration value="Stop"/>
+                                <xsd:enumeration value="Snowball"/>
+                                <xsd:enumeration value="Braziliian"/>
+                                <xsd:enumeration value="Cjk"/>
+                                <xsd:enumeration value="Chinese"/>
+                                <xsd:enumeration value="Czech"/>
+                                <xsd:enumeration value="German"/>
+                                <xsd:enumeration value="Greek"/>
+                                <xsd:enumeration value="French"/>
+                                <xsd:enumeration value="Dutch"/>
+                                <xsd:enumeration value="Russian"/>
+                                <xsd:enumeration value="CustomAnalyzer"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="analyzerClass" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Used to define the fully qualified analyzer class name in case of a CustomAnalyzer type.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="snowballType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If using the snowball analyzer, controlls the snowball analyzer type.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="Danish"/>
+                                <xsd:enumeration value="Dutch"/>
+                                <xsd:enumeration value="English"/>
+                                <xsd:enumeration value="Finnish"/>
+                                <xsd:enumeration value="French"/>
+                                <xsd:enumeration value="German"/>
+                                <xsd:enumeration value="German2"/>
+                                <xsd:enumeration value="Italian"/>
+                                <xsd:enumeration value="Kp"/>
+                                <xsd:enumeration value="Lovins"/>
+                                <xsd:enumeration value="Norwegian"/>
+                                <xsd:enumeration value="Porter"/>
+                                <xsd:enumeration value="Portuguese"/>
+                                <xsd:enumeration value="Russian"/>
+                                <xsd:enumeration value="Spanish"/>
+                                <xsd:enumeration value="Swedish"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="filters" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A comma separated LuceneAnalyzerTokenFilterProviders lookup names to be used with the
+                                Analyzer.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
             <xsd:element name="optimizer" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
                     <xsd:documentation>

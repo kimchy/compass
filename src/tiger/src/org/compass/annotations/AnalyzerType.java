@@ -2,7 +2,7 @@ package org.compass.annotations;
 
 /**
  * The intenral Compass supported analyzers.
- * Note the {@link #ClassName}, which is not an analyzer, but specifies
+ * Note the {@link #CustomAnalyzer}, which is not an analyzer, but specifies
  * that the analyzer that will be used is a custom implementation of Lucene
  * <code>Analyzer</code>/
  *
@@ -26,5 +26,5 @@ public enum AnalyzerType {
     French,
     Dutch,
     Russian,
-    ClassName
+    CustomAnalyzer
 }

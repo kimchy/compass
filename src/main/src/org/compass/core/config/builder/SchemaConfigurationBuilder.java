@@ -118,6 +118,50 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, DomUtils.getElementAttribute(optimizerEle, "mergeFactor"));
             settings.setSetting(LuceneEnvironment.Optimizer.Aggressive.MERGE_FACTOR, DomUtils.getElementAttribute(optimizerEle, "mergeFactor"));
         }
+        child = DomUtils.getChildElementsByTagName(ele, "analyzer", true);
+        for (Iterator it = child.iterator(); it.hasNext();) {
+            Element analyzerEle = (Element) it.next();
+            String analyzerName = DomUtils.getElementAttribute(analyzerEle, "name");
+            SettingsHolder settingsHolder = processSettings(analyzerEle);
+            String analyzerType = DomUtils.getElementAttribute(analyzerEle, "type");
+            if (analyzerType != null) {
+                if (analyzerType.equals("CustomAnalyzer")) {
+                    analyzerType = DomUtils.getElementAttribute(analyzerEle, "analyzerClass");
+                    if (analyzerType == null) {
+                        throw new ConfigurationException("Analyzer [" + analyzerName + "] has " +
+                                "type of [CustomAnalyzer] but does not set analyzerClass");
+                    }
+                }
+                settingsHolder.names.add(LuceneEnvironment.Analyzer.TYPE);
+                settingsHolder.values.add(analyzerType);
+
+                if (analyzerType.equals("Snowball")) {
+                    settingsHolder.names.add(LuceneEnvironment.Analyzer.Snowball.NAME_TYPE);
+                    settingsHolder.values.add(DomUtils.getElementAttribute(analyzerEle, "snowballType"));
+                }
+            }
+            settingsHolder.names.add(LuceneEnvironment.Analyzer.FILTERS);
+            settingsHolder.values.add(DomUtils.getElementAttribute(analyzerEle, "filters"));
+
+            List stopWordsList = DomUtils.getChildElementsByTagName(analyzerEle, "stopWords", true);
+            if (stopWordsList.size() == 1) {
+                Element stopWordsEle = (Element) stopWordsList.get(0);
+                StringBuffer sb = new StringBuffer();
+                boolean replace = DomUtils.getElementAttributeAsBoolean(stopWordsEle, "replace", true);
+                if (!replace) {
+                    sb.append("+");
+                }
+                List stopWords = DomUtils.getChildElementsByTagName(stopWordsEle, "stopWord", true);
+                for (Iterator swIt = stopWords.iterator(); swIt.hasNext();) {
+                    Element stopWordEle = (Element) swIt.next();
+                    sb.append(DomUtils.getElementAttribute(stopWordEle, "value")).append(",");
+                }
+                settingsHolder.names.add(LuceneEnvironment.Analyzer.STOPWORDS);
+                settingsHolder.values.add(sb.toString());
+            }
+            settings.setGroupSettings(LuceneEnvironment.Analyzer.PREFIX, analyzerName,
+                    settingsHolder.names(), settingsHolder.values());
+        }
     }
 
     public void bindCache(Element ele, CompassConfiguration config) {

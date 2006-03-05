@@ -17,7 +17,7 @@ import org.apache.lucene.analysis.Analyzer;
  * Allows for simple configuration of all analyzers that come with Compass using {@link #type()}.
  * If the {@link #type()} is set to {@link AnalyzerType#Snowball}, the {@link #snowballType()}
  * can be used to further configure the snowball analyzer. If a custom converter needs to be
- * registered with Compass, the {@link AnalyzerType#ClassName} needs to be set on {@link #type()},
+ * registered with Compass, the {@link AnalyzerType#CustomAnalyzer} needs to be set on {@link #type()},
  * and the {@link #analyzerClass()} needs to be configured with the class that implements it.
  * <p/>
  * A set of stop words can be added/replace the stop words the internal analyzers are configured
@@ -50,7 +50,7 @@ public @interface SearchAnalyzer {
 
     /**
      * The type of the analyzer. For custom {@link Analyzer} implementation
-     * the {@link AnalyzerType#ClassName} should be set, and the {@link #analyzerClass()}
+     * the {@link AnalyzerType#CustomAnalyzer} should be set, and the {@link #analyzerClass()}
      * should have the custom {@link Analyzer} class set.
      */
     AnalyzerType type();
@@ -63,7 +63,7 @@ public @interface SearchAnalyzer {
 
     /**
      * The custom {@link Analyzer} implementation. Used when the {@link #type()}
-     * is set to {@link AnalyzerType#ClassName}.
+     * is set to {@link AnalyzerType#CustomAnalyzer}.
      */
     Class<? extends Analyzer> analyzerClass() default Analyzer.class;
 
@@ -79,7 +79,7 @@ public @interface SearchAnalyzer {
      * A set of stop words that will be added/replace the stop words that comes with Compass intenral
      * analyzers.
      * <p/>
-     * Only applies when using one of Compass internal analyzer types, and not the {@link AnalyzerType#ClassName}.
+     * Only applies when using one of Compass internal analyzer types, and not the {@link AnalyzerType#CustomAnalyzer}.
      */
     String[] stopWords() default {};
 
@@ -87,7 +87,7 @@ public @interface SearchAnalyzer {
      * Add the set of {@link #stopWords()} to the default set of stop words if set to <code>true</code>.
      * Replaces them if set to <code>false</code>.
      * <p/>
-     * Only applies when using one of Compass internal analyzer types, and not the {@link AnalyzerType#ClassName}.
+     * Only applies when using one of Compass internal analyzer types, and not the {@link AnalyzerType#CustomAnalyzer}.
      */
     boolean addStopWords() default true;
 

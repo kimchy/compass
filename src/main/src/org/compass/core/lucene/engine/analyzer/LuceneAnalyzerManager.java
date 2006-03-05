@@ -16,11 +16,7 @@
 
 package org.compass.core.lucene.engine.analyzer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +34,7 @@ import org.compass.core.mapping.ResourceAnalyzerController;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.util.ClassUtils;
+import org.compass.core.util.StringUtils;
 
 /**
  * @author kimchy
@@ -187,6 +184,9 @@ public class LuceneAnalyzerManager {
             ArrayList filterProviders = new ArrayList();
             while (tokenizer.hasMoreTokens()) {
                 String filterProviderLookupName = tokenizer.nextToken();
+                if (!StringUtils.hasText(filterProviderLookupName)) {
+                    continue;
+                }
                 LuceneAnalyzerTokenFilterProvider provider =
                         (LuceneAnalyzerTokenFilterProvider) analyzersFilters.get(filterProviderLookupName);
                 if (provider == null) {
