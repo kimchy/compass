@@ -68,5 +68,10 @@
 	<classpathentry kind="lib" path="lib/lucene/lucene-highlighter.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-core.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-analyzers.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-hibernate2.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-jdo.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-jpa.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-ojb.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
