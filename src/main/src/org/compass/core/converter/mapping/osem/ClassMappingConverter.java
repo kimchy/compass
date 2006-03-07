@@ -49,6 +49,7 @@ public class ClassMappingConverter implements Converter {
         // care and "unroots" it)
         if (classMapping.isRoot()) {
             resource.setAlias(classMapping.getAlias());
+            resource.setBoost(classMapping.getBoost());
         }
         if (classMapping.isPoly()) {
             // if the class is defined as poly, persist the class name as well
@@ -57,8 +58,6 @@ public class ClassMappingConverter implements Converter {
                     Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
         }
-
-        resource.setBoost(classMapping.getBoost());
 
         for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, root);
