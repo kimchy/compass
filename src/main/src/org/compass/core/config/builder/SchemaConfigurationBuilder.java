@@ -131,6 +131,99 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, DomUtils.getElementAttribute(optimizerEle, "mergeFactor"));
             settings.setSetting(LuceneEnvironment.Optimizer.Aggressive.MERGE_FACTOR, DomUtils.getElementAttribute(optimizerEle, "mergeFactor"));
         }
+        child = DomUtils.getChildElementsByTagName(ele, "highlighter", true);
+        for (Iterator it = child.iterator(); it.hasNext();) {
+            Element highlighterEle = (Element) it.next();
+            String highlighterName = DomUtils.getElementAttribute(highlighterEle, "name");
+            SettingsHolder settingsHolder = processSettings(highlighterEle);
+
+            settingsHolder.names.add(LuceneEnvironment.Highlighter.TEXT_TOKENIZER);
+            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "textTokenizer"));
+
+            settingsHolder.names.add(LuceneEnvironment.Highlighter.REWRITE_QUERY);
+            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "rewriteQuery"));
+
+            settingsHolder.names.add(LuceneEnvironment.Highlighter.COMPUTE_IDF);
+            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "computeIdf"));
+
+            settingsHolder.names.add(LuceneEnvironment.Highlighter.MAX_NUM_FRAGMENTS);
+            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "maxNumFragments"));
+
+            settingsHolder.names.add(LuceneEnvironment.Highlighter.SEPARATOR);
+            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "separator"));
+
+            settingsHolder.names.add(LuceneEnvironment.Highlighter.MAX_BYTES_TO_ANALYZE);
+            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "maxBytesToAnalyze"));
+
+            List fragmenterList = DomUtils.getChildElementsByTagName(highlighterEle, "fragmenter", true);
+            if (fragmenterList.size() == 1) {
+                Element fragmenterEle = (Element) fragmenterList.get(0);
+                String type = DomUtils.getElementAttribute(fragmenterEle, "type");
+                if ("custom".equals(type)) {
+                    type = DomUtils.getElementAttribute(fragmenterEle, "class");
+                }
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Fragmenter.TYPE);
+                settingsHolder.values.add(type);
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Fragmenter.SIMPLE_SIZE);
+                settingsHolder.values.add(DomUtils.getElementAttribute(fragmenterEle, "size"));
+            }
+
+            List encoderList = DomUtils.getChildElementsByTagName(highlighterEle, "encoder", true);
+            if (encoderList.size() == 1) {
+                Element encoderEle = (Element) encoderList.get(0);
+                String type = DomUtils.getElementAttribute(encoderEle, "type");
+                if ("custom".equals(type)) {
+                    type = DomUtils.getElementAttribute(encoderEle, "class");
+                }
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Encoder.TYPE);
+                settingsHolder.values.add(type);
+            }
+
+            List formatterList = DomUtils.getChildElementsByTagName(highlighterEle, "simpleFormatter", true);
+            if (formatterList.size() == 1) {
+                Element formatterEle = (Element) formatterList.get(0);
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.TYPE);
+                settingsHolder.values.add(LuceneEnvironment.Highlighter.Formatter.SIMPLE);
+
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.SIMPLE_PRE_HIGHLIGHT);
+                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "pre"));
+
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.SIMPLE_POST_HIGHLIGHT);
+                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "post"));
+            }
+
+            formatterList = DomUtils.getChildElementsByTagName(highlighterEle, "htmlSpanGradientFormatter", true);
+            if (formatterList.size() == 1) {
+                Element formatterEle = (Element) formatterList.get(0);
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.TYPE);
+                settingsHolder.values.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT);
+
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_SCORE);
+                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "maxScore"));
+
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MIN_FOREGROUND_COLOR);
+                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "minForegroundColor"));
+
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_FOREGROUND_COLOR);
+                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "maxForegroundColor"));
+
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MIN_BACKGROUND_COLOR);
+                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "minBackgroundColor"));
+
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_BACKGROUND_COLOR);
+                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "maxBackgroundColor"));
+            }
+
+            formatterList = DomUtils.getChildElementsByTagName(highlighterEle, "customFormatter", true);
+            if (formatterList.size() == 1) {
+                Element formatterEle = (Element) formatterList.get(0);
+                settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.TYPE);
+                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "class"));
+            }
+
+            settings.setGroupSettings(LuceneEnvironment.Highlighter.PREFIX, highlighterName,
+                    settingsHolder.names(), settingsHolder.values());
+        }
         child = DomUtils.getChildElementsByTagName(ele, "analyzer", true);
         for (Iterator it = child.iterator(); it.hasNext();) {
             Element analyzerEle = (Element) it.next();

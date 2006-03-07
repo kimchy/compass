@@ -55,4 +55,24 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("org.compass.test.Test", settings.getSetting(LuceneEnvironment.AnalyzerFilter.TYPE));
         assertEquals("setValue", settings.getSetting("setName"));
     }
+
+    public void testHighlightersSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/highlighters.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        Map groupSettings = settings.getSettingGroups(LuceneEnvironment.Highlighter.PREFIX);
+        assertEquals(1, groupSettings.size());
+        settings = (CompassSettings) groupSettings.get("test1");
+        assertNotNull(settings);
+        assertEquals(LuceneEnvironment.Highlighter.Fragmenter.TYPE_SIMPLE,
+                settings.getSetting(LuceneEnvironment.Highlighter.Fragmenter.TYPE));
+        assertEquals(90, settings.getSettingAsInt(LuceneEnvironment.Highlighter.Fragmenter.SIMPLE_SIZE, 0));
+        assertEquals(LuceneEnvironment.Highlighter.Encoder.HTML,
+                settings.getSetting(LuceneEnvironment.Highlighter.Encoder.TYPE));
+        assertEquals(LuceneEnvironment.Highlighter.Formatter.SIMPLE,
+                settings.getSetting(LuceneEnvironment.Highlighter.Formatter.TYPE));
+        assertEquals("<tag>", settings.getSetting(LuceneEnvironment.Highlighter.Formatter.SIMPLE_PRE_HIGHLIGHT));
+        assertEquals("</tag>", settings.getSetting(LuceneEnvironment.Highlighter.Formatter.SIMPLE_POST_HIGHLIGHT));
+    }
 }

@@ -343,7 +343,7 @@ public class LuceneEnvironment {
         public static final String SEPARATOR = "separator";
 
         /**
-         * Maximum byes to analyze. Default to <code>50*1024</code> bytes.
+         * Maximum bytes to analyze. Default to <code>50*1024</code> bytes.
          */
         public static final String MAX_BYTES_TO_ANALYZE = "maxBytesToAnalyze";
 
@@ -418,7 +418,7 @@ public class LuceneEnvironment {
         public abstract class Formatter {
 
             /**
-             * If set, sets the type of the Lucene <code>Fragmenter</code> or
+             * If set, sets the type of the Lucene <code>Formatter</code> or
              * it's fully qualified name. Defaults to {@link #SIMPLE}.
              */
             public static final String TYPE = "formatter.type";

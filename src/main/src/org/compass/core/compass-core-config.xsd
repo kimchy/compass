@@ -104,6 +104,304 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
+            <xsd:element name="highlighter" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures a Highlighter within Compass. The highlighter is bound to a lookup name, which can be
+                        used to reference the highlighter. The default highlighter should be regsitered under the name
+                        default.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="fragmenter" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Responsible for fragmenting the text. For a custom implementation of the Fragmenter
+                                    class, use the custom type, and provide the fully qualified class name in the class
+                                    attribute.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="type" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The type of the fragmenter.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                            <xsd:enumeration value="null">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        A null Lucene Fragmenter. Does not fragment the text.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="simple">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        A simple Lucene Fragmenter. Breaks text up into same-size
+                                                        fragments with no concerns over spotting sentence boundaries.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="custom">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Allows to specify a custom class implementation of Lucene
+                                                        Fragmenter class. The class can be defined in the class
+                                                        attribute.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                        </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:attribute>
+                                <xsd:attribute name="class" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The fully qualified class name of the implementation of Lucene Fragmenter.
+                                            Used when the type is custom.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="size" type="xsd:positiveInteger" use="optional" default="100">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The size of the fragment. Applies to the simple fragmenter.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="encoder" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Responsible for encoding the text. For a custom implementation of the Encoder
+                                    class, use the custom type, and provide the fully qualified class name in the class
+                                    attribute.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="type" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The type of the fragmenter.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                            <xsd:enumeration value="default">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Performs no encoding of the text.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="html">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Simple encoder that encodes html tags.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="custom">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Allows to specify a custom class implementation of Lucene
+                                                        Encoder class. The class can be defined in the class
+                                                        attribute.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                        </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:attribute>
+                                <xsd:attribute name="class" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The fully qualified class name of the implementation of Lucene Encoder.
+                                            Used when the type is custom.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:choice>
+                            <xsd:element name="simpleFormatter" minOccurs="0" maxOccurs="1">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        A simple wrapper formatter. Wraps the highlight with pre and post string (can be
+                                        html or xml tags)
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="pre" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Controlls the text that is appened before the highlighted text.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="post" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Controlls the text that is appened after the highlighted text.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="htmlSpanGradientFormatter" minOccurs="0" maxOccurs="1">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Wraps an html span tag around the highlighted text. The background and
+                                        foreground colors can be controlled and will have different color intensity
+                                        depending on the score.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="maxScore" type="xsd:float" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The score (and above) displayed as maxColor.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="minForegroundColor" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The hex color used for representing IDF scores of zero eg #FFFFFF
+                                                (white) or not set if no foreground color required.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="maxForegroundColor" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The largest hex color used for representing IDF scores eg #000000
+                                                (black) or not set if no foreground color required.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="minBackgroundColor" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The hex color used for representing IDF scores of zero eg #FFFFFF
+                                                (white) or not set if no background color required.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="maxBackgroundColor" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The largest hex color used for representing IDF scores eg #000000
+                                                (black) or not set if no background color required.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="customFormatter" minOccurs="0" maxOccurs="1">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        A custom implementation of the Lucene Formatter.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="class" type="xsd:string" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The fully qualified class name implementation of Lucene Formatter.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:choice>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name the highlighter will be registered under.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="textTokenizer" use="optional" default="auto">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Controls the way text will be tokenized in order to perform the highlight operation.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="auto">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Will use term vector if available to tokenize the text, otherwise will use
+                                            analyzer.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="analyzer">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Forces tokenization of the text using the analyzer.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="termVector">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Forces tokenization of the text using the tem vector information.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="rewriteQuery" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Low level. If the query will be rewritten befored it is used by the highlighter.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="computeIdf" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If the idf value will be used during the highlighting process. Used by formatters that
+                                a) score selected fragments better b) use graded highlights eg chaning intensity of font
+                                color. Automatically assigned for the provided formatters.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="maxNumFragments" type="xsd:positiveInteger" use="optional" default="3">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the maximum number of fragments that will be returned.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="separator" type="xsd:string" use="optional" default="...">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the separator string between fragments if using the combined fragments highlight
+                                option.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="maxBytesToAnalyze" type="xsd:positiveInteger" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Maximum bytes to analyze. Default to 50*1024 bytes.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
             <xsd:element name="analyzer" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
