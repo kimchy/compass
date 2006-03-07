@@ -53,7 +53,6 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
 
         if (resourcePropertyMapping.getStore() == Property.Store.NO) {
             // it is not stored, so don't bother with converting it

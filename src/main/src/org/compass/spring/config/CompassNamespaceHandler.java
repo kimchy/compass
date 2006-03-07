@@ -16,8 +16,6 @@
 
 package org.compass.spring.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.builder.SchemaConfigurationBuilder;
@@ -33,8 +31,6 @@ import org.w3c.dom.Element;
  * @author kimchy
  */
 public class CompassNamespaceHandler extends NamespaceHandlerSupport {
-
-    private static final Log log = LogFactory.getLog(CompassNamespaceHandler.class);
 
     public CompassNamespaceHandler() {
         registerBeanDefinitionParser("compass", new CompassBeanDefinitionParser());

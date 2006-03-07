@@ -27,6 +27,8 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
 
     public static final class CollectionType extends Parameter {
 
+        private static final long serialVersionUID = 5419036751959715652L;
+
         private CollectionType(String name) {
             super(name);
         }
