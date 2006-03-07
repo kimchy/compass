@@ -703,4 +703,25 @@ public class PropertyTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testStoreNoManagedIdFalse() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        CompassHits hits = session.find("mvalue1:test");
+        assertEquals(0, hits.getLength());
+
+        Long id = new Long(1);
+        A a = new A();
+        a.setId(id);
+        a.setValue("first test string");
+
+        session.save("a13", a);
+
+        a = (A) session.load("a13", id);
+        assertNull(a.getValue());
+
+        tr.commit();
+        session.close();
+    }
 }
