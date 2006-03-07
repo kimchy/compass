@@ -15,8 +15,8 @@
 
 
     <compass:compass name="compass" dataSource="dataSource">
-        <compass:settings>
-            <compass:setting name="compass.engine.connection" value="target/test-index" />
-        </compass:settings>
+        <compass:connection>
+            <compass:file path="target/test-index" />
+        </compass:connection>
     </compass:compass>
 </beans>
