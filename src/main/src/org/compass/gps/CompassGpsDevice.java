@@ -95,8 +95,9 @@ public interface CompassGpsDevice {
      * devices through the CompassGps API.
      * 
      * @throws CompassGpsException
+     * @throws IllegalStateException
      */
-    void index() throws CompassGpsException;
+    void index() throws CompassGpsException, IllegalStateException;
 
     /**
      * Retuns <code>true</code> if the devide performs the index operaiton.

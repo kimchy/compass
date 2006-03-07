@@ -38,6 +38,8 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
 
     private boolean started = false;
 
+    private boolean performingIndexOperation = false;
+
     public void addGpsDevice(CompassGpsDevice gpsDevice) {
         checkDeviceValidity(gpsDevice);
         gpsDevice.setGps(this);
@@ -82,7 +84,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         return false;
     }
 
-    public synchronized void index() throws CompassGpsException {
+    public synchronized void index() throws CompassGpsException, IllegalStateException {
         if (!isRunning()) {
             throw new IllegalStateException("CompassGps must be running in order to perform the index operation");
         }
@@ -92,7 +94,15 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         if (((InternalCompass) getIndexCompass()).getTransactionFactory().getTransactionBoundSession() != null) {
             throw new CompassGpsException("index() operation is not allowed to be called within a transaction (index)");
         }
-        doIndex();
+        if (isPerformingIndexOperation()) {
+            throw new IllegalArgumentException("Indexing alredy in process, not allowed to call index()");
+        }
+        try {
+            performingIndexOperation = true;
+            doIndex();
+        } finally {
+            performingIndexOperation = false;
+        }
     }
 
     protected abstract void doIndex() throws CompassGpsException;
@@ -127,4 +137,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         return started;
     }
 
+    public boolean isPerformingIndexOperation() {
+        return performingIndexOperation;
+    }
 }

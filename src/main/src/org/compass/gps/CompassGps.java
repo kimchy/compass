@@ -64,10 +64,15 @@ public interface CompassGps {
     boolean isRunning();
 
     /**
+     * Retuns <code>true</code> if the devide performs the index operaiton.
+     */
+    public boolean isPerformingIndexOperation();
+
+    /**
      * Indexes all the different devices (by calling their respective
      * <code>index()</code> operation.
      * 
      * @throws CompassGpsException
      */
-    void index() throws CompassGpsException;
+    void index() throws CompassGpsException, IllegalStateException;
 }

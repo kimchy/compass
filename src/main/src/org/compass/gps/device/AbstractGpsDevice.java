@@ -16,6 +16,9 @@
 
 package org.compass.gps.device;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassCallbackWithoutResult;
@@ -24,15 +27,12 @@ import org.compass.core.CompassSession;
 import org.compass.core.impl.InternalCompassSession;
 import org.compass.gps.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A general abstract device which can be used by all types of devices.
- * <p>
+ * <p/>
  * Provides support for device name, state management
  * {@link AbstractGpsDevice#isRunning()}, as well as general helper methods.
- * 
+ *
  * @author kimchy
  */
 public abstract class AbstractGpsDevice implements CompassGpsDevice {
@@ -46,8 +46,6 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
     private boolean started = false;
 
     private boolean internalMirrorDataChanges = false;
-
-    private boolean performingIndexOperation = false;
 
     private String[] filteredEntitiesForIndex;
 
@@ -86,17 +84,12 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
             throw new IllegalStateException(
                     buildMessage("must be running in order to perform the index operation"));
         }
-        try {
-            performingIndexOperation = true;
-            compassGps.executeForIndex(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    doIndex(session);
-                    ((InternalCompassSession) session).flush();
-                }
-            });
-        } finally {
-            performingIndexOperation = false;
-        }
+        compassGps.executeForIndex(new CompassCallbackWithoutResult() {
+            protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                doIndex(session);
+                ((InternalCompassSession) session).flush();
+            }
+        });
     }
 
     /**
@@ -132,7 +125,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
 
     /**
      * Derived devices can implement it in case of start event notification.
-     * 
+     *
      * @throws CompassGpsException
      */
     protected void doStart() throws CompassGpsException {
@@ -148,7 +141,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
 
     /**
      * Derived devices can implement it in case of stop event notification.
-     * 
+     *
      * @throws CompassGpsException
      */
     protected void doStop() throws CompassGpsException {
@@ -160,7 +153,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
     }
 
     public boolean isPerformingIndexOperation() {
-        return performingIndexOperation;
+        return compassGps.isPerformingIndexOperation();
     }
 
     public boolean shouldMirrorDataChanges() {
