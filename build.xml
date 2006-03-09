@@ -206,14 +206,16 @@
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
         <copy file="${main.src.dir}/org/compass/core/compass-core-config.xsd"
-              todir="${dist.dir}/xsd" preservelastmodified="true"/>
+              todir="${dist.dir}/schema" preservelastmodified="true"/>
 
         <copy file="${main.src.dir}/org/compass/spring/config/spring-compass-core-config.xsd"
-              todir="${dist.dir}/xsd" preservelastmodified="true"/>
+              todir="${dist.dir}/schema" preservelastmodified="true"/>
 
         <copy todir="${dist.dir}/lucene">
             <fileset dir="${lib.dir}/lucene" />
         </copy>
+
+        <copy file="${lib.dir}/jakarta-commons/commons-logging.jar" todir="${dist.dir}"/>
     </target>
 
 

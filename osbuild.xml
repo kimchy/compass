@@ -23,12 +23,12 @@
             <fileset dir="${basedir}/site" />
         </copy>
         <copy todir="${os.docs.dir}/dtd" overwrite="true">
-            <fileset dir="${dist.dir}">
+            <fileset dir="${dist.dir}/dtd">
                 <include name="*.dtd"/>
             </fileset>
         </copy>
         <copy todir="${os.docs.dir}/schema" overwrite="true">
-            <fileset dir="${dist.dir}">
+            <fileset dir="${dist.dir}/schema">
                 <include name="*.xsd"/>
             </fileset>
         </copy>
@@ -50,12 +50,12 @@
             <fileset dir="${target.release.dir}" />
         </copy>
         <copy todir="${os.docs.dir}/versions/${compass-version}/dtd">
-            <fileset dir="${dist.dir}">
+            <fileset dir="${dist.dir}/dtd">
                 <include name="*.dtd"/>
             </fileset>
         </copy>
         <copy todir="${os.docs.dir}/versions/${compass-version}/schema">
-            <fileset dir="${dist.dir}">
+            <fileset dir="${dist.dir}/schema">
                 <include name="*.xsd"/>
             </fileset>
         </copy>
