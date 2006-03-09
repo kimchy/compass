@@ -13,6 +13,7 @@
 <!ENTITY core-transaction  SYSTEM "core-transaction.xml">
 <!ENTITY core-workingwithobjects  SYSTEM "core-workingwithobjects.xml">
 <!ENTITY core-jdbcdirectory  SYSTEM "core-jdbcdirectory.xml">
+<!ENTITY core-settings  SYSTEM "core-settings.xml">
 
 <!ENTITY vocabulary-intro  SYSTEM "vocabulary-intro.xml">
 <!ENTITY vocabulary-introduction  SYSTEM "vocabulary-introduction.xml">
@@ -171,6 +172,7 @@
 
   <part>
     <title>Appendixes</title>
+    &core-settings;
     &core-jdbcdirectory;
   </part>
 

@@ -34,6 +34,20 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("analyzer1", settings.getSetting(LuceneEnvironment.ALL_ANALYZER));
     }
 
+    public void testConvertersSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/converters.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        Map groupSettings = settings.getSettingGroups(CompassEnvironment.Converter.PREFIX);
+        assertEquals(2, groupSettings.size());
+        settings = (CompassSettings) groupSettings.get("date");
+        assertNotNull(settings);
+        assertEquals("yyyy-MM-dd", settings.getSetting("format"));
+        settings = (CompassSettings) groupSettings.get("myConverter");
+        assertNotNull(settings);
+    }
+
     public void testAnalyzersSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/analyzers.cfg.xml");
