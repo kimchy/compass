@@ -37,7 +37,7 @@ public class InputStreamConverter implements Converter {
 
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 1;
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
@@ -45,7 +45,7 @@ public class InputStreamConverter implements Converter {
 
         // don't save a null value
         if (root == null) {
-            return;
+            return false;
         }
 
         String propertyName = resourcePropertyMapping.getPath();
@@ -66,6 +66,8 @@ public class InputStreamConverter implements Converter {
         Property p = searchEngine.createProperty(propertyName, output.toByteArray(), resourcePropertyMapping.getStore());
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
+        
+        return resourcePropertyMapping.getStore() != Property.Store.NO;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

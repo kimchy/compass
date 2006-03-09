@@ -30,22 +30,23 @@ import org.compass.core.marshall.MarshallingEnvironment;
  */
 public class ReferenceMappingConverter implements Converter {
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         // no need to marshall if it is null
         if (root == null) {
-            return;
+            return false;
         }
         ReferenceMapping referenceMapping = (ReferenceMapping) mapping;
 
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-        context.getMarshallingStrategy().marshallIds(resource, referenceMapping.getRefClassMapping(), root);
+        boolean stored = context.getMarshallingStrategy().marshallIds(resource, referenceMapping.getRefClassMapping(), root);
 
         if (referenceMapping.getRefCompMapping() != null) {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-            referenceMapping.getRefCompMapping().getConverter().marshall(resource, root, referenceMapping.getRefCompMapping(), context);
+            stored |= referenceMapping.getRefCompMapping().getConverter().marshall(resource, root, referenceMapping.getRefCompMapping(), context);
         }
+        return stored;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

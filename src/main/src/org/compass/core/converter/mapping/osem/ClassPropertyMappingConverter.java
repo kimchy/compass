@@ -31,17 +31,19 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public class ClassPropertyMappingConverter implements Converter {
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         // no need to marshall if it is null
         if (root == null && !context.handleNulls()) {
-            return;
+            return false;
         }
         ClassPropertyMapping aMapping = (ClassPropertyMapping) mapping;
+        boolean store = false;
         for (Iterator it = aMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
-            m.getConverter().marshall(resource, root, m, context);
+            store |= m.getConverter().marshall(resource, root, m, context);
         }
+        return store;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

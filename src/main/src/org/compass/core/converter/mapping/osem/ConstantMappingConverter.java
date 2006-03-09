@@ -35,16 +35,19 @@ import org.compass.core.marshall.MarshallingContext;
 
 public class ConstantMappingConverter implements Converter {
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         ConstantMetaDataMapping cm = (ConstantMetaDataMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
         String propertyName = cm.getPath();
+        boolean stored = false;
         for (Iterator it = cm.metaDataValuesIt(); it.hasNext();) {
             Property p = searchEngine.createProperty(propertyName, (String) it.next(), cm.getStore(), cm.getIndex());
             p.setBoost(cm.getBoost());
             resource.addProperty(p);
+            stored |= cm.getStore() != Property.Store.NO;
         }
+        return stored;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

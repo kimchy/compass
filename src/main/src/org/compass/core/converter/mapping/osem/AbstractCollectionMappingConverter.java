@@ -33,10 +33,10 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public abstract class AbstractCollectionMappingConverter implements Converter {
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         if (root == null) {
-            return;
+            return false;
         }
         AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
@@ -52,22 +52,32 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         // so the order will be maintained
         context.setHandleNulls(colMapping.getPath());
 
-        int actualSize = getActualSize(root, colMapping, resource, context);
-        Property p = searchEngine.createProperty(colMapping.getColSizePath(), Integer.toString(actualSize),
-                Property.Store.YES, Property.Index.UN_TOKENIZED);
-        resource.addProperty(p);
-
-        marshallIterateData(root, colMapping, resource, context);
+        int size = marshallIterateData(root, colMapping, resource, context);
 
         context.removeHandleNulls(colMapping.getPath());
+        
+        if (size > 0) {
+            Property p = searchEngine.createProperty(colMapping.getColSizePath(), Integer.toString(size),
+                    Property.Store.YES, Property.Index.UN_TOKENIZED);
+            resource.addProperty(p);
+            return true;
+        }
+        return false;
     }
 
     protected abstract AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root);
 
-    protected abstract void marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
-            MarshallingContext context);
-
-    protected abstract int getActualSize(Object root, AbstractCollectionMapping colMapping, Resource resource,
+    /**
+     * Marhall the data, returning the number of elements that were actually stored in the index
+     * (and can later be read).
+     * 
+     * @param root
+     * @param colMapping
+     * @param resource
+     * @param context
+     * @return
+     */
+    protected abstract int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
             MarshallingContext context);
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

@@ -32,7 +32,7 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public abstract class AbstractBasicConverter implements ResourcePropertyConverter {
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
@@ -40,7 +40,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
 
         // don't save a null value if the context does not states so
         if (root == null && !handleNulls(context)) {
-            return;
+            return false;
         }
         String sValue = getNullValue(context);
         if (root != null) {
@@ -49,6 +49,8 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
         Property p = searchEngine.createProperty(sValue, resourcePropertyMapping);
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
+        
+        return resourcePropertyMapping.getStore() != Property.Store.NO;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

@@ -31,6 +31,9 @@ public interface Converter {
     /**
      * Marshall the given <code>Object</code> to the given
      * <code>Resource</code>.
+     * <p/>
+     * Returns <code>true</code> if data was saved in the index, and it can
+     * be read as well (i.e. stored).
      * 
      * @param resource
      * @param root
@@ -38,7 +41,7 @@ public interface Converter {
      * @param context
      * @throws ConversionException
      */
-    void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException;
 
     /**

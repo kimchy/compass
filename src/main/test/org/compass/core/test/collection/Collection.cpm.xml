@@ -19,6 +19,20 @@
         
     </class>
 
+    <class name="SimpleTypeCollection" alias="no-metadata-stored">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>    
+    
+        <property name="strings" class="java.lang.String" managed-id="false">
+            <meta-data store="no">mvalue</meta-data>
+        </property>
+        
+    </class>
+
     <class name="ExplicitTypeCollection" alias="explicit-type-col">
     
         <id name="id" />

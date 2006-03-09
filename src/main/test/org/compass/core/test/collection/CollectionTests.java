@@ -25,14 +25,14 @@ public class CollectionTests extends AbstractTestCase {
         Long id = new Long(1);
         o.setId(id);
         o.setValue("test");
-        session.save(o);
+        session.save("simple-type-col", o);
 
-        o = (SimpleTypeCollection) session.load(SimpleTypeCollection.class, id);
+        o = (SimpleTypeCollection) session.load("simple-type-col", id);
         assertEquals("test", o.getValue());
         assertNull(o.getStrings());
 
         session.delete(o);
-        o = (SimpleTypeCollection) session.get(SimpleTypeCollection.class, id);
+        o = (SimpleTypeCollection) session.get("simple-type-col", id);
         assertNull(o);
 
         transaction.commit();
@@ -51,15 +51,18 @@ public class CollectionTests extends AbstractTestCase {
         o.setValue("test");
         o.setStrings(stringCol);
 
-        session.save(o);
+        session.save("simple-type-col", o);
 
-        o = (SimpleTypeCollection) session.load(SimpleTypeCollection.class, id);
+        o = (SimpleTypeCollection) session.load("simple-type-col", id);
         assertEquals("test", o.getValue());
         assertNotNull(o.getStrings());
         assertEquals(2, o.getStrings().size());
         ArrayList list = (ArrayList) o.getStrings();
         assertEquals("test1", list.get(0));
         assertEquals("test2", list.get(1));
+
+        Resource r = session.loadResource("simple-type-col", id);
+        assertEquals("2", r.get("$/simple-type-col/strings/colSize"));
 
         CompassHits result = session.find("mvalue:test1");
         o = (SimpleTypeCollection) result.data(0);
@@ -86,10 +89,35 @@ public class CollectionTests extends AbstractTestCase {
         }
 
         session.delete(o);
-        o = (SimpleTypeCollection) session.get(SimpleTypeCollection.class, id);
+        o = (SimpleTypeCollection) session.get("simple-type-col", id);
         assertNull(o);
 
         transaction.commit();
+    }
+    
+    public void testNoMetaDataStored() {
+        CompassSession session = openSession();
+        CompassTransaction transaction = session.beginTransaction();
+        
+        SimpleTypeCollection o = new SimpleTypeCollection();
+        Long id = new Long(1);
+        Collection stringCol = new ArrayList();
+        stringCol.add("test1");
+        stringCol.add("test2");
+        o.setId(id);
+        o.setValue("test");
+        o.setStrings(stringCol);
+
+        session.save("no-metadata-stored", o);
+        
+        o = (SimpleTypeCollection) session.load("no-metadata-stored", id);
+        assertEquals("test", o.getValue());
+        assertNull(o.getStrings());
+        Resource r = session.loadResource("no-metadata-stored", id);
+        assertNull(r.get("$/no-metadata-stored/strings/colSize"));
+
+        transaction.commit();
+        session.close();
     }
 
     public void testExplicitCollection() {

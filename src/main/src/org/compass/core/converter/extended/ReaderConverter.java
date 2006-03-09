@@ -32,14 +32,14 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public class ReaderConverter implements Converter {
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
 
         // don't save a null value
         if (root == null) {
-            return;
+            return false;
         }
 
         String propertyName = resourcePropertyMapping.getPath();
@@ -47,6 +47,8 @@ public class ReaderConverter implements Converter {
         Property p = searchEngine.createProperty(propertyName, value, resourcePropertyMapping.getTermVector());
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
+        
+        return false;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

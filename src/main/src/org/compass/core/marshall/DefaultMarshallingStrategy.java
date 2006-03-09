@@ -178,13 +178,14 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
         setter.set(root, id);
     }
 
-    public void marshallIds(Resource idResource, ClassMapping classMapping, Object id) {
+    public boolean marshallIds(Resource idResource, ClassMapping classMapping, Object id) {
+        boolean stored = false;
         ResourcePropertyMapping[] ids = classMapping.getIdMappings();
         if (classMapping.getClazz().isAssignableFrom(id.getClass())) {
             // the object is the key
             for (int i = 0; i < ids.length; i++) {
                 ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) ids[i];
-                convertId(idResource, classPropertyMetaDataMapping.getGetter().get(id), classPropertyMetaDataMapping);
+                stored |= convertId(idResource, classPropertyMetaDataMapping.getGetter().get(id), classPropertyMetaDataMapping);
             }
         } else if (id.getClass().isArray()) {
             if (Array.getLength(id) != ids.length) {
@@ -192,22 +193,23 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
                         + "] while has ids mappings of [" + ids.length + "]");
             }
             for (int i = 0; i < ids.length; i++) {
-                convertId(idResource, Array.get(id, i), (ClassPropertyMetaDataMapping) ids[i]);
+                stored |= convertId(idResource, Array.get(id, i), (ClassPropertyMetaDataMapping) ids[i]);
             }
         } else if (ids.length == 1) {
-            convertId(idResource, id, (ClassPropertyMetaDataMapping) ids[0]);
+            stored = convertId(idResource, id, (ClassPropertyMetaDataMapping) ids[0]);
         } else {
             String type = id.getClass().getName();
             throw new MarshallingException("Cannot marshall ids, not supported id object type [" + type
                     + "] and value [" + id + "], or you have not defined ids in the mapping files");
         }
+        return stored;
     }
 
-    private void convertId(Resource resource, Object root, ClassPropertyMetaDataMapping mdMapping) {
+    private boolean convertId(Resource resource, Object root, ClassPropertyMetaDataMapping mdMapping) {
         if (root == null) {
-            throw new MarshallingException("Trying to unmarshall a null id [" + mdMapping.getName() + "]");
+            throw new MarshallingException("Trying to marshall a null id [" + mdMapping.getName() + "]");
         }
-        mdMapping.getConverter().marshall(resource, root, mdMapping, this);
+        return mdMapping.getConverter().marshall(resource, root, mdMapping, this);
     }
 
     public Object[] unmarshallIds(Resource resource, ClassMapping classMapping) {

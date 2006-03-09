@@ -43,8 +43,8 @@ public class MetaDataFormatDelegateConverter implements DelegateConverter {
         this.delegatedConverter.setFormat(format);
     }
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
-        delegatedConverter.marshall(resource, root, mapping, context);
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
+        return delegatedConverter.marshall(resource, root, mapping, context);
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

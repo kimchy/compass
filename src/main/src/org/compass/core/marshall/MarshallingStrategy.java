@@ -40,7 +40,16 @@ public interface MarshallingStrategy {
 
     void marshallIds(Object root, Object id);
 
-    void marshallIds(Resource idResource, ClassMapping classMapping, Object id);
+    /**
+     * Returns <code>true</code> if data was saved in the index that can be read
+     * as well (i.e. stored).
+     * 
+     * @param idResource
+     * @param classMapping
+     * @param id
+     * @return
+     */
+    boolean marshallIds(Resource idResource, ClassMapping classMapping, Object id);
 
     Object[] unmarshallIds(Resource resource, ClassMapping classMapping);
 

@@ -29,26 +29,22 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public class ArrayMappingConverter extends AbstractCollectionMappingConverter {
 
-    protected void marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
+    protected int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
             MarshallingContext context) {
+        int count = 0;
         int size = Array.getLength(root);
         Mapping elementMapping = colMapping.getElementMapping();
         for (int i = 0; i < size; i++) {
             Object value = Array.get(root, i);
-            elementMapping.getConverter().marshall(resource, value, elementMapping, context);
-        }
-    }
-
-    protected int getActualSize(Object root, AbstractCollectionMapping colMapping, Resource resource, MarshallingContext context) {
-        int size = Array.getLength(root);
-        int actualSize = 0;
-        for (int i = 0; i < size; i++) {
-            Object value = Array.get(root, i);
-            if (value != null) {
-                actualSize++;
+            if (value == null) {
+                continue;
+            }
+            boolean stored = elementMapping.getConverter().marshall(resource, value, elementMapping, context);
+            if (stored) {
+                count++;
             }
         }
-        return actualSize;
+        return count;
     }
 
     protected AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root) {

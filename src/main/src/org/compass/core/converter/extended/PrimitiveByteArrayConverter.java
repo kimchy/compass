@@ -30,7 +30,7 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public class PrimitiveByteArrayConverter implements Converter {
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
@@ -38,7 +38,7 @@ public class PrimitiveByteArrayConverter implements Converter {
 
         // don't save a null value
         if (root == null) {
-            return;
+            return false;
         }
 
         String propertyName = resourcePropertyMapping.getPath();
@@ -46,6 +46,8 @@ public class PrimitiveByteArrayConverter implements Converter {
         Property p = searchEngine.createProperty(propertyName, value, resourcePropertyMapping.getStore());
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
+        
+        return resourcePropertyMapping.getStore() != Property.Store.NO;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

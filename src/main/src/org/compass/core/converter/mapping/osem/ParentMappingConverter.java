@@ -34,9 +34,10 @@ public class ParentMappingConverter implements Converter {
 
     private static Log log = LogFactory.getLog(ParentMappingConverter.class);
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         // nothing to do here
+        return false;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

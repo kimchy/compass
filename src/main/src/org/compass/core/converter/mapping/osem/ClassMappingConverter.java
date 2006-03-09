@@ -40,7 +40,7 @@ import org.compass.core.util.ResourceHelper;
  */
 public class ClassMappingConverter implements Converter {
 
-    public void marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         SearchEngine searchEngine = context.getSearchEngine();
         ClassMapping classMapping = (ClassMapping) mapping;
@@ -59,6 +59,7 @@ public class ClassMappingConverter implements Converter {
             resource.addProperty(p);
         }
 
+        boolean store = false;
         for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, root);
             Mapping m = (Mapping) mappingsIt.next();
@@ -69,8 +70,9 @@ public class ClassMappingConverter implements Converter {
             } else {
                 value = root;
             }
-            m.getConverter().marshall(resource, value, m, context);
+            store |=  m.getConverter().marshall(resource, value, m, context);
         }
+        return store;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
