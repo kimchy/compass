@@ -11,8 +11,8 @@ public class Oracle8Dialect extends OracleDialect {
     public String getCurrentTimestampSelectString() {
         return "select sysdate from dual";
     }
-
-    public String getCurrentTimestampSQLFunctionName() {
+    
+    public String getCurrentTimestampFunction() {
         return "sysdate";
     }
 
