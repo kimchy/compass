@@ -22,32 +22,26 @@ import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
-import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.util.backport.java.util.concurrent.Executors;
+import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
+import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
+import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
  * @author kimchy
  */
-public class LuceneSearchEngineScheduledOptimizer implements LuceneSearchEngineOptimizer {
+public class ScheduledLuceneSearchEngineOptimizer implements LuceneSearchEngineOptimizer {
 
-    final static private Log log = LogFactory.getLog(LuceneSearchEngineScheduledOptimizer.class);
+    final static private Log log = LogFactory.getLog(ScheduledLuceneSearchEngineOptimizer.class);
 
     private LuceneSearchEngineOptimizer optimizer;
 
-    private boolean daemon;
+    private ScheduledExecutorService scheduledExecutorService;
 
-    private long period;
-
-    private boolean fixedRate;
-
-    private ScheduledOptimizeThread thread;
-
-    private SearchEngineFactory searchEngineFactory;
-
-    public LuceneSearchEngineScheduledOptimizer(LuceneSearchEngineOptimizer optimizer, SearchEngineFactory searchEngineFactory) {
+    public ScheduledLuceneSearchEngineOptimizer(LuceneSearchEngineOptimizer optimizer) {
         this.optimizer = optimizer;
-        this.searchEngineFactory = searchEngineFactory;
     }
 
     public LuceneSearchEngineFactory getSearchEngineFactory() {
@@ -84,19 +78,19 @@ public class LuceneSearchEngineScheduledOptimizer implements LuceneSearchEngineO
         }
 
         CompassSettings settings = getSearchEngineFactory().getSettings();
-        daemon = settings.getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE_DEAMON, true);
-        period = (long) (settings.getSettingAsFloat(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD, 10) * 1000);
-        fixedRate = settings.getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE_FIXEDRATE, false);
+        boolean daemon = settings.getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE_DEAMON, true);
+        long period = (long) (settings.getSettingAsFloat(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD, 10) * 1000);
         if (log.isInfoEnabled()) {
             log.info("Starting scheduled optimizer [" + optimizer.getClass() + "] with period [" + period
-                    + "ms] fixed rate [" + fixedRate + "] daemon [" + daemon + "]");
+                    + "ms] daemon [" + daemon + "]");
         }
 
         this.optimizer.start();
-        thread = new ScheduledOptimizeThread(this.optimizer, period, searchEngineFactory.getIndexManager());
-        thread.setDaemon(daemon);
-        thread.setName("Compass Optimizer");
-        thread.start();
+
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new SingleThreadThreadFactory("Compass Scheduled Optimizer", daemon));
+        ScheduledOptimizeRunnable scheduledOptimizeRunnable =
+                new ScheduledOptimizeRunnable(getOptimizerTemplate());
+        scheduledExecutorService.scheduleWithFixedDelay(scheduledOptimizeRunnable, period, period, TimeUnit.MILLISECONDS);
     }
 
     public synchronized void stop() throws SearchEngineException {
@@ -106,37 +100,15 @@ public class LuceneSearchEngineScheduledOptimizer implements LuceneSearchEngineO
         if (log.isInfoEnabled()) {
             log.info("Stopping scheduled optimizer [" + optimizer.getClass() + "]");
         }
-        thread.cancel();
-        thread = null;
+        getOptimizerTemplate().cancel();
+        // TODO should we gracefully wait for it?
+        scheduledExecutorService.shutdown();
+        scheduledExecutorService = null;
         this.optimizer.stop();
     }
 
     public boolean isRunning() {
         return this.optimizer.isRunning();
-    }
-
-    public boolean isDaemon() {
-        return daemon;
-    }
-
-    public void setDaemon(boolean daemon) {
-        this.daemon = daemon;
-    }
-
-    public long getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(long period) {
-        this.period = period;
-    }
-
-    public boolean isFixedRate() {
-        return fixedRate;
-    }
-
-    public void setFixedRate(boolean fixedRate) {
-        this.fixedRate = fixedRate;
     }
 
     public LuceneSearchEngineOptimizer getWrappedOptimizer() {
@@ -147,44 +119,29 @@ public class LuceneSearchEngineScheduledOptimizer implements LuceneSearchEngineO
         return false;
     }
 
+    public OptimizerTemplate getOptimizerTemplate() {
+        return this.optimizer.getOptimizerTemplate();
+    }
 
-    private static class ScheduledOptimizeThread extends Thread {
+    private static class ScheduledOptimizeRunnable implements Runnable {
 
         private OptimizerTemplate optimizerTemplate;
 
-        private long period;
-
-        private boolean canceled;
-
-        public ScheduledOptimizeThread(LuceneSearchEngineOptimizer optimizer, long period, SearchEngineIndexManager indexManager) {
-            this.optimizerTemplate = new OptimizerTemplate(optimizer, indexManager);
-            this.period = period;
+        public ScheduledOptimizeRunnable(OptimizerTemplate optimizerTemplate) {
+            this.optimizerTemplate = optimizerTemplate;
         }
 
         public void run() {
-            while (!Thread.interrupted() || !canceled) {
-                try {
-                    Thread.sleep(period);
-                } catch (InterruptedException e) {
-                    break;
-                }
+            if (log.isDebugEnabled()) {
+                log.debug("Checking for index optimization");
+            }
+            try {
+                optimizerTemplate.optimize();
+            } catch (Exception e) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Checking for index optimization");
-                }
-                try {
-                    optimizerTemplate.optimize();
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Failed to optimize", e);
-                    }
+                    log.debug("Failed to optimize", e);
                 }
             }
-        }
-
-        public void cancel() {
-            optimizerTemplate.cancel();
-            this.canceled = true;
-            this.interrupt();
         }
     }
 }

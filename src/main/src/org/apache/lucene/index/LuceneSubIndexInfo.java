@@ -17,6 +17,7 @@
 package org.apache.lucene.index;
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.apache.lucene.store.Directory;
@@ -30,11 +31,11 @@ import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 /**
  * Provides information about the segments within a Lucene index and about the
  * lucene index itself.
- * <p>
+ * <p/>
  * Can not be instantiated directly, but has a factory method (<code>getSegmentsInfos</code>)
  * which returns the index info for the given index path.
  * </p>
- * 
+ *
  * @author kimchy
  */
 public class LuceneSubIndexInfo {
@@ -72,7 +73,7 @@ public class LuceneSubIndexInfo {
 
     /**
      * Returns the version of the index.
-     * 
+     *
      * @return The version of the index
      */
     public long version() {
@@ -81,7 +82,7 @@ public class LuceneSubIndexInfo {
 
     /**
      * Retruns the number of segments.
-     * 
+     *
      * @return The number of segments
      */
     public int size() {
@@ -90,9 +91,8 @@ public class LuceneSubIndexInfo {
 
     /**
      * The segment info that maps to the given index.
-     * 
-     * @param segmentIndex
-     *            The segment index
+     *
+     * @param segmentIndex The segment index
      * @return The segment info structure
      */
     public LuceneSegmentInfo info(int segmentIndex) {
@@ -101,7 +101,7 @@ public class LuceneSubIndexInfo {
 
     /**
      * The index parh of the given index.
-     * 
+     *
      * @return The index path
      */
     public String getSubIndex() {
@@ -116,7 +116,7 @@ public class LuceneSubIndexInfo {
             tx = session.beginTransaction();
             LuceneSubIndexInfo info = getIndexInfo(indexManager.getStore().getSubIndexForAlias(alias), indexManager);
             tx.commit();
-            return info;                                                       
+            return info;
         } catch (RuntimeException e) {
             if (tx != null) {
                 try {
@@ -130,29 +130,40 @@ public class LuceneSubIndexInfo {
     }
 
     /**
-     * Contructs the <code>LuceneIndexInfo</code> for the given index path.
+     * Contructs the <code>LuceneIndexInfo</code> for the given index path. If the segments file does not exists,
+     * return <code>null</code>.
      */
     public static LuceneSubIndexInfo getIndexInfo(String subIndex, LuceneSearchEngineIndexManager indexManager)
             throws IOException {
         final Directory directory = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
-        final SegmentInfos segmentInfos = new SegmentInfos();
-        synchronized (directory) { // in- & inter-process sync
-            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT) {
-                public Object doBody() throws IOException {
-                    segmentInfos.read(directory);
-                    return null;
-                }
-            }.run();
+        try {
+            final SegmentInfos segmentInfos = new SegmentInfos();
+            synchronized (directory) { // in- & inter-process sync
+                new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT) {
+                    public Object doBody() throws IOException {
+                        segmentInfos.read(directory);
+                        return null;
+                    }
+                }.run();
+            }
+            ArrayList segmentInfosList = new ArrayList();
+            for (int i = 0; i < segmentInfos.size(); i++) {
+                SegmentInfo segmentInfo = segmentInfos.info(i);
+                LuceneSegmentInfo luceneSegmentInfo = new LuceneSegmentInfo(segmentInfo.name, segmentInfo.docCount);
+                segmentInfosList.add(luceneSegmentInfo);
+            }
+            LuceneSubIndexInfo luceneSegmentInfos = new LuceneSubIndexInfo(subIndex, segmentInfos.getVersion(),
+                    segmentInfosList);
+            return luceneSegmentInfos;
+        } catch (FileNotFoundException e) {
+            // the segments file was not found, return null.
+            return null;
+        } finally {
+            try {
+                directory.close();
+            } catch (IOException e) {
+                // ignore this one
+            }
         }
-        ArrayList segmentInfosList = new ArrayList();
-        for (int i = 0; i < segmentInfos.size(); i++) {
-            SegmentInfo segmentInfo = segmentInfos.info(i);
-            LuceneSegmentInfo luceneSegmentInfo = new LuceneSegmentInfo(segmentInfo.name, segmentInfo.docCount);
-            segmentInfosList.add(luceneSegmentInfo);
-        }
-        LuceneSubIndexInfo luceneSegmentInfos = new LuceneSubIndexInfo(subIndex, segmentInfos.getVersion(),
-                segmentInfosList);
-        directory.close();
-        return luceneSegmentInfos;
     }
 }

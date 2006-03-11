@@ -46,7 +46,8 @@ import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.ScheduledLuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
-import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineScheduledOptimizer;
+import org.compass.core.lucene.engine.optimizer.ScheduledLuceneSearchEngineOptimizer;
+import org.compass.core.lucene.engine.optimizer.OptimizerTemplate;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
@@ -123,7 +124,7 @@ public class DefaultCompass implements InternalCompass {
         if (optimizer.canBeScheduled()) {
             boolean scheduledOptimizer = settings.getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE, true);
             if (scheduledOptimizer) {
-                optimizer = new LuceneSearchEngineScheduledOptimizer(optimizer, searchEngineFactory);
+                optimizer = new ScheduledLuceneSearchEngineOptimizer(optimizer);
             }
         }
         optimizer.setSearchEngineFactory(searchEngineFactory);
@@ -448,6 +449,10 @@ public class DefaultCompass implements InternalCompass {
 
         public LuceneSearchEngineFactory getSearchEngineFactory() {
             return searchEngineOptimizer.getSearchEngineFactory();
+        }
+
+        public OptimizerTemplate getOptimizerTemplate() {
+            return searchEngineOptimizer.getOptimizerTemplate();
         }
 
         public boolean canBeScheduled() {

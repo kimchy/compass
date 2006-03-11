@@ -42,6 +42,8 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
 
     private HashMap tempSubIndexVersion = new HashMap();
 
+    private OptimizerTemplate optimizerTemplate;
+
     public void start() throws SearchEngineException {
         if (isRunning) {
             throw new IllegalStateException("Optimizer is already running");
@@ -49,6 +51,7 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
         if (log.isDebugEnabled()) {
             log.debug("Starting Optimizer");
         }
+        optimizerTemplate = new OptimizerTemplate(this);
         doStart();
         isRunning = true;
     }
@@ -77,7 +80,6 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
     }
 
     public void optimize() throws SearchEngineException {
-        final OptimizerTemplate optimizerTemplate = new OptimizerTemplate(this, searchEngineFactory.getIndexManager());
         optimizerTemplate.optimize();
     }
 
@@ -89,7 +91,6 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
     protected abstract void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
 
     public boolean needOptimization() throws SearchEngineException {
-        final OptimizerTemplate optimizerTemplate = new OptimizerTemplate(this, searchEngineFactory.getIndexManager());
         return optimizerTemplate.needOptimizing();
     }
 
@@ -122,5 +123,9 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
 
     public void setSearchEngineFactory(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
+    }
+
+    public OptimizerTemplate getOptimizerTemplate() {
+        return this.optimizerTemplate;
     }
 }

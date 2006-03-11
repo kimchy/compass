@@ -33,6 +33,11 @@ public interface LuceneSearchEngineOptimizer extends SearchEngineOptimizer {
     LuceneSearchEngineFactory getSearchEngineFactory();
 
     /**
+     * Returns the optimizer template associated with this optimizer.
+     */
+    OptimizerTemplate getOptimizerTemplate();
+
+    /**
      * Can the optimizer be scheduled or not.
      */
     boolean canBeScheduled();

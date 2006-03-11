@@ -19,8 +19,8 @@ package org.compass.core.lucene.engine.optimizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.LuceneSubIndexInfo;
-import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.util.backport.java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author kimchy
@@ -29,20 +29,21 @@ public class OptimizerTemplate {
 
     private static Log log = LogFactory.getLog(OptimizerTemplate.class);
 
-    private boolean canceled;
+    private AtomicBoolean canceled = new AtomicBoolean(false);
 
     private LuceneSearchEngineOptimizer optimizer;
 
-    public OptimizerTemplate(LuceneSearchEngineOptimizer optimizer, SearchEngineIndexManager indexManager) {
+    public OptimizerTemplate(LuceneSearchEngineOptimizer optimizer) {
         this.optimizer = optimizer;
     }
 
     public void optimize() {
+        canceled.set(false);
         LuceneSearchEngineIndexManager indexManager = optimizer.getSearchEngineFactory().getLuceneIndexManager();
         String[] subIndexes = indexManager.getStore().getSubIndexes();
         for (int i = 0; i < subIndexes.length; i++) {
             try {
-                if (canceled) {
+                if (canceled.get()) {
                     break;
                 }
                 boolean needOptimizing = optimizer.needOptimizing(subIndexes[i]);
@@ -50,8 +51,12 @@ public class OptimizerTemplate {
                     continue;
                 }
                 LuceneSubIndexInfo indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndexes[i], indexManager);
+                if (indexInfo == null) {
+                    // no index data, simply continue
+                    continue;
+                }
                 needOptimizing = optimizer.needOptimizing(subIndexes[i], indexInfo);
-                if (canceled) {
+                if (canceled.get()) {
                     break;
                 }
                 if (needOptimizing) {
@@ -65,11 +70,12 @@ public class OptimizerTemplate {
     }
 
     public boolean needOptimizing() {
+        canceled.set(false);
         LuceneSearchEngineIndexManager indexManager = optimizer.getSearchEngineFactory().getLuceneIndexManager();
         String[] subIndexes = indexManager.getStore().getSubIndexes();
         for (int i = 0; i < subIndexes.length; i++) {
             try {
-                if (canceled) {
+                if (canceled.get()) {
                     break;
                 }
                 boolean needOptimizing = optimizer.needOptimizing(subIndexes[i]);
@@ -77,6 +83,10 @@ public class OptimizerTemplate {
                     continue;
                 }
                 LuceneSubIndexInfo indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndexes[i], indexManager);
+                if (indexInfo == null) {
+                    // no index data, simply continue
+                    continue;
+                }
                 needOptimizing = optimizer.needOptimizing(subIndexes[i], indexInfo);
                 if (needOptimizing) {
                     return true;
@@ -89,6 +99,6 @@ public class OptimizerTemplate {
     }
 
     public void cancel() {
-        this.canceled = true;
+        this.canceled.set(true);
     }
 }

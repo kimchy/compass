@@ -543,16 +543,6 @@ public class LuceneEnvironment {
          */
         public static final String SCHEDULE_DEAMON = "compass.engine.optimizer.schedule.daemon";
 
-        /**
-         * Determines if the schedule will run in a fixed rate or not. If it is
-         * set to <code>false</code> each execution is scheduled relative to
-         * the actual execution of the previous execution. If it is set to
-         * <code>true</code> each execution is scheduled relative to the
-         * execution time of the initial execution. <p/> Defaults to
-         * <code>false</code>
-         */
-        public static final String SCHEDULE_FIXEDRATE = "compass.engine.optimizer.schedule.fixedRate";
-
         public abstract class Aggressive {
 
             /**

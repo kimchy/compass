@@ -22,7 +22,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.optimizer.AbstractLuceneSearchEngineOptimizer;
-import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineScheduledOptimizer;
+import org.compass.core.lucene.engine.optimizer.ScheduledLuceneSearchEngineOptimizer;
 
 /**
  * @author kimchy
@@ -87,7 +87,7 @@ public class ScheduledOptimizerTests extends AbstractOptimizerTests {
     }
 
     public void testScheduledOptimizer() {
-        MockOptimizer optimizer = (MockOptimizer) ((DefaultCompass.TransactionalSearchEngineOptimizer) ((LuceneSearchEngineScheduledOptimizer) getCompass()
+        MockOptimizer optimizer = (MockOptimizer) ((DefaultCompass.TransactionalSearchEngineOptimizer) ((ScheduledLuceneSearchEngineOptimizer) getCompass()
                 .getSearchEngineOptimizer()).getWrappedOptimizer()).getWrappedOptimizer();
         assertTrue(getCompass().getSearchEngineOptimizer().isRunning());
         optimizer.clear();
@@ -97,6 +97,8 @@ public class ScheduledOptimizerTests extends AbstractOptimizerTests {
         }
         assertTrue(optimizer.isNeedOptimizingCalled());
         assertFalse(optimizer.isOptimizeCalled());
+
+        optimizer.clear();
         optimizer.setNeedOptimizing(true);
         try {
             Thread.sleep(500);
@@ -104,7 +106,17 @@ public class ScheduledOptimizerTests extends AbstractOptimizerTests {
         }
         assertTrue(optimizer.isNeedOptimizingCalled());
         assertTrue(optimizer.isOptimizeCalled());
+
+        // stop the optimizer, make sure that it won't schedule any more optimizations
         getCompass().getSearchEngineOptimizer().stop();
         assertFalse(getCompass().getSearchEngineOptimizer().isRunning());
+        optimizer.clear();
+        optimizer.setNeedOptimizing(true);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+        }
+        assertFalse(optimizer.isNeedOptimizingCalled());
+        assertFalse(optimizer.isOptimizeCalled());
     }
 }
