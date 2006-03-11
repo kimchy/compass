@@ -39,7 +39,7 @@ import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterSettings;
-import org.compass.core.lucene.engine.manager.LuceneScheduledSearchEngineIndexManager;
+import org.compass.core.lucene.engine.manager.ScheduledLuceneSearchEngineIndexManager;
 
 /**
  * 
@@ -276,8 +276,8 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
 
         if (indexHolders != null) {
             for (int i = 0; i < indexHolders.size(); i++) {
-                LuceneScheduledSearchEngineIndexManager.LuceneIndexHolder indexHolder =
-                        (LuceneScheduledSearchEngineIndexManager.LuceneIndexHolder) indexHolders.get(i);
+                ScheduledLuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
+                        (ScheduledLuceneSearchEngineIndexManager.LuceneIndexHolder) indexHolders.get(i);
                 indexHolder.release();
             }
         }

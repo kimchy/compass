@@ -30,9 +30,9 @@ import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 /**
  * @author kimchy
  */
-public class LuceneScheduledSearchEngineIndexManager implements LuceneSearchEngineIndexManager {
+public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngineIndexManager {
 
-    private static Log log = LogFactory.getLog(LuceneScheduledSearchEngineIndexManager.class);
+    private static Log log = LogFactory.getLog(ScheduledLuceneSearchEngineIndexManager.class);
 
     private LuceneSearchEngineIndexManager indexManager;
 
@@ -40,7 +40,7 @@ public class LuceneScheduledSearchEngineIndexManager implements LuceneSearchEngi
 
     private LuceneSettings settings;
 
-    public LuceneScheduledSearchEngineIndexManager(LuceneSearchEngineIndexManager indexManager) {
+    public ScheduledLuceneSearchEngineIndexManager(LuceneSearchEngineIndexManager indexManager) {
         this.indexManager = indexManager;
         this.settings = indexManager.getSettings();
     }

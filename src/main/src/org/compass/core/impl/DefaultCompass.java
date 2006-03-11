@@ -17,7 +17,6 @@
 package org.compass.core.impl;
 
 import java.io.IOException;
-
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
@@ -27,12 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.apache.lucene.store.Directory;
-import org.compass.core.Compass;
-import org.compass.core.CompassCallback;
-import org.compass.core.CompassCallbackWithoutResult;
-import org.compass.core.CompassException;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTemplate;
+import org.compass.core.*;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.FirstLevelCacheFactory;
 import org.compass.core.config.CompassEnvironment;
@@ -49,8 +43,8 @@ import org.compass.core.jndi.CompassObjectFactory;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
-import org.compass.core.lucene.engine.manager.LuceneScheduledSearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.lucene.engine.manager.ScheduledLuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineScheduledOptimizer;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
@@ -138,7 +132,7 @@ public class DefaultCompass implements InternalCompass {
         // wrap the index manager with a scheduled one and a transactional aspect
         LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
         indexManager = new TransactionalSearchEngineIndexManager(indexManager, this);
-        indexManager = new LuceneScheduledSearchEngineIndexManager(indexManager);
+        indexManager = new ScheduledLuceneSearchEngineIndexManager(indexManager);
         searchEngineFactory.setIndexManager(indexManager);
 
         firstLevelCacheFactory = new FirstLevelCacheFactory();
