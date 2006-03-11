@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
+import org.compass.core.util.JdkVersion;
 import org.compass.core.config.binding.XmlMappingBinding;
 import org.compass.core.config.binding.XmlMetaDataBinding;
 import org.compass.core.config.builder.ConfigurationBuilder;
@@ -69,6 +70,14 @@ import org.compass.core.metadata.impl.DefaultCompassMetaData;
  * @see org.compass.core.Compass
  */
 public class CompassConfiguration {
+
+    static {
+        // for the lack of a nicer way to place this without chaning the backport code
+        if (JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15) {
+            System.setProperty("org.compass.core.util.backport.java.util.concurrent.NanoTimerProvider",
+                    "org.compass.core.util.concurrent.SystemNanoTimer");
+        }
+    }
 
     protected static final Log log = LogFactory.getLog(CompassConfiguration.class);
 
