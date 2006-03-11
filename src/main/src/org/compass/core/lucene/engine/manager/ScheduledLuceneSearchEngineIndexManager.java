@@ -26,6 +26,10 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
+import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
+import org.compass.core.util.backport.java.util.concurrent.Executors;
+import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
+import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
  * @author kimchy
@@ -36,7 +40,7 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
 
     private LuceneSearchEngineIndexManager indexManager;
 
-    private IndexManagerScheduledThread thread;
+    private ScheduledExecutorService scheduledExecutorService;
 
     private LuceneSettings settings;
 
@@ -47,21 +51,24 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
 
     public void start() {
         indexManager.start();
-        thread = new IndexManagerScheduledThread(settings.getIndexManagerScheduleInterval());
-        thread.setDaemon(true);
-        thread.setName("Compass Index Manager");
+
         if (log.isInfoEnabled()) {
             log.info("Starting scheduled index manager with period [" + settings.getIndexManagerScheduleInterval()
                     + "ms] daemon [true]");
         }
-        thread.start();
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new SingleThreadThreadFactory("Compass Scheduled IndexManager", true));
+        ScheduledIndexManagerRunnable scheduledIndexManagerRunnable =
+                new ScheduledIndexManagerRunnable(indexManager);
+        long period = settings.getIndexManagerScheduleInterval();
+        scheduledExecutorService.scheduleWithFixedDelay(scheduledIndexManagerRunnable, period, period, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
-        if (thread != null) {
-            thread.cancel();
-            thread = null;
+        if (log.isInfoEnabled()) {
+            log.info("Stopping scheduled index manager");
         }
+        scheduledExecutorService.shutdown();
+        scheduledExecutorService = null;
         indexManager.stop();
     }
 
@@ -165,48 +172,34 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
         return indexManager.openIndexHolderBySubIndex(subIndex);
     }
 
-    private class IndexManagerScheduledThread extends Thread {
+    private static class ScheduledIndexManagerRunnable implements Runnable {
 
-        private long period;
+        private LuceneSearchEngineIndexManager indexManager;
 
-        private boolean canceled;
-
-        public IndexManagerScheduledThread(long period) {
-            this.period = period;
+        public ScheduledIndexManagerRunnable(LuceneSearchEngineIndexManager indexManager) {
+            this.indexManager = indexManager;
         }
 
-
         public void run() {
-            while (!Thread.interrupted() || !canceled) {
-                try {
-                    Thread.sleep(period);
-                } catch (InterruptedException e) {
-                    break;
+            try {
+                if (log.isDebugEnabled()) {
+                    log.debug("Checking for global cache invalidation");
                 }
-                try {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Checking for global cache invalidation");
-                    }
-                    indexManager.checkAndClearIfNotifiedAllToClearCache();
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Failed to check clear cache", e);
-                    }
+                indexManager.checkAndClearIfNotifiedAllToClearCache();
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to check clear cache", e);
                 }
-                try {
-                    indexManager.getStore().performScheduledTasks();
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Failed to perform schedule task", e);
-                    }
+            }
+            try {
+                indexManager.getStore().performScheduledTasks();
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to perform schedule task", e);
                 }
             }
         }
 
-        public void cancel() {
-            this.canceled = true;
-            this.interrupt();
-        }
     }
 
 }

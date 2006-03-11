@@ -77,6 +77,8 @@ public class ScheduledLuceneSearchEngineOptimizer implements LuceneSearchEngineO
             throw new IllegalStateException("Optimizer is already running");
         }
 
+        this.optimizer.start();
+
         CompassSettings settings = getSearchEngineFactory().getSettings();
         boolean daemon = settings.getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE_DEAMON, true);
         long period = (long) (settings.getSettingAsFloat(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD, 10) * 1000);
@@ -84,9 +86,6 @@ public class ScheduledLuceneSearchEngineOptimizer implements LuceneSearchEngineO
             log.info("Starting scheduled optimizer [" + optimizer.getClass() + "] with period [" + period
                     + "ms] daemon [" + daemon + "]");
         }
-
-        this.optimizer.start();
-
         scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new SingleThreadThreadFactory("Compass Scheduled Optimizer", daemon));
         ScheduledOptimizeRunnable scheduledOptimizeRunnable =
                 new ScheduledOptimizeRunnable(getOptimizerTemplate());
