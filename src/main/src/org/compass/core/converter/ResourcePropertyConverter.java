@@ -19,7 +19,7 @@ package org.compass.core.converter;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
- * A specialized converter that can convert to and from strings as well.
+ * A specialized converter that can convert to and from strings as well. Handles {@link ResourcePropertyMapping}.
  *
  * @author kimchy
  */
@@ -28,7 +28,7 @@ public interface ResourcePropertyConverter extends Converter {
     /**
      * Converts from a String and into it's Object representation.
      *
-     * @param str The string to convert from
+     * @param str                     The string to convert from
      * @param resourcePropertyMapping The resource property mapping
      * @return Theh object converterd from the String
      * @throws ConversionException
@@ -37,10 +37,10 @@ public interface ResourcePropertyConverter extends Converter {
 
     /**
      * Converts the Object into a String.
-     *
+     * <p/>
      * Note that toString must be able to handle a <code>null</code> resourcePropertyMapping.
      *
-     * @param o The Object to convert from
+     * @param o                       The Object to convert from
      * @param resourcePropertyMapping The resource proeprty mapping
      * @return The String converted from the Object
      * @throws ConversionException

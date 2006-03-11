@@ -26,7 +26,19 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
- * An easy to use abstact class for Basic converters.
+ * An easy to use abstact class for Basic converters. Handles converters that usually deals with String
+ * as a result of the conversion.
+ * <p/>
+ * This base class will create a simple {@link Property} when marshalling,
+ * calling {@link #toString(Object, org.compass.core.mapping.ResourcePropertyMapping)} as the {@link Property}
+ * value. And will use the {@link #fromString(String, org.compass.core.mapping.ResourcePropertyMapping)} when
+ * unmarhslling.
+ * <p/>
+ * If special <code>null</code> values handling is required, the
+ * {@link #handleNulls(org.compass.core.marshall.MarshallingContext)}, and
+ * {@link #getNullValue(org.compass.core.marshall.MarshallingContext)} can be overriden. Note, that it is best
+ * to call base implementations and extend the base funtionallity, since the base class takes special care
+ * when using collections. 
  *
  * @author kimchy
  */
@@ -49,7 +61,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
         Property p = searchEngine.createProperty(sValue, resourcePropertyMapping);
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
-        
+
         return resourcePropertyMapping.getStore() != Property.Store.NO;
     }
 

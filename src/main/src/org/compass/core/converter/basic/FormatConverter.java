@@ -19,11 +19,19 @@ package org.compass.core.converter.basic;
 import org.compass.core.converter.Converter;
 
 /**
+ * A {@link Converter} that can handle format parameter.
+ *
  * @author kimchy
  */
 public interface FormatConverter extends Converter {
 
+    /**
+     * Sets the format for the {@link Converter}.
+     */
     void setFormat(String format);
 
+    /**
+     * Returns a copy of the format converter.
+     */
     FormatConverter copy();
 }

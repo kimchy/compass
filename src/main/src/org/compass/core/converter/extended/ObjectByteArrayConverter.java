@@ -36,8 +36,8 @@ public class ObjectByteArrayConverter implements Converter {
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
 
-        // don't save a null value
-        if (root == null) {
+        // don't save a null value if the context does not states so
+        if (root == null && !handleNulls(context)) {
             return false;
         }
 
@@ -76,5 +76,20 @@ public class ObjectByteArrayConverter implements Converter {
             oValue[i] = new Byte(value[i]);
         }
         return oValue;
+    }
+
+    /**
+     * Should the converter handle nulls? Handling nulls means should the
+     * converter process nulls or not. Usually the converter will not
+     * persist null values, but sometimes it might be needed
+     * ({@link org.compass.core.marshall.MarshallingContext#handleNulls()}).
+     * <p/>
+     * Extracted to a method so special converters can control null handling.
+     *
+     * @param context
+     * @return <code>true</code> if the converter should handle null values
+     */
+    protected boolean handleNulls(MarshallingContext context) {
+        return context.handleNulls();
     }
 }

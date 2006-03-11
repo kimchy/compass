@@ -25,6 +25,9 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
+ * A base class for number based converters. Allows for formatting (if specified) and for default
+ * behaviour handling if none is provided.
+ *
  * @author kimchy
  */
 public abstract class AbstractNumberConverter extends AbstractFormatConverter implements CompassConfigurable {

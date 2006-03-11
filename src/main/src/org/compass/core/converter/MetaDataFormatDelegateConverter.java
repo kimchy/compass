@@ -22,6 +22,9 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
+ * A metadata based format converter, that creates its own intenral format converter based on the format
+ * that it is initalized with.
+ *
  * @author kimchy
  */
 public class MetaDataFormatDelegateConverter implements DelegateConverter {
@@ -34,6 +37,10 @@ public class MetaDataFormatDelegateConverter implements DelegateConverter {
         this.format = format;
     }
 
+    /**
+     * Sets a delegated format converter. Will not use the actual passed converter,
+     * but will use {@link org.compass.core.converter.basic.FormatConverter#copy()} to create a new format converter.
+     */
     public void setDelegatedConverter(Converter delegatedConverter) {
         if (!(delegatedConverter instanceof FormatConverter)) {
             throw new IllegalArgumentException("Meta data format attribute can only work on format converters. The " +
