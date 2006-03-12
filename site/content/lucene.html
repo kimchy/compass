@@ -1,0 +1,27 @@
+<html>
+<head>
+    <title>Compass - Lucene</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h3>Lucene</h3>
+
+<p>
+   Compass uses Lucene as the underlying search engine implementation. Lucene is an amazing, fast, search engine. Yet the main problem with Lucene is it's raw/low-level API. One of the main benefits of using Compass is simplifying the work with a Search Engine (Lucene), without suffering any performance or loss of capabilities.
+</p>
+
+<p>
+   If you are considering using Lucene, or if you are using Lucene currently, have a look at the following set of additional features that Compass provides:
+   <ul>
+      <li>Lucene Jdbc Directory: An implementation of Lucene Directory to store the index within a database (using Jdbc). It is separated from Compass code base and can be used with pure Lucene applications.</li>
+      <li>Simple API: Lucene has three main classes, IndexReader, Searcher and IndexWriter. It is difficult, especially for developers unfamiliar with Lucene, to understand how to perform operations against the index (while still having a performant system). Compass has a single interface, with all operations available through it. Compass also abstract the user from the gory details of opening and closing readers/searchers/writers, as well as caching and invalidating them.</li>
+      <li>Updates: Updating existing data within the Lucene index is non-trivial, as well as very delicate in terms of performance. Compass requires from all it's stored data (Resources - even OSEM), a set of Properties that acts as it's identifier and also implements transaction support (see next section). These two features allows Compass to implement very fast (faster than if using Lucene, under any API manipulation) updates.</li>
+      <li>Transaction Support: Lucene is not transactional. If a set of operations done on the index fails in the middle, the index will be left in an inconsistent state. Compass::Core provides support for two phase commits transactions (read_committed and serializable), implemented on top of Lucene index segmentations. The implementation provides fast commits (faster than Lucene), though they do require the concept of Optimizers that will keep the index at bay. Compass::Core comes with support for Local and JTA transactions, and Compass::Spring comes with Spring transaction synchronization. When only adding data to the index, Compass comes with the batch_insert transaction, which is the same IndexWriter operation with the same usual suspects for controlling performance and memory.</li>
+      <li>'All' Support: When working with Lucene, there is no way to search on all the fields (Compass equivalent is Property) stored in a Document (Compass equivalent is a Resource). One must programmatically create synthetic fields that aggregate all the other fields in order to provide an "ALL" field, as well as providing it when querying the index. Compass::Core does it all for you, by default Compass creates that "ALL" field and it acts as the default search field. Of course, in the spirit of being as configurable as possible, the "ALL" property can be enabled or disables, have a different name, or not act as the default search property.</li>
+      <li>Index Fragmentation: When building a Lucene enabled application, sometimes (for performance reasons) the index actually consists of several indexes. Compass will automatically fragment the index into several sub indexes (based on the number of aliases - the high level Resource Mapping or OSEM), or it can be map several (or all) the aliases to the same sub index. The main point here is that it is all configurable in the mapping definitions.</li>
+      <li>Not Just OSEM: OSEM is one of the main features for using Compass. Compass::Core OSEM capabilities are built on top of a lower level Resource and Resource Mapping support. At that level, the user works with a Resource (a Lucene Document) and a Property (a Lucene Field) and needs to provide a very simple Resource Mapping. If OSEM is not required in the application, since it already has a domain model, or already works with Lucene, it is even simpler to work with Resources or migrate from Lucene to Compass.</li>
+   </ul>
+</p>
+
+</body>
+</html>

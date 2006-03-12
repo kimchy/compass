@@ -1,0 +1,30 @@
+<html>
+<head>
+    <title>Compass - Hibernate</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h3>Hibernate</h3>
+
+<p>
+   Hibernate is considered to be the leading open source ORM engine. Hibernate persist POJO (Plain Old Java Objects), or a rich domain model to the database based on a set of mapping definitions.
+</p>
+
+<p>
+   An ORM tool is a natural match to Compass OSEM features. A simple Compass::Gps device that can index all the data that has both OSEM and ORM mapping definition can be easily developed, and if the ORM tool provides support for events, then mirroring can be supported as well.
+</p>
+
+<p>
+   Note that most, if not all of the time, enabling full text search on the application domain model when using Hibernate will not require any coding.
+</p>
+
+<p>
+   The following are the features for the Compass::Gps Hibernate device:
+   <ul>
+      <li>Index Operation: For objects (classes) that has both ORM and OSEM definitions, both the Hibernate2GpsDevice and the Hibernate3GpsDevice can index all the relevant data.</li>
+      <li>Mirror Operation: For objects (classes) that has both ORM and OSEM definitions, Hibernate3GpsDevice based on the new event mechanism for updated/created/deleted events can mirror any data changes made to using the ORM tool to the index (Compass::Gps calls it "Passive Mirror Device").</li>
+   </ul>
+</p>
+
+</body>
+</html>

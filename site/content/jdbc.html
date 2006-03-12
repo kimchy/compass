@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Compass - Jdbc</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+<h3>Jdbc</h3>
+
+<p>
+   As part of Compass::Gps, the Jdbc device can index databases using Jdbc, mapping a Jdbc ResultSet or database Table to a Compass Resource. The Jdbc device can index the content of a database, as well as mirroring changes done to it (providing there are version columns and they are properly maintained).
+</p>
+
+<p>
+   Note, that if the application uses a rich domain model with an ORM tool such as Hibernate / JDO or Apache OJB, Compass::Gps provides devices for each of them that is much simpler than Jdbc.
+</p>
+
+<p>
+   The Jdbc support provides the following features:
+   <ul>
+      <li>Generic ResultSet Mapping: A versatile mapping from a ResultSet to Compass Resource (alias) based on a SQL select query.</li>
+      <li>Simple Table Mapping: Very simple mapping from a database table to a Compass Resource (alias) with no SQL required and auto id detection.</li>
+      <li>Auto column index: Ability to automatically index data columns without mapping them.</li>
+      <li>Mirroring Data Changes: If version columns are provided (or supported by the underlying database), than the Jdbc device can mirror data changes made to the database. The mirroring is "Active Mirroring", meaning that a programmatic call should be mage in order to perform the mirroring operation. Compass comes with an Active Mirror Scheduler that can schedule the mirroring operation.</li>
+   </ul>
+</p>
+
+</body>
+</html>
