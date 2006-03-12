@@ -186,6 +186,31 @@
 </compass-core-config>
 ]]></programlisting>     
          </para>
+
+        <para>
+           The next sample configures a jdbc based index, with a JTA transaction (note the managed="true" and commitBeforeCompletion="true"):
+
+<programlisting><![CDATA[<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
+          http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+
+   <compass name="default">
+
+     <connection>
+         <jdbc dialect="org.apache.lucene.store.jdbc.dialect.HSQLDialect" managed="true">
+             <dataSourceProvider>
+                 <driverManager url="jdbc:hsqldb:mem:test" username="sa" password="" 
+                                driverClass="org.hsqldb.jdbcDriver" />
+             </dataSourceProvider>
+         </jdbc>
+     </connection>
+     <transaction factory="org.compass.core.transaction.JTASyncTransactionFactory" commitBeforeCompletion="true">
+     </transaction>
+   </compass>
+</compass-core-config>
+]]></programlisting>     
+         </para>
       
          <para>
             Here is another sample, that configures another analyzer, a specialized Converter, and changed the default date format for all Java Dates (date is an internal name that maps to Compass default date Converter).
