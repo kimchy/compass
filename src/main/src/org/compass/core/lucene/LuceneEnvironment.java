@@ -680,8 +680,8 @@ public class LuceneEnvironment {
         public static final String LOCK_TYPE = "compass.engine.store.jdbc.lockType";
 
         /**
-         * If the connection is managed or not. Basically, if set to <code>true</code>, compass
-         * will commit and rollback the transaction. If set to <code>false</code>, compass will
+         * If the connection is managed or not. Basically, if set to <code>false</code>, compass
+         * will commit and rollback the transaction. If set to <code>true</code>, compass will
          * not perform it. Defaults to <code>false</code>. Should be set to <code>true</code> if
          * using external transaction managers (like JTA or Spring <code>PlatformTransactionManager</literal>),
          * and <code>false</code> if using <code>LocalTransactionFactory</code>.
