@@ -47,7 +47,6 @@ import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.ScheduledLuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
 import org.compass.core.lucene.engine.optimizer.ScheduledLuceneSearchEngineOptimizer;
-import org.compass.core.lucene.engine.optimizer.OptimizerTemplate;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
@@ -128,7 +127,7 @@ public class DefaultCompass implements InternalCompass {
             }
         }
         optimizer.setSearchEngineFactory(searchEngineFactory);
-        (searchEngineFactory).setOptimizer(optimizer);
+        searchEngineFactory.setOptimizer(optimizer);
 
         // wrap the index manager with a scheduled one and a transactional aspect
         LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
@@ -428,19 +427,13 @@ public class DefaultCompass implements InternalCompass {
         }
 
         public boolean needOptimization() throws SearchEngineException {
-            return ((Boolean) template.execute(new CompassCallback() {
-                public Object doInCompass(CompassSession session) throws CompassException {
-                    return (searchEngineOptimizer.needOptimization()) ? Boolean.TRUE : Boolean.FALSE;
-                }
-            })).booleanValue();
+            // no need to wrap it in a transaciton, since per sub index ones are wrapped
+            return searchEngineOptimizer.needOptimization();
         }
 
         public void optimize() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    searchEngineOptimizer.optimize();
-                }
-            });
+            // no need to wrap it in a transaciton, since per sub index ones are wrapped
+            searchEngineOptimizer.optimize();
         }
 
         public void setSearchEngineFactory(LuceneSearchEngineFactory searchEngineFactory) {
@@ -451,34 +444,22 @@ public class DefaultCompass implements InternalCompass {
             return searchEngineOptimizer.getSearchEngineFactory();
         }
 
-        public OptimizerTemplate getOptimizerTemplate() {
-            return searchEngineOptimizer.getOptimizerTemplate();
-        }
-
         public boolean canBeScheduled() {
             return searchEngineOptimizer.canBeScheduled();
         }
 
-        public boolean needOptimizing(final String subIndex) throws SearchEngineException {
+        public boolean needOptimization(final String subIndex) throws SearchEngineException {
             return ((Boolean) template.execute(new CompassCallback() {
                 public Object doInCompass(CompassSession session) throws CompassException {
-                    return (searchEngineOptimizer.needOptimizing(subIndex)) ? Boolean.TRUE : Boolean.FALSE;
+                    return (searchEngineOptimizer.needOptimization(subIndex)) ? Boolean.TRUE : Boolean.FALSE;
                 }
             })).booleanValue();
         }
 
-        public boolean needOptimizing(final String subIndex, final LuceneSubIndexInfo indexInfo) throws SearchEngineException {
-            return ((Boolean) template.execute(new CompassCallback() {
-                public Object doInCompass(CompassSession session) throws CompassException {
-                    return (searchEngineOptimizer.needOptimizing(subIndex, indexInfo)) ? Boolean.TRUE : Boolean.FALSE;
-                }
-            })).booleanValue();
-        }
-
-        public void optimize(final String subIndex, final LuceneSubIndexInfo indexInfo) throws SearchEngineException {
+        public void optimize(final String subIndex) throws SearchEngineException {
             template.execute(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    searchEngineOptimizer.optimize(subIndex, indexInfo);
+                    searchEngineOptimizer.optimize(subIndex);
                 }
             });
         }

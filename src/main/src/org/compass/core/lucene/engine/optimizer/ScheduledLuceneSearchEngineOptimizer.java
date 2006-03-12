@@ -22,6 +22,7 @@ import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
+import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.util.backport.java.util.concurrent.Executors;
@@ -44,32 +45,8 @@ public class ScheduledLuceneSearchEngineOptimizer implements LuceneSearchEngineO
         this.optimizer = optimizer;
     }
 
-    public LuceneSearchEngineFactory getSearchEngineFactory() {
-        return this.optimizer.getSearchEngineFactory();
-    }
-
-    public void setSearchEngineFactory(LuceneSearchEngineFactory searchEngineFactory) {
-        this.optimizer.setSearchEngineFactory(searchEngineFactory);
-    }
-
-    public boolean needOptimization() throws SearchEngineException {
-        return this.optimizer.needOptimization();
-    }
-
-    public void optimize() throws SearchEngineException {
-        this.optimizer.optimize();
-    }
-
-    public boolean needOptimizing(String subIndex) throws SearchEngineException {
-        return this.optimizer.needOptimizing(subIndex);
-    }
-
-    public boolean needOptimizing(String subIndex, LuceneSubIndexInfo segmentInfos) throws SearchEngineException {
-        return this.optimizer.needOptimizing(subIndex, segmentInfos);
-    }
-
-    public void optimize(String subIndex, LuceneSubIndexInfo segmentInfos) throws SearchEngineException {
-        this.optimizer.optimize(subIndex, segmentInfos);
+    public LuceneSearchEngineOptimizer getWrappedOptimizer() {
+        return this.optimizer;
     }
 
     public synchronized void start() throws SearchEngineException {
@@ -88,7 +65,7 @@ public class ScheduledLuceneSearchEngineOptimizer implements LuceneSearchEngineO
         }
         scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new SingleThreadThreadFactory("Compass Scheduled Optimizer", daemon));
         ScheduledOptimizeRunnable scheduledOptimizeRunnable =
-                new ScheduledOptimizeRunnable(getOptimizerTemplate());
+                new ScheduledOptimizeRunnable(getSearchEngineFactory().getOptimizer());
         scheduledExecutorService.scheduleWithFixedDelay(scheduledOptimizeRunnable, period, period, TimeUnit.MILLISECONDS);
     }
 
@@ -99,35 +76,50 @@ public class ScheduledLuceneSearchEngineOptimizer implements LuceneSearchEngineO
         if (log.isInfoEnabled()) {
             log.info("Stopping scheduled optimizer [" + optimizer.getClass() + "]");
         }
-        getOptimizerTemplate().cancel();
+        this.optimizer.stop();
         // TODO should we gracefully wait for it?
         scheduledExecutorService.shutdown();
         scheduledExecutorService = null;
-        this.optimizer.stop();
+    }
+
+    public LuceneSearchEngineFactory getSearchEngineFactory() {
+        return optimizer.getSearchEngineFactory();
+    }
+
+    public void setSearchEngineFactory(LuceneSearchEngineFactory searchEngineFactory) {
+        optimizer.setSearchEngineFactory(searchEngineFactory);
+    }
+
+    public boolean needOptimization() throws SearchEngineException {
+        return optimizer.needOptimization();
+    }
+
+    public void optimize() throws SearchEngineException {
+        optimizer.optimize();
+    }
+
+    public boolean needOptimization(String subIndex) throws SearchEngineException {
+        return optimizer.needOptimization(subIndex);
+    }
+
+    public void optimize(String subIndex) throws SearchEngineException {
+        optimizer.optimize(subIndex);
     }
 
     public boolean isRunning() {
         return this.optimizer.isRunning();
     }
 
-    public LuceneSearchEngineOptimizer getWrappedOptimizer() {
-        return this.optimizer;
-    }
-
     public boolean canBeScheduled() {
         return false;
     }
 
-    public OptimizerTemplate getOptimizerTemplate() {
-        return this.optimizer.getOptimizerTemplate();
-    }
-
     private static class ScheduledOptimizeRunnable implements Runnable {
 
-        private OptimizerTemplate optimizerTemplate;
+        private SearchEngineOptimizer optimizer;
 
-        public ScheduledOptimizeRunnable(OptimizerTemplate optimizerTemplate) {
-            this.optimizerTemplate = optimizerTemplate;
+        public ScheduledOptimizeRunnable(SearchEngineOptimizer optimizer) {
+            this.optimizer = optimizer;
         }
 
         public void run() {
@@ -135,7 +127,7 @@ public class ScheduledLuceneSearchEngineOptimizer implements LuceneSearchEngineO
                 log.debug("Checking for index optimization");
             }
             try {
-                optimizerTemplate.optimize();
+                optimizer.optimize();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to optimize", e);

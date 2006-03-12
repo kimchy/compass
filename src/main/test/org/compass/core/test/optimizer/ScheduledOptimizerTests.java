@@ -41,7 +41,7 @@ public class ScheduledOptimizerTests extends AbstractOptimizerTests {
             return false;
         }
 
-        public boolean needOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
+        public boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
             needOptimizingCalled = true;
             return needOptimizing;
         }

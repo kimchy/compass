@@ -33,46 +33,7 @@ public interface LuceneSearchEngineOptimizer extends SearchEngineOptimizer {
     LuceneSearchEngineFactory getSearchEngineFactory();
 
     /**
-     * Returns the optimizer template associated with this optimizer.
-     */
-    OptimizerTemplate getOptimizerTemplate();
-
-    /**
      * Can the optimizer be scheduled or not.
      */
     boolean canBeScheduled();
-    
-    /**
-     * Should the index be optimized only after the index was changed. The
-     * operation of checking if the index was changed or not is much faster than
-     * the {@link #needOptimizing(String, LuceneSubIndexInfo)} operation, and it
-     * can speed up optimization check time.
-     * <p>
-     * It will return <code>false</code> if there is not need for optmizing,
-     * and <code>true</code> to continue and check with the
-     * {@link #needOptimizing(String, LuceneSubIndexInfo)} method.
-     */
-    boolean needOptimizing(String subIndex) throws SearchEngineException;
-
-    /**
-     * Checks if the index requires optimizing operation.
-     * 
-     * @param subIndex
-     *            The sub-index to check.
-     * @param indexInfo
-     *            The index structire information.
-     * @return <code>true</code> if the index need to be optimized.
-     */
-    boolean needOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
-
-    /**
-     * Optmizes the sub-index.
-     * 
-     * @param subIndex
-     *            The sub-index to optimize.
-     * @param indexInfo
-     *            The index structure information.
-     */
-    void optimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
-
 }

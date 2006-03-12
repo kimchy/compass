@@ -18,16 +18,16 @@ package org.compass.core.engine;
 
 /**
  * Optimizes search engine index data.
- * <p>
+ * <p/>
  * Using it, one can controll the lifecycle of the optimizer using the
  * <code>start()</code> and <code>stop()</code> methods (note that does not
  * mean that it will start a scheduled optimizer, it depends on the
  * configuration supplied).
- * <p>
+ * <p/>
  * You can also check if the search engine required optimization using the
  * <code>needOptimization()</code> method, and run the optimization process
  * using the <code>optimize()</code> method.
- * 
+ *
  * @author kimchy
  */
 public interface SearchEngineOptimizer {
@@ -35,7 +35,7 @@ public interface SearchEngineOptimizer {
     /**
      * Starts the given optimizer. Will start a scheduled optimizer if
      * configured.
-     * 
+     *
      * @throws SearchEngineException
      */
     void start() throws SearchEngineException;
@@ -43,34 +43,52 @@ public interface SearchEngineOptimizer {
     /**
      * Stops the given optimizer. Will stop the scheduled optimizer if
      * configured.
-     * <p>
+     * <p/>
      * Note that if the optimizer is stopped while optimizing, it might take
      * some time till the optimizer will actually stop.
-     * 
+     *
      * @throws SearchEngineException
      */
     void stop() throws SearchEngineException;
 
     /**
      * Returns <code>true</code> if the optimizer is running.
-     * 
+     *
      * @return <code>true</code> if the optimizer is running
      */
     boolean isRunning();
 
     /**
-     * Returns <code>true</code> if the search engine index required
+     * Returns <code>true</code> if the search engine index requires
      * optimization (depends on the optimizer configured).
-     * 
-     * @return <code>true</code> if the search engine index requires optimization.
+     *
+     * @return <code>true</code> if the search engine index requires optimization
      * @throws SearchEngineException
      */
     boolean needOptimization() throws SearchEngineException;
 
     /**
+     * Returns <code>true</code> of the sub index requires optimization
+     * (depends on the optimizer configured).
+     *
+     * @param subIndex The sub index to check if needs optimization
+     * @return <code>true</code> if the sub index requires optimization
+     * @throws SearchEngineException
+     */
+    boolean needOptimization(String subIndex) throws SearchEngineException;
+
+    /**
      * Optimizes the search engine index if it requires optimization.
-     * 
+     *
      * @throws SearchEngineException
      */
     void optimize() throws SearchEngineException;
+
+    /**
+     * Optimizes the sub index if it requires optimization.
+     *
+     * @param subIndex The sub index to optimize
+     * @throws SearchEngineException
+     */
+    void optimize(String subIndex) throws SearchEngineException;
 }

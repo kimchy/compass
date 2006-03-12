@@ -47,7 +47,7 @@ public class AdaptiveOptimizer extends AbstractLuceneSearchEngineOptimizer imple
         return false;
     }
 
-    public boolean needOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
+    public boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
         if (indexInfo.size() >= mergeFactor) {
             if (log.isDebugEnabled()) {
                 log.debug("Need to optimize sub-index [" + subIndex + "]. Number of segments " + indexInfo.size()

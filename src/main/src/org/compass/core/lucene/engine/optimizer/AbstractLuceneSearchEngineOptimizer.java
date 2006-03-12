@@ -26,6 +26,8 @@ import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.apache.lucene.store.Directory;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.util.backport.java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author kimchy
@@ -38,12 +40,6 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
 
     private boolean isRunning = false;
 
-    private HashMap subIndexVersion = new HashMap();
-
-    private HashMap tempSubIndexVersion = new HashMap();
-
-    private OptimizerTemplate optimizerTemplate;
-
     public void start() throws SearchEngineException {
         if (isRunning) {
             throw new IllegalStateException("Optimizer is already running");
@@ -51,7 +47,6 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
         if (log.isDebugEnabled()) {
             log.debug("Starting Optimizer");
         }
-        optimizerTemplate = new OptimizerTemplate(this);
         doStart();
         isRunning = true;
     }
@@ -80,42 +75,71 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
     }
 
     public void optimize() throws SearchEngineException {
-        optimizerTemplate.optimize();
+        LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
+        String[] subIndexes = indexManager.getStore().getSubIndexes();
+        for (int i = 0; i < subIndexes.length; i++) {
+            // here we go indirectly since it might be wrapped in a transaction
+            searchEngineFactory.getOptimizer().optimize(subIndexes[i]);
+        }
     }
 
-    public void optimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException {
-        doOptimize(subIndex, indexInfo);
-        subIndexVersion.put(subIndex, tempSubIndexVersion.get(subIndex));
+    public void optimize(String subIndex) throws SearchEngineException {
+        if (!isRunning()) {
+            return;
+        }
+        LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
+        LuceneSubIndexInfo indexInfo;
+        try {
+            indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndex, indexManager);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to read index info for sub index [" + subIndex + "]", e);
+        }
+        if (indexInfo == null) {
+            // no index data, simply continue
+            return;
+        }
+        boolean needOptimizing = doNeedOptimizing(subIndex, indexInfo);
+        if (!isRunning()) {
+            return;
+        }
+        if (needOptimizing) {
+            doOptimize(subIndex, indexInfo);
+            searchEngineFactory.getIndexManager().clearCache(subIndex);
+        }
+    }
+
+    public boolean needOptimization() throws SearchEngineException {
+        LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
+        String[] subIndexes = indexManager.getStore().getSubIndexes();
+        boolean needOptmization = false;
+        for (int i = 0; i < subIndexes.length; i++) {
+            // here we go indirectly since it might be wrapped in a transaction
+            needOptmization |= searchEngineFactory.getOptimizer().needOptimization(subIndexes[i]);
+        }
+        return needOptmization;
+    }
+
+    public boolean needOptimization(String subIndex) throws SearchEngineException {
+        LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
+        if (!isRunning()) {
+            return false;
+        }
+        LuceneSubIndexInfo indexInfo;
+        try {
+            indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndex, indexManager);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to read index info for sub index [" + subIndex + "]", e);
+        }
+        if (indexInfo == null) {
+            // no index data, simply continue
+            return false;
+        }
+        return doNeedOptimizing(subIndex, indexInfo);
     }
 
     protected abstract void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
 
-    public boolean needOptimization() throws SearchEngineException {
-        return optimizerTemplate.needOptimizing();
-    }
-
-    protected abstract boolean isOptimizeOnlyIfIndexChanged();
-
-    public boolean needOptimizing(String subIndex) throws SearchEngineException {
-        if (!isOptimizeOnlyIfIndexChanged()) {
-            return true;
-        }
-        Long version = (Long) subIndexVersion.get(subIndex);
-        Directory directory = searchEngineFactory.getLuceneIndexManager().getStore()
-                .getDirectoryBySubIndex(subIndex, false);
-        long actualVersion;
-        try {
-            actualVersion = IndexReader.getCurrentVersion(directory);
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to read index version for optimization", e);
-        }
-        // it is the first time we run it, or the index was changed
-        if (version == null || actualVersion > version.longValue()) {
-            tempSubIndexVersion.put(subIndex, new Long(actualVersion));
-            return true;
-        }
-        return false;
-    }
+    protected abstract boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
 
     public LuceneSearchEngineFactory getSearchEngineFactory() {
         return searchEngineFactory;
@@ -125,7 +149,4 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
         this.searchEngineFactory = searchEngineFactory;
     }
 
-    public OptimizerTemplate getOptimizerTemplate() {
-        return this.optimizerTemplate;
-    }
 }

@@ -47,7 +47,7 @@ public class AggressiveOptimizer extends AbstractLuceneSearchEngineOptimizer imp
         return true;
     }
 
-    public boolean needOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
+    public boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
         if (indexInfo.size() >= mergeFactor) {
             if (log.isDebugEnabled()) {
                 log.debug("Need to optimize sub-index [" + subIndex + "]. Optimizing " + indexInfo.size()

@@ -31,16 +31,12 @@ public class NullOptimizer extends AbstractLuceneSearchEngineOptimizer {
     public boolean canBeScheduled() {
         return false;
     }
-    
-    public boolean needOptimizing(String subIndex) throws SearchEngineException {
-        return false;
-    }
-    
-    public boolean needOptimizing(String subIndex, LuceneSubIndexInfo segmentInfos) {
-        return false;
+
+    protected void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException {
+        // do nothing
     }
 
-    protected void doOptimize(String subIndex, LuceneSubIndexInfo segmentInfos) throws SearchEngineException {
-        // don't do anything
+    protected boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException {
+        return false;
     }
 }
