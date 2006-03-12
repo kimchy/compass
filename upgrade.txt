@@ -16,12 +16,12 @@ VERSION 0.9.0 ()
    c) Since the converter-param was mostly used for formatting Dates and Numbers, the format attribute was
       added to the DTD, allowing for quick setting of the format, without going through the hassle of 
       defining a new Converter and registering it. Note, that it must be set only on formatting converters.
-   c) Old way of registering new converters still works (CompassConfiguration#registerConverter).
-   d) You can now configure new converters using Compass configuration settings. The converter setting is
+   d) Old way of registering new converters still works (CompassConfiguration#registerConverter).
+   e) You can now configure new converters using Compass configuration settings. The converter setting is
       compass.converter.[converter name].[settings]. For example, to register a new DateConverter, two settings
       must be set, compass.converter.mydate.type=date, and compass.converter.mydate.format=yyyy-MM-dd. Now,
       you can use the mydate converter lookup name in the converter mapping attribute.
-   e) You can now override default converters that comes with compass. They are registered under Compass
+   f) You can now override default converters that comes with compass. They are registered under Compass
       default names. For example, to change the format for all Dates, simply provide the setting
       compass.converter.date.format=yyyy-MM-dd.
    For more information, please check the reference documentation.
@@ -33,6 +33,9 @@ VERSION 0.9.0 ()
 7. compass.transaction.managerLookup is no longer required when using JTA. 
    Compass will try to auto-detect it based on the JTA implementation used.
 8. The setting for compound file format was wrongly named, changed to: compass.engine.useCompoundFile.
+9. A new XML configuration based on XML schema is avilable. It is now the prefered way to configure Compass.
+10. A full implementation of OSEM definition using Java 5 annotations.
+11. Support for EJB3 JPA.
 
 VERSION 0.8.1 (Jan 22, 2006)
 ============================
