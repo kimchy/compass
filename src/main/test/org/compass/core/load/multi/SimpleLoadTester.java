@@ -124,7 +124,7 @@ public class SimpleLoadTester {
         int writeFactor = 10;
 
         CompassConfiguration conf = new CompassConfiguration();
-        conf.configure("org/compass/core/load/multi/compass.cfg.xml");
+        conf.configure("/org/compass/core/load/multi/compass.cfg.xml");
         File testPropsFile = new File("compass.test.properties");
         if (testPropsFile.exists()) {
             Properties testProps = new Properties();
