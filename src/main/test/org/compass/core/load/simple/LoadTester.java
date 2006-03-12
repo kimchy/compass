@@ -53,7 +53,7 @@ public class LoadTester {
     public void runTests(PrintStream printer) throws IOException {
         printer.println("Run: Number Of Cycles[" + numberOfCycles + "] Number Per Cycle [" + numberPerCycle + "]");
         CompassConfiguration conf = new CompassConfiguration();
-        conf.configure("org/compass/core/load/simple/compass.cfg.xml");
+        conf.configure("/org/compass/core/load/simple/compass.cfg.xml");
         File testPropsFile = new File("compass.test.properties");
         if (testPropsFile.exists()) {
             Properties testProps = new Properties();

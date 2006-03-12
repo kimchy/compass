@@ -50,6 +50,9 @@ public class SmartConfigurationBuilder implements ConfigurationBuilder {
 
     public void configure(String resource, CompassConfiguration config) throws ConfigurationException {
         InputStream stream = CompassEnvironment.class.getResourceAsStream(resource);
+        if (stream == null) {
+            throw new ConfigurationException("Failed to open config resource [" + resource + "]");
+        }
         int mode = detectValidationMode(stream, resource);
         if (mode == VALIDATION_XSD) {
             new SchemaConfigurationBuilder().configure(resource, config);
