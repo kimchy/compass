@@ -7,6 +7,11 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider;
+import org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider;
+import org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider;
+import org.compass.core.transaction.JTASyncTransactionFactory;
+import org.compass.core.transaction.manager.JBoss;
 
 /**
  * @author kimchy
@@ -32,6 +37,63 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("all1", settings.getSetting(CompassEnvironment.All.NAME));
         assertEquals("yes", settings.getSetting(CompassEnvironment.All.TERM_VECTOR));
         assertEquals("analyzer1", settings.getSetting(LuceneEnvironment.ALL_ANALYZER));
+    }
+
+    public void testJtaSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/jta.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals(JTASyncTransactionFactory.class.getName(), settings.getSetting(CompassEnvironment.Transaction.FACTORY));
+        assertEquals("true", settings.getSetting(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION));
+        assertEquals(JBoss.class.getName(), settings.getSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP));
+    }
+
+    public void testJdbcDriverManagerSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/jdbc-drivermanager.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
+        assertEquals(DriverManagerDataSourceProvider.class.getName(),
+                settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS));
+        assertEquals("testusername", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME));
+        assertEquals("testpassword", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD));
+        assertEquals("testDriverClass", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS));
+        assertEquals("jdbc://testurl", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+
+    public void testJdbcDbcp() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/jdbc-dbcp.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
+        assertEquals(DbcpDataSourceProvider.class.getName(),
+                settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS));
+        assertEquals("testusername", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME));
+        assertEquals("testpassword", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD));
+        assertEquals("testDriverClass", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS));
+        assertEquals("jdbc://testurl", settings.getSetting(CompassEnvironment.CONNECTION));
+        assertEquals("10", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_ACTIVE));
+        assertEquals("5", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_WAIT));
+        assertEquals("2", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_IDLE));
+        assertEquals("3", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.INITIAL_SIZE));
+        assertEquals("4", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MIN_IDLE));
+        assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.POOL_PREPARED_STATEMENTS));
+    }
+
+    public void testJdbcJndiSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/jdbc-jndi.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("false", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
+        assertEquals(JndiDataSourceProvider.class.getName(),
+                settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS));
+        assertEquals("testusername", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME));
+        assertEquals("testpassword", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD));
+        assertEquals("jdbc://testds", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
     public void testConvertersSchema() throws Exception {

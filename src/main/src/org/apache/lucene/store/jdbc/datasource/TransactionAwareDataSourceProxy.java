@@ -107,7 +107,18 @@ public class TransactionAwareDataSourceProxy implements DataSource {
      * Not supported.
      */
     public Connection getConnection(String username, String password) throws SQLException {
-        throw new UnsupportedOperationException("");
+        Map holders = (Map) connectionHolders.get();
+        if (holders == null) {
+            holders = new HashMap();
+            connectionHolders.set(holders);
+        }
+        Connection con = (Connection) holders.get(getTargetDataSource());
+        if (con == null) {
+            con = getTargetDataSource().getConnection(username, password);
+            holders.put(getTargetDataSource(), con);
+            return getTransactionAwareConnectionProxy(con, getTargetDataSource(), true);
+        }
+        return getTransactionAwareConnectionProxy(con, getTargetDataSource(), false);
     }
 
     /**
