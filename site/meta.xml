@@ -12,13 +12,43 @@
     <owners>
         <person>
             <name>Shay Banon</name>
-            <email>kimchy.compass@mac.com</email>
+            <email>kimchy (AT) mac (DOT) com</email>
         </person>
     </owners>
 
     <developers/>
 
     <docs>
+       <items>
+          <item>
+             <name>Lucene</name>
+             <url>content/lucene.html</url>
+          </item>
+          <item>
+             <name>Hibernate</name>
+             <url>content/hibernate.html</url>
+          </item>
+          <item>
+             <name>Spring</name>
+             <url>content/spring.html</url>
+          </item>
+          <item>
+             <name>JDO</name>
+             <url>content/jdo.html</url>
+          </item>
+          <item>
+             <name>Apache OJB</name>
+             <url>content/ojb.html</url>
+          </item>
+          <item>
+             <name>iBatis</name>
+             <url>content/ibatis.html</url>
+          </item>
+          <item>
+             <name>JDBC</name>
+             <url>content/jdbc.html</url>
+          </item>
+       </items>
     </docs>
 
     <evaluating>
