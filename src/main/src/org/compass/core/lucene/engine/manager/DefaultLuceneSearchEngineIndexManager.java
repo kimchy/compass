@@ -188,13 +188,16 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (log.isDebugEnabled()) {
             log.debug("Global notification to clear cache");
         }
-        // here we sync on globalCache since we do not want to collide with the other sync methods
         String[] subIndexes = searchEngineStore.getSubIndexes();
         // just update the last modified time, others will see the change and update
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                dir.touchFile(CLEAR_CACHE_NAME);
+                if (!dir.fileExists(CLEAR_CACHE_NAME)) {
+                    dir.createOutput(CLEAR_CACHE_NAME).close();
+                } else {
+                    dir.touchFile(CLEAR_CACHE_NAME);
+                }
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to update/generate global invalidation cahce", e);
             }
@@ -365,20 +368,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 } catch (IOException e) {
                     throw new SearchEngineException("Failed to check if global clear cache exists", e);
                 }
-                IndexOutput indexOutput = null;
                 try {
-                    indexOutput = dir.createOutput(CLEAR_CACHE_NAME);
-                    indexOutput.writeByte((byte) 0);
+                    dir.createOutput(CLEAR_CACHE_NAME).close();
                 } catch (IOException e) {
                     throw new SearchEngineException("Failed to update/generate global invalidation cahce", e);
-                } finally {
-                    if (indexOutput != null) {
-                        try {
-                            indexOutput.close();
-                        } catch (IOException e) {
-                            // do nothing
-                        }
-                    }
                 }
             }
             lastModifiled = new long[subIndexes.length];
@@ -415,7 +408,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                if (!org.apache.lucene.index.LuceneUtils.isCompound(dir, luceneSettings.getTransactionCommitTimeout())) {
+                if (!org.apache.lucene.index.LuceneUtils.isCompound(dir, luceneSettings.getTransactionCommitTimeout()))
+                {
                     return false;
                 }
             } catch (IOException e) {
@@ -430,7 +424,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                if (!org.apache.lucene.index.LuceneUtils.isUnCompound(dir, luceneSettings.getTransactionCommitTimeout())) {
+                if (!org.apache.lucene.index.LuceneUtils.isUnCompound(dir, luceneSettings.getTransactionCommitTimeout()))
+                {
                     return false;
                 }
             } catch (IOException e) {
