@@ -3,6 +3,7 @@
     <jiraId>10004</jiraId>
     <jiraName>CMP</jiraName>
     <confluenceName>CMP</confluenceName>
+    <license>apache</license>
 
     <forums>
         <usersId>5</usersId>
