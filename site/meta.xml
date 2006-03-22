@@ -5,6 +5,7 @@
     <confluenceName>CMP</confluenceName>
     <license>apache</license>
     <svn>true</svn>
+    <noJavaDoc>true</noJavaDoc>
 
     <forums>
         <usersId>5</usersId>
@@ -61,6 +62,21 @@
     </docs>
 
     <releases>
+        <release>
+            <version>0.9.0 SNAPSHOT</version>
+            <date>Latest SVN build</date>
+            <jiraId>21360</jiraId>
+            <downloads>
+                <download>
+                    <url>versions/0.9.0-SNAPSHOT/release/compass-0.9.0-SNAPSHOT.zip</url>
+                    <name>Compass</name>
+                </download>
+                <download>
+                    <url>versions/0.9.0-SNAPSHOT/release/compass-0.9.0-SNAPSHOT-with-dependencies.zip</url>
+                    <name>With Dependencies</name>
+                </download>
+            </downloads>
+        </release>
         <release>
             <version>0.8.1</version>
             <date>Sunday, January 22, 2006</date>
