@@ -58,7 +58,7 @@
 
     <docs>
         <customUrl>true</customUrl>
-        <url>content/documentation.html</url>
+        <url>http://www.opensymphony.com/compass/content/documentation.html</url>
     </docs>
 
     <releases>
