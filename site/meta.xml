@@ -5,7 +5,6 @@
     <confluenceName>CMP</confluenceName>
     <license>apache</license>
     <svn>true</svn>
-    <noJavaDoc>true</noJavaDoc>
 
     <forums>
         <usersId>5</usersId>
@@ -59,6 +58,7 @@
     <docs>
         <customUrl>true</customUrl>
         <url>http://www.opensymphony.com/compass/content/documentation.html</url>
+        <noJavaDoc>true</noJavaDoc>
     </docs>
 
     <releases>
