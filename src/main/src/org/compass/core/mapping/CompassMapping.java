@@ -44,7 +44,7 @@ public class CompassMapping {
         public ResourcePropertyLookup(String name) {
             // the path is escaped, so don't try to look it up
             if (name.charAt(0) == '\'' && name.charAt(name.length() - 1) == '\'') {
-                path = name.substring(1, name.length() - 2);
+                path = name.substring(1, name.length() - 1);
             } else {
                 this.resourcePropertyMapping = getResourcePropertyMappingByPath(name);
                 if (resourcePropertyMapping == null) {
