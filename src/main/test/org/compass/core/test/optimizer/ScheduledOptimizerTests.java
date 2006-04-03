@@ -110,9 +110,10 @@ public class ScheduledOptimizerTests extends AbstractOptimizerTests {
         // stop the optimizer, make sure that it won't schedule any more optimizations
         getCompass().getSearchEngineOptimizer().stop();
         assertFalse(getCompass().getSearchEngineOptimizer().isRunning());
-        optimizer.clear();
-        optimizer.setNeedOptimizing(true);
         try {
+            Thread.sleep(100);
+            optimizer.clear();
+            optimizer.setNeedOptimizing(true);
             Thread.sleep(500);
         } catch (InterruptedException e) {
         }

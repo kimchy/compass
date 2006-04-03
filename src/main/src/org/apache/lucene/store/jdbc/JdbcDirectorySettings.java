@@ -38,6 +38,7 @@ import org.apache.lucene.store.jdbc.lock.PhantomReadLock;
  * The "segments" and "segments.new" uses the {@link ActualDeleteFileEntryHandler}, {@link FetchOnOpenJdbcIndexInput},
  * and {@link RAMJdbcIndexOutput}.
  * The file suffix "fnm" uses the {@link FetchOnOpenJdbcIndexInput}, and {@link RAMJdbcIndexOutput}.
+ * The file suffix "del" and "tmp" uses the {@link ActualDeleteFileEntryHandler}.
  *
  * @author kimchy
  */
@@ -97,6 +98,14 @@ public class JdbcDirectorySettings {
         segmentsSettings.setClassSetting(JdbcFileEntrySettings.INDEX_OUTPUT_TYPE_SETTING, RAMJdbcIndexOutput.class);
         registerFileEntrySettings("segments", segmentsSettings);
         registerFileEntrySettings("segments.new", segmentsSettings);
+
+        JdbcFileEntrySettings dotDelSettings = new JdbcFileEntrySettings();
+        dotDelSettings.setClassSetting(JdbcFileEntrySettings.FILE_ENTRY_HANDLER_TYPE, ActualDeleteFileEntryHandler.class);
+        registerFileEntrySettings("del", dotDelSettings);
+
+        JdbcFileEntrySettings tmpSettings = new JdbcFileEntrySettings();
+        tmpSettings.setClassSetting(JdbcFileEntrySettings.FILE_ENTRY_HANDLER_TYPE, ActualDeleteFileEntryHandler.class);
+        registerFileEntrySettings("tmp", dotDelSettings);
 
         JdbcFileEntrySettings fnmSettings = new JdbcFileEntrySettings();
         fnmSettings.setClassSetting(JdbcFileEntrySettings.INDEX_INPUT_TYPE_SETTING, FetchOnOpenJdbcIndexInput.class);
