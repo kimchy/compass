@@ -320,18 +320,25 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                 // query for the base class will return results for this class as well
                 if (isInherited(classMetadata)) {
                     if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("entity [") + entityname + "] is inherited, filtering it out");
+                        log.debug(buildMessage("entity [" + entityname + "] is inherited, filtering it out"));
                     }
                     continue;
                 }
                 if (isFilteredForIndex(entityname)) {
                     if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("entity [") + entityname + "] is marked to be filtered, filtering it out");
+                        log.debug(buildMessage("entity [" + entityname + "] is marked to be filtered, filtering it out"));
                     }
                     continue;
                 }
                 if (compassGps.hasMappingForEntityForIndex((entityname))) {
                     classesToIndex.add(entityname);
+                    if (log.isDebugEnabled()) {
+                        log.debug(buildMessage("entity [" + entityname + "] will be indexed"));
+                    }
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug(buildMessage("entity [" + entityname + "] does not have compass mapping, filtering it out"));
+                    }
                 }
             }
         } catch (Exception e) {
