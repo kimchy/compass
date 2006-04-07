@@ -20,6 +20,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+
 import org.compass.core.CompassSession;
 import org.compass.core.util.Assert;
 import org.compass.gps.CompassGpsException;
@@ -125,10 +126,21 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
         EntityManagerFactory nativeEntityManagerFactory = entityManagerFactory;
         if (nativeEntityManagerFactoryExtractor != null) {
             nativeEntityManagerFactory = nativeEntityManagerFactoryExtractor.extractNative(nativeEntityManagerFactory);
+            if (nativeEntityManagerFactory == null) {
+                throw new JpaGpsDeviceException(buildMessage("Native EntityManager extractor returned null"));
+            }
+            if (log.isDebugEnabled()) {
+                log.debug(buildMessage("Using native EntityManagerFactory ["
+                        + nativeEntityManagerFactory.getClass().getName() + "] extracted by ["
+                        + nativeEntityManagerFactory.getClass().getName() + "]"));
+            }
         }
 
         if (entitiesLocator == null) {
             entitiesLocator = JpaEntitiesLocatorDetector.detectLocator(nativeEntityManagerFactory);
+            if (log.isDebugEnabled()) {
+                log.debug(buildMessage("Using index entityLocator [" + entitiesLocator.getClass().getName() + "]"));
+            }
         }
         entetiesInformation = entitiesLocator.locate(nativeEntityManagerFactory, this);
 
@@ -137,7 +149,10 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 lifecycleInjector = JpaEntityLifecycleInjectorDetector.detectInjector(nativeEntityManagerFactory);
             }
             if (lifecycleInjector == null) {
-                throw new JpaGpsDeviceException("Failed to locate lifecycleInjector");
+                throw new JpaGpsDeviceException(buildMessage("Failed to locate lifecycleInjector"));
+            }
+            if (log.isDebugEnabled()) {
+                log.debug(buildMessage("Using lifecycleInjector [" + lifecycleInjector.getClass().getName() + "]"));
             }
             lifecycleInjector.injectLifecycle(nativeEntityManagerFactory, this);
         }
@@ -153,6 +168,11 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 entityManagerWrapper.open();
                 EntityManager entityManager = entityManagerWrapper.getEntityManager();
                 while (true) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(buildMessage("Indexing entities [" + entityInformation.getName() + "] range ["
+                                + current + "-" + (current + fetchCount) + "] using query ["
+                                + entityInformation.getSelectQuery() + "]"));
+                    }
                     Query query = entityManager.createQuery(entityInformation.getSelectQuery());
                     query.setFirstResult(current);
                     query.setMaxResults(current + fetchCount);

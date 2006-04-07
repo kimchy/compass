@@ -24,6 +24,8 @@ import org.compass.core.util.StringUtils;
 import org.compass.gps.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityManagerFactory;
@@ -43,6 +45,8 @@ import java.util.ArrayList;
  */
 public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
 
+    protected Log log = LogFactory.getLog(getClass());
+
     public EntityInformation[] locate(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
         final ResourceMapping[] resourceMappings =
@@ -61,13 +65,25 @@ public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
             if (entityInformation == null) {
                 continue;
             }
-            if (!shouldFilter(entityInformation)) {
-                entitiesList.add(entityInformation);
+            if (shouldFilter(entityInformation, device)) {
+                continue;
             }
+            entitiesList.add(entityInformation);
         }
         return entitiesList.toArray(new EntityInformation[entitiesList.size()]);
     }
 
+    /**
+     * Creates the {@link EntityInformation} for a given class. If return <code>null</code>
+     * the class will be filtered out.
+     * <p/>
+     * Implementation filters out classes that do not have the {@link Entity} annotation (i.e.
+     * return <code>null</code> for such a case).
+     *
+     * @param clazz The class to create the {@link EntityInformation} for
+     * @return The entity information, or <code>null</code> to filter it out
+     * @throws JpaGpsDeviceException
+     */
     protected EntityInformation createEntityInformation(Class<?> clazz) throws JpaGpsDeviceException {
         Entity entity = clazz.getAnnotation(Entity.class);
         if (entity == null) {
@@ -82,19 +98,32 @@ public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
         return new EntityInformation(clazz, name);
     }
 
-    protected boolean shouldFilter(EntityInformation entityInformation) {
-        boolean hasIneritence = false;
+    /**
+     * Return <code>true</code> if the entity should be filtered out from the index operation.
+     * <p/>
+     * Implementation filters out classes that one of the super classes has the {@link Inheritance}
+     * annotation and the super class has compass mappings.
+     *
+     * @param entityInformation The entity information to check if it should be filtered
+     * @param device            The Jpa gps device
+     * @return <code>true</code> if the entity should be filtered from the index process
+     */
+    protected boolean shouldFilter(EntityInformation entityInformation, JpaGpsDevice device) {
         Class<?> clazz = entityInformation.getClazz().getSuperclass();
         while (true) {
             if (clazz == null || clazz.equals(Object.class)) {
                 break;
             }
-            if (clazz.isAnnotationPresent(Inheritance.class)) {
-                hasIneritence = true;
-                break;
+            if (clazz.isAnnotationPresent(Inheritance.class)
+                    && ((CompassGpsInterfaceDevice) device.getGps()).hasMappingForEntityForIndex(clazz)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Entity [" + entityInformation.getName()
+                            + "] is inherited and super class [" + clazz + "] has compass mapping, filtering it out");
+                }
+                return true;
             }
             clazz = clazz.getSuperclass();
         }
-        return hasIneritence;
+        return false;
     }
 }

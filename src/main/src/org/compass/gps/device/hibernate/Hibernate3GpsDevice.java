@@ -273,16 +273,16 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                 throw new HibernateGpsDeviceException(buildMessage("Failed to create session factory"), e);
             }
         }
-            if (isMirrorDataChanges()) {
-                SessionFactory actualSessionFactory = doGetActualSessionFactory();
+        if (isMirrorDataChanges()) {
+            SessionFactory actualSessionFactory = doGetActualSessionFactory();
 
-                try {
-                    ClassUtils.forName("org.hibernate.event.SessionEventListenerConfig");
-                    registerEventsForHibernate30(actualSessionFactory);
-                } catch (ClassNotFoundException e) {
-                    registerEventsForHibernate31(actualSessionFactory);
-                }
+            try {
+                ClassUtils.forName("org.hibernate.event.SessionEventListenerConfig");
+                registerEventsForHibernate30(actualSessionFactory);
+            } catch (ClassNotFoundException e) {
+                registerEventsForHibernate31(actualSessionFactory);
             }
+        }
     }
 
     protected void doStop() throws CompassGpsException {
@@ -319,10 +319,16 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                 // if it is inherited, do not add it to the classes to index, since the "from [entity]"
                 // query for the base class will return results for this class as well
                 if (isInherited(classMetadata)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("entity [" + entityname + "] is inherited, filtering it out"));
+                    Class mappedClass = classMetadata.getMappedClass(EntityMode.POJO);
+                    Class superClass = mappedClass.getSuperclass();
+                    // only filter out classes that their super class has compass mappings
+                    if (superClass != null && compassGps.hasMappingForEntityForIndex(superClass)) {
+                        if (log.isDebugEnabled()) {
+                            log.debug(buildMessage("entity [" + entityname + "] is inherited and super class ["
+                                    + superClass + "] has compass mapping, filtering it out"));
+                        }
+                        continue;
                     }
-                    continue;
                 }
                 if (isFilteredForIndex(entityname)) {
                     if (log.isDebugEnabled()) {
