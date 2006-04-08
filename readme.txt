@@ -54,7 +54,7 @@ MODULE JARS (dist/modules):
 
 * "compass-core"
 - Contents: core compass functionality - OSEM, RSEM, Transaction, Optimizer, JDBC Store
-- Dependencies: Commons Logging, Lucene, (JTA/JEE)
+- Dependencies: Commons Logging, Lucene Core (Highlighter) (Analyzers) (Snowball), (JTA/JEE)
 
 * "compass-annotations"
 - Contents: Java 5 Annotation based OSEM support
