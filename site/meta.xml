@@ -1,10 +1,11 @@
 <project>
     <name>Compass</name>
-    <jiraId>10004</jiraId>
+    <jiraId>10000</jiraId>
     <jiraName>CMP</jiraName>
     <confluenceName>CMP</confluenceName>
     <license>apache</license>
     <svn>true</svn>
+    <jiraUrl>http/jira.compassframework.org</jiraUrl>
 
     <forums>
         <usersId>5</usersId>
