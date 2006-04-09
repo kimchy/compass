@@ -6,7 +6,7 @@
     <license>apache</license>
     <svn>true</svn>
     <jiraUrl>http://jira.compassframework.org</jiraUrl>
-    <mailingLists>false</mailingLists>
+    <noMailingLists>true</noMailingLists>
 
     <forums>
         <usersId>5</usersId>
