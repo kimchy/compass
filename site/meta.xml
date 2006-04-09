@@ -89,5 +89,38 @@
                 </download>
             </downloads>
         </release>
+        <release>
+            <version>0.8.0</version>
+            <date>Sunday, January 8, 2006</date>
+            <jiraId>10031</jiraId>
+            <downloads>
+                <download>
+                    <url>https://compass.dev.java.net/files/documents/4669/29599/compass-0.8.0.zip</url>
+                    <name>Full</name>
+                </download>
+            </downloads>
+        </release>
+        <release>
+            <version>0.7.0</version>
+            <date>Thursday, December 22, 2005</date>
+            <jiraId>10010</jiraId>
+            <downloads>
+                <download>
+                    <url>https://compass.dev.java.net/files/documents/4669/29596/compass-0.7.0.zip</url>
+                    <name>Full</name>
+                </download>
+            </downloads>
+        </release>
+        <release>
+            <version>0.6.2</version>
+            <date>Tuesday, November 22, 2005</date>
+            <jiraId>10021</jiraId>
+            <downloads>
+                <download>
+                    <url>https://compass.dev.java.net/files/documents/4669/29598/compass-0.6.2.zip</url>
+                    <name>Full</name>
+                </download>
+            </downloads>
+        </release>
     </releases>
 </project>

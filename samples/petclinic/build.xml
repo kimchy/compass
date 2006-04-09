@@ -48,6 +48,8 @@
         </fileset>
         <fileset dir="${compass.root}/lib/spring">
             <include name="spring.jar"/>
+            <include name="spring-hibernate3.jar"/>
+            <include name="spring-ojb.jar"/>
         </fileset>
 
     </path>
@@ -223,6 +225,8 @@
             </fileset>
             <fileset dir="${compass.root}/lib/spring">
                 <include name="spring.jar"/>
+                <include name="spring-hibernate3.jar"/>
+                <include name="spring-ojb.jar"/>
             </fileset>
         </copy>
 
