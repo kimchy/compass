@@ -31,7 +31,7 @@ try {
     ...
     session.save(author);
     CompassHits hits = session.find("jack london");
-    Author a = (Author)hits.get(0);
+    Author a = (Author) hits.data(0);
     Resource r = hits.getResource(0);
     ...
     tx.commit();
