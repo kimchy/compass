@@ -23,6 +23,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.util.DTDEntityResolver;
 import org.compass.core.util.DomUtils;
+import org.compass.core.util.ClassUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -48,7 +49,7 @@ public class DTDConfigurationBuilder extends AbstractXmlConfigurationBuilder {
         }
     }
 
-    protected void processCompass(Element compassElement, CompassConfiguration config) {
+    protected void processCompass(Element compassElement, CompassConfiguration config) throws ConfigurationException {
         String name = DomUtils.getElementAttribute(compassElement, "name", "default");
         config.getSettings().setSetting(CompassEnvironment.NAME, name);
         NodeList nl = compassElement.getChildNodes();
@@ -65,12 +66,19 @@ public class DTDConfigurationBuilder extends AbstractXmlConfigurationBuilder {
                     String file = DomUtils.getElementAttribute(ele, "file", null);
                     String jar = DomUtils.getElementAttribute(ele, "jar", null);
                     String pckg = DomUtils.getElementAttribute(ele, "package", null);
+                    String clazz = DomUtils.getElementAttribute(ele, "class", null);
                     if (rsrc != null) {
                         config.addResource(rsrc);
                     } else if (jar != null) {
                         config.addJar(new File(jar));
                     } else if (pckg != null) {
                         config.addPackage(pckg);
+                    } else if (clazz != null) {
+                        try {
+                            config.addClass(ClassUtils.forName(clazz));
+                        } catch (ClassNotFoundException e) {
+                            throw new ConfigurationException("Failed map class [" + clazz + "]", e);
+                        }
                     } else {
                         if (file == null) {
                             throw new ConfigurationException(

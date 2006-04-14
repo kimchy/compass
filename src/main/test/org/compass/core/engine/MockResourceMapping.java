@@ -75,7 +75,7 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
         return subIndex;
     }
     
-    public boolean isInclucePropertiesWithNoMappingsInAll() {
+    public boolean isIncludePropertiesWithNoMappingsInAll() {
         return true;
     }
 

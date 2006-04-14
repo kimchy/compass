@@ -85,7 +85,7 @@ public interface ResourceMapping extends Mapping {
      * properties with no mappings will be added to the "all" property. A resoruce can have property with no
      * mappings if it was added programtically to the resource.
      */
-    boolean isInclucePropertiesWithNoMappingsInAll();
+    boolean isIncludePropertiesWithNoMappingsInAll();
 
     /**
      * Returns the name of the all property for the given resoruce.

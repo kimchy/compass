@@ -82,7 +82,7 @@ public abstract class LuceneUtils {
                 ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property
                         .getName());
                 if (resourcePropertyMapping == null) {
-                    if (resourceMapping.isInclucePropertiesWithNoMappingsInAll()) {
+                    if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {
                         atleastOneAddedToAll = tryAddPropertyToAll(property, reader, atleastOneAddedToAll);
                     }
                 } else if (!resourcePropertyMapping.isExcludeFromAll() && !resourcePropertyMapping.isInternal()) {

@@ -19,7 +19,7 @@ public class NullResourceMapping extends AbstractResourceMapping {
         return null;
     }
 
-    public boolean isInclucePropertiesWithNoMappingsInAll() {
+    public boolean isIncludePropertiesWithNoMappingsInAll() {
         return false;
     }
 

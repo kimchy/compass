@@ -39,7 +39,7 @@ public class RawResourceMapping extends AbstractResourceMapping implements PostP
         return copy;
     }
 
-    public boolean isInclucePropertiesWithNoMappingsInAll() {
+    public boolean isIncludePropertiesWithNoMappingsInAll() {
         return true;
     }
 
