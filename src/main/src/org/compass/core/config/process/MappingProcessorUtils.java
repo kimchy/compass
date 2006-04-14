@@ -61,6 +61,7 @@ public abstract class MappingProcessorUtils {
 
     public static void process(ClassPropertyMetaDataMapping mdMapping, ClassPropertyMapping classPropertyMapping,
                                ConverterLookup converterLookup) throws MappingException {
+        mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
         if (mdMapping.getConverter() == null) {
 
             if (mdMapping.getConverterName() != null) {

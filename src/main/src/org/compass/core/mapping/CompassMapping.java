@@ -173,7 +173,7 @@ public class CompassMapping {
             throw new IllegalArgumentException("Failed to find class/resource mapping for alias [" + alias
                     + "] from path [" + path + "]");
         }
-        ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getMappingByPath(path.substring(dotIndex + 1));
+        ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getResourcePropertyMappingByDotPath(path.substring(dotIndex + 1));
         if (resourcePropertyMapping == null) {
             throw new IllegalArgumentException("Failed to find mapping for alias [" + alias + "] and path [" + path + "]");
         }

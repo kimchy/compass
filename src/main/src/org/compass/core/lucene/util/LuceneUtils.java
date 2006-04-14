@@ -35,6 +35,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
@@ -74,16 +75,19 @@ public abstract class LuceneUtils {
     public static void addAllPropertyIfNeeded(Resource resource, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) throws SearchEngineException {
         if (resourceMapping.isAllSupported()) {
             LuceneSettings luceneSettings = searchEngine.getSearchEngineFactory().getLuceneSettings();
+            PropertyNamingStrategy propertyNamingStrategy = searchEngine.getSearchEngineFactory().getPropertyNamingStrategy();
             MultiIOReader reader = new MultiIOReader();
             Property[] properties = resource.getProperties();
             boolean atleastOneAddedToAll = false;
             for (int i = 0; i < properties.length; i++) {
                 Property property = properties[i];
-                ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property
-                        .getName());
+                ResourcePropertyMapping resourcePropertyMapping =
+                        resourceMapping.getResourcePropertyMappingByPath(property.getName());
                 if (resourcePropertyMapping == null) {
-                    if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {
-                        atleastOneAddedToAll = tryAddPropertyToAll(property, reader, atleastOneAddedToAll);
+                    if (!propertyNamingStrategy.isInternal(property.getName())) {
+                        if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {
+                            atleastOneAddedToAll = tryAddPropertyToAll(property, reader, atleastOneAddedToAll);
+                        }
                     }
                 } else if (!resourcePropertyMapping.isExcludeFromAll() && !resourcePropertyMapping.isInternal()) {
                     atleastOneAddedToAll = tryAddPropertyToAll(property, reader, atleastOneAddedToAll);

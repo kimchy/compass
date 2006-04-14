@@ -50,22 +50,22 @@ public class ReferenceTests extends AbstractTestCase {
         assertEquals("$/x/y/id", resourcePropertyMappings[0].getPath());
         assertEquals("id", resourcePropertyMappings[0].getName());
 
-        ResourcePropertyMapping resourcePropertyMapping = xMapping.getMappingByPath("id");
+        ResourcePropertyMapping resourcePropertyMapping = xMapping.getResourcePropertyMappingByDotPath("id");
         assertNotNull(resourcePropertyMapping);
         assertEquals("id", resourcePropertyMapping.getName());
         assertEquals("$/x/id", resourcePropertyMapping.getPath());
 
-        resourcePropertyMapping = xMapping.getMappingByPath("value");
+        resourcePropertyMapping = xMapping.getResourcePropertyMappingByDotPath("value");
         assertNotNull(resourcePropertyMapping);
         assertEquals("value", resourcePropertyMapping.getName());
         assertEquals("value", resourcePropertyMapping.getPath());
 
-        resourcePropertyMapping = xMapping.getMappingByPath("value.value");
+        resourcePropertyMapping = xMapping.getResourcePropertyMappingByDotPath("value.value");
         assertNotNull(resourcePropertyMapping);
         assertEquals("value", resourcePropertyMapping.getName());
         assertEquals("value", resourcePropertyMapping.getPath());
 
-        resourcePropertyMapping = xMapping.getMappingByPath("y.id");
+        resourcePropertyMapping = xMapping.getResourcePropertyMappingByDotPath("y.id");
         assertNotNull(resourcePropertyMapping);
         assertEquals("id", resourcePropertyMapping.getName());
         assertEquals("$/x/y/id", resourcePropertyMapping.getPath());

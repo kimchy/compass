@@ -56,7 +56,7 @@ public interface ConverterLookup extends CompassConfigurable {
 
     /**
      * Registers a {@link Converter} under the converter name. Also associates
-     * the converter with the given name.
+     * the converter with the given type.
      *
      * @param converterName The converter name to be registered against
      * @param converter     The converter to use

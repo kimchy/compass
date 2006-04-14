@@ -136,5 +136,11 @@ public interface ResourceMapping extends Mapping {
      * ({@link org.compass.core.mapping.ResourcePropertyMapping#getPath()}, or
      * <code>null</code> of not exists.
      */
-    ResourcePropertyMapping getMappingByPath(String path);
+    ResourcePropertyMapping getResourcePropertyMappingByPath(String path);
+
+    /**
+     * Returns the {@link ResourcePropertyMapping} that match the given path
+     * "dot" path (a.bValue.value), or <code>null</code> if none exists.
+     */
+    ResourcePropertyMapping getResourcePropertyMappingByDotPath(String path);
 }

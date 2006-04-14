@@ -39,6 +39,7 @@ public interface Converter {
      * @param root     The Object to marshall to the resource
      * @param mapping  The mapping definition of how to marshall the Object to the resoruce
      * @param context  The context for the current marhslling process
+     * @return <code>true</code> if data was saved in the the index that can be read.
      * @throws ConversionException
      */
     boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)

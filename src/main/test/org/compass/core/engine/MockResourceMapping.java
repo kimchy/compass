@@ -147,6 +147,10 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
         return null;
     }
 
+    public ResourcePropertyMapping getResourcePropertyMappingByPath(String path) {
+        return null;
+    }
+
     public ResourcePropertyMapping[] getResourcePropertyMappings(String propertyName) {
         return new ResourcePropertyMapping[0];
     }
@@ -163,7 +167,7 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
         return new String[0];
     }
     
-    public ResourcePropertyMapping getMappingByPath(String path) {
+    public ResourcePropertyMapping getResourcePropertyMappingByDotPath(String path) {
         return null;
     }
 

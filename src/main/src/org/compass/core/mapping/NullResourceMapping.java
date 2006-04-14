@@ -27,7 +27,7 @@ public class NullResourceMapping extends AbstractResourceMapping {
         return new ResourcePropertyMapping[0];
     }
 
-    public ResourcePropertyMapping getMappingByPath(String path) {
+    public ResourcePropertyMapping getResourcePropertyMappingByDotPath(String path) {
         return null;
     }
 }

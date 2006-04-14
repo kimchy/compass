@@ -108,12 +108,12 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         return idMappingList;
     }
 
-    public ResourcePropertyMapping getMappingByPath(String path) {
+    public ResourcePropertyMapping getResourcePropertyMappingByDotPath(String path) {
         return (ResourcePropertyMapping) pathMappings.get(path);
     }
 
     public boolean isIncludePropertiesWithNoMappingsInAll() {
-        return false;
+        return true;
     }
 
     public boolean isPoly() {
