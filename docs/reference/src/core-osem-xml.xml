@@ -774,7 +774,7 @@ public class Author {
                 <entry>The class mapping alias that defines the reference. This is an optional attribute since under some conditions, compass can infer the correct reference alias.</entry>
               </row>
               <row>
-                <entry>ref-comp-alias</entry>
+                <entry>ref-comp-alias (optional)</entry>
                 <entry>The class mapping alias that defines a "shadow component". Will marshal a component like mapping based on the alias into the current class. Note, it's best to create a dedicated class mapping (with root="false") that only holds the required information. Based on the information, if you search for it, you will be able to get as part of your hits the encompassing class. Note as well, that when changing the referenced class, for it to be reflected as part of the ref-comp-alias you will have to save all the relevant encompassing classes.</entry>
               </row>
               <row>
