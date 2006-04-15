@@ -22,8 +22,7 @@ import org.compass.core.config.builder.SchemaConfigurationBuilder;
 import org.compass.core.util.DomUtils;
 import org.compass.spring.LocalCompassBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryBuilder;
-import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.w3c.dom.Element;
 
@@ -36,28 +35,28 @@ public class CompassNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("compass", new CompassBeanDefinitionParser());
     }
 
-    private static class CompassBeanDefinitionParser extends AbstractBeanDefinitionParser {
+    private static class CompassBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-        protected void doParse(Element element, BeanDefinitionRegistryBuilder beanDefinitionRegistryBuilder) {
-            BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(getBeanClass(element));
+        protected void doParse(Element element, BeanDefinitionBuilder beanDefinitionBuilder) {
             String id = element.getAttribute("name");
+
+            // set the id so it will be registered under it in the base class
+            element.setAttribute(ID_ATTRIBUTE, id);
 
             SchemaConfigurationBuilder schemaConfigurationBuilder = new SchemaConfigurationBuilder();
             CompassConfiguration config = CompassConfigurationFactory.newConfiguration();
             schemaConfigurationBuilder.processCompass(element, config);
-            definitionBuilder.addPropertyValue("compassConfiguration", config);
+            beanDefinitionBuilder.addPropertyValue("compassConfiguration", config);
 
             String txManagerRef = DomUtils.getElementAttribute(element, "txManager");
             if (txManagerRef != null) {
-                definitionBuilder.addPropertyReference("transactionManager", txManagerRef);
+                beanDefinitionBuilder.addPropertyReference("transactionManager", txManagerRef);
             }
 
             String dataSourceRef = DomUtils.getElementAttribute(element, "dataSource");
             if (dataSourceRef != null) {
-                definitionBuilder.addPropertyReference("dataSource", dataSourceRef);
+                beanDefinitionBuilder.addPropertyReference("dataSource", dataSourceRef);
             }
-
-            beanDefinitionRegistryBuilder.register(id, definitionBuilder);
         }
 
         protected Class getBeanClass(Element element) {

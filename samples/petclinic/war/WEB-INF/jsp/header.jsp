@@ -31,8 +31,4 @@
 
         <!--main body-->
 
-        <div>
-          <img class="logo" src="images/logo_med.jpg" width="572" height="80" border=0 alt="Compass">
-        </div>
-
         <div id="content">
