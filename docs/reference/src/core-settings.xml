@@ -1,4 +1,4 @@
-<chapter id="core-settings">
+<appendix id="core-settings">
   <title>Configuration Settings</title>
 
   <sect1 id="CompassSettings">
@@ -290,9 +290,9 @@
             <title>Default Compass Converters</title>
             <tgroup cols="5">
             <colspec colname="c1" colwidth="3*" />
-            <colspec colname="c2" colwidth="5*" />
-            <colspec colname="c3" colwidth="2*" />
-            <colspec colname="c4" colwidth="3*" />
+            <colspec colname="c2" colwidth="2*" />
+            <colspec colname="c3" colwidth="5*" />
+            <colspec colname="c4" colwidth="2*" />
             <colspec colname="c5" colwidth="3*" />
             <thead>
                 <row><entry>Java type</entry><entry>Lookup Name</entry><entry>Converter Class</entry><entry>Converter Type</entry><entry>Notes</entry></row>
@@ -301,168 +301,168 @@
               <row>
                 <entry>java.lang.Boolean, boolean</entry>
                 <entry>boolean</entry>
-                <entry>org.compass.core.converter.simple.BooleanConveter</entry>
+                <entry>org.compass.core.converter. simple.BooleanConveter</entry>
                 <entry>boolean</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.lang.Byte, byte</entry>
                 <entry>byte</entry>
-                <entry>org.compass.core.converter.simple.ByteConveter</entry>
+                <entry>org.compass.core.converter. simple.ByteConveter</entry>
                 <entry>byte</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.lang.Charecter, char</entry>
                 <entry>char</entry>
-                <entry>org.compass.core.converter.simple.CharConveter</entry>
+                <entry>org.compass.core.converter. simple.CharConveter</entry>
                 <entry>char</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.lang.Float, float</entry>
                 <entry>float</entry>
-                <entry>org.compass.core.converter.simple.FloatConveter</entry>
+                <entry>org.compass.core.converter. simple.FloatConveter</entry>
                 <entry>float</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
                 <entry>java.lang.Double, double</entry>
                 <entry>double</entry>
-                <entry>org.compass.core.converter.simple.DoubleConveter</entry>
+                <entry>org.compass.core.converter. simple.DoubleConveter</entry>
                 <entry>double</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
                 <entry>java.lang.Short, short</entry>
                 <entry>short</entry>
-                <entry>org.compass.core.converter.simple.ShortConveter</entry>
+                <entry>org.compass.core.converter. simple.ShortConveter</entry>
                 <entry>short</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
                 <entry>java.lang.Integer, int</entry>
                 <entry>int</entry>
-                <entry>org.compass.core.converter.simple.IntConveter</entry>
+                <entry>org.compass.core.converter. simple.IntConveter</entry>
                 <entry>int</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
                 <entry>java.lang.Long, long</entry>
                 <entry>long</entry>
-                <entry>org.compass.core.converter.simple.LongConveter</entry>
+                <entry>org.compass.core.converter. simple.LongConveter</entry>
                 <entry>long</entry>
                 <entry>Format-table converter</entry>
               </row>
               <row>
                 <entry>java.lang.Date</entry>
                 <entry>date</entry>
-                <entry>org.compass.core.converter.simple.DateConveter</entry>
+                <entry>org.compass.core.converter. simple.DateConveter</entry>
                 <entry>date</entry>
                 <entry>Format-table converter, defaults to <literal>yyyy-MM-dd-HH-mm-ss-S-a</literal></entry>
               </row>
               <row>
                 <entry>java.lang.Calendar</entry>
                 <entry>calendar</entry>
-                <entry>org.compass.core.converter.simple.CalendarConveter</entry>
+                <entry>org.compass.core.converter. simple.CalendarConveter</entry>
                 <entry>calendar</entry>
                 <entry>Format-table converter, defaults to <literal>yyyy-MM-dd-HH-mm-ss-S-a</literal></entry>
               </row>
               <row>
                 <entry>java.lang.String</entry>
                 <entry>string</entry>
-                <entry>org.compass.core.converter.simple.StringConveter</entry>
+                <entry>org.compass.core.converter. simple.StringConveter</entry>
                 <entry>string</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.lang.StringBuffer</entry>
                 <entry>stringbuffer</entry>
-                <entry>org.compass.core.converter.simple.StringBufferConveter</entry>
+                <entry>org.compass.core.converter. simple.StringBufferConveter</entry>
                 <entry>stringbuffer</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.math.BigDecimal</entry>
                 <entry>bigdecimal</entry>
-                <entry>org.compass.core.converter.simple.BigDecimalConveter</entry>
+                <entry>org.compass.core.converter. simple.BigDecimalConveter</entry>
                 <entry>bigdecimal</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.math.BigInteger</entry>
                 <entry>biginteger</entry>
-                <entry>org.compass.core.converter.simple.BigIntegerConveter</entry>
+                <entry>org.compass.core.converter. simple.BigIntegerConveter</entry>
                 <entry>biginteger</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.net.URL</entry>
                 <entry>url</entry>
-                <entry>org.compass.core.converter.simple.URLConveter</entry>
+                <entry>org.compass.core.converter. simple.URLConveter</entry>
                 <entry>url</entry>
                 <entry>Uses the <literal>URL#toString</literal></entry>
               </row>
               <row>
                 <entry>java.io.File</entry>
                 <entry>file</entry>
-                <entry>org.compass.core.converter.extended.FileConveter</entry>
+                <entry>org.compass.core.converter. extended.FileConveter</entry>
                 <entry>file</entry>
                 <entry>Uses the file name</entry>
               </row>
               <row>
                 <entry>java.io.InputStream</entry>
                 <entry>inputstream</entry>
-                <entry>org.compass.core.converter.extended.InputStreamConveter</entry>
+                <entry>org.compass.core.converter. extended.InputStreamConveter</entry>
                 <entry>inputstream</entry>
                 <entry>Stores the content of the <literal>InputStream</literal> without performing any other search related operations.</entry>
               </row>
               <row>
                 <entry>java.io.Reader</entry>
                 <entry>reader</entry>
-                <entry>org.compass.core.converter.extended.ReaderConverter</entry>
+                <entry>org.compass.core.converter. extended.ReaderConverter</entry>
                 <entry>reader</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.util.Locale</entry>
                 <entry>locale</entry>
-                <entry>org.compass.core.converter.extended.LocaleConveter</entry>
+                <entry>org.compass.core.converter. extended.LocaleConveter</entry>
                 <entry>locale</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.sql.Date</entry>
                 <entry>sqldate</entry>
-                <entry>org.compass.core.converter.extended.SqlDateConveter</entry>
+                <entry>org.compass.core.converter. extended.SqlDateConveter</entry>
                 <entry>sqldate</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.sql.Time</entry>
                 <entry>sqltime</entry>
-                <entry>org.compass.core.converter.extended.SqlTimeConveter</entry>
+                <entry>org.compass.core.converter. extended.SqlTimeConveter</entry>
                 <entry>sqltime</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>java.sql.Timestamp</entry>
                 <entry>sqltimestamp</entry>
-                <entry>org.compass.core.converter.extended.SqlTimestampConveter</entry>
+                <entry>org.compass.core.converter. extended.SqlTimestampConveter</entry>
                 <entry>sqltimestamp</entry>
                 <entry></entry>
               </row>
               <row>
                 <entry>byte[]</entry>
                 <entry>primitivebytearray</entry>
-                <entry>org.compass.core.converter.extended.PrimitiveByteArrayConverter</entry>
+                <entry>org.compass.core.converter. extended.PrimitiveByteArrayConverter</entry>
                 <entry>primitivebytearray</entry>
                 <entry>Stores the content of the byte array without performing any other search related operations.</entry>
               </row>
               <row>
                 <entry>Byte[]</entry>
                 <entry>objectbytearray</entry>
-                <entry>org.compass.core.converter.extended.ObjectByteArrayConverter</entry>
+                <entry>org.compass.core.converter. extended.ObjectByteArrayConverter</entry>
                 <entry>objectbytearray</entry>
                 <entry>Stores the content of the byte array without performing any other search related operations.</entry>
               </row>
@@ -473,66 +473,66 @@
           <table>
             <title>Compass Mapping Converters</title>
             <tgroup cols="4">
-            <colspec colname="c1" colwidth="3*" />
-            <colspec colname="c2" colwidth="5*" />
-            <colspec colname="c3" colwidth="2*" />
+            <colspec colname="c1" colwidth="4*" />
+            <colspec colname="c2" colwidth="2*" />
+            <colspec colname="c3" colwidth="4*" />
             <colspec colname="c4" colwidth="2*" />
             <thead>
                 <row><entry>Mapping type</entry><entry>Lookup Name</entry><entry>Converter Class</entry><entry>Notes</entry></row>
             </thead>
             <tbody>
               <row>
-                <entry>org.compass.core.mapping.osem.ClassMapping</entry>
+                <entry>org.compass.core.mapping. osem.ClassMapping</entry>
                 <entry>classMapping</entry>
-                <entry>org.compass.core.converter.mapping.ClassMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.ClassMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping.osem.ClassIdPropertyMapping</entry>
+                <entry>org.compass.core.mapping. osem.ClassIdPropertyMapping</entry>
                 <entry>classIdPropertyMapping</entry>
-                <entry>org.compass.core.converter.mapping.ClassPropertyMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.ClassPropertyMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping.osem.ClassPropertyMapping</entry>
+                <entry>org.compass.core.mapping. osem.ClassPropertyMapping</entry>
                 <entry>classPropertyMapping</entry>
-                <entry>org.compass.core.converter.mapping.ClassPropertyMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.ClassPropertyMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping.osem.ComponentMapping</entry>
+                <entry>org.compass.core.mapping. osem.ComponentMapping</entry>
                 <entry>componentMapping</entry>
-                <entry>org.compass.core.converter.mapping.ComponentMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.ComponentMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping.osem.ReferenceMapping</entry>
+                <entry>org.compass.core.mapping. osem.ReferenceMapping</entry>
                 <entry>referenceMapping</entry>
-                <entry>org.compass.core.converter.mapping.ReferenceMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.ReferenceMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping.osem.CollectionMapping</entry>
+                <entry>org.compass.core.mapping. osem.CollectionMapping</entry>
                 <entry>collectionMapping</entry>
-                <entry>org.compass.core.converter.mapping.CollectionMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.CollectionMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping.osem.ArrayMapping</entry>
+                <entry>org.compass.core.mapping. osem.ArrayMapping</entry>
                 <entry>arrayMapping</entry>
-                <entry>org.compass.core.converter.mapping.ArrayMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.ArrayMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping.osem.ConstantMapping</entry>
+                <entry>org.compass.core.mapping. osem.ConstantMapping</entry>
                 <entry>constantMapping</entry>
-                <entry>org.compass.core.converter.mapping.ConstantMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.ConstantMappingConverter</entry>
                 <entry></entry>
               </row>
               <row>
-                <entry>org.compass.core.mapping.osem.ParentMapping</entry>
+                <entry>org.compass.core.mapping. osem.ParentMapping</entry>
                 <entry>parentMapping</entry>
-                <entry>org.compass.core.converter.mapping.ParentMappingConverter</entry>
+                <entry>org.compass.core.converter. mapping.ParentMappingConverter</entry>
                 <entry></entry>
               </row>
             </tbody>
@@ -747,55 +747,55 @@
           </thead>
           <tbody>
             <row>
-              <entry>compass.engine.store.jdbc.dialect</entry>
+              <entry>compass.engine.store.jdbc. dialect</entry>
               <entry>Optional. The fully qualified class name of the dialect (the database type) that the index will be stored at. Please refer to Lucene Jdbc Directory appendix for a list of the currently supported dialects. If not set, Compass will try to auto-detect it based on the Database meta-data.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.managed</entry>
+              <entry>compass.engine.store.jdbc. managed</entry>
               <entry>Optional (defaults to <literal>false</literal>). If the connection is managed or not. Basically, if set to <literal>false</literal>, compass will commit and rollback the transaction. If set to <literal>true</literal>, compass will not perform it. Defaults to <literal>false</literal>. Should be set to <literal>true</literal> if using external transaction managers (like JTA or Spring <literal>PlatformTransactionManager</literal>), and <literal>false</literal> if using compass <literal>LocalTransactionFactory</literal>. Note as well, that if using external transaction managers, the <literal>compass.transaction.commitBeforeCompletion</literal> should be set to <literal>true</literal>. If the connection is not managed (set to <literal>false</literal>), the created <literal>DataSource</literal> will be wrapped with Compass Jdbc directory <literal>TransactionAwareDataSourceProxy</literal>. Please refer to Lucene Jdbc Directory appendix for more information.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.connection.provider.class</entry>
+              <entry>compass.engine.store.jdbc. connection.provider.class</entry>
               <entry>The fully qualified name of the <literal>DataSourceProvider</literal>. The <literal>DataSourceProvider</literal> is responsible for getting/creating the Jdbc <literal>DataSource</literal> that will be used. Defaults to <literal>org.compass.core.lucene.engine .store.jdbc.DriverManagerDataSourceProvider</literal> (Poor performance). Please refer to next section for a list of the available providers.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.useCommitLocks</entry>
+              <entry>compass.engine.store.jdbc. useCommitLocks</entry>
               <entry>Optional (defaults to <literal>false</literal>). Determines if the index will use Lucene commit locks. Setting it to <literal>true</literal> makes sense only if the system will work in <literal>autoCommit</literal> mode (which is not recommended anyhow).</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.deleteMarkDeletedDelta</entry>
+              <entry>compass.engine.store.jdbc. deleteMarkDeletedDelta</entry>
               <entry>Optional (defaults to an hour). Some of the entries in the database are marked as deleted, and not actually gets to be deleted from the database. The setting controls the delta time of when they should be deleted. They will be deleted if they were marked for deleted "delta" time ago (base on database time, if possible by dialect).</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.lockType</entry>
+              <entry>compass.engine.store.jdbc. lockType</entry>
               <entry>Optional (defaults to <literal>PhantomReadLock</literal>). The fully qualified name of the <literal>Lock</literal> implementation that will be used.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.ddl.name.name</entry>
+              <entry>compass.engine.store.jdbc. ddl.name.name</entry>
               <entry>Optional (defaults to <literal>name_</literal>). The name of the name column.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.ddl.name.size</entry>
+              <entry>compass.engine.store.jdbc. ddl.name.size</entry>
               <entry>Optional (defaults to <literal>50</literal>). The size (charecters) of the name column.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.ddl.value.name</entry>
+              <entry>compass.engine.store.jdbc. ddl.value.name</entry>
               <entry>Optional (defaults to <literal>value_</literal>). The name of the value column.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.ddl.value.size</entry>
+              <entry>compass.engine.store.jdbc. ddl.value.size</entry>
               <entry>Optional (defaults to <literal>500 * 1000 K</literal>). The size (in K) of the value column. Only applies to databases that require it.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.ddl.size.name</entry>
+              <entry>compass.engine.store.jdbc. ddl.size.name</entry>
               <entry>Optional (defaults to <literal>size_</literal>). The name of the size column.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.ddl.lastModified.name</entry>
+              <entry>compass.engine.store.jdbc. ddl.lastModified.name</entry>
               <entry>Optional (defaults to <literal>lf_</literal>). The name of the last modified column.</entry>
             </row>
             <row>
-              <entry>compass.engine.store.jdbc.ddl.deleted.name</entry>
+              <entry>compass.engine.store.jdbc. ddl.deleted.name</entry>
               <entry>Optional (defaults to <literal>deleted_</literal>). The name of the deleted column.</entry>
             </row>
           </tbody>
@@ -857,15 +857,15 @@
               </thead>
               <tbody>
                 <row>
-                  <entry>compass.engine.store.jdbc.connection.driverClass</entry>
+                  <entry>compass.engine.store.jdbc. connection.driverClass</entry>
                   <entry>The Jdbc driver class.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc.connection.username</entry>
+                  <entry>compass.engine.store.jdbc. connection.username</entry>
                   <entry>The Jdbc connection user name.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc.connection.password</entry>
+                  <entry>compass.engine.store.jdbc. connection.password</entry>
                   <entry>The Jdbc connection password.</entry>
                 </row>
               </tbody>
@@ -899,27 +899,27 @@
               </thead>
               <tbody>
                 <row>
-                  <entry>compass.engine.store.jdbc.fe.[name].type</entry>
+                  <entry>compass.engine.store.jdbc.fe. [name].type</entry>
                   <entry>The fully qualified class name of the file entry handler.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc.fe.[name].indexInput.type</entry>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexInput.type</entry>
                   <entry>The fully qualified class name of the <literal>IndexInput</literal> implementation.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc.fe.[name].indexOutput.type</entry>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexOutput.type</entry>
                   <entry>The fully qualified class name of the <literal>IndexInput</literal> implementation.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc.fe.[name].indexInput.bufferSize</entry>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexInput.bufferSize</entry>
                   <entry>The RAM buffer size of the index input. Note, it applies only to some of the <literal>IndexInput</literal> implementations.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc.fe.[name].indexOutput.bufferSize</entry>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexOutput.bufferSize</entry>
                   <entry>The RAM buffer size of the index output. Note, it applies only to some of the <literal>IndexOutput</literal> implementations.</entry>
                 </row>
                 <row>
-                  <entry>compass.engine.store.jdbc.fe.[name].indexOutput.threshold</entry>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexOutput.threshold</entry>
                   <entry>The threshold value (in bytes) after which data will be temporarly written to a file (and them dumped into the database). Applies when using <literal>RAMAndFileJdbcIndexOutput</literal> (which is the default one). Defaults to <literal>16 * 1024</literal> bytes.</entry>
                 </row>
               </tbody>
@@ -1135,4 +1135,4 @@
 
   </sect1>
 
-</chapter>
+</appendix>
