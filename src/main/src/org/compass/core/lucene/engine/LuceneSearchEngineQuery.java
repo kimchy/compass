@@ -97,6 +97,11 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
         return this;
     }
 
+    public SearchEngineQuery addSort(SortField sortField) {
+        sortFields.add(sortField);
+        return this;
+    }
+
     public Sort getSort() {
         if (sortFields.size() == 0) {
             return null;
@@ -171,7 +176,7 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
         return this.filter;
     }
 
-    public Query toQuery() {
+    public Query getQuery() {
         return query;
     }
 

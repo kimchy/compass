@@ -56,6 +56,20 @@ public abstract class LuceneHelper {
     }
 
     /**
+     * Returns the underlying {@link LuceneSearchEngineQuery} of the given {@link CompassQuery}.
+     * <p/>
+     * Can be used for example to add custom Sorting using
+     * {@link LuceneSearchEngineQuery#addSort(org.apache.lucene.search.SortField)}, or get the actual lucene query
+     * using {@link org.compass.core.lucene.engine.LuceneSearchEngineQuery#getQuery()}.
+     *
+     * @param query The compass query to extract the lucene search engine query from
+     * @return The lucene search engine query extracted from the compass query
+     */
+    public static LuceneSearchEngineQuery getLuceneSearchEngineQuery(CompassQuery query) {
+        return (LuceneSearchEngineQuery) ((DefaultCompassQuery) query).getSearchEngineQuery();
+    }
+
+    /**
      * Creates a new {@link CompassQueryFilter} based on a Lucene {@link Filter}.
      * <p/>
      * Allows to create {@link CompassQueryFilter} based on external Lucene {@link Filter} that is not supported
@@ -68,5 +82,18 @@ public abstract class LuceneHelper {
     public static CompassQueryFilter createCompassQueryFilter(CompassSession session, Filter filter) {
         SearchEngineQueryFilter searchEngineQueryFilter = new LuceneSearchEngineQueryFilter(filter);
         return new DefaultCompassQueryFilter(searchEngineQueryFilter);
+    }
+
+    /**
+     * Returns the underlying {@link LuceneSearchEngineQueryFilter} of the given {@link CompassQueryFilter}.
+     * <p/>
+     * Can be used to get the actual Lucene {@link Filter} using
+     * {@link org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter#getFilter()}.
+     *
+     * @param filter The compass query filter to extract the lucene search engine query filter from
+     * @return The lucene search engine query filter extracted from the compass query filter
+     */
+    public static LuceneSearchEngineQueryFilter getLuceneSearchEngineQueryFilter(CompassQueryFilter filter) {
+        return (LuceneSearchEngineQueryFilter) ((DefaultCompassQueryFilter) filter).getFilter();
     }
 }

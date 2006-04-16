@@ -532,7 +532,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     private Hits findByQuery(Searcher indexSearcher, LuceneSearchEngineQuery searchEngineQuery, Filter filter)
             throws SearchEngineException {
-        Query query = searchEngineQuery.toQuery();
+        Query query = searchEngineQuery.getQuery();
         Sort sort = searchEngineQuery.getSort();
         Hits hits;
         try {

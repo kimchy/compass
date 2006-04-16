@@ -64,15 +64,15 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
         }
 
         public void addMust(SearchEngineQuery query) {
-            boolQuery.add(((LuceneSearchEngineQuery) query).toQuery(), BooleanClause.Occur.MUST);
+            boolQuery.add(((LuceneSearchEngineQuery) query).getQuery(), BooleanClause.Occur.MUST);
         }
 
         public void addMustNot(SearchEngineQuery query) {
-            boolQuery.add(((LuceneSearchEngineQuery) query).toQuery(), BooleanClause.Occur.MUST_NOT);
+            boolQuery.add(((LuceneSearchEngineQuery) query).getQuery(), BooleanClause.Occur.MUST_NOT);
         }
 
         public void addShould(SearchEngineQuery query) {
-            boolQuery.add(((LuceneSearchEngineQuery) query).toQuery(), BooleanClause.Occur.SHOULD);
+            boolQuery.add(((LuceneSearchEngineQuery) query).getQuery(), BooleanClause.Occur.SHOULD);
         }
 
         public SearchEngineQuery toQuery() {
@@ -213,7 +213,7 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
         }
 
         public SearchEngineQuerySpanNearBuilder add(SearchEngineSpanQuery query) {
-            values.add(((LuceneSearchEngineSpanQuery) query).toQuery());
+            values.add(((LuceneSearchEngineSpanQuery) query).getQuery());
             return this;
         }
 
@@ -236,7 +236,7 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
         }
         
         public SearchEngineQuerySpanOrBuilder add(SearchEngineSpanQuery query) {
-            queries.add(((LuceneSearchEngineSpanQuery) query).toQuery());
+            queries.add(((LuceneSearchEngineSpanQuery) query).getQuery());
             return this;
         }
         

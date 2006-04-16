@@ -83,7 +83,7 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
 
         if (highlighterSettings.isRewriteQuery()) {
             try {
-                this.query = searchEngineQuery.toQuery().rewrite(indexReader);
+                this.query = searchEngineQuery.getQuery().rewrite(indexReader);
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to rewrite query [" + query + "] for highlighter", e);
             }

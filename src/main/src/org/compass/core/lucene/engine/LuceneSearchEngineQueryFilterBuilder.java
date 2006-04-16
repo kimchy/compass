@@ -96,7 +96,7 @@ public class LuceneSearchEngineQueryFilterBuilder implements SearchEngineQueryFi
     }
 
     public SearchEngineQueryFilter query(SearchEngineQuery query) {
-        return new LuceneSearchEngineQueryFilter(new QueryFilter(((LuceneSearchEngineQuery) query).toQuery()));
+        return new LuceneSearchEngineQueryFilter(new QueryFilter(((LuceneSearchEngineQuery) query).getQuery()));
     }
 
     public SearchEngineBooleanQueryFilterBuilder bool() {
