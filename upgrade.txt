@@ -1,8 +1,12 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 0.9.0 ()
-================
+VERSION 0.9.1 (------------)
+============================
+
+
+VERSION 0.9.0 (Apr 17, 2006)
+============================
 
 1. Package name changed back to org.compass from org.compassframework.
    Due to the move to Open Symphony, the name Compass is back, without the Framework part.

@@ -33,19 +33,20 @@
    <ul>
       <li><b>Lucene Jdbc Directory:</b> An implementation of Lucene Directory to store the index within a database (using Jdbc). It is separated from Compass code base and can be used with pure Lucene applications.</li>
       <li><b>Search Engine API:</b> A powerful and simple to use abstraction on top of Lucene Search Engine.</li>
-      <li>OSEM: Object/Search Engine Mapping technology. Allowing you to declare the mapping from application Object model to the underlying search engine semantics.
+      <li><b>OSEM:</b> Object/Search Engine Mapping technology (using xml and/or Java 5 annotations). Allowing you to declare the mapping from application Object model to the underlying search engine semantics.
       <li><b>Resource Mapping:</b> Ability to map application resource through Compass when no Object model is available.</li>
-      <li><b>Transaction support:</b> Provides both LocalTransaction and JTATransaction implementations.
-   Common Meta-data:The means to externalise common mapping meta-data into easy to manage centralised resource.</li>
+      <li><b>Transaction support:</b> Provides both LocalTransaction and JTATransaction implementations.</li>
+      <li><b>Common Meta-data:</b> The means to externalize common mapping meta-data into easy to manage centralized resource.</li>
    </ul>
 </p>
 
 <b>Compass Gps</b>
 <p>
    <ul>
-      <li><b>Hibernate:</b> Provides support for indexing your datasource through OSEM and the Hibernate ORM tool. It also implements data mirroring though Hibernates event based mechanism.</li>
-      <li><b>JDO:</b> Provides support for indexing your datasource through OSEM and JDO ORM tool. It also implements data mirroring though JDO 2 event based mechanism.</li>
-      <li><b>OJB:</b> Provides support for indexing your datasource through OSEM and Apache OJB ORM tool. It also implements data mirroring though OJB lifecycle event based mechanism.</li>
+      <li><b>Hibernate:</b> Provides support for indexing your datasource through OSEM and the Hibernate ORM tool. It also implements data mirroring through Hibernates event based mechanism.</li>
+      <li><b>JPA:</b> Provides support for indexing your datasource through OSEM and an implementation of EJB3 JPA (Java Persistence API). It also implements data mirroring using JPA event registration or using specifics of the underlying JPA implementation.</li>
+      <li><b>JDO:</b> Provides support for indexing your datasource through OSEM and JDO ORM tool. It also implements data mirroring through JDO 2 event based mechanism.</li>
+      <li><b>OJB:</b> Provides support for indexing your datasource through OSEM and Apache OJB ORM tool. It also implements data mirroring through OJB lifecycle event based mechanism.</li>
       <li><b>iBATIS:</b> Provides support for indexing your datasource through OSEM and Apache iBATIS.</li>
       <li><b>JDBC:</b> Provides support for indexing your datasource through mapping of a JDBC ResultSet or Table (non POJO based mapping). It also implements data mirroring capability.</li>
    </ul>
