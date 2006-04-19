@@ -56,12 +56,12 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
         if (copyFromAliasMapping.getExtendedMappings() != null) {
             for (int i = 0; i < copyFromAliasMapping.getExtendedMappings().length; i++) {
                 String extendedAlias = copyFromAliasMapping.getExtendedMappings()[i];
-                AliasMapping extendedAliasMapping = (AliasMapping) compassMapping.getAliasMapping(extendedAlias).copy();
+                AliasMapping extendedAliasMapping = compassMapping.getAliasMapping(extendedAlias);
                 if (extendedAliasMapping == null) {
                     throw new MappingException("Failed to find alias [" + extendedAlias + "] in alias ["
                             + aliasMapping.getAlias() + "] extends section");
                 }
-                resolveExtends(compassMapping, aliasMapping, extendedAliasMapping);
+                resolveExtends(compassMapping, aliasMapping, (AliasMapping) extendedAliasMapping.copy());
             }
         }
 
