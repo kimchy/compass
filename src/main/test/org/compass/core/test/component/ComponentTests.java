@@ -34,7 +34,7 @@ public class ComponentTests extends AbstractTestCase {
     protected String[] getMappings() {
         return new String[]{"component/C.cpm.xml", "component/SimpleRoot.cpm.xml",
                 "component/SimpleComponent.cpm.xml", "component/id-component.cpm.xml", "component/Cyclic.cpm.xml",
-                "component/SelfCycle.cpm.xml", "component/InferRefAlias.cpm.xml"};
+                "component/SelfCycle.cpm.xml", "component/InferRefAlias.cpm.xml", "component/ManyToMany.cpm.xml"};
     }
 
     public void testMappings() {
@@ -335,6 +335,47 @@ public class ComponentTests extends AbstractTestCase {
         assertEquals("value3", selfCycle1.getSelfCycle().getSelfCycle().getValue());
         assertEquals("value4", selfCycle1.getSelfCycle().getSelfCycle().getSelfCycle().getValue());
         assertNull(selfCycle1.getSelfCycle().getSelfCycle().getSelfCycle().getSelfCycle());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testManyToMany() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        ManyToMany1 many11 = new ManyToMany1();
+        many11.id = new Long(1);
+        many11.value = "many11";
+
+        ManyToMany1 many12 = new ManyToMany1();
+        many12.id = new Long(2);
+        many12.value = "many12";
+
+        ManyToMany2 many21 = new ManyToMany2();
+        many21.id = new Long(1);
+        many21.value = "many21";
+
+        many11.many2.add(many21);
+        many12.many2.add(many21);
+
+        many21.many1.add(many11);
+        many21.many1.add(many12);
+
+        session.save(many11);
+        session.save(many12);
+        session.save(many21);
+
+        many21 = (ManyToMany2) session.load("many2", new Long(1));
+        assertEquals("many21", many21.value);
+        assertEquals(2, many21.many1.size());
+        assertEquals("many11", ((ManyToMany1) many21.many1.get(0)).value);
+        assertEquals("many12", ((ManyToMany1) many21.many1.get(1)).value);
+
+        many11 = (ManyToMany1) session.load("many1", new Long(1));
+        assertEquals("many11", many11.value);
+        assertEquals(1, many11.many2.size());
+        assertEquals("many21", ((ManyToMany2) many11.many2.get(0)).value);
 
         tr.commit();
         session.close();
