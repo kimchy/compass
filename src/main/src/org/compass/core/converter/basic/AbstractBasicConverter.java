@@ -38,7 +38,7 @@ import org.compass.core.marshall.MarshallingContext;
  * {@link #handleNulls(org.compass.core.marshall.MarshallingContext)}, and
  * {@link #getNullValue(org.compass.core.marshall.MarshallingContext)} can be overriden. Note, that it is best
  * to call base implementations and extend the base funtionallity, since the base class takes special care
- * when using collections. 
+ * when using collections.
  *
  * @author kimchy
  */
@@ -59,7 +59,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
             sValue = toString(root, resourcePropertyMapping);
         }
         Property p = searchEngine.createProperty(sValue, resourcePropertyMapping);
-        p.setBoost(resourcePropertyMapping.getBoost());
+        doSetBoost(p, root, resourcePropertyMapping, context);
         resource.addProperty(p);
 
         return resourcePropertyMapping.getStore() != Property.Store.NO;
@@ -120,6 +120,23 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
      */
     protected boolean isNullValue(MarshallingContext context, String value) {
         return context.getSearchEngine().isNullValue(value);
+    }
+
+    /**
+     * A simple extension point that allows to set the boost value for the created {@link Property}.
+     * <p/>
+     * The default implemenation uses the statically defined boost value in the mapping definition
+     * ({@link org.compass.core.mapping.ResourcePropertyMapping#getBoost()}) to set the boost level
+     * using {@link Property#setBoost(float)}
+     *
+     * @param property                The property to set the boost on
+     * @param root                    The object that is marshalled into a property
+     * @param resourcePropertyMapping The Resource Property Mapping definition
+     * @throws ConversionException
+     */
+    protected void doSetBoost(Property property, Object root, ResourcePropertyMapping resourcePropertyMapping,
+                              MarshallingContext context) throws ConversionException {
+        property.setBoost(resourcePropertyMapping.getBoost());
     }
 
     /**

@@ -49,7 +49,7 @@ public class ClassMappingConverter implements Converter {
         // care and "unroots" it)
         if (classMapping.isRoot()) {
             resource.setAlias(classMapping.getAlias());
-            resource.setBoost(classMapping.getBoost());
+            doSetBoost(resource, root, classMapping, context);
         }
         if (classMapping.isPoly()) {
             // if the class is defined as poly, persist the class name as well
@@ -70,7 +70,7 @@ public class ClassMappingConverter implements Converter {
             } else {
                 value = root;
             }
-            store |=  m.getConverter().marshall(resource, value, m, context);
+            store |= m.getConverter().marshall(resource, value, m, context);
         }
         return store;
     }
@@ -143,4 +143,24 @@ public class ClassMappingConverter implements Converter {
             throw new MarshallingException("Failed to create class [" + className + "] for unmarshalling", e);
         }
     }
+
+    /**
+     * A simple extension point that allows to set the boost value for the created {@link Resource}.
+     * <p/>
+     * The default implemenation uses the statically defined boost value in the mapping definition
+     * ({@link org.compass.core.mapping.osem.ClassMapping#getBoost()}) to set the boost level
+     * using {@link Resource#setBoost(float)}
+     * <p/>
+     * Note, that this method will only be called on a root level (root=true) mapping.
+     *
+     * @param resource     The resource to set the boost on
+     * @param root         The Object that is marshalled into the respective Resource
+     * @param classMapping The Class Mapping deifnition
+     * @throws ConversionException
+     */
+    protected void doSetBoost(Resource resource, Object root, ClassMapping classMapping,
+                              MarshallingContext context) throws ConversionException {
+        resource.setBoost(classMapping.getBoost());
+    }
+
 }
