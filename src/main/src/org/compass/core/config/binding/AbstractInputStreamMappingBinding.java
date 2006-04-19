@@ -71,7 +71,10 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
             if (files[i].isDirectory()) {
-                addDirectory(files[i]);
+                boolean retVal = addDirectory(files[i]);
+                if (retVal) {
+                    addedAtLeastOne = true;
+                }
             } else if (files[i].getName().endsWith(getSuffix())) {
                 boolean retVal = addFile(files[i]);
                 if (retVal) {
