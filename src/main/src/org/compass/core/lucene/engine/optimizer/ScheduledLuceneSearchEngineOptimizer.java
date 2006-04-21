@@ -18,10 +18,8 @@ package org.compass.core.lucene.engine.optimizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;

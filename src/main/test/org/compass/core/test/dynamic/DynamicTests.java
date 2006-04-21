@@ -16,7 +16,6 @@
 
 package org.compass.core.test.dynamic;
 
-import java.util.Map;
 import java.util.HashMap;
 
 import org.compass.core.test.AbstractTestCase;

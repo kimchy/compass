@@ -16,8 +16,6 @@
 
 package org.compass.core.lucene.engine.optimizer;
 
-import org.apache.lucene.index.LuceneSubIndexInfo;
-import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 
