@@ -18,6 +18,7 @@ package org.compass.gps.device.hibernate;
 
 import java.util.Iterator;
 import java.util.List;
+
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.gps.CompassGpsException;
@@ -31,10 +32,13 @@ import org.compass.gps.device.AbstractGpsDevice;
  */
 public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice implements HibernateGpsDevice {
 
-    protected static class HibernateClassInfo {
+    /**
+     * A data holder used to index a specific Hibernate entity.
+     */
+    protected static class HibernateEntityInfo {
         public String entityname;
 
-        public int count;
+        public String selectQuery;
     }
 
     protected static interface HibernateSessionWrapper {
@@ -47,11 +51,14 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
 
     protected int fetchCount = 200;
 
+    private HibernateEntityInfo[] entetiesInfo;
+
     public void setFetchCount(int fetchCount) {
         this.fetchCount = fetchCount;
     }
 
     protected void doStart() throws CompassGpsException {
+        entetiesInfo = doGetHibernateEntetiesInfo();
     }
 
     /**
@@ -63,19 +70,16 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
             log.info(buildMessage("Indexing the database with fetch count [" + fetchCount + "]"));
         }
 
-        final HibernateClassInfo[] infos = doGetHibernateClassesInfo();
-
-        for (int i = 0; i < infos.length; i++) {
+        for (int i = 0; i < entetiesInfo.length; i++) {
             int current = 0;
-            while (current < infos[i].count) {
+            while (true) {
                 HibernateSessionWrapper sessionWrapper = doGetHibernateSessionWrapper();
                 try {
                     sessionWrapper.open();
-                    final List values = doGetObjects(infos[i], current, fetchCount, sessionWrapper);
+                    final List values = doGetObjects(entetiesInfo[i], current, fetchCount, sessionWrapper);
                     if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("Indexing entities [" + infos[i].entityname + "] range ["
-                                + current + "-" + (current + fetchCount) + "] out of total [" + infos[i].count
-                                + "]"));
+                        log.debug(buildMessage("Indexing entity [" + entetiesInfo[i].entityname + "] range ["
+                                + current + "-" + (current + fetchCount) + "]"));
                     }
                     current += fetchCount;
                     for (Iterator it = values.iterator(); it.hasNext();) {
@@ -83,6 +87,9 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
                     }
                     session.evictAll();
                     sessionWrapper.close();
+                    if (values.size() < fetchCount) {
+                        break;
+                    }
                 } catch (Exception e) {
                     log.error(buildMessage("Failed to index the database"), e);
                     sessionWrapper.closeOnError();
@@ -100,19 +107,18 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
     }
 
     /**
-     * Returns all the hibernate class info (the hibernate mapped classes and
-     * their count).
+     * Returns all the hibernate entity info. Called when the device starts up.
      *
      * @return Hibernate class informtion
      * @throws HibernateGpsDeviceException
      */
-    protected abstract HibernateClassInfo[] doGetHibernateClassesInfo() throws HibernateGpsDeviceException;
+    protected abstract HibernateEntityInfo[] doGetHibernateEntetiesInfo() throws HibernateGpsDeviceException;
 
     /**
      * Returns the data that maps to the given class info, paginated with from
      * and count.
      */
-    protected abstract List doGetObjects(HibernateClassInfo info, int from, int count,
+    protected abstract List doGetObjects(HibernateEntityInfo info, int from, int count,
                                          HibernateSessionWrapper sessionWrapper) throws HibernateGpsDeviceException;
 
     protected abstract HibernateSessionWrapper doGetHibernateSessionWrapper();

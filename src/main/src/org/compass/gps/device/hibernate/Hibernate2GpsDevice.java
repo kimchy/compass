@@ -32,18 +32,18 @@ import net.sf.hibernate.cfg.Configuration;
 import org.compass.gps.CompassGpsException;
 
 /**
- * A {@link org.compass.gps.device.hibernate.HibernateGpsDevice} which
+ * A {@link HibernateGpsDevice} which
  * works with hibernate 2.
- * <p>
+ * <p/>
  * You must either set the Hibernate <code>Configuration</code> or the
  * <code>SessionFactory</code> to be used by the device. Note that if the
  * <code>Configuration</code> is supplied, when the device <code>start</code>
  * is called, a new <code>SessionFactory</code> will be built.
- * <p>
+ * <p/>
  * Note: Only provides the <code>index()</code> operation. No real time index
  * updated are performed since the Hiberante <code>Interceptor</code> provides
  * null values for newly created objects with generated ids.
- * 
+ *
  * @author kimchy
  */
 public class Hibernate2GpsDevice extends AbstractHibernateGpsDevice {
@@ -113,7 +113,7 @@ public class Hibernate2GpsDevice extends AbstractHibernateGpsDevice {
     }
 
     public Hibernate2GpsDevice() {
-        
+
     }
 
     public Hibernate2GpsDevice(String name, SessionFactory sessionFactory) {
@@ -155,7 +155,7 @@ public class Hibernate2GpsDevice extends AbstractHibernateGpsDevice {
         return new Hibernate2SessionWrapper(sessionFactory);
     }
 
-    protected HibernateClassInfo[] doGetHibernateClassesInfo() throws HibernateGpsDeviceException {
+    protected HibernateEntityInfo[] doGetHibernateEntetiesInfo() throws HibernateGpsDeviceException {
         ArrayList classesToIndex = new ArrayList();
         try {
             Map allClassMetaData = sessionFactory.getAllClassMetadata();
@@ -172,50 +172,22 @@ public class Hibernate2GpsDevice extends AbstractHibernateGpsDevice {
             throw new HibernateGpsDeviceException(buildMessage("Failed to fetch all class meta data"), e);
         }
 
-        HibernateClassInfo[] infos = new HibernateClassInfo[classesToIndex.size()];
-        Session session = null;
-        try {
-            session = sessionFactory.openSession();
-        } catch (HibernateException e) {
-            throw new HibernateGpsDeviceException(buildMessage("Failed to open session to fetch counts"), e);
-        }
-        Transaction tr = null;
-        try {
-            session.setFlushMode(FlushMode.NEVER);
-            tr = session.beginTransaction();
-            for (int i = 0; i < infos.length; i++) {
-                infos[i] = new HibernateClassInfo();
-                infos[i].entityname = ((Class) classesToIndex.get(i)).getName();
-                infos[i].count = ((Integer) session.createQuery("select count(*) from " + infos[i].entityname)
-                        .uniqueResult()).intValue();
-            }
-            tr.commit();
-        } catch (Exception e) {
-            if (tr != null) {
-                try {
-                    tr.rollback();
-                } catch (HibernateException e1) {
-                    log.error(buildMessage("Failed to rollback hibernate transaction"), e1);
-                }
-            }
-            throw new HibernateGpsDeviceException(buildMessage("Failed to fetch counts"), e);
-        } finally {
-            try {
-                session.close();
-            } catch (HibernateException e) {
-                log.error(buildMessage("Failed to close hibernate session"), e);
-            }
+        HibernateEntityInfo[] infos = new HibernateEntityInfo[classesToIndex.size()];
+        for (int i = 0; i < infos.length; i++) {
+            infos[i] = new HibernateEntityInfo();
+            infos[i].entityname = ((Class) classesToIndex.get(i)).getName();
+            infos[i].selectQuery = "from " + infos[i].entityname;
         }
 
         return infos;
     }
 
-    protected List doGetObjects(HibernateClassInfo info, int from, int count, HibernateSessionWrapper sessionWrapper)
+    protected List doGetObjects(HibernateEntityInfo info, int from, int count, HibernateSessionWrapper sessionWrapper)
             throws HibernateGpsDeviceException {
-        List values = null;
+        List values;
         Session session = ((Hibernate2SessionWrapper) sessionWrapper).getSession();
         try {
-            Query query = session.createQuery("from " + info.entityname).setFirstResult(from).setMaxResults(count);
+            Query query = session.createQuery(info.selectQuery).setFirstResult(from).setMaxResults(count);
             values = query.list();
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(buildMessage("Failed to open session to fetch data for class ["

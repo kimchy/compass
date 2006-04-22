@@ -51,6 +51,7 @@ import java.util.Map;
  *
  * @author kimchy
  */
+// TODO think about filtering of objects, not sure what is the best way, haveing HibernateInsertFiltering interface or maybe extend the event listeners... 
 public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements PassiveMirrorGpsDevice {
 
     private class Hibernate3SessionWrapper implements HibernateSessionWrapper {
@@ -118,8 +119,12 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
         private PostInsertEventListener postInsertEventListener;
 
-        public Hibernate3GpsDevicePostInsert(PostInsertEventListener postInsertEventListener) {
+        private HibernateMirrorFilter mirrorFilter;
+
+        public Hibernate3GpsDevicePostInsert(PostInsertEventListener postInsertEventListener,
+                                             HibernateMirrorFilter mirrorFilter) {
             this.postInsertEventListener = postInsertEventListener;
+            this.mirrorFilter = mirrorFilter;
         }
 
         public void onPostInsert(final PostInsertEvent postInsertEvent) {
@@ -135,6 +140,12 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             final Object entity = postInsertEvent.getEntity();
             if (!compassGps.hasMappingForEntityForMirror((entity.getClass()))) {
                 return;
+            }
+
+            if (mirrorFilter != null) {
+                if (mirrorFilter.shouldFilterInsert(postInsertEvent)) {
+                    return;
+                }
             }
 
             try {
@@ -159,8 +170,12 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
         private PostUpdateEventListener postUpdateEventListener;
 
-        public Hibernate3GpsDevicePostUpdate(PostUpdateEventListener postUpdateEventListener) {
+        private HibernateMirrorFilter mirrorFilter;
+
+        public Hibernate3GpsDevicePostUpdate(PostUpdateEventListener postUpdateEventListener,
+                                             HibernateMirrorFilter mirrorFilter) {
             this.postUpdateEventListener = postUpdateEventListener;
+            this.mirrorFilter = mirrorFilter;
         }
 
         public void onPostUpdate(final PostUpdateEvent postUpdateEvent) {
@@ -176,6 +191,12 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             final Object entity = postUpdateEvent.getEntity();
             if (!compassGps.hasMappingForEntityForMirror((entity.getClass()))) {
                 return;
+            }
+
+            if (mirrorFilter != null) {
+                if (mirrorFilter.shouldFilterUpdate(postUpdateEvent)) {
+                    return;
+                }
             }
 
             try {
@@ -199,8 +220,12 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
         private PostDeleteEventListener postDeleteEventListener;
 
-        public Hibernate3GpsDevicePostDelete(PostDeleteEventListener postDeleteEventListener) {
+        private HibernateMirrorFilter mirrorFilter;
+
+        public Hibernate3GpsDevicePostDelete(PostDeleteEventListener postDeleteEventListener,
+                                             HibernateMirrorFilter mirrorFilter) {
             this.postDeleteEventListener = postDeleteEventListener;
+            this.mirrorFilter = mirrorFilter;
         }
 
         public void onPostDelete(final PostDeleteEvent postDeleteEvent) {
@@ -216,6 +241,12 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             final Object entity = postDeleteEvent.getEntity();
             if (!compassGps.hasMappingForEntityForMirror((entity.getClass()))) {
                 return;
+            }
+
+            if (mirrorFilter != null) {
+                if (mirrorFilter.shouldFilterDelete(postDeleteEvent)) {
+                    return;
+                }
             }
 
             try {
@@ -239,6 +270,8 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
     private Configuration configuration;
 
+    private HibernateMirrorFilter mirrorFilter;
+
     public Hibernate3GpsDevice() {
 
     }
@@ -259,6 +292,16 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    /**
+     * Sets a mirroring filter that can filter hibernate mirror events. If no mirror filter is set
+     * no filtering will happen.
+     *
+     * @param mirrorFilter The mirror filter handler
+     */
+    public void setMirrorFilter(HibernateMirrorFilter mirrorFilter) {
+        this.mirrorFilter = mirrorFilter;
     }
 
     protected void doStart() throws CompassGpsException {
@@ -309,7 +352,7 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
         return new Hibernate3SessionWrapper(sessionFactory);
     }
 
-    protected HibernateClassInfo[] doGetHibernateClassesInfo() throws HibernateGpsDeviceException {
+    protected HibernateEntityInfo[] doGetHibernateEntetiesInfo() throws HibernateGpsDeviceException {
         ArrayList classesToIndex = new ArrayList();
         try {
             Map allClassMetaData = sessionFactory.getAllClassMetadata();
@@ -351,50 +394,21 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             throw new HibernateGpsDeviceException(buildMessage("Failed to fetch all class meta data"), e);
         }
 
-        HibernateClassInfo[] infos = new HibernateClassInfo[classesToIndex.size()];
-        Session session;
-        try {
-            session = sessionFactory.openSession();
-        } catch (HibernateException e) {
-            throw new HibernateGpsDeviceException(buildMessage("Failed to open session to fetch counts"), e);
+        HibernateEntityInfo[] infos = new HibernateEntityInfo[classesToIndex.size()];
+        for (int i = 0; i < infos.length; i++) {
+            infos[i] = new HibernateEntityInfo();
+            infos[i].entityname = (String) classesToIndex.get(i);
+            infos[i].selectQuery = "from " + infos[i].entityname;
         }
-        Transaction tr = null;
-        try {
-            session.setFlushMode(FlushMode.NEVER);
-            tr = session.beginTransaction();
-            for (int i = 0; i < infos.length; i++) {
-                infos[i] = new HibernateClassInfo();
-                infos[i].entityname = (String) classesToIndex.get(i);
-                infos[i].count = ((Integer) session.createQuery("select count(*) from " + infos[i].entityname)
-                        .uniqueResult()).intValue();
-            }
-            tr.commit();
-        } catch (Exception e) {
-            if (tr != null) {
-                try {
-                    tr.rollback();
-                } catch (HibernateException e1) {
-                    log.error(buildMessage("Failed to rollback hibernate transaction"), e1);
-                }
-            }
-            throw new HibernateGpsDeviceException(buildMessage("Failed to fetch counts"), e);
-        } finally {
-            try {
-                session.close();
-            } catch (HibernateException e) {
-                log.error(buildMessage("Failed to close hibernate session"), e);
-            }
-        }
-
         return infos;
     }
 
-    protected List doGetObjects(HibernateClassInfo info, int from, int count, HibernateSessionWrapper sessionWrapper)
+    protected List doGetObjects(HibernateEntityInfo info, int from, int count, HibernateSessionWrapper sessionWrapper)
             throws HibernateGpsDeviceException {
         List values;
         Session session = ((Hibernate3SessionWrapper) sessionWrapper).getSession();
         try {
-            Query query = session.createQuery("from " + info.entityname).setFirstResult(from).setMaxResults(count);
+            Query query = session.createQuery(info.selectQuery).setFirstResult(from).setMaxResults(count);
             values = query.list();
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(buildMessage("Failed to open session to fetch data for class ["
@@ -413,13 +427,13 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
             FieldInvoker eventListener = new FieldInvoker(sessionEventListenerConfigClass, "postInsertEventListener").prepare();
             eventListener.set(sessionEventListenerConfig,
-                    new Hibernate3GpsDevicePostInsert((PostInsertEventListener) eventListener.get(sessionEventListenerConfig)));
+                    new Hibernate3GpsDevicePostInsert((PostInsertEventListener) eventListener.get(sessionEventListenerConfig), mirrorFilter));
             eventListener = new FieldInvoker(sessionEventListenerConfigClass, "postUpdateEventListener").prepare();
             eventListener.set(sessionEventListenerConfig,
-                    new Hibernate3GpsDevicePostUpdate((PostUpdateEventListener) eventListener.get(sessionEventListenerConfig)));
+                    new Hibernate3GpsDevicePostUpdate((PostUpdateEventListener) eventListener.get(sessionEventListenerConfig), mirrorFilter));
             eventListener = new FieldInvoker(sessionEventListenerConfigClass, "postDeleteEventListener").prepare();
             eventListener.set(sessionEventListenerConfig,
-                    new Hibernate3GpsDevicePostDelete((PostDeleteEventListener) eventListener.get(sessionEventListenerConfig)));
+                    new Hibernate3GpsDevicePostDelete((PostDeleteEventListener) eventListener.get(sessionEventListenerConfig), mirrorFilter));
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(
                     buildMessage("Failed to inject compass gps device events into hibernate 3.0 session factory"), e);
@@ -437,21 +451,21 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             PostInsertEventListener[] postInsertEventListener = (PostInsertEventListener[]) eventListener.get(eventListeners);
             PostInsertEventListener[] tempPostInsertEventListener = new PostInsertEventListener[postInsertEventListener.length + 1];
             System.arraycopy(postInsertEventListener, 0, tempPostInsertEventListener, 0, postInsertEventListener.length);
-            tempPostInsertEventListener[postInsertEventListener.length] = new Hibernate3GpsDevicePostInsert(null);
+            tempPostInsertEventListener[postInsertEventListener.length] = new Hibernate3GpsDevicePostInsert(null, mirrorFilter);
             eventListener.set(eventListeners, tempPostInsertEventListener);
 
             eventListener = new FieldInvoker(eventListenersClass, "postUpdateEventListeners").prepare();
             PostUpdateEventListener[] postUpdateEventListener = (PostUpdateEventListener[]) eventListener.get(eventListeners);
             PostUpdateEventListener[] tempPostUpdateEventListener = new PostUpdateEventListener[postUpdateEventListener.length + 1];
             System.arraycopy(postUpdateEventListener, 0, tempPostUpdateEventListener, 0, postUpdateEventListener.length);
-            tempPostUpdateEventListener[postUpdateEventListener.length] = new Hibernate3GpsDevicePostUpdate(null);
+            tempPostUpdateEventListener[postUpdateEventListener.length] = new Hibernate3GpsDevicePostUpdate(null, mirrorFilter);
             eventListener.set(eventListeners, tempPostUpdateEventListener);
 
             eventListener = new FieldInvoker(eventListenersClass, "postDeleteEventListeners").prepare();
             PostDeleteEventListener[] postDeleteEventListener = (PostDeleteEventListener[]) eventListener.get(eventListeners);
             PostDeleteEventListener[] tempPostDeleteEventListener = new PostDeleteEventListener[postDeleteEventListener.length + 1];
             System.arraycopy(postDeleteEventListener, 0, tempPostDeleteEventListener, 0, postDeleteEventListener.length);
-            tempPostDeleteEventListener[postDeleteEventListener.length] = new Hibernate3GpsDevicePostDelete(null);
+            tempPostDeleteEventListener[postDeleteEventListener.length] = new Hibernate3GpsDevicePostDelete(null, mirrorFilter);
             eventListener.set(eventListeners, tempPostDeleteEventListener);
 
         } catch (Exception e) {

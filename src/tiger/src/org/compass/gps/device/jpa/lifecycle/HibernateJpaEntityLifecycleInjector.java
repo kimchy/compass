@@ -65,6 +65,7 @@ public class HibernateJpaEntityLifecycleInjector implements JpaEntityLifecycleIn
         SessionFactoryImpl sessionFactory = (SessionFactoryImpl) hibernateEntityManagerFactory.getSessionFactory();
         EventListeners eventListeners = sessionFactory.getEventListeners();
 
+        // TODO add the ability to extend the system and register your own event listener (which maybe performs filtering)
         HibernateEventListener hibernateEventListener = new HibernateEventListener(device);
 
         PostInsertEventListener[] postInsertEventListeners = eventListeners.getPostInsertEventListeners();
