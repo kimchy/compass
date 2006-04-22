@@ -241,6 +241,7 @@ public class Author {
         analyzer="name of the analyzer"
         root="true|false"
         poly="false|true"
+        poly-class="the class name that will be used to instantiate poly mapping (optional)"
         extends="a comma separated list of aliases to extend"
         boost="boost value for the class"
         all="true|false"
@@ -285,6 +286,10 @@ public class Author {
             <row>
               <entry>poly (optional, defaults to <literal>false</literal>)</entry>
               <entry>Specifies if the class will be enabled to support polymorphism. This is the less prefable way to map an inheritance tree, since the extends attribute can be used to statically extend base classes or contracts.</entry>
+            </row>
+            <row>
+              <entry>poly-class (optional)</entry>
+              <entry>If poly is set to <literal>true</literal>, the actual class name of the indexed object will be saved to the index as well (will be used later to instantiate the Object). If the poly-class is set, the class name will not be saved to the index, and the value of poly-class will be used to instantiate all the classes in the inheritance tree.</entry>
             </row>
             <row>
               <entry>extends (optional)</entry>

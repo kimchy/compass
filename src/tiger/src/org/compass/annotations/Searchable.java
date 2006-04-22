@@ -148,17 +148,17 @@ public @interface Searchable {
      * more performant way.
      * <p/>
      * If poly is set to <code>true</code>, the actual class implementation will be persisted
-     * to the index, later be used to instanciate it when un-marhsalling. If a specific class
-     * need to be used to instanciate all classes, use the {{@link #polyClass()} to set it.
+     * to the index, later be used to instantiate it when un-marhsalling. If a specific class
+     * need to be used to instantiate all classes, use the {{@link #polyClass()} to set it.
      */
     boolean poly() default false;
 
     /**
      * In cases where poly is set to <code>true</code>, allows to set the class that will
-     * be used to instanciate in all inheritance tree cases.
+     * be used to instantiate in all inheritance tree cases.
      * <p/>
      * If not set, the actual class will be saved to the index,
-     * later be used to instanciate it when un-marhsalling
+     * later be used to instantiate it when un-marhsalling
      */
     Class polyClass() default Object.class;
 

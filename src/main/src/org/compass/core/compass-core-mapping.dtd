@@ -122,7 +122,7 @@
     -->
     <!ATTLIST class poly (true|false) "false">
     <!--
-        Specified the class name that will be used to instanciate if poly is set to true.
+        Specified the class name that will be used to instantiate if poly is set to true.
         If not set, the actual class will be persisted to the index.
     -->
     <!ATTLIST class poly-class CDATA #IMPLIED>
