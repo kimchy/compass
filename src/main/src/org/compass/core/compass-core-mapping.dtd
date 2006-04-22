@@ -81,7 +81,7 @@
         The alias can be used to reference the class when performing search operations,
         or for other mappings to extend it.
     -->
-    <!ATTLIST class alias    CDATA #REQUIRED>
+    <!ATTLIST class alias CDATA #REQUIRED>
     <!--
         The sub index the searchable class will be saved to. A sub index is a fully functional index.
 
@@ -121,6 +121,11 @@
         Defaults to false.
     -->
     <!ATTLIST class poly (true|false) "false">
+    <!--
+        Specified the class name that will be used to instanciate if poly is set to true.
+        If not set, the actual class will be persisted to the index.
+    -->
+    <!ATTLIST class poly-class CDATA #IMPLIED>
     <!--
         Controls if the searchable class will create it's own internal "all" meta-data.
         The "all" meta-data holds searchable information of all the class searchable content.

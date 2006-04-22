@@ -34,6 +34,8 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private boolean poly;
 
+    private Class polyClass;
+
     private ResourcePropertyMapping[] resourcePropertyMappings;
 
     private ClassPropertyMapping[] classPropertyMappings;
@@ -48,6 +50,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setPoly(isPoly());
         copy.setClassPath(getClassPath());
         copy.setClazz(getClazz());
+        copy.setPolyClass(getPolyClass());
         return copy;
     }
 
@@ -57,6 +60,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setPoly(isPoly());
         copy.setClassPath(getClassPath());
         copy.setClazz(getClazz());
+        copy.setPolyClass(getPolyClass());
         return copy;
     }
 
@@ -138,5 +142,18 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public void setClazz(Class clazz) {
         this.clazz = clazz;
+    }
+
+    /**
+     * In case poly is set to <code>true</code>, this will be the class that will
+     * be instanciated for all persisted classes. If not set, Compass will persist
+     * the actual class in the index, and will use it to instanciate the class.
+     */
+    public Class getPolyClass() {
+        return polyClass;
+    }
+
+    public void setPolyClass(Class polyClass) {
+        this.polyClass = polyClass;
     }
 }

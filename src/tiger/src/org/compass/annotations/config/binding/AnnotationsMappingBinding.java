@@ -233,6 +233,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         classMapping.setBoost(searchable.boost());
         classMapping.setRoot(searchable.root());
         classMapping.setPoly(searchable.poly());
+        if (!Object.class.equals(searchable.polyClass())) {
+            classMapping.setPolyClass(searchable.polyClass());
+        }
         if (StringUtils.hasLength(searchable.analyzer())) {
             classMapping.setAnalyzer(searchable.analyzer());
         }

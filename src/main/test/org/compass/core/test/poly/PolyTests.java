@@ -39,12 +39,12 @@ public class PolyTests extends AbstractTestCase {
         PolyImpl1 impl1 = new PolyImpl1();
         impl1.setId(new Long(1));
         impl1.setValue("test1");
-        session.save(impl1);
+        session.save("poly", impl1);
 
         PolyImpl2 impl2 = new PolyImpl2();
         impl2.setId(new Long(2));
         impl2.setValue("test2");
-        session.save(impl2);
+        session.save("poly", impl2);
 
         impl1 = (PolyImpl1) session.load("poly", new Long(1));
         assertEquals("test1", impl1.getValue());
@@ -145,6 +145,30 @@ public class PolyTests extends AbstractTestCase {
         assertEquals("test1", arr.getPi()[0].getValue());
         assertEquals(PolyImpl2.class.getName(), arr.getPi()[1].getClass().getName());
         assertEquals("test2", arr.getPi()[1].getValue());
+
+        tr.commit();
+    }
+
+    public void testPolyClass() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        PolyImpl1 impl1 = new PolyImpl1();
+        impl1.setId(new Long(1));
+        impl1.setValue("test1");
+        session.save("poly2", impl1);
+
+        PolyImpl2 impl2 = new PolyImpl2();
+        impl2.setId(new Long(2));
+        impl2.setValue("test2");
+        session.save("poly2", impl2);
+
+        impl1 = (PolyImpl1) session.load("poly2", new Long(1));
+        assertEquals("test1", impl1.getValue());
+
+        // this will fail on a class cast if we did not have the poly-class
+        impl1 = (PolyImpl1) session.load("poly2", new Long(2));
+        assertEquals("test2", impl1.getValue());
 
         tr.commit();
     }

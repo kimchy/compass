@@ -251,6 +251,15 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         boolean poly = classConf.getAttributeAsBoolean("poly", false);
         classMapping.setPoly(poly);
 
+        String polyClassName = classConf.getAttribute("poly-class", null);
+        if (polyClassName != null) {
+            try {
+                classMapping.setPolyClass(ClassUtils.forName(polyClassName));
+            } catch (ClassNotFoundException e) {
+                throw new ConfigurationException("Failed to load polyClass [" + polyClassName + "]", e);
+            }
+        }
+
         boolean root = classConf.getAttributeAsBoolean("root", true);
         classMapping.setRoot(root);
         classMapping.setBoost(getBoost(classConf));

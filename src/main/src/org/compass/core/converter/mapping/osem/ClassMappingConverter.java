@@ -51,7 +51,7 @@ public class ClassMappingConverter implements Converter {
             resource.setAlias(classMapping.getAlias());
             doSetBoost(resource, root, classMapping, context);
         }
-        if (classMapping.isPoly()) {
+        if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
             // if the class is defined as poly, persist the class name as well
             String className = root.getClass().getName();
             Property p = searchEngine.createProperty(classMapping.getClassPath(), className, Property.Store.YES,
@@ -90,15 +90,19 @@ public class ClassMappingConverter implements Converter {
         }
         String className = classMapping.getName();
         if (classMapping.isPoly()) {
-            Property pClassName = resource.getProperty(classMapping.getClassPath());
-            if (pClassName == null) {
-                throw new MarshallingException("The class [" + className
-                        + "] is configured as poly, but no class information is stored in the resource");
-            }
-            className = pClassName.getStringValue();
-            if (className == null) {
-                throw new MarshallingException("The class [" + className
-                        + "] is configured as poly, but no class information is stored in the resource");
+            if (classMapping.getPolyClass() != null) {
+                className = classMapping.getPolyClass().getName();
+            } else {
+                Property pClassName = resource.getProperty(classMapping.getClassPath());
+                if (pClassName == null) {
+                    throw new MarshallingException("The class [" + className
+                            + "] is configured as poly, but no class information is stored in the resource");
+                }
+                className = pClassName.getStringValue();
+                if (className == null) {
+                    throw new MarshallingException("The class [" + className
+                            + "] is configured as poly, but no class information is stored in the resource");
+                }
             }
         }
         try {

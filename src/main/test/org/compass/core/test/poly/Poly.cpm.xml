@@ -13,7 +13,17 @@
         </property>
     
     </class>
+
+    <class name="PolyInterface" alias="poly2" poly="true" poly-class="org.compass.core.test.poly.PolyImpl1">
     
+        <id name="id" />
+
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+    </class>
+
     <class name="Component" alias="comp">
     
         <id name="id" />
