@@ -32,11 +32,11 @@ public interface SearchEngineQueryBuilder {
     
     public static interface SearchEngineBooleanQueryBuilder extends SearchEngineToQuery {
 
-        void addMust(SearchEngineQuery query);
+        SearchEngineBooleanQueryBuilder addMust(SearchEngineQuery query);
 
-        void addMustNot(SearchEngineQuery query);
+        SearchEngineBooleanQueryBuilder addMustNot(SearchEngineQuery query);
 
-        void addShould(SearchEngineQuery query);
+        SearchEngineBooleanQueryBuilder addShould(SearchEngineQuery query);
     }
 
     public static interface SearchEngineMultiPhraseQueryBuilder extends SearchEngineToQuery {
@@ -57,6 +57,17 @@ public interface SearchEngineQueryBuilder {
         SearchEngineQueryStringBuilder setAnalyzer(String analyzer);
 
         SearchEngineQueryStringBuilder setDefaultSearchProperty(String defaultSearchProperty);
+
+        SearchEngineQueryStringBuilder useAndDefaultOperator();
+    }
+
+    public static interface SearchEngineMultiPropertyQueryStringBuilder extends SearchEngineToQuery {
+
+        SearchEngineMultiPropertyQueryStringBuilder setAnalyzer(String analyzer);
+
+        SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName);
+
+        SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator();
     }
     
     public static interface SearchEngineQuerySpanNearBuilder {
@@ -86,6 +97,8 @@ public interface SearchEngineQueryBuilder {
     SearchEngineMultiPhraseQueryBuilder multiPhrase(String resourcePropertyName);
 
     SearchEngineQueryStringBuilder queryString(String queryString);
+
+    SearchEngineMultiPropertyQueryStringBuilder multiPropertyQueryString(String queryString);
 
     SearchEngineQuery wildcard(String resourcePropertyName, String wildcard);
 

@@ -44,11 +44,10 @@ import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery;
 import org.compass.core.lucene.util.LuceneQueryParser;
+import org.compass.core.lucene.util.LuceneMultiFieldQueryParser;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder {
 
@@ -63,16 +62,19 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
             boolQuery = new BooleanQuery(disableCoord);
         }
 
-        public void addMust(SearchEngineQuery query) {
+        public SearchEngineBooleanQueryBuilder addMust(SearchEngineQuery query) {
             boolQuery.add(((LuceneSearchEngineQuery) query).getQuery(), BooleanClause.Occur.MUST);
+            return this;
         }
 
-        public void addMustNot(SearchEngineQuery query) {
+        public SearchEngineBooleanQueryBuilder addMustNot(SearchEngineQuery query) {
             boolQuery.add(((LuceneSearchEngineQuery) query).getQuery(), BooleanClause.Occur.MUST_NOT);
+            return this;
         }
 
-        public void addShould(SearchEngineQuery query) {
+        public SearchEngineBooleanQueryBuilder addShould(SearchEngineQuery query) {
             boolQuery.add(((LuceneSearchEngineQuery) query).getQuery(), BooleanClause.Occur.SHOULD);
+            return this;
         }
 
         public SearchEngineQuery toQuery() {
@@ -105,7 +107,7 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
         }
 
         public SearchEngineMultiPhraseQueryBuilder add(String value, int position) {
-            multiPhraseQuery.add(new Term[] { new Term(resourceProperty, value) }, position);
+            multiPhraseQuery.add(new Term[]{new Term(resourceProperty, value)}, position);
             return this;
         }
 
@@ -142,6 +144,8 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
 
         private String queryString;
 
+        private LuceneQueryParser.Operator operator = LuceneQueryParser.Operator.OR;
+
         public LuceneSearchEngineQueryStringBuilder(LuceneSearchEngine searchEngine, String queryString) {
             this.searchEngine = searchEngine;
             this.queryString = queryString;
@@ -157,24 +161,85 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
             return this;
         }
 
+        public SearchEngineQueryStringBuilder useAndDefaultOperator() {
+            this.operator = LuceneQueryParser.Operator.AND;
+            return this;
+        }
+
         public SearchEngineQuery toQuery() {
             String defaultSearch = defaultSearchProperty;
             if (defaultSearch == null) {
                 defaultSearch = searchEngine.getSearchEngineFactory().getLuceneSettings().getDefaultSearchPropery();
             }
             String analyzerName = analyzer;
-            Analyzer analyzer = null;
+            Analyzer analyzer;
             if (analyzerName == null) {
                 analyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getSearchAnalyzer();
             } else {
-                analyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager()
-                        .getAnalyzerMustExist(analyzerName);
+                analyzer =
+                        searchEngine.getSearchEngineFactory().getAnalyzerManager().getAnalyzerMustExist(analyzerName);
             }
-            Query qQuery = null;
+            Query qQuery;
             try {
-                qQuery = LuceneQueryParser.parse(queryString, defaultSearch, analyzer);
+                LuceneQueryParser queryParser = new LuceneQueryParser(defaultSearch, analyzer);
+                queryParser.setDefaultOperator(operator);
+                qQuery = queryParser.parse(queryString);
             } catch (ParseException e) {
-                throw new SearchEngineException("Failed to parse query [" + queryString + "].");
+                throw new SearchEngineException("Failed to parse query [" + queryString + "]", e);
+            }
+            return new LuceneSearchEngineQuery(searchEngine, qQuery);
+        }
+    }
+
+    public static class LuceneSearchEngineMultiPropertyQueryStringBuilder implements SearchEngineMultiPropertyQueryStringBuilder {
+
+        private LuceneSearchEngine searchEngine;
+
+        private String analyzer;
+
+        private String queryString;
+
+        private LuceneQueryParser.Operator operator = LuceneQueryParser.Operator.OR;
+
+        private ArrayList propertyNames = new ArrayList();
+
+        public LuceneSearchEngineMultiPropertyQueryStringBuilder(LuceneSearchEngine searchEngine, String queryString) {
+            this.searchEngine = searchEngine;
+            this.queryString = queryString;
+        }
+
+        public SearchEngineMultiPropertyQueryStringBuilder setAnalyzer(String analyzer) {
+            this.analyzer = analyzer;
+            return this;
+        }
+
+        public SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName) {
+            propertyNames.add(resourcePropertyName);
+            return this;
+        }
+
+        public SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator() {
+            this.operator = LuceneQueryParser.Operator.AND;
+            return this;
+        }
+
+        public SearchEngineQuery toQuery() {
+            String analyzerName = analyzer;
+            Analyzer analyzer;
+            if (analyzerName == null) {
+                analyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getSearchAnalyzer();
+            } else {
+                analyzer =
+                        searchEngine.getSearchEngineFactory().getAnalyzerManager().getAnalyzerMustExist(analyzerName);
+            }
+            Query qQuery;
+            try {
+                LuceneMultiFieldQueryParser queryParser = new LuceneMultiFieldQueryParser(
+                        (String[]) propertyNames.toArray(new String[propertyNames.size()]), analyzer);
+                queryParser.setDefaultOperator(operator);
+                qQuery = queryParser.parse(queryString);
+            } catch (ParseException e) {
+                throw new SearchEngineException("Failed to parse query [" + queryString + "]", e);
             }
             return new LuceneSearchEngineQuery(searchEngine, qQuery);
         }
@@ -224,22 +289,22 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
         }
 
     }
-    
+
     public static class LuceneSearchEngineQuerySpanOrBuilder implements SearchEngineQuerySpanOrBuilder {
-        
+
         private LuceneSearchEngine searchEngine;
-        
+
         private ArrayList queries = new ArrayList();
-        
+
         public LuceneSearchEngineQuerySpanOrBuilder(LuceneSearchEngine searchEngine) {
             this.searchEngine = searchEngine;
         }
-        
+
         public SearchEngineQuerySpanOrBuilder add(SearchEngineSpanQuery query) {
             queries.add(((LuceneSearchEngineSpanQuery) query).getQuery());
             return this;
         }
-        
+
         public SearchEngineSpanQuery toQuery() {
             SpanQuery[] spanQueries = (SpanQuery[]) queries.toArray(new SpanQuery[queries.size()]);
             SpanOrQuery spanOrQuery = new SpanOrQuery(spanQueries);
@@ -288,7 +353,7 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
         }
         return new LuceneSearchEngineQuery(searchEngine, query);
     }
-    
+
     public SearchEngineQuery between(String resourcePropertyName, String low, String high, boolean inclusive) {
         return between(resourcePropertyName, low, high, inclusive, true);
     }
@@ -341,7 +406,11 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
     public SearchEngineQueryStringBuilder queryString(String queryString) {
         return new LuceneSearchEngineQueryStringBuilder(searchEngine, queryString);
     }
-    
+
+    public SearchEngineMultiPropertyQueryStringBuilder multiPropertyQueryString(String queryString) {
+        return new LuceneSearchEngineMultiPropertyQueryStringBuilder(searchEngine, queryString);
+    }
+
     public SearchEngineSpanQuery spanEq(String resourcePropertyName, String value) {
         SpanQuery spanQuery = new SpanTermQuery(new Term(resourcePropertyName, value));
         return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanQuery);
@@ -361,7 +430,7 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
                 ((LuceneSearchEngineSpanQuery) exclude).toSpanQuery());
         return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanNotQuery);
     }
-    
+
     public SearchEngineQuerySpanOrBuilder spanOr() {
         return new LuceneSearchEngineQuerySpanOrBuilder(searchEngine);
     }

@@ -72,6 +72,21 @@ public class QueryBuilderTests extends AbstractTestCase {
         session.save(a);
     }
 
+    public void testMultiPropertyQueryString() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        setUpData(session);
+
+        CompassQueryBuilder queryBuilder = session.queryBuilder();
+        CompassHits hits = queryBuilder.multiPropertyQueryString("test1 0002").add("mvalue1")
+                .add("mvalue2").toQuery().hits();
+        assertEquals(2, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
     public void testEqAlias() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
