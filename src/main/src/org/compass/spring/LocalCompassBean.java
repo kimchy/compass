@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
+import org.compass.core.util.ClassUtils;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.CompassEnvironment;
@@ -61,6 +62,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
     private Resource[] resourceJarLocations;
 
     private Resource[] resourceDirectoryLocations;
+
+    private String[] classMappings;
 
     private InputStreamMappingResolver[] mappingResolvers;
 
@@ -134,6 +137,14 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
     }
 
     /**
+     * Sets the fully qualified class names for mappings. Useful when using annotations
+     * for example. Will also try to load the matching "[Class].cpm.xml" file.
+     */
+    public void setClassMappings(String[] classMappings) {
+        this.classMappings = classMappings;
+    }
+
+    /**
      * Sets the mapping resolvers the resolved Compass mapping definitions.
      */
     public void setMappingResolvers(InputStreamMappingResolver[] mappingResolvers) {
@@ -202,6 +213,12 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         if (resourceJarLocations != null) {
             for (int i = 0; i < resourceJarLocations.length; i++) {
                 config.addJar(resourceJarLocations[i].getFile());
+            }
+        }
+
+        if (classMappings != null) {
+            for (int i = 0; i < classMappings.length; i++) {
+                config.addClass(ClassUtils.forName(classMappings[i]));
             }
         }
 

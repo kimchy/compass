@@ -18,11 +18,15 @@ package org.compass.core.config;
 
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.JdkVersion;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @author kimchy
  */
 public abstract class CompassConfigurationFactory {
+
+    private static final Log log = LogFactory.getLog(CompassConfigurationFactory.class);
 
     private static final String DEFAULT_COMPASS_CONFIG = "org.compass.core.config.CompassConfiguration";
 
@@ -44,6 +48,9 @@ public abstract class CompassConfigurationFactory {
                 throw new ConfigurationException("Failed to create configuration class ["
                         + compassConfigurationClassName + "] and default [" + DEFAULT_COMPASS_CONFIG + "]", e);
             }
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Using configuration [" + compassConfigurationClass.getName() + "]");
         }
         try {
             config = (CompassConfiguration) compassConfigurationClass.newInstance();
