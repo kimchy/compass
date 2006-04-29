@@ -285,7 +285,7 @@ public class Author {
             </row>
             <row>
               <entry>poly (optional, defaults to <literal>false</literal>)</entry>
-              <entry>Specifies if the class will be enabled to support polymorphism. This is the less prefable way to map an inheritance tree, since the extends attribute can be used to statically extend base classes or contracts.</entry>
+              <entry>Specifies if the class will be enabled to support polymorphism. This is the less preferable way to map an inheritance tree, since the extends attribute can be used to statically extend base classes or contracts.</entry>
             </row>
             <row>
               <entry>poly-class (optional)</entry>
@@ -293,7 +293,7 @@ public class Author {
             </row>
             <row>
               <entry>extends (optional)</entry>
-              <entry>A comma seperated list of aliases to extend. Can extend a <literal>class</literal> mapping or a <literal>contract</literal> mapping. Note that can extend more than one <literal>class/contract</literal></entry> mapping.
+              <entry>A comma separated list of aliases to extend. Can extend a <literal>class</literal> mapping or a <literal>contract</literal> mapping. Note that can extend more than one <literal>class/contract</literal></entry> mapping.
             </row>
             <row>
               <entry>boost (optional, defaults to <literal>1.0</literal>)</entry>
@@ -449,7 +449,7 @@ public class Author {
         </para>
 
         <para>
-          Compass::Core requires that <literal>id</literal> and <literal>property</literal> mappings will be identifiable on the root class (<literal>Resource</literal>) level. Compass does that by either using one of the <literal>meta-data</literal> names (which is unique within ALL of the <literal>meta-data</literal> in the <literal>class</literal> mapping), or creating an internal one. Compass will create an internal one if no <literal>meta-data</literal> is defined in the <literal>id</literal> or <literal>property</literal> mapping. You can control it by using the <literal>managed-id</literal>, the value <literal>auto</literal> leaves the id assignment / creation as Compass's responsibility. Compass will analyse all the different meta-data defined in the mappings and will decide if it needs to create an internal id for an <literal>id</literal> or a <literal>property</literal> mapping. The <literal>true</literal> option will always create an internal id for the <literal>id</literal> or <literal>property</literal> and the <literal>false</literal> option will always take the first <literal>meta-data</literal> and use it as the <literal>id</literal> or <literal>property</literal> id.
+          Compass::Core requires that <literal>id</literal> and <literal>property</literal> mappings will be identifiable on the root class (<literal>Resource</literal>) level. Compass does that by either using one of the <literal>meta-data</literal> names (which is unique within ALL of the <literal>meta-data</literal> in the <literal>class</literal> mapping), or creating an internal one. Compass will create an internal one if no <literal>meta-data</literal> is defined in the <literal>id</literal> or <literal>property</literal> mapping. You can control it by using the <literal>managed-id</literal>, the value <literal>auto</literal> leaves the id assignment / creation as Compass's responsibility. Compass will analyze all the different meta-data defined in the mappings and will decide if it needs to create an internal id for an <literal>id</literal> or a <literal>property</literal> mapping. The <literal>true</literal> option will always create an internal id for the <literal>id</literal> or <literal>property</literal> and the <literal>false</literal> option will always take the first <literal>meta-data</literal> and use it as the <literal>id</literal> or <literal>property</literal> id.
         </para>
 
       </para>

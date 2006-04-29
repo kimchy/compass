@@ -5,7 +5,7 @@
       <title>Introduction</title>
 
       <para>
-        Compass::Core provides OSEM technology for use with an applications Object domain model. Compass::Core also provides  Resource Mapping technology for resources other than Objects (that do not benefit from OSEM). The benefits of using Resources can be summarised as:
+        Compass::Core provides OSEM technology for use with an applications Object domain model. Compass::Core also providesResource Mapping technology for resources other than Objects (that do not benefit from OSEM). The benefits of using Resources can be summarized as:
 
         <itemizedlist>
           <listitem>
@@ -20,8 +20,7 @@
           </listitem>
           <listitem>
             <para>
-               You execute a query and want to update all the meta-data (<literal>Resource Property</literal>) with a certain value. You use OSEM in your application, but you do not wish to iterate
-               through the results, performing run-time object type checking and casting to the appropriate object type before method call. You can simply use the <literal>Resource</literal> interface and treat all the results in the same abstracted way.
+               You execute a query and want to update all the meta-data (<literal>Resource Property</literal>) with a certain value. You use OSEM in your application, but you do not wish to iterate through the results, performing run-time object type checking and casting to the appropriate object type before method call. You can simply use the <literal>Resource</literal> interface and treat all the results in the same abstracted way.
             </para>
           </listitem>
         </itemizedlist>
@@ -70,7 +69,7 @@
       </para>
 
       <para>
-        Now that the Resource Mapping has be declared, you can create the Resource in the application. In the following code example the Resource is created with an alias and id property matching the Resource Mapping declaration.
+        Now that the Resource Mapping has been declared, you can create the Resource in the application. In the following code example the Resource is created with an alias and id property matching the Resource Mapping declaration.
       </para>
 
       <para>
@@ -85,16 +84,15 @@ session.save(r);]]></programlisting>
       </para>
 
       <para>
-          The Resource Mapping file example above defines mappings for two resources (each identified with a different alias). Each resource has a set of resource ids that are associated with it. The value for the <literal>resource-id</literal> tag is the name of the <literal>
-          Property</literal> that is associated with the primary property for the <literal>Resource</literal>.
+          The Resource Mapping file example above defines mappings for two resources (each identified with a different alias). Each resource has a set of resource ids that are associated with it. The value for the <literal>resource-id</literal> tag is the name of the <literal>Property</literal> that is associated with the primary property for the <literal>Resource</literal>.
       </para>
 
       <para>
-        The third mapping (alias "c"), defined <literal>resource-property</literal> mappings as well as <literal>resource-id</literal> mappings. The <literal>resource-property</literal> mapping works with the <literal>Resource#addProperty(String name, Object value)</literal> operation. It provides definitions for the resource properties that are added (<literal>index</literal>, <literal>store</literal>, and so on), and they are then looked up when using the mentioned add method. Using the <literal>resource-property</literal> mapping, helps clean up the code when constructing a <literal>Resource</literal>, since all the <literal>Property</literal> characteristics are defined in the mapping definition, as well as auto conversion from different objects, and the ability to define new ones. Note that the <literal>resource-property</literal> definition will only work with the mentioned addProperty method, and no other addProperty method.
+        The third mapping (alias "c"), defines <literal>resource-property</literal> mappings as well as <literal>resource-id</literal> mappings. The <literal>resource-property</literal> mapping works with the <literal>Resource#addProperty(String name, Object value)</literal> operation. It provides definitions for the resource properties that are added (<literal>index</literal>, <literal>store</literal>, and so on), and they are then looked up when using the mentioned add method. Using the <literal>resource-property</literal> mapping, helps clean up the code when constructing a <literal>Resource</literal>, since all the <literal>Property</literal> characteristics are defined in the mapping definition, as well as auto conversion from different objects, and the ability to define new ones. Note that the <literal>resource-property</literal> definition will only work with the mentioned addProperty method, and no other addProperty method.
       </para>
 
       <para>
-          All XML mappings should declare the doctype shown. The actual DTD may be found at the URL above or in the <literal>compass-core-x.x.x.jar</literal>. Compass will always look for the DTD in the classpath first.
+          All XML mappings should declare the doctype shown. The actual DTD may be found at the URL above or in the compass core distribution. Compass will always look for the DTD in the classpath first.
       </para>
 
       <para>
@@ -110,6 +108,7 @@ session.save(r);]]></programlisting>
 <programlisting><![CDATA[<resource
       alias="aliasName"
       sub-index="sub index name"
+      extends="a comma separated list of aliases to extend"
       analyzer="name of the analyzer"
       all="true|false"
       all-term-vector="no|yes|positions|offsets|positios_offsets"
@@ -139,6 +138,10 @@ session.save(r);]]></programlisting>
                   <entry>The name of the sub-index that the alias will map to.</entry>
                 </row>
                 <row>
+                  <entry>extends (optional)</entry>
+                  <entry>A comma separated list of aliases to extend. Can extend a <literal>resource</literal> mapping or a <literal>resource-contract</literal> mapping. Note that can extend more than one <literal>resource/resource-contract</literal></entry> mapping.
+                </row>
+                <row>
                   <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
                   <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>resource-analyzer</literal> mapping (a child mapping of resource mapping) (for a resource property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
                 </row>
@@ -161,6 +164,52 @@ session.save(r);]]></programlisting>
     </para>
 
   </sect2>
+
+        <sect2 id="resource-contract">
+          <title>resource-contract</title>
+
+          <para>
+            You may declare a resource mapping contract using the <literal>resource-contract</literal> element:
+
+  <programlisting><![CDATA[<resource-contract
+        alias="aliasName"
+        extends="a comma separated list of aliases to extend"
+        analyzer="name of the analyzer"
+  />
+      resource-id*,
+      (resource-analyzer?),
+      (resource-property)*
+  ]]></programlisting>
+
+            <table>
+              <tgroup cols="2">
+                <colspec colname="c1" colwidth="3*" />
+                <colspec colname="c2" colwidth="5*" />
+                <thead>
+                  <row>
+                    <entry>Attribute</entry><entry>Description</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry>alias</entry>
+                    <entry>The name of the alias that represents the <literal>Resource</literal>.</entry>
+                  </row>
+                  <row>
+                    <entry>extends (optional)</entry>
+                    <entry>A comma separated list of aliases to extend. Can extend a <literal>resource</literal> mapping or a <literal>resource-contract</literal> mapping. Note that can extend more than one <literal>resource/resource-contract</literal></entry> mapping.
+                  </row>
+                  <row>
+                    <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
+                    <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>resource-analyzer</literal> mapping (a child mapping of resource mapping) (for a resource property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
+                  </row>
+                </tbody>
+              </tgroup>
+          </table>
+
+      </para>
+
+    </sect2>
 
   <sect2 id="resource-id">
       <title>resource-id</title>
@@ -208,6 +257,7 @@ session.save(r);]]></programlisting>
       boost="boost value for the property"
       analyzer="name of the analyzer"
       reverse="no|reader|string"
+      override="true|false"
       exclude-from-all="[parent's exclude-from-all]|false|true"
       converter="fully qualified converter class name"
       converter-param="parameter for the converter"
@@ -266,7 +316,7 @@ session.save(r);]]></programlisting>
         </tgroup></table>
 
         <para>
-          Defines the charectaristics of a <literal>Resource</literal> <literal>Property</literal> identified by the <literal>name</literal> mapping. The definition only applies when using the <literal>Resource#addProperty(String name, Object value)</literal> operation, and the operation can only be used with the <literal>resourcde-property</literal> mapping.
+          Defines the characteristics of a <literal>Resource</literal> <literal>Property</literal> identified by the <literal>name</literal> mapping. The definition only applies when using the <literal>Resource#addProperty(String name, Object value)</literal> operation, and the operation can only be used with the <literal>resourcde-property</literal> mapping.
         </para>
 
         <para>
