@@ -74,6 +74,12 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             bindContract(contractArr[i], contractMapping);
             mapping.addMapping(contractMapping);
         }
+        ConfigurationHelper[] resourceContractArr = doc.getChildren("resource-contract");
+        for (int i = 0; i < resourceContractArr.length; i++) {
+            ContractMapping contractMapping = new ContractMapping();
+            bindResourceContract(resourceContractArr[i], contractMapping);
+            mapping.addMapping(contractMapping);
+        }
         ConfigurationHelper[] classArr = doc.getChildren("class");
         for (int i = 0; i < classArr.length; i++) {
             ConfigurationHelper classConf = classArr[i];
@@ -106,6 +112,20 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         return true;
     }
 
+    private void bindResourceContract(ConfigurationHelper contractConf, ContractMapping contractMapping)
+            throws ConfigurationException {
+        String aliasValue = contractConf.getAttribute("alias");
+        Alias alias = valueLookup.lookupAlias(aliasValue);
+        if (alias == null) {
+            contractMapping.setAlias(aliasValue);
+        } else {
+            contractMapping.setAlias(alias.getName());
+        }
+        bindExtends(contractConf, contractMapping);
+
+        bindResourceMappingChildren(contractConf, contractMapping);
+    }
+
     private void bindResource(ConfigurationHelper resourceConf, RawResourceMapping rawResourceMapping)
             throws ConfigurationException {
         String aliasValue = resourceConf.getAttribute("alias");
@@ -118,6 +138,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         String subIndex = resourceConf.getAttribute("sub-index", rawResourceMapping.getAlias());
         rawResourceMapping.setSubIndex(subIndex);
+
+        bindExtends(resourceConf, rawResourceMapping);
 
         String analyzer = resourceConf.getAttribute("analyzer", null);
         rawResourceMapping.setAnalyzer(analyzer);
@@ -143,33 +165,36 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         rawResourceMapping.setRoot(true);
         rawResourceMapping.setBoost(getBoost(resourceConf));
 
+        bindResourceMappingChildren(resourceConf, rawResourceMapping);
+    }
+
+    private void bindResourceMappingChildren(ConfigurationHelper resourceConf, AliasMapping resourceMapping) {
         ConfigurationHelper[] ids = resourceConf.getChildren("resource-id");
         for (int i = 0; i < ids.length; i++) {
             RawResourcePropertyIdMapping rawIdPropertyMapping = new RawResourcePropertyIdMapping();
-            bindResourceProperty(ids[i], rawResourceMapping, rawIdPropertyMapping);
-            rawResourceMapping.addMapping(rawIdPropertyMapping);
+            bindResourceProperty(ids[i], rawIdPropertyMapping);
+            resourceMapping.addMapping(rawIdPropertyMapping);
         }
 
         ConfigurationHelper[] properties = resourceConf.getChildren("resource-property");
         for (int i = 0; i < properties.length; i++) {
             RawResourcePropertyMapping rawPropertyMapping = new RawResourcePropertyMapping();
-            bindResourceProperty(properties[i], rawResourceMapping, rawPropertyMapping);
-            rawResourceMapping.addMapping(rawPropertyMapping);
+            bindResourceProperty(properties[i], rawPropertyMapping);
+            resourceMapping.addMapping(rawPropertyMapping);
         }
 
         ConfigurationHelper analyzerConf = resourceConf.getChild("resource-analyzer", false);
         if (analyzerConf != null) {
             RawResourcePropertyAnalyzerController analyzerController = new RawResourcePropertyAnalyzerController();
-            bindResourceProperty(analyzerConf, rawResourceMapping, analyzerController);
+            bindResourceProperty(analyzerConf, analyzerController);
             analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
-            rawResourceMapping.addMapping(analyzerController);
+            resourceMapping.addMapping(analyzerController);
         }
     }
 
-    private void bindResourceProperty(ConfigurationHelper resourcePropConf, RawResourceMapping resourceMapping,
-                                      RawResourcePropertyMapping propertyMapping) {
+    private void bindResourceProperty(ConfigurationHelper resourcePropConf, RawResourcePropertyMapping propertyMapping) {
         String name = valueLookup.lookupMetaDataName(resourcePropConf.getAttribute("name"));
-        propertyMapping.setBoost(getBoost(resourcePropConf, resourceMapping.getBoost()));
+        propertyMapping.setBoost(getBoost(resourcePropConf));
         propertyMapping.setName(name);
         propertyMapping.setPath(name);
         bindConverter(resourcePropConf, propertyMapping);

@@ -28,6 +28,9 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.metadata.CompassMetaData;
 
 /**
+ * A basic no op implementation of {@link MappingBinding} that allows for classes
+ * to extend it and implement only specific features.
+ *
  * @author kimchy
  */
 public class MappingBindingSupport implements MappingBinding {

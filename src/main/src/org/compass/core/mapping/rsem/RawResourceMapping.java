@@ -48,8 +48,11 @@ public class RawResourceMapping extends AbstractResourceMapping implements PostP
         if (mapping instanceof ResourcePropertyMapping) {
             ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
             if (mappingsMap.get(resourcePropertyMapping.getPath()) != null) {
-                throw new InvalidMappingException("Two resource property mappings are mapped to property path ["
-                        + resourcePropertyMapping.getPath() + "], it is not allowed");
+                if (!(resourcePropertyMapping instanceof OverrideByNameMapping) ||
+                        !((OverrideByNameMapping) resourcePropertyMapping).isOverrideByName()) {
+                    throw new InvalidMappingException("Two resource property mappings are mapped to property path ["
+                            + resourcePropertyMapping.getPath() + "], it is not allowed");
+                }
             }
         }
         return super.addMapping(mapping);

@@ -55,7 +55,7 @@ public class QueryBuilderTests extends AbstractTestCase {
         a.setId(new Long(2));
         a.setValue1("0002");
         a.setValue2("test2");
-        calendar.set(2000, 1, 2);
+       calendar.set(2000, 1, 2);
         a.setDate(calendar.getTime());
         session.save(a);
         a.setId(new Long(3));

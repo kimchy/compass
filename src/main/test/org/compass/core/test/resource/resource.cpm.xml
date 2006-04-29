@@ -35,5 +35,25 @@
         <resource-property name="value6"/>
     </resource>
 
+    <resource alias="d" extends="a">
+        <resource-property name="value1" />
+    </resource>
+
+    <resource-contract alias="cont1">
+        <resource-id name="id" />
+    </resource-contract>
+
+    <resource-contract alias="cont2">
+        <resource-property name="value1" />
+    </resource-contract>
+
+    <resource-contract alias="cont3" extends="cont1">
+        <resource-property name="value2" />
+    </resource-contract>
+
+    <resource alias="e" extends="cont2, cont3">
+        <resource-property name="value1" store="no" />
+    </resource>
+
 </compass-core-mapping>
     

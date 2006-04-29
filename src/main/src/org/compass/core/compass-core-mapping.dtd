@@ -6,9 +6,18 @@
 -->
 
 <!ELEMENT compass-core-mapping (
-    (contract|class|resource)* 
+    (contract|class|resource|resource-contract)* 
 )>
     <!ATTLIST compass-core-mapping package CDATA #IMPLIED>
+
+<!ELEMENT resource-contract (
+    resource-id*,
+    (resource-analyzer?),
+    (resource-property)*
+)>
+    <!ATTLIST resource-contract alias CDATA #REQUIRED>
+    <!ATTLIST resource-contract extends CDATA #IMPLIED>
+    <!ATTLIST resource-contract analyzer CDATA #IMPLIED>
 
 <!ELEMENT resource ( 
     resource-id*,
@@ -17,6 +26,7 @@
 )>
     <!ATTLIST resource alias CDATA #REQUIRED>
     <!ATTLIST resource sub-index CDATA #IMPLIED>
+    <!ATTLIST resource extends CDATA #IMPLIED>
     <!ATTLIST resource analyzer CDATA #IMPLIED>
     <!ATTLIST resource all (true|false) "true">
     <!ATTLIST resource all-metadata CDATA #IMPLIED>

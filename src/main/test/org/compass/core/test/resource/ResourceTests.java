@@ -103,6 +103,7 @@ public class ResourceTests extends AbstractTestCase {
         assertNull(r);
 
         tr.commit();
+        session.close();
     }
 
     public void testMultipleIdResource() throws Exception {
@@ -132,6 +133,7 @@ public class ResourceTests extends AbstractTestCase {
         assertEquals("this is a test", hits.resource(0).get("mvalue"));
 
         tr.commit();
+        session.close();
     }
 
     public void testSimplePropertyMapping() throws Exception {
@@ -197,5 +199,40 @@ public class ResourceTests extends AbstractTestCase {
         assertEquals(1, hits.length());
 
         tr.commit();
+        session.close();
+    }
+
+    public void testResourceExtends() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Resource r = session.createResource("d");
+        r.addProperty("id", "1");
+        r.addProperty("value1", "this is a test");
+        session.save(r);
+
+        r = session.getResource("d", "1");
+        assertEquals("this is a test", r.get("value1"));
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testResourceContractExtends() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Resource r = session.createResource("e");
+        r.addProperty("id", "1");
+        r.addProperty("value1", "test1");
+        r.addProperty("value2", "test2");
+        session.save(r);
+
+        r = session.getResource("e", "1");
+        assertNull(r.get("value1"));
+        assertEquals("test2", r.get("value2"));
+
+        tr.commit();
+        session.close();
     }
 }
