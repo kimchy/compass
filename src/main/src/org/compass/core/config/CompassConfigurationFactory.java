@@ -30,7 +30,7 @@ public abstract class CompassConfigurationFactory {
 
     private static final String DEFAULT_COMPASS_CONFIG = "org.compass.core.config.CompassConfiguration";
 
-    private static final String ANNOTATIONS_COMPASS_CONFIG = "org.compass.core.config.CompassAnnotationsConfiguration";
+    private static final String ANNOTATIONS_COMPASS_CONFIG = "org.compass.annotations.config.CompassAnnotationsConfiguration";
 
     public static CompassConfiguration newConfiguration() throws ConfigurationException {
         String compassConfigurationClassName = DEFAULT_COMPASS_CONFIG;
