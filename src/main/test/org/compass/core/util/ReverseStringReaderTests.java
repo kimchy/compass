@@ -17,6 +17,7 @@
 package org.compass.core.util;
 
 import junit.framework.TestCase;
+import org.compass.core.util.reader.ReverseStringReader;
 
 /**
  * @author kimchy

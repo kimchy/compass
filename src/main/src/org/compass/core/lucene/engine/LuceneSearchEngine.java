@@ -45,7 +45,7 @@ import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.util.ResourceHelper;
-import org.compass.core.util.ReverseStringReader;
+import org.compass.core.util.reader.ReverseStringReader;
 import org.compass.core.util.StringUtils;
 
 /**

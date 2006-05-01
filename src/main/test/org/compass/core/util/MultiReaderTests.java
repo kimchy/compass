@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 import junit.framework.TestCase;
+import org.compass.core.util.reader.MultiIOReader;
 
 /**
  * @author kimchy

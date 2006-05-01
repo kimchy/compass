@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.util;
+package org.compass.core.util.reader;
 
 import java.io.Reader;
 
@@ -22,6 +22,11 @@ import org.compass.core.engine.RepeatableReader;
 
 
 /**
+ * A character stream whose source is a string. Allows for
+ * repeatable reads from the same string.
+ * <p/>
+ * Note, this is an unsafe reader in terms of {@link IndexOutOfBoundsException}.
+ *
  * @author kimchy
  */
 public class StringReader extends Reader implements RepeatableReader {
@@ -43,10 +48,7 @@ public class StringReader extends Reader implements RepeatableReader {
     }
 
     public int read(char cbuf[], int off, int len) {
-        if ((off < 0) || (off > cbuf.length) || (len < 0) ||
-                ((off + len) > cbuf.length) || ((off + len) < 0)) {
-            throw new IndexOutOfBoundsException();
-        } else if (len == 0) {
+        if (len == 0) {
             return 0;
         }
         if (next >= length)

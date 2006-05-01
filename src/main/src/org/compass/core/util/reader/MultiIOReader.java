@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.util;
+package org.compass.core.util.reader;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -104,9 +104,9 @@ public class MultiIOReader extends Reader {
         }
 
         IOException ioe = null;
-        for (Iterator it = readers.iterator(); it.hasNext();) {
+        for (int i = 0; i < readers.size(); i++) {
             try {
-                ((Reader) it.next()).close();
+                ((Reader) readers.get(i)).close();
             } catch (IOException e) {
                 ioe = e;
             }

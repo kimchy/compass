@@ -42,8 +42,9 @@ import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.util.MultiIOReader;
-import org.compass.core.util.StringReader;
+import org.compass.core.util.reader.MultiIOReader;
+import org.compass.core.util.reader.StringReader;
+import org.compass.core.util.reader.StringWithSeparatorReader;
 
 /**
  * @author kimchy
@@ -110,10 +111,10 @@ public abstract class LuceneUtils {
     private static boolean tryAddPropertyToAll(Property property, MultiIOReader reader, boolean atleastOneAddedToAll) {
         String value = property.getStringValue();
         if (value != null) {
-            reader.add(new StringReader(value));
-            reader.add(new StringReader(" "));
+            reader.add(new StringWithSeparatorReader(value, ' '));
             return true;
         }
+        // if it is a repeatable reader, we can add it to all, since we read it several times
         RepeatableReader repeatableReader = ((LuceneProperty) property).getRepeatableReader();
         if (repeatableReader != null) {
             reader.add((Reader) repeatableReader);
