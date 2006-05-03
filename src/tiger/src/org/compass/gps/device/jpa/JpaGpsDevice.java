@@ -132,7 +132,7 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
             if (log.isDebugEnabled()) {
                 log.debug(buildMessage("Using native EntityManagerFactory ["
                         + nativeEntityManagerFactory.getClass().getName() + "] extracted by ["
-                        + nativeEntityManagerFactory.getClass().getName() + "]"));
+                        + nativeEntityManagerFactoryExtractor.getClass().getName() + "]"));
             }
         }
 
@@ -160,7 +160,7 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
 
     protected void doIndex(CompassSession session) throws CompassGpsException {
         if (log.isInfoEnabled()) {
-            log.info(buildMessage("Indexing the database"));
+            log.info(buildMessage("Indexing the database with fetch count [" + fetchCount + "]"));
         }
         for (EntityInformation entityInformation : entetiesInformation) {
             try {

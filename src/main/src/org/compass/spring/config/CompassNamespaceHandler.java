@@ -32,6 +32,9 @@ import org.w3c.dom.Element;
 public class CompassNamespaceHandler extends NamespaceHandlerSupport {
 
     public CompassNamespaceHandler() {
+    }
+
+    public void init() {
         registerBeanDefinitionParser("compass", new CompassBeanDefinitionParser());
     }
 

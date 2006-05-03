@@ -43,7 +43,7 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
             try {
                 entityTransaction.begin();
             } catch (Exception e) {
-                throw new JpaGpsDeviceException("Failed to start JPA resource local transaction");
+                throw new JpaGpsDeviceException("Failed to start JPA resource local transaction", e);
             }
         }
     }
@@ -53,7 +53,7 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
             try {
                 entityTransaction.commit();
             } catch (PersistenceException e) {
-                throw new JpaGpsDeviceException("Failed to commit JPA resource local transaction");
+                throw new JpaGpsDeviceException("Failed to commit JPA resource local transaction", e);
             }
             entityTransaction = null;
         }
@@ -61,7 +61,7 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
             try {
                 entityManager.close();
             } catch (PersistenceException e) {
-                log.warn("Failed to close JPA EntityManager");
+                log.warn("Failed to close JPA EntityManager", e);
             } finally {
                 entityManager = null;
             }
@@ -73,7 +73,7 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
             try {
                 entityTransaction.rollback();
             } catch (PersistenceException e) {
-                log.warn("Failed to rollback JPA resource local transaction");
+                log.warn("Failed to rollback JPA resource local transaction, ignoring", e);
             }
             entityTransaction = null;
         }
@@ -81,7 +81,7 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
             try {
                 entityManager.close();
             } catch (PersistenceException e) {
-                log.warn("Failed to close JPA EntityManager");
+                log.warn("Failed to close JPA EntityManager, ignoring", e);
             } finally {
                 entityManager = null;
             }

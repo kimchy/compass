@@ -20,12 +20,16 @@ public class DefaultEntityManagerWrapper extends AbstractEntityManagerWrapper {
         try {
             entityManager = entityManagerFactory.getEntityManager();
             isNew = false;
-            log.debug("Got an existing JPA EntityManager");
+            if (log.isDebugEnabled()) {
+                log.debug("Got an existing JPA EntityManager");
+            }
         } catch (IllegalStateException e) {
             try {
                 entityManager = entityManagerFactory.createEntityManager();
                 isNew = true;
-                log.debug("Created a new JPA EntityManager");
+                if (log.isDebugEnabled()) {
+                    log.debug("Created a new JPA EntityManager");
+                }
             } catch (PersistenceException ex) {
                 throw new JpaGpsDeviceException("Failed to open JPA EntityManager", e);
             }
