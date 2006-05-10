@@ -189,6 +189,9 @@
                 <include name="org/apache/lucene/**"/>
                 <include name="org/compass/**"/>
             </fileset>
+			<fileset dir="${tiger.src.dir}">
+				<include name="org/compass/**"/>
+			</fileset>
         </zip>
 
     </target>
