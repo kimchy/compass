@@ -751,6 +751,10 @@
               <entry>Optional. The fully qualified class name of the dialect (the database type) that the index will be stored at. Please refer to Lucene Jdbc Directory appendix for a list of the currently supported dialects. If not set, Compass will try to auto-detect it based on the Database meta-data.</entry>
             </row>
             <row>
+              <entry>compass.engine.store.jdbc. disableSchemaOperations</entry>
+              <entry>Optional. If set to <literal>true</literal>, no database schema level operations will be performed (drop and create tables). When deleting the data in the index, the content will be deleted, but the table will not be dropped. Default to <literal>false</literal>.</entry>
+            </row>
+            <row>
               <entry>compass.engine.store.jdbc. managed</entry>
               <entry>Optional (defaults to <literal>false</literal>). If the connection is managed or not. Basically, if set to <literal>false</literal>, compass will commit and rollback the transaction. If set to <literal>true</literal>, compass will not perform it. Defaults to <literal>false</literal>. Should be set to <literal>true</literal> if using external transaction managers (like JTA or Spring <literal>PlatformTransactionManager</literal>), and <literal>false</literal> if using compass <literal>LocalTransactionFactory</literal>. Note as well, that if using external transaction managers, the <literal>compass.transaction.commitBeforeCompletion</literal> should be set to <literal>true</literal>. If the connection is not managed (set to <literal>false</literal>), the created <literal>DataSource</literal> will be wrapped with Compass Jdbc directory <literal>TransactionAwareDataSourceProxy</literal>. Please refer to Lucene Jdbc Directory appendix for more information.</entry>
             </row>

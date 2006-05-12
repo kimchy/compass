@@ -67,6 +67,8 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
 
     private boolean managed;
 
+    private boolean disableSchemaOperation;
+
     private Map cachedJdbcTables = new HashMap();
 
     public JdbcLuceneSearchEngineStore(String url, String subContext) {
@@ -116,6 +118,11 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
             this.dataSource = new TransactionAwareDataSourceProxy(this.dataSource);
         }
 
+        disableSchemaOperation = settings.getSettingAsBoolean(LuceneEnvironment.JdbcStore.DISABLE_SCHEMA_OPERATIONS, false);
+        if (log.isDebugEnabled()) {
+            log.debug("Using disable schema operations [" + disableSchemaOperation + "]");
+        }
+
         jdbcSettings = new JdbcDirectorySettings();
         jdbcSettings.setNameColumnName(settings.getSetting(LuceneEnvironment.JdbcStore.DDL.NAME_NAME, jdbcSettings.getNameColumnName()));
         jdbcSettings.setValueColumnName(settings.getSetting(LuceneEnvironment.JdbcStore.DDL.VALUE_NAME, jdbcSettings.getValueColumnName()));
@@ -150,7 +157,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
 
         if (dialect.supportTransactionalScopedBlobs() &&
                 !settings.getSettingAsBoolean(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, false)) {
-              // Use FetchPerTransaction is dialect supports it
+            // Use FetchPerTransaction is dialect supports it
             jdbcSettings.getDefaultFileEntrySettings().setClassSetting(JdbcFileEntrySettings.INDEX_INPUT_TYPE_SETTING,
                     FetchPerTransactionJdbcIndexInput.class);
             if (log.isDebugEnabled()) {
@@ -214,7 +221,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         JdbcDirectory dir = new JdbcDirectory(dataSource, jdbcTable);
         if (create) {
             try {
-                dir.create();
+                createDirectory(dir);
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to create dir [" + path + "]", e);
             }
@@ -237,7 +244,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
             template.executeForSubIndex(subIndexes[i], false,
                     new LuceneStoreCallback() {
                         public Object doWithStore(Directory dir) throws IOException {
-                            ((JdbcDirectory) dir).delete();
+                            deleteDirectory((JdbcDirectory) dir);
                             return null;
                         }
                     });
@@ -288,6 +295,21 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         CopyFromHolder holder = new CopyFromHolder();
         holder.createOriginalDirectory = false;
         return holder;
+    }
+
+    private void createDirectory(JdbcDirectory dir) throws IOException {
+        if (disableSchemaOperation) {
+            return;
+        }
+        dir.create();
+    }
+
+    private void deleteDirectory(JdbcDirectory dir) throws IOException {
+        if (disableSchemaOperation) {
+            dir.deleteContent();
+        } else {
+            dir.delete();
+        }
     }
 
     private class ManagedEventListeners implements SearchEngineLifecycleEventListener {

@@ -1700,6 +1700,15 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="disableSchemaOperations" type="booleanType" use="optional" default="false">
+            <xsd:annotation>
+                <xsd:documentation>
+                    If set to true, no database schema level operations will be performed (drop and create
+                    tables). When deleting the data in the index, the content will be deleted, but the table will not
+                    be dropped. Default to o false.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
         <xsd:attribute name="dialectClass" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>

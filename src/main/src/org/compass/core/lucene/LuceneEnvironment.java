@@ -688,6 +688,13 @@ public class LuceneEnvironment {
          */
         public static final String MANAGED = "compass.engine.store.jdbc.managed";
 
+        /**
+         * If set to <code>true</code>, no database schema level operations will be performed (drop and create
+         * tables). When deleting the data in the index, the content will be deleted, but the table will not
+         * be dropped. Default to <code>false</code>. 
+         */
+        public static final String DISABLE_SCHEMA_OPERATIONS = "compass.engine.store.jdbc.disableSchemaOperations";
+
         public abstract class Connection {
             /**
              * The jdbc driver class
