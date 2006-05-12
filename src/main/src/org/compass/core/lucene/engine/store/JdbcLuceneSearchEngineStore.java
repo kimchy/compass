@@ -255,9 +255,9 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn("Failed to check if index exists", e);
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
+            // do nothing, let the base class check for it
         }
         return super.indexExists(dir);
     }
