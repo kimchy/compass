@@ -58,6 +58,16 @@ public interface CompassHitsOperations {
     Resource resource(int n) throws CompassException;
 
     /**
+     * Returns a compass hit wrapper that maps to the n'th hit
+     *
+     * @param n
+     *            The n'th hit.
+     * @return The hit.
+     * @throws CompassException
+     */
+    CompassHit hit(int n) throws CompassException;
+    
+    /**
      * Returns the score of the n'th hit. Can be a value between 0 and 1,
      * normalised by the highest scoring hit.
      * 

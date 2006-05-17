@@ -40,16 +40,6 @@ public interface CompassDetachedHits extends CompassHitsOperations {
     int totalLength();
 
     /**
-     * Returns a compass hit wrapper that maps to the n'th hit
-     *
-     * @param n
-     *            The n'th hit.
-     * @return The hit.
-     * @throws CompassException
-     */
-    CompassHit hit(int n) throws CompassException;
-
-    /**
      * Returns a lazily loaded iterator over the hits.
      * 
      * @return A lazily loaded iterator.
