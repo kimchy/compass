@@ -351,6 +351,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         Element connEle = (Element) child.get(0);
         // managed
         settings.setSetting(LuceneEnvironment.JdbcStore.MANAGED, DomUtils.getElementAttribute(connEle, "managed", "false"));
+        // disable schema operations
+        settings.setSetting(LuceneEnvironment.JdbcStore.DISABLE_SCHEMA_OPERATIONS, DomUtils.getElementAttribute(connEle, "disableSchemaOperations", "false"));
         // dialect
         settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, DomUtils.getElementAttribute(connEle, "dialect"));
         settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, DomUtils.getElementAttribute(connEle, "dialectClass"));
