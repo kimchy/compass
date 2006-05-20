@@ -12,6 +12,7 @@ import org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider;
 import org.compass.core.transaction.JTASyncTransactionFactory;
 import org.compass.core.transaction.manager.JBoss;
+import org.compass.core.accessor.DirectPropertyAccessor;
 
 /**
  * @author kimchy
@@ -109,6 +110,19 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("yyyy-MM-dd", settings.getSetting("format"));
         settings = (CompassSettings) groupSettings.get("myConverter");
         assertNotNull(settings);
+    }
+
+    public void testPropertyAcessorsSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/property-accessors.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        Map groupSettings = settings.getSettingGroups(CompassEnvironment.PropertyAccessor.PREFIX);
+        assertEquals(1, groupSettings.size());
+        settings = (CompassSettings) groupSettings.get("myType");
+        assertNotNull(settings);
+        assertEquals(DirectPropertyAccessor.class.getName(), settings.getSetting("type"));
+        assertEquals("value", settings.getSetting("test"));
     }
 
     public void testAnalyzersSchema() throws Exception {

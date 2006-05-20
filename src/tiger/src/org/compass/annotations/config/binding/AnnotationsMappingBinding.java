@@ -335,37 +335,37 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (annotation instanceof SearchableId) {
             ClassIdPropertyMapping classPropertyMapping = new ClassIdPropertyMapping();
             SearchableId searchableId = (SearchableId) annotation;
-            bindObjectMapping(classPropertyMapping, accessor, name);
+            bindObjectMapping(classPropertyMapping, accessor, name, searchableId.accessor());
             bindClassPropertyIdMapping(searchableId, classPropertyMapping, clazz, type, annotatedElement);
             classMapping.addMapping(classPropertyMapping);
         } else if (annotation instanceof SearchableProperty) {
             ClassPropertyMapping classPropertyMapping = new ClassPropertyMapping();
             SearchableProperty searchableProperty = (SearchableProperty) annotation;
-            bindObjectMapping(classPropertyMapping, accessor, name);
+            bindObjectMapping(classPropertyMapping, accessor, name, searchableProperty.accessor());
             bindClassPropertyMapping(searchableProperty, classPropertyMapping, annotatedElement, clazz, type);
             classMapping.addMapping(classPropertyMapping);
         } else if (annotation instanceof SearchableComponent) {
             ComponentMapping componentMapping = new ComponentMapping();
             SearchableComponent searchableComponent = (SearchableComponent) annotation;
-            bindObjectMapping(componentMapping, accessor, name);
+            bindObjectMapping(componentMapping, accessor, name, searchableComponent.accessor());
             bindComponent(searchableComponent, componentMapping, clazz, type);
             classMapping.addMapping(componentMapping);
         } else if (annotation instanceof SearchableReference) {
             ReferenceMapping referenceMapping = new ReferenceMapping();
             SearchableReference searchableReference = (SearchableReference) annotation;
-            bindObjectMapping(referenceMapping, accessor, name);
+            bindObjectMapping(referenceMapping, accessor, name, searchableReference.accessor());
             bindReference(searchableReference, referenceMapping, clazz, type);
             classMapping.addMapping(referenceMapping);
         } else if (annotation instanceof SearchableAnalyzerProperty) {
             ClassPropertyAnalyzerController analyzerMapping = new ClassPropertyAnalyzerController();
             SearchableAnalyzerProperty searchableAnalyzerProperty = (SearchableAnalyzerProperty) annotation;
-            bindObjectMapping(analyzerMapping, accessor, name);
+            bindObjectMapping(analyzerMapping, accessor, name, searchableAnalyzerProperty.accessor());
             bindAnalyzer(searchableAnalyzerProperty, analyzerMapping, clazz, type);
             classMapping.addMapping(analyzerMapping);
         } else if (annotation instanceof SearchableParent) {
             ParentMapping parentMapping = new ParentMapping();
             SearchableParent searchableParent = (SearchableParent) annotation;
-            bindObjectMapping(parentMapping, accessor, name);
+            bindObjectMapping(parentMapping, accessor, name, searchableParent.accessor());
             bindParent(searchableParent, parentMapping, clazz, type);
             classMapping.addMapping(parentMapping);
         }
@@ -657,8 +657,12 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         return converter;
     }
 
-    private void bindObjectMapping(ObjectMapping objectMapping, String accessor, String name) {
-        objectMapping.setAccessor(accessor);
+    private void bindObjectMapping(ObjectMapping objectMapping, String actualAccessor, String name, String annotationAccessor) {
+        if (!StringUtils.hasLength(annotationAccessor)) {
+            objectMapping.setAccessor(actualAccessor);
+        } else {
+            objectMapping.setAccessor(annotationAccessor);
+        }
         objectMapping.setName(name);
         objectMapping.setObjClass(classMapping.getClazz());
         objectMapping.setPropertyName(name);

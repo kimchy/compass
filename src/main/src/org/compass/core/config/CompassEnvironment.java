@@ -41,6 +41,30 @@ public class CompassEnvironment {
     public static final String NAME = "compass.name";
 
     /**
+     * Settings for global rregistration and handling of property accessors.
+     * <p/>
+     * This is a group settings, you can set more than one property accessor setting.
+     */
+    public abstract class PropertyAccessor {
+
+        /**
+         * The prefix for property accessor group settings
+         */
+        public static final String PREFIX = "compass.propertyAccessor";
+
+        /**
+         * The fully qualified class name of the {@link PropertyAccessor}.
+         */
+        public static final String TYPE = "type";
+
+        /**
+         * The group name of the default group. It will be used when no
+         * accessor is defined.
+         */
+        public static final String DEFAULT_GROUP = "default";
+    }
+
+    /**
      * Converter settings
      */
     public abstract class Converter {
@@ -261,7 +285,6 @@ public class CompassEnvironment {
     }
 
     /* Transaction Settings */
-
     public abstract class Transaction {
 
         /**
@@ -351,7 +374,7 @@ public class CompassEnvironment {
     }
 
     /**
-     * Settetings relating to the "all" property.
+     * Settings relating to the "all" property.
      */
     public abstract class All {
 
@@ -374,6 +397,9 @@ public class CompassEnvironment {
 
     }
 
+    /**
+     * Settings relating to the "alias" property
+     */
     public abstract class Alias {
 
         /**
@@ -402,6 +428,9 @@ public class CompassEnvironment {
         public static final String FACTORY_TYPE = "compass.property.naming.factory";
     }
 
+    /**
+     * Settings for cache management of objects / resources
+     */
     public abstract class Cache {
 
         public abstract class FirstLevel {
@@ -413,6 +442,9 @@ public class CompassEnvironment {
         }
     }
 
+    /**
+     * Settings relating to global handling of managed id (meta-data) creation
+     */
     public abstract class ManagedId {
 
         /**

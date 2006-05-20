@@ -269,6 +269,41 @@
 
     </sect2>
 
+    <sect2 id="config-propertyAccessors">
+       <title>Property Accessor</title>
+
+       <para>
+          Property accessors are used for reading and writing Class properties. Compass comes with two implementations, field and property. field is used for directly accessing the Class property, and property is used for accessing the class property using the property getters/setters. Compass allows for registration of custom <literal>PropertyAccessor</literal> implementations under a lookup name, as well as changing the default property accessor used (which is property).
+       </para>
+
+       <para>
+          The configuration uses Compass support for group properties, with the <literal>compass.propertyAccessor</literal> group prefix. The name the property accessor will be registered under is the group name. In order to set the default property accessor, the <literal>default</literal> group name should be used.
+       </para>
+       
+       <para>
+          Custom implementations of <literal>PropertyAccessor</literal> can optionally implement the <literal>CompassConfigurable</literal> interface, which allows for additional settings to be injected into the implementations.
+       </para>
+
+       <para>
+
+         <table><title>Property Accessor Settings</title><tgroup cols="2">
+           <colspec colname="c1" colwidth="3*" />
+           <colspec colname="c2" colwidth="5*" />
+           <thead>
+               <row><entry>Setting</entry><entry>Description</entry></row>
+           </thead>
+           <tbody>
+             <row>
+               <entry>compass.propertyAccessor.[property accessor name].type</entry>
+               <entry>The fully qualified class name of the property accessor.</entry>
+             </row>
+           </tbody>
+         </tgroup></table>
+
+       </para>
+
+    </sect2>
+
     <sect2 id="config-converter">
        <title>Converters</title>
 

@@ -19,6 +19,9 @@ package org.compass.core.test.accessor;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.accessor.DirectPropertyAccessor;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -27,7 +30,12 @@ import org.compass.core.test.AbstractTestCase;
 public class AccessorTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "accessor/Accessor.cpm.xml" };
+        return new String[]{"accessor/Accessor.cpm.xml"};
+    }
+
+    protected void addSettings(CompassSettings settings) {
+        settings.setGroupSettings(CompassEnvironment.PropertyAccessor.PREFIX, "myAccessor",
+                new String[]{"type"}, new String[]{DirectPropertyAccessor.class.getName()});
     }
 
     public void testAccessor() {
@@ -90,16 +98,31 @@ public class AccessorTests extends AbstractTestCase {
         Long id = new Long(1);
         C o = new C(id);
         o.setValue("value");
-        session.save(o);
+        session.save("c", o);
         tr.commit();
         session.close();
 
         session = openSession();
         tr = session.beginTransaction();
 
-        o = (C) session.load(C.class, id);
+        o = (C) session.load("c", id);
         Resource resource = session.loadResource(C.class, id);
         assertEquals("value special", resource.get("special"));
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testCustomPropertyAccessor() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = new Long(1);
+        C c = new C(id);
+        c.setValue("value");
+        session.save("d", c);
+
+        session.load("d", id);
 
         tr.commit();
         session.close();

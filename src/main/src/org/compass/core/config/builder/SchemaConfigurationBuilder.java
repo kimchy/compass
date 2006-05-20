@@ -104,6 +104,19 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         }
     }
 
+    public void bindPropertyAccessors(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        List propertyAccessorsEle = DomUtils.getChildElementsByTagName(ele, "propertyAccessor");
+        for (Iterator it = propertyAccessorsEle.iterator(); it.hasNext();) {
+            Element propertyAccessorEle = (Element) it.next();
+            SettingsHolder settingsHolder = processSettings(propertyAccessorEle);
+            settingsHolder.names.add(CompassEnvironment.PropertyAccessor.TYPE);
+            settingsHolder.values.add(DomUtils.getElementAttribute(propertyAccessorEle, "type"));
+            settings.setGroupSettings(CompassEnvironment.PropertyAccessor.PREFIX, DomUtils.getElementAttribute(propertyAccessorEle, "name"),
+                    settingsHolder.names(), settingsHolder.values());
+        }
+    }
+
     public void bindSearchEngine(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, DomUtils.getElementAttribute(ele, "useCompoundFile"));

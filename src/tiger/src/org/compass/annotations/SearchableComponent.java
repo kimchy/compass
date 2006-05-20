@@ -77,4 +77,13 @@ public @interface SearchableComponent {
      * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.ComponentMappingConverter}.
      */
     String converter() default "";
+
+    /**
+     * The property accessor that will be fetch and write the property value.
+     * <p/>
+     * It is automatically set based on where the annotation is used, but can be
+     * explicitly set. Compass also supports custom property accessors, registered
+     * under a custom name, which can then be used here as well.
+     */
+    String accessor() default "";
 }

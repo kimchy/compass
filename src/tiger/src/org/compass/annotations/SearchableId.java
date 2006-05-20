@@ -80,6 +80,15 @@ public @interface SearchableId {
      */
     String idConverter() default "";
 
+    /**
+     * The property accessor that will be fetch and write the property value.
+     * <p/>
+     * It is automatically set based on where the annotation is used, but can be
+     * explicitly set. Compass also supports custom property accessors, registered
+     * under a custom name, which can then be used here as well.
+     */
+    String accessor() default "";
+
     // Generated MetaData definitions
 
     /**

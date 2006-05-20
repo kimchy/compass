@@ -16,6 +16,8 @@
 
 package org.compass.core.config.process;
 
+import java.util.Iterator;
+
 import org.compass.core.accessor.PropertyAccessor;
 import org.compass.core.accessor.PropertyAccessorFactory;
 import org.compass.core.config.CompassSettings;
@@ -28,8 +30,6 @@ import org.compass.core.mapping.MultipleMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 
-import java.util.Iterator;
-
 /**
  * @author kimchy
  */
@@ -38,19 +38,24 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
 
+        // initalize the property accessor registry
+        PropertyAccessorFactory propertyAccessorFactory = new PropertyAccessorFactory();
+        propertyAccessorFactory.configure(settings);
+
         for (Iterator rIt = compassMapping.mappingsIt(); rIt.hasNext();) {
             Mapping mapping = (Mapping) rIt.next();
             if (mapping instanceof ClassMapping) {
                 ClassMapping classMapping = (ClassMapping) mapping;
                 for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
-                    processMapping((Mapping) it.next(), classMapping.getClazz());
+                    processMapping((Mapping) it.next(), classMapping.getClazz(), propertyAccessorFactory);
                 }
             }
         }
         return compassMapping;
     }
 
-    private void processMapping(Mapping mapping, Object fatherObject) throws MappingException {
+    private void processMapping(Mapping mapping, Object fatherObject, PropertyAccessorFactory propertyAccessorFactory)
+            throws MappingException {
         if (!(mapping instanceof ObjectMapping)) {
             return;
         }
@@ -64,14 +69,14 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
             }
             objectMapping.setObjClass(clazz);
         }
-        PropertyAccessor pAccessor = PropertyAccessorFactory.getPropertyAccessor(objectMapping.getAccessor());
+        PropertyAccessor pAccessor = propertyAccessorFactory.getPropertyAccessor(objectMapping.getAccessor());
         objectMapping.setGetter(pAccessor.getGetter(clazz, objectMapping.getPropertyName()));
         objectMapping.setSetter(pAccessor.getSetter(clazz, objectMapping.getPropertyName()));
 
         if (mapping instanceof MultipleMapping) {
             MultipleMapping multipleMapping = (MultipleMapping) mapping;
             for (Iterator it = multipleMapping.mappingsIt(); it.hasNext();) {
-                processMapping((Mapping) it.next(), objectMapping);
+                processMapping((Mapping) it.next(), objectMapping, propertyAccessorFactory);
             }
         }
     }

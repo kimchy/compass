@@ -51,12 +51,19 @@
 
         <id name="id" />
 
-        <property name="value">
+        <property name="value" accessor="property">
             <meta-data>mvalue</meta-data>
         </property>
 
-        <property name="specialValue">
+        <property name="specialValue" accessor="property">
             <meta-data>special</meta-data>
+        </property>
+    </class>
+
+    <class name="C" alias="d">
+        <id name="id" />
+        <property name="value" accessor="myAccessor">
+            <meta-data>mvalue</meta-data>
         </property>
     </class>
 </compass-core-mapping>

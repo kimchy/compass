@@ -26,6 +26,7 @@
             <xsd:element name="jndi" type="jndiType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="cache" type="cacheType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="converters" type="convertersType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="propertyAccessors" type="propertyAccessorsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="searchEngine" type="searchEngineType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
@@ -719,6 +720,53 @@
                         <xsd:annotation>
                             <xsd:documentation>
                                 The fully qualified class name of the Converter. Must implement the Converter interface.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Convertres -->
+    <xsd:complexType name="propertyAccessorsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures a set of converters to work with Compass.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="propertyAccessor" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures a custom property accessor
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Setting used to configure the Property Accessor (if needed). The Property Accessor
+                                    must implement the CompassConfigurable interface for the to be injected.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name of the Property Accessor. Will be used as the property accessor lookup name.
+                                Can also have the value deafult, which will be used as teh deafult property accessor
+                                when nothing is set in the mapping definitions.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qualified class name of the property accessor. Must implement the
+                                PropertyAccessor interface.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>

@@ -47,7 +47,6 @@ public class DefaultConverterLookup implements ConverterLookup {
 
     private static final Log log = LogFactory.getLog(DefaultConverterLookup.class);
 
-
     // not synchronized since the assumption is that no changes are made after
     // theh constructor
     private final HashMap convertersByClass = new HashMap();
@@ -161,8 +160,8 @@ public class DefaultConverterLookup implements ConverterLookup {
         for (Iterator it = converterGroups.keySet().iterator(); it.hasNext();) {
             String converterName = (String) it.next();
             CompassSettings converterSettings = (CompassSettings) converterGroups.get(converterName);
-            if (log.isInfoEnabled()) {
-                log.info("Conveter [" + converterName + "] building...");
+            if (log.isDebugEnabled()) {
+                log.debug("Conveter [" + converterName + "] building...");
             }
             String converterClassType = converterSettings.getSetting(CompassEnvironment.Converter.TYPE);
             if (converterClassType == null) {

@@ -20,8 +20,9 @@ package org.compass.core.accessor;
  * Abstracts the notion of a "property". Defines a strategy for accessing the
  * value of a class property.
  * <p>
- * Initial version taken from hibernate.
- * 
+ * Custom implementation can implement {@link org.compass.core.config.CompassConfiguration}
+ * for external configuration settings.
+ *
  * @author kimchy
  */
 public interface PropertyAccessor {
