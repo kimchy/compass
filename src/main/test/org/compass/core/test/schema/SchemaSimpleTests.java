@@ -69,6 +69,7 @@ public class SchemaSimpleTests extends TestCase {
 
         CompassSettings settings = conf.getSettings();
         assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
+        assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.DISABLE_SCHEMA_OPERATIONS));
         assertEquals(DbcpDataSourceProvider.class.getName(),
                 settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS));
         assertEquals("testusername", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME));
