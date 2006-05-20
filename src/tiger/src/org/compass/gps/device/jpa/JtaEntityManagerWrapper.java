@@ -16,8 +16,6 @@
 
 package org.compass.gps.device.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
 
 /**
@@ -29,13 +27,16 @@ import javax.persistence.PersistenceException;
 public class JtaEntityManagerWrapper extends AbstractEntityManagerWrapper {
 
     @Override
-    protected EntityManager doGetEntityManager() throws PersistenceException {
-        return entityManagerFactory.getEntityManager();
+    protected void beginTransaction() throws PersistenceException {
+        entityManager.joinTransaction();
     }
 
     @Override
-    protected EntityTransaction doGetEntityTransaction() throws PersistenceException {
-        return null;
+    protected void commitTransaction() throws PersistenceException {
+    }
+
+    @Override
+    protected void rollbackTransaction() throws PersistenceException {
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.compass.gps.device.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceException;
 
 /**
  * An <code>EntityManager<code> wrapper allows controlling the creation and destruction of JPA
@@ -39,10 +40,8 @@ public interface EntityManagerWrapper {
 
     /**
      * Opens the warpper for a session of reading enteties for indexing.
-     *
-     * @throws JpaGpsDeviceException
      */
-    void open() throws JpaGpsDeviceException;
+    void open() throws JpaGpsDeviceException, PersistenceException;
 
     /**
      * Returns the <code>EntityManager</code> opened by the wrapper open operation.
@@ -57,12 +56,12 @@ public interface EntityManagerWrapper {
      *
      * @throws JpaGpsDeviceException
      */
-    void close() throws JpaGpsDeviceException;
+    void close() throws JpaGpsDeviceException, PersistenceException;
 
     /**
      * Closes the current <code>EntityManager</code>, rollback the transaction if necessary.
      *
      * @throws JpaGpsDeviceException
      */
-    void closeOnError() throws JpaGpsDeviceException;
+    void closeOnError() throws JpaGpsDeviceException, PersistenceException;
 }

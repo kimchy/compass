@@ -3,6 +3,7 @@ package org.compass.gps.device.jpa;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
+import javax.persistence.TransactionRequiredException;
 
 /**
  * The default {@link EntityManagerWrapper} implementation. Works well both in
@@ -12,41 +13,54 @@ import javax.persistence.PersistenceException;
  */
 public class DefaultEntityManagerWrapper extends AbstractEntityManagerWrapper {
 
-    private boolean isNew;
+    private boolean isJta;
+
+    private EntityTransaction transaction;
 
     @Override
-    protected EntityManager doGetEntityManager() throws PersistenceException {
-        EntityManager entityManager;
+    protected void beginTransaction() throws PersistenceException {
         try {
-            entityManager = entityManagerFactory.getEntityManager();
-            isNew = false;
-            if (log.isDebugEnabled()) {
-                log.debug("Got an existing JPA EntityManager");
+            transaction = entityManager.getTransaction();
+            isJta = false;
+            try {
+                transaction.begin();
+            } finally {
+                transaction = null;
             }
         } catch (IllegalStateException e) {
-            try {
-                entityManager = entityManagerFactory.createEntityManager();
-                isNew = true;
-                if (log.isDebugEnabled()) {
-                    log.debug("Created a new JPA EntityManager");
-                }
-            } catch (PersistenceException ex) {
-                throw new JpaGpsDeviceException("Failed to open JPA EntityManager", e);
-            }
+            // thrown when we are in a JTA transaction
+            isJta = true;
+            entityManager.joinTransaction();
         }
-        return entityManager;
     }
 
     @Override
-    protected EntityTransaction doGetEntityTransaction() throws PersistenceException {
-        if (!isNew) {
-            return null;
+    protected void commitTransaction() throws PersistenceException {
+        if (transaction == null) {
+            return;
         }
-        return entityManager.getTransaction();
+        try {
+            transaction.commit();
+        } finally {
+            transaction = null;
+        }
     }
+
+    @Override
+    protected void rollbackTransaction() throws PersistenceException {
+        if (transaction == null) {
+            return;
+        }
+        try {
+            transaction.rollback();
+        } finally {
+            transaction = null;
+        }
+    }
+
 
     @Override
     protected boolean shouldCloseEntityManager() {
-        return isNew;
+        return !isJta;
     }
 }

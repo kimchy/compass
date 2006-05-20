@@ -23,8 +23,6 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
 
     protected EntityManager entityManager;
 
-    protected EntityTransaction entityTransaction;
-
     public void setUp(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -36,50 +34,38 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
         return this.entityManager;
     }
 
-    public void open() throws JpaGpsDeviceException {
-        entityManager = doGetEntityManager();
-        entityTransaction = doGetEntityTransaction();
-        if (entityTransaction != null) {
-            try {
-                entityTransaction.begin();
-            } catch (Exception e) {
-                throw new JpaGpsDeviceException("Failed to start JPA resource local transaction", e);
-            }
-        }
+    public void open() throws JpaGpsDeviceException, PersistenceException {
+        doCreateEntityManager();
+        beginTransaction();
     }
 
-    public void close() throws JpaGpsDeviceException {
-        if (entityTransaction != null) {
-            try {
-                entityTransaction.commit();
-            } catch (PersistenceException e) {
-                throw new JpaGpsDeviceException("Failed to commit JPA resource local transaction", e);
-            }
-            entityTransaction = null;
-        }
-        if (shouldCloseEntityManager()) {
-            try {
-                entityManager.close();
-            } catch (PersistenceException e) {
-                log.warn("Failed to close JPA EntityManager", e);
-            } finally {
-                entityManager = null;
+    public void close() throws JpaGpsDeviceException, PersistenceException {
+        try {
+            commitTransaction();
+        } finally {
+            if (shouldCloseEntityManager()) {
+                try {
+                    entityManager.close();
+                } catch (PersistenceException e) {
+                    log.warn("Failed to close JPA EntityManager", e);
+                } finally {
+                    entityManager = null;
+                }
             }
         }
     }
 
     public void closeOnError() throws JpaGpsDeviceException {
-        if (entityTransaction != null) {
-            try {
-                entityTransaction.rollback();
-            } catch (PersistenceException e) {
-                log.warn("Failed to rollback JPA resource local transaction, ignoring", e);
-            }
-            entityTransaction = null;
+        try {
+            rollbackTransaction();
+        } catch (PersistenceException e) {
+            log.warn("Failed to rollback JPA transaction, ignoring", e);
         }
         if (shouldCloseEntityManager()) {
             try {
-                entityManager.close();
+                if (entityManager != null) {
+                    entityManager.close();
+                }
             } catch (PersistenceException e) {
                 log.warn("Failed to close JPA EntityManager, ignoring", e);
             } finally {
@@ -88,9 +74,15 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
         }
     }
 
-    protected abstract EntityManager doGetEntityManager() throws PersistenceException;
+    protected void doCreateEntityManager() throws PersistenceException {
+        entityManager = entityManagerFactory.createEntityManager();
+    }
 
-    protected abstract EntityTransaction doGetEntityTransaction() throws PersistenceException;
+    protected abstract void beginTransaction() throws PersistenceException;
+
+    protected abstract void commitTransaction() throws PersistenceException;
+
+    protected abstract void rollbackTransaction() throws PersistenceException;
 
     protected abstract boolean shouldCloseEntityManager();
 }

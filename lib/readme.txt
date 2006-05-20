@@ -41,19 +41,19 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using Compass's Hibernate 3.x support
 
 * hibernate/hibernate-annotations.jar
-- Hibernate Annotations 3.1beta4 (http://www.hibernate.org) (taken form EntityManager 3.1beta6)
+- Hibernate Annotations 3.1beta9 (http://www.hibernate.org) (taken form EntityManager 3.2 RC1)
 - required for building compass
 
 * hibernate/javassist.jar
-- Java Assist 3.0 (Required by Hibernate EntityManager) (taken form EntityManager 3.1beta6)
+- Java Assist 3.1 (Required by Hibernate EntityManager) (taken form EntityManager 3.2 RC1)
 - required for building compass
 
 * hibernate/hibernate-entitymanager.jar
-- Hibernate EntityManager 3.1beta6 (http://www.hibernate.org)
+- Hibernate EntityManager 3.2 RC1 (http://www.hibernate.org)
 - required for building compass
 
 * hibernate/jboss-archive-browsing.jar
-- JBoss Archive Browsing 5.0.0alpha build: CVSTag=HEAD date=200507071617 (taken form EntityManager 3.1beta6)
+- JBoss Archive Browsing 5.0.0alpha build: CVSTag=HEAD date=200507071617 (taken form EntityManager 3.2 RC1)
 - required for building compass
 
 * hsqldb/hsqldb.jar
