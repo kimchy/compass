@@ -7,8 +7,8 @@ distribution/website before using any of them in your own applications.
 - Ant 1.6.5 (http://ant.apache.org)
 - used to build compass and the sample apps
 
-* antlr/antlr-2.7.6rc1.jar
-- ANTLR 2.7.6 RC1 (http://www.antlr.org)
+* antlr/antlr-2.7.6.jar
+- ANTLR 2.7.6 (http://www.antlr.org)
 - required for running PetClinic (by Hibernate3)
 
 * c3p0/c3p0-0.9.0.2.jar
@@ -25,8 +25,8 @@ distribution/website before using any of them in your own applications.
 - DOM4J 1.6.1 XML parser (http://www.dom4j.org)
 - required for running PetClinic (by Hibernate)
 
-* ehcache/ehcache-1.1.jar
-- EHCache 1.1 (http://ehcache.sourceforge.net)
+* ehcache/ehcache-1.2.jar
+- EHCache 1.2 (http://ehcache.sourceforge.net)
 - required for building compass
 - required for running PetClinic (by Hibernate)
 
@@ -36,7 +36,7 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using Compass's Hibernate 2.1 support
 
 * hibernate/hibernate3.jar
-- Hibernate 3.1.2 (http://www.hibernate.org)
+- Hibernate 3.2 RC2 (http://www.hibernate.org)
 - required for building compass
 - required at runtime when using Compass's Hibernate 3.x support
 
