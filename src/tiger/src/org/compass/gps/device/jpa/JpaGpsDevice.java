@@ -175,7 +175,7 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                     }
                     Query query = entityManager.createQuery(entityInformation.getSelectQuery());
                     query.setFirstResult(current);
-                    query.setMaxResults(current + fetchCount);
+                    query.setMaxResults(fetchCount);
                     List results = query.getResultList();
                     for (Object result : results) {
                         session.create(result);
