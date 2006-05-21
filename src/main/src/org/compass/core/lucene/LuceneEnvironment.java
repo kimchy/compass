@@ -649,6 +649,12 @@ public class LuceneEnvironment {
          */
         public static final String INDEX_MANAGER_SCHEDULE_INTERVAL = "compass.engine.indexManagerScheduleInterval";
 
+        /**
+         * Defaults to <code>false</code>. If set to <code>true</code>, will cause index manager operation (including
+         * replace index) to wait for all other Compass instances to invalidate their cache. The wait time will be
+         * the same as the {@link #INDEX_MANAGER_SCHEDULE_INTERVAL}.
+         */
+        public static final String WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION = "compass.engine.waitForCacheInvalidationOnIndexOperation";
     }
 
     /**

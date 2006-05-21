@@ -55,6 +55,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     private long[] lastModifiled;
 
+    private long waitForCacheInvalidationBeforeSecondStep = 0;
+
     public DefaultLuceneSearchEngineIndexManager(LuceneSearchEngineFactory searchEngineFactory,
                                                  final LuceneSearchEngineStore searchEngineStore) {
         this.searchEngineFactory = searchEngineFactory;
@@ -147,6 +149,19 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             // tell eveybody that are using the index, to clear the cache
             clearCache();
             notifyAllToClearCache();
+
+            if (waitForCacheInvalidationBeforeSecondStep != 0 && luceneSettings.isWaitForCacheInvalidationOnIndexOperation()) {
+                // now wait for the cache invalidation
+                try {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Waiting [" + waitForCacheInvalidationBeforeSecondStep + "ms] for global cache invalidation");
+                    }
+                    Thread.sleep(waitForCacheInvalidationBeforeSecondStep);
+                } catch (InterruptedException e) {
+                    log.debug("Interrupted while waiting for cache invalidation", e);
+                    throw new SearchEngineException("Interrupted while waiting for cache invalidation", e);
+                }
+            }
 
             if (log.isDebugEnabled()) {
                 log.debug("[Replace Index] Calling callback second step");
@@ -390,11 +405,12 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             try {
                 lastMod = dir.fileModified(CLEAR_CACHE_NAME);
             } catch (IOException e) {
-                throw new SearchEngineException("Failed to check last modified on global index chache", e);
+                throw new SearchEngineException("Failed to check last modified on global index chache on sub index ["
+                        + subIndexes[i] + "]", e);
             }
             if (lastModifiled[i] < lastMod) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Global notification to clear cache detected, clearing cache...");
+                    log.debug("Global notification to clear cache detected on sub index [" + subIndexes[i] + "]");
                 }
                 lastModifiled[i] = lastMod;
                 clearCache(subIndexes[i]);
@@ -464,6 +480,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 throw new SearchEngineException("Failed to unCompuond index", e);
             }
         }
+    }
+
+    public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
+        this.waitForCacheInvalidationBeforeSecondStep = timeToWaitInMillis;
     }
 
     public LuceneSettings getSettings() {

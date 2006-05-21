@@ -123,6 +123,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_FIELD_LENGTH, DomUtils.getElementAttribute(ele, "maxFieldLength"));
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, DomUtils.getElementAttribute(ele, "cacheInvalidationInterval"));
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, DomUtils.getElementAttribute(ele, "indexManagerScheduleInterval"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION, DomUtils.getElementAttribute(ele, "waitForCacheInvalidationOnIndexOperation"));
         settings.setSetting(LuceneEnvironment.DEFAULT_SEARCH, DomUtils.getElementAttribute(ele, "defaultSearch"));
         List child = DomUtils.getChildElementsByTagName(ele, "aliasProperty", true);
         if (child.size() == 1) {

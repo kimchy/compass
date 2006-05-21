@@ -71,6 +71,8 @@ public class LuceneSettings {
 
     private long indexManagerScheduleInterval;
 
+    private boolean waitForCacheInvalidationOnIndexOperation;
+
     private String lockDir;
 
     public void configure(CompassSettings settings) throws SearchEngineException {
@@ -185,6 +187,11 @@ public class LuceneSettings {
         indexManagerScheduleInterval = (long) (settings.getSettingAsFloat(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60.0f) * 1000);
         if (log.isDebugEnabled()) {
             log.debug("Using index manager schedule interval [" + indexManagerScheduleInterval + "ms]");
+        }
+
+        waitForCacheInvalidationOnIndexOperation = settings.getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION, false);
+        if (log.isDebugEnabled()) {
+            log.debug("Wait for cahce invalidation on index operatrion is set to [" + waitForCacheInvalidationOnIndexOperation + "]");
         }
     }
 
@@ -315,4 +322,9 @@ public class LuceneSettings {
     public long getIndexManagerScheduleInterval() {
         return indexManagerScheduleInterval;
     }
+
+    public boolean isWaitForCacheInvalidationOnIndexOperation() {
+        return waitForCacheInvalidationOnIndexOperation;
+    }
+
 }

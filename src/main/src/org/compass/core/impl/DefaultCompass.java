@@ -396,6 +396,10 @@ public class DefaultCompass implements InternalCompass {
         public LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
             return indexManager.openIndexHolderBySubIndex(subIndex);
         }
+
+        public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
+            indexManager.setWaitForCacheInvalidationBeforeSecondStep(timeToWaitInMillis);
+        }
     }
 
     public static class TransactionalSearchEngineOptimizer implements LuceneSearchEngineOptimizer {

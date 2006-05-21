@@ -673,6 +673,15 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="waitForCacheInvalidationOnIndexOperation" type="booleanType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Defaults to false. If set to true, will cause the index manager operation (including replace index)
+                    to wait for all other compass instances to invalidate their cache. The time to wait will be the
+                    indexManagerScheduledInterval configuration setting.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
         <xsd:attribute name="defaultSearch" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>

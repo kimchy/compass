@@ -57,10 +57,12 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
                     + "ms] daemon [true]");
         }
         scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new SingleThreadThreadFactory("Compass Scheduled IndexManager", true));
-        ScheduledIndexManagerRunnable scheduledIndexManagerRunnable =
-                new ScheduledIndexManagerRunnable(indexManager);
+        ScheduledIndexManagerRunnable scheduledIndexManagerRunnable = new ScheduledIndexManagerRunnable(indexManager);
         long period = settings.getIndexManagerScheduleInterval();
         scheduledExecutorService.scheduleWithFixedDelay(scheduledIndexManagerRunnable, period, period, TimeUnit.MILLISECONDS);
+
+        // set the time to wait for clearing cache to 110% of the schedule time
+        setWaitForCacheInvalidationBeforeSecondStep((long) (settings.getIndexManagerScheduleInterval() * 1.1));
     }
 
     public void stop() {
@@ -170,6 +172,10 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
 
     public LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
         return indexManager.openIndexHolderBySubIndex(subIndex);
+    }
+
+    public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
+        indexManager.setWaitForCacheInvalidationBeforeSecondStep(timeToWaitInMillis);
     }
 
     private static class ScheduledIndexManagerRunnable implements Runnable {

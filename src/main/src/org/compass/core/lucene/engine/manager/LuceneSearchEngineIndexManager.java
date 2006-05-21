@@ -116,6 +116,20 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
     LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException;
 
     /**
+     * Since there might be several instances of Compass running against the same index, they
+     * need to be globally notified to invalidate the cache after the commit lock has been
+     * obtained for the second step on the {@link #operate(org.compass.core.engine.SearchEngineIndexManager.IndexOperationCallback)}
+     * or {@link #replaceIndex(org.compass.core.engine.SearchEngineIndexManager, org.compass.core.engine.SearchEngineIndexManager.ReplaceIndexCallback)}.
+     * <p/>
+     * If directly set to 0, will not wait.
+     * <p/>
+     * This one will default to the {@link ScheduledLuceneSearchEngineIndexManager} interval.
+     *
+     * @param timeToWaitInMillis
+     */
+    void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis);
+
+    /**
      * Returns <code>true</code> if the index is in a compound form. Will return <code>true</code>
      * if the index is empty or it does not exists.
      *
