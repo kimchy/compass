@@ -40,8 +40,12 @@ public abstract class AbstractCompassJpaEntityListener {
 
     protected abstract Compass getCompass();
 
+    /**
+     * Should exception be thrown during the mirroring operation, or just logged.
+     * Defaults to <code>true</code>.
+     */
     protected boolean throwExceptionOnError() {
-        return false;
+        return true;
     }
 
     protected boolean disable() {

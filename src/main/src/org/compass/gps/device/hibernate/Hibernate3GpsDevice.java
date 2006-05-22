@@ -160,7 +160,11 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                     }
                 });
             } catch (Exception e) {
-                log.error(buildMessage("Failed while creating [" + entity + "]"), e);
+                if (isIgnoreMirrorExceptions()) {
+                    log.error(buildMessage("Failed while creating [" + entity + "]"), e);
+                } else {
+                    throw new HibernateGpsDeviceException(buildMessage("Failed while creating [" + entity + "]"), e);
+                }
             }
         }
     }
@@ -209,7 +213,11 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                     }
                 });
             } catch (Exception e) {
-                log.error(buildMessage("Failed while updating [" + entity + "]"), e);
+                if (isIgnoreMirrorExceptions()) {
+                    log.error(buildMessage("Failed while updating [" + entity + "]"), e);
+                } else {
+                    throw new HibernateGpsDeviceException(buildMessage("Failed while updating [" + entity + "]"), e);
+                }
             }
         }
     }
@@ -259,7 +267,11 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                     }
                 });
             } catch (Exception e) {
-                log.error(buildMessage("Failed while deleting [" + entity + "]"), e);
+                if (isIgnoreMirrorExceptions()) {
+                    log.error(buildMessage("Failed while deleting [" + entity + "]"), e);
+                } else {
+                    throw new HibernateGpsDeviceException(buildMessage("Failed while deleting [" + entity + "]"), e);
+                }
             }
         }
     }
@@ -271,6 +283,8 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
     private Configuration configuration;
 
     private HibernateMirrorFilter mirrorFilter;
+
+    private boolean ignoreMirrorExceptions;
 
     public Hibernate3GpsDevice() {
 
@@ -346,6 +360,22 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
     public void setMirrorDataChanges(boolean mirrorDataChanges) {
         this.mirrorDataChanges = mirrorDataChanges;
+    }
+
+    /**
+     * Should exceptions be ignored during the mirroring operations (the Hibernate event listeners).
+     * Defaults to <code>false</code>.
+     */
+    public boolean isIgnoreMirrorExceptions() {
+        return ignoreMirrorExceptions;
+    }
+
+    /**
+     * Should exceptions be ignored during the mirroring operations (the Hibernate event listeners).
+     * Defaults to <code>false</code>.
+     */
+    public void setIgnoreMirrorExceptions(boolean ignoreMirrorExceptions) {
+        this.ignoreMirrorExceptions = ignoreMirrorExceptions;
     }
 
     protected HibernateSessionWrapper doGetHibernateSessionWrapper() {

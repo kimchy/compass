@@ -39,6 +39,8 @@ public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevic
 
     private boolean mirrorDataChanges = true;
 
+    private boolean ignoreMirrorExceptions;
+
     public Jdo2GpsDevice() {
         super();
     }
@@ -53,6 +55,22 @@ public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevic
 
     public void setMirrorDataChanges(boolean mirrorDataChanges) {
         this.mirrorDataChanges = mirrorDataChanges;
+    }
+
+    /**
+     * Should exceptions be ignored during the mirroring operations (the JDO 2 event listeners).
+     * Defaults to <code>false</code>.
+     */
+    public boolean isIgnoreMirrorExceptions() {
+        return ignoreMirrorExceptions;
+    }
+
+    /**
+     * Should exceptions be ignored during the mirroring operations (the JDO 2 event listeners).
+     * Defaults to <code>false</code>.
+     */
+    public void setIgnoreMirrorExceptions(boolean ignoreMirrorExceptions) {
+        this.ignoreMirrorExceptions = ignoreMirrorExceptions;
     }
 
     protected void doStart() throws CompassGpsException {
@@ -96,7 +114,11 @@ public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevic
                     }
                 });
             } catch (Exception e) {
-                log.error(buildMessage("Failed while deleting [" + entity + "]"), e);
+                if (isIgnoreMirrorExceptions()) {
+                    log.error(buildMessage("Failed while deleting [" + entity + "]"), e);
+                } else {
+                    throw new JdoGpsDeviceException(buildMessage("Failed while deleting [" + entity + "]"), e);
+                }
             }
         }
 
@@ -120,7 +142,11 @@ public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevic
                     }
                 });
             } catch (Exception e) {
-                log.error(buildMessage("Failed while updating [" + entity + "]"), e);
+                if (isIgnoreMirrorExceptions()) {
+                    log.error(buildMessage("Failed while updating [" + entity + "]"), e);
+                } else {
+                    throw new JdoGpsDeviceException(buildMessage("Failed while updating [" + entity + "]"), e);
+                }
             }
         }
     }
