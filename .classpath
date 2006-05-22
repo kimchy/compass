@@ -18,12 +18,10 @@
 	<classpathentry kind="lib" path="lib/ant/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant-junit.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant.jar"/>
-	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.6rc1.jar"/>
 	<classpathentry kind="lib" path="lib/c3p0/c3p0-0.9.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/cglib/cglib-nodep-2.1_3.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j/jaxen-1.1-beta-7.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/rowset.jar"/>
@@ -73,5 +71,7 @@
 	<classpathentry kind="lib" path="lib/spring/spring-jdo.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-jpa.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-ojb.jar"/>
+	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
