@@ -146,7 +146,7 @@ distribution/website before using any of them in your own applications.
 - required for running PetClinic
 
 * jdo/jdo2.jar
-- JDO API 2.0 beta (http://www.jpox.org, corresponding to JPOX 1.1.0-beta-6)
+- JDO API 2.0 (http://www.jpox.org, corresponding to JPOX 1.1.0)
 - required for building compass
 - required at runtime when using Compass's JDO support
 
@@ -167,11 +167,11 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 
 * jpox/jpox.jar
-- JPox 1.1.0-beta-6 JDO implementation (http://www.jpox.org/)
+- JPox 1.1.0 JDO implementation (http://www.jpox.org/)
 - required for building compass
 
 * jpox/jpox-enhancer.jar
-- JPox 1.1.0-beta-6 JDO implementation (http://www.jpox.org/)
+- JPox 1.1.0 JDO implementation (http://www.jpox.org/)
 - required for building compass
 
 * junit/junit.jar
