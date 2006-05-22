@@ -19,7 +19,6 @@ package org.compass.core.util.reader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * A <code>Reader</code> implementation which wraps several
