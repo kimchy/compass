@@ -30,6 +30,8 @@ public interface SearchEngineAnalyzerHelper {
 
     SearchEngineAnalyzerHelper setAnalyzer(Resource resource) throws SearchEngineException;
 
+    SearchEngineAnalyzerHelper setAnalyzerByAlias(String alias) throws SearchEngineException;
+
     CompassToken analyzeSingle(String text) throws SearchEngineException;
 
     CompassToken[] analyze(String text) throws SearchEngineException;

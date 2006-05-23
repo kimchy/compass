@@ -47,6 +47,18 @@ public interface CompassAnalyzerHelper {
     CompassAnalyzerHelper setAnalyzer(Resource resource) throws CompassException;
 
     /**
+     * Sets the analyzer that will be used for the analysis of the text.
+     * Uses the alias to get the mapping deinfitions and build a specific analyzer
+     * if there is a certain property that is associated with a specific analyzer
+     * (builds a per resource property analyzer).
+     *
+     * @param alias The alias to derive the analyzer from
+     * @return the analyzer helper
+     * @throws CompassException If the analyzer if not found
+     */
+    CompassAnalyzerHelper setAnalyzerByAlias(String alias) throws CompassException;
+
+    /**
      * Analyzes the given text, returning the first token.
      *
      * @param text The text to analyze

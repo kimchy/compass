@@ -41,6 +41,8 @@ import org.compass.core.lucene.engine.transaction.BatchInsertTransaction;
 import org.compass.core.lucene.engine.transaction.LuceneSearchEngineTransaction;
 import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
 import org.compass.core.lucene.engine.transaction.SerialableTransaction;
+import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
+import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;

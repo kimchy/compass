@@ -29,7 +29,7 @@ public interface SearchEngineQueryBuilder {
         
         SearchEngineQuery toQuery();
     }
-    
+
     public static interface SearchEngineBooleanQueryBuilder extends SearchEngineToQuery {
 
         SearchEngineBooleanQueryBuilder addMust(SearchEngineQuery query);
@@ -56,6 +56,8 @@ public interface SearchEngineQueryBuilder {
 
         SearchEngineQueryStringBuilder setAnalyzer(String analyzer);
 
+        SearchEngineQueryStringBuilder setAnalyzerByAlias(String alias);
+
         SearchEngineQueryStringBuilder setDefaultSearchProperty(String defaultSearchProperty);
 
         SearchEngineQueryStringBuilder useAndDefaultOperator();
@@ -65,6 +67,8 @@ public interface SearchEngineQueryBuilder {
 
         SearchEngineMultiPropertyQueryStringBuilder setAnalyzer(String analyzer);
 
+        SearchEngineMultiPropertyQueryStringBuilder setAnalyzerByAlias(String alias);
+        
         SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName);
 
         SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator();

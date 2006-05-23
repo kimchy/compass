@@ -62,6 +62,7 @@ public class AnalyzerTests extends AbstractTestCase {
         hits = session.find("the");
         assertEquals(0, hits.getLength());
 
+        // this one will use the simple analyzer
         CompassToken[] tokens = session.analyzerHelper().setAnalyzer("simple").analyze(r.get("value"));
         assertEquals(9, tokens.length);
         assertEquals("the", tokens[0].getTermText());
@@ -69,7 +70,15 @@ public class AnalyzerTests extends AbstractTestCase {
         assertEquals("brown", tokens[2].getTermText());
         assertEquals("fox", tokens[3].getTermText());
 
+        // this one will use the default analyzer
+        tokens = session.analyzerHelper().setAnalyzerByAlias("a").analyze(r.get("value"));
+        assertEquals(7, tokens.length);
+        assertEquals("quick", tokens[0].getTermText());
+        assertEquals("brown", tokens[1].getTermText());
+        assertEquals("fox", tokens[2].getTermText());
+
         tr.commit();
+
     }
 
     public void testResourceAnalyzerSetForResource() {

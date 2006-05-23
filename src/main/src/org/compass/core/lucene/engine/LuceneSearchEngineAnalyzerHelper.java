@@ -39,6 +39,11 @@ public class LuceneSearchEngineAnalyzerHelper implements SearchEngineAnalyzerHel
         return this;
     }
 
+    public SearchEngineAnalyzerHelper setAnalyzerByAlias(String alias) throws SearchEngineException {
+        this.analyzer = analyzerManager.getAnalyzerByAliasMustExists(alias);
+        return this;
+    }
+
     public CompassToken analyzeSingle(String text) throws SearchEngineException {
         CompassToken[] tokens = analyze(text);
         if (tokens == null || tokens.length == 0) {

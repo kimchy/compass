@@ -18,6 +18,7 @@ package org.compass.core.impl;
 
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryBuilder;
+import org.compass.core.CompassException;
 import org.compass.core.CompassQuery.CompassSpanQuery;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
@@ -137,8 +138,13 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
             this.session = session;
         }
 
-        public CompassQueryStringBuilder setAnalyzer(String analyzer) {
+        public CompassQueryStringBuilder setAnalyzer(String analyzer) throws CompassException {
             queryBuilder.setAnalyzer(analyzer);
+            return this;
+        }
+
+        public CompassQueryStringBuilder setAnalyzerByAlias(String alias) throws CompassException {
+            queryBuilder.setAnalyzerByAlias(alias);
             return this;
         }
 
@@ -171,8 +177,13 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
             this.session = session;
         }
 
-        public CompassMultiPropertyQueryStringBuilder setAnalyzer(String analyzer) {
+        public CompassMultiPropertyQueryStringBuilder setAnalyzer(String analyzer) throws CompassException {
             queryBuilder.setAnalyzer(analyzer);
+            return this;
+        }
+
+        public CompassMultiPropertyQueryStringBuilder setAnalyzerByAlias(String alias) throws CompassException {
+            queryBuilder.setAnalyzerByAlias(alias);
             return this;
         }
 

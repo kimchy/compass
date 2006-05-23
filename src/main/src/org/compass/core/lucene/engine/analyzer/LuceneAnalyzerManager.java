@@ -37,6 +37,8 @@ import org.compass.core.util.ClassUtils;
 import org.compass.core.util.StringUtils;
 
 /**
+ * Manages all the configured Lucene analyzers within Compass.
+ *
  * @author kimchy
  */
 public class LuceneAnalyzerManager {
@@ -131,18 +133,49 @@ public class LuceneAnalyzerManager {
         }
     }
 
+    /**
+     * Returns the default Lucene {@link Analyzer} for Compass.
+     */
     public Analyzer getDefaultAnalyzer() {
         return defaultAnalyzer;
     }
 
+    /**
+     * Returns the search Lucene {@link Analyzer}.
+     */
     public Analyzer getSearchAnalyzer() {
         return searchAnalyzer;
     }
 
+    /**
+     * Returns the Lucene {@link Analyzer} registed under the given name.
+     */
     public Analyzer getAnalyzer(String analyzerName) {
         return (Analyzer) analyzers.get(analyzerName);
     }
 
+    /**
+     * Returns the Lucene {@link Analyzer} for the given alias. Might build a per field analyzer
+     * if the resource has more than one analyzer against one of its properties.
+     */
+    public Analyzer getAnalyzerByAlias(String alias) {
+        return (Analyzer) aliasAnalyzers.get(alias);
+    }
+
+    public Analyzer getAnalyzerByAliasMustExists(String alias) throws SearchEngineException {
+        Analyzer analyzer = (Analyzer) aliasAnalyzers.get(alias);
+        if (analyzer == null) {
+            throw new SearchEngineException("No analyzer is defined for alias [" + alias + "]");
+        }
+        return analyzer;
+    }
+
+    /**
+     * Returns the Lucene {@link Analyzer} based on the give {@link Resource}. Will build a specifc
+     * per field analyzr if the given {@link Resource} has properties with different analyzers.
+     * Will also take into account if the resource has an analyzer controller based on the analyzer
+     * controller property value.
+     */
     public Analyzer getAnalyzerByResource(Resource resource) throws SearchEngineException {
         String alias = resource.getAlias();
         ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);

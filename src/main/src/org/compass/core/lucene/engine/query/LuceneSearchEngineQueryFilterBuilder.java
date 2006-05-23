@@ -14,63 +14,21 @@
  * limitations under the License.
  */
 
-package org.compass.core.lucene.engine;
+package org.compass.core.lucene.engine.query;
 
-import java.util.ArrayList;
-
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.QueryFilter;
 import org.apache.lucene.search.RangeFilter;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryFilter;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
-import org.compass.core.lucene.util.ChainedFilter;
+import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
+import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 
 /**
  * @author kimchy
  */
 // TODO add makeCacheable to filters. Will have to hook into index change events to invalidate the filter cache.
 public class LuceneSearchEngineQueryFilterBuilder implements SearchEngineQueryFilterBuilder {
-
-    public static class LuceneSearchEngineBooleanQueryFilterBuilder implements SearchEngineBooleanQueryFilterBuilder {
-
-        private ArrayList types = new ArrayList();
-
-        private ArrayList filters = new ArrayList();
-
-        public LuceneSearchEngineBooleanQueryFilterBuilder() {
-
-        }
-
-        public void and(SearchEngineQueryFilter filter) {
-            types.add(ChainedFilter.ChainedFilterType.AND);
-            filters.add(((LuceneSearchEngineQueryFilter) filter).getFilter());
-        }
-
-        public void or(SearchEngineQueryFilter filter) {
-            types.add(ChainedFilter.ChainedFilterType.OR);
-            filters.add(((LuceneSearchEngineQueryFilter) filter).getFilter());
-        }
-
-        public void andNot(SearchEngineQueryFilter filter) {
-            types.add(ChainedFilter.ChainedFilterType.ANDNOT);
-            filters.add(((LuceneSearchEngineQueryFilter) filter).getFilter());
-        }
-
-        public void xor(SearchEngineQueryFilter filter) {
-            types.add(ChainedFilter.ChainedFilterType.XOR);
-            filters.add(((LuceneSearchEngineQueryFilter) filter).getFilter());
-        }
-
-        public SearchEngineQueryFilter toFilter() {
-            if (filters.size() == 0) {
-                throw new IllegalArgumentException("Must add at least one filter");
-            }
-            Filter[] filtersArr = (Filter[]) filters.toArray(new Filter[filters.size()]);
-            ChainedFilter.ChainedFilterType[] typesArr = (ChainedFilter.ChainedFilterType[]) types.toArray(new ChainedFilter.ChainedFilterType[types.size()]);
-            return new LuceneSearchEngineQueryFilter(new ChainedFilter(filtersArr, typesArr));
-        }
-    }
 
     public LuceneSearchEngineQueryFilterBuilder() {
     }

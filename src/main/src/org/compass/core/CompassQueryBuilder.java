@@ -147,7 +147,15 @@ public interface CompassQueryBuilder {
          * has no efects when using a bulit in query (using the
          * {@link CompassQuery}).
          */
-        CompassQueryStringBuilder setAnalyzer(String analyzer);
+        CompassQueryStringBuilder setAnalyzer(String analyzer) throws CompassException;
+
+        /**
+         * Sets the analyzer that will be used to analyzer the query string. The
+         * analyzer will be build based on analyzer settings for the mapping definitions
+         * the define the alias. It means that if a certain property is associated with
+         * a specific analyzer, a per property analyzer will be built.
+         */
+        CompassQueryStringBuilder setAnalyzerByAlias(String alias) throws CompassException;
 
         /**
          * Sets the default search property for non prefixed terms in the query
@@ -183,6 +191,15 @@ public interface CompassQueryBuilder {
          * {@link CompassQuery}).
          */
         CompassMultiPropertyQueryStringBuilder setAnalyzer(String analyzer);
+
+        /**
+         * Sets the analyzer that will be used to analyzer the query string. The
+         * analyzer will be build based on analyzer settings for the mapping definitions
+         * the define the alias. It means that if a certain property is associated with
+         * a specific analyzer, a per property analyzer will be built.
+         */
+        CompassMultiPropertyQueryStringBuilder setAnalyzerByAlias(String alias) throws CompassException;
+
 
         /**
          * Adds another resource property name / meta-data that the query string will be executed against.
