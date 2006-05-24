@@ -163,6 +163,9 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
             log.info(buildMessage("Indexing the database with fetch count [" + fetchCount + "]"));
         }
         for (EntityInformation entityInformation : entetiesInformation) {
+            if (isFilteredForIndex(entityInformation.getName())) {
+                continue;
+            }
             try {
                 int current = 0;
                 entityManagerWrapper.open();
