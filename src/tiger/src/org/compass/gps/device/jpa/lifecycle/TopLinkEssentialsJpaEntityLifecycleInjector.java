@@ -15,6 +15,8 @@ import oracle.toplink.essentials.sessions.Session;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.core.impl.InternalCompass;
 
 public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLifecycleInjector {
 
@@ -25,12 +27,12 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
         public TopLinkEssentialsEventListener(JpaGpsDevice device) {
             this.device = device;
         }
-        
+
         @Override
         protected JpaGpsDevice getDevice() {
             return this.device;
         }
-        
+
         public void postUpdate(DescriptorEvent event) {
             postUpdate(event.getObject());
         }
@@ -93,17 +95,21 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
 
         public void preWrite(DescriptorEvent event) {
         }
-        
+
     }
-    
+
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
         EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) entityManagerFactory;
         Session session = emf.getServerSession();
         Map descriptors = session.getDescriptors();
         TopLinkEssentialsEventListener eventListener = new TopLinkEssentialsEventListener(device);
+        InternalCompass compass = (InternalCompass) ((CompassGpsInterfaceDevice) device.getGps()).getMirrorCompass();
         for (Iterator it = descriptors.values().iterator(); it.hasNext();) {
             ClassDescriptor classDescriptor = (ClassDescriptor) it.next();
-            classDescriptor.getDescriptorEventManager().addListener(eventListener);
+            Class mappedClass = classDescriptor.getClass();
+            if (compass.getMapping().getRootMappingByClass(mappedClass) != null) {
+                classDescriptor.getDescriptorEventManager().addListener(eventListener);
+            }
         }
     }
 }
