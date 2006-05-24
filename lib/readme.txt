@@ -220,3 +220,8 @@ distribution/website before using any of them in your own applications.
 - Spring Framework 2.0 M4 (http://www.springframework.org)
 - required for building compass
 - required at runtime when using Compass's Spring support
+
+* oracle/toplink-essentials
+- Oracle Toplink Essential Reference implementation of JPA (part of glass fish) v2 build 03 (http://www.oracle.com/technology/products/ias/toplink/jpa)
+- required for building compass
+- required at runtime when using Compass Gps JPA support with Toplink Essentials

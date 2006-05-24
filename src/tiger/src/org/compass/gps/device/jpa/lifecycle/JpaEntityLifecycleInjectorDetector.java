@@ -41,6 +41,8 @@ public abstract class JpaEntityLifecycleInjectorDetector {
         String injectorClassName = null;
         if (entityManagerFactory.getClass().getName().equals("org.hibernate.ejb.EntityManagerFactoryImpl")) {
             injectorClassName = "org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityLifecycleInjector";
+        } else if (entityManagerFactory.getClass().getName().equals("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
+            injectorClassName = "org.compass.gps.device.jpa.lifecycle.TopLinkEssentialsJpaEntityLifecycleInjector";
         }
         if (injectorClassName == null) {
             return null;
