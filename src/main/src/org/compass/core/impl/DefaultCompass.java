@@ -138,9 +138,9 @@ public class DefaultCompass implements InternalCompass {
         firstLevelCacheFactory.configure(settings);
 
         indexManager.verifyIndex();
-        indexManager.start();
 
         if (!duplicate) {
+            indexManager.start();
             searchEngineFactory.getOptimizer().start();
         }
     }
@@ -257,6 +257,10 @@ public class DefaultCompass implements InternalCompass {
 
         public void close() {
             indexManager.close();
+        }
+
+        public boolean isRunning() {
+            return indexManager.isRunning();
         }
 
         public void createIndex() throws SearchEngineException {

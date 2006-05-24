@@ -70,6 +70,7 @@ public class DualCompassGps extends AbstractCompassGps {
     protected void doIndex() throws CompassGpsException {
         boolean stoppedMirrorCompassOptimizer = false;
         boolean stoppedIndexCompassOptimizer = false;
+        boolean stoppedIndexCompassIndexManager = false;
         if (mirrorCompass != null && mirrorCompass.getSearchEngineOptimizer().isRunning()) {
             mirrorCompass.getSearchEngineOptimizer().stop();
             stoppedMirrorCompassOptimizer = true;
@@ -77,6 +78,10 @@ public class DualCompassGps extends AbstractCompassGps {
         if (indexCompass.getSearchEngineOptimizer().isRunning()) {
             indexCompass.getSearchEngineOptimizer().stop();
             stoppedIndexCompassOptimizer = true;
+        }
+        if (indexCompass.getSearchEngineIndexManager().isRunning()) {
+            indexCompass.getSearchEngineIndexManager().stop();
+            stoppedIndexCompassIndexManager = true;
         }
 
         indexCompass.getSearchEngineIndexManager().clearCache();
@@ -98,6 +103,9 @@ public class DualCompassGps extends AbstractCompassGps {
         }
         if (stoppedIndexCompassOptimizer) {
             indexCompass.getSearchEngineOptimizer().start();
+        }
+        if (stoppedIndexCompassIndexManager) {
+            indexCompass.getSearchEngineIndexManager().start();
         }
     }
 

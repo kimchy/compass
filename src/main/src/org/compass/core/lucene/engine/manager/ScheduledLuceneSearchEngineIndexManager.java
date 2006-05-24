@@ -69,9 +69,15 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
         if (log.isInfoEnabled()) {
             log.info("Stopping scheduled index manager");
         }
-        scheduledExecutorService.shutdown();
-        scheduledExecutorService = null;
+        if (scheduledExecutorService != null) {
+            scheduledExecutorService.shutdown();
+            scheduledExecutorService = null;
+        }
         indexManager.stop();
+    }
+
+    public boolean isRunning() {
+        return indexManager.isRunning();
     }
 
     public void close() {

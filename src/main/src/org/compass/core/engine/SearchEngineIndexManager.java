@@ -70,6 +70,11 @@ public interface SearchEngineIndexManager {
     void stop();
 
     /**
+     * Returns <code>true</code> if the index manage is running
+     */
+    boolean isRunning();
+
+    /**
      * Closes the index manager. Used by compass, probably not a good idea to call it.
      */
     void close();

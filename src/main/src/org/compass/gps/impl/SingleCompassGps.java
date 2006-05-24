@@ -94,12 +94,17 @@ public class SingleCompassGps extends AbstractCompassGps {
 	}
 
 	protected void doIndex() throws CompassGpsException {
-		boolean stoppedCompassOptimizer = false;
-		if (compass.getSearchEngineOptimizer().isRunning()) {
+		boolean stoppedOptimizer = false;
+        boolean stoppedIndexManager = false;
+        if (compass.getSearchEngineOptimizer().isRunning()) {
 			compass.getSearchEngineOptimizer().stop();
-			stoppedCompassOptimizer = true;
+			stoppedOptimizer = true;
 		}
-		// create the temp compass index, and clean it
+        if (compass.getSearchEngineIndexManager().isRunning()) {
+            compass.getSearchEngineIndexManager().stop();
+            stoppedIndexManager = true;
+        }
+        // create the temp compass index, and clean it
 		indexCompass = compass.clone(indexCompassSettings);
 		indexCompass.getSearchEngineIndexManager().deleteIndex();
 		indexCompass.getSearchEngineIndexManager().createIndex();
@@ -121,10 +126,13 @@ public class SingleCompassGps extends AbstractCompassGps {
 		indexCompass = null;
 		indexCompassTemplate = null;
 
-		if (stoppedCompassOptimizer) {
+		if (stoppedOptimizer) {
 			compass.getSearchEngineOptimizer().start();
 		}
-	}
+        if (stoppedIndexManager) {
+            compass.getSearchEngineIndexManager().start();
+        }
+    }
 
 	public void executeForIndex(CompassCallback callback) throws CompassException {
 		if (indexCompassTemplate == null) {

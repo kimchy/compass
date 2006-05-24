@@ -57,6 +57,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     private long waitForCacheInvalidationBeforeSecondStep = 0;
 
+    private boolean isRunning = false;
+
     public DefaultLuceneSearchEngineIndexManager(LuceneSearchEngineFactory searchEngineFactory,
                                                  final LuceneSearchEngineStore searchEngineStore) {
         this.searchEngineFactory = searchEngineFactory;
@@ -363,10 +365,15 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void start() {
-        // do nothing
+        isRunning = true;
     }
 
     public void stop() {
+        isRunning = false;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     public synchronized void checkAndClearIfNotifiedAllToClearCache() throws SearchEngineException {
