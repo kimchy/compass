@@ -1,9 +1,7 @@
 package org.compass.gps.device.jpa.lifecycle;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
-
 import javax.persistence.EntityManagerFactory;
 
 import oracle.toplink.essentials.descriptors.ClassDescriptor;
@@ -11,13 +9,16 @@ import oracle.toplink.essentials.descriptors.DescriptorEvent;
 import oracle.toplink.essentials.descriptors.DescriptorEventListener;
 import oracle.toplink.essentials.internal.ejb.cmp3.base.EntityManagerFactoryImpl;
 import oracle.toplink.essentials.sessions.Session;
-
+import org.compass.gps.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.CompassGpsInterfaceDevice;
-import org.compass.core.impl.InternalCompass;
 
+/**
+ * Injects lifecycle listeners directly into TopLink Essentials for mirroring operations.
+ *
+ * @author kimchy
+ */
 public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLifecycleInjector {
 
     private class TopLinkEssentialsEventListener extends AbstractDeviceJpaEntityListener implements DescriptorEventListener {
@@ -99,15 +100,17 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
     }
 
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
+
+        CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
+
         EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) entityManagerFactory;
         Session session = emf.getServerSession();
         Map descriptors = session.getDescriptors();
         TopLinkEssentialsEventListener eventListener = new TopLinkEssentialsEventListener(device);
-        InternalCompass compass = (InternalCompass) ((CompassGpsInterfaceDevice) device.getGps()).getMirrorCompass();
-        for (Iterator it = descriptors.values().iterator(); it.hasNext();) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) it.next();
-            Class mappedClass = classDescriptor.getClass();
-            if (compass.getMapping().getRootMappingByClass(mappedClass) != null) {
+        for (Object o : descriptors.values()) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) o;
+            Class mappedClass = classDescriptor.getJavaClass();
+            if (gps.hasMappingForEntityForMirror(mappedClass)) {
                 classDescriptor.getDescriptorEventManager().addListener(eventListener);
             }
         }

@@ -414,7 +414,9 @@
           <root url="jar://$MODULE_DIR$/../../lib/toplink/toplink-essentials.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../../../tools/glassfish/v2-b03/entity-persistence/src/java" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntryProperties />

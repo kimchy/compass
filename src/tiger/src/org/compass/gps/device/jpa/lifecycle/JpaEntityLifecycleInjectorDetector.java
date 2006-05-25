@@ -26,7 +26,7 @@ import javax.persistence.EntityManagerFactory;
  * <code>EntityManagerFactory</code>, and based on it, check if the current set of actual JPA
  * implementations is one of compass supported ones (like Hibernate).
  * <p>
- * Currently support the following JPA implementations: Hibernate.
+ * Currently support the following JPA implementations: Hibernate, TopLink Essentials (Glassfish Persistence).
  * <p/>
  * Assumes that the <code>EntityManagerFactory</code> is the native one, since the
  * {@link org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor} of the

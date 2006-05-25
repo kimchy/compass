@@ -27,6 +27,8 @@ import org.hibernate.impl.SessionFactoryImpl;
 import javax.persistence.EntityManagerFactory;
 
 /**
+ * Injects lifecycle listeners directly into Hibernate for mirroring operations.
+ *
  * @author kimchy
  */
 public class HibernateJpaEntityLifecycleInjector implements JpaEntityLifecycleInjector {

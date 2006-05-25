@@ -51,7 +51,6 @@ import java.util.Map;
  *
  * @author kimchy
  */
-// TODO think about filtering of objects, not sure what is the best way, haveing HibernateInsertFiltering interface or maybe extend the event listeners... 
 public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements PassiveMirrorGpsDevice {
 
     private class Hibernate3SessionWrapper implements HibernateSessionWrapper {
