@@ -655,7 +655,7 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="cacheInvalidationInterval" type="xsd:positiveInteger" use="optional">
+        <xsd:attribute name="cacheInvalidationInterval" type="xsd:integer" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     Sets how often (in milliseconds) the index manager will check if the index cache needs to be
