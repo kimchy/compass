@@ -9,7 +9,7 @@
         </connection>
 
         <transaction isolation="batch_insert">
-            <batchInsertSettings maxBufferedDocs="100" />
+            <batchInsertSettings maxBufferedDocs="100" mergeFactor="20" />
         </transaction>
     </compass>
 

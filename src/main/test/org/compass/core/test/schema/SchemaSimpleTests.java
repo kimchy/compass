@@ -39,6 +39,15 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("yes", settings.getSetting(CompassEnvironment.All.TERM_VECTOR));
         assertEquals("analyzer1", settings.getSetting(LuceneEnvironment.ALL_ANALYZER));
     }
+    
+    public void testBatchInsertSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+            .configure("/org/compass/core/test/schema/batchInsert.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("100", settings.getSetting(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS));
+        assertEquals("20", settings.getSetting(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR));
+    }
 
     public void testJtaSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
