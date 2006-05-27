@@ -1,8 +1,10 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 0.9.1 (------------)
+VERSION 0.9.1 (May 27, 2006)
 ============================
+
+No upgrade steps required to use 0.9.1.
 
 
 VERSION 0.9.0 (Apr 17, 2006)
@@ -38,8 +40,6 @@ VERSION 0.9.0 (Apr 17, 2006)
    Compass will try to auto-detect it based on the JTA implementation used.
 8. The setting for compound file format was wrongly named, changed to: compass.engine.useCompoundFile.
 9. A new XML configuration based on XML schema is avilable. It is now the prefered way to configure Compass.
-10. A full implementation of OSEM definition using Java 5 annotations.
-11. Support for EJB3 JPA.
 
 VERSION 0.8.1 (Jan 22, 2006)
 ============================

@@ -65,16 +65,31 @@
 
     <releases>
         <release>
-            <version>0.9.1 SNAPSHOT</version>
-            <date>Latest SVN build</date>
-            <jiraId>10040</jiraId>
+            <version>0.9.2-SNAPSHOT</version>
+            <date>Latest svn build</date>
+            <jiraId>10051</jiraId>
             <downloads>
                 <download>
-                    <url>versions/0.9.1-SNAPSHOT/release/compass-0.9.1-SNAPSHOT.zip</url>
+                    <url>versions/0.9.2-SNAPSHOT/release/compass-0.9.2-SNAPSHOT.zip</url>
                     <name>Compass</name>
                 </download>
                 <download>
-                    <url>versions/0.9.1-SNAPSHOT/release/compass-0.9.1-SNAPSHOT-with-dependencies.zip</url>
+                    <url>versions/0.9.2-SNAPSHOT/release/compass-0.9.2-SNAPSHOT-with-dependencies.zip</url>
+                    <name>With Dependencies</name>
+                </download>
+            </downloads>
+        </release>
+        <release>
+            <version>0.9.1</version>
+            <date>Saturday, May 27, 2006</date>
+            <jiraId>10040</jiraId>
+            <downloads>
+                <download>
+                    <url></url>
+                    <name>Compass</name>
+                </download>
+                <download>
+                    <url></url>
                     <name>With Dependencies</name>
                 </download>
             </downloads>

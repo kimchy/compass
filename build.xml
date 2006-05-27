@@ -772,6 +772,7 @@
                 <include name="lib/ojb/**"/>
                 <include name="lib/spring/**"/>
                 <include name="lib/sunfsjndi/**"/>
+                <include name="lib/toplink/**"/>
             </zipfileset>
         </zip>
 
