@@ -85,11 +85,11 @@
             <jiraId>10040</jiraId>
             <downloads>
                 <download>
-                    <url></url>
+                    <url>https://compass.dev.java.net/files/documents/4669/35311/compass-0.9.1.zip</url>
                     <name>Compass</name>
                 </download>
                 <download>
-                    <url></url>
+                    <url>https://compass.dev.java.net/files/documents/4669/35313/compass-0.9.1-with-dependencies.zip</url>
                     <name>With Dependencies</name>
                 </download>
             </downloads>
