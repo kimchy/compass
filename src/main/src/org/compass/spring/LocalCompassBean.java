@@ -36,7 +36,7 @@ import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.InputStreamMappingResolver;
 import org.compass.core.converter.Converter;
-import org.compass.core.impl.InternalCompass;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.jdbc.ExternalDataSourceProvider;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;

@@ -58,7 +58,7 @@ public interface CompassGpsDevice {
      * 
      * @param compassGps
      */
-    void setGps(CompassGpsInterfaceDevice compassGps);
+    void setGps(CompassGps compassGps);
 
     /**
      * Returns the CompassGps that manages the device.

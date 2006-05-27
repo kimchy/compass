@@ -19,7 +19,7 @@ package org.compass.core.transaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
-import org.compass.core.impl.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * 

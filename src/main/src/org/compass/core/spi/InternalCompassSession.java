@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.core.impl;
+package org.compass.core.spi;
 
 import java.io.Serializable;
 
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.CompassMapping;

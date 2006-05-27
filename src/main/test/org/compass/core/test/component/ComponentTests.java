@@ -19,7 +19,7 @@ package org.compass.core.test.component;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.impl.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;

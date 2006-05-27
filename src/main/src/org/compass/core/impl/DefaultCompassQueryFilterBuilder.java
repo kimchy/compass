@@ -3,6 +3,7 @@ package org.compass.core.impl;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryFilter;
 import org.compass.core.CompassQueryFilterBuilder;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.mapping.CompassMapping;
 

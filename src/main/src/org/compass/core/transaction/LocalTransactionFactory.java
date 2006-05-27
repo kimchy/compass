@@ -18,8 +18,8 @@ package org.compass.core.transaction;
 
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.CompassTransaction.TransactionIsolation;
-import org.compass.core.impl.InternalCompassSession;
 
 /**
  * 
@@ -28,25 +28,25 @@ import org.compass.core.impl.InternalCompassSession;
  */
 public class LocalTransactionFactory extends AbstractTransactionFactory {
 
-	protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-			TransactionIsolation transactionIsolation) throws CompassException {
-		LocalTransaction tx = new LocalTransaction(session, transactionIsolation);
-		tx.begin();
-		return tx;
-	}
+    protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
+                                                            TransactionIsolation transactionIsolation) throws CompassException {
+        LocalTransaction tx = new LocalTransaction(session, transactionIsolation);
+        tx.begin();
+        return tx;
+    }
 
-	protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
-		LocalTransaction tx = new LocalTransaction(session, null);
-		tx.join();
-		return tx;
-	}
+    protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
+        LocalTransaction tx = new LocalTransaction(session, null);
+        tx.join();
+        return tx;
+    }
 
-	protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
-		return holder.getSession();
-	}
+    protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
+        return holder.getSession();
+    }
 
-	protected void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
-			throws CompassException {
-		holder.addSession(session);
-	}
+    protected void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
+            throws CompassException {
+        holder.addSession(session);
+    }
 }

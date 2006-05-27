@@ -19,7 +19,7 @@ package org.compass.gps.device.hibernate;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.impl.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.FieldInvoker;
 import org.compass.gps.CompassGpsException;

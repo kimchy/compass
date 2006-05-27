@@ -22,6 +22,7 @@ import org.compass.core.CompassHighlighter;
 import org.compass.core.CompassHit;
 import org.compass.core.CompassHits;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineHits;
 
 /**

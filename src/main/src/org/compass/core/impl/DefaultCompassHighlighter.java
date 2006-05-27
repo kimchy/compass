@@ -19,6 +19,7 @@ package org.compass.core.impl;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHighlighter;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.mapping.CompassMapping;
 

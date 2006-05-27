@@ -22,7 +22,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.impl.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * 

@@ -20,7 +20,7 @@ import javax.transaction.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
-import org.compass.core.impl.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * Implements a basic transaction strategy for JTA transactions. Instances check

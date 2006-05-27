@@ -16,7 +16,7 @@
 
 package org.compass.gps.device.jpa.entities;
 
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.entities.EntityInformation;

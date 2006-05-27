@@ -20,10 +20,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.impl.InternalCompassSession;
 import org.compass.core.jndi.NamingHelper;
 
 import javax.naming.InitialContext;

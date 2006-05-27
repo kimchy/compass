@@ -18,7 +18,7 @@ package org.compass.core.marshall;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
-import org.compass.core.impl.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 
 /**

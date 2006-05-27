@@ -20,9 +20,9 @@ import java.io.StringReader;
 import java.util.Calendar;
 
 import org.compass.core.*;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.impl.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;

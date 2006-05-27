@@ -20,72 +20,72 @@ import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.impl.InternalCompassSession;
 
 /**
  * @author kimchy
  */
 public abstract class AbstractTransactionFactory implements TransactionFactory {
 
-	private Compass compass;
+    private Compass compass;
 
-	protected boolean commitBeforeCompletion;
+    protected boolean commitBeforeCompletion;
 
-	public void configure(Compass compass, CompassSettings settings) throws CompassException {
-		this.compass = compass;
-		this.commitBeforeCompletion = settings.getSettingAsBoolean(
-				CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, false);
-		doConfigure(settings);
-	}
+    public void configure(Compass compass, CompassSettings settings) throws CompassException {
+        this.compass = compass;
+        this.commitBeforeCompletion = settings.getSettingAsBoolean(
+                CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, false);
+        doConfigure(settings);
+    }
 
-	protected void doConfigure(CompassSettings settings) {
+    protected void doConfigure(CompassSettings settings) {
 
-	}
+    }
 
-	public CompassTransaction beginTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation)
-			throws CompassException {
-		// bind the holder if not exists
-		CompassSessionHolder holder = TransactionSessionManager.getHolder(compass);
-		if (holder == null) {
-			holder = new CompassSessionHolder();
-			TransactionSessionManager.bindHolder(compass, holder);
-		}
+    public CompassTransaction beginTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation)
+            throws CompassException {
+        // bind the holder if not exists
+        CompassSessionHolder holder = TransactionSessionManager.getHolder(compass);
+        if (holder == null) {
+            holder = new CompassSessionHolder();
+            TransactionSessionManager.bindHolder(compass, holder);
+        }
 
-		CompassSession boundSession = getTransactionBoundSession();
-		InternalCompassTransaction tr;
-		if (boundSession == null || boundSession != session) {
-			tr = doBeginTransaction(session, transactionIsolation);
-			doBindSessionToTransaction(holder, session);
-		} else {
-			tr = doContinueTransaction(session);
-		}
-		tr.setBegun(true);
-		return tr;
-	}
+        CompassSession boundSession = getTransactionBoundSession();
+        InternalCompassTransaction tr;
+        if (boundSession == null || boundSession != session) {
+            tr = doBeginTransaction(session, transactionIsolation);
+            doBindSessionToTransaction(holder, session);
+        } else {
+            tr = doContinueTransaction(session);
+        }
+        tr.setBegun(true);
+        return tr;
+    }
 
-	protected abstract InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-			TransactionIsolation transactionIsolation) throws CompassException;
+    protected abstract InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
+                                                                     TransactionIsolation transactionIsolation) throws CompassException;
 
-	protected abstract InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
-			throws CompassException;
+    protected abstract InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
+            throws CompassException;
 
-	public CompassSession getTransactionBoundSession() throws CompassException {
-		CompassSessionHolder holder = TransactionSessionManager.getHolder(compass);
-		if (holder == null || holder.isEmpty()) {
-			return null;
-		}
-		return doGetTransactionBoundSession(holder);
-	}
+    public CompassSession getTransactionBoundSession() throws CompassException {
+        CompassSessionHolder holder = TransactionSessionManager.getHolder(compass);
+        if (holder == null || holder.isEmpty()) {
+            return null;
+        }
+        return doGetTransactionBoundSession(holder);
+    }
 
-	protected abstract CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException;
+    protected abstract CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException;
 
-	protected abstract void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
-			throws CompassException;
+    protected abstract void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
+            throws CompassException;
 
-	public Compass getCompass() {
-		return compass;
-	}
+    public Compass getCompass() {
+        return compass;
+    }
 }

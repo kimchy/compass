@@ -24,8 +24,9 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.impl.InternalCompassSession;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.*;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * A general abstract device which can be used by all types of devices.
@@ -63,8 +64,8 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
         return compassGps;
     }
 
-    public void setGps(CompassGpsInterfaceDevice compassGps) {
-        this.compassGps = compassGps;
+    public void setGps(CompassGps compassGps) {
+        this.compassGps = (CompassGpsInterfaceDevice) compassGps;
     }
 
     public void setFilteredEntitiesForIndex(String[] filteredEntitiesForIndex) {

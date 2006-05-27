@@ -9,7 +9,7 @@ import oracle.toplink.essentials.descriptors.DescriptorEvent;
 import oracle.toplink.essentials.descriptors.DescriptorEventListener;
 import oracle.toplink.essentials.internal.ejb.cmp3.base.EntityManagerFactoryImpl;
 import oracle.toplink.essentials.sessions.Session;
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;

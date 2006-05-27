@@ -19,7 +19,7 @@ package org.compass.gps.device.jdbc.snapshot;
 import java.sql.Connection;
 import java.util.List;
 
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
 

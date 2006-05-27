@@ -29,11 +29,11 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.impl.InternalCompass;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.gps.CompassGpsException;
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.PassiveMirrorGpsDevice;
 import org.compass.gps.device.AbstractGpsDevice;
 

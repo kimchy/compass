@@ -16,12 +16,12 @@
 
 package org.compass.gps.device.jpa.entities;
 
-import org.compass.core.impl.InternalCompass;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.StringUtils;
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.apache.commons.logging.Log;

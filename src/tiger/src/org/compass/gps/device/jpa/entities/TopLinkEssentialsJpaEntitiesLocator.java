@@ -10,7 +10,7 @@ import oracle.toplink.essentials.internal.ejb.cmp3.base.EntityManagerFactoryImpl
 import oracle.toplink.essentials.sessions.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 

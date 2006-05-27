@@ -21,6 +21,7 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassHit;
 import org.compass.core.CompassHitIterator;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineHits;
 
 /**

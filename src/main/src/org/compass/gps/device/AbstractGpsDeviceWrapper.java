@@ -21,16 +21,13 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.gps.CompassGps;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
-import org.compass.gps.CompassGpsInterfaceDevice;
 
 /**
- * 
  * A helper base class that can wrap a {@link org.compass.gps.CompassGpsDevice}
  * and delegate the calls defined at the
  * {@link org.compass.gps.CompassGpsDevice} interface.
- * 
+ *
  * @author kimchy
- * 
  */
 public class AbstractGpsDeviceWrapper implements CompassGpsDevice {
 
@@ -47,7 +44,7 @@ public class AbstractGpsDeviceWrapper implements CompassGpsDevice {
         return this.gpsDevice.getGps();
     }
 
-    public void setGps(CompassGpsInterfaceDevice compassGps) {
+    public void setGps(CompassGps compassGps) {
         checkDeviceSet();
         this.gpsDevice.setGps(compassGps);
     }

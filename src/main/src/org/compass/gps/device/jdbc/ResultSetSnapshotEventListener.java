@@ -29,7 +29,7 @@ import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 import org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;

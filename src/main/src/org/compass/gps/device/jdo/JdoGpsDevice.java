@@ -25,7 +25,7 @@ import javax.jdo.Query;
 import javax.jdo.Transaction;
 
 import org.compass.core.CompassSession;
-import org.compass.core.impl.InternalCompass;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.gps.CompassGpsException;

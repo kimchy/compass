@@ -19,7 +19,7 @@ package org.compass.gps.device.jpa;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.*;
-import org.compass.core.impl.InternalCompass;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
 
 import javax.persistence.PostPersist;

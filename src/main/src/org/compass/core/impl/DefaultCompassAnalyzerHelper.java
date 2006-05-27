@@ -22,6 +22,7 @@ import org.compass.core.CompassAnalyzerHelper;
 import org.compass.core.CompassException;
 import org.compass.core.CompassToken;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
 import org.compass.core.mapping.CompassMapping;
 

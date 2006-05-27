@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.compass.gps;
+package org.compass.gps.spi;
 
 import org.compass.core.Compass;
 import org.compass.core.CompassCallback;
 import org.compass.core.CompassException;
+import org.compass.gps.CompassGps;
 
 /**
  * An extension to the {@link org.compass.gps.CompassGps} interface

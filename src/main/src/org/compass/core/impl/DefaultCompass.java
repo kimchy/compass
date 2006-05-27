@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import org.compass.core.*;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.FirstLevelCacheFactory;
 import org.compass.core.config.CompassEnvironment;

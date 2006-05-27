@@ -19,6 +19,7 @@ package org.compass.core.impl;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryBuilder;
 import org.compass.core.CompassException;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.CompassQuery.CompassSpanQuery;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;

@@ -17,7 +17,7 @@
 package org.compass.gps.device.jpa;
 
 import org.compass.core.Compass;
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * An abstract support class for event lifecycle JPA spec support. Requires the <code>JpaGpsDevice<code>

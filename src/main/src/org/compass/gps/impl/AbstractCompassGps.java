@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.compass.core.Compass;
-import org.compass.core.impl.InternalCompass;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
-import org.compass.gps.CompassGpsInterfaceDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * A simple base class for {@link org.compass.gps.CompassGps}

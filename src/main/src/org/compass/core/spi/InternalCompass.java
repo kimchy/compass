@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.impl;
+package org.compass.core.spi;
 
 import org.compass.core.Compass;
 import org.compass.core.config.CompassSettings;

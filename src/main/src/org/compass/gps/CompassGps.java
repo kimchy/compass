@@ -24,7 +24,7 @@ package org.compass.gps;
  * instances, as part of the internal contract between
  * <code>CompassGps</code> and its devices and should not be used by a
  * non-device code (see
- * {@link org.compass.gps.CompassGpsInterfaceDevice}).
+ * {@link org.compass.gps.spi.CompassGpsInterfaceDevice}).
  * 
  * @author kimchy
  */
