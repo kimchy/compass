@@ -419,8 +419,7 @@ public abstract class LuceneUtils {
         Vector deletable = new Vector();
         deleteFiles(readDeleteableFiles(directory), deletable, directory);
         deleteFiles(files, deletable, directory); // try to delete our files
-        writeDeleteableFiles(deletable, directory); // note files we can't
-        // delete
+        writeDeleteableFiles(deletable, directory); // note files we can't delete
     }
 
     public static void deleteFiles(Vector files, Vector deletable, Directory directory) throws IOException {

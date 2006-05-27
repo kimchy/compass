@@ -85,7 +85,7 @@ public class AdaptiveOptimizer extends AbstractLuceneSearchEngineOptimizer imple
         try {
             long time = System.currentTimeMillis();
             Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
-            segmentsMerger = new LuceneSegmentsMerger(subIndex, dir, true, getSearchEngineFactory().getLuceneSettings());
+            segmentsMerger = new LuceneSegmentsMerger(dir, true, getSearchEngineFactory().getLuceneSettings());
             long lockTime = System.currentTimeMillis() - time;
             time = System.currentTimeMillis();
             segmentsMerger.mergeFromSegment(mergeFromSegment);

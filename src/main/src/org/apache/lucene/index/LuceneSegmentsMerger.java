@@ -55,7 +55,7 @@ public class LuceneSegmentsMerger {
 
     private LuceneSettings luceneSettings;
 
-    public LuceneSegmentsMerger(String subIndex, Directory dir, boolean closeDir, LuceneSettings luceneSettings) throws IOException {
+    public LuceneSegmentsMerger(Directory dir, boolean closeDir, LuceneSettings luceneSettings) throws IOException {
         this.closeDir = closeDir;
         this.directory = dir;
         this.luceneSettings = luceneSettings;
@@ -84,8 +84,7 @@ public class LuceneSegmentsMerger {
             SegmentInfo si = segmentInfos.info(i);
             IndexReader reader = SegmentReader.get(si);
             merger.add(reader);
-            segmentsToDelete.addElement(reader); // queue segment for
-            // deletion
+            segmentsToDelete.addElement(reader); // queue segment for deletion
         }
         int mergedDocCount = merger.merge();
 
@@ -104,16 +103,18 @@ public class LuceneSegmentsMerger {
                 public Object doBody() throws IOException {
                     if (luceneSettings.isUseCompoundFile()) {
                         directory.renameFile(newSegmentName + ".tmp", newSegmentName + ".cfs");
-                        // delete now unused files of segment
-                        LuceneUtils.deleteFiles(filesToDeleteCS, directory);
-                        filesToDeleteCS = null;
                     }
                     segmentInfos.write(directory); // commit before deleting
-                    LuceneUtils.deleteSegments(segmentsToDelete, directory);
                     return null;
                 }
             }.run();
         }
+        if (luceneSettings.isUseCompoundFile()) {
+            // delete now unused files of segment
+            LuceneUtils.deleteFiles(filesToDeleteCS, directory);
+            filesToDeleteCS = null;
+        }
+        LuceneUtils.deleteSegments(segmentsToDelete, directory);
     }
 
     public void close() throws IOException {

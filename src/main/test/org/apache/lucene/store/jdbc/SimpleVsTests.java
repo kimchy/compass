@@ -100,10 +100,10 @@ public class SimpleVsTests extends AbstractJdbcDirectoryTests {
                 for (Iterator iter = docs.iterator(); iter.hasNext();) {
                     Document doc = new Document();
                     String word = (String) iter.next();
-                    doc.add(Field.Keyword("keyword", word));
-                    doc.add(Field.UnIndexed("unindexed", word));
-                    doc.add(Field.UnStored("unstored", word));
-                    doc.add(Field.Text("text", word));
+                    doc.add(new Field("keyword", word, Field.Store.YES, Field.Index.UN_TOKENIZED));
+                    doc.add(new Field("unindexed", word, Field.Store.YES, Field.Index.NO));
+                    doc.add(new Field("unstored", word, Field.Store.NO, Field.Index.TOKENIZED));
+                    doc.add(new Field("text", word, Field.Store.YES, Field.Index.TOKENIZED));
                     writer.addDocument(doc);
                 }
                 writer.optimize();

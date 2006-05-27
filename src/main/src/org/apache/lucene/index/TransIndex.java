@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Vector;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -338,19 +339,19 @@ public class TransIndex {
             throw new IOException("Transaction not called first phase");
         }
         synchronized (directory) { // in- & inter-process sync
-            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), luceneSettings
-                    .getTransactionCommitTimeout()) {
+            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), luceneSettings.getTransactionCommitTimeout()) {
                 public Object doBody() throws IOException {
                     if (luceneSettings.isUseCompoundFile()) {
                         directory.renameFile(newSegmentName + ".tmp", newSegmentName + ".cfs");
-                        // delete now unused files of segment
-                        LuceneUtils.deleteFiles(filesToDeleteCS, directory);
-                        filesToDeleteCS = null;
                     }
                     segmentInfos.write(directory); // commit before deleting
                     return null;
                 }
             }.run();
+        }
+        if (luceneSettings.isUseCompoundFile()) {
+            LuceneUtils.deleteFiles(filesToDeleteCS, directory);
+            filesToDeleteCS = null;
         }
     }
 
