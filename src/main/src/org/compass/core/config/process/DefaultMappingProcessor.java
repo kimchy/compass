@@ -77,6 +77,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
     }
 
     private void secondPass(RawResourceMapping resourceMapping) {
+        secondPassConverter(resourceMapping, true);
         for (Iterator it = resourceMapping.mappingsIt(); it.hasNext();) {
             secondPassConverter((Mapping) it.next(), false);
         }

@@ -208,6 +208,8 @@ public class CompassEnvironment {
 
             public abstract class Mapping {
 
+                public static final String RAW_RESOURCE_MAPPING = "rawResourceMapping";
+                
                 public static final String CLASS = "classMapping";
 
                 public static final String CLASS_PROPERTY = "classPropertyMapping";

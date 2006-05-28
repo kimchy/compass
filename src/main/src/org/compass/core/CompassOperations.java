@@ -169,28 +169,6 @@ public interface CompassOperations {
     Resource loadResource(String alias, Serializable id) throws CompassException;
 
     /**
-     * Saves a Resource in Compass. Resource objects are normally created by
-     * Compass, which creates internal id's for the object. Ensure that only
-     * Compass loaded Resources are saved.
-     * 
-     * @param resource
-     *            The resource to save
-     * @throws CompassException
-     */
-    void save(Resource resource) throws CompassException;
-
-    /**
-     * Creates a NEW Resource in Compass. Resource objects are normally created
-     * by Compass, which creates internal id's for the object. Ensure that only
-     * Compass loaded Resources are saved.
-     * 
-     * @param resource
-     *            The resource to save
-     * @throws CompassException
-     */
-    void create(Resource resource) throws CompassException;
-
-    /**
      * Deletes an object from Compass. The object must have been either loaded
      * by Compass or it's ids must be set if already known.
      * 

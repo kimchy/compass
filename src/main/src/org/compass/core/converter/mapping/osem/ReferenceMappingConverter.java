@@ -19,6 +19,7 @@ package org.compass.core.converter.mapping.osem;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
@@ -52,7 +53,7 @@ public class ReferenceMappingConverter implements Converter {
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         ReferenceMapping referenceMapping = (ReferenceMapping) mapping;
         ClassMapping classMapping = referenceMapping.getRefClassMapping();
-        Object[] ids = context.getMarshallingStrategy().unmarshallIds(resource, classMapping);
+        Object[] ids = context.getMarshallingStrategy().unmarshallIds(classMapping, resource);
         if (ids == null) {
             // the reference was not marshalled
             return null;

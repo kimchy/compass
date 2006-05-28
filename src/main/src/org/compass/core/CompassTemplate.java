@@ -170,15 +170,6 @@ public class CompassTemplate implements CompassOperations {
 		});
 	}
 
-	public void create(final Resource resource) throws CompassException {
-		execute(new CompassCallback() {
-			public Object doInCompass(CompassSession session) throws CompassException {
-				session.create(resource);
-				return null;
-			}
-		});
-	}
-
 	public void create(final String alias, final Object obj) throws CompassException {
 		execute(new CompassCallback() {
 			public Object doInCompass(CompassSession session) throws CompassException {
@@ -369,15 +360,6 @@ public class CompassTemplate implements CompassOperations {
 		execute(new CompassCallback() {
 			public Object doInCompass(CompassSession session) throws CompassException {
 				session.save(obj);
-				return null;
-			}
-		});
-	}
-
-	public void save(final Resource resource) throws CompassException {
-		execute(new CompassCallback() {
-			public Object doInCompass(CompassSession session) throws CompassException {
-				session.save(resource);
 				return null;
 			}
 		});

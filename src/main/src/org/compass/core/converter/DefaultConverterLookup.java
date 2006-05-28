@@ -34,7 +34,9 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.basic.*;
 import org.compass.core.converter.extended.*;
 import org.compass.core.converter.mapping.osem.*;
+import org.compass.core.converter.mapping.rsem.RawResourceMappingConverter;
 import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -137,6 +139,8 @@ public class DefaultConverterLookup implements ConverterLookup {
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.SQL_TIMESTAMP,
                 java.sql.Timestamp.class, new SqlTimestampConverter());
         // add mapping converters
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.RAW_RESOURCE_MAPPING,
+                RawResourceMapping.class, new RawResourceMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS,
                 ClassMapping.class, new ClassMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_PROPERTY,

@@ -29,6 +29,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.spi.AliasedObject;
 import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
@@ -40,7 +41,7 @@ import org.compass.core.util.StringUtils;
 /**
  * @author kimchy
  */
-public class LuceneResource implements Resource, Map {
+public class LuceneResource implements AliasedObject, Resource, Map {
 
     private static final long serialVersionUID = 3904681565727306034L;
 
@@ -73,6 +74,16 @@ public class LuceneResource implements Resource, Map {
         this.docNum = docNum;
     }
 
+    public void copy(Resource resource) {
+        LuceneResource luceneResource = (LuceneResource) resource;
+        this.document = luceneResource.document;
+        this.docNum = luceneResource.docNum;
+        this.properties = luceneResource.properties;
+        this.aliasProperty = luceneResource.aliasProperty;
+        this.searchEngine = luceneResource.searchEngine;
+        this.resourceMapping = luceneResource.resourceMapping;
+    }
+    
     public Document getDocument() {
         return this.document;
     }

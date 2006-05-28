@@ -154,4 +154,11 @@ public interface Resource extends Serializable {
      * @param boost
      */
     Resource setBoost(float boost);
+
+    /**
+     * Copies the content of the give Resource into the current one
+     *
+     * @param resource The resource to copy from
+     */
+    void copy(Resource resource);
 }

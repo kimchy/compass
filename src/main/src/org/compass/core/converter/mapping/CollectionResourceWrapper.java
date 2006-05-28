@@ -122,4 +122,8 @@ public class CollectionResourceWrapper implements Resource {
         return this;
     }
 
+    public void copy(Resource resource) {
+        this.resource.copy(resource);
+    }
+
 }

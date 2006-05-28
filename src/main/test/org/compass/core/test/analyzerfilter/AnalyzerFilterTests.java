@@ -65,10 +65,10 @@ public class AnalyzerFilterTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = new Long(1);
-        Resource r = session.createResource("a1");
-        r.addProperty("id", id);
-        r.addProperty("value", TEXT);
-        session.save(r);
+        A a = new A();
+        a.setId(id);
+        a.setValue(TEXT);
+        session.save(a);
 
         CompassHits hits = session.find("value:quick");
         assertEquals(1, hits.getLength());

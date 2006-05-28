@@ -16,6 +16,7 @@
 
 package org.compass.core.converter.mapping.osem;
 
+import java.lang.reflect.Array;
 import java.util.Iterator;
 
 import org.compass.core.Property;
@@ -23,22 +24,24 @@ import org.compass.core.Resource;
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.impl.ResourceIdKey;
 import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
-import org.compass.core.marshall.MarshallingException;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.ResourceHelper;
 
 /**
  * @author kimchy
  */
-public class ClassMappingConverter implements Converter {
+public class ClassMappingConverter implements ResourceMappingConverter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
@@ -95,12 +98,12 @@ public class ClassMappingConverter implements Converter {
             } else {
                 Property pClassName = resource.getProperty(classMapping.getClassPath());
                 if (pClassName == null) {
-                    throw new MarshallingException("The class [" + className
+                    throw new ConversionException("The class [" + className
                             + "] is configured as poly, but no class information is stored in the resource");
                 }
                 className = pClassName.getStringValue();
                 if (className == null) {
-                    throw new MarshallingException("The class [" + className
+                    throw new ConversionException("The class [" + className
                             + "] is configured as poly, but no class information is stored in the resource");
                 }
             }
@@ -144,8 +147,82 @@ public class ClassMappingConverter implements Converter {
             }
             return obj;
         } catch (Exception e) {
-            throw new MarshallingException("Failed to create class [" + className + "] for unmarshalling", e);
+            throw new ConversionException("Failed to create class [" + className + "] for unmarshalling", e);
         }
+    }
+
+    public boolean marshallIds(Resource idResource, Object id, ResourceMapping resourceMapping, MarshallingContext context)
+            throws ConversionException {
+        ClassMapping classMapping = (ClassMapping) resourceMapping;
+        boolean stored = false;
+        ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+        if (classMapping.getClazz().isAssignableFrom(id.getClass())) {
+            // the object is the key
+            for (int i = 0; i < ids.length; i++) {
+                ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) ids[i];
+                stored |= convertId(idResource, classPropertyMetaDataMapping.getGetter().get(id), classPropertyMetaDataMapping, context);
+            }
+        } else if (id.getClass().isArray()) {
+            if (Array.getLength(id) != ids.length) {
+                throw new ConversionException("Trying to load class with [" + Array.getLength(id)
+                        + "] while has ids mappings of [" + ids.length + "]");
+            }
+            for (int i = 0; i < ids.length; i++) {
+                stored |= convertId(idResource, Array.get(id, i), (ClassPropertyMetaDataMapping) ids[i], context);
+            }
+        } else if (ids.length == 1) {
+            stored = convertId(idResource, id, (ClassPropertyMetaDataMapping) ids[0], context);
+        } else {
+            String type = id.getClass().getName();
+            throw new ConversionException("Cannot marshall ids, not supported id object type [" + type
+                    + "] and value [" + id + "], or you have not defined ids in the mapping files");
+        }
+        return stored;
+    }
+
+    private boolean convertId(Resource resource, Object root, ClassPropertyMetaDataMapping mdMapping, MarshallingContext context) {
+        if (root == null) {
+            throw new ConversionException("Trying to marshall a null id [" + mdMapping.getName() + "]");
+        }
+        return mdMapping.getConverter().marshall(resource, root, mdMapping, context);
+    }
+
+    public Object[] unmarshallIds(Object id, ResourceMapping resourceMapping, MarshallingContext context)
+            throws ConversionException {
+        ClassMapping classMapping = (ClassMapping) resourceMapping;
+        ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+        Object[] idsValues = new Object[ids.length];
+        if (id instanceof Resource) {
+            Resource resource = (Resource) id;
+            for (int i = 0; i < ids.length; i++) {
+                idsValues[i] = ids[i].getConverter().unmarshall(resource, ids[i], context);
+                if (idsValues[i] == null) {
+                    // the reference was not marshalled
+                    return null;
+                }
+            }
+        } else if (classMapping.getClazz().isAssignableFrom(id.getClass())) {
+            // the object is the key
+            for (int i = 0; i < ids.length; i++) {
+                ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) ids[i];
+                idsValues[i] = classPropertyMetaDataMapping.getGetter().get(id);
+            }
+        } else if (id.getClass().isArray()) {
+            if (Array.getLength(id) != ids.length) {
+                throw new ConversionException("Trying to load class with [" + Array.getLength(id)
+                        + "] while has ids mappings of [" + ids.length + "]");
+            }
+            for (int i = 0; i < ids.length; i++) {
+                idsValues[i] = Array.get(id, i);
+            }
+        } else if (ids.length == 1) {
+            idsValues[0] = id;
+        } else {
+            String type = id.getClass().getName();
+            throw new ConversionException("Cannot marshall ids, not supported id object type [" + type
+                    + "] and value [" + id + "], or you have not defined ids in the mapping files");
+        }
+        return idsValues;
     }
 
     /**

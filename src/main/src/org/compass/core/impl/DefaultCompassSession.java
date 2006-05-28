@@ -265,42 +265,32 @@ public class DefaultCompassSession implements InternalCompassSession {
         return createQueryBuilder().queryString(query).toQuery().hits();
     }
 
-    public void create(Resource resource) throws CompassException {
-        searchEngine.create(resource);
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
-        firstLevelCache.setResource(key, resource);
-    }
-
-    public void save(Resource resource) throws CompassException {
-        searchEngine.save(resource);
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
-        firstLevelCache.setResource(key, resource);
-    }
-
     public void create(String alias, Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(alias, object);
+        searchEngine.create(resource);
         ResourceIdKey key = new ResourceIdKey(mapping, resource);
         firstLevelCache.set(key, object);
-        create(resource);
     }
 
     public void save(String alias, Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(alias, object);
-        save(resource);
+        searchEngine.save(resource);
+        ResourceIdKey key = new ResourceIdKey(mapping, resource);
+        firstLevelCache.set(key, object);
     }
 
     public void create(Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(object);
+        searchEngine.create(resource);
         ResourceIdKey key = new ResourceIdKey(mapping, resource);
         firstLevelCache.set(key, object);
-        create(resource);
     }
 
     public void save(Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(object);
+        searchEngine.save(resource);
         ResourceIdKey key = new ResourceIdKey(mapping, resource);
         firstLevelCache.set(key, object);
-        save(resource);
     }
 
     public void delete(CompassQuery query) throws CompassException {

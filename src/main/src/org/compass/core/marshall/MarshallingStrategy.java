@@ -17,50 +17,152 @@
 package org.compass.core.marshall;
 
 import org.compass.core.Resource;
-import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.ResourceMapping;
 
 /**
+ * Responsible for marhslling and unmarashlling high level objects (a.k.a root object)
+ * to and from {@link Resource}.
+ *
  * @author kimchy
  */
 public interface MarshallingStrategy {
 
+    /**
+     * Unmarshalls the given resource to an Object based on the {@link ResourceMapping}
+     * regsitered under the {@link Resource} alias.
+     *
+     * @param resource The resource to unmarshall from
+     * @return The object unmarshalled from the resource
+     */
     Object unmarshall(Resource resource);
 
-    Object unmarshall(String alias, Resource resource);
-
+    /**
+     * Unmarshalls the given resource to an Object based on the {@link ResourceMapping}
+     * regsitered under the {@link Resource} alias WITHIN the given marshalling context.
+     *
+     * @param resource The resource to unmarshall from
+     * @param context  The context to unmarshall the resource within
+     * @return The object unmarshalled from the resource
+     */
     Object unmarshall(Resource resource, MarshallingContext context);
 
-    Object unmarshall(String alias, Resource resource, MarshallingContext context);
+    /**
+     * Marshalls the given Object into a {@link Resource} based on the {@link ResourceMapping}
+     * associated with the provided alias.
+     *
+     * @param alias The alias to look up the {@link ResourceMapping}
+     * @param root  The object to marshall into the resource
+     * @return The resource result of marshalling the object
+     */
+    Resource marshall(String alias, Object root);
 
+    /**
+     * Marshalls the given Object into a {@link Resource} based on the {@link ResourceMapping}
+     * associated with the provided object. If the object implements {@link org.compass.core.spi.AliasedObject},
+     * the alias will be used to look up the {@link ResourceMapping}, otherwise, the object class will be used.
+     *
+     * @param root The object to marshall into a resource
+     * @return The resource result of marshalling the object
+     */
+    Resource marshall(Object root);
+
+    /**
+     * Marshalls the give id object into a Resource (a resource having only its ids set).
+     * Note, that the id can be several types, depending on the mapping. For example, for
+     * class mapping, it can be the root Object itself (with its ids set), an array of ids,
+     * or if a single id, the actual id object.
+     * <p/>
+     * The {@link ResourceMapping} are looked up based on the given alias.
+     *
+     * @param alias The alias to look up the {@link ResourceMapping} based
+     * @param id    The id to marshall into a {@link Resource}
+     * @return A resource having its id properties set
+     */
     Resource marshallIds(String alias, Object id);
 
+    /**
+     * Marshalls the give id object into a Resource (a resource having only its ids set).
+     * Note, that the id can be several types, depending on the mapping. For example, for
+     * class mapping, it can be the root Object itself (with its ids set), an array of ids,
+     * or if a single id, the actual id object.
+     * <p/>
+     * The {@link ResourceMapping} are looked up based on the given class.
+     *
+     * @param clazz The class to look up the {@link ResourceMapping} based
+     * @param id    The id to marshall into a {@link Resource}
+     * @return A resource having its id properties set
+     */
     Resource marshallIds(Class clazz, Object id);
 
-    Resource marshallIds(ClassMapping classMapping, Object id);
+    /**
+     * Marshalls the give id object into a Resource (a resource having only its ids set).
+     * Note, that the id can be several types, depending on the mapping. For example, for
+     * class mapping, it can be the root Object itself (with its ids set), an array of ids,
+     * or if a single id, the actual id object.
+     *
+     * @param resourceMapping The resource mapping holding how to marhsall the ids
+     * @param id              The id to marshall into a {@link Resource}
+     * @return A resource having its id properties set
+     */
+    Resource marshallIds(ResourceMapping resourceMapping, Object id);
 
+    /**
+     * Marshalls the give id object into the provided Resource (a resource having only its ids set).
+     * Note, that the id can be several types, depending on the mapping. For example, for
+     * class mapping, it can be the root Object itself (with its ids set), an array of ids,
+     * or if a single id, the actual id object.
+     *
+     * @param resource        The resource to marhsll the ids into
+     * @param resourceMapping The resource mapping holding how to marhsall the ids
+     * @param id              The id to marshall into a {@link Resource}
+     * @return <code>true</code> if stored properties were added to the {@link Resource}.
+     */
+    boolean marshallIds(Resource resource, ResourceMapping resourceMapping, Object id);
+
+    /**
+     * Marhsalls the give id into the actual object. Kindda hacky... .
+     *
+     * @param root The object to marshall the ids into
+     * @param id   The id to marshall into the root object
+     */
     void marshallIds(Object root, Object id);
 
     /**
-     * Returns <code>true</code> if data was saved in the index that can be read
-     * as well (i.e. stored).
-     * 
-     * @param idResource
-     * @param classMapping
-     * @param id
-     * @return
+     * Unmarshalls the given id object into an array of all the id values. The results depends
+     * on the type of the mappings (raw resource/class).
+     * <p/>
+     * The unmarshalling is performed based on {@link ResourceMapping} associated with the given
+     * alias.
+     *
+     * @param alias The alias to lookup the {@link ResourceMapping}
+     * @param id    The id to unmarshall
+     * @return An array of all the ids
      */
-    boolean marshallIds(Resource idResource, ClassMapping classMapping, Object id);
-
-    Object[] unmarshallIds(Resource resource, ClassMapping classMapping);
-
     Object[] unmarshallIds(String alias, Object id);
 
+    /**
+     * Unmarshalls the given id object into an array of all the id values. The results depends
+     * on the type of the mappings (raw resource/class).
+     * <p/>
+     * The unmarshalling is performed based on {@link ResourceMapping} associated with the given
+     * class.
+     *
+     * @param clazz The class to lookup the {@link ResourceMapping}
+     * @param id    The id to unmarshall
+     * @return An array of all the ids
+     */
     Object[] unmarshallIds(Class clazz, Object id);
 
-    Object[] unmarshallIds(ClassMapping classMapping, Object id);
-
-    Resource marshall(String alias, Object root);
-
-    Resource marshall(Object root);
+    /**
+     * Unmarshalls the given id object into an array of all the id values. The results depends
+     * on the type of the mappings (raw resource/class).
+     * <p/>
+     * The unmarshalling is performed based on {@link ResourceMapping} provided.
+     *
+     * @param resourceMapping The resource to perform the unmarshalling based on
+     * @param id              The id to unmarshall
+     * @return An array of all the ids
+     */
+    Object[] unmarshallIds(ResourceMapping resourceMapping, Object id);
 
 }
