@@ -9,6 +9,15 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.xsem.XmlPropertyMapping;
 
 /**
+ * Responsible for converting {@link XmlObject} based on {@link org.compass.core.mapping.xsem.XmlIdMapping}.
+ * Uses the {@link org.compass.core.mapping.xsem.XmlIdMapping} value converter to actually convert the given
+ * value.
+ * <p/>
+ * The converter executes the given xpath expression associated with {@link org.compass.core.mapping.xsem.XmlIdMapping}
+ * and uses the FIRST one as the xml object to convert using the value converter.
+ * <p/>
+ * Also note, that un-marshalling is not supported.
+ *
  * @author kimchy
  */
 public class XmlIdMappingConverter implements Converter {
@@ -33,7 +42,7 @@ public class XmlIdMappingConverter implements Converter {
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        throw new ConversionException("should not be called");
+        throw new ConversionException("Not supported operation");
     }
-    
+
 }

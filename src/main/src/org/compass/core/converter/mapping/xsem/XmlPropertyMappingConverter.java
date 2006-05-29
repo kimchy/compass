@@ -25,6 +25,15 @@ import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.xml.XmlObject;
 
 /**
+ * Responsible for converting {@link XmlObject} based on {@link XmlPropertyMapping}.
+ * Uses the {@link XmlPropertyMapping} value converter to actually convert the given
+ * value.
+ * <p/>
+ * The converter executes the given xpath expression associated with {@link XmlPropertyMapping}
+ * and for each xml object will use the value converter to marshall it.
+ * <p/>
+ * Note, that un-marshalling is not supported.
+ *
  * @author kimchy
  */
 public class XmlPropertyMappingConverter implements Converter {
@@ -49,6 +58,6 @@ public class XmlPropertyMappingConverter implements Converter {
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        throw new ConversionException("should not be called");
+        throw new ConversionException("Not supported");
     }
 }

@@ -22,10 +22,24 @@ import org.compass.core.mapping.xsem.XPathEnabledMapping;
 import org.compass.core.converter.ConversionException;
 
 /**
+ * A set of utilities for xml conversion.
+ *
  * @author kimchy
  */
 public abstract class XmlConverterUtils {
 
+    /**
+     * Executes the given xpath expression (using {@link XPathEnabledMapping} and returns
+     * a list of xml objects.
+     * <p/>
+     * Handles compilation of xpath expression if possible, and storing the compiled xpath
+     * expressions in the {@link XPathEnabledMapping}.
+     *
+     * @param xmlObject    The xml object to execute the xpath expression against.
+     * @param xpathMapping The xpath mapping definiton
+     * @return The list of xml objects matching the xpath expression
+     * @throws ConversionException
+     */
     public static XmlObject[] select(XmlObject xmlObject, XPathEnabledMapping xpathMapping) throws ConversionException {
         if (xpathMapping.getXPathExpression() != null) {
             try {

@@ -8,6 +8,8 @@ import org.compass.core.xml.XmlXPathExpression;
 import org.w3c.dom.NodeList;
 
 /**
+ * A java 5 implementation of {@link XmlXPathExpression} wrapping a {@link XPathExpression}.
+ *
  * @author kimchy
  */
 public class XPathXmlXPathExpression implements XmlXPathExpression {

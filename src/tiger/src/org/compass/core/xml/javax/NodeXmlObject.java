@@ -19,23 +19,32 @@ package org.compass.core.xml.javax;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.compass.core.util.DomUtils;
 import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.XmlXPathExpression;
-import org.compass.core.util.DomUtils;
-import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
+ * A java 5 implementation of {@link XmlObject} wrapping a {@link Node}.
+ *
  * @author kimchy
  */
 public class NodeXmlObject implements XmlObject {
 
     private Node node;
 
+    /**
+     * Constructs a new xml object using the given {@link Node}.
+     */
     public NodeXmlObject(Node node) {
         this.node = node;
     }
 
+    /**
+     * Returns the node name, if the {@link org.w3c.dom.Node#getLocalName()} is not <code>null</code>
+     * will return it, otherwise will return {@link org.w3c.dom.Node#getNodeName()}.
+     */
     public String getName() {
         if (node.getLocalName() != null) {
             return node.getLocalName();
@@ -43,6 +52,10 @@ public class NodeXmlObject implements XmlObject {
         return node.getNodeName();
     }
 
+    /**
+     * Returns the node value, using {@link org.w3c.dom.Node#getNodeValue()} with the
+     * exception of element, which has special handling using {@link DomUtils#getTextValue(org.w3c.dom.Element)}.
+     */
     public String getValue() {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             return DomUtils.getTextValue((Element) node);
@@ -50,19 +63,31 @@ public class NodeXmlObject implements XmlObject {
         return node.getNodeValue();
     }
 
+    /**
+     * Not supported. Not really needed since xpath expression copilation is available.
+     */
     public XmlObject[] selectPath(String path) {
         throw new IllegalStateException("This should not be called since tiger support compilation of xpath expressions");
     }
 
+    /**
+     * Returns <code>true</code> since xpath expression compilation is supported.
+     */
     public boolean canCompileXpath() {
         return true;
     }
 
+    /**
+     * Compiles the given xpath expression.
+     */
     public XmlXPathExpression compile(String path) throws Exception {
         XPathExpression xPathExpression = XPathFactory.newInstance().newXPath().compile(path);
         return new XPathXmlXPathExpression(xPathExpression);
     }
 
+    /**
+     * Returns the {@link Node} this xml object wraps.
+     */
     public Node getNode() {
         return node;
     }

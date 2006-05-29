@@ -16,22 +16,38 @@
 
 package org.compass.core.spi;
 
-import java.util.NoSuchElementException;
-
 import org.compass.core.Resource;
 
 /**
+ * A multiple resource implementation. Exposes {@link Resource} operations as well, which
+ * are performed against the current {@link Resource}.
+ *
  * @author kimchy
  */
 public interface MultiResource extends Resource {
 
+    /**
+     * Returns the number of {@link Resource}s.
+     */
     int size();
 
+    /**
+     * Adds another {@link Resource}, and moves the current resource to the newly created one.
+     */
     void addResource();
 
+    /**
+     * Returns the curren {@link Resource}.
+     */
     Resource currentResource();
 
+    /**
+     * Returns the {@link Resource} at the given postion.
+     */
     Resource resource(int i);
 
+    /**
+     * Clears all the saves resources.
+     */
     void clear();
 }

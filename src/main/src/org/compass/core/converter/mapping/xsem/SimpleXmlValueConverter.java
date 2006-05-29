@@ -28,6 +28,10 @@ import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.xml.XmlObject;
 
 /**
+ * A simple converter which uses the String value of {@link org.compass.core.xml.XmlObject#getValue()}.
+ * It is the deafult converter associated with the value converter of {@link XmlPropertyMapping} if none
+ * is specified. It can also be used as a base class for more specialized converters.
+ *
  * @author kimchy
  */
 public class SimpleXmlValueConverter implements Converter {
@@ -109,7 +113,10 @@ public class SimpleXmlValueConverter implements Converter {
         return xmlObject.getValue();
     }
 
+    /**
+     * Not supported operation.
+     */
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        return new ConversionException("Should not be called");
+        return new ConversionException("Not supported");
     }
 }

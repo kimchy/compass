@@ -9,6 +9,8 @@ import org.compass.core.xml.AliasedXmlObject;
 import org.w3c.dom.Node;
 
 /**
+ * A java 5 implementation of {@link AliasedXmlObject} wrapping a {@link Node}.
+ *
  * @author kimchy
  */
 public class NodeAliasedXmlObject extends NodeXmlObject implements AliasedXmlObject {

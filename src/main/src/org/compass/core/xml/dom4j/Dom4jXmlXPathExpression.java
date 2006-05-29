@@ -24,6 +24,8 @@ import org.dom4j.Node;
 import org.dom4j.XPath;
 
 /**
+ * A dom4j (http://www.dom4j.org) implementation of {@link XmlXPathExpression}.
+ *
  * @author kimchy
  */
 public class Dom4jXmlXPathExpression implements XmlXPathExpression {
@@ -35,7 +37,7 @@ public class Dom4jXmlXPathExpression implements XmlXPathExpression {
     }
 
     public XmlObject[] select(XmlObject xmlObject) {
-        List nodes = xpath.selectNodes( ((Dom4jXmlObject) xmlObject).getNode() );
+        List nodes = xpath.selectNodes(((Dom4jXmlObject) xmlObject).getNode());
         XmlObject[] xmlObjects = new XmlObject[nodes.size()];
         for (int i = 0; i < xmlObjects.length; i++) {
             xmlObjects[i] = new Dom4jXmlObject((Node) nodes.get(i));

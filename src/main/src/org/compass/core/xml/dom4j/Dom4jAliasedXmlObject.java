@@ -4,6 +4,8 @@ import org.compass.core.xml.AliasedXmlObject;
 import org.dom4j.Node;
 
 /**
+ * A dom4j (http://www.dom4j.org) implementation of {@link AliasedXmlObject}.
+ * 
  * @author kimchy
  */
 public class Dom4jAliasedXmlObject extends Dom4jXmlObject implements AliasedXmlObject {

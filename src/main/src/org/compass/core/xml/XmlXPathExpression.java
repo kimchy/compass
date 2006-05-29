@@ -17,9 +17,18 @@
 package org.compass.core.xml;
 
 /**
+ * A compiled representation of an xpath expression.
+ *
  * @author kimchy
  */
 public interface XmlXPathExpression {
 
+    /**
+     * Executes the given compiled xpath expression against the given xml object.
+     *
+     * @param xmlObject The xml object to execute the compiled xpath expression against
+     * @return A list of xml objects matching the given compiled xpath expression
+     * @throws Exception
+     */
     XmlObject[] select(XmlObject xmlObject) throws Exception;
 }

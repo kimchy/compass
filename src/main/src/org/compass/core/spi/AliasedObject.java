@@ -17,9 +17,14 @@
 package org.compass.core.spi;
 
 /**
+ * An object that has an alias association.
+ *
  * @author kimchy
  */
 public interface AliasedObject {
 
+    /**
+     * Returns the alias name that is associated with the Object.
+     */
     String getAlias();
 }

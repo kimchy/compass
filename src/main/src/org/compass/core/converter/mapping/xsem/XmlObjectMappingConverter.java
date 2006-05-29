@@ -33,6 +33,13 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 
 /**
+ * Responsible for converting {@link XmlObject} based on {@link XmlObjectMapping}.
+ * <p/>
+ * Note, that marshalls might create several resources, if the {@link XmlObjectMapping} has
+ * an xpath expression associated with it.
+ * <p/>
+ * Also note, that unmarshall is not supported for now.
+ *
  * @author kimchy
  */
 public class XmlObjectMappingConverter implements ResourceMappingConverter {
@@ -138,6 +145,6 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
     }
 
     public Object[] unmarshallIds(Object id, ResourceMapping resourceMapping, MarshallingContext context) throws ConversionException {
-        throw new ConversionException("should not be called");
+        throw new ConversionException("Not supported");
     }
 }
