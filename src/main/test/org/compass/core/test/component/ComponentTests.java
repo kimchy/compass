@@ -42,6 +42,8 @@ public class ComponentTests extends AbstractTestCase {
 
         CompassMapping mapping = session.getMapping();
         ClassMapping firstMapping = (ClassMapping) mapping.getRootMappingByClass(CFirst.class);
+        String[] propertyNames = firstMapping.getResourcePropertyNames();
+        assertEquals(2, propertyNames.length);
         ClassIdPropertyMapping[] idMappings = firstMapping.getClassPropertyIdMappings();
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();

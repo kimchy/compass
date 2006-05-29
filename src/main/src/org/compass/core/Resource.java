@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.io.Serializable;
 
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.spi.AliasedObject;
 
 /**
  * A Resource holds a list of meta data properties. The Resource is the basic
@@ -28,7 +29,7 @@ import org.compass.core.engine.SearchEngineException;
  * 
  * @author kimchy
  */
-public interface Resource extends Serializable {
+public interface Resource extends AliasedObject, Serializable {
 
     /**
      * Returns the mapping alias of the associated Resource

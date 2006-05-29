@@ -57,8 +57,9 @@ public class LuceneResource implements AliasedObject, Resource, Map {
 
     private transient ResourceMapping resourceMapping;
 
-    public LuceneResource(LuceneSearchEngine searchEngine) {
+    public LuceneResource(String alias, LuceneSearchEngine searchEngine) {
         this(new Document(), -1, searchEngine);
+        setAlias(alias);
     }
 
     public LuceneResource(Document document, int docNum, LuceneSearchEngine searchEngine) {

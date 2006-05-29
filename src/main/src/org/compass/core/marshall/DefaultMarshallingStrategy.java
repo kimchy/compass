@@ -57,6 +57,13 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
         this.session = session;
     }
 
+    public Resource marshallIds(Object id) {
+        if (id instanceof AliasedObject) {
+            return marshallIds(((AliasedObject) id).getAlias(), id);
+        }
+        return marshallIds(id.getClass(), id);
+    }
+
     public Resource marshallIds(String alias, Object id) {
         ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
         if (resourceMapping == null) {

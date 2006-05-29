@@ -24,6 +24,7 @@ import org.apache.lucene.document.Field;
 import org.compass.core.CompassTermInfoVector;
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.spi.MultiResource;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngine;
@@ -37,6 +38,7 @@ import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
+import org.compass.core.lucene.LuceneMultiResource;
 import org.compass.core.lucene.engine.transaction.BatchInsertTransaction;
 import org.compass.core.lucene.engine.transaction.LuceneSearchEngineTransaction;
 import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
@@ -92,9 +94,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public Resource createResource(String alias) throws SearchEngineException {
-        LuceneResource resource = new LuceneResource(this);
-        resource.setAlias(alias);
-        return resource;
+        return new LuceneMultiResource(alias, this);
     }
 
     public Property createProperty(String value, ResourcePropertyMapping mapping) throws SearchEngineException {
@@ -277,8 +277,16 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void delete(Resource resource) throws SearchEngineException {
-        delete(ResourceHelper.toIds(resource.getAlias(), resource, searchEngineFactory.getMapping()), resource
-                .getAlias());
+        if (resource instanceof MultiResource) {
+            MultiResource multiResource = (MultiResource) resource;
+            for (int i = 0; i < multiResource.size(); i++) {
+                delete(ResourceHelper.toIds(resource.getAlias(), multiResource.resource(i), searchEngineFactory.getMapping()),
+                        resource.getAlias());
+            }
+        } else {
+            delete(ResourceHelper.toIds(resource.getAlias(), resource, searchEngineFactory.getMapping()),
+                    resource.getAlias());
+        }
     }
 
     public void delete(final Property[] ids, String alias) throws SearchEngineException {
@@ -299,17 +307,27 @@ public class LuceneSearchEngine implements SearchEngine {
         if (resourceMapping == null) {
             throw new SearchEngineException("Failed to find mapping for alias [" + alias + "]");
         }
-        LuceneUtils.addAllPropertyIfNeeded(resource, resourceMapping, this);
-        transaction.create(resource);
-
-        if (log.isDebugEnabled()) {
-            log.debug("RESOURCE CREATE " + resource);
+        if (resource instanceof MultiResource) {
+            MultiResource multiResource = (MultiResource) resource;
+            for (int i = 0; i < multiResource.size(); i++) {
+                Resource resource1 = multiResource.resource(i);
+                LuceneUtils.addAllPropertyIfNeeded(resource1, resourceMapping, this);
+                transaction.create(resource1);
+                if (log.isDebugEnabled()) {
+                    log.debug("RESOURCE CREATE " + resource1);
+                }
+            }
+        } else {
+            LuceneUtils.addAllPropertyIfNeeded(resource, resourceMapping, this);
+            transaction.create(resource);
+            if (log.isDebugEnabled()) {
+                log.debug("RESOURCE CREATE " + resource);
+            }
         }
     }
 
     public void save(Resource resource) throws SearchEngineException {
-        String alias = resource.getAlias();
-        delete(ResourceHelper.toIds(alias, resource, searchEngineFactory.getMapping()), alias);
+        delete(resource);
         create(resource);
     }
 

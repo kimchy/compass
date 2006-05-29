@@ -23,6 +23,7 @@ import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.Resource;
 import org.compass.core.Property;
+import org.compass.core.spi.MultiResource;
 import org.compass.core.xml.XmlObject;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.marshall.MarshallingContext;
@@ -43,26 +44,32 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
         }
         XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) mapping;
         XmlObject rootXmlObject = (XmlObject) root;
+
         if (xmlObjectMapping.getXPath() != null) {
             XmlObject[] xmlObjects = XmlConverterUtils.select(rootXmlObject, xmlObjectMapping);
-            if (xmlObjects.length == 0) {
+            if (xmlObjects == null || xmlObjects.length == 0) {
                 throw new ConversionException("xpath [" + xmlObjectMapping.getXPath() + "] returned no value for alias [" +
                         xmlObjectMapping.getAlias() + "]");
             }
-            if (xmlObjects.length > 1) {
-                throw new ConversionException("xpath [" + xmlObjectMapping.getXPath() + "] returned multiple hits for alias [" +
-                        xmlObjectMapping.getAlias() + "], it" +
-                        " is not allowed since it is marshalled into one resource, you will have to explicitly iterate" +
-                        " throug the xpath expression and save each XmlObject");
+            boolean store = false;
+            MultiResource multiResource = (MultiResource) resource;
+            multiResource.clear();
+            for (int i = 0; i < xmlObjects.length; i++) {
+                multiResource.addResource();
+                for (Iterator it = xmlObjectMapping.mappingsIt(); it.hasNext();) {
+                    Mapping m = (Mapping) it.next();
+                    store |= m.getConverter().marshall(multiResource.currentResource(), xmlObjects[i], m, context);
+                }
             }
-            rootXmlObject = xmlObjects[0];
+            return store;
+        } else {
+            boolean store = false;
+            for (Iterator it = xmlObjectMapping.mappingsIt(); it.hasNext();) {
+                Mapping m = (Mapping) it.next();
+                store |= m.getConverter().marshall(resource, rootXmlObject, m, context);
+            }
+            return store;
         }
-        boolean store = false;
-        for (Iterator it = xmlObjectMapping.mappingsIt(); it.hasNext();) {
-            Mapping m = (Mapping) it.next();
-            store |= m.getConverter().marshall(resource, rootXmlObject, m, context);
-        }
-        return store;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
@@ -72,10 +79,28 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
     public boolean marshallIds(Resource idResource, Object id, ResourceMapping resourceMapping, MarshallingContext context) throws ConversionException {
         SearchEngine searchEngine = context.getSearchEngine();
 
+        XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) resourceMapping;
         ResourcePropertyMapping[] ids = resourceMapping.getIdMappings();
         if (id instanceof XmlObject) {
-            for (int i = 0; i < ids.length; i++) {
-                ids[i].getConverter().marshall(idResource, id, ids[i], context);
+            XmlObject rootXmlObject = (XmlObject) id;
+            if (xmlObjectMapping.getXPath() != null) {
+                XmlObject[] xmlObjects = XmlConverterUtils.select(rootXmlObject, xmlObjectMapping);
+                if (xmlObjects == null || xmlObjects.length == 0) {
+                    throw new ConversionException("xpath [" + xmlObjectMapping.getXPath() + "] returned no value for alias [" +
+                            xmlObjectMapping.getAlias() + "]");
+                }
+                MultiResource multiResource = (MultiResource) idResource;
+                multiResource.clear();
+                for (int i = 0; i < xmlObjects.length; i++) {
+                    multiResource.addResource();
+                    for (int j = 0; j < ids.length; j++) {
+                        ids[j].getConverter().marshall(multiResource.currentResource(), xmlObjects[i], ids[j], context);
+                    }
+                }
+            } else {
+                for (int i = 0; i < ids.length; i++) {
+                    ids[i].getConverter().marshall(idResource, rootXmlObject, ids[i], context);
+                }
             }
         } else if (id instanceof Resource) {
             for (int i = 0; i < ids.length; i++) {

@@ -51,6 +51,7 @@ import org.compass.core.transaction.TransactionFactory;
  * @author kimchy
  * 
  */
+// TODO we need to support multiple resource with ResourceIdKey and first cache
 public class DefaultCompassSession implements InternalCompassSession {
 
     private InternalCompass compass;
@@ -159,7 +160,7 @@ public class DefaultCompassSession implements InternalCompassSession {
     }
 
     public void delete(Object obj) throws CompassException {
-        Resource idResource = marshallingStrategy.marshallIds(obj.getClass(), obj);
+        Resource idResource = marshallingStrategy.marshallIds(obj);
         ResourceIdKey key = new ResourceIdKey(mapping, idResource);
         firstLevelCache.evict(key);
         delete(idResource);

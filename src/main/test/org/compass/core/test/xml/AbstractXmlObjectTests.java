@@ -91,4 +91,38 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testData3() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        AliasedXmlObject xmlObject = buildAliasedXmlObject("data3", readData("data3"));
+        session.save(xmlObject);
+
+        Resource resource = session.loadResource("data3", "1");
+        assertEquals("1", resource.get("$/data3/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        resource = session.getResource("data3", "2");
+        assertEquals("2", resource.get("$/data3/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        CompassHits hits = session.find("data11");
+        assertEquals(1, hits.length());
+        hits = session.find("data11attr");
+        assertEquals(1, hits.length());
+        hits = session.find("data21attr");
+        assertEquals(1, hits.length());
+
+        session.delete(xmlObject);
+        hits = session.find("data11attr");
+        assertEquals(0, hits.length());
+        hits = session.find("data21attr");
+        assertEquals(0, hits.length());
+
+        tr.commit();
+        session.close();
+    }
 }
