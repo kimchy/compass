@@ -6,9 +6,47 @@
 -->
 
 <!ELEMENT compass-core-mapping (
-    (contract|class|resource|resource-contract)* 
+    (contract|class|resource|resource-contract|xml-object)*
 )>
     <!ATTLIST compass-core-mapping package CDATA #IMPLIED>
+
+<!ELEMENT xml-object (
+    xml-id*,
+    (xml-property)*
+)>
+    <!ATTLIST xml-object alias CDATA #REQUIRED>
+    <!ATTLIST xml-object sub-index CDATA #IMPLIED>
+    <!ATTLIST xml-object xpath CDATA #IMPLIED>
+    <!ATTLIST xml-object extends CDATA #IMPLIED>
+    <!ATTLIST xml-object analyzer CDATA #IMPLIED>
+    <!ATTLIST xml-object all (true|false) "true">
+    <!ATTLIST xml-object all-metadata CDATA #IMPLIED>
+    <!ATTLIST xml-object all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
+    <!ATTLIST xml-object all-analyzer CDATA #IMPLIED>
+
+<!ELEMENT xml-id EMPTY
+>
+    <!ATTLIST xml-id name CDATA #REQUIRED>
+    <!ATTLIST xml-id xpath CDATA #REQUIRED>
+    <!ATTLIST xml-id analyzer CDATA #IMPLIED>
+    <!ATTLIST xml-id converter CDATA #IMPLIED>
+    <!ATTLIST xml-id value-converter CDATA #IMPLIED>
+
+<!ELEMENT xml-property EMPTY
+>
+    <!ATTLIST xml-property xpath CDATA #REQUIRED>
+    <!ATTLIST xml-property name CDATA #IMPLIED>
+    <!ATTLIST xml-property store (no|yes|compress) "yes">
+    <!ATTLIST xml-property index (no|tokenized|un_tokenized) "tokenized">
+    <!ATTLIST xml-property term-vector (no|yes|positions|offsets|positions_offsets) "no">
+    <!ATTLIST xml-property reverse (no|reader|string) "no">
+    <!ATTLIST xml-property analyzer CDATA #IMPLIED>
+    <!ATTLIST xml-property override (true|false) "true">
+    <!ATTLIST xml-property exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST xml-property converter CDATA #IMPLIED>
+    <!ATTLIST xml-property value-converter CDATA #IMPLIED>
+    <!ATTLIST xml-property boost CDATA #IMPLIED>
+
 
 <!ELEMENT resource-contract (
     resource-id*,

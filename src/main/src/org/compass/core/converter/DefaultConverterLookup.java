@@ -22,7 +22,12 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,11 +37,40 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.basic.*;
-import org.compass.core.converter.extended.*;
-import org.compass.core.converter.mapping.osem.*;
+import org.compass.core.converter.extended.FileConverter;
+import org.compass.core.converter.extended.InputStreamConverter;
+import org.compass.core.converter.extended.LocaleConverter;
+import org.compass.core.converter.extended.ObjectByteArrayConverter;
+import org.compass.core.converter.extended.PrimitiveByteArrayConverter;
+import org.compass.core.converter.extended.ReaderConverter;
+import org.compass.core.converter.extended.SqlDateConverter;
+import org.compass.core.converter.extended.SqlTimeConverter;
+import org.compass.core.converter.extended.SqlTimestampConverter;
+import org.compass.core.converter.mapping.osem.ArrayMappingConverter;
+import org.compass.core.converter.mapping.osem.ClassMappingConverter;
+import org.compass.core.converter.mapping.osem.ClassPropertyMappingConverter;
+import org.compass.core.converter.mapping.osem.CollectionMappingConverter;
+import org.compass.core.converter.mapping.osem.ComponentMappingConverter;
+import org.compass.core.converter.mapping.osem.ConstantMappingConverter;
+import org.compass.core.converter.mapping.osem.ParentMappingConverter;
+import org.compass.core.converter.mapping.osem.ReferenceMappingConverter;
 import org.compass.core.converter.mapping.rsem.RawResourceMappingConverter;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.converter.mapping.xsem.XmlIdMappingConverter;
+import org.compass.core.converter.mapping.xsem.XmlObjectMappingConverter;
+import org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter;
+import org.compass.core.mapping.osem.ArrayMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
+import org.compass.core.mapping.osem.CollectionMapping;
+import org.compass.core.mapping.osem.ComponentMapping;
+import org.compass.core.mapping.osem.ConstantMetaDataMapping;
+import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
+import org.compass.core.mapping.xsem.XmlIdMapping;
+import org.compass.core.mapping.xsem.XmlObjectMapping;
+import org.compass.core.mapping.xsem.XmlPropertyMapping;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -159,6 +193,12 @@ public class DefaultConverterLookup implements ConverterLookup {
                 ConstantMetaDataMapping.class, new ConstantMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.PARENT,
                 ParentMapping.class, new ParentMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_OBJECT_MAPPING,
+                XmlObjectMapping.class, new XmlObjectMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_PROPERTY_MAPPING,
+                XmlPropertyMapping.class, new XmlPropertyMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_ID_MAPPING,
+                XmlIdMapping.class, new XmlIdMappingConverter());
 
         // now configure all the none default converters
         for (Iterator it = converterGroups.keySet().iterator(); it.hasNext();) {

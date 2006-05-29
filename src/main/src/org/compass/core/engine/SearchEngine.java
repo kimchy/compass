@@ -75,6 +75,12 @@ public interface SearchEngine {
     /**
      * Creates a Property that is used with the actual Search Engine
      */
+    Property createProperty(String name, String value, ResourcePropertyMapping mapping)
+            throws SearchEngineException;
+
+    /**
+     * Creates a Property that is used with the actual Search Engine
+     */
     Property createProperty(String name, String value, Property.Store store, Property.Index index)
             throws SearchEngineException;
 

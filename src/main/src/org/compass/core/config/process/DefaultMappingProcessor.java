@@ -23,10 +23,14 @@ import java.util.List;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.ConverterLookup;
+import org.compass.core.converter.mapping.xsem.SimpleXmlValueConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.xsem.XmlObjectMapping;
+import org.compass.core.mapping.xsem.XmlPropertyMapping;
+import org.compass.core.mapping.xsem.XmlIdMapping;
 import org.compass.core.mapping.osem.*;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.marshall.MarshallingEnvironment;
@@ -70,10 +74,42 @@ public class DefaultMappingProcessor implements MappingProcessor {
                 secondPass((ClassMapping) m, compassMapping);
             } else if (m instanceof RawResourceMapping) {
                 secondPass((RawResourceMapping) m);
+            } else if (m instanceof XmlObjectMapping) {
+                secondPass((XmlObjectMapping) m, compassMapping);
             }
         }
 
         return compassMapping;
+    }
+
+    private void secondPass(XmlObjectMapping xmlObjectMapping, CompassMapping fatherMapping) {
+        xmlObjectMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), xmlObjectMapping.getAlias()));
+        secondPassConverter(xmlObjectMapping, true);
+        for (Iterator it = xmlObjectMapping.mappingsIt(); it.hasNext();) {
+            Mapping mapping = (Mapping) it.next();
+            secondPassConverter(mapping, true);
+            if (mapping instanceof XmlIdMapping) {
+                XmlIdMapping xmlIdMapping = (XmlIdMapping) mapping;
+                // in case of xml id mapping, we always use it as internal id
+                // and build its own internal path (because other xml properties names might be dynamic)
+                xmlIdMapping.setInternal(true);
+                xmlIdMapping.setPath(namingStrategy.buildPath(xmlObjectMapping.getPath(), xmlIdMapping.getName()));
+            }
+            if (mapping instanceof XmlPropertyMapping) {
+                XmlPropertyMapping xmlPropertyMapping = (XmlPropertyMapping) mapping;
+                if (xmlPropertyMapping.getValueConverterName() != null) {
+                    String converterName = xmlPropertyMapping.getValueConverterName();
+                    xmlPropertyMapping.setValueConverter(converterLookup.lookupConverter(converterName));
+                    if (xmlPropertyMapping.getValueConverter() == null) {
+                        throw new ConfigurationException("Failed to find converter [" + converterName + "] for mapping " +
+                                "[" + xmlPropertyMapping.getName() + "]");
+                    }
+                } else {
+                    // this should probably be handled in the actual converteres
+                    xmlPropertyMapping.setValueConverter(new SimpleXmlValueConverter());
+                }
+            }
+        }
     }
 
     private void secondPass(RawResourceMapping resourceMapping) {

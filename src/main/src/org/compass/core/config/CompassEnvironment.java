@@ -209,6 +209,12 @@ public class CompassEnvironment {
             public abstract class Mapping {
 
                 public static final String RAW_RESOURCE_MAPPING = "rawResourceMapping";
+
+                public static final String XML_OBJECT_MAPPING = "xmlObjectMapping";
+
+                public static final String XML_PROPERTY_MAPPING = "xmlPropertyMapping";
+
+                public static final String XML_ID_MAPPING = "xmlIdMapping";
                 
                 public static final String CLASS = "classMapping";
 

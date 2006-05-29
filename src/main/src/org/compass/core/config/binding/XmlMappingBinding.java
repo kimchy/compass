@@ -25,6 +25,9 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
 import org.compass.core.mapping.*;
+import org.compass.core.mapping.xsem.XmlObjectMapping;
+import org.compass.core.mapping.xsem.XmlIdMapping;
+import org.compass.core.mapping.xsem.XmlPropertyMapping;
 import org.compass.core.mapping.osem.*;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
@@ -108,8 +111,106 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             bindResource(resourceArr[i], rawResourceMapping);
             mapping.addMapping(rawResourceMapping);
         }
+        ConfigurationHelper[] xmlObjectArr = doc.getChildren("xml-object");
+        for (int i = 0; i < xmlObjectArr.length; i++) {
+            XmlObjectMapping xmlObjectMapping = new XmlObjectMapping();
+            bindXmlObject(xmlObjectArr[i], xmlObjectMapping);
+            mapping.addMapping(xmlObjectMapping);
+        }
 
         return true;
+    }
+
+    private void bindXmlObject(ConfigurationHelper xmlObjectConf, XmlObjectMapping xmlObjectMapping)
+            throws ConfigurationException {
+        String aliasValue = xmlObjectConf.getAttribute("alias");
+        Alias alias = valueLookup.lookupAlias(aliasValue);
+        if (alias == null) {
+            xmlObjectMapping.setAlias(aliasValue);
+        } else {
+            xmlObjectMapping.setAlias(alias.getName());
+        }
+
+        String subIndex = xmlObjectConf.getAttribute("sub-index", xmlObjectMapping.getAlias());
+        xmlObjectMapping.setSubIndex(subIndex);
+
+        bindExtends(xmlObjectConf, xmlObjectMapping);
+
+        String analyzer = xmlObjectConf.getAttribute("analyzer", null);
+        xmlObjectMapping.setAnalyzer(analyzer);
+
+        String sAllSupported = xmlObjectConf.getAttribute("all", "true");
+        boolean allSupported = sAllSupported.equalsIgnoreCase("true");
+        xmlObjectMapping.setAllSupported(allSupported);
+
+        String termVectorType = xmlObjectConf.getAttribute("all-term-vector", null);
+        if (termVectorType == null) {
+            xmlObjectMapping.setAllTermVector(null);
+        } else {
+            xmlObjectMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
+        }
+
+        String allAnalyzer = xmlObjectConf.getAttribute("all-analyzer", null);
+        xmlObjectMapping.setAllAnalyzer(allAnalyzer);
+
+        if (xmlObjectMapping.isAllSupported()) {
+            String allProperty = xmlObjectConf.getAttribute("all-metadata", null);
+            xmlObjectMapping.setAllProperty(allProperty);
+        }
+        xmlObjectMapping.setRoot(true);
+        xmlObjectMapping.setBoost(getBoost(xmlObjectConf));
+
+        xmlObjectMapping.setXPath(xmlObjectConf.getAttribute("xpath", null));
+
+        bindConverter(xmlObjectConf, xmlObjectMapping);
+
+        bindXmlObjectChildren(xmlObjectConf, xmlObjectMapping);
+    }
+
+    private void bindXmlObjectChildren(ConfigurationHelper resourceConf, AliasMapping resourceMapping) {
+        ConfigurationHelper[] ids = resourceConf.getChildren("xml-id");
+        for (int i = 0; i < ids.length; i++) {
+            XmlIdMapping xmlIdMapping = new XmlIdMapping();
+            bindXmlProperty(ids[i], xmlIdMapping);
+            resourceMapping.addMapping(xmlIdMapping);
+        }
+
+        ConfigurationHelper[] properties = resourceConf.getChildren("xml-property");
+        for (int i = 0; i < properties.length; i++) {
+            XmlPropertyMapping xmlPropertyMapping = new XmlPropertyMapping();
+            bindXmlProperty(properties[i], xmlPropertyMapping);
+            resourceMapping.addMapping(xmlPropertyMapping);
+        }
+    }
+
+    private void bindXmlProperty(ConfigurationHelper xmlPropConf, XmlPropertyMapping xmlPropertyMapping) {
+        String name = xmlPropConf.getAttribute("name", null);
+        if (name != null) {
+            name = valueLookup.lookupMetaDataName(name);
+        }
+        xmlPropertyMapping.setBoost(getBoost(xmlPropConf));
+        xmlPropertyMapping.setName(name);
+        xmlPropertyMapping.setPath(name);
+        bindConverter(xmlPropConf, xmlPropertyMapping);
+        String storeType = xmlPropConf.getAttribute("store", "yes");
+        xmlPropertyMapping.setStore(Property.Store.fromString(storeType));
+        String indexType = xmlPropConf.getAttribute("index", "tokenized");
+        xmlPropertyMapping.setIndex(Property.Index.fromString(indexType));
+        String termVectorType = xmlPropConf.getAttribute("term-vector", "no");
+        xmlPropertyMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        String reverseType = xmlPropConf.getAttribute("reverse", "no");
+        xmlPropertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
+        xmlPropertyMapping.setInternal(false);
+        xmlPropertyMapping.setAnalyzer(xmlPropConf.getAttribute("analyzer", null));
+        boolean excludeFromAll = xmlPropConf.getAttributeAsBoolean("exclude-from-all", false);
+        xmlPropertyMapping.setExcludeFromAll(excludeFromAll);
+        boolean override = xmlPropConf.getAttributeAsBoolean("override", true);
+        xmlPropertyMapping.setOverrideByName(override);
+
+        xmlPropertyMapping.setXPath(xmlPropConf.getAttribute("xpath"));
+
+        bindConverter(xmlPropConf, xmlPropertyMapping);
+        xmlPropertyMapping.setValueConverterName(xmlPropConf.getAttribute("value-converter", null));
     }
 
     private void bindResourceContract(ConfigurationHelper contractConf, ContractMapping contractMapping)

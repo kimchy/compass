@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package org.compass.core.util.concurrent;
+package org.compass.core.xml;
 
-import org.compass.core.util.backport.java.util.concurrent.helpers.NanoTimer;
+import java.io.Serializable;
 
 /**
  * @author kimchy
  */
-public class SystemNanoTimer implements NanoTimer {
+public interface XmlObject extends Serializable {
 
-    public long nanoTime() {
-        return System.nanoTime();
-    }
+    String getName();
+
+    String getValue();
+
+    XmlObject[] selectPath(String path) throws Exception;
+
+    boolean canCompileXpath();
+
+    XmlXPathExpression compile(String path) throws Exception;
 }

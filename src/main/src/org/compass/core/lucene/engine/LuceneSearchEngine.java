@@ -98,7 +98,10 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public Property createProperty(String value, ResourcePropertyMapping mapping) throws SearchEngineException {
-        String name = mapping.getPath();
+        return createProperty(mapping.getPath(), value, mapping);
+    }
+
+    public Property createProperty(String name, String value, ResourcePropertyMapping mapping) throws SearchEngineException {
         Property property = null;
         if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.NO) {
             property = createProperty(name, value, mapping.getStore(), mapping.getIndex(), mapping.getTermVector());

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping>
+
+    <xml-object alias="data1">
+        <xml-id name="id" xpath="/xml-fragment/data/id/@value" />
+        <xml-property xpath="/xml-fragment/data/data1/@value" />
+        <xml-property name="eleText" xpath="/xml-fragment/data/data1" />
+    </xml-object>
+
+    <xml-object alias="data2" xpath="/xml-fragment/data[1]">
+        <xml-id name="id" xpath="id/@value" />
+        <xml-property xpath="data1/@value" />
+        <xml-property name="eleText" xpath="data1" />
+    </xml-object>
+
+</compass-core-mapping>
+    

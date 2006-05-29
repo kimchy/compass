@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package org.compass.core.util.concurrent;
-
-import org.compass.core.util.backport.java.util.concurrent.helpers.NanoTimer;
+package org.compass.core.xml;
 
 /**
  * @author kimchy
  */
-public class SystemNanoTimer implements NanoTimer {
+public interface XmlXPathExpression {
 
-    public long nanoTime() {
-        return System.nanoTime();
-    }
+    XmlObject[] select(XmlObject xmlObject) throws Exception;
 }

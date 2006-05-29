@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.compass.core.util.concurrent;
+package org.compass.core.mapping.xsem;
 
-import org.compass.core.util.backport.java.util.concurrent.helpers.NanoTimer;
+import org.compass.core.xml.XmlXPathExpression;
 
 /**
  * @author kimchy
  */
-public class SystemNanoTimer implements NanoTimer {
+public interface XPathEnabledMapping {
 
-    public long nanoTime() {
-        return System.nanoTime();
-    }
+    String getXPath();
+
+    XmlXPathExpression getXPathExpression();
+
+    void setXPathExpression(XmlXPathExpression xpathExpression);
 }

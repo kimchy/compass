@@ -1,0 +1,7 @@
+<xml-fragment>
+    <data>
+        <id value="1"/>
+        <data1 value="data11attr">data11</data1>
+        <data1 value="data12attr">data12</data1>
+    </data>
+</xml-fragment>

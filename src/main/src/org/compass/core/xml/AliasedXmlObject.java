@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.core.util.concurrent;
+package org.compass.core.xml;
 
-import org.compass.core.util.backport.java.util.concurrent.helpers.NanoTimer;
+import org.compass.core.spi.AliasedObject;
 
 /**
  * @author kimchy
  */
-public class SystemNanoTimer implements NanoTimer {
+public interface AliasedXmlObject extends XmlObject, AliasedObject {
 
-    public long nanoTime() {
-        return System.nanoTime();
-    }
+
 }
