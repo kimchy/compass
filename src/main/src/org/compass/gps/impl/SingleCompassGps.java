@@ -42,161 +42,166 @@ import org.compass.gps.CompassGpsException;
  * configured transaction isolation, but will use the
  * {@link #setIndexTransactionIsolation(CompassTransaction.TransactionIsolation)}
  * transaction isolation, which defaults to <code>batch_insert</code>.
- * 
+ *
  * @author kimchy
  */
 public class SingleCompassGps extends AbstractCompassGps {
 
-	private Compass compass;
+    private Compass compass;
 
-	private CompassTemplate compassTemplate;
+    private CompassTemplate compassTemplate;
 
-	private Compass indexCompass;
+    private Compass indexCompass;
 
-	private CompassTemplate indexCompassTemplate;
+    private CompassTemplate indexCompassTemplate;
 
-	private CompassTransaction.TransactionIsolation indexTransactionIsolation = CompassTransaction.TransactionIsolation.BATCH_INSERT;
+    private CompassTransaction.TransactionIsolation indexTransactionIsolation = CompassTransaction.TransactionIsolation.BATCH_INSERT;
 
-	private Properties indexSettings;
+    private Properties indexSettings;
 
-	private CompassSettings indexCompassSettings;
+    private CompassSettings indexCompassSettings;
 
-	public SingleCompassGps() {
+    public SingleCompassGps() {
 
-	}
+    }
 
-	public SingleCompassGps(Compass compass) {
-		this.compass = compass;
-	}
+    public SingleCompassGps(Compass compass) {
+        this.compass = compass;
+    }
 
-	protected void doStart() throws CompassGpsException {
-		if (compass == null) {
-			throw new IllegalArgumentException("Must set the compass property");
-		}
-		TransactionIsolation defaultIsolation = ((LuceneSearchEngineFactory) ((InternalCompass) compass)
-				.getSearchEngineFactory()).getLuceneSettings().getTransactionIsolation();
-		if (defaultIsolation == TransactionIsolation.BATCH_INSERT) {
-			throw new IllegalArgumentException(
-					"The compass instance is configured with transaction isolation of batch_insert"
-							+ ", there is no need since this CompassGps will execute the index operation with batch_index automatically, "
-							+ " and mirroring with the configured transaction isolation");
-		}
-		indexCompassSettings = new CompassSettings();
-		if (indexSettings == null) {
-			indexCompassSettings.setSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "gpsindex");
-		} else {
-			indexCompassSettings.addSettings(indexSettings);
-		}
-		this.compassTemplate = new CompassTemplate(compass);
-	}
+    protected void doStart() throws CompassGpsException {
+        if (compass == null) {
+            throw new IllegalArgumentException("Must set the compass property");
+        }
+        TransactionIsolation defaultIsolation = ((LuceneSearchEngineFactory) ((InternalCompass) compass)
+                .getSearchEngineFactory()).getLuceneSettings().getTransactionIsolation();
+        if (defaultIsolation == TransactionIsolation.BATCH_INSERT) {
+            throw new IllegalArgumentException(
+                    "The compass instance is configured with transaction isolation of batch_insert"
+                            + ", there is no need since this CompassGps will execute the index operation with batch_index automatically, "
+                            + " and mirroring with the configured transaction isolation");
+        }
+        indexCompassSettings = new CompassSettings();
+        if (indexSettings == null) {
+            indexCompassSettings.setSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "gpsindex");
+        } else {
+            indexCompassSettings.addSettings(indexSettings);
+        }
+        this.compassTemplate = new CompassTemplate(compass);
+    }
 
-	protected void doStop() throws CompassGpsException {
-	}
+    protected void doStop() throws CompassGpsException {
+    }
 
-	protected void doIndex() throws CompassGpsException {
-		boolean stoppedOptimizer = false;
+    protected void doIndex() throws CompassGpsException {
+        boolean stoppedOptimizer = false;
         boolean stoppedIndexManager = false;
         if (compass.getSearchEngineOptimizer().isRunning()) {
-			compass.getSearchEngineOptimizer().stop();
-			stoppedOptimizer = true;
-		}
+            compass.getSearchEngineOptimizer().stop();
+            stoppedOptimizer = true;
+        }
         if (compass.getSearchEngineIndexManager().isRunning()) {
             compass.getSearchEngineIndexManager().stop();
             stoppedIndexManager = true;
         }
         // create the temp compass index, and clean it
-		indexCompass = compass.clone(indexCompassSettings);
-		indexCompass.getSearchEngineIndexManager().deleteIndex();
-		indexCompass.getSearchEngineIndexManager().createIndex();
-		indexCompassTemplate = new CompassTemplate(indexCompass);
+        indexCompass = compass.clone(indexCompassSettings);
+        indexCompass.getSearchEngineIndexManager().deleteIndex();
+        indexCompass.getSearchEngineIndexManager().createIndex();
+        indexCompassTemplate = new CompassTemplate(indexCompass);
 
-		indexCompass.getSearchEngineIndexManager().clearCache();
-		compass.getSearchEngineIndexManager().replaceIndex(indexCompass.getSearchEngineIndexManager(),
-				new SearchEngineIndexManager.ReplaceIndexCallback() {
-					public void buildIndexIfNeeded() throws SearchEngineException {
-						for (Iterator it = devices.values().iterator(); it.hasNext();) {
-							CompassGpsDevice device = (CompassGpsDevice) it.next();
-							device.index();
-						}
-					}
-				});
+        indexCompass.getSearchEngineIndexManager().clearCache();
+        compass.getSearchEngineIndexManager().replaceIndex(indexCompass.getSearchEngineIndexManager(),
+                new SearchEngineIndexManager.ReplaceIndexCallback() {
+                    public void buildIndexIfNeeded() throws SearchEngineException {
+                        for (Iterator it = devices.values().iterator(); it.hasNext();) {
+                            CompassGpsDevice device = (CompassGpsDevice) it.next();
+                            device.index();
+                        }
+                    }
+                });
 
-		indexCompass.getSearchEngineIndexManager().deleteIndex();
-		indexCompass.close();
-		indexCompass = null;
-		indexCompassTemplate = null;
+        indexCompass.getSearchEngineIndexManager().clearCache();
+        try {
+            indexCompass.getSearchEngineIndexManager().deleteIndex();
+        } catch (CompassException e) {
+            log.debug("Failed to delete gps index after indexing, ignoring", e);
+        }
+        indexCompass.close();
+        indexCompass = null;
+        indexCompassTemplate = null;
 
-		if (stoppedOptimizer) {
-			compass.getSearchEngineOptimizer().start();
-		}
+        if (stoppedOptimizer) {
+            compass.getSearchEngineOptimizer().start();
+        }
         if (stoppedIndexManager) {
             compass.getSearchEngineIndexManager().start();
         }
     }
 
-	public void executeForIndex(CompassCallback callback) throws CompassException {
-		if (indexCompassTemplate == null) {
-			compassTemplate.execute(indexTransactionIsolation, callback);
-			return;
-		}
-		indexCompassTemplate.execute(indexTransactionIsolation, callback);
-	}
+    public void executeForIndex(CompassCallback callback) throws CompassException {
+        if (indexCompassTemplate == null) {
+            compassTemplate.execute(indexTransactionIsolation, callback);
+            return;
+        }
+        indexCompassTemplate.execute(indexTransactionIsolation, callback);
+    }
 
-	public void executeForMirror(CompassCallback callback) throws CompassException {
-		compassTemplate.execute(callback);
-	}
+    public void executeForMirror(CompassCallback callback) throws CompassException {
+        compassTemplate.execute(callback);
+    }
 
-	public boolean hasMappingForEntityForIndex(Class clazz) throws CompassException {
-		return hasMappingForEntity(clazz, getIndexCompass());
-	}
+    public boolean hasMappingForEntityForIndex(Class clazz) throws CompassException {
+        return hasMappingForEntity(clazz, getIndexCompass());
+    }
 
-	public boolean hasMappingForEntityForIndex(String name) throws CompassException {
-		return hasMappingForEntity(name, getIndexCompass());
-	}
+    public boolean hasMappingForEntityForIndex(String name) throws CompassException {
+        return hasMappingForEntity(name, getIndexCompass());
+    }
 
-	public boolean hasMappingForEntityForMirror(Class clazz) throws CompassException {
-		return hasMappingForEntity(clazz, compass);
-	}
+    public boolean hasMappingForEntityForMirror(Class clazz) throws CompassException {
+        return hasMappingForEntity(clazz, compass);
+    }
 
-	public boolean hasMappingForEntityForMirror(String name) throws CompassException {
-		return hasMappingForEntity(name, compass);
-	}
+    public boolean hasMappingForEntityForMirror(String name) throws CompassException {
+        return hasMappingForEntity(name, compass);
+    }
 
-	public Compass getIndexCompass() {
-		if (indexCompass == null) {
-			return compass;
-		}
-		return indexCompass;
-	}
+    public Compass getIndexCompass() {
+        if (indexCompass == null) {
+            return compass;
+        }
+        return indexCompass;
+    }
 
-	public Compass getMirrorCompass() {
-		return compass;
-	}
+    public Compass getMirrorCompass() {
+        return compass;
+    }
 
-	/**
-	 * Sets the compass instance that will be used with this Gps implementation.
-	 * It will be used directly for mirror operations, and will be cloned
-	 * (optionally adding the {@link #setIndexSettings(java.util.Properties)}
-	 * for index operations.
-	 */
-	public void setCompass(Compass compass) {
-		this.compass = compass;
-	}
+    /**
+     * Sets the compass instance that will be used with this Gps implementation.
+     * It will be used directly for mirror operations, and will be cloned
+     * (optionally adding the {@link #setIndexSettings(java.util.Properties)}
+     * for index operations.
+     */
+    public void setCompass(Compass compass) {
+        this.compass = compass;
+    }
 
-	/**
-	 * Sets the transaction isolation for the clones compass used for the index
-	 * process.
-	 */
-	public void setIndexTransactionIsolation(CompassTransaction.TransactionIsolation indexTransactionIsolation) {
-		this.indexTransactionIsolation = indexTransactionIsolation;
-	}
+    /**
+     * Sets the transaction isolation for the clones compass used for the index
+     * process.
+     */
+    public void setIndexTransactionIsolation(CompassTransaction.TransactionIsolation indexTransactionIsolation) {
+        this.indexTransactionIsolation = indexTransactionIsolation;
+    }
 
-	/**
-	 * Sets the additional cloned compass index settings. The settings can
-	 * override existing settings used to create the Compass instance. Can be
-	 * used to define different connection string for example.
-	 */
-	public void setIndexSettings(Properties indexSettings) {
-		this.indexSettings = indexSettings;
-	}
+    /**
+     * Sets the additional cloned compass index settings. The settings can
+     * override existing settings used to create the Compass instance. Can be
+     * used to define different connection string for example.
+     */
+    public void setIndexSettings(Properties indexSettings) {
+        this.indexSettings = indexSettings;
+    }
 }
