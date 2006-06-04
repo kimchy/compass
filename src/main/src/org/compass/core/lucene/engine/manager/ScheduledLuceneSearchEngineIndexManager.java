@@ -52,6 +52,11 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
     public void start() {
         indexManager.start();
 
+        if (settings.getIndexManagerScheduleInterval() < 0) {
+            log.info("Not starting scheduled index manager");
+            return;
+        }
+
         if (log.isInfoEnabled()) {
             log.info("Starting scheduled index manager with period [" + settings.getIndexManagerScheduleInterval()
                     + "ms] daemon [true]");

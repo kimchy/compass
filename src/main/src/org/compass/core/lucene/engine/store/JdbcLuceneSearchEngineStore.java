@@ -221,7 +221,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
             try {
                 createDirectory(dir);
             } catch (IOException e) {
-                throw new SearchEngineException("Failed to create dir [" + path + "]", e);
+                throw new SearchEngineException("Failed to create dir [" + totalPath + "]", e);
             }
         }
         return dir;

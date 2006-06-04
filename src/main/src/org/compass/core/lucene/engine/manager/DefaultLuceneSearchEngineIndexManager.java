@@ -166,7 +166,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("[Replace Index] Calling callback second step");
+                log.debug("Calling callback second step");
             }
             // call the second step
             callback.secondStep();

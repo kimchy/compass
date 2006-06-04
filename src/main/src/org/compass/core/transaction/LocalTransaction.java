@@ -19,12 +19,11 @@ package org.compass.core.transaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
+import org.compass.core.Compass;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
- * 
  * @author kimchy
- * 
  */
 
 public class LocalTransaction extends AbstractTransaction {
@@ -43,23 +42,28 @@ public class LocalTransaction extends AbstractTransaction {
 
     private InternalCompassSession session;
 
+    private Compass compass;
+
     private TransactionIsolation transactionIsolation;
 
     public LocalTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation) {
         state = UNKNOWN;
         this.session = session;
+        this.compass = session.getCompass();
         this.transactionIsolation = transactionIsolation;
     }
 
     public void join() throws CompassException {
         if (log.isDebugEnabled()) {
-            log.debug("Joining an existing local transcation on thread [" + Thread.currentThread().getName() + "]");
+            log.debug("Joining an existing local transcation on thread [" + Thread.currentThread().getName() +
+                    "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
         }
     }
 
     public void begin() throws CompassException {
         if (log.isDebugEnabled()) {
-            log.debug("Starting a new local transcation on thread [" + Thread.currentThread().getName() + "]");
+            log.debug("Starting a new local transcation on thread [" + Thread.currentThread().getName() +
+                    "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
         }
         session.getSearchEngine().begin(transactionIsolation);
         state = STARTED;
@@ -72,13 +76,15 @@ public class LocalTransaction extends AbstractTransaction {
 
         if (state == UNKNOWN) {
             log.debug("Not committing the transaction since within a local transaction on thread ["
-                    + Thread.currentThread().getName() + "]");
+                    + Thread.currentThread().getName() + "] Compass [" + System.identityHashCode(compass)
+                    + "] Session [" + System.identityHashCode(session) + "]");
             return;
         }
 
         // commit called by the high level local transaction
         if (log.isDebugEnabled()) {
-            log.debug("Committing local transaction on thread [" + Thread.currentThread().getName() + "]");
+            log.debug("Committing local transaction on thread [" + Thread.currentThread().getName() +
+                    "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
         }
 
         CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());
@@ -92,11 +98,13 @@ public class LocalTransaction extends AbstractTransaction {
         if (state == UNKNOWN) {
             if (log.isDebugEnabled()) {
                 log.debug("Rolling back local transaction, which exists within another local transaction "
-                        + " on thread [" + Thread.currentThread().getName() + "]");
+                        + " on thread [" + Thread.currentThread().getName() +
+                        "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Rolling back local transaction on thread [" + Thread.currentThread().getName() + "]");
+                log.debug("Rolling back local transaction on thread [" + Thread.currentThread().getName() +
+                        "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
             }
 
             CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());

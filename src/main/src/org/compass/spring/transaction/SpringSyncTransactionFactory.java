@@ -34,7 +34,9 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
 	private static ThreadLocal transactionManagerHolder = new ThreadLocal();
 
-	private PlatformTransactionManager transactionManager;
+    private static String transactionManagerKey = SpringSyncTransactionFactory.class.getName();
+
+    private PlatformTransactionManager transactionManager;
 
 	public static void setTransactionManager(PlatformTransactionManager transactionManager) {
 		transactionManagerHolder.set(transactionManager);
@@ -42,6 +44,12 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
 	protected void doConfigure(CompassSettings settings) {
 		this.transactionManager = (PlatformTransactionManager) transactionManagerHolder.get();
+        if (transactionManager == null) {
+            transactionManager = (PlatformTransactionManager) settings.getRegistry().get(transactionManagerKey);
+        }
+        if (transactionManager != null) {
+            settings.getRegistry().put(transactionManagerKey, transactionManager);
+        }
         transactionManagerHolder.set(null);
     }
 

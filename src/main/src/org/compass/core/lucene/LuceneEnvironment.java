@@ -645,7 +645,7 @@ public class LuceneEnvironment {
 
         /**
          * The index manager schedule interval (in seconds) where different actions related to index manager will happen (such
-         * as global cache interval checks.
+         * as global cache interval checks. If set to <code>-1</code>, not scheduling will happen.
          */
         public static final String INDEX_MANAGER_SCHEDULE_INTERVAL = "compass.engine.indexManagerScheduleInterval";
 

@@ -31,6 +31,8 @@ public class CompassSettings {
 
     private HashMap groups = new HashMap();
 
+    private Map registry = new HashMap();
+
     public CompassSettings() {
         this(new Properties());
     }
@@ -48,7 +50,9 @@ public class CompassSettings {
     }
 
     public CompassSettings copy() {
-        return new CompassSettings((Properties) settings.clone());
+        CompassSettings copySettings = new CompassSettings((Properties) settings.clone());
+        copySettings.setRegistry(getRegistry());
+        return copySettings;
     }
 
     public Properties getProperties() {
@@ -201,6 +205,20 @@ public class CompassSettings {
             setSetting(settingPrefix + "." + groupName + "." + settings[i], values[i]);
         }
         return this;
+    }
+
+    /**
+     * ADANCE: An internal compass global registry
+     */
+    public Map getRegistry() {
+        return registry;
+    }
+
+    /**
+     * ADVANCE: An internal compass global registry
+     */
+    public void setRegistry(Map registry) {
+        this.registry = registry;
     }
 
     public String toString() {

@@ -68,8 +68,11 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
         }
     }
 
-
     private static ThreadLocal dataSourceHolder = new ThreadLocal();
+
+    private static String dataSourceKey = ExternalDataSourceProvider.class.getName();
+
+    private CompassSettings settings;
 
     /**
      * Sets the external data source to be used. Must be set before creating the compass instance.
@@ -79,11 +82,22 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
     }
 
     protected DataSource doCreateDataSource(String url, CompassSettings settings) throws CompassException {
+        this.settings = settings;
         DataSource dataSource =  (DataSource) dataSourceHolder.get();
+        if (dataSource == null) {
+            dataSource = (DataSource) settings.getRegistry().get(dataSourceKey);
+        }
+        if (dataSource == null) {
+            throw new CompassException("Failed to find data source, have you set the static set data source?");
+        } else {
+            settings.getRegistry().put(dataSourceKey, dataSource);
+            dataSourceHolder.set(null);
+        }
         return new UsernamePasswordDataSourceWrapper(dataSource, username, password, autoCommit);
     }
 
     public void closeDataSource() {
         dataSourceHolder.set(null);
+        settings.getRegistry().put(dataSourceKey, null);
     }
 }
