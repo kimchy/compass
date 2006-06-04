@@ -98,7 +98,7 @@ public class JTASyncTransaction extends AbstractTransaction {
     public void join() throws CompassException {
         controllingNewTransaction = false;
         if (log.isDebugEnabled()) {
-            log.debug("Joining an existing compass transcation on therad [" + Thread.currentThread().getName() + "]");
+            log.debug("Joining an existing compass transcation on thread [" + Thread.currentThread().getName() + "]");
         }
     }
 
@@ -114,7 +114,7 @@ public class JTASyncTransaction extends AbstractTransaction {
 
         if (newTransaction) {
             if (log.isDebugEnabled()) {
-                log.debug("Committing JTA transaction controlled by compass on therad ["
+                log.debug("Committing JTA transaction controlled by compass on thread ["
                         + Thread.currentThread().getName() + "]");
             }
             try {
@@ -126,7 +126,7 @@ public class JTASyncTransaction extends AbstractTransaction {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Commit called, let JTA synchronization commit the transaciton on therad ["
+                log.debug("Commit called, let JTA synchronization commit the transaciton on thread ["
                         + Thread.currentThread().getName() + "]");
             }
         }
@@ -137,7 +137,7 @@ public class JTASyncTransaction extends AbstractTransaction {
         try {
             if (newTransaction) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Rolling back JTA transaction controlled by compass on therad [" + Thread.currentThread().getName() + "]");
+                    log.debug("Rolling back JTA transaction controlled by compass on thread [" + Thread.currentThread().getName() + "]");
                 }
                 if (!commitFailed)
                     ut.rollback();
@@ -215,7 +215,7 @@ public class JTASyncTransaction extends AbstractTransaction {
                 return;
             }
             if (log.isDebugEnabled()) {
-                log.debug("Committing compass transaction using JTA synchronization beforeCompletion on therad [" +
+                log.debug("Committing compass transaction using JTA synchronization beforeCompletion on thread [" +
                         Thread.currentThread().getName() + "]");
             }
             session.getSearchEngine().commit(true);
@@ -226,13 +226,13 @@ public class JTASyncTransaction extends AbstractTransaction {
                 if (!commitBeforeCompletion) {
                     if (status == Status.STATUS_COMMITTED) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Committing compass transaction using JTA synchronization afterCompletion on therad [" +
+                            log.debug("Committing compass transaction using JTA synchronization afterCompletion on thread [" +
                                     Thread.currentThread().getName() + "]");
                         }
                         session.getSearchEngine().commit(true);
                     } else {
                         if (log.isDebugEnabled()) {
-                            log.debug("Rolling back compass transaction using JTA synchronization afterCompletion on therad [" +
+                            log.debug("Rolling back compass transaction using JTA synchronization afterCompletion on thread [" +
                                     Thread.currentThread().getName() + "]");
                         }
                         session.getSearchEngine().rollback();

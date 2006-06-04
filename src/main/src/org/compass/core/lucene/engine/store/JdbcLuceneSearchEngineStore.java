@@ -55,8 +55,6 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
 
     private String url;
 
-    private String subContext;
-
     private JdbcDirectorySettings jdbcSettings;
 
     private DataSource dataSource;
@@ -72,7 +70,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
     private Map cachedJdbcTables = new HashMap();
 
     public JdbcLuceneSearchEngineStore(String url, String subContext) {
-        this.subContext = subContext;
+        super(url, subContext);
         this.url = url;
     }
 

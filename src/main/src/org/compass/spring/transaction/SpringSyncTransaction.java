@@ -73,17 +73,17 @@ public class SpringSyncTransaction extends AbstractTransaction {
         if (transactionManager != null) {
             if (log.isDebugEnabled()) {
                 if (status.isNewTransaction()) {
-                    log.debug("Beginning new Spring transaction, and a new compass transaction on therad ["
+                    log.debug("Beginning new Spring transaction, and a new compass transaction on thread ["
                             + Thread.currentThread().getName() + "]");
                 } else {
-                    log.debug("Joining Spring transaction, and starting a new compass transaction on therad ["
+                    log.debug("Joining Spring transaction, and starting a new compass transaction on thread ["
                             + Thread.currentThread().getName() + "]");
                 }
             }
             sync = new SpringTransactionSynchronization(session, status.isNewTransaction(), commitBeforeCompletion);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Joining Spring transaction, and starting a new compass transaction on therad ["
+                log.debug("Joining Spring transaction, and starting a new compass transaction on thread ["
                         + Thread.currentThread().getName() + "]");
             }
             sync = new SpringTransactionSynchronization(session, false, commitBeforeCompletion);
@@ -99,7 +99,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
     public void join() throws CompassException {
         controllingNewTransaction = false;
         if (log.isDebugEnabled()) {
-            log.debug("Joining an existing compass transcation on therad [" + Thread.currentThread().getName() + "]");
+            log.debug("Joining an existing compass transcation on thread [" + Thread.currentThread().getName() + "]");
         }
     }
 
@@ -120,7 +120,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
 
         if (status.isNewTransaction()) {
             if (log.isDebugEnabled()) {
-                log.debug("Committing transaction controlled by compass on therad ["
+                log.debug("Committing Spring transaction controlled by compass on therad ["
                         + Thread.currentThread().getName() + "]");
             }
             try {
@@ -132,7 +132,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Commit called, let Spring synchronization commit the transaciton on therad ["
+                log.debug("Commit called, let Spring synchronization commit the transaciton on thread ["
                         + Thread.currentThread().getName() + "]");
             }
         }
@@ -149,7 +149,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
         try {
             if (status.isNewTransaction()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Rolling back Spring transaction controlled by compass on therad ["
+                    log.debug("Rolling back Spring transaction controlled by compass on thread ["
                             + Thread.currentThread().getName() + "]");
                 }
                 if (!commitFailed)

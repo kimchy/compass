@@ -24,13 +24,13 @@ import org.compass.core.CompassCallback;
 import org.compass.core.CompassException;
 import org.compass.core.CompassTemplate;
 import org.compass.core.CompassTransaction;
-import org.compass.core.spi.InternalCompass;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
 
@@ -82,10 +82,11 @@ public class SingleCompassGps extends AbstractCompassGps {
                             + " and mirroring with the configured transaction isolation");
         }
         indexCompassSettings = new CompassSettings();
-        if (indexSettings == null) {
-            indexCompassSettings.setSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "gpsindex");
-        } else {
+        if (indexSettings != null) {
             indexCompassSettings.addSettings(indexSettings);
+        }
+        if (indexCompassSettings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT) == null) {
+            indexCompassSettings.setSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "gpsindex");
         }
         this.compassTemplate = new CompassTemplate(compass);
     }

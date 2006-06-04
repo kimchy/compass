@@ -42,7 +42,8 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
 	protected void doConfigure(CompassSettings settings) {
 		this.transactionManager = (PlatformTransactionManager) transactionManagerHolder.get();
-	}
+        transactionManagerHolder.set(null);
+    }
 
 	protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
 			TransactionIsolation transactionIsolation) throws CompassException {
@@ -82,7 +83,7 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 			if (transactionManager == null) {
 				throw new TransactionException(
 						"Either spring trnasction synchronization is not active, or a spring transaction has not been started, "
-								+ "you might want to check if transacitonManager is set on LocalCompassBean configuration, so compass can start one by itself");
+								+ "you might want to check if transactionManager is set on LocalCompassBean configuration, so compass can start one by itself");
 			} else {
 				return null;
 			}

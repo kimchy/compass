@@ -41,6 +41,8 @@ public class LuceneSettings {
 
     private String connection;
 
+    private String subContext;
+
     private String defaultSearchPropery;
 
     private String allProperty;
@@ -81,8 +83,9 @@ public class LuceneSettings {
             throw new SearchEngineException("Lucene connection must be set in the settings. Please set ["
                     + CompassEnvironment.CONNECTION + "]");
         }
+        subContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT);
         if (log.isDebugEnabled()) {
-            log.debug("Using connection [" + connection + "]");
+            log.debug("Using connection [" + connection + "][" + subContext + "]");
         }
         // the alias property
         aliasProperty = settings.getSetting(CompassEnvironment.Alias.NAME, CompassEnvironment.Alias.DEFAULT_NAME);
@@ -327,4 +330,7 @@ public class LuceneSettings {
         return waitForCacheInvalidationOnIndexOperation;
     }
 
+    public String getSubContext() {
+        return subContext;
+    }
 }

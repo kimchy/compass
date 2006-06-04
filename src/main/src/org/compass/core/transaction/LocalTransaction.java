@@ -53,7 +53,7 @@ public class LocalTransaction extends AbstractTransaction {
 
     public void join() throws CompassException {
         if (log.isDebugEnabled()) {
-            log.debug("Joining an existing local transcation on therad [" + Thread.currentThread().getName() + "]");
+            log.debug("Joining an existing local transcation on thread [" + Thread.currentThread().getName() + "]");
         }
     }
 
@@ -71,7 +71,7 @@ public class LocalTransaction extends AbstractTransaction {
         }
 
         if (state == UNKNOWN) {
-            log.debug("Not committing the transaction since within a local transaction on therad ["
+            log.debug("Not committing the transaction since within a local transaction on thread ["
                     + Thread.currentThread().getName() + "]");
             return;
         }

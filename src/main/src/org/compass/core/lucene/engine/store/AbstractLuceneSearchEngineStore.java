@@ -55,12 +55,18 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     protected LuceneStoreTemplate template;
 
-    private String connectionString;
+    protected String connectionString;
+
+    protected String subContext;
 
     private LuceneSettings luceneSettings;
 
+    public AbstractLuceneSearchEngineStore(String connectionString, String subContext) {
+        this.connectionString = connectionString;
+        this.subContext = subContext;
+    }
+
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
-        connectionString = settings.getSetting(CompassEnvironment.CONNECTION);
         template = new LuceneStoreTemplate(this);
 
         this.luceneSettings = searchEngineFactory.getLuceneSettings();
@@ -279,6 +285,6 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     public String toString() {
-        return "store [" + connectionString + "] sub-indexes [" + StringUtils.arrayToCommaDelimitedString(subIndexes) + "]";
+        return "store [" + connectionString + "][" + subContext + "] sub-indexes [" + StringUtils.arrayToCommaDelimitedString(subIndexes) + "]";
     }
 }

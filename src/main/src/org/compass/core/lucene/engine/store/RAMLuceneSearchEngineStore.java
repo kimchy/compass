@@ -31,6 +31,7 @@ public class RAMLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore 
     private Map ramIndexes = new HashMap();
 
     public RAMLuceneSearchEngineStore(String path, String subContext) {
+        super(path, subContext);
         // nothing to do with the path yet..
     }
 

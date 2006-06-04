@@ -32,6 +32,7 @@ public class FSLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore {
     private String indexPath;
 
     public FSLuceneSearchEngineStore(String indexPath, String subContext) {
+        super(indexPath, subContext);
         this.indexPath = indexPath + "/" + subContext;
     }
     
