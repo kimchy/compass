@@ -21,18 +21,32 @@ import java.util.StringTokenizer;
 
 import org.compass.core.Property;
 import org.compass.core.config.CommonMetaDataLookup;
-import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
-import org.compass.core.mapping.*;
-import org.compass.core.mapping.xsem.XmlObjectMapping;
-import org.compass.core.mapping.xsem.XmlIdMapping;
-import org.compass.core.mapping.xsem.XmlPropertyMapping;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ContractMapping;
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.ComponentMapping;
+import org.compass.core.mapping.osem.ConstantMetaDataMapping;
+import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
+import org.compass.core.mapping.xsem.XmlIdMapping;
+import org.compass.core.mapping.xsem.XmlObjectMapping;
+import org.compass.core.mapping.xsem.XmlPropertyAnalyzerController;
+import org.compass.core.mapping.xsem.XmlPropertyMapping;
 import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
@@ -180,6 +194,14 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             XmlPropertyMapping xmlPropertyMapping = new XmlPropertyMapping();
             bindXmlProperty(properties[i], xmlPropertyMapping);
             resourceMapping.addMapping(xmlPropertyMapping);
+        }
+
+        ConfigurationHelper analyzerConf = resourceConf.getChild("xml-analyzer", false);
+        if (analyzerConf != null) {
+            XmlPropertyAnalyzerController analyzerController = new XmlPropertyAnalyzerController();
+            bindXmlProperty(analyzerConf, analyzerController);
+            analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
+            resourceMapping.addMapping(analyzerController);
         }
     }
 

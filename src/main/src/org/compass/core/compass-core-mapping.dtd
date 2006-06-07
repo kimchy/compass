@@ -12,6 +12,7 @@
 
 <!ELEMENT xml-object (
     xml-id*,
+    (xml-analyzer?),
     (xml-property)*
 )>
     <!ATTLIST xml-object alias CDATA #REQUIRED>
@@ -47,6 +48,13 @@
     <!ATTLIST xml-property value-converter CDATA #IMPLIED>
     <!ATTLIST xml-property boost CDATA #IMPLIED>
 
+<!ELEMENT xml-analyzer (
+    #PCDATA
+)>
+    <!ATTLIST xml-analyzer name CDATA #REQUIRED>
+    <!ATTLIST xml-analyzer xpath CDATA #REQUIRED>
+    <!ATTLIST xml-analyzer null-analyzer CDATA #IMPLIED>
+    <!ATTLIST xml-analyzer converter CDATA #IMPLIED>
 
 <!ELEMENT resource-contract (
     resource-id*,

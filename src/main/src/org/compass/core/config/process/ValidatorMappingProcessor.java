@@ -37,12 +37,11 @@ public class ValidatorMappingProcessor implements MappingProcessor {
     }
 
     private void validateRootMapping(ResourceMapping resourceMapping) throws MappingException {
+        validatieHasAtLeastOneId(resourceMapping);
         String[] resourcePropertyNames = resourceMapping.getResourcePropertyNames();
         for (int i = 0; i < resourcePropertyNames.length; i++) {
             String propertyName = resourcePropertyNames[i];
-            ResourcePropertyMapping[] resourcePropertyMapping = resourceMapping
-                    .getResourcePropertyMappings(propertyName);
-            validatieHasAtLeastOneId(resourceMapping);
+            ResourcePropertyMapping[] resourcePropertyMapping = resourceMapping.getResourcePropertyMappings(propertyName);
             validateDuplicateExcludeFromAll(resourceMapping, propertyName, resourcePropertyMapping);
             validateDuplicateAnalyzer(resourceMapping, propertyName, resourcePropertyMapping);
         }

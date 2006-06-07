@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping>
+
+    <xml-object alias="a" xpath="/data">
+        <xml-id name="id" xpath="id" />
+        <xml-property xpath="value" />
+    </xml-object>
+
+    <xml-object alias="b" xpath="/data" analyzer="simple" all-analyzer="simple">
+        <xml-id name="id" xpath="id" />
+        <xml-property xpath="value" />
+    </xml-object>
+
+    <xml-object alias="c" xpath="/data">
+        <xml-id name="id" xpath="id" analyzer="simple" />
+        <xml-property xpath="value" />
+    </xml-object>
+
+    <xml-object alias="d" xpath="/data" all-analyzer="default" >
+        <xml-id name="id" xpath="id" />
+        <xml-property name="value" xpath="value" analyzer="simple"/>
+        <xml-property name="value2" xpath="value2" />
+    </xml-object>
+
+    <xml-object alias="e" xpath="/data" analyzer="simple">
+        <xml-id name="id" xpath="id" />
+        <xml-property name="value" xpath="value" analyzer="default"/>
+        <xml-property name="value2" xpath="value2" />
+    </xml-object>
+
+    <xml-object alias="f" xpath="/data" all-analyzer="simple">
+        <xml-id name="id" xpath="id" />
+        <xml-property name="value" xpath="value" />
+    </xml-object>
+
+    <xml-object alias="g" xpath="/data">
+        <xml-id name="id" xpath="id" />
+        <xml-analyzer name="analyzer" xpath="analyzer" />
+        <xml-property name="value" xpath="value" />
+    </xml-object>
+
+    <xml-object alias="h" xpath="/data">
+        <xml-id name="id" xpath="id" />
+        <xml-analyzer name="analyzer" xpath="analyzer" null-analyzer="simple" />
+        <xml-property name="value" xpath="value" />
+    </xml-object>
+
+    <xml-object alias="i" xpath="/data">
+        <xml-id name="id" xpath="id" />
+        <xml-analyzer name="analyzer" xpath="analyzer" null-analyzer="simple" />
+        <xml-property name="value" xpath="value" analyzer="default" />
+    </xml-object>
+
+</compass-core-mapping>
+    

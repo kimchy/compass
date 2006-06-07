@@ -6,83 +6,53 @@
 <compass-core-mapping>
 
     <resource alias="a">
-        
         <resource-id name="id" />
-    
         <resource-property name="value" />
-
     </resource>
 
     <resource alias="b" analyzer="simple" all-analyzer="simple">
-        
         <resource-id name="id" />
-
         <resource-property name="value" />
-
     </resource>
 
     <resource alias="c">
-        
         <resource-id name="id" analyzer="simple" />
-
         <resource-property name="value" />
-    
     </resource>
 
     <resource alias="d" all-analyzer="default" >
-
         <resource-id name="id" />
-
         <resource-property name="value" analyzer="simple"/>
         <resource-property name="value2" />
-
     </resource>
 
     <resource alias="e" analyzer="simple">
-
         <resource-id name="id" />
-
         <resource-property name="value" analyzer="default"/>
         <resource-property name="value2" />
-
     </resource>
 
     <resource alias="f" all-analyzer="simple">
-
         <resource-id name="id" />
-
         <resource-property name="value" />
-
     </resource>
 
     <resource alias="g">
-
         <resource-id name="id" />
-
         <resource-analyzer name="analyzer" />
-
         <resource-property name="value" />
-
     </resource>
 
     <resource alias="h">
-
         <resource-id name="id" />
-
         <resource-analyzer name="analyzer" null-analyzer="simple" />
-
         <resource-property name="value" />
-
     </resource>
 
     <resource alias="i">
-
         <resource-id name="id" />
-
         <resource-analyzer name="analyzer" null-analyzer="simple" />
-
         <resource-property name="value" analyzer="default" />
-
     </resource>
 
 </compass-core-mapping>
