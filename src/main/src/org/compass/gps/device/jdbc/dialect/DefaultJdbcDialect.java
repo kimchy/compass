@@ -39,7 +39,7 @@ public class DefaultJdbcDialect implements JdbcDialect {
         if (columnMapping.isUsingColumnIndex()) {
             integer = rs.getInt(columnMapping.getColumnIndex());
         } else {
-            integer = rs.getInt(columnMapping.getColumnIndex());
+            integer = rs.getInt(columnMapping.getColumnName());
         }
         return new Long(integer);
     }
