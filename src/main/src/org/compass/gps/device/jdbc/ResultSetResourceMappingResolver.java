@@ -27,25 +27,27 @@ import org.compass.core.config.InputStreamMappingResolver;
 import org.compass.gps.device.jdbc.mapping.AutoGenerateMapping;
 import org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
+import org.compass.gps.device.jdbc.mapping.ColumnToPropertyMapping;
+import org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping;
 
 /**
  * A Compass::Core <code>MappingResolver</code>, which can generate compass
  * mappings (<code>Resource</code> mapping)
  * {@link org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping}.
- * <p>
+ * <p/>
  * Other relevant mapping settings can be set as well, such as subIndex, all,
  * allMetaData, and the allTermVector.
- * <p>
+ * <p/>
  * The required property is the
  * {@link org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping}, and
  * the <code>DataSource</code>.
- * <p>
+ * <p/>
  * Using the mapping builder helps automatically generate compass mapping files (<code>Resource</code>
  * mappings) based on the configuration of the
  * {@link org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping} or one
  * of it's sub classes (like
  * {@link org.compass.gps.device.jdbc.mapping.TableToResourceMapping}).
- * 
+ *
  * @author kimchy
  */
 public class ResultSetResourceMappingResolver implements InputStreamMappingResolver {
@@ -66,7 +68,6 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
      * Creates a new mapping builder. Must set the
      * {@link  #setMapping(ResultSetToResourceMapping)}, and the
      * {@link #setDataSource(DataSource)}.
-     * 
      */
     public ResultSetResourceMappingResolver() {
 
@@ -74,10 +75,9 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
 
     /**
      * Creates a new mapping builder, using the mapping and the data source.
-     * 
-     * @param mapping
-     *            The mapping that will be used to generate compass mapping
-     *            definition.
+     *
+     * @param mapping The mapping that will be used to generate compass mapping
+     *                definition.
      */
     public ResultSetResourceMappingResolver(ResultSetToResourceMapping mapping, DataSource dataSource) {
         this.mapping = mapping;
@@ -98,16 +98,16 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
         sb.append("    \"-//Compass/Compass Core Mapping DTD 1.0//EN\"");
         sb.append("    \"http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd\">");
         sb.append("<compass-core-mapping>");
-        sb.append("    <resource alias=\"" + mapping.getAlias() + "\"");
+        sb.append("    <resource alias=\"").append(mapping.getAlias()).append("\"");
         if (subIndex != null) {
-            sb.append(" sub-index=\"" + subIndex + "\"");
+            sb.append(" sub-index=\"").append(subIndex).append("\"");
         }
-        sb.append(" all=\"" + all + "\"");
+        sb.append(" all=\"").append(all).append("\"");
         if (allMetaData != null) {
-            sb.append(" all-metadata=\"" + allMetaData + "\"");
+            sb.append(" all-metadata=\"").append(allMetaData).append("\"");
         }
         if (allTermVector != null) {
-            sb.append(" all-term-vector=\"" + Property.TermVector.toString(allTermVector) + "\"");
+            sb.append(" all-term-vector=\"").append(Property.TermVector.toString(allTermVector)).append("\"");
         }
         sb.append(" >");
         if (mapping.idMappingsSize() == 0) {
@@ -121,11 +121,43 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
         }
         for (Iterator it = mapping.idMappingsIt(); it.hasNext();) {
             IdColumnToPropertyMapping idMapping = (IdColumnToPropertyMapping) it.next();
-            sb.append("<resource-id name=\"" + idMapping.getPropertyName() + "\" />");
+            generateResourceIdMapping("resource-id", idMapping, sb);
+        }
+        for (Iterator it = mapping.dataMappingsIt(); it.hasNext();) {
+            DataColumnToPropertyMapping dataMapping = (DataColumnToPropertyMapping) it.next();
+            generateResourceProperyMapping("resource-property", dataMapping, sb);
         }
         sb.append("    </resource>");
         sb.append("</compass-core-mapping>");
         return new ByteArrayInputStream(sb.toString().getBytes());
+    }
+
+    private void generateResourceIdMapping(String tag, ColumnToPropertyMapping mapping, StringBuffer sb) {
+        sb.append("<").append(tag).append(" ");
+        sb.append("name=\"").append(mapping.getPropertyName()).append("\"").append(" ");
+        if (mapping.getAnalyzer() != null) {
+            sb.append("analyzer=\"").append(mapping.getAnalyzer()).append("\"").append(" ");
+        }
+        if (mapping.getConverter() != null) {
+            sb.append("converter=\"").append(mapping.getConverter()).append("\"").append(" ");
+        }
+        sb.append(" />");
+    }
+
+    private void generateResourceProperyMapping(String tag, ColumnToPropertyMapping mapping, StringBuffer sb) {
+        sb.append("<").append(tag).append(" ");
+        sb.append("name=\"").append(mapping.getPropertyName()).append("\"").append(" ");
+        sb.append("index=\"").append(Property.Index.toString(mapping.getPropertyIndex())).append("\"").append(" ");
+        sb.append("store=\"").append(Property.Store.toString(mapping.getPropertyStore())).append("\"").append(" ");
+        sb.append("term-vector=\"").append(Property.TermVector.toString(mapping.getPropertyTermVector())).append("\"").append(" ");
+        sb.append("exclude-from-all=\"").append(mapping.isExcludeFromAll()).append("\"").append(" ");
+        if (mapping.getAnalyzer() != null) {
+            sb.append("analyzer=\"").append(mapping.getAnalyzer()).append("\"").append(" ");
+        }
+        if (mapping.getConverter() != null) {
+            sb.append("converter=\"").append(mapping.getConverter()).append("\"").append(" ");
+        }
+        sb.append(" />");
     }
 
     /**

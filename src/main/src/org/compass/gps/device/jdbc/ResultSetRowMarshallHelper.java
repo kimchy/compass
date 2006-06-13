@@ -24,6 +24,12 @@ import java.util.Iterator;
 import org.compass.core.CompassSession;
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.Compass;
+import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalCompass;
+import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 import org.compass.gps.device.jdbc.mapping.ColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
@@ -34,7 +40,7 @@ import org.compass.gps.device.jdbc.snapshot.JdbcAliasRowSnapshot;
  * A helper marshaller from a <code>ResultSet</code> current row to a
  * <code>Resource</code> and/or to a
  * {@link org.compass.gps.device.jdbc.snapshot.JdbcAliasRowSnapshot}.
- * 
+ *
  * @author kimchy
  */
 public class ResultSetRowMarshallHelper {
@@ -53,12 +59,14 @@ public class ResultSetRowMarshallHelper {
 
     private boolean marshallVersioning = false;
 
+    private ResourceMapping resourceMapping;
+
     /**
      * Creates a new marshaller helper that will marhsall the
      * <code>ResultSet</code> to the given <code>Resource</code>.
      */
     public ResultSetRowMarshallHelper(ResultSetToResourceMapping mapping, CompassSession session, JdbcDialect dialect,
-            Resource resource) {
+                                      Resource resource) {
         this(mapping, session, dialect, resource, null);
     }
 
@@ -67,8 +75,13 @@ public class ResultSetRowMarshallHelper {
      * <code>ResultSet</code> to the given {@link JdbcAliasRowSnapshot}.
      */
     public ResultSetRowMarshallHelper(ResultSetToResourceMapping mapping, JdbcDialect dialect,
-            JdbcAliasRowSnapshot rowSnapshot) {
-        this(mapping, null, dialect, null, rowSnapshot);
+                                      JdbcAliasRowSnapshot rowSnapshot, Compass compass) {
+        this(mapping, null, dialect, null, rowSnapshot, compass);
+    }
+
+    public ResultSetRowMarshallHelper(ResultSetToResourceMapping mapping, CompassSession session, JdbcDialect dialect,
+                                      Resource resource, JdbcAliasRowSnapshot rowSnapshot) {
+        this(mapping, session, dialect, resource, rowSnapshot, ((InternalCompassSession) session).getCompass());
     }
 
     /**
@@ -77,11 +90,12 @@ public class ResultSetRowMarshallHelper {
      * {@link JdbcAliasRowSnapshot}.
      */
     public ResultSetRowMarshallHelper(ResultSetToResourceMapping mapping, CompassSession session, JdbcDialect dialect,
-            Resource resource, JdbcAliasRowSnapshot rowSnapshot) {
+                                      Resource resource, JdbcAliasRowSnapshot rowSnapshot, Compass compass) {
         this.mapping = mapping;
         this.session = session;
         this.dialect = dialect;
         this.rowSnapshot = rowSnapshot;
+        resourceMapping = ((InternalCompass) compass).getMapping().getResourceMappingByAlias(mapping.getAlias());
         if (rowSnapshot == null || !mapping.supportsVersioning()) {
             marshallVersioning = false;
         } else {
@@ -167,10 +181,16 @@ public class ResultSetRowMarshallHelper {
     }
 
     public void marshallProperty(ColumnToPropertyMapping ctpMapping, String value) {
-        Property p = session.createProperty(ctpMapping.getPropertyName(), value, ctpMapping.getPropertyStore(),
-                ctpMapping.getPropertyIndex(), ctpMapping.getPropertyTermVector());
-        p.setBoost(ctpMapping.getBoost());
-        resource.addProperty(p);
+        ResourcePropertyMapping propertyMapping = resourceMapping.getResourcePropertyMapping(ctpMapping.getPropertyName());
+        if (propertyMapping == null) {
+            Property p = session.createProperty(ctpMapping.getPropertyName(), value, ctpMapping.getPropertyStore(),
+                    ctpMapping.getPropertyIndex(), ctpMapping.getPropertyTermVector());
+            p.setBoost(ctpMapping.getBoost());
+            resource.addProperty(p);
+        } else {
+            // has explicit mappings (not auto generated), use additional settings (like analyzer and such).
+            resource.addProperty(ctpMapping.getPropertyName(), value);
+        }
     }
 
 }

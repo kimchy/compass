@@ -32,9 +32,7 @@ import org.compass.gps.device.jdbc.mapping.VersionColumnMapping;
 import org.compass.gps.impl.SingleCompassGps;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
@@ -47,8 +45,12 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
     private SingleCompassGps gps;
 
     protected void tearDown() throws Exception {
-        gps.stop();
-        compass.close();
+        if (gps != null) {
+            gps.stop();
+        }
+        if (compass != null) {
+            compass.close();
+        }
         super.tearDown();
     }
 
@@ -93,7 +95,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
     public void testExactMappingNoMirror() throws Exception {
         setUpExactMappingNoMirror();
         gps.index();
-        Resource r = compassTemplate.getResource("result-set", new String[] { "1", "1" });
+        Resource r = compassTemplate.getResource("result-set", new String[]{"1", "1"});
         assertNotNull(r.getProperty("parent_id"));
         assertNotNull(r.getProperty("parent_first_name"));
         assertNotNull(r.getProperty("child_id"));
@@ -103,7 +105,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         assertNull(r.getProperty("FIRST_NAME"));
         assertNull(r.getProperty("LAST_NAME"));
         assertNotNull(r);
-        r = compassTemplate.getResource("result-set", new String[] { "4", "6" });
+        r = compassTemplate.getResource("result-set", new String[]{"4", "6"});
         assertNotNull(r);
         CompassDetachedHits hits = compassTemplate.findWithDetach("parent");
         assertEquals(6, hits.getLength());
@@ -145,7 +147,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
     public void testUnmappedMappingNoMirror() throws Exception {
         setUpUnmappedMappingNoMirror();
         gps.index();
-        Resource r = compassTemplate.getResource("result-set", new String[] { "1", "1" });
+        Resource r = compassTemplate.getResource("result-set", new String[]{"1", "1"});
         assertNotNull(r);
         assertNotNull(r.getProperty("parent_id"));
         assertNotNull(r.getProperty("parent_first_name"));
@@ -153,7 +155,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         assertNotNull(r.getProperty("child_first_name"));
         assertNotNull(r.getProperty("LAST_NAME"));
         assertNull(r.getProperty("FIRST_NAME"));
-        r = compassTemplate.getResource("result-set", new String[] { "4", "6" });
+        r = compassTemplate.getResource("result-set", new String[]{"4", "6"});
         assertNotNull(r);
         CompassDetachedHits hits = compassTemplate.findWithDetach("parent");
         assertEquals(6, hits.getLength());
@@ -203,8 +205,8 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         MockSnapshotEventListener eventListener = new MockSnapshotEventListener();
         gpsDevice.setSnapshotEventListener(eventListener);
         gps.index();
-        Resource r = compassTemplate.loadResource("result-set", new String[] { "1", "1" });
-        r = compassTemplate.getResource("result-set", new String[] { "4", "6" });
+        Resource r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
+        r = compassTemplate.getResource("result-set", new String[]{"4", "6"});
         assertNotNull(r);
         CompassDetachedHits hits = compassTemplate.findWithDetach("parent");
         assertEquals(6, hits.getLength());
@@ -283,8 +285,8 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
     public void testExactMappingWithMirror() throws Exception {
         setUpExactMappingWithMirror();
         gps.index();
-        Resource r = compassTemplate.loadResource("result-set", new String[] { "1", "1" });
-        r = compassTemplate.getResource("result-set", new String[] { "4", "6" });
+        Resource r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
+        r = compassTemplate.getResource("result-set", new String[]{"4", "6"});
         assertNotNull(r);
         CompassDetachedHits hits = compassTemplate.findWithDetach("parent");
         assertEquals(6, hits.getLength());
@@ -298,10 +300,10 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         con.commit();
         con.close();
 
-        r = compassTemplate.getResource("result-set", new String[] { "999", "0" });
+        r = compassTemplate.getResource("result-set", new String[]{"999", "0"});
         assertNull(r);
         gpsDevice.performMirroring();
-        r = compassTemplate.loadResource("result-set", new String[] { "999", "0" });
+        r = compassTemplate.loadResource("result-set", new String[]{"999", "0"});
 
         // test that update works
         con = JdbcUtils.getConnection(dataSource);
@@ -312,7 +314,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         con.close();
 
         gpsDevice.performMirroring();
-        r = compassTemplate.loadResource("result-set", new String[] { "1", "1" });
+        r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
         assertEquals("new first name", r.get("parent_first_name"));
 
         // test that delete works
@@ -324,7 +326,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
         con.close();
 
         gpsDevice.performMirroring();
-        r = compassTemplate.getResource("result-set", new String[] { "999", "0" });
+        r = compassTemplate.getResource("result-set", new String[]{"999", "0"});
         assertNull(r);
     }
 }

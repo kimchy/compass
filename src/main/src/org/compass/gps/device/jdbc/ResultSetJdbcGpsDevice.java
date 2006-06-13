@@ -320,7 +320,7 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
 
                     JdbcAliasRowSnapshot newRowSnapshot = new JdbcAliasRowSnapshot();
                     ResultSetRowMarshallHelper marshallHelper = new ResultSetRowMarshallHelper(mapping, dialect,
-                            newRowSnapshot);
+                            newRowSnapshot, compassGps.getMirrorCompass());
                     marshallHelper.marshallResultSet(rs);
 
                     // new and old have the same ids

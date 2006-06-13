@@ -19,12 +19,18 @@ package org.compass.gps.device.jdbc.mapping;
 /**
  * A helper base class for mappings from a jdbc column to a Compass
  * <code>Property</code>. Holds the property name that the column maps to.
- * 
+ *
  * @author kimchy
  */
 public abstract class AbstractColumnToPropertyMapping extends AbstractColumnMapping implements ColumnToPropertyMapping {
 
     private String propertyName;
+
+    private boolean excludeFromAll;
+
+    private String analyzer;
+
+    private String converter;
 
     public AbstractColumnToPropertyMapping() {
 
@@ -48,6 +54,30 @@ public abstract class AbstractColumnToPropertyMapping extends AbstractColumnMapp
         this.propertyName = property;
     }
 
+    public boolean isExcludeFromAll() {
+        return excludeFromAll;
+    }
+
+    public void setExcludeFromAll(boolean excludeFromAll) {
+        this.excludeFromAll = excludeFromAll;
+    }
+
+    public String getAnalyzer() {
+        return analyzer;
+    }
+
+    public void setAnalyzer(String analyzer) {
+        this.analyzer = analyzer;
+    }
+
+    public String getConverter() {
+        return converter;
+    }
+
+    public void setConverter(String converter) {
+        this.converter = converter;
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append(super.toString());
@@ -59,6 +89,12 @@ public abstract class AbstractColumnToPropertyMapping extends AbstractColumnMapp
         sb.append(getPropertyIndex());
         sb.append("] termVector [");
         sb.append(getPropertyTermVector());
+        sb.append("] excludeFromAll [");
+        sb.append(isExcludeFromAll());
+        sb.append("] analyzer [");
+        sb.append(getAnalyzer());
+        sb.append("] converter [");
+        sb.append(getConverter());
         sb.append("]");
         return sb.toString();
     }

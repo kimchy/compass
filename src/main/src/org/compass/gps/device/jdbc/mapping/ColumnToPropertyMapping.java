@@ -19,7 +19,7 @@ package org.compass.gps.device.jdbc.mapping;
 import org.compass.core.Property;
 
 /**
- * A geberal interface for a jdbc column mapping to a Compass
+ * A general interface for a jdbc column mapping to a Compass
  * <code>Property</code>. Holds differnt aspects of the mapped
  * <code>Property</code> like the property name, the
  * <code>Property.Index</code>, <code>Property.Store</code>,
@@ -44,29 +44,36 @@ public interface ColumnToPropertyMapping extends ColumnMapping {
 
     /**
      * Returns the property index option.
-     * 
-     * @return the property index option.
      */
     Property.Index getPropertyIndex();
 
     /**
      * Returns the property store option.
-     * 
-     * @return the property store option.
      */
     Property.Store getPropertyStore();
 
     /**
      * Returns the property termVector option.
-     * 
-     * @return the property termVector option.
      */
     Property.TermVector getPropertyTermVector();
 
     /**
      * Returns the property boost level.
-     * 
-     * @return the property boost level.
      */
     float getBoost();
+
+    /**
+     * The analyzer that will be used to analyzer this property.
+     */
+    String getAnalyzer();
+
+    /**
+     * Returns the converter lookup name that will be used to convert this property.
+     */
+    String getConverter();
+
+    /**
+     * Should this property be excluded from the all property.
+     */
+    boolean isExcludeFromAll();
 }

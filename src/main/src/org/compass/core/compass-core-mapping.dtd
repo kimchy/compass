@@ -83,6 +83,7 @@
 >
     <!ATTLIST resource-id name CDATA #REQUIRED>
     <!ATTLIST resource-id analyzer CDATA #IMPLIED>
+    <!ATTLIST resource-id converter CDATA #IMPLIED>
 
 <!ELEMENT resource-property EMPTY
 >
