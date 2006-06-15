@@ -112,7 +112,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
                     writer.indexWriter.close();
                 } catch (IOException e) {
                     throw new SearchEngineException("Failed to close index writer for sub-index [" + writer.subIndex
-                            + "]");
+                            + "]", e);
                 } finally {
                     writer.indexWriter = null;
                 }
@@ -125,7 +125,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
                     writer.indexWriter.optimize();
                 } catch (IOException e) {
                     throw new SearchEngineException("Failed to optimize index writer for sub-index [" + writer.subIndex
-                            + "]");
+                            + "]", e);
                 }
             }
         }
