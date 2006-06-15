@@ -22,6 +22,9 @@ import org.compass.core.test.xml.AbstractXmlObjectTests;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.dom4j.Dom4jXmlObject;
 import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
+import org.compass.core.xml.dom4j.converter.SAXReaderXmlContentMappingConverter;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.config.CompassEnvironment;
 import org.dom4j.io.SAXReader;
 import org.dom4j.Document;
 
@@ -30,9 +33,18 @@ import org.dom4j.Document;
  */
 public class Dom4jXmlObjectTests extends AbstractXmlObjectTests {
 
+    protected void addSettings(CompassSettings settings) {
+        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
+                new String[] {CompassEnvironment.Converter.TYPE}, new String[] {SAXReaderXmlContentMappingConverter.class.getName()});
+    }
+
     protected AliasedXmlObject buildAliasedXmlObject(String alias, Reader data) throws Exception {
         SAXReader reader = new SAXReader();
         Document document = reader.read(data);
         return new Dom4jAliasedXmlObject(alias, document.getRootElement());
+    }
+
+    public void testData4XmlContent() throws Exception {
+        innerTestData4XmlContent();
     }
 }

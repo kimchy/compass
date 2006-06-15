@@ -58,6 +58,7 @@ import org.compass.core.converter.mapping.rsem.RawResourceMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlIdMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlObjectMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter;
+import org.compass.core.converter.mapping.xsem.ExceptionXmlContentMappingConverter;
 import org.compass.core.mapping.osem.ArrayMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -71,6 +72,7 @@ import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.xsem.XmlIdMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.mapping.xsem.XmlPropertyMapping;
+import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -199,6 +201,8 @@ public class DefaultConverterLookup implements ConverterLookup {
                 XmlPropertyMapping.class, new XmlPropertyMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_ID_MAPPING,
                 XmlIdMapping.class, new XmlIdMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
+                XmlContentMapping.class, new ExceptionXmlContentMappingConverter());
 
         // now configure all the none default converters
         for (Iterator it = converterGroups.keySet().iterator(); it.hasNext();) {

@@ -38,6 +38,8 @@ public class XmlObjectMapping extends AbstractResourceMapping implements XPathEn
     
     private XmlXPathExpression xpathExpression;
 
+    private XmlContentMapping xmlContentMapping;
+
     public Mapping copy() {
         XmlObjectMapping copy = new XmlObjectMapping();
         copy.setXPath(getXPath());
@@ -51,6 +53,8 @@ public class XmlObjectMapping extends AbstractResourceMapping implements XPathEn
         shallowCopy(copy);
         return copy;
     }
+
+
 
     public boolean isIncludePropertiesWithNoMappingsInAll() {
         return true;
@@ -67,6 +71,9 @@ public class XmlObjectMapping extends AbstractResourceMapping implements XPathEn
                             + resourcePropertyMapping.getPath() + "], it is not allowed");
                 }
             }
+        }
+        if (mapping instanceof XmlContentMapping) {
+            xmlContentMapping = (XmlContentMapping) mapping;
         }
         return super.addMapping(mapping);
     }
@@ -103,4 +110,10 @@ public class XmlObjectMapping extends AbstractResourceMapping implements XPathEn
         this.xpathExpression = xpathExpression;
     }
 
+    /**
+     * Returns the xml content mapping (might be <code>null</code>).
+     */
+    public XmlContentMapping getXmlContentMapping() {
+        return xmlContentMapping;
+    }
 }

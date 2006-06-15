@@ -23,5 +23,12 @@
         <xml-property name="eleText" xpath="data1" />
     </xml-object>
 
+    <xml-object alias="data4" xpath="/xml-fragment/data">
+        <xml-id name="id" xpath="id/@value" />
+        <xml-property xpath="data1/@value" />
+        <xml-property name="eleText" xpath="data1" />
+        <xml-content name="content" />
+    </xml-object>
+
 </compass-core-mapping>
     

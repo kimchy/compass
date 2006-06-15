@@ -49,6 +49,8 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         AliasedXmlObject xmlObject = buildAliasedXmlObject("data1", readData("data1"));
         session.save(xmlObject);
 
+        assertNull(session.get("data1", "1"));
+
         Resource resource = session.loadResource("data1", "1");
         assertEquals("1", resource.get("$/data1/id"));
         assertEquals(2, resource.getProperties("eleText").length);
@@ -121,6 +123,34 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         assertEquals(0, hits.length());
         hits = session.find("data21attr");
         assertEquals(0, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void innerTestData4XmlContent() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        AliasedXmlObject xmlObject = buildAliasedXmlObject("data4", readData("data4"));
+        session.save(xmlObject);
+
+        Resource resource = session.loadResource("data4", "1");
+        assertEquals("1", resource.get("$/data4/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        resource = session.getResource("data4", "2");
+        assertEquals("2", resource.get("$/data4/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        xmlObject = (AliasedXmlObject) session.get("data4", "1");
+        assertNotNull(xmlObject);
+        assertEquals("data", xmlObject.getName());
+        xmlObject = (AliasedXmlObject) session.get("data4", "2");
+        assertNotNull(xmlObject);
+        assertEquals("data", xmlObject.getName());
 
         tr.commit();
         session.close();

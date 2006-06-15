@@ -215,7 +215,9 @@ public class CompassEnvironment {
                 public static final String XML_PROPERTY_MAPPING = "xmlPropertyMapping";
 
                 public static final String XML_ID_MAPPING = "xmlIdMapping";
-                
+
+                public static final String XML_CONTENT_MAPPING = "xmlContentMapping";
+
                 public static final String CLASS = "classMapping";
 
                 public static final String CLASS_PROPERTY = "classPropertyMapping";

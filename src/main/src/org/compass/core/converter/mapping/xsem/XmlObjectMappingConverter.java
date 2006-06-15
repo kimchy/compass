@@ -16,21 +16,22 @@
 
 package org.compass.core.converter.mapping.xsem;
 
-import java.util.Iterator;
 import java.lang.reflect.Array;
+import java.util.Iterator;
 
-import org.compass.core.converter.mapping.ResourceMappingConverter;
-import org.compass.core.converter.ConversionException;
-import org.compass.core.Resource;
 import org.compass.core.Property;
-import org.compass.core.spi.MultiResource;
-import org.compass.core.xml.XmlObject;
+import org.compass.core.Resource;
+import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
-import org.compass.core.marshall.MarshallingContext;
-import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
+import org.compass.core.mapping.xsem.XmlContentMapping;
+import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.spi.MultiResource;
+import org.compass.core.xml.XmlObject;
 
 /**
  * Responsible for converting {@link XmlObject} based on {@link XmlObjectMapping}.
@@ -80,7 +81,12 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        throw new ConversionException("should not be called");
+        XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) mapping;
+        if (xmlObjectMapping.getXmlContentMapping() == null) {
+            return null;
+        }
+        XmlContentMapping xmlContentMapping = xmlObjectMapping.getXmlContentMapping();
+        return xmlContentMapping.getConverter().unmarshall(resource, xmlContentMapping, context);
     }
 
     public boolean marshallIds(Resource idResource, Object id, ResourceMapping resourceMapping, MarshallingContext context) throws ConversionException {

@@ -47,6 +47,7 @@ import org.compass.core.mapping.xsem.XmlIdMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.mapping.xsem.XmlPropertyAnalyzerController;
 import org.compass.core.mapping.xsem.XmlPropertyMapping;
+import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
@@ -196,6 +197,13 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             resourceMapping.addMapping(xmlPropertyMapping);
         }
 
+        ConfigurationHelper xmlContentConf = resourceConf.getChild("xml-content", false);
+        if (xmlContentConf != null) {
+            XmlContentMapping xmlContentMapping = new XmlContentMapping();
+            bindXmlContent(xmlContentConf, xmlContentMapping);
+            resourceMapping.addMapping(xmlContentMapping);
+        }
+
         ConfigurationHelper analyzerConf = resourceConf.getChild("xml-analyzer", false);
         if (analyzerConf != null) {
             XmlPropertyAnalyzerController analyzerController = new XmlPropertyAnalyzerController();
@@ -203,6 +211,19 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
             resourceMapping.addMapping(analyzerController);
         }
+    }
+
+    private void bindXmlContent(ConfigurationHelper xmlContentConf, XmlContentMapping xmlContentMapping) {
+        String name = xmlContentConf.getAttribute("name", null);
+        if (name != null) {
+            name = valueLookup.lookupMetaDataName(name);
+        }
+        xmlContentMapping.setName(name);
+        xmlContentMapping.setPath(name);
+        bindConverter(xmlContentConf, xmlContentMapping);
+        String storeType = xmlContentConf.getAttribute("store", "yes");
+        xmlContentMapping.setStore(Property.Store.fromString(storeType));
+        xmlContentMapping.setInternal(true);
     }
 
     private void bindXmlProperty(ConfigurationHelper xmlPropConf, XmlPropertyMapping xmlPropertyMapping) {
@@ -231,7 +252,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         xmlPropertyMapping.setXPath(xmlPropConf.getAttribute("xpath"));
 
-        bindConverter(xmlPropConf, xmlPropertyMapping);
         xmlPropertyMapping.setValueConverterName(xmlPropConf.getAttribute("value-converter", null));
     }
 

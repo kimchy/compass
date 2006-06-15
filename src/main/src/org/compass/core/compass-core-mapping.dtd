@@ -13,7 +13,8 @@
 <!ELEMENT xml-object (
     xml-id*,
     (xml-analyzer?),
-    (xml-property)*
+    (xml-property)*,
+    (xml-content?)
 )>
     <!ATTLIST xml-object alias CDATA #REQUIRED>
     <!ATTLIST xml-object sub-index CDATA #IMPLIED>
@@ -47,6 +48,12 @@
     <!ATTLIST xml-property converter CDATA #IMPLIED>
     <!ATTLIST xml-property value-converter CDATA #IMPLIED>
     <!ATTLIST xml-property boost CDATA #IMPLIED>
+
+<!ELEMENT xml-content EMPTY
+>
+    <!ATTLIST xml-content name CDATA #REQUIRED>
+    <!ATTLIST xml-content store (yes|compress) "yes">
+    <!ATTLIST xml-content converter CDATA #IMPLIED>
 
 <!ELEMENT xml-analyzer (
     #PCDATA
