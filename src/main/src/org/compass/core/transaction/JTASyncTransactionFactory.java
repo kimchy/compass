@@ -120,11 +120,10 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
 		try {
 			ut = (UserTransaction) context.lookup(utName);
 		} catch (NamingException ne) {
-			log.error("Could not find UserTransaction in JNDI under [" + utName + "]", ne);
-			throw new TransactionException("Could not find UserTransaction in JNDI", ne);
+			throw new TransactionException("Could not find UserTransaction in JNDI under [" + utName + "]", ne);
 		}
 		if (ut == null) {
-			throw new TransactionException("A naming service lookup returned null");
+			throw new TransactionException("A naming service lookup returned null under [" + utName + "]");
 		}
 		return ut;
 	}
