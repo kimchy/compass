@@ -29,9 +29,9 @@ import org.compass.gps.device.MockIndexGpsDevice;
 import org.compass.gps.device.MockIndexGpsDeviceObject;
 import org.compass.gps.impl.SingleCompassGps;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
+import org.compass.spring.device.SpringSyncTransactionGpsDeviceWrapper;
 import org.springframework.transaction.jta.JotmFactoryBean;
 import org.springframework.transaction.jta.JtaTransactionManager;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * @author kimchy
@@ -47,6 +47,7 @@ public class SpringSyncGpsIndexTests extends TestCase {
     private JotmFactoryBean jotmFactoryBean;
 
     private JtaTransactionManager transactionManager;
+    private SpringSyncTransactionGpsDeviceWrapper gpsDevice;
 
     protected void setUp() throws Exception {
 
@@ -61,7 +62,7 @@ public class SpringSyncGpsIndexTests extends TestCase {
         jotmFactoryBean.destroy();
     }
 
-    public void testSimpleIndex() {
+    public void testSimpleIndex() throws Exception {
         SpringSyncTransactionFactory.setTransactionManager(transactionManager);
 
         CompassConfiguration conf = new CompassConfiguration();
@@ -75,7 +76,9 @@ public class SpringSyncGpsIndexTests extends TestCase {
         device = new MockIndexGpsDevice();
         device.setName("test");
         compassGps = new SingleCompassGps(compass);
-        compassGps.addGpsDevice(device);
+        gpsDevice = new SpringSyncTransactionGpsDeviceWrapper(device);
+        gpsDevice.afterPropertiesSet();
+        compassGps.addGpsDevice(gpsDevice);
         compassGps.start();
 
         compass.getSearchEngineIndexManager().deleteIndex();

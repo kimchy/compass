@@ -1,6 +1,12 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
+VERSION 0.9.2 ()
+============================
+
+1. When using Spring and Compass Gps, each device should be wrapped with
+   org.compass.spring.device.SpringSyncTransactionGpsDeviceWrapper for better transcation handling.
+
 VERSION 0.9.1 (May 27, 2006)
 ============================
 

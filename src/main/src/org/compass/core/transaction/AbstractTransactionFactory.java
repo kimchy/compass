@@ -30,7 +30,7 @@ import org.compass.core.config.CompassSettings;
  */
 public abstract class AbstractTransactionFactory implements TransactionFactory {
 
-    private Compass compass;
+    protected Compass compass;
 
     protected boolean commitBeforeCompletion;
 

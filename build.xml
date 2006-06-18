@@ -32,7 +32,6 @@
                 <equals arg1="${ant.java.version}" arg2="1.3"/>
                 <equals arg1="${ant.java.version}" arg2="1.4"/>
             </or>
-        </not>
     </condition>
 
     <path id="all-libs">
@@ -54,6 +53,7 @@
         <echo message="build    --> build all; don't create JARs"/>
         <echo message="alljars  --> create all JAR files"/>
         <echo message="tests    --> run tests"/>
+        <echo message="release  --> create a release"/>
         <echo message=""/>
 
     </target>

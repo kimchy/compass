@@ -189,6 +189,10 @@ public class SpringSyncTransaction extends AbstractTransaction {
             this.commitBeforeCompletion = commitBeforeCompletion;
         }
 
+        public InternalCompassSession getSession() {
+            return this.session;
+        }
+
         public void suspend() {
         }
 

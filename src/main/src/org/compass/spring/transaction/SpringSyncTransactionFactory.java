@@ -17,6 +17,7 @@
 package org.compass.spring.transaction;
 
 import java.util.List;
+
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
@@ -32,18 +33,18 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
-	private static ThreadLocal transactionManagerHolder = new ThreadLocal();
+    private static ThreadLocal transactionManagerHolder = new ThreadLocal();
 
     private static String transactionManagerKey = SpringSyncTransactionFactory.class.getName();
 
     private PlatformTransactionManager transactionManager;
 
-	public static void setTransactionManager(PlatformTransactionManager transactionManager) {
-		transactionManagerHolder.set(transactionManager);
-	}
+    public static void setTransactionManager(PlatformTransactionManager transactionManager) {
+        transactionManagerHolder.set(transactionManager);
+    }
 
-	protected void doConfigure(CompassSettings settings) {
-		this.transactionManager = (PlatformTransactionManager) transactionManagerHolder.get();
+    protected void doConfigure(CompassSettings settings) {
+        this.transactionManager = (PlatformTransactionManager) transactionManagerHolder.get();
         if (transactionManager == null) {
             transactionManager = (PlatformTransactionManager) settings.getRegistry().get(transactionManagerKey);
         }
@@ -53,56 +54,63 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
         transactionManagerHolder.set(null);
     }
 
-	protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-			TransactionIsolation transactionIsolation) throws CompassException {
-		SpringSyncTransaction tr = new SpringSyncTransaction();
-		// transaction manager might be null, we rely then on the fact that the
-		// transaction started before
-		tr.begin(transactionManager, session, transactionIsolation, commitBeforeCompletion);
-		return tr;
-	}
-
-	protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
-			throws CompassException {
+    protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
+                                                            TransactionIsolation transactionIsolation) throws CompassException {
         SpringSyncTransaction tr = new SpringSyncTransaction();
-		tr.join();
+        // transaction manager might be null, we rely then on the fact that the
+        // transaction started before
+        tr.begin(transactionManager, session, transactionIsolation, commitBeforeCompletion);
         return tr;
     }
 
-	protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
-		TransactionSynchronization sync = lookupTransactionSynchronization();
-		if (sync == null) {
-			return null;
-		}
-		return holder.getSession(sync);
-	}
+    protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
+            throws CompassException {
+        SpringSyncTransaction tr = new SpringSyncTransaction();
+        tr.join();
+        return tr;
+    }
 
-	protected void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
-			throws CompassException {
-		TransactionSynchronization sync = lookupTransactionSynchronization();
-		if (sync == null) {
-			throw new TransactionException("Failed to find compass registered spring synchronization");
-		}
-		holder.addSession(sync, session);
-	}
+    protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
+        TransactionSynchronization sync = lookupTransactionSynchronization();
+        if (sync == null) {
+            return null;
+        }
+        return holder.getSession(sync);
+    }
 
-	private TransactionSynchronization lookupTransactionSynchronization() throws TransactionException {
-		if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-			if (transactionManager == null) {
-				throw new TransactionException(
-						"Either spring trnasction synchronization is not active, or a spring transaction has not been started, "
-								+ "you might want to check if transactionManager is set on LocalCompassBean configuration, so compass can start one by itself");
-			} else {
-				return null;
-			}
-		}
-		List syncs = TransactionSynchronizationManager.getSynchronizations();
-		for (int i = 0; i < syncs.size(); i++) {
-			Object sync = syncs.get(i);
-			if (sync instanceof SpringSyncTransaction.SpringTransactionSynchronization) {
-				return (TransactionSynchronization) sync;
-			}
-		}
-		return null;
-	}
+    protected void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
+            throws CompassException {
+        TransactionSynchronization sync = lookupTransactionSynchronization();
+        if (sync == null) {
+            throw new TransactionException("Failed to find compass registered spring synchronization");
+        }
+        holder.addSession(sync, session);
+    }
+
+    private TransactionSynchronization lookupTransactionSynchronization() throws TransactionException {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            if (transactionManager == null) {
+                throw new TransactionException(
+                        "Either spring trnasction synchronization is not active, or a spring transaction has not been started, "
+                                + "you might want to check if transactionManager is set on LocalCompassBean configuration, so compass can start one by itself");
+            } else {
+                return null;
+            }
+        }
+        List syncs = TransactionSynchronizationManager.getSynchronizations();
+        for (int i = 0; i < syncs.size(); i++) {
+            Object sync = syncs.get(i);
+            if (sync instanceof SpringSyncTransaction.SpringTransactionSynchronization) {
+                SpringSyncTransaction.SpringTransactionSynchronization springSync = (SpringSyncTransaction.SpringTransactionSynchronization) sync;
+                if (springSync.getSession().getCompass() == compass) {
+                    return springSync;
+                }
+            }
+        }
+        return null;
+    }
+
+    public PlatformTransactionManager getTransactionManager() {
+        return this.transactionManager;
+    }
 }
