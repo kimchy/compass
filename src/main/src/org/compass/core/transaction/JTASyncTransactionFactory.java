@@ -46,7 +46,9 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
 
 	private String utName;
 
-	private TransactionManager transactionManager;
+    private UserTransaction userTransaction;
+
+    private TransactionManager transactionManager;
 
 	public void doConfigure(CompassSettings settings) throws CompassException {
 
@@ -71,26 +73,34 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
 					+ CompassEnvironment.Transaction.MANAGER_LOOKUP + " property");
 		}
 
-		if (utName == null)
+		if (utName == null) {
 			utName = DEFAULT_USER_TRANSACTION_NAME;
+        }
 
-	}
+        boolean cacheUserTransaction = settings.getSettingAsBoolean(CompassEnvironment.Transaction.CACHE_USER_TRANSACTION, true);
+        if (cacheUserTransaction) {
+            if (log.isDebugEnabled()) {
+                log.debug("Caching JTA UserTransaction from Jndi [" + utName + "]");
+            }
+            userTransaction = lookupUserTransaction();
+        }
+    }
 
 	public InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
 			TransactionIsolation transactionIsolation) throws CompassException {
-		JTASyncTransaction tx = new JTASyncTransaction(lookupUserTransaction());
+        JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction());
 		tx.begin(session, transactionManager, transactionIsolation, commitBeforeCompletion);
 		return tx;
 	}
 
 	protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
-        JTASyncTransaction tx = new JTASyncTransaction(lookupUserTransaction());
+        JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction());
         tx.join();
         return tx;
     }
 
 	protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
-		UserTransaction ut = lookupUserTransaction();
+		UserTransaction ut = getUserTransaction();
 		try {
 			if (ut.getStatus() == Status.STATUS_NO_TRANSACTION) {
 				return null;
@@ -112,7 +122,14 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
 		}
 	}
 
-	private UserTransaction lookupUserTransaction() throws TransactionException {
+    private UserTransaction getUserTransaction() throws TransactionException {
+        if (userTransaction != null) {
+            return userTransaction;
+        }
+        return lookupUserTransaction();
+    }
+
+    private UserTransaction lookupUserTransaction() throws TransactionException {
 		UserTransaction ut;
 		if (log.isDebugEnabled()) {
 			log.debug("Looking for UserTransaction under [" + utName + "]");

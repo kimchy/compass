@@ -322,6 +322,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         if (child.size() == 1) {
             Element jtaSettingsEle = (Element) child.get(0);
             settings.setSetting(CompassEnvironment.Transaction.USER_TRANSACTION, DomUtils.getElementAttribute(jtaSettingsEle, "userTransactionName"));
+            settings.setSetting(CompassEnvironment.Transaction.CACHE_USER_TRANSACTION, DomUtils.getElementAttribute(jtaSettingsEle, "cacheUserTransaction"));
             settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, DomUtils.getElementAttribute(jtaSettingsEle, "managerLookup"));
             settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, DomUtils.getElementAttribute(jtaSettingsEle, "managerLookupClass"));
         }

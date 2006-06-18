@@ -325,6 +325,19 @@ public class CompassEnvironment {
         public static final String USER_TRANSACTION = "compass.transaction.userTransactionName";
 
         /**
+         * Set whether to cache the JTA UserTransaction object fetched from JNDI.
+         * <p>Default is "true": UserTransaction lookup will only happen at startup,
+         * reusing the same UserTransaction handle for all transactions of all threads.
+         * This is the most efficient choice for all application servers that provide
+         * a shared UserTransaction object (the typical case).
+         * <p>Turn this flag off to enforce a fresh lookup of the UserTransaction
+         * for every transaction. This is only necessary for application servers
+         * that return a new UserTransaction for every transaction, keeping state
+         * tied to the UserTransaction object itself rather than the current thread.
+         */
+        public static final String CACHE_USER_TRANSACTION = "compass.transaction.cacheUserTransaction";
+
+        /**
          * The transaction isolation, can be one of the 4 constants values.
          */
         public static final String ISOLATION = "compass.transaction.isolation";

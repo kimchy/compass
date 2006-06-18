@@ -264,7 +264,7 @@
       </para>
 
       <para>
-        The JTA transaction mechanism will use the JNDI configuration to lookup the JTA <literal>UserTransaction</literal>. The transaction manager lookup provides the JNDI name, but if you wish to set it yourself, you can set the <literal>compass.transaction.userTransactionName</literal> setting.
+        The JTA transaction mechanism will use the JNDI configuration to lookup the JTA <literal>UserTransaction</literal>. The transaction manager lookup provides the JNDI name, but if you wish to set it yourself, you can set the <literal>compass.transaction.userTransactionName</literal> setting. Also, the <literal>UserTransaction</literal> will be cached by default (fetched from JNDI on Compass startup), the caching can be controlled by <literal>compass.transaction.cacheUserTransaction</literal>.
       </para>
 
     </sect2>
