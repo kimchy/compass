@@ -33,7 +33,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * A Spring Transaction device wrapper, which starts a new transaction (with transaction propogation of
+ * A Spring Transaction device wrapper, which starts a new transaction (with transaction propagation of
  * REQUIRES_NEW) for the device index operation.
  * <p/>
  * When using {@link SpringSyncTransactionFactory}, this gps device wrapper should be used to wrap all
@@ -68,7 +68,7 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
 
     /**
      * If a Spring <code>PlatformTransactionManager<code> is available, will use it to execute the wrapped gps device
-     * index operation within a new transcation with a propogation level of REQUIRES_NEW.
+     * index operation within a new transcation with a propagation level of REQUIRES_NEW.
      */
     public void index() throws CompassGpsException {
         if (transactionManager == null) {
