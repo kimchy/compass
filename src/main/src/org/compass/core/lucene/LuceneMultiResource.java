@@ -18,7 +18,6 @@ package org.compass.core.lucene;
 
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
