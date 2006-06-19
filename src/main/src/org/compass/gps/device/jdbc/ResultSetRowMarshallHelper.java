@@ -27,7 +27,6 @@ import org.compass.core.Resource;
 import org.compass.core.Compass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalCompass;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;

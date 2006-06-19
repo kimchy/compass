@@ -20,7 +20,6 @@ import java.io.Reader;
 
 import org.compass.core.test.xml.AbstractXmlObjectTests;
 import org.compass.core.xml.AliasedXmlObject;
-import org.compass.core.xml.dom4j.Dom4jXmlObject;
 import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
 import org.compass.core.xml.dom4j.converter.SAXReaderXmlContentMappingConverter;
 import org.compass.core.config.CompassSettings;

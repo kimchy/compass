@@ -20,7 +20,6 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.analyzer.synonym.SynonymLookupProvider;

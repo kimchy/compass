@@ -16,7 +16,6 @@
 
 package org.compass.spring.test.config;
 
-import org.compass.core.Compass;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
@@ -29,6 +28,6 @@ public class ConfigTests extends AbstractDependencyInjectionSpringContextTests {
     }
 
     public void testNamespaceHandler() throws Exception {
-        Compass compass = (Compass) applicationContext.getBean("compass");
+        applicationContext.getBean("compass");
     }
 }

@@ -1,9 +1,7 @@
 package org.compass.gps.device.jpa;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceException;
-import javax.persistence.TransactionRequiredException;
 
 /**
  * The default {@link EntityManagerWrapper} implementation. Works well both in
