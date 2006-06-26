@@ -31,8 +31,7 @@ import net.sf.hibernate.cfg.Configuration;
 import org.compass.gps.CompassGpsException;
 
 /**
- * A {@link HibernateGpsDevice} which
- * works with hibernate 2.
+ * A {@link HibernateGpsDevice} which works with hibernate 2.
  * <p/>
  * You must either set the Hibernate <code>Configuration</code> or the
  * <code>SessionFactory</code> to be used by the device. Note that if the
