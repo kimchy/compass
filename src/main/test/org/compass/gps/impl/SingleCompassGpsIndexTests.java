@@ -60,6 +60,9 @@ public class SingleCompassGpsIndexTests extends TestCase {
         compassGps.index();
 
         assertExists(new Long(1));
+        
+        compassGps.stop();
+        compass.close();
     }
 
     public void testWithPropertiesForSingleComopassGps() {
@@ -67,6 +70,8 @@ public class SingleCompassGpsIndexTests extends TestCase {
         conf.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
         conf.addClass(MockIndexGpsDeviceObject.class);
         compass = conf.buildCompass();
+        compass.getSearchEngineIndexManager().deleteIndex();
+        compass.getSearchEngineIndexManager().createIndex();
 
         device = new MockIndexGpsDevice();
         device.setName("test");
@@ -77,16 +82,15 @@ public class SingleCompassGpsIndexTests extends TestCase {
         compassGps.setIndexSettings(props);
         compassGps.start();
 
-        compass.getSearchEngineIndexManager().deleteIndex();
-        compass.getSearchEngineIndexManager().createIndex();
-
         assertNoObjects();
 
         device.add(new Long(1), "testvalue");
         compassGps.index();
 
         assertExists(new Long(1));
-
+        
+        compassGps.stop();
+        compass.close();
     }
 
     private void assertExists(Long id) {

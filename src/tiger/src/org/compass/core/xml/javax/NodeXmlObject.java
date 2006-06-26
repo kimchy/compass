@@ -64,10 +64,10 @@ public class NodeXmlObject implements XmlObject {
     }
 
     /**
-     * Not supported. Not really needed since xpath expression copilation is available.
+     * Compiles and selects the given xpath expression.
      */
-    public XmlObject[] selectPath(String path) {
-        throw new IllegalStateException("This should not be called since tiger support compilation of xpath expressions");
+    public XmlObject[] selectPath(String path) throws Exception {
+        return compile(path).select(this);
     }
 
     /**

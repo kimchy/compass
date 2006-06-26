@@ -25,6 +25,7 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.test.AbstractTestCase;
 import org.compass.core.xml.AliasedXmlObject;
+import org.compass.core.xml.XmlObject;
 
 /**
  * @author kimchy
@@ -139,18 +140,24 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         assertEquals("1", resource.get("$/data4/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
+        assertNotNull(resource.get("content"));
 
         resource = session.getResource("data4", "2");
         assertEquals("2", resource.get("$/data4/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
+        assertNotNull(resource.get("content"));
 
         xmlObject = (AliasedXmlObject) session.get("data4", "1");
         assertNotNull(xmlObject);
-        assertEquals("data", xmlObject.getName());
+        XmlObject[] ids = xmlObject.selectPath("/data/id/@value");
+        assertEquals(1, ids.length);
+        assertEquals("1", ids[0].getValue());
         xmlObject = (AliasedXmlObject) session.get("data4", "2");
         assertNotNull(xmlObject);
-        assertEquals("data", xmlObject.getName());
+        ids = xmlObject.selectPath("/data/id/@value");
+        assertEquals(1, ids.length);
+        assertEquals("2", ids[0].getValue());
 
         tr.commit();
         session.close();
