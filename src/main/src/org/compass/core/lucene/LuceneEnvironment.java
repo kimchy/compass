@@ -514,6 +514,13 @@ public class LuceneEnvironment {
          */
         public static final String LOCK_POLL_INTERVAL = "compass.transaction.lockPollInterval";
 
+        /**
+         * Should the cache be cleared on commit. Note, that setting it to <code>false</code>
+         * might mean that the transaction isolation level will not function properly (for example,
+         * with read_committed, it will mean that data that is committed will take time to be
+         * reflected in the index). Defaults to <code>true</code>.
+         */
+        public static final String CLEAR_CACHE_ON_COMMIT = "compass.transaction.clearCacheOnCommit";
     }
 
     /* Optimizer Settings */

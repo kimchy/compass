@@ -248,10 +248,12 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 doPrepare();
             }
             transIndexManager.secondPhase();
-            // clear cache here for all the dirty sub indexes
-            for (Iterator it = transIndexManager.transIndexMap.keySet().iterator(); it.hasNext();) {
-                String subIndex = (String) it.next();
-                getIndexManager().clearCache(subIndex);
+            if (getSearchEngine().getSearchEngineFactory().getLuceneSettings().isClearCacheOnCommit()) {
+                // clear cache here for all the dirty sub indexes
+                for (Iterator it = transIndexManager.transIndexMap.keySet().iterator(); it.hasNext();) {
+                    String subIndex = (String) it.next();
+                    getIndexManager().clearCache(subIndex);
+                }
             }
         } finally {
             transIndexManager.close();

@@ -227,7 +227,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         Boolean retVal = (Boolean) template.executeForSubIndex(subIndex, false,
                 new LuceneStoreCallback() {
                     public Object doWithStore(Directory dir) throws IOException {
-                        return IndexReader.isLocked(dir);
+                        return Boolean.valueOf(IndexReader.isLocked(dir));
                     }
                 });
         return retVal.booleanValue();

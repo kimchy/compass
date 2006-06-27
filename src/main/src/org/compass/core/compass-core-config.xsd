@@ -1023,6 +1023,15 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="clearCacheOnCommit" type="booleanType" use="optional" default="true">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Should the cache be cleared on commit. Note, that setting it to false might mean that the
+                    transaction isolation level will not function properly (for example, with read_committed, it will
+                    mean that data that is committed will take time to be reflected in the index). Defaults to true.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
         <xsd:attribute name="lockDir" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>

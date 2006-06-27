@@ -308,6 +308,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         settings.setSetting(CompassEnvironment.Transaction.FACTORY, DomUtils.getElementAttribute(ele, "factory"));
         settings.setSetting(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, DomUtils.getElementAttribute(ele, "commitBeforeCompletion"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_DIR, DomUtils.getElementAttribute(ele, "lockDir"));
+        settings.setSetting(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, DomUtils.getElementAttribute(ele, "clearCacheOnCommit"));
         settings.setSetting(LuceneEnvironment.Transaction.COMMIT_TIMEOUT, DomUtils.getElementAttribute(ele, "commitTimeout"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, DomUtils.getElementAttribute(ele, "lockTimeout"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, DomUtils.getElementAttribute(ele, "lockPollInterval"));
