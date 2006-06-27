@@ -91,7 +91,12 @@ public interface LuceneSearchEngineStore {
 	 */
 	Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException;
 
-	/**
+    /**
+     * Returns <code>true</code> if the sub index is locked (both Lucene write and commit locks).
+     */
+    boolean isLocked(String subIndex) throws SearchEngineException;
+
+    /**
 	 * Deletes the index.
 	 */
 	void deleteIndex() throws SearchEngineException;

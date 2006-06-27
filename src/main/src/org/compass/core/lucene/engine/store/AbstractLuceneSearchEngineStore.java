@@ -223,6 +223,16 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         return (String[]) ret.toArray(new String[ret.size()]);
     }
 
+    public boolean isLocked(String subIndex) throws SearchEngineException {
+        Boolean retVal = (Boolean) template.executeForSubIndex(subIndex, false,
+                new LuceneStoreCallback() {
+                    public Object doWithStore(Directory dir) throws IOException {
+                        return IndexReader.isLocked(dir);
+                    }
+                });
+        return retVal.booleanValue();
+    }
+
     public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {
         // do nothing here
     }
