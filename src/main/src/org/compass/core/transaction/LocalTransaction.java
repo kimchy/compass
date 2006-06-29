@@ -18,9 +18,10 @@ package org.compass.core.transaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.compass.core.CompassException;
 import org.compass.core.Compass;
+import org.compass.core.CompassException;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
@@ -42,7 +43,7 @@ public class LocalTransaction extends AbstractTransaction {
 
     private InternalCompassSession session;
 
-    private Compass compass;
+    private InternalCompass compass;
 
     private TransactionIsolation transactionIsolation;
 
@@ -87,9 +88,8 @@ public class LocalTransaction extends AbstractTransaction {
                     "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
         }
 
-        CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());
-        holder.removeSession();
         session.evictAll();
+        ((LocalTransactionFactory)compass.getTransactionFactory()).unbindSessionFromTransaction(this, session);
         session.getSearchEngine().commit(true);
         state = COMMIT;
     }
@@ -107,8 +107,7 @@ public class LocalTransaction extends AbstractTransaction {
                         "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
             }
 
-            CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());
-            holder.removeSession();
+            ((LocalTransactionFactory)compass.getTransactionFactory()).unbindSessionFromTransaction(this, session);
         }
 
         state = ROLLBACK;

@@ -37,7 +37,7 @@ public class LocalTransactionTests extends AbstractTestCase {
 
         CompassSession nestedSession = openSession();
         CompassTransaction nestedTr = nestedSession.beginTransaction();
-        assertEquals(session, nestedSession);
+        assertTrue(session == nestedSession);
         a = (A) nestedSession.get(A.class, id);
         assertNotNull(a);
         nestedTr.commit();
@@ -68,7 +68,7 @@ public class LocalTransactionTests extends AbstractTestCase {
 
         CompassSession nestedSession = openSession();
         CompassTransaction nestedTr = nestedSession.beginTransaction();
-        assertEquals(session, nestedSession);
+        assertTrue(session == nestedSession);
         a = (A) nestedSession.get(A.class, id);
         assertNotNull(a);
         nestedTr.rollback();

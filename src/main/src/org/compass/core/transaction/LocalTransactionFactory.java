@@ -16,17 +16,27 @@
 
 package org.compass.core.transaction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class LocalTransactionFactory extends AbstractTransactionFactory {
+
+    /**
+     * A ThreadLocal maintaining current sessions for the given execution thread.
+     * The actual ThreadLocal variable is a java.util.Map to account for
+     * the possibility for multiple Compass instances being used during execution
+     * of the given thread.
+     */
+    private static final ThreadLocal context = new ThreadLocal();
 
     protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
                                                             TransactionIsolation transactionIsolation) throws CompassException {
@@ -41,12 +51,36 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
         return tx;
     }
 
-    protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
-        return holder.getSession();
+    public CompassSession getTransactionBoundSession() throws CompassException {
+        Map sessionMap = sessionMap();
+        if (sessionMap == null) {
+            return null;
+        } else {
+            return (CompassSession) sessionMap.get(compass);
+        }
     }
 
-    protected void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
-            throws CompassException {
-        holder.addSession(session);
+    public void unbindSessionFromTransaction(LocalTransaction tr, CompassSession session) {
+        Map sessionMap = sessionMap();
+        if (sessionMap != null) {
+            sessionMap.remove(compass);
+            if (sessionMap.isEmpty()) {
+                context.set(null);
+            }
+        }
     }
+
+    protected void doBindSessionToTransaction(CompassTransaction tr, CompassSession session) throws CompassException {
+        Map sessionMap = sessionMap();
+        if (sessionMap == null) {
+            sessionMap = new HashMap();
+            context.set(sessionMap);
+        }
+        sessionMap.put(compass, session);
+    }
+
+    private static Map sessionMap() {
+        return (Map) context.get();
+    }
+
 }

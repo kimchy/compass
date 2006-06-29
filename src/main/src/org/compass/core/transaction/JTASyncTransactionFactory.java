@@ -16,65 +16,74 @@
 
 package org.compass.core.transaction;
 
+import java.util.Hashtable;
+import java.util.Map;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.jndi.NamingHelper;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.transaction.*;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * Factory for <code>JTATransaction</code>.
- * 
- * @see JTASyncTransaction
+ *
  * @author kimchy
+ * @see JTASyncTransaction
  */
 public class JTASyncTransactionFactory extends AbstractTransactionFactory {
 
-	private static final Log log = LogFactory.getLog(JTASyncTransactionFactory.class);
+    private static final Log log = LogFactory.getLog(JTASyncTransactionFactory.class);
 
-	private static final String DEFAULT_USER_TRANSACTION_NAME = "java:comp/UserTransaction";
+    private static final String DEFAULT_USER_TRANSACTION_NAME = "java:comp/UserTransaction";
 
-	private InitialContext context;
+    private transient Map currentSessionMap = new Hashtable();
 
-	private String utName;
+    private InitialContext context;
+
+    private String utName;
 
     private UserTransaction userTransaction;
 
     private TransactionManager transactionManager;
 
-	public void doConfigure(CompassSettings settings) throws CompassException {
+    public void doConfigure(CompassSettings settings) throws CompassException {
 
-		try {
-			context = NamingHelper.getInitialContext(settings);
-		} catch (NamingException ne) {
-			throw new CompassException("Could not obtain initial context", ne);
-		}
+        try {
+            context = NamingHelper.getInitialContext(settings);
+        } catch (NamingException ne) {
+            throw new CompassException("Could not obtain initial context", ne);
+        }
 
-		utName = settings.getSetting(CompassEnvironment.Transaction.USER_TRANSACTION);
+        utName = settings.getSetting(CompassEnvironment.Transaction.USER_TRANSACTION);
 
-		TransactionManagerLookup lookup = TransactionManagerLookupFactory.getTransactionManagerLookup(settings);
-		if (lookup != null) {
-			transactionManager = lookup.getTransactionManager(settings);
-			if (transactionManager == null) {
-				throw new CompassException("Failed to find transaction manager");
-			}
-			if (utName == null)
-				utName = lookup.getUserTransactionName();
-		} else {
-			throw new CompassException("Must register a transaction manager lookup using the "
-					+ CompassEnvironment.Transaction.MANAGER_LOOKUP + " property");
-		}
+        TransactionManagerLookup lookup = TransactionManagerLookupFactory.getTransactionManagerLookup(settings);
+        if (lookup != null) {
+            transactionManager = lookup.getTransactionManager(settings);
+            if (transactionManager == null) {
+                throw new CompassException("Failed to find transaction manager");
+            }
+            if (utName == null)
+                utName = lookup.getUserTransactionName();
+        } else {
+            throw new CompassException("Must register a transaction manager lookup using the "
+                    + CompassEnvironment.Transaction.MANAGER_LOOKUP + " property");
+        }
 
-		if (utName == null) {
-			utName = DEFAULT_USER_TRANSACTION_NAME;
+        if (utName == null) {
+            utName = DEFAULT_USER_TRANSACTION_NAME;
         }
 
         boolean cacheUserTransaction = settings.getSettingAsBoolean(CompassEnvironment.Transaction.CACHE_USER_TRANSACTION, true);
@@ -86,41 +95,44 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
         }
     }
 
-	public InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-			TransactionIsolation transactionIsolation) throws CompassException {
+    public InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
+                                                         TransactionIsolation transactionIsolation) throws CompassException {
         JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction());
-		tx.begin(session, transactionManager, transactionIsolation, commitBeforeCompletion);
-		return tx;
-	}
+        tx.begin(session, transactionManager, transactionIsolation, commitBeforeCompletion);
+        return tx;
+    }
 
-	protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
+    protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
         JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction());
         tx.join();
         return tx;
     }
 
-	protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
-		UserTransaction ut = getUserTransaction();
-		try {
-			if (ut.getStatus() == Status.STATUS_NO_TRANSACTION) {
-				return null;
-			}
-			Transaction tr = transactionManager.getTransaction();
-			return holder.getSession(tr);
-		} catch (SystemException e) {
-			throw new TransactionException("Failed to fetch transaction bound session", e);
-		}
-	}
+    public CompassSession getTransactionBoundSession() throws CompassException {
+        UserTransaction ut = getUserTransaction();
+        try {
+            if (ut.getStatus() == Status.STATUS_NO_TRANSACTION) {
+                return null;
+            }
+            Transaction tr = transactionManager.getTransaction();
+            return (CompassSession) currentSessionMap.get(tr);
+        } catch (SystemException e) {
+            throw new TransactionException("Failed to fetch transaction bound session", e);
+        }
+    }
 
-	protected void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
-			throws CompassException {
-		try {
-			Transaction tx = transactionManager.getTransaction();
-			holder.addSession(tx, session);
-		} catch (SystemException e) {
-			throw new TransactionException("Failed to bind session to transcation", e);
-		}
-	}
+    protected void doBindSessionToTransaction(CompassTransaction tr, CompassSession session) throws CompassException {
+        try {
+            Transaction tx = transactionManager.getTransaction();
+            currentSessionMap.put(tx, session);
+        } catch (SystemException e) {
+            throw new TransactionException("Failed to bind session to transcation", e);
+        }
+    }
+
+    public void unbindSessionFromTransaction(Transaction tx) {
+        currentSessionMap.remove(tx);
+    }
 
     private UserTransaction getUserTransaction() throws TransactionException {
         if (userTransaction != null) {
@@ -130,18 +142,18 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
     }
 
     private UserTransaction lookupUserTransaction() throws TransactionException {
-		UserTransaction ut;
-		if (log.isDebugEnabled()) {
-			log.debug("Looking for UserTransaction under [" + utName + "]");
-		}
-		try {
-			ut = (UserTransaction) context.lookup(utName);
-		} catch (NamingException ne) {
-			throw new TransactionException("Could not find UserTransaction in JNDI under [" + utName + "]", ne);
-		}
-		if (ut == null) {
-			throw new TransactionException("A naming service lookup returned null under [" + utName + "]");
-		}
-		return ut;
-	}
+        if (log.isDebugEnabled()) {
+            log.debug("Looking for UserTransaction under [" + utName + "]");
+        }
+        UserTransaction ut;
+        try {
+            ut = (UserTransaction) context.lookup(utName);
+        } catch (NamingException ne) {
+            throw new TransactionException("Could not find UserTransaction in JNDI under [" + utName + "]", ne);
+        }
+        if (ut == null) {
+            throw new TransactionException("A naming service lookup returned null under [" + utName + "]");
+        }
+        return ut;
+    }
 }

@@ -37,6 +37,9 @@ public interface TransactionFactory {
 	CompassTransaction beginTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation)
 			throws CompassException;
 
-	CompassSession getTransactionBoundSession() throws CompassException;
+    /**
+     * Retuns a transaction bound session, or <code>null</code> if none is found.
+     */
+    CompassSession getTransactionBoundSession() throws CompassException;
 
 }

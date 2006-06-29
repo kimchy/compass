@@ -16,15 +16,17 @@
 
 package org.compass.spring.transaction;
 
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransactionFactory;
-import org.compass.core.transaction.CompassSessionHolder;
 import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.TransactionException;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -38,6 +40,8 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
     private static String transactionManagerKey = SpringSyncTransactionFactory.class.getName();
 
     private PlatformTransactionManager transactionManager;
+
+    private transient Map currentSessionMap = new Hashtable();
 
     public static void setTransactionManager(PlatformTransactionManager transactionManager) {
         transactionManagerHolder.set(transactionManager);
@@ -70,21 +74,24 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
         return tr;
     }
 
-    protected CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException {
+    public CompassSession getTransactionBoundSession() throws CompassException {
         TransactionSynchronization sync = lookupTransactionSynchronization();
         if (sync == null) {
             return null;
         }
-        return holder.getSession(sync);
+        return (CompassSession) currentSessionMap.get(sync);
     }
 
-    protected void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
-            throws CompassException {
+    protected void doBindSessionToTransaction(CompassTransaction tr, CompassSession session) throws CompassException {
         TransactionSynchronization sync = lookupTransactionSynchronization();
         if (sync == null) {
             throw new TransactionException("Failed to find compass registered spring synchronization");
         }
-        holder.addSession(sync, session);
+        currentSessionMap.put(sync, session);
+    }
+
+    public void unbindSessionFromTransaction(TransactionSynchronization sync) {
+        currentSessionMap.remove(sync);
     }
 
     private TransactionSynchronization lookupTransactionSynchronization() throws TransactionException {

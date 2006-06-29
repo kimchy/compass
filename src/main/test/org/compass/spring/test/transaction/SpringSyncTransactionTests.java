@@ -85,7 +85,7 @@ public class SpringSyncTransactionTests extends TestCase {
 
                 CompassSession oldSession = session;
                 session = compass.openSession();
-                assertEquals(oldSession, session);
+                assertTrue(oldSession == session);
                 tr = session.beginTransaction();
                 a = (A) session.get(A.class, id);
                 assertNotNull(a);
@@ -125,7 +125,7 @@ public class SpringSyncTransactionTests extends TestCase {
 
                 CompassSession oldSession = session;
                 session = compass.openSession();
-                assertEquals(oldSession, session);
+                assertTrue(oldSession == session);
                 tr = session.beginTransaction();
                 a = (A) session.get(A.class, id);
                 assertNotNull(a);
@@ -171,7 +171,7 @@ public class SpringSyncTransactionTests extends TestCase {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         CompassSession innerSession = compass.openSession();
-                        assertNotSame(session, innerSession);
+                        assertTrue(session != innerSession);
                         CompassTransaction tr = innerSession.beginTransaction();
                         A a = (A) innerSession.get(A.class, id);
                         assertNull(a);

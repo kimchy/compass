@@ -16,7 +16,13 @@
 
 package org.compass.core.transaction;
 
-import javax.transaction.*;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
@@ -243,8 +249,7 @@ public class JTASyncTransaction extends AbstractTransaction {
                 log.error("Exception occured when sync with transaction", e);
             } finally {
                 session.evictAll();
-                CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());
-                holder.removeSession(tx);
+                ((JTASyncTransactionFactory) session.getCompass().getTransactionFactory()).unbindSessionFromTransaction(tx);
                 // close the session AFTER we cleared it from the transaction,
                 // so it will be actually closed (and only if we are not
                 // controlling the trnasction)

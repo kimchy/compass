@@ -21,9 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransaction;
-import org.compass.core.transaction.CompassSessionHolder;
 import org.compass.core.transaction.TransactionException;
-import org.compass.core.transaction.TransactionSessionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -234,8 +232,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
                 log.error("Exception occured when sync with transaction", e);
                 // TODO swallow??????
             } finally {
-                CompassSessionHolder holder = TransactionSessionManager.getHolder(session.getCompass());
-                holder.removeSession(this);
+                ((SpringSyncTransactionFactory) session.getCompass().getTransactionFactory()).unbindSessionFromTransaction(this);
                 session.evictAll();
                 // close the session AFTER we cleared it from the transaction,
                 // so it will be actually closed. Also close it only if we do

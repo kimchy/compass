@@ -47,18 +47,12 @@ public abstract class AbstractTransactionFactory implements TransactionFactory {
 
     public CompassTransaction beginTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation)
             throws CompassException {
-        // bind the holder if not exists
-        CompassSessionHolder holder = TransactionSessionManager.getHolder(compass);
-        if (holder == null) {
-            holder = new CompassSessionHolder();
-            TransactionSessionManager.bindHolder(compass, holder);
-        }
 
         CompassSession boundSession = getTransactionBoundSession();
         InternalCompassTransaction tr;
         if (boundSession == null || boundSession != session) {
             tr = doBeginTransaction(session, transactionIsolation);
-            doBindSessionToTransaction(holder, session);
+            doBindSessionToTransaction(tr, session);
         } else {
             tr = doContinueTransaction(session);
         }
@@ -72,20 +66,5 @@ public abstract class AbstractTransactionFactory implements TransactionFactory {
     protected abstract InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
             throws CompassException;
 
-    public CompassSession getTransactionBoundSession() throws CompassException {
-        CompassSessionHolder holder = TransactionSessionManager.getHolder(compass);
-        if (holder == null || holder.isEmpty()) {
-            return null;
-        }
-        return doGetTransactionBoundSession(holder);
-    }
-
-    protected abstract CompassSession doGetTransactionBoundSession(CompassSessionHolder holder) throws CompassException;
-
-    protected abstract void doBindSessionToTransaction(CompassSessionHolder holder, CompassSession session)
-            throws CompassException;
-
-    public Compass getCompass() {
-        return compass;
-    }
+    protected abstract void doBindSessionToTransaction(CompassTransaction tr, CompassSession session) throws CompassException;
 }

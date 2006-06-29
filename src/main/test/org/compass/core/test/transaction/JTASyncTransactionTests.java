@@ -86,7 +86,7 @@ public class JTASyncTransactionTests extends TestCase {
         // check that if we open a new transaction within the current one it
         // will still work
         CompassSession newSession = compass.openSession();
-        assertEquals(session, newSession);
+        assertTrue(session == newSession);
         CompassTransaction newTr = session.beginTransaction();
         a = (A) session.get(A.class, id);
         assertNotNull(a);
@@ -124,7 +124,7 @@ public class JTASyncTransactionTests extends TestCase {
 
         CompassSession oldSession = session;
         session = compass.openSession();
-        assertEquals(oldSession, session);
+        assertTrue(oldSession == session);
         tr = session.beginTransaction();
         a = (A) session.get(A.class, id);
         assertNotNull(a);
@@ -190,7 +190,7 @@ public class JTASyncTransactionTests extends TestCase {
         UserTransaction newUt = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
         newUt.begin();
         CompassSession newSession = compass.openSession();
-        assertNotSame(session, newSession);
+        assertTrue(session != newSession);
         CompassTransaction newTr = newSession.beginTransaction();
         a = (A) newSession.get(A.class, id);
         assertNull(a);

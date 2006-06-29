@@ -261,7 +261,7 @@ public class LuceneSearchEngine implements SearchEngine {
     public void close() throws SearchEngineException {
         eventManager.close();
         if (transactionState == STARTED) {
-            log.error("Transaction not committed/rolled backed, code flow is wrong!, rolling back");
+            log.warn("Transaction not committed/rolled backed, rolling back");
             try {
                 rollback();
             } catch (Exception e) {
