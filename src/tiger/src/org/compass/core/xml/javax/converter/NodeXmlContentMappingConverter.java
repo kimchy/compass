@@ -64,7 +64,6 @@ public class NodeXmlContentMappingConverter extends AbstractXmlContentMappingCon
         } catch (Exception e) {
             throw new ConversionException("Failed to marshall to xml, this should not happen", e);
         }
-        System.out.println(sw.toString());
         return sw.toString();
     }
 }
