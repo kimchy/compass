@@ -31,7 +31,7 @@ import org.dom4j.io.SAXReader;
  */
 public class SAXReaderXmlContentMappingConverter extends AbstractDom4jXmlContentMappingConverter {
 
-    protected AliasedXmlObject fromString(String alias, String xml, XmlContentMapping xmlContentMapping) throws ConversionException {
+    public AliasedXmlObject fromString(String alias, String xml) throws ConversionException {
         SAXReader saxReader = new SAXReader();
         Document doc;
         try {

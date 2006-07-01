@@ -32,7 +32,7 @@ import org.dom4j.io.XMLWriter;
  */
 public abstract class AbstractDom4jXmlContentMappingConverter extends AbstractXmlContentMappingConverter {
 
-    protected String toString(XmlObject xmlObject, XmlContentMapping xmlContentMapping) throws ConversionException {
+    public String toString(XmlObject xmlObject) throws ConversionException {
         Dom4jXmlObject dom4jXmlObject = (Dom4jXmlObject) xmlObject;
         StringWriter stringWriter = new StringWriter();
         OutputFormat outputFormat = OutputFormat.createCompactFormat();

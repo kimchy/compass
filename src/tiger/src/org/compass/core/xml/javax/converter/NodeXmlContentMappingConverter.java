@@ -38,12 +38,13 @@ import org.xml.sax.InputSource;
 
 /**
  * @author kimchy
- * @TODO For better performance, we might want to pool DocumentBuilders and Transformers
+ *
  */
+// TODO For better performance, we might want to pool DocumentBuilders and Transformers
 public class NodeXmlContentMappingConverter extends AbstractXmlContentMappingConverter {
 
     @Override
-    protected AliasedXmlObject fromString(String alias, String xml, XmlContentMapping xmlContentMapping) throws ConversionException {
+    public AliasedXmlObject fromString(String alias, String xml) throws ConversionException {
         Document document;
         try {
             document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
@@ -54,7 +55,7 @@ public class NodeXmlContentMappingConverter extends AbstractXmlContentMappingCon
     }
     
     @Override
-    protected String toString(XmlObject xmlObject, XmlContentMapping xmlContentMapping) throws ConversionException {
+    public String toString(XmlObject xmlObject) throws ConversionException {
         NodeXmlObject nodeXmlObject = (NodeXmlObject) xmlObject;
         Source source = new DOMSource(nodeXmlObject.getNode());
         StringWriter sw = new StringWriter();

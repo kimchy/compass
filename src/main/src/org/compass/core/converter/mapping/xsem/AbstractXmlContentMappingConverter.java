@@ -40,7 +40,7 @@ public abstract class AbstractXmlContentMappingConverter implements Converter {
         }
         XmlObject xmlObject = (XmlObject) root;
         XmlContentMapping xmlContentMapping = (XmlContentMapping) mapping;
-        String sValue = toString(xmlObject, xmlContentMapping);
+        String sValue = toString(xmlObject);
         String propertyName = xmlContentMapping.getPath();
         Property p = searchEngine.createProperty(propertyName, sValue, xmlContentMapping);
         resource.addProperty(p);
@@ -59,7 +59,7 @@ public abstract class AbstractXmlContentMappingConverter implements Converter {
             return null;
         }
 
-        return fromString(resource.getAlias(), p.getStringValue(), xmlContentMapping);
+        return fromString(resource.getAlias(), p.getStringValue());
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class AbstractXmlContentMappingConverter implements Converter {
     }
 
 
-    protected abstract String toString(XmlObject xmlObject, XmlContentMapping xmlContentMapping) throws ConversionException;
+    public abstract String toString(XmlObject xmlObject) throws ConversionException;
 
-    protected abstract AliasedXmlObject fromString(String alias, String xml, XmlContentMapping xmlContentMapping) throws ConversionException;
+    public abstract AliasedXmlObject fromString(String alias, String xml) throws ConversionException;
 }
