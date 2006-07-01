@@ -28,6 +28,12 @@ import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.XmlObject;
 
 /**
+ * <p>A base class for xml content converters. The converters knows how to marshall
+ * an {@link XmlObject} into xml, and un-marshall xml into an {@link AliasedXmlObject}.
+ * <p/>
+ * <p>Requires two methods to be implemented: {@link #toString(org.compass.core.xml.XmlObject)}
+ * and {@link #fromString(String, String)}.
+ *
  * @author kimchy
  */
 public abstract class AbstractXmlContentMappingConverter implements Converter {
@@ -89,8 +95,22 @@ public abstract class AbstractXmlContentMappingConverter implements Converter {
         return context.getSearchEngine().isNullValue(value);
     }
 
-
+    /**
+     * Converts an {@link XmlObject} into an xml string.
+     *
+     * @param xmlObject The xml object to convert to an xml string
+     * @return An xml string representation of the xml object
+     * @throws ConversionException Failed to convert the xml object to an xml string
+     */
     public abstract String toString(XmlObject xmlObject) throws ConversionException;
 
+    /**
+     * Converts an xml string into an {@link AliasedXmlObject}.
+     *
+     * @param alias The alias the aliases xml object is associated with
+     * @param xml   The xml string that will be converted into an aliases xml object
+     * @return The aliases xml object that is the restult of the xml parsed
+     * @throws ConversionException
+     */
     public abstract AliasedXmlObject fromString(String alias, String xml) throws ConversionException;
 }

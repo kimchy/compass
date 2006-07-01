@@ -37,12 +37,22 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 /**
- * @author kimchy
+ * <p>Uses JSE to convert an xml content to and from {@link NodeAliasedXmlObject}.
  *
+ * @author kimchy
  */
 // TODO For better performance, we might want to pool DocumentBuilders and Transformers
 public class NodeXmlContentMappingConverter extends AbstractXmlContentMappingConverter {
 
+    /**
+     * Uses {@link DocumentBuilderFactory} to create a {@link javax.xml.parsers.DocumentBuilder}
+     * and parse the given xml into a {@link NodeAliasedXmlObject}.
+     *
+     * @param alias The alias that will be associated with the {@link NodeAliasedXmlObject}
+     * @param xml   The xml string to parse into {@link NodeAliasedXmlObject}
+     * @return A {@link NodeAliasedXmlObject} parsed from the given xml string and associated with the given alias
+     * @throws ConversionException In case the xml parsing failed
+     */
     @Override
     public AliasedXmlObject fromString(String alias, String xml) throws ConversionException {
         Document document;
@@ -53,7 +63,15 @@ public class NodeXmlContentMappingConverter extends AbstractXmlContentMappingCon
         }
         return new NodeAliasedXmlObject(alias, document);
     }
-    
+
+    /**
+     * Converts a {@link NodeXmlObject} into an xml string. Uses {@link TransformerFactory}
+     * and {@link javax.xml.transform.Transformer} to do it.
+     *
+     * @param xmlObject The {@link NodeXmlObject} to convert into an xml string
+     * @return The xml string representation of the given {@link NodeXmlObject}
+     * @throws ConversionException Should not really happen...
+     */
     @Override
     public String toString(XmlObject xmlObject) throws ConversionException {
         NodeXmlObject nodeXmlObject = (NodeXmlObject) xmlObject;

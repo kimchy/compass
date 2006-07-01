@@ -27,10 +27,21 @@ import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 
 /**
+ * A dom4j xml content mapping converter, which uses dom4j <code>SAXReader</code> to
+ * convert the xml string into a {@link Dom4jAliasedXmlObject}.
+ *
  * @author kimchy
  */
 public class SAXReaderXmlContentMappingConverter extends AbstractDom4jXmlContentMappingConverter {
 
+    /**
+     * Uses dom4j <code>SAXReader</code> to convert the given xml string into a {@link Dom4jAliasedXmlObject}.
+     *
+     * @param alias The alias that will be associated with the {@link AliasedXmlObject}
+     * @param xml   The xml string to convert into an {@link Dom4jAliasedXmlObject}
+     * @return A {@link Dom4jAliasedXmlObject} parsed from the given xml string and associated with the given alias
+     * @throws ConversionException In case the xml parsing failed
+     */
     public AliasedXmlObject fromString(String alias, String xml) throws ConversionException {
         SAXReader saxReader = new SAXReader();
         Document doc;

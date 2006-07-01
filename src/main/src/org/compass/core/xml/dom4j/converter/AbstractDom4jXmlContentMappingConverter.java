@@ -28,10 +28,22 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 /**
+ * A base class for dom4j xml content mapping converters. Already implements
+ * {@link #toString(org.compass.core.xml.XmlObject)} using dom4j <code>XmlWriter</code>.
+ *
  * @author kimchy
  */
 public abstract class AbstractDom4jXmlContentMappingConverter extends AbstractXmlContentMappingConverter {
 
+    /**
+     * Converts the {@link XmlObject} (assumes it is a {@link Dom4jXmlObject}) into
+     * an xml string. Uses dom4j <code>XmlWriter</code> and <code>OutputFormat</code>
+     * (in a compact mode) to perform it.
+     *
+     * @param xmlObject The xml object to convert into an xml string (must be a {@link Dom4jXmlObject} implementation).
+     * @return An xml string representation of the xml object
+     * @throws ConversionException Should not really happne...
+     */
     public String toString(XmlObject xmlObject) throws ConversionException {
         Dom4jXmlObject dom4jXmlObject = (Dom4jXmlObject) xmlObject;
         StringWriter stringWriter = new StringWriter();
