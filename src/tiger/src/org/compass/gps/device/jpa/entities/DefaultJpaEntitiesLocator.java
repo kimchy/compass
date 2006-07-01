@@ -109,7 +109,7 @@ public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
      * @return <code>true</code> if the entity should be filtered from the index process
      */
     protected boolean shouldFilter(EntityInformation entityInformation, JpaGpsDevice device) {
-        Class<?> clazz = entityInformation.getClazz().getSuperclass();
+        Class<?> clazz = entityInformation.getEntityClass().getSuperclass();
         while (true) {
             if (clazz == null || clazz.equals(Object.class)) {
                 break;
@@ -117,7 +117,7 @@ public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
             if (clazz.isAnnotationPresent(Inheritance.class)
                     && ((CompassGpsInterfaceDevice) device.getGps()).hasMappingForEntityForIndex(clazz)) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Entity [" + entityInformation.getName()
+                    log.debug("Entity [" + entityInformation.getEntityName()
                             + "] is inherited and super class [" + clazz + "] has compass mapping, filtering it out");
                 }
                 return true;

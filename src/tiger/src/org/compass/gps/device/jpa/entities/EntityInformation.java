@@ -41,15 +41,19 @@ public class EntityInformation {
         this.selectQuery = selectQuery;
     }
 
-    public Class<?> getClazz() {
+    public Class<?> getEntityClass() {
         return clazz;
     }
 
-    public String getName() {
+    public String getEntityName() {
         return name;
     }
 
     public String getSelectQuery() {
         return selectQuery;
+    }
+
+    public void setSelectQuery(String selectQuery) {
+        this.selectQuery = selectQuery;
     }
 }

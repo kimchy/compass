@@ -16,7 +16,9 @@
 
 package org.compass.gps.device.jpa;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
@@ -116,6 +118,10 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
 
     private EntityInformation[] entetiesInformation;
 
+    private Map<Class<?>, String> selectQueryByClass = new HashMap<Class<?>, String>();
+
+    private Map<String, String> selectQueryByName = new HashMap<String, String>();
+
     protected void doStart() throws CompassGpsException {
         Assert.notNull(entityManagerFactory, buildMessage("Must set JPA EntityManagerFactory"));
         if (entityManagerWrapper == null) {
@@ -143,6 +149,15 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
             }
         }
         entetiesInformation = entitiesLocator.locate(nativeEntityManagerFactory, this);
+        // apply specific select statements
+        for (EntityInformation entityInformation : entetiesInformation) {
+            if (selectQueryByClass.get(entityInformation.getEntityClass()) != null) {
+                entityInformation.setSelectQuery(selectQueryByClass.get(entityInformation.getEntityClass()));
+            }
+            if (selectQueryByName.get(entityInformation.getEntityName()) != null) {
+                entityInformation.setSelectQuery(selectQueryByName.get(entityInformation.getEntityName()));
+            }
+        }
 
         if (injectEntityLifecycleListener && mirrorDataChanges) {
             if (lifecycleInjector == null) {
@@ -163,7 +178,7 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
             log.info(buildMessage("Indexing the database with fetch count [" + fetchCount + "]"));
         }
         for (EntityInformation entityInformation : entetiesInformation) {
-            if (isFilteredForIndex(entityInformation.getName())) {
+            if (isFilteredForIndex(entityInformation.getEntityName())) {
                 continue;
             }
             try {
@@ -172,7 +187,7 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 EntityManager entityManager = entityManagerWrapper.getEntityManager();
                 while (true) {
                     if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("Indexing entities [" + entityInformation.getName() + "] range ["
+                        log.debug(buildMessage("Indexing entities [" + entityInformation.getEntityName() + "] range ["
                                 + current + "-" + (current + fetchCount) + "] using query ["
                                 + entityInformation.getSelectQuery() + "]"));
                     }
@@ -283,5 +298,27 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
      */
     public void setFetchCount(int fetchCount) {
         this.fetchCount = fetchCount;
+    }
+
+    /**
+     * Sets a specific select statement for the index process of the given
+     * entity class.
+     *
+     * @param entityClass The Entity class to associate the select query with
+     * @param selectQuery The select query to execute when indexing the given entity
+     */
+    public void setIndexSelectQuery(Class<?> entityClass, String selectQuery) {
+        selectQueryByClass.put(entityClass, selectQuery);
+    }
+
+    /**
+     * Sets a specific select statement for the index process of the given
+     * entity name.
+     *
+     * @param entityName  The entity name to associate the select query with
+     * @param selectQuery The select query to execute when indexing the given entity
+     */
+    public void setIndexSelectQuery(String entityName, String selectQuery) {
+        selectQueryByName.put(entityName, selectQuery);
     }
 }
