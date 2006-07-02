@@ -45,7 +45,10 @@ public class PostgreSQLDialect extends Dialect {
     }
 
     public String sqlTableExists(String catalog, String schemaName) {
-        return "select tablename from pg_tables where schemaname = 'public' and lower(tablename) = ?";
+        if (schemaName == null || schemaName.length() == 0) {
+            schemaName = "public";
+        }
+        return "select tablename from pg_tables where schemaname = '" + schemaName + "' and lower(tablename) = ?";
     }
 
     public boolean supportsCurrentTimestampSelection() {
