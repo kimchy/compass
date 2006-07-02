@@ -16,19 +16,29 @@
 
 package org.compass.core.xml.javax.converter;
 
-import java.io.StringReader;
+import java.io.Reader;
 import java.io.StringWriter;
-
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.mapping.xsem.AbstractXmlContentMappingConverter;
-import org.compass.core.mapping.xsem.XmlContentMapping;
+import org.compass.core.converter.xsem.SupportsXmlContentWrapper;
+import org.compass.core.converter.xsem.XmlContentConverter;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.javax.NodeAliasedXmlObject;
@@ -41,11 +51,43 @@ import org.xml.sax.InputSource;
  *
  * @author kimchy
  */
-// TODO For better performance, we might want to pool DocumentBuilders and Transformers
-public class NodeXmlContentMappingConverter extends AbstractXmlContentMappingConverter {
+public class NodeXmlContentConverter implements XmlContentConverter, CompassConfigurable, SupportsXmlContentWrapper {
+
+    private static Log log = LogFactory.getLog(NodeXmlContentConverter.class);
+
+    private DocumentBuilder documentBuilder;
+
+    private Transformer transformer;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        try {
+            this.documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new ConfigurationException("Failed to create document builder", e);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Using document builder [" + documentBuilder.getClass().getName() + "]");
+        }
+        try {
+            this.transformer = TransformerFactory.newInstance().newTransformer();
+        } catch (TransformerConfigurationException e) {
+            throw new ConfigurationException("Failed to create transformer", e);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Using transformer [" + transformer.getClass().getName() + "]");
+        }
+    }
 
     /**
-     * Uses {@link DocumentBuilderFactory} to create a {@link javax.xml.parsers.DocumentBuilder}
+     * This converter does not support a singleton wrapper strategy.
+     */
+    public boolean supports(String wrapper) {
+        return !CompassEnvironment.Converter.XmlContent.WRAPPER_SINGLETON.equals(wrapper);
+    }
+
+
+    /**
+     * Uses the already created {@link javax.xml.parsers.DocumentBuilder}
      * and parse the given xml into a {@link NodeAliasedXmlObject}.
      *
      * @param alias The alias that will be associated with the {@link NodeAliasedXmlObject}
@@ -53,11 +95,10 @@ public class NodeXmlContentMappingConverter extends AbstractXmlContentMappingCon
      * @return A {@link NodeAliasedXmlObject} parsed from the given xml string and associated with the given alias
      * @throws ConversionException In case the xml parsing failed
      */
-    @Override
-    public AliasedXmlObject fromString(String alias, String xml) throws ConversionException {
+    public AliasedXmlObject fromXml(String alias, Reader xml) throws ConversionException {
         Document document;
         try {
-            document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+            document = documentBuilder.parse(new InputSource(xml));
         } catch (Exception e) {
             throw new ConversionException("Failed to parse alias[" + alias + "] xml[" + xml + "]", e);
         }
@@ -65,21 +106,20 @@ public class NodeXmlContentMappingConverter extends AbstractXmlContentMappingCon
     }
 
     /**
-     * Converts a {@link NodeXmlObject} into an xml string. Uses {@link TransformerFactory}
-     * and {@link javax.xml.transform.Transformer} to do it.
+     * Converts a {@link NodeXmlObject} into an xml string.
+     * Uses the created {@link javax.xml.transform.Transformer} to do it.
      *
      * @param xmlObject The {@link NodeXmlObject} to convert into an xml string
      * @return The xml string representation of the given {@link NodeXmlObject}
      * @throws ConversionException Should not really happen...
      */
-    @Override
-    public String toString(XmlObject xmlObject) throws ConversionException {
+    public String toXml(XmlObject xmlObject) throws ConversionException {
         NodeXmlObject nodeXmlObject = (NodeXmlObject) xmlObject;
         Source source = new DOMSource(nodeXmlObject.getNode());
         StringWriter sw = new StringWriter();
         Result result = new StreamResult(sw);
         try {
-            TransformerFactory.newInstance().newTransformer().transform(source, result);
+            transformer.transform(source, result);
         } catch (Exception e) {
             throw new ConversionException("Failed to marshall to xml, this should not happen", e);
         }

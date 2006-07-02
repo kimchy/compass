@@ -774,6 +774,7 @@
                 <include name="lib/spring/**"/>
                 <include name="lib/sunfsjndi/**"/>
                 <include name="lib/toplink/**"/>
+                <include name="lib/xpp/**"/>
             </zipfileset>
         </zip>
 

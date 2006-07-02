@@ -23,7 +23,7 @@ import java.util.List;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.ConverterLookup;
-import org.compass.core.converter.mapping.xsem.SimpleXmlValueConverter;
+import org.compass.core.converter.xsem.SimpleXmlValueConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;

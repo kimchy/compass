@@ -55,10 +55,10 @@ import org.compass.core.converter.mapping.osem.ConstantMappingConverter;
 import org.compass.core.converter.mapping.osem.ParentMappingConverter;
 import org.compass.core.converter.mapping.osem.ReferenceMappingConverter;
 import org.compass.core.converter.mapping.rsem.RawResourceMappingConverter;
+import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlIdMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlObjectMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter;
-import org.compass.core.converter.mapping.xsem.ExceptionXmlContentMappingConverter;
 import org.compass.core.mapping.osem.ArrayMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -69,10 +69,10 @@ import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
+import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.mapping.xsem.XmlIdMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.mapping.xsem.XmlPropertyMapping;
-import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -177,23 +177,23 @@ public class DefaultConverterLookup implements ConverterLookup {
         // add mapping converters
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.RAW_RESOURCE_MAPPING,
                 RawResourceMapping.class, new RawResourceMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_MAPPING,
                 ClassMapping.class, new ClassMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_PROPERTY,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_PROPERTY_MAPPING,
                 ClassPropertyMapping.class, new ClassPropertyMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_ID_PROPERTY,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CLASS_ID_PROPERTY_MAPPING,
                 ClassIdPropertyMapping.class, new ClassPropertyMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COMPONENT,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COMPONENT_MAPPING,
                 ComponentMapping.class, new ComponentMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COLLECTION,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.COLLECTION_MAPPING,
                 CollectionMapping.class, new CollectionMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.ARRAY,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.ARRAY_MAPPING,
                 ArrayMapping.class, new ArrayMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.REFERENCE,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.REFERENCE_MAPPING,
                 ReferenceMapping.class, new ReferenceMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CONSTANT,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CONSTANT_MAPPING,
                 ConstantMetaDataMapping.class, new ConstantMappingConverter());
-        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.PARENT,
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.PARENT_MAPPING,
                 ParentMapping.class, new ParentMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_OBJECT_MAPPING,
                 XmlObjectMapping.class, new XmlObjectMappingConverter());
@@ -202,7 +202,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_ID_MAPPING,
                 XmlIdMapping.class, new XmlIdMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
-                XmlContentMapping.class, new ExceptionXmlContentMappingConverter());
+                XmlContentMapping.class, new XmlContentMappingConverter());
 
         // now configure all the none default converters
         for (Iterator it = converterGroups.keySet().iterator(); it.hasNext();) {

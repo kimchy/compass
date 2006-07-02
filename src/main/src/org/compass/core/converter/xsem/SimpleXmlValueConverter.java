@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.mapping.xsem;
+package org.compass.core.converter.xsem;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;

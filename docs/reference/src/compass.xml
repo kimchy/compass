@@ -8,8 +8,9 @@
 <!ENTITY core-searchengine  SYSTEM "core-searchengine.xml">
 <!ENTITY core-osem-xml  SYSTEM "core-osem-xml.xml">
 <!ENTITY core-osem-annotations  SYSTEM "core-osem-annotations.xml">
-<!ENTITY core-commonmetadata  SYSTEM "core-commonmetadata.xml">
 <!ENTITY core-resourcemapping  SYSTEM "core-resourcemapping.xml">
+<!ENTITY core-xsem  SYSTEM "core-xsem.xml">
+<!ENTITY core-commonmetadata  SYSTEM "core-commonmetadata.xml">
 <!ENTITY core-transaction  SYSTEM "core-transaction.xml">
 <!ENTITY core-workingwithobjects  SYSTEM "core-workingwithobjects.xml">
 <!ENTITY core-jdbcdirectory  SYSTEM "core-jdbcdirectory.xml">
@@ -117,8 +118,9 @@
     &core-searchengine;
     &core-osem-xml;
     &core-osem-annotations;
-    &core-commonmetadata;
+    &core-xsem;
     &core-resourcemapping;
+    &core-commonmetadata;
     &core-transaction;
     &core-workingwithobjects;
   </part>

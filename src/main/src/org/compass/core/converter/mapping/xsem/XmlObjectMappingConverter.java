@@ -16,21 +16,24 @@
 
 package org.compass.core.converter.mapping.xsem;
 
+import java.io.Reader;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
+import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.spi.MultiResource;
+import org.compass.core.xml.RawXmlObject;
 import org.compass.core.xml.XmlObject;
 
 /**
@@ -39,7 +42,6 @@ import org.compass.core.xml.XmlObject;
  * Note, that marshalls might create several resources, if the {@link XmlObjectMapping} has
  * an xpath expression associated with it.
  * <p/>
- * Also note, that unmarshall is not supported for now.
  *
  * @author kimchy
  */
@@ -52,6 +54,8 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
         }
         XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) mapping;
         XmlObject rootXmlObject = (XmlObject) root;
+
+        rootXmlObject = getActualXmlObject(rootXmlObject, xmlObjectMapping, context, resource);
 
         if (xmlObjectMapping.getXPath() != null) {
             XmlObject[] xmlObjects = XmlConverterUtils.select(rootXmlObject, xmlObjectMapping);
@@ -95,7 +99,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
         XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) resourceMapping;
         ResourcePropertyMapping[] ids = resourceMapping.getIdMappings();
         if (id instanceof XmlObject) {
-            XmlObject rootXmlObject = (XmlObject) id;
+            XmlObject rootXmlObject = getActualXmlObject((XmlObject) id, xmlObjectMapping, context, idResource);
             if (xmlObjectMapping.getXPath() != null) {
                 XmlObject[] xmlObjects = XmlConverterUtils.select(rootXmlObject, xmlObjectMapping);
                 if (xmlObjects == null || xmlObjects.length == 0) {
@@ -153,4 +157,22 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
     public Object[] unmarshallIds(Object id, ResourceMapping resourceMapping, MarshallingContext context) throws ConversionException {
         throw new ConversionException("Not supported");
     }
+
+    private XmlObject getActualXmlObject(XmlObject rootXmlObject, XmlObjectMapping xmlObjectMapping, MarshallingContext context, Resource resource) {
+        // in case it is an xml string value, convert it into an xml object
+        if (rootXmlObject instanceof RawXmlObject) {
+            Reader xml = ((RawXmlObject) rootXmlObject).getXml();
+            XmlContentMapping xmlContentMapping = xmlObjectMapping.getXmlContentMapping();
+            XmlContentMappingConverter xmlContentMappingConverter;
+            if (xmlContentMapping != null) {
+                xmlContentMappingConverter = (XmlContentMappingConverter) xmlContentMapping.getConverter();
+            } else {
+                xmlContentMappingConverter = (XmlContentMappingConverter) context.getConverterLookup().
+                        lookupConverter(CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING);
+            }
+            rootXmlObject = xmlContentMappingConverter.getXmlContentConverter().fromXml(resource.getAlias(), xml);
+        }
+        return rootXmlObject;
+    }
+
 }

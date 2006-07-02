@@ -49,7 +49,7 @@ public abstract class XmlConverterUtils {
             }
         }
         if (xmlObject.canCompileXpath()) {
-            XmlXPathExpression xPathExpression = null;
+            XmlXPathExpression xPathExpression;
             try {
                 xPathExpression = xmlObject.compile(xpathMapping.getXPath());
             } catch (Exception e) {

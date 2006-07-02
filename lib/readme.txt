@@ -225,3 +225,11 @@ distribution/website before using any of them in your own applications.
 - Oracle Toplink Essential Reference implementation of JPA (part of glass fish) v2 build 03 (http://www.oracle.com/technology/products/ias/toplink/jpa)
 - required for building compass
 - required at runtime when using Compass Gps JPA support with Toplink Essentials
+
+* xpp/pull-parser-2.1.10.jar
+- XPP2 (http://www.extreme.indiana.edu/xgws/xsoap/xpp/)
+- required at runtime when using XPP2 based xml parsing with XSEM
+
+* xpp/xpp3-1.1.3_8.jar
+- XPP3 (http://www.extreme.indiana.edu/xgws/xsoap/xpp/)
+- required at runtime when using XPP3 based xml parsing with XSEM

@@ -18,23 +18,25 @@ package org.compass.core.test.xml.dom4j;
 
 import java.io.Reader;
 
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
 import org.compass.core.test.xml.AbstractXmlObjectTests;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
-import org.compass.core.xml.dom4j.converter.SAXReaderXmlContentMappingConverter;
-import org.compass.core.config.CompassSettings;
-import org.compass.core.config.CompassEnvironment;
-import org.dom4j.io.SAXReader;
+import org.compass.core.xml.dom4j.converter.XPP3ReaderXmlContentConverter;
 import org.dom4j.Document;
+import org.dom4j.io.SAXReader;
 
 /**
  * @author kimchy
  */
-public class Dom4jXmlObjectTests extends AbstractXmlObjectTests {
+public class Dom4jXmlXPP3ReaderObjectTests extends AbstractXmlObjectTests {
 
     protected void addSettings(CompassSettings settings) {
         settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
-                new String[] {CompassEnvironment.Converter.TYPE}, new String[] {SAXReaderXmlContentMappingConverter.class.getName()});
+                new String[]{CompassEnvironment.Converter.TYPE, CompassEnvironment.Converter.XmlContent.TYPE},
+                new String[]{XmlContentMappingConverter.class.getName(), XPP3ReaderXmlContentConverter.class.getName()});
     }
 
     protected AliasedXmlObject buildAliasedXmlObject(String alias, Reader data) throws Exception {

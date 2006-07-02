@@ -218,24 +218,48 @@ public class CompassEnvironment {
 
                 public static final String XML_CONTENT_MAPPING = "xmlContentMapping";
 
-                public static final String CLASS = "classMapping";
+                public static final String CLASS_MAPPING = "classMapping";
 
-                public static final String CLASS_PROPERTY = "classPropertyMapping";
+                public static final String CLASS_PROPERTY_MAPPING = "classPropertyMapping";
 
-                public static final String CLASS_ID_PROPERTY = "classIdPropertyMapping";
+                public static final String CLASS_ID_PROPERTY_MAPPING = "classIdPropertyMapping";
 
-                public static final String COMPONENT = "component";
+                public static final String COMPONENT_MAPPING = "component";
 
-                public static final String REFERENCE = "referenceMapping";
+                public static final String REFERENCE_MAPPING = "referenceMapping";
 
-                public static final String COLLECTION = "collectionMapping";
+                public static final String COLLECTION_MAPPING = "collectionMapping";
 
-                public static final String ARRAY = "arrayMapping";
+                public static final String ARRAY_MAPPING = "arrayMapping";
 
-                public static final String CONSTANT = "constantMapping";
+                public static final String CONSTANT_MAPPING = "constantMapping";
 
-                public static final String PARENT = "parentMapping";
+                public static final String PARENT_MAPPING = "parentMapping";
             }
+        }
+
+        /**
+         * Settings applicable to xml content mapping converters
+         */
+        public abstract class XmlContent {
+
+            public static final String TYPE = "xmlContentConverter.type";
+
+            public static final String WRAPPER = "xmlContentConverter.wrapper";
+
+            public static final String WRAPPER_SINGLETON = "singleton";
+            public static final String WRAPPER_POOL = "pool";
+            public static final String WRAPPER_PROTOTYPE = "prototype";
+
+            /**
+             * The minimum pool size. Applies to pooled xml content converters.
+             */
+            public static final String MIN_POOL_SIZE = "xmlContentConverter.minPoolSize";
+
+            /**
+             * The maximum pool size. Applies to pooled xml content converters.
+             */
+            public static final String MAX_POOL_SIZE = "xmlContentConverter.maxPoolSize";
         }
 
         /**
