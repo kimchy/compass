@@ -134,7 +134,7 @@ session.save(r);]]></programlisting>
                   <entry>The name of the alias that represents the <literal>Resource</literal>.</entry>
                 </row>
                 <row>
-                  <entry>sub-index (optional, defaults to the <literal>alias</literal> value</entry>
+                  <entry>sub-index (optional, defaults to the <literal>alias</literal> value)</entry>
                   <entry>The name of the sub-index that the alias will map to.</entry>
                 </row>
                 <row>
@@ -259,10 +259,8 @@ session.save(r);]]></programlisting>
       reverse="no|reader|string"
       override="true|false"
       exclude-from-all="[parent's exclude-from-all]|false|true"
-      converter="fully qualified converter class name"
-      converter-param="parameter for the converter"
+      converter="converter lookup name"
 >
-   (converter-param)*,
 </resource-property>]]></programlisting>
 
         <table><tgroup cols="2">
@@ -282,7 +280,7 @@ session.save(r);]]></programlisting>
             </row>
             <row>
               <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
-              <entry>If the value of the resource property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analysed (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+              <entry>If the value of the resource property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analyzed (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
             </row>
             <row>
               <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
@@ -306,11 +304,7 @@ session.save(r);]]></programlisting>
             </row>
             <row>
                 <entry>converter (optional)</entry>
-                <entry>The fully qualified class of a custom converter.</entry>
-            </row>
-            <row>
-                <entry>converter-param (optional)</entry>
-                <entry>A single parameter for the converter (none required for the default one).</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
             </row>
           </tbody>
         </tgroup></table>
@@ -336,8 +330,7 @@ session.save(r);]]></programlisting>
 <programlisting><![CDATA[<resource-analyzer
       name="property name"
       null-analyzer="analyzer name if value is null"
-      converter="fully qualified converter class name"
-      converter-param="parameter for the converter"
+      converter="converter lookup name"
 >
 </resource-analyzer>]]></programlisting>
 
@@ -359,11 +352,7 @@ session.save(r);]]></programlisting>
               </row>
               <row>
                   <entry>converter (optional)</entry>
-                  <entry>The fully qualified class of a custom converter.</entry>
-              </row>
-              <row>
-                  <entry>converter-param (optional)</entry>
-                  <entry>A single parameter for the converter (none required for the default one).</entry>
+                  <entry>The global converter lookup name registered with the configuration.</entry>
               </row>
             </tbody>
           </tgroup>
@@ -374,7 +363,7 @@ session.save(r);]]></programlisting>
         </para>
 
         <para>
-          If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the resource property can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, than a <literal>null-analyzer</literal> can be configured that will be used in that case. If the resource property has a value, but there is not matching analyzer, an exception will be thrown.
+          If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the resource property can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, a <literal>null-analyzer</literal> can be configured that will be used in that case. If the resource property has a value, but there is not matching analyzer, an exception will be thrown.
         </para>
 
       </para>

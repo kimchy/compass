@@ -595,7 +595,7 @@ public class Author {
         </para>
 
         <para>
-          If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the class property can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, than a <literal>null-analyzer</literal> can be configured that will be used in that case. If the class property has a value, but there is not matching analyzer, an exception will be thrown.
+          If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the class property can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, a <literal>null-analyzer</literal> can be configured that will be used in that case. If the class property has a value, but there is not matching analyzer, an exception will be thrown.
         </para>
 
       </para>

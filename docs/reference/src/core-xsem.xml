@@ -72,6 +72,7 @@ session.save(xmlObject);
           In order to support this, Compass must be configured with how to parse the xml content into an <literal>XmlObject</literal>, and how to convert an <literal>XmlObject</literal> into an xml string. Compass comes with built in converters that do exactly that:
           
           <table>
+            <title>Compass XmlContentConverters</title>
             <tgroup cols="2">
               <colspec colname="c1" colwidth="3*" />
               <colspec colname="c2" colwidth="5*" />
@@ -152,6 +153,10 @@ session.save(xmlObject);
    new String[]{XmlContentMappingConverter.class.getName(), XPP3ReaderXmlContentConverter.class.getName()});
 ]]></programlisting>
        </para>
+       
+       <para>
+          Note, that specific converters can be associated with a specific <literal>xml-object</literal> mapping, in order to do it, simply register the converter under a different name (compass.converter.xmlContentMapping is the default name that Compass will use when nothing is configured), and use that name in the converter attribute of the <literal>xml-content</literal> mapping.
+       </para>
     </sect1>
     
     <sect1 id="xsem-rawxmlobject-def">
@@ -167,5 +172,372 @@ session.save(xmlObject);
        <para>
           Here, Compass will identify that it is a <literal>RawAliasedXmlObject</literal>, and will used the registered converter (or the one configured against the <literal>xml-content</literal> mapping for the given alias) to convert it to the appropriate <literal>XmlObject</literal> implementation. Note, that when performing any read/search operation, the actual <literal>XmlObject</literal> that will be returned is the onc the the registered converter creates, and not the raw xml object.
        </para>
+    </sect1>
+    
+    <sect1 id="xsem-mappingdefinition">
+       <title>Mapping Definition</title>
+       
+       <para>
+          XML/Search Engine mappings are defined in an XML document, and maps XML data structures. The mappings are xml centric, meaning that mappings are constructed around XML data structures themselves and not internal <literal>Resources</literal>. If we take the following as a sample XML data structure:
+<programlisting><![CDATA[<xml-fragment>
+     <data>
+         <id value="1"/>
+         <data1 value="data11attr">data11</data1>
+         <data1 value="data12attr">data12</data1>
+     </data>
+     <data>
+         <id value="2"/>
+         <data1 value="data21attr">data21</data1>
+         <data1 value="data22attr">data22</data1>
+     </data>
+</xml-fragment>
+]]></programlisting>
+       </para>
+       <para>
+          We can map it using the following XSEM definition file:
+<programlisting><![CDATA[<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+      "-//Compass/Compass Core Mapping DTD 1.0//EN"
+      "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping>
+
+  <xml-object alias="data1" xpath="/xml-fragment/data[1]">
+      <xml-id name="id" xpath="id/@value" />
+      <xml-property xpath="data1/@value" />
+      <xml-property name="eleText" xpath="data1" />
+  </xml-object>
+
+  <xml-object alias="data2" xpath="/xml-fragment/data">
+      <xml-id name="id" xpath="id/@value" />
+      <xml-property xpath="data1/@value" />
+      <xml-property name="eleText" xpath="data1" />
+  </xml-object>
+
+  <xml-object alias="data3" xpath="/xml-fragment/data">
+      <xml-id name="id" xpath="id/@value" />
+      <xml-property xpath="data1/@value" />
+      <xml-property name="eleText" xpath="data1" />
+      <xml-content name="content" />
+  </xml-object>
+
+</compass-core-mapping>
+]]></programlisting>
+       </para>
+       
+       <para>
+          The mapping definition here shows three different mappings (that will work with the sample xml). The different mappings are registered under different aliases, where the alias acts as the connection between the actual XML saved and the mappings definition.
+       </para>
+       
+       <para>
+          An <literal>xml-object</literal> mapping can have an associated xpath expression with it, which will narrow down the actual xml elements that will represent the top level xml object which will be mapped to the search engine. A nice benefit here, is that the xpath can return multiple xml objects, which in turn will result in multiple <literal>Resources</literal> saved to the search engine.
+       </para>
+       
+       <para>
+          Each xml object mapping must have at least one <literal>xml-id</literal> mapping definition associated with it. It is used in order to update/delete existing xml objects.
+       </para>
+       
+       <para>
+          In the mapping definition associated with data3 alias, the <literal>xml-content</literal> mapping is used, which stores the actual xml content in the search engine as well. This will allow to unmarshall the xml back into an <literal>XmlObject</literal> representation. For the first two mappings (data1 and data2), search/read operations will only be able to work on the <literal>Resource</literal> level.
+       </para>
+       
+       <sect2 id="xsem-xmlobject">
+          <title>xml-object</title>
+
+          <para>
+             You may declare a xml object mapping using the <literal>xml-object</literal> element:
+
+ <programlisting><![CDATA[<xml-object
+       alias="aliasName"
+       sub-index="sub index name"
+       xpath="optional xpath expression"
+       analyzer="name of the analyzer"
+       all="true|false"
+       all-term-vector="no|yes|positions|offsets|positios_offsets"
+       all-metadata="name of all metadata"
+ />
+     xml-id*,
+     (xml-analyzer?),
+     (xml-property)*,
+     (xml-content?)
+ ]]></programlisting>
+
+              <table>
+                 <title>xml-object mapping</title>
+                <tgroup cols="2">
+                  <colspec colname="c1" colwidth="3*" />
+                  <colspec colname="c2" colwidth="5*" />
+                  <thead>
+                    <row>
+                      <entry>Attribute</entry><entry>Description</entry>
+                    </row>
+                  </thead>
+                  <tbody>
+                    <row>
+                      <entry>alias</entry>
+                      <entry>The name of the alias that represents the <literal>XmlObject</literal>.</entry>
+                    </row>
+                    <row>
+                      <entry>sub-index (optional, defaults to the <literal>alias</literal> value)</entry>
+                      <entry>The name of the sub-index that the alias will map to.</entry>
+                    </row>
+                    <row>
+                      <entry>xpath (optional, will not execute an xpath expression if not specified)</entry>
+                      <entry>An optional xpath expression to narrow down the actual xml elements that will represent the top level xml object which will be mapped to the search engine. A nice benefit here, is that the xpath can return multiple xml objects, which in turn will result in multiple <literal>Resources</literal> saved to the search engine.</entry>
+                    </row>
+                    <row>
+                      <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
+                      <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>xml-analyzer</literal> mapping (a child mapping of xml object mapping) (for an xml element that controls the analyzer), the analyzer attribute will have no effects.</entry>
+                    </row>
+                    <row>
+                      <entry>all (optional, defaults to <literal>true</literal>)</entry>
+                      <entry>Specifies if when persisting the <literal>XmlObject</literal>, Compass::Core will create the all property (which represents all the properties/meta-data values).</entry>
+                    </row>
+                    <row>
+                      <entry>all-term-vector (optional, defaults to configuration setting <literal>compass.property.all.termVector</literal>)</entry>
+                      <entry>The term vector value of the all property.</entry>
+                    </row>
+                    <row>
+                      <entry>all-metadata (optional, defaults to the setting)</entry>
+                      <entry>The name of the all meta-data (property).</entry>
+                    </row>
+                  </tbody>
+                </tgroup>
+            </table>
+         </para>
+      </sect2>
+      
+      <sect2 id="xsem-xmlid">
+         <title>xml-id</title>
+         
+         <para>
+            Mapped <literal>XmlObject's</literal> must declare at least one <literal>xml-id</literal>. The <literal>xml-id</literal> element defines the <literal>XmlObject</literal> (element, attribute, ...) that identifies the root <literal>XmlObject</literal> for the specified alias.
+
+<programlisting><![CDATA[<xml-id
+      name="the name of the xml id"
+      xpath="xpath expression"
+      value-converter="value converter lookup name"
+      converter="converter lookup name"
+/>
+]]></programlisting>
+
+              <table>
+                 <title>xml-id mapping</title>
+                <tgroup cols="2">
+                  <colspec colname="c1" colwidth="3*" />
+                  <colspec colname="c2" colwidth="5*" />
+                  <thead>
+                    <row>
+                      <entry>Attribute</entry><entry>Description</entry>
+                    </row>
+                  </thead>
+                  <tbody>
+                   <row>
+                      <entry>name</entry>
+                      <entry>The name of the <literal>xml-id</literal>. Will be used when constructing the xml-id internal path.</entry>
+                   </row>
+                   <row>
+                      <entry>xpath</entry>
+                      <entry>The xpath expression used to identify the xml-id. Must return a single xml element.</entry>
+                   </row>
+                   <row>
+                     <entry>value-converter (optional, default to Compass <literal>SimpleXmlValueConverter</literal>)</entry>
+                     <entry>The global converter lookup name registered with the configuration. This is a converter associated with converting the actual value of the xml-id. Acts as a convenient extension point for custom value converter implementation (for example, date formatters). <literal>SimpleXmlValueConverter</literal> will usually act as a base class for such extensions.</entry>
+                   </row>
+                   <row>
+                     <entry>converter (optional)</entry>
+                     <entry>The global converter lookup name registered with the configuration. The converter will is responsible to convert the xml-id mapping.</entry>
+                   </row>
+                  </tbody>
+               </tgroup>
+              </table>
+         </para>
+         <para>
+            An important note regarding the <literal>xml-id</literal> mapping, is that it will always at as an internal Compass <literal>Property</literal>. This means that if one wish to have it as part of the searchable content, it will have to be mapped with <literal>xml-property</literal> as well.
+         </para>
+      </sect2> 
+
+      <sect2 id="xsem-xmlproperty">
+         <title>xml-property</title>
+
+         <para>
+            Declaring and using the <literal>xml-property</literal> element.
+
+<programlisting><![CDATA[<xml-property
+      xpath="xpath expression"
+      name="optionally the name of the xml property"
+      store="yes|no|compress"
+      index="tokenized|un_tokenized|no"
+      boost="boost value for the property"
+      analyzer="name of the analyzer"
+      reverse="no|reader|string"
+      override="true|false"
+      exclude-from-all="false|true"
+      value-converter="value converter lookup name"
+      converter="converter lookup name"
+/>
+]]></programlisting>
+
+              <table>
+                 <title>xml-property mapping</title>
+                <tgroup cols="2">
+                  <colspec colname="c1" colwidth="3*" />
+                  <colspec colname="c2" colwidth="5*" />
+                  <thead>
+                    <row>
+                      <entry>Attribute</entry><entry>Description</entry>
+                    </row>
+                  </thead>
+                  <tbody>
+                   <row>
+                      <entry>name (optional, will use the xml object (element, attribute, ...) name if not set)</entry>
+                      <entry>The name that the value will be saved under. It is optional, and if not set, will use the xml object name (the result of the xpath expression).</entry>
+                   </row>
+                   <row>
+                      <entry>xpath</entry>
+                      <entry>The xpath expression used to identify the xml-property. Can return no xml objects, one xml object, or many xml objects.</entry>
+                   </row>
+                   <row>
+                     <entry>store (optional, defaults to <literal>yes</literal>)</entry>
+                     <entry>If the value of the xml property is going to be stored in the index.</entry>
+                   </row>
+                   <row>
+                     <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
+                     <entry>If the value of the xml property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analyzed (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+                   </row>
+                   <row>
+                     <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
+                     <entry>Controls the boost level for the xml property.</entry>
+                   </row>
+                   <row>
+                     <entry>analyzer (optional, defaults to the xml mapping analyzer decision scheme)</entry>
+                     <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> xml property mappings defined for the given property. Defaults to the xml mapping analyzer decision scheme based on the analyzer set, or the <literal>xml-analyzer</literal> mapping.</entry>.
+                   </row>
+                   <row>
+                     <entry>exclude-from-all (optional, default to <literal>false</literal>)</entry>
+                     <entry>Excludes the property from participating in the "all" meta-data.</entry>
+                   </row>
+                   <row>
+                     <entry>override (optional, defaults to <literal>true</literal>)</entry>
+                     <entry>If there is another definition with the same mapping name, if it will be overridden or added as additional mapping. Mainly used to override definitions made in extended mappings.</entry>
+                   </row>
+                   <row>
+                     <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
+                     <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more performant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
+                   </row>
+                   <row>
+                     <entry>value-converter (optional, default to Compass <literal>SimpleXmlValueConverter</literal>)</entry>
+                     <entry>The global converter lookup name registered with the configuration. This is a converter associated with converting the actual value of the xml-id. Acts as a convenient extension point for custom value converter implementation (for example, date formatters). <literal>SimpleXmlValueConverter</literal> will usually act as a base class for such extensions.</entry>
+                   </row>
+                   <row>
+                     <entry>converter (optional)</entry>
+                     <entry>The global converter lookup name registered with the configuration. The converter will is responsible to convert the xml-property mapping.</entry>
+                   </row>
+                  </tbody>
+               </tgroup>
+              </table>
+         </para>
+      </sect2> 
+
+       <sect2 id="xml-analyzer">
+         <title>xml-analyzer</title>
+
+         <para>
+           Declaring an analyzer controller property using the <literal>xml-analyzer</literal> element.
+
+   <programlisting><![CDATA[<xml-analyzer
+         name="property name"
+         xpath="xpath expression"
+         null-analyzer="analyzer name if value is null"
+         converter="converter lookup name"
+   >
+   </xml-analyzer>]]></programlisting>
+
+           <table>
+              <title>xml-analyzer mapping</title>
+             <tgroup cols="2">
+               <colspec colname="c1" colwidth="3*" />
+               <colspec colname="c2" colwidth="5*" />
+               <thead>
+                 <row><entry>Attribute</entry><entry>Description</entry></row>
+               </thead>
+               <tbody>
+                 <row>
+                   <entry>name</entry>
+                   <entry>The name of the xml-analyzer (results in a <literal>Property</literal>).</entry>
+                 </row>
+                 <row>
+                   <entry>xpath</entry>
+                   <entry>The xpath expression used to identify the xml-analyzer. Must return a single xml element.</entry>
+                 </row>
+                 <row>
+                   <entry>null-analyzer (optional, defaults to error in case of a <literal>null</literal> value)</entry>
+                   <entry>The name of the analyzer that will be used if the property has a <literal>null</literal> value, or the xpath expression returned no elements.</entry>
+                 </row>
+                 <row>
+                     <entry>converter (optional)</entry>
+                     <entry>The global converter lookup name registered with the configuration.</entry>
+                 </row>
+               </tbody>
+             </tgroup>
+           </table>
+
+           <para>
+             The analyzer xml property mapping, controls the analyzer that will be used when indexing the <literal>XmlObject</literal>. If the mapping is defined, it will override the xml object mapping analyzer attribute setting.
+           </para>
+
+           <para>
+             If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the xml property can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, a <literal>null-analyzer</literal> can be configured that will be used in that case. If the resource property has a value, but there is not matching analyzer, an exception will be thrown.
+           </para>
+
+         </para>
+
+       </sect2>
+
+     <sect2 id="xml-content">
+       <title>xml-content</title>
+
+       <para>
+         Declaring an xml content mapping using the <literal>xml-content</literal> element.
+
+ <programlisting><![CDATA[<xml-content
+       name="property name"
+       store="yes|compress"
+       converter="converter lookup name"
+ >
+ </xml-content>]]></programlisting>
+
+         <table>
+            <title>xml-content mapping</title>
+           <tgroup cols="2">
+             <colspec colname="c1" colwidth="3*" />
+             <colspec colname="c2" colwidth="5*" />
+             <thead>
+               <row><entry>Attribute</entry><entry>Description</entry></row>
+             </thead>
+             <tbody>
+               <row>
+                 <entry>name</entry>
+                 <entry>The name the xml content will be saved under.</entry>
+               </row>
+               <row>
+                 <entry>store (optional, defaults to yes)</entry>
+                 <entry>How to store the actual xml content.</entry>
+               </row>
+               <row>
+                   <entry>converter (optional)</entry>
+                   <entry>The global converter lookup name registered with the configuration.</entry>
+               </row>
+             </tbody>
+           </tgroup>
+         </table>
+       </para>
+       
+       <para>
+           The <literal>xml-content</literal> mapping causes Compass to store the actual xml content in the search engine as well. This will allow to unmarshall the xml back into an <literal>XmlObject</literal> representation. For <literal>xml-object</literal> mapping without an <literal>xml-content</literal> mapping, search/read operations will only be able to work on the <literal>Resource</literal> level.
+       </para>
+
+     </sect2>
+
     </sect1>
 </chapter>

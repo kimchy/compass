@@ -19,7 +19,6 @@
     <!ATTLIST xml-object alias CDATA #REQUIRED>
     <!ATTLIST xml-object sub-index CDATA #IMPLIED>
     <!ATTLIST xml-object xpath CDATA #IMPLIED>
-    <!ATTLIST xml-object extends CDATA #IMPLIED>
     <!ATTLIST xml-object analyzer CDATA #IMPLIED>
     <!ATTLIST xml-object all (true|false) "true">
     <!ATTLIST xml-object all-metadata CDATA #IMPLIED>
@@ -30,7 +29,6 @@
 >
     <!ATTLIST xml-id name CDATA #REQUIRED>
     <!ATTLIST xml-id xpath CDATA #REQUIRED>
-    <!ATTLIST xml-id analyzer CDATA #IMPLIED>
     <!ATTLIST xml-id converter CDATA #IMPLIED>
     <!ATTLIST xml-id value-converter CDATA #IMPLIED>
 
