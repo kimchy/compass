@@ -72,12 +72,6 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
     /**
      * Marhall the data, returning the number of elements that were actually stored in the index
      * (and can later be read).
-     * 
-     * @param root
-     * @param colMapping
-     * @param resource
-     * @param context
-     * @return
      */
     protected abstract int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
             MarshallingContext context);
@@ -110,6 +104,8 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         // so the order will be maintained
         context.setHandleNulls(colMapping.getPath());
 
+        // if we already wrapped the resource with a collection wrapper, use it
+        // if not, create a new one. Also, mark if we created it so we can clean up afterwards
         boolean createdCollectionResourceWrapper = false;
         CollectionResourceWrapper crw = (CollectionResourceWrapper) context.getAttribute(COLLECTION_RESOURCE_WRAPPER_KEY);
         if (crw == null) {
@@ -127,7 +123,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         }
 
         if (createdCollectionResourceWrapper) {
-            context.setAttribute(COLLECTION_RESOURCE_WRAPPER_KEY, null);
+            context.removeAttribute(COLLECTION_RESOURCE_WRAPPER_KEY);
         }
 
         context.removeHandleNulls(colMapping.getPath());

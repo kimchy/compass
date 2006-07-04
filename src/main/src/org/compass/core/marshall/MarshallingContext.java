@@ -41,6 +41,8 @@ public interface MarshallingContext {
 
     Object getAttribute(Object key);
 
+    Object removeAttribute(Object key);
+
     void setUnmarshalled(ResourceIdKey key, Object obj);
 
     Object getUnmarshalled(ResourceIdKey key);
