@@ -75,5 +75,7 @@
 	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials-agent.jar"/>
+	<classpathentry kind="lib" path="lib/xpp/pull-parser-2.1.10.jar"/>
+	<classpathentry kind="lib" path="lib/xpp/xpp3-1.1.3_8.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
