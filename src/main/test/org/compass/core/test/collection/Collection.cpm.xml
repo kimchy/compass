@@ -92,4 +92,24 @@
         
     </class>
 
+    <!-- tests three level deep collection component mapping -->
+    <class name="A" alias="a1">
+        <id name="id" />
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+        <component name="cb" ref-alias="a2" />
+    </class>
+    <class name="A" alias="a2" root="false">
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+        <component name="cb" ref-alias="a3" />
+    </class>
+    <class name="A" alias="a3" root="false">
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+    </class>
+
 </compass-core-mapping>

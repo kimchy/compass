@@ -16,8 +16,6 @@
 
 package org.compass.core.marshall;
 
-import java.util.HashMap;
-
 import org.compass.core.CompassException;
 import org.compass.core.Resource;
 import org.compass.core.accessor.Setter;
@@ -35,7 +33,7 @@ import org.compass.core.spi.InternalCompassSession;
 /**
  * @author kimchy
  */
-public class DefaultMarshallingStrategy implements MarshallingStrategy, MarshallingContext {
+public class DefaultMarshallingStrategy implements MarshallingStrategy {
 
     private CompassMapping mapping;
 
@@ -44,10 +42,6 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
     private ConverterLookup converterLookup;
 
     private InternalCompassSession session;
-
-    private HashMap attributes = new HashMap();
-
-    private HashMap nullValuesPath = new HashMap();
 
     public DefaultMarshallingStrategy(CompassMapping mapping, SearchEngine searchEngine,
                                       ConverterLookup converterLookup, InternalCompassSession session) {
@@ -82,19 +76,18 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
 
     public Resource marshallIds(ResourceMapping resourceMapping, Object id) {
         Resource idResource = searchEngine.createResource(resourceMapping.getAlias());
-        marshallIds(idResource, resourceMapping, id);
+        marshallIds(idResource, resourceMapping, id, createContext());
         return idResource;
     }
 
-    public boolean marshallIds(Resource resource, ResourceMapping resourceMapping, Object id) {
-        return ((ResourceMappingConverter) resourceMapping.getConverter()).marshallIds(resource, id, resourceMapping, this);
+    public boolean marshallIds(Resource resource, ResourceMapping resourceMapping, Object id, MarshallingContext context) {
+        return ((ResourceMappingConverter) resourceMapping.getConverter()).marshallIds(resource, id, resourceMapping, context);
     }
-
 
     public void marshallIds(Object root, Object id) {
         ClassMapping classMapping = (ClassMapping) mapping.getRootMappingByClass(root.getClass());
         ResourcePropertyMapping[] ids = classMapping.getIdMappings();
-        Object[] idsValues = unmarshallIds(classMapping, id);
+        Object[] idsValues = unmarshallIds(classMapping, id, createContext());
         for (int i = 0; i < idsValues.length; i++) {
             setId(root, idsValues[i], (ClassPropertyMetaDataMapping) ids[i]);
         }
@@ -107,16 +100,16 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
 
     public Object[] unmarshallIds(String alias, Object id) {
         ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
-        return unmarshallIds(resourceMapping, id);
+        return unmarshallIds(resourceMapping, id, createContext());
     }
 
     public Object[] unmarshallIds(Class clazz, Object id) {
         ResourceMapping resourceMapping = mapping.findRootMappingByClass(clazz);
-        return unmarshallIds(resourceMapping, id);
+        return unmarshallIds(resourceMapping, id, createContext());
     }
 
-    public Object[] unmarshallIds(ResourceMapping resourceMapping, Object id) {
-        return ((ResourceMappingConverter) resourceMapping.getConverter()).unmarshallIds(id, resourceMapping, this);
+    public Object[] unmarshallIds(ResourceMapping resourceMapping, Object id, MarshallingContext context) {
+        return ((ResourceMappingConverter) resourceMapping.getConverter()).unmarshallIds(id, resourceMapping, context);
     }
 
     public Resource marshall(String alias, Object root) {
@@ -125,9 +118,7 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
             throw new MarshallingException("No mapping is defined for alias [" + alias + "]");
         }
         Resource resource = searchEngine.createResource(alias);
-        clearContext();
-        resourceMapping.getConverter().marshall(resource, root, resourceMapping, this);
-        clearContext();
+        resourceMapping.getConverter().marshall(resource, root, resourceMapping, createContext());
         return resource;
     }
 
@@ -140,17 +131,12 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
             throw new MarshallingException("No mapping is defined for class [" + root.getClass().getName() + "]");
         }
         Resource resource = searchEngine.createResource(resourceMapping.getAlias());
-        clearContext();
-        resourceMapping.getConverter().marshall(resource, root, resourceMapping, this);
-        clearContext();
+        resourceMapping.getConverter().marshall(resource, root, resourceMapping, createContext());
         return resource;
     }
 
     public Object unmarshall(Resource resource) throws CompassException {
-        clearContext();
-        Object retVal = unmarshall(resource, this);
-        clearContext();
-        return retVal;
+        return unmarshall(resource, createContext());
     }
 
     public Object unmarshall(Resource resource, MarshallingContext context) throws CompassException {
@@ -158,52 +144,10 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy, Marshall
         if (resourceMapping == null) {
             throw new MarshallingException("No mapping is defined for alias [ " + resource.getAlias() + "]");
         }
-        return resourceMapping.getConverter().unmarshall(resource, resourceMapping, this);
+        return resourceMapping.getConverter().unmarshall(resource, resourceMapping, context);
     }
 
-    public void clearContext() {
-        this.attributes.clear();
-        this.nullValuesPath.clear();
-        this.session.getFirstLevelCache().evictAllUnmarhsalled();
-    }
-
-    public void setHandleNulls(String path) {
-        nullValuesPath.put(path, "");
-    }
-
-    public void removeHandleNulls(String path) {
-        nullValuesPath.remove(path);
-    }
-
-    public boolean handleNulls() {
-        return nullValuesPath.size() > 0;
-    }
-
-    public ConverterLookup getConverterLookup() {
-        return converterLookup;
-    }
-
-    public SearchEngine getSearchEngine() {
-        return searchEngine;
-    }
-
-    public CompassMapping getCompassMapping() {
-        return mapping;
-    }
-
-    public InternalCompassSession getSession() {
-        return session;
-    }
-
-    public MarshallingStrategy getMarshallingStrategy() {
-        return this;
-    }
-
-    public Object getAttribute(Object key) {
-        return attributes.get(key);
-    }
-
-    public void setAttribute(Object key, Object value) {
-        attributes.put(key, value);
+    private MarshallingContext createContext() {
+        return new DefaultMarshallingContext(mapping, searchEngine, converterLookup, session, this);
     }
 }

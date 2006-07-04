@@ -14,9 +14,9 @@ import org.compass.core.test.AbstractTestCase;
 public class CollectionTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "collection/Collection.cpm.xml" };
+        return new String[]{"collection/Collection.cpm.xml"};
     }
-    
+
     public void testSimpleCollectionNull() {
         CompassSession session = openSession();
         CompassTransaction transaction = session.beginTransaction();
@@ -94,11 +94,11 @@ public class CollectionTests extends AbstractTestCase {
 
         transaction.commit();
     }
-    
+
     public void testNoMetaDataStored() {
         CompassSession session = openSession();
         CompassTransaction transaction = session.beginTransaction();
-        
+
         SimpleTypeCollection o = new SimpleTypeCollection();
         Long id = new Long(1);
         Collection stringCol = new ArrayList();
@@ -109,7 +109,7 @@ public class CollectionTests extends AbstractTestCase {
         o.setStrings(stringCol);
 
         session.save("no-metadata-stored", o);
-        
+
         o = (SimpleTypeCollection) session.load("no-metadata-stored", id);
         assertEquals("test", o.getValue());
         assertNull(o.getStrings());
@@ -186,9 +186,9 @@ public class CollectionTests extends AbstractTestCase {
         bs.add(b1);
         bs.add(b2);
         a.setCb(bs);
-        session.save(a);
-        
-        a = (A) session.load(A.class, id);
+        session.save("a", a);
+
+        a = (A) session.load("a", id);
         assertEquals("test", a.getValue());
         List list = (List) a.getCb();
         assertNotNull(list);
@@ -206,7 +206,7 @@ public class CollectionTests extends AbstractTestCase {
         assertEquals("test2", ((B) list.get(1)).getValue());
 
         tr.commit();
-        
+
     }
 
     public void testABWithNull() {
@@ -225,16 +225,16 @@ public class CollectionTests extends AbstractTestCase {
         bs.add(b1);
         bs.add(b2);
         a.setCb(bs);
-        session.save(a);
-        
-        a = (A) session.load(A.class, id);
+        session.save("a", a);
+
+        a = (A) session.load("a", id);
         assertEquals("test", a.getValue());
         List list = (List) a.getCb();
         assertNotNull(list);
         assertEquals(0, list.size());
 
-        session.delete(a);
-        a = (A) session.get(A.class, id);
+        session.delete("a", a);
+        a = (A) session.get("a", id);
         assertNull(a);
 
         tr.commit();
@@ -254,9 +254,9 @@ public class CollectionTests extends AbstractTestCase {
         bs.add(null);
         bs.add(b2);
         a.setCb(bs);
-        session.save(a);
-        
-        a = (A) session.load(A.class, id);
+        session.save("a", a);
+
+        a = (A) session.load("a", id);
         assertEquals("test", a.getValue());
         List list = (List) a.getCb();
         assertNotNull(list);
@@ -264,8 +264,8 @@ public class CollectionTests extends AbstractTestCase {
         b2 = (B) list.get(0);
         assertEquals("test", b2.getValue());
 
-        session.delete(a);
-        a = (A) session.get(A.class, id);
+        session.delete("a", a);
+        a = (A) session.get("a", id);
         assertNull(a);
 
         tr.commit();
@@ -289,14 +289,14 @@ public class CollectionTests extends AbstractTestCase {
         bs.add(b1);
         bs.add(b2);
         a.setCb(bs);
-        session.save(a);
-        
-        a = (A) session.load(A.class, id);
+        session.save("a", a);
+
+        a = (A) session.load("a", id);
         assertEquals("test", a.getValue());
         List list = (List) a.getCb();
         assertNotNull(list);
         assertEquals(2, list.size());
-        
+
         b1 = (B) list.get(0);
         assertEquals("test1", b1.getValue());
         assertEquals(null, b1.getValue2());
@@ -304,9 +304,9 @@ public class CollectionTests extends AbstractTestCase {
         b2 = (B) list.get(1);
         assertEquals("test2", b2.getValue());
         assertEquals("value2", b2.getValue2());
-        
-        session.delete(a);
-        a = (A) session.get(A.class, id);
+
+        session.delete("a", a);
+        a = (A) session.get("a", id);
         assertNull(a);
 
         tr.commit();
@@ -346,5 +346,72 @@ public class CollectionTests extends AbstractTestCase {
         assertEquals(2, y.getId().longValue());
 
         tr.commit();
+    }
+
+    public void testThreeLevelDeepComponentCollection() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a1 = new A();
+        a1.setId(new Long(1));
+        a1.setValue("a1");
+        a1.setCb(new ArrayList());
+
+        A a21 = new A();
+        a21.setValue("a21");
+        a21.setCb(new ArrayList());
+        a1.getCb().add(a21);
+
+        A a31 = new A();
+        a31.setValue("a31");
+        a21.getCb().add(a31);
+
+        A a32 = new A();
+        a32.setValue("a32");
+        a21.getCb().add(a32);
+
+        A a22 = new A();
+        a22.setValue("a22");
+        a22.setCb(new ArrayList());
+        a1.getCb().add(a22);
+
+        A a33 = new A();
+        a33.setValue("a33");
+        a22.getCb().add(a33);
+
+        A a34 = new A();
+        a34.setValue("a34");
+        a22.getCb().add(a34);
+
+        A a35 = new A();
+        a35.setValue("a35");
+        a22.getCb().add(a35);
+
+        session.save("a1", a1);
+
+        a1 = (A) session.load("a1", new Long(1));
+        assertEquals("a1", a1.getValue());
+        assertEquals(2, a1.getCb().size());
+        a21 = (A) ((List) a1.getCb()).get(0);
+        assertEquals("a21", a21.getValue());
+        a22 = (A) ((List) a1.getCb()).get(1);
+        assertEquals("a22", a22.getValue());
+
+        assertEquals(2, a21.getCb().size());
+        a31 = (A) ((List) a21.getCb()).get(0);
+        assertEquals("a31", a31.getValue());
+        a32 = (A) ((List) a21.getCb()).get(1);
+        assertEquals("a32", a32.getValue());
+
+        assertEquals(3, a22.getCb().size());
+        a33 = (A) ((List) a22.getCb()).get(0);
+        assertEquals("a33", a33.getValue());
+        a34 = (A) ((List) a22.getCb()).get(1);
+        assertEquals("a34", a34.getValue());
+        a35 = (A) ((List) a22.getCb()).get(2);
+        assertEquals("a35", a35.getValue());
+
+        tr.commit();
+        session.close();
     }
 }

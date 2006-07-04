@@ -22,9 +22,7 @@ import org.compass.core.Resource;
 import org.compass.core.impl.ResourceIdKey;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class DefaultFirstLevelCache implements FirstLevelCache {
 
@@ -46,18 +44,6 @@ public class DefaultFirstLevelCache implements FirstLevelCache {
 
     public void setResource(ResourceIdKey key, Resource resource) {
         resources.put(key, resource);
-    }
-
-    public void setUnmarshalled(ResourceIdKey key, Object obj) {
-        set(key, obj);
-    }
-
-    public void evictUnmarhsalled(ResourceIdKey key) {
-        // do nothing
-    }
-
-    public void evictAllUnmarhsalled() {
-        // do nothing
     }
 
     public void evict(ResourceIdKey key) {

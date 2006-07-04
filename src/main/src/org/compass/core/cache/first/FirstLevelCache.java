@@ -34,12 +34,6 @@ public interface FirstLevelCache {
 
     void setResource(ResourceIdKey key, Resource resource);
 
-    void setUnmarshalled(ResourceIdKey key, Object obj);
-
-    void evictUnmarhsalled(ResourceIdKey key);
-
-    void evictAllUnmarhsalled();
-
     void evict(ResourceIdKey key);
 
     void evictAll();

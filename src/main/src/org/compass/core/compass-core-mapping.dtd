@@ -29,6 +29,7 @@
 >
     <!ATTLIST xml-id name CDATA #REQUIRED>
     <!ATTLIST xml-id xpath CDATA #REQUIRED>
+    <!ATTLIST xml-id analyzer CDATA #IMPLIED>
     <!ATTLIST xml-id converter CDATA #IMPLIED>
     <!ATTLIST xml-id value-converter CDATA #IMPLIED>
 

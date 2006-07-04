@@ -20,6 +20,7 @@ import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.impl.ResourceIdKey;
 
 /**
  * @author kimchy
@@ -39,6 +40,10 @@ public interface MarshallingContext {
     void setAttribute(Object key, Object value);
 
     Object getAttribute(Object key);
+
+    void setUnmarshalled(ResourceIdKey key, Object obj);
+
+    Object getUnmarshalled(ResourceIdKey key);
 
     void clearContext();
 

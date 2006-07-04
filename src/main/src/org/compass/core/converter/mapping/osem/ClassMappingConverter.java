@@ -86,7 +86,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         if (classMapping.isRoot()) {
             Property[] ids = ResourceHelper.toIds(classMapping.getAlias(), resource, context.getCompassMapping());
             resourceIdKey = new ResourceIdKey(classMapping.getAlias(), ids);
-            Object cached = context.getSession().getFirstLevelCache().get(resourceIdKey);
+            Object cached = context.getUnmarshalled(resourceIdKey);
             if (cached != null) {
                 return cached;
             }
@@ -118,7 +118,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             // and it's all we need to handle cyclic refernces in case of
             // references
             if (classMapping.isRoot()) {
-                context.getSession().getFirstLevelCache().setUnmarshalled(resourceIdKey, obj);
+                context.setUnmarshalled(resourceIdKey, obj);
             }
 
             boolean isNullClass = true;

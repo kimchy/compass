@@ -40,7 +40,7 @@ public class ReferenceMappingConverter implements Converter {
 
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-        boolean stored = context.getMarshallingStrategy().marshallIds(resource, referenceMapping.getRefClassMapping(), root);
+        boolean stored = context.getMarshallingStrategy().marshallIds(resource, referenceMapping.getRefClassMapping(), root, context);
 
         if (referenceMapping.getRefCompMapping() != null) {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
@@ -52,7 +52,7 @@ public class ReferenceMappingConverter implements Converter {
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         ReferenceMapping referenceMapping = (ReferenceMapping) mapping;
         ClassMapping classMapping = referenceMapping.getRefClassMapping();
-        Object[] ids = context.getMarshallingStrategy().unmarshallIds(classMapping, resource);
+        Object[] ids = context.getMarshallingStrategy().unmarshallIds(classMapping, resource, context);
         if (ids == null) {
             // the reference was not marshalled
             return null;

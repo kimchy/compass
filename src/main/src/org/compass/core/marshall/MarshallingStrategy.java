@@ -130,7 +130,7 @@ public interface MarshallingStrategy {
      * @param id              The id to marshall into a {@link Resource}
      * @return <code>true</code> if stored properties were added to the {@link Resource}.
      */
-    boolean marshallIds(Resource resource, ResourceMapping resourceMapping, Object id);
+    boolean marshallIds(Resource resource, ResourceMapping resourceMapping, Object id, MarshallingContext context);
 
     /**
      * Marhsalls the give id into the actual object. Kindda hacky... .
@@ -176,6 +176,6 @@ public interface MarshallingStrategy {
      * @param id              The id to unmarshall
      * @return An array of all the ids
      */
-    Object[] unmarshallIds(ResourceMapping resourceMapping, Object id);
+    Object[] unmarshallIds(ResourceMapping resourceMapping, Object id, MarshallingContext context);
 
 }

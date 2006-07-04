@@ -33,6 +33,8 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public abstract class AbstractCollectionMappingConverter implements Converter {
 
+    public static final String COLLECTION_RESOURCE_WRAPPER_KEY = "$crwk";
+
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         if (root == null) {
@@ -108,13 +110,24 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         // so the order will be maintained
         context.setHandleNulls(colMapping.getPath());
 
-        CollectionResourceWrapper crw = new CollectionResourceWrapper(resource);
+        boolean createdCollectionResourceWrapper = false;
+        CollectionResourceWrapper crw = (CollectionResourceWrapper) context.getAttribute(COLLECTION_RESOURCE_WRAPPER_KEY);
+        if (crw == null) {
+            createdCollectionResourceWrapper = true;
+            crw = new CollectionResourceWrapper(resource);
+            context.setAttribute(COLLECTION_RESOURCE_WRAPPER_KEY, crw);
+        }
+
         Mapping elementMapping = colMapping.getElementMapping();
         for (int i = 0; i < size; i++) {
             Object value = elementMapping.getConverter().unmarshall(crw, elementMapping, context);
             if (value != null) {
                 addValue(col, i, value);
             }
+        }
+
+        if (createdCollectionResourceWrapper) {
+            context.setAttribute(COLLECTION_RESOURCE_WRAPPER_KEY, null);
         }
 
         context.removeHandleNulls(colMapping.getPath());

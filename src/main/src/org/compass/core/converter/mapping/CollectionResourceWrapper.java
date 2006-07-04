@@ -29,11 +29,25 @@ import org.compass.core.engine.SearchEngineException;
  */
 public class CollectionResourceWrapper implements Resource {
 
-    private static final long serialVersionUID = 3257570611466156082L;
+    public class PropertiesWrapper {
+
+        public String name;
+
+        public Property[] properties;
+
+        public int counter;
+
+        public int hashCode() {
+            return name.hashCode();
+        }
+
+        public boolean equals(Object object) {
+            PropertiesWrapper copy = (PropertiesWrapper) object;
+            return name.equals( copy.name );
+        }
+    }
 
     private Resource resource;
-
-    private HashMap counterMap = new HashMap();
 
     private HashMap propertiesMap = new HashMap();
 
@@ -83,26 +97,23 @@ public class CollectionResourceWrapper implements Resource {
     }
 
     private Property computeProperty(String name) {
-        Property[] properties = (Property[]) propertiesMap.get(name);
-        if (properties == null) {
-            properties = getProperties(name);
-            propertiesMap.put(name, properties);
+        PropertiesWrapper wrapper = (PropertiesWrapper) propertiesMap.get(name);
+        if (wrapper == null) {
+            wrapper = new PropertiesWrapper();
+            wrapper.name = name;
+            wrapper.properties = getProperties(name);
+            propertiesMap.put(name, wrapper);
         }
-        if (properties.length == 0) {
+
+        if (wrapper.properties.length == 0) {
             return null;
         }
-        Integer count = (Integer) counterMap.get(name);
-        if (count == null) {
-            count = new Integer(0);
-        } else {
-            count = new Integer(count.intValue() + 1);
-        }
-        counterMap.put(name, count);
-        if (count.intValue() >= properties.length) {
+
+        if (wrapper.counter >= wrapper.properties.length) {
             // we are asking for data that was not marshalled, return null
             return null;
         }
-        return properties[count.intValue()];
+        return wrapper.properties[wrapper.counter++];
     }
 
     public Property[] getProperties(String name) {
