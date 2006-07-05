@@ -16,12 +16,11 @@
 
 package org.compass.core.lucene.util;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.RangeQuery;
-import org.apache.lucene.index.Term;
 
 /**
  * Extends Lucene {@link MultiFieldQueryParser} and overrides {@link #getRangeQuery(String, String, String, boolean)}
@@ -45,7 +44,10 @@ public class LuceneMultiFieldQueryParser extends MultiFieldQueryParser {
             part2 = part2.toLowerCase();
         }
 
-        return new RangeQuery(new Term(field, part1), new Term(field, part2), inclusive);
+        return new ConstantScoreRangeQuery(field,
+                "*".equals(part1) ? null : part1,
+                "*".equals(part2) ? null : part2,
+                inclusive, inclusive);
     }
 
 }
