@@ -19,6 +19,8 @@
         </property>
     </contract>
 
+    <contract alias="contract12" extends="contract1, contract2" />
+
     <class name="A" alias="a" extends="contract1, contract2">
     
         <property name="valueA">
@@ -27,7 +29,7 @@
     
     </class>
 
-    <class name="A" alias="a1" extends="contract1, contract2">
+    <class name="A" alias="a1" extends="contract12">
 
         <property name="value1" override="true">
             <meta-data>mvalueEx</meta-data>
