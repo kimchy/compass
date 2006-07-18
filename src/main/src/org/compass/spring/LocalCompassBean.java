@@ -57,6 +57,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     private Resource configLocation;
 
+    private Resource[] configLocations;
+
     private Resource[] resourceLocations;
 
     private Resource[] resourceJarLocations;
@@ -94,6 +96,17 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
      */
     public void setConfigLocation(Resource configLocation) {
         this.configLocation = configLocation;
+    }
+
+    /**
+     * Set the location of the Compass XML config file, for example as classpath
+     * resource "classpath:compass.cfg.xml".
+     * <p/>
+     * Note: Can be omitted when all necessary properties and mapping resources
+     * are specified locally via this bean.
+     */
+    public void setConfigLocations(Resource[] configLocations) {
+        this.configLocations = configLocations;
     }
 
     public void setCompassSettings(Properties compassSettings) {
@@ -198,6 +211,12 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
         if (this.configLocation != null) {
             config.configure(this.configLocation.getURL());
+        }
+
+        if (this.configLocations != null) {
+            for (int i = 0; i < configLocations.length; i++) {
+                config.configure(configLocations[i].getURL());
+            }
         }
 
         if (this.compassSettings != null) {
