@@ -19,15 +19,13 @@ package org.compass.core.impl;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHighlighter;
 import org.compass.core.Resource;
-import org.compass.core.spi.InternalCompassHits;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.spi.InternalCompassHits;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class DefaultCompassHighlighter implements CompassHighlighter {
 
@@ -36,9 +34,9 @@ public class DefaultCompassHighlighter implements CompassHighlighter {
     private SearchEngineHighlighter highlighter;
 
     private InternalCompassSession session;
-    
+
     private InternalCompassHits hits;
-    
+
     private int hitNumber;
 
     public DefaultCompassHighlighter(InternalCompassSession session, InternalCompassHits hits, int n) {
@@ -73,7 +71,7 @@ public class DefaultCompassHighlighter implements CompassHighlighter {
         highlighter.setMaxNumFragments(maxNumFragments);
         return this;
     }
-    
+
     public CompassHighlighter setMaxBytesToAnalyze(int maxBytesToAnalyze) throws CompassException {
         highlighter.setMaxBytesToAnalyze(maxBytesToAnalyze);
         return this;

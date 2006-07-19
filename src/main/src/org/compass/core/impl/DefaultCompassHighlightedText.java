@@ -30,18 +30,18 @@ import org.compass.core.spi.InternalCompassHighlightedText;
 public class DefaultCompassHighlightedText implements InternalCompassHighlightedText, Map {
 
     private HashMap highlightedText = new HashMap();
-    
+
     public void setHighlightedText(String propertyName, String highlightedText) {
         this.highlightedText.put(propertyName, highlightedText);
     }
-    
+
     public String getHighlightedText() throws CompassException {
         if (highlightedText.size() == 0) {
             return null;
         }
         return (String) highlightedText.values().iterator().next();
     }
-    
+
     public String getHighlightedText(String propertyName) throws CompassException {
         return (String) highlightedText.get(propertyName);
     }
@@ -96,6 +96,6 @@ public class DefaultCompassHighlightedText implements InternalCompassHighlighted
     public Object get(Object key) {
         return highlightedText.get(key);
     }
-    
-    
+
+
 }

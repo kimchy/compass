@@ -41,9 +41,9 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
     private float[] scores;
 
     private CompassHit[] hits;
-    
+
     private CompassHighlightedText[] highlightedText;
-    
+
     public DefaultCompassDetachedHits(InternalCompassHits hits, InternalCompassSession session, int from, int size)
             throws CompassException, IllegalArgumentException {
         this.length = size;
@@ -82,7 +82,7 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
     public Object data(int n) throws CompassException, IllegalArgumentException {
         return datas[n];
     }
-    
+
     public CompassHighlightedText highlightedText(int n) throws CompassException {
         return highlightedText[n];
     }

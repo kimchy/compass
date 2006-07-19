@@ -20,16 +20,16 @@ import java.io.Serializable;
 
 /**
  * Wrapper that provides a lazily loaded hit from
- * {@link org.compass.core.CompassHitsOperations}. It is also used as
- * the iterator value for {@link org.compass.core.CompassHitIterator}.
- * 
+ * {@link CompassHitsOperations}. It is also used as
+ * the iterator value for {@link CompassHitIterator}.
+ *
  * @author kimchy
  */
 public interface CompassHit extends Serializable {
 
     /**
      * Returns the alias value of the hit.
-     * 
+     *
      * @return The alias.
      * @throws CompassException
      */
@@ -37,7 +37,7 @@ public interface CompassHit extends Serializable {
 
     /**
      * Returns the object for this hit.
-     * 
+     *
      * @return The object data of the hit.
      * @throws CompassException
      * @see CompassHits#data(int)
@@ -46,7 +46,7 @@ public interface CompassHit extends Serializable {
 
     /**
      * Returns the {@link Resource} for this hit.
-     * 
+     *
      * @return The {@link Resource} of the hit.
      * @throws CompassException
      * @see CompassHits#resource(int)
@@ -55,19 +55,19 @@ public interface CompassHit extends Serializable {
 
     /**
      * Returns the score for this hit.
-     * 
+     *
      * @return The score of the hit.
      * @throws CompassException
-     * @see CompassHits#score(int) 
+     * @see CompassHits#score(int)
      */
     float getScore() throws CompassException;
-    
+
     /**
      * Returns a cached highlighted text the maps to the hit.
      * <p/>
      * Highlighted text is automatically cached when using {@link CompassHighlighter}
      * using {@link CompassHits#highlighter(int)}.
-     * 
+     *
      * @return The cached highlighted hits
      * @throws CompassException
      */

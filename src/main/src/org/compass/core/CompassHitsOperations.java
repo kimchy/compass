@@ -18,30 +18,29 @@ package org.compass.core;
 
 /**
  * Mutual operations for hits, for both detached and transactional hits.
- * 
+ *
  * @author kimchy
  */
 public interface CompassHitsOperations {
-    
+
     /**
      * Returns the number of hits,
-     * 
+     *
      * @return The number of hits.
      */
     int getLength();
 
     /**
      * Returns the number of hits,
-     * 
+     *
      * @return The number of hits.
      */
     int length();
 
     /**
      * Returns the object that maps the n'th hit
-     * 
-     * @param n
-     *            The n'th hit.
+     *
+     * @param n The n'th hit.
      * @return The object.
      * @throws CompassException
      */
@@ -49,9 +48,8 @@ public interface CompassHitsOperations {
 
     /**
      * Returns the resource that maps to the n'th hit
-     * 
-     * @param n
-     *            The n'th hit.
+     *
+     * @param n The n'th hit.
      * @return The resource.
      * @throws CompassException
      */
@@ -60,31 +58,29 @@ public interface CompassHitsOperations {
     /**
      * Returns a compass hit wrapper that maps to the n'th hit
      *
-     * @param n
-     *            The n'th hit.
+     * @param n The n'th hit.
      * @return The hit.
      * @throws CompassException
      */
     CompassHit hit(int n) throws CompassException;
-    
+
     /**
      * Returns a cached highlighted text the maps to the n'th hit.
      * <p/>
      * Highlighted text is automatically cached when using {@link CompassHighlighter}
      * using {@link CompassHits#highlighter(int)}.
-     * 
+     *
      * @param n The n'th hit
      * @return A highlighted text cache associated witht the n'th hit
      * @throws CompassException
      */
     CompassHighlightedText highlightedText(int n) throws CompassException;
-    
+
     /**
      * Returns the score of the n'th hit. Can be a value between 0 and 1,
      * normalised by the highest scoring hit.
-     * 
-     * @param n
-     *            The n'th hit.
+     *
+     * @param n The n'th hit.
      * @return The score.
      * @throws CompassException
      */

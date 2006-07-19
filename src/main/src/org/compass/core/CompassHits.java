@@ -20,12 +20,12 @@ package org.compass.core;
  * Holds hits returned from a search performed by compass. Can be used within a
  * transaction context. For hits to be used outside of a transactional context,
  * the {@link #detach()} and {@link #detach(int, int)} can be used.
- * <p>
- * Also allows for highlighting using {@link #highlighter(int)}, and any highlighting 
- * operation (that returns a single <code>String</code>) will be cached within the 
- * hits (and also moved to the detached hits, if {@link #detach(int, int)} is called), 
+ * <p/>
+ * Also allows for highlighting using {@link #highlighter(int)}, and any highlighting
+ * operation (that returns a single <code>String</code>) will be cached within the
+ * hits (and also moved to the detached hits, if {@link #detach(int, int)} is called),
  * and can be used by {@link CompassHitsOperations#highlightedText(int)}.
- * 
+ *
  * @author kimchy
  */
 public interface CompassHits extends CompassHitsOperations {
@@ -35,7 +35,7 @@ public interface CompassHits extends CompassHitsOperations {
      * detached hits preloads all the data, so it can be used outside of a
      * transaction. NOTE: Be carefull when using the method, since it will take
      * LONG time to load a large hits result set.
-     * 
+     *
      * @return A detached hits.
      * @throws CompassException
      */
@@ -45,11 +45,9 @@ public interface CompassHits extends CompassHitsOperations {
      * Detaches a seperate <code>CompassHits</code>, which starts from the
      * given from parameter, and has the specified size. The detached hits
      * preloads all the data, so it can be used outside of a transaction.
-     * 
-     * @param from
-     *            The index that the sub hits starts from.
-     * @param size
-     *            The size of the sub hits.
+     *
+     * @param from The index that the sub hits starts from.
+     * @param size The size of the sub hits.
      * @return A detached sub hits.
      * @throws CompassException
      */
@@ -59,12 +57,11 @@ public interface CompassHits extends CompassHitsOperations {
      * Returns the highlighter that maps the n'th hit.
      * <p/>
      * Note, that any highlighting operation (that returns a single <code>String</code>)
-     * will be cached within the hits (and also moved to the detached hits, if 
-     * {@link #detach(int, int)} is called), and can be used by 
+     * will be cached within the hits (and also moved to the detached hits, if
+     * {@link #detach(int, int)} is called), and can be used by
      * {@link CompassHitsOperations#highlightedText(int)}.
-     * 
-     * @param n
-     *            The n'th hit.
+     *
+     * @param n The n'th hit.
      * @return The highlighter.
      * @throws CompassException
      */
@@ -73,9 +70,9 @@ public interface CompassHits extends CompassHitsOperations {
     /**
      * Closes the hits object. Note that it is an optional operation since it
      * will be closed transperantly when the transaction is closed.
-     * <p>
+     * <p/>
      * It is provided for more controlled resource management
-     * 
+     *
      * @throws CompassException
      */
     void close() throws CompassException;

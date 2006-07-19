@@ -17,11 +17,21 @@
 package org.compass.core;
 
 /**
+ * A cached holder of highlighted text.
+ *
  * @author kimchy
+ * @see CompassHitsOperations#highlightedText(int)
+ * @see CompassHits#highlighter(int)
  */
 public interface CompassHighlightedText {
 
+    /**
+     * Returns the first highlighted text cached.
+     */
     String getHighlightedText() throws CompassException;
-    
+
+    /**
+     * Returns the highlighted text associated with the given property name.
+     */
     String getHighlightedText(String propertyName) throws CompassException;
 }

@@ -42,7 +42,7 @@ public class DefaultCompassHit implements CompassHit {
     private CompassHitsOperations compassHits;
 
     private int hitNumber;
-    
+
     DefaultCompassHit(CompassHitsOperations compassHits, int hitNumber) {
         this.compassHits = compassHits;
         this.hitNumber = hitNumber;
@@ -62,7 +62,7 @@ public class DefaultCompassHit implements CompassHit {
         fetchTheResource();
         return score;
     }
-    
+
     public CompassHighlightedText getHighlightedText() throws CompassException {
         return compassHits.highlightedText(hitNumber);
     }

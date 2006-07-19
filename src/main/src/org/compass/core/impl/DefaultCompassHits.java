@@ -24,29 +24,27 @@ import org.compass.core.CompassHighlightedText;
 import org.compass.core.CompassHighlighter;
 import org.compass.core.CompassHit;
 import org.compass.core.Resource;
+import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.spi.InternalCompassHighlightedText;
 import org.compass.core.spi.InternalCompassHits;
 import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.engine.SearchEngineHits;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class DefaultCompassHits extends AbstractCompassHits implements InternalCompassHits {
 
     private SearchEngineHits hits;
 
     private InternalCompassSession session;
-    
+
     private HashMap highlightedTextHolder;
 
     public DefaultCompassHits(SearchEngineHits hits, InternalCompassSession session) {
         this.hits = hits;
         this.session = session;
     }
-    
+
     public SearchEngineHits getSearchEngineHits() {
         return this.hits;
     }
@@ -90,19 +88,19 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
     public CompassDetachedHits detach(int from, int size) throws CompassException, IllegalArgumentException {
         return new DefaultCompassDetachedHits(this, session, from, size);
     }
-    
+
     public CompassHighlightedText highlightedText(int n) throws CompassException {
         if (highlightedTextHolder == null) {
             return null;
         }
         return (CompassHighlightedText) highlightedTextHolder.get(Integer.valueOf(n));
     }
-    
+
     public void setHighlightedText(int n, String propertyName, String highlihgtedText) {
         if (highlightedTextHolder == null) {
             highlightedTextHolder = new HashMap();
         }
-        
+
         Integer hitNumber = Integer.valueOf(n);
         InternalCompassHighlightedText hitHighlightedText = (InternalCompassHighlightedText) highlightedTextHolder.get(hitNumber);
         if (hitHighlightedText == null) {
