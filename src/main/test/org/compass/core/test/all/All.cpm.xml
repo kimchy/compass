@@ -96,4 +96,14 @@
         </property>
     </class>
     
+    <class name="A" alias="a00">
+        <id name="id" />
+        <property name="value1" exclude-from-all="true">
+            <meta-data index="un_tokenized" store="no">value1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data>value2</meta-data>
+        </property>
+    </class>
+    
 </compass-core-mapping>

@@ -63,6 +63,9 @@ public class ValidatorMappingProcessor implements MappingProcessor {
         }
         boolean excludeFromAll = resourcePropertyMapping[0].isExcludeFromAll();
         for (int i = 1; i < resourcePropertyMapping.length; i++) {
+            if (resourcePropertyMapping[i].isInternal()) {
+                continue;
+            }
             if (excludeFromAll != resourcePropertyMapping[i].isExcludeFromAll()) {
                 throw new InvalidMappingException("Resource property / meta-data [" + propertyName + "] of alias ["
                         + resourceMapping.getAlias() + "] has different exclude from all settings");
