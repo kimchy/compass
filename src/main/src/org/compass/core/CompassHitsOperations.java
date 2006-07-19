@@ -22,7 +22,7 @@ package org.compass.core;
  * @author kimchy
  */
 public interface CompassHitsOperations {
-
+    
     /**
      * Returns the number of hits,
      * 
@@ -66,6 +66,18 @@ public interface CompassHitsOperations {
      * @throws CompassException
      */
     CompassHit hit(int n) throws CompassException;
+    
+    /**
+     * Returns a cached highlighted text the maps to the n'th hit.
+     * <p/>
+     * Highlighted text is automatically cached when using {@link CompassHighlighter}
+     * using {@link CompassHits#highlighter(int)}.
+     * 
+     * @param n The n'th hit
+     * @return A highlighted text cache associated witht the n'th hit
+     * @throws CompassException
+     */
+    CompassHighlightedText highlightedText(int n) throws CompassException;
     
     /**
      * Returns the score of the n'th hit. Can be a value between 0 and 1,

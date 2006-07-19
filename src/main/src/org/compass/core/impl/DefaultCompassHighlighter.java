@@ -19,6 +19,7 @@ package org.compass.core.impl;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHighlighter;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompassHits;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.mapping.CompassMapping;
@@ -35,11 +36,17 @@ public class DefaultCompassHighlighter implements CompassHighlighter {
     private SearchEngineHighlighter highlighter;
 
     private InternalCompassSession session;
+    
+    private InternalCompassHits hits;
+    
+    private int hitNumber;
 
-    public DefaultCompassHighlighter(InternalCompassSession session, SearchEngineHighlighter highlighter, Resource resource) {
+    public DefaultCompassHighlighter(InternalCompassSession session, InternalCompassHits hits, int n) {
         this.session = session;
-        this.highlighter = highlighter;
-        this.resource = resource;
+        this.hits = hits;
+        this.hitNumber = n;
+        this.highlighter = hits.getSearchEngineHits().getHighlighter();
+        this.resource = hits.resource(n);
     }
 
     public CompassHighlighter setAnalyzer(String analyzerName) throws CompassException {
@@ -84,7 +91,9 @@ public class DefaultCompassHighlighter implements CompassHighlighter {
 
     public String fragment(String propertyName, String text) throws CompassException {
         CompassMapping.ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
-        return highlighter.fragment(resource, lookup.getPath(), text);
+        String fragment = highlighter.fragment(resource, lookup.getPath(), text);
+        hits.setHighlightedText(hitNumber, propertyName, fragment);
+        return fragment;
     }
 
     public String[] fragments(String propertyName) throws CompassException {
@@ -99,11 +108,15 @@ public class DefaultCompassHighlighter implements CompassHighlighter {
 
     public String fragmentsWithSeparator(String propertyName) throws CompassException {
         CompassMapping.ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
-        return highlighter.fragmentsWithSeparator(resource, lookup.getPath());
+        String fragment = highlighter.fragmentsWithSeparator(resource, lookup.getPath());
+        hits.setHighlightedText(hitNumber, propertyName, fragment);
+        return fragment;
     }
 
     public String fragmentsWithSeparator(String propertyName, String text) throws CompassException {
         CompassMapping.ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
-        return highlighter.fragmentsWithSeparator(resource, lookup.getPath(), text);
+        String fragment = highlighter.fragmentsWithSeparator(resource, lookup.getPath(), text);
+        hits.setHighlightedText(hitNumber, propertyName, fragment);
+        return fragment;
     }
 }

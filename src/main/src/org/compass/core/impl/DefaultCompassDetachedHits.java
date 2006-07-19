@@ -18,11 +18,12 @@ package org.compass.core.impl;
 
 import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassException;
+import org.compass.core.CompassHighlightedText;
 import org.compass.core.CompassHit;
 import org.compass.core.CompassHitIterator;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompassHits;
 import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.engine.SearchEngineHits;
 
 /**
  * @author kimchy
@@ -40,8 +41,10 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
     private float[] scores;
 
     private CompassHit[] hits;
-
-    public DefaultCompassDetachedHits(SearchEngineHits hits, InternalCompassSession session, int from, int size)
+    
+    private CompassHighlightedText[] highlightedText;
+    
+    public DefaultCompassDetachedHits(InternalCompassHits hits, InternalCompassSession session, int from, int size)
             throws CompassException, IllegalArgumentException {
         this.length = size;
         if (from < 0) {
@@ -55,10 +58,13 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
         scores = new float[this.length];
         datas = new Object[this.length];
         this.hits = new CompassHit[this.length];
+        highlightedText = new CompassHighlightedText[this.length];
         for (int i = 0; i < this.length; i++) {
-            resources[i] = hits.getResource(from + i);
-            scores[i] = hits.score(from + i);
+            int location = from + i;
+            resources[i] = hits.resource(location);
+            scores[i] = hits.score(location);
             this.hits[i] = new DefaultCompassHit(this, i);
+            highlightedText[i] = hits.highlightedText(location);
             if (session.getMapping().hasClassMapping(resources[i].getAlias())) {
                 datas[i] = session.getByResource(resources[i]);
             }
@@ -75,6 +81,10 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
 
     public Object data(int n) throws CompassException, IllegalArgumentException {
         return datas[n];
+    }
+    
+    public CompassHighlightedText highlightedText(int n) throws CompassException {
+        return highlightedText[n];
     }
 
     public CompassHitIterator iterator() throws CompassException {

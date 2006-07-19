@@ -20,6 +20,11 @@ package org.compass.core;
  * Holds hits returned from a search performed by compass. Can be used within a
  * transaction context. For hits to be used outside of a transactional context,
  * the {@link #detach()} and {@link #detach(int, int)} can be used.
+ * <p>
+ * Also allows for highlighting using {@link #highlighter(int)}, and any highlighting 
+ * operation (that returns a single <code>String</code>) will be cached within the 
+ * hits (and also moved to the detached hits, if {@link #detach(int, int)} is called), 
+ * and can be used by {@link CompassHitsOperations#highlightedText(int)}.
  * 
  * @author kimchy
  */
@@ -52,6 +57,11 @@ public interface CompassHits extends CompassHitsOperations {
 
     /**
      * Returns the highlighter that maps the n'th hit.
+     * <p/>
+     * Note, that any highlighting operation (that returns a single <code>String</code>)
+     * will be cached within the hits (and also moved to the detached hits, if 
+     * {@link #detach(int, int)} is called), and can be used by 
+     * {@link CompassHitsOperations#highlightedText(int)}.
      * 
      * @param n
      *            The n'th hit.

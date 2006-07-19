@@ -61,4 +61,15 @@ public interface CompassHit extends Serializable {
      * @see CompassHits#score(int) 
      */
     float getScore() throws CompassException;
+    
+    /**
+     * Returns a cached highlighted text the maps to the hit.
+     * <p/>
+     * Highlighted text is automatically cached when using {@link CompassHighlighter}
+     * using {@link CompassHits#highlighter(int)}.
+     * 
+     * @return The cached highlighted hits
+     * @throws CompassException
+     */
+    CompassHighlightedText getHighlightedText() throws CompassException;
 }

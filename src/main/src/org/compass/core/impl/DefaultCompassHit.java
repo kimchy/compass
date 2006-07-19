@@ -17,6 +17,7 @@
 package org.compass.core.impl;
 
 import org.compass.core.CompassException;
+import org.compass.core.CompassHighlightedText;
 import org.compass.core.CompassHit;
 import org.compass.core.CompassHitsOperations;
 import org.compass.core.Resource;
@@ -41,7 +42,7 @@ public class DefaultCompassHit implements CompassHit {
     private CompassHitsOperations compassHits;
 
     private int hitNumber;
-
+    
     DefaultCompassHit(CompassHitsOperations compassHits, int hitNumber) {
         this.compassHits = compassHits;
         this.hitNumber = hitNumber;
@@ -60,6 +61,10 @@ public class DefaultCompassHit implements CompassHit {
     public float getScore() throws CompassException {
         fetchTheResource();
         return score;
+    }
+    
+    public CompassHighlightedText getHighlightedText() throws CompassException {
+        return compassHits.highlightedText(hitNumber);
     }
 
     public String getAlias() throws CompassException {

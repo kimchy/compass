@@ -16,6 +16,7 @@
 
 package org.compass.core.test.highlighter;
 
+import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassHighlighter;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
@@ -60,16 +61,25 @@ public class HighlighterTests extends AbstractTestCase {
 
         fragment = hits.highlighter(0).fragment("text", texts[3]);
         assertEquals("John <b>Kennedy</b> has been shot", fragment);
+        
+        // test automatic storing of highlighted text
+        assertEquals(fragment, hits.highlightedText(0).getHighlightedText());
+        CompassDetachedHits detachedHits = hits.detach();
+        assertEquals(fragment, detachedHits.highlightedText(0).getHighlightedText());
 
         fragment = hits.highlighter(1).setHighlighter("smallFragmenter").setMaxNumFragments(3).fragmentsWithSeparator(
                 "text");
         assertEquals("This piece of text refers to <b>Kennedy</b>... to <b>Kennedy</b>", fragment);
+        assertEquals(fragment, hits.highlightedText(1).getHighlightedText());
+        detachedHits = hits.detach();
+        assertEquals(fragment, detachedHits.highlightedText(1).getHighlightedText());
 
         String fragments[] = hits.highlighter(1).setHighlighter("smallFragmenter").setMaxNumFragments(3).fragments(
                 "text");
         assertEquals(2, fragments.length);
         assertEquals("This piece of text refers to <b>Kennedy</b>", fragments[0]);
         assertEquals(" to <b>Kennedy</b>", fragments[1]);
+        
 
         tr.commit();
     }
