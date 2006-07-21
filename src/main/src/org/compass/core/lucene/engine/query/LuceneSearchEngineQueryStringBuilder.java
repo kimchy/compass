@@ -18,7 +18,6 @@ package org.compass.core.lucene.engine.query;
 
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQuery;
-import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineQueryParseException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
