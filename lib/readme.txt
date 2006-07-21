@@ -211,13 +211,8 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 - required at runtime when using Compass's OJB support
 
-* spring/spring.jar
-- Spring Framework 2.0 M4 (http://www.springframework.org)
-- required for building compass
-- required at runtime when using Compass's Spring support
-
 * spring/spring.jar (and spring-*.jar)
-- Spring Framework 2.0 RC1 (http://www.springframework.org)
+- Spring Framework 2.0 RC2 (http://www.springframework.org)
 - required for building compass
 - required at runtime when using Compass's Spring support
 
