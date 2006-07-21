@@ -28,7 +28,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -92,9 +91,8 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
             if (log.isDebugEnabled()) {
                 log.debug("Startin a new Spring transaction for device [" + gpsDevice.getName() + "] index operation");
             }
-            DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-            transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-            TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager, transactionDefinition);
+            TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+            transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                     gpsDevice.index();
