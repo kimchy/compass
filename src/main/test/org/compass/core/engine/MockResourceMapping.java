@@ -17,6 +17,7 @@
 package org.compass.core.engine;
 
 import org.compass.core.Property;
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.*;
 import org.compass.core.util.config.ConfigurationHelper;
 
@@ -147,7 +148,7 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
         return null;
     }
 
-    public ResourcePropertyMapping getResourcePropertyMappingByPath(String path) {
+    public ResourcePropertyMapping getResourcePropertyMappingByPath(PropertyPath path) {
         return null;
     }
 

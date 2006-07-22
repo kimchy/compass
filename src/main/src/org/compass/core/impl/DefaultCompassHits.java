@@ -93,7 +93,7 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
         if (highlightedTextHolder == null) {
             return null;
         }
-        return (CompassHighlightedText) highlightedTextHolder.get(Integer.valueOf(n));
+        return (CompassHighlightedText) highlightedTextHolder.get(new Integer(n));
     }
 
     public void setHighlightedText(int n, String propertyName, String highlihgtedText) {
@@ -101,7 +101,7 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
             highlightedTextHolder = new HashMap();
         }
 
-        Integer hitNumber = Integer.valueOf(n);
+        Integer hitNumber = new Integer(n);
         InternalCompassHighlightedText hitHighlightedText = (InternalCompassHighlightedText) highlightedTextHolder.get(hitNumber);
         if (hitHighlightedText == null) {
             hitHighlightedText = new DefaultCompassHighlightedText();

@@ -37,7 +37,7 @@ public class ClassPropertyAnalyzerController extends ClassPropertyMapping implem
     }
     
     public String getAnalyzerResourcePropertyName() {
-        return ((ResourcePropertyMapping)mappings.get(getIdPropertyIndex())).getPath();
+        return ((ResourcePropertyMapping)mappings.get(getIdPropertyIndex())).getPath().getPath();
     }
 
     public String getNullAnalyzer() {

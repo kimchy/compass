@@ -19,6 +19,7 @@ package org.compass.core.engine;
 import org.compass.core.Property;
 import org.compass.core.Property.TermVector;
 import org.compass.core.converter.Converter;
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
@@ -31,11 +32,11 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
 
     private String name;
 
-    private String path;
+    private PropertyPath path;
 
     private boolean isInternal = false;
 
-    public MockPropertyMapping(String name, String path) {
+    public MockPropertyMapping(String name, PropertyPath path) {
         this.name = name;
         this.path = path;
     }
@@ -101,11 +102,11 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
         return null;
     }
 
-    public void setPath(String path) {
+    public void setPath(PropertyPath path) {
         this.path = path;
     }
 
-    public String getPath() {
+    public PropertyPath getPath() {
         return path;
     }
 

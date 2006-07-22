@@ -41,7 +41,7 @@ public class PrimitiveByteArrayConverter implements Converter {
             return false;
         }
 
-        String propertyName = resourcePropertyMapping.getPath();
+        String propertyName = resourcePropertyMapping.getPath().getPath();
         byte[] value = (byte[]) root;
         Property p = searchEngine.createProperty(propertyName, value, resourcePropertyMapping.getStore());
         p.setBoost(resourcePropertyMapping.getBoost());
@@ -58,7 +58,7 @@ public class PrimitiveByteArrayConverter implements Converter {
             return null;
         }
 
-        String propertyName = resourcePropertyMapping.getPath();
+        String propertyName = resourcePropertyMapping.getPath().getPath();
         Property p = resource.getProperty(propertyName);
 
         // don't set anything if null

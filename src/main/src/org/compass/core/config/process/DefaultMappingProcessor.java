@@ -25,6 +25,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.xsem.SimpleXmlValueConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
@@ -126,7 +127,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
 
     private void secondPass(ClassMapping classMapping, boolean onlyProperties) {
         classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(),
-                MarshallingEnvironment.PROPERTY_CLASS));
+                MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
         secondPassConverter(classMapping);
         ArrayList innerMappingsCopy = new ArrayList();
         for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
@@ -175,11 +176,11 @@ public class DefaultMappingProcessor implements MappingProcessor {
 
         collectionMapping.setElementMapping(elementMappingCopy);
 
-        collectionMapping.setPath(elementMappingCopy.getPath());
+        collectionMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), collectionMapping.getName()));
         collectionMapping.setCollectionTypePath(namingStrategy.buildPath(collectionMapping.getPath(),
-                MarshallingEnvironment.PROPERTY_COLLECTION_TYPE));
+                MarshallingEnvironment.PROPERTY_COLLECTION_TYPE).hintStatic());
         collectionMapping.setColSizePath(namingStrategy.buildPath(collectionMapping.getPath(),
-                MarshallingEnvironment.PROPERTY_COLLECTION_SIZE));
+                MarshallingEnvironment.PROPERTY_COLLECTION_SIZE).hintStatic());
 
         return removeMapping;
     }
@@ -279,7 +280,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
         secondPassConverter(classPropertyMapping);
         classPropertyMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), classPropertyMapping.getName()));
 
-        // we check is we override the managedId option
+        // we check if we override the managedId option
         if (managedId != null) {
             classPropertyMapping.setManagedId(managedId);
         }
@@ -300,7 +301,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
 
     private boolean secondPass(ConstantMetaDataMapping constantMapping) {
         secondPassConverter(constantMapping);
-        constantMapping.setPath(constantMapping.getName());
+        constantMapping.setPath(new StaticPropertyPath(constantMapping.getName()));
         return false;
     }
 

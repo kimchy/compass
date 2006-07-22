@@ -17,6 +17,7 @@
 package org.compass.core.mapping;
 
 import org.compass.core.Property;
+import org.compass.core.engine.naming.PropertyPath;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -126,12 +127,13 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         resourcePropertyNames = new String[tempMap.size()];
         int i = 0;
         resourcePropertyMappingsByNameMap = new HashMap();
-        for (Iterator it = tempMap.keySet().iterator(); it.hasNext();) {
-            String propertyName = (String) it.next();
+        for (Iterator it = tempMap.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String propertyName = (String) entry.getKey();
             resourcePropertyNames[i++] = propertyName;
-            ArrayList propertyList = (ArrayList) tempMap.get(propertyName);
-            resourcePropertyMappingsByNameMap.put(propertyName, propertyList.toArray(new ResourcePropertyMapping[propertyList
-                    .size()]));
+            ArrayList propertyList = (ArrayList) entry.getValue();
+            resourcePropertyMappingsByNameMap.put(propertyName,
+                    propertyList.toArray(new ResourcePropertyMapping[propertyList.size()]));
         }
     }
 
@@ -172,7 +174,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         return retVal[0];
     }
 
-    public ResourcePropertyMapping getResourcePropertyMappingByPath(String path) {
+    public ResourcePropertyMapping getResourcePropertyMappingByPath(PropertyPath path) {
         return (ResourcePropertyMapping) resourcePropertyMappingsByPathMap.get(path);
     }
 

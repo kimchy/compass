@@ -48,43 +48,43 @@ public class ComponentTests extends AbstractTestCase {
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
         assertEquals(1, resourcePropertyMappings.length);
-        assertEquals("$/first/id", resourcePropertyMappings[0].getPath());
+        assertEquals("$/first/id", resourcePropertyMappings[0].getPath().getPath());
         assertEquals("id", resourcePropertyMappings[0].getName());
 
         ResourcePropertyMapping resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("id");
         assertNotNull(resourcePropertyMapping);
         assertEquals("id", resourcePropertyMapping.getName());
-        assertEquals("$/first/id", resourcePropertyMapping.getPath());
+        assertEquals("$/first/id", resourcePropertyMapping.getPath().getPath());
 
         resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("value");
         assertNotNull(resourcePropertyMapping);
         assertEquals("value", resourcePropertyMapping.getName());
-        assertEquals("$/first/value", resourcePropertyMapping.getPath());
+        assertEquals("$/first/value", resourcePropertyMapping.getPath().getPath());
 
         resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("value.value");
         assertNotNull(resourcePropertyMapping);
         assertEquals("value", resourcePropertyMapping.getName());
-        assertEquals("value", resourcePropertyMapping.getPath());
+        assertEquals("value", resourcePropertyMapping.getPath().getPath());
 
         resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("second.value");
         assertNotNull(resourcePropertyMapping);
         assertEquals("value", resourcePropertyMapping.getName());
-        assertEquals("$/first/second/value", resourcePropertyMapping.getPath());
+        assertEquals("$/first/second/value", resourcePropertyMapping.getPath().getPath());
 
         resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("second.value.value");
         assertNotNull(resourcePropertyMapping);
         assertEquals("value", resourcePropertyMapping.getName());
-        assertEquals("value", resourcePropertyMapping.getPath());
+        assertEquals("value", resourcePropertyMapping.getPath().getPath());
 
         resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("second.third.value");
         assertNotNull(resourcePropertyMapping);
         assertEquals("value", resourcePropertyMapping.getName());
-        assertEquals("$/first/second/third/value", resourcePropertyMapping.getPath());
+        assertEquals("$/first/second/third/value", resourcePropertyMapping.getPath().getPath());
 
         resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("second.third.value.value");
         assertNotNull(resourcePropertyMapping);
         assertEquals("value", resourcePropertyMapping.getName());
-        assertEquals("value", resourcePropertyMapping.getPath());
+        assertEquals("value", resourcePropertyMapping.getPath().getPath());
 
         session.close();
     }

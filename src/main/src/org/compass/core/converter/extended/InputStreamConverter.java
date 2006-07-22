@@ -48,7 +48,7 @@ public class InputStreamConverter implements Converter {
             return false;
         }
 
-        String propertyName = resourcePropertyMapping.getPath();
+        String propertyName = resourcePropertyMapping.getPath().getPath();
 
         InputStream input = (InputStream) root;
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -78,7 +78,7 @@ public class InputStreamConverter implements Converter {
             return null;
         }
 
-        String propertyName = resourcePropertyMapping.getPath();
+        String propertyName = resourcePropertyMapping.getPath().getPath();
         Property p = resource.getProperty(propertyName);
 
         // don't set anything if null

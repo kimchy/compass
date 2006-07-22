@@ -104,15 +104,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-lang.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/j2ee/xml-apis.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -430,6 +421,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/xpp/pull-parser-2.1.10.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-lang.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

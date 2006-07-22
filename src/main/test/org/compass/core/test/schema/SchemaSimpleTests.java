@@ -13,6 +13,7 @@ import org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider;
 import org.compass.core.transaction.JTASyncTransactionFactory;
 import org.compass.core.transaction.manager.JBoss;
 import org.compass.core.accessor.DirectPropertyAccessor;
+import org.compass.core.engine.naming.DynamicPropertyNamingStrategy;
 
 /**
  * @author kimchy
@@ -39,7 +40,15 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("yes", settings.getSetting(CompassEnvironment.All.TERM_VECTOR));
         assertEquals("analyzer1", settings.getSetting(LuceneEnvironment.ALL_ANALYZER));
     }
-    
+
+    public void testPropertyNamingStrategySchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/propertyNamingStrategy.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals(DynamicPropertyNamingStrategy.class.getName(), settings.getSetting(CompassEnvironment.NamingStrategy.TYPE));
+    }
+
     public void testBatchInsertSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
             .configure("/org/compass/core/test/schema/batchInsert.cfg.xml");

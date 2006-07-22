@@ -17,14 +17,15 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element name="connection" type="connectionType"/>
-            <xsd:element name="transaction" type="transactionType" minOccurs="0"/>
-            <xsd:element name="jndi" type="jndiType" minOccurs="0"/>
-            <xsd:element name="cache" type="cacheType" minOccurs="0"/>
-            <xsd:element name="converters" type="convertersType" minOccurs="0"/>
-            <xsd:element name="propertyAccessors" type="propertyAccessorsType" minOccurs="0"/>
-            <xsd:element name="searchEngine" type="searchEngineType" minOccurs="0"/>
-            <xsd:element name="mappings" type="mappingsType" minOccurs="0"/>
-            <xsd:element name="settings" type="settingsType" minOccurs="0"/>
+            <xsd:element name="transaction" type="transactionType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="jndi" type="jndiType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="cache" type="cacheType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="converters" type="convertersType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="propertyAccessors" type="propertyAccessorsType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="propertyNamingStrategy" type="propertyNamingStrategyType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="searchEngine" type="searchEngineType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="name" type="xsd:string" use="required">
             <xsd:annotation>
@@ -729,7 +730,47 @@
             </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
-    <!-- Convertres -->
+    <!-- Naming Strategy -->
+    <xsd:complexType name="propertyNamingStrategyType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures the naming strategy for paths Compass will use.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Setting used to configure the Naming Strategy (if needed). The Naming Strategy
+                        must implement the CompassConfigurable interface for the to be injected.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The type of the Property Naming Stratergy.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="org.compass.core.engine.naming.DefaultPropertyNamingStrategy"/>
+                    <xsd:enumeration value="org.compass.core.engine.naming.StaticPropertyNamingStrategy"/>
+                    <xsd:enumeration value="org.compass.core.engine.naming.DynamicPropertyNamingStrategy"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="typeClass" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The fully qualified class name of the naming strategy. Must implement the
+                    PropertyNamingStrategy interface.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- Property Accessor -->
     <xsd:complexType name="propertyAccessorsType">
         <xsd:annotation>
             <xsd:documentation>
@@ -854,8 +895,8 @@
                                 indexing speed is slower. With larger values, more RAM is used during indexing, and
                                 while searches on unoptimized indices are slower, indexing is faster. Thus larger values
                                 (&gt; 10) are best for batch index creation, and smaller values ( &lt; 10) for indices
-                                that
-                                are interactively maintained. This must never be less than 2. The default value is 10.
+                                that are interactively maintained. This must never be less than 2. The default value is
+                                10.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>

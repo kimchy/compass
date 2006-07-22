@@ -36,7 +36,7 @@ public class XmlPropertyAnalyzerController extends XmlPropertyMapping implements
     }
 
     public String getAnalyzerResourcePropertyName() {
-        return getPath();
+        return getPath().getPath();
     }
 
     public Property.Index getIndex() {

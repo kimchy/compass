@@ -57,7 +57,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
             // if the class is defined as poly, persist the class name as well
             String className = root.getClass().getName();
-            Property p = searchEngine.createProperty(classMapping.getClassPath(), className, Property.Store.YES,
+            Property p = searchEngine.createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
                     Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
         }
@@ -96,7 +96,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             if (classMapping.getPolyClass() != null) {
                 className = classMapping.getPolyClass().getName();
             } else {
-                Property pClassName = resource.getProperty(classMapping.getClassPath());
+                Property pClassName = resource.getProperty(classMapping.getClassPath().getPath());
                 if (pClassName == null) {
                     throw new ConversionException("The class [" + className
                             + "] is configured as poly, but no class information is stored in the resource");

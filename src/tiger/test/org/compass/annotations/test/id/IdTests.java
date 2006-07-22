@@ -47,7 +47,7 @@ public class IdTests extends AbstractAnnotationsTestCase {
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
         assertEquals(1, resourcePropertyMappings.length);
-        assertEquals("test", resourcePropertyMappings[0].getPath());
+        assertEquals("test", resourcePropertyMappings[0].getPath().getPath());
         assertEquals("test", resourcePropertyMappings[0].getName());
 
         CompassTransaction tr = session.beginTransaction();

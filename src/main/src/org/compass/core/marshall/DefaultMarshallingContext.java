@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.impl.ResourceIdKey;
@@ -28,6 +29,8 @@ import org.compass.core.impl.ResourceIdKey;
  * @author kimchy
  */
 public class DefaultMarshallingContext implements MarshallingContext {
+
+    private static final Object nullValue = new Object();
 
     private CompassMapping mapping;
 
@@ -74,11 +77,11 @@ public class DefaultMarshallingContext implements MarshallingContext {
         return unmarshalled.get(key);
     }
 
-    public void setHandleNulls(String path) {
-        nullValuesPath.put(path, "");
+    public void setHandleNulls(PropertyPath path) {
+        nullValuesPath.put(path, nullValue);
     }
 
-    public void removeHandleNulls(String path) {
+    public void removeHandleNulls(PropertyPath path) {
         nullValuesPath.remove(path);
     }
 

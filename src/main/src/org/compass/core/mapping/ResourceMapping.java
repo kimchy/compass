@@ -17,6 +17,7 @@
 package org.compass.core.mapping;
 
 import org.compass.core.Property;
+import org.compass.core.engine.naming.PropertyPath;
 
 /**
  * A mapping defining a {@link org.compass.core.Resource} saved in the Search Engine.
@@ -136,7 +137,7 @@ public interface ResourceMapping extends Mapping {
      * ({@link org.compass.core.mapping.ResourcePropertyMapping#getPath()}, or
      * <code>null</code> of not exists.
      */
-    ResourcePropertyMapping getResourcePropertyMappingByPath(String path);
+    ResourcePropertyMapping getResourcePropertyMappingByPath(PropertyPath path);
 
     /**
      * Returns the {@link ResourcePropertyMapping} that match the given path

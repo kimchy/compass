@@ -27,23 +27,10 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
 
     protected ArrayList mappings = new ArrayList();
 
-    protected HashMap mappingsMap = new HashMap();
-
-    public void removeExistingByPath(Mapping mapping) {
-        if (mappingsMap.get(mapping.getPath()) != null) {
-            for (int i = 0; i < mappings.size(); i++) {
-                Mapping tempMapping = (Mapping) mappings.get(i);
-                if (tempMapping.getPath() != null && tempMapping.getPath().equals(mapping.getPath())) {
-                    mappings.remove(i);
-                    break;
-                }
-            }
-            mappingsMap.remove(mapping.getPath());
-        }
-    }
+    protected HashMap mappingsByNameMap = new HashMap();
 
     public void removeExistingByName(Mapping mapping) {
-        if (mappingsMap.get(mapping.getName()) != null) {
+        if (mappingsByNameMap.get(mapping.getName()) != null) {
             for (int i = 0; i < mappings.size(); i++) {
                 Mapping tempMapping = (Mapping) mappings.get(i);
                 if (tempMapping.getName() != null && tempMapping.getName().equals(mapping.getName())) {
@@ -51,18 +38,17 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
                     break;
                 }
             }
-            mappingsMap.remove(mapping.getName());
+            mappingsByNameMap.remove(mapping.getName());
         }
     }
 
     public int addMapping(Mapping mapping) {
-        removeExistingByPath(mapping);
         if (mapping instanceof OverrideByNameMapping) {
             if (((OverrideByNameMapping) mapping).isOverrideByName()) {
                 removeExistingByName(mapping);
             }
         }
-        mappingsMap.put(mapping.getName(), mapping);
+        mappingsByNameMap.put(mapping.getName(), mapping);
         mappings.add(mapping);
         return mappings.size() - 1;
     }
@@ -76,7 +62,7 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
     }
 
     public Mapping getMapping(String name) {
-        return (Mapping) mappingsMap.get(name);
+        return (Mapping) mappingsByNameMap.get(name);
     }
 
     public Mapping getMapping(int index) {
@@ -85,7 +71,7 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
 
     public void clearMappings() {
         mappings.clear();
-        mappingsMap.clear();
+        mappingsByNameMap.clear();
     }
 
     protected void copy(MultipleMapping mapping) {

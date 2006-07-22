@@ -41,7 +41,7 @@ public abstract class ResourceHelper {
         ResourcePropertyMapping[] pMappings = resourceMapping.getIdMappings();
         Property[] ids = new Property[pMappings.length];
         for (int i = 0; i < pMappings.length; i++) {
-            ids[i] = resource.getProperty(pMappings[i].getPath());
+            ids[i] = resource.getProperty(pMappings[i].getPath().getPath());
             if (ids[i] == null) {
                 throw new SearchEngineException("Id with path [" + pMappings[i].getPath() + "] for alias [" + alias
                         + "] not found");
@@ -64,7 +64,7 @@ public abstract class ResourceHelper {
         }
         Property[] properties = new Property[values.length];
         for (int i = 0; i < values.length; i++) {
-            String name = idsMapping[i].getPath();
+            String name = idsMapping[i].getPath().getPath();
             properties[i] = searchEngine.createProperty(name, values[i], Property.Store.YES, Property.Index.UN_TOKENIZED);
         }
         return properties;

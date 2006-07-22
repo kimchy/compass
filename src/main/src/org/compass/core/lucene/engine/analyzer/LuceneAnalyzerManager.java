@@ -253,7 +253,7 @@ public class LuceneAnalyzerManager {
                                 + "] for alias [" + resourceMapping.getAlias() + "] and property ["
                                 + propertyMapping.getName() + "]");
                     }
-                    perFieldAnalyzerWrapper.addAnalyzer(propertyMapping.getPath(), propertyAnalyzer);
+                    perFieldAnalyzerWrapper.addAnalyzer(propertyMapping.getPath().getPath(), propertyAnalyzer);
                 }
             }
             if (resourceMapping.isAllSupported()) {

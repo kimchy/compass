@@ -106,7 +106,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
 
     public void bindPropertyAccessors(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        List propertyAccessorsEle = DomUtils.getChildElementsByTagName(ele, "propertyAccessor");
+        List propertyAccessorsEle = DomUtils.getChildElementsByTagName(ele, "propertyAccessor", true);
         for (Iterator it = propertyAccessorsEle.iterator(); it.hasNext();) {
             Element propertyAccessorEle = (Element) it.next();
             SettingsHolder settingsHolder = processSettings(propertyAccessorEle);
@@ -115,6 +115,15 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setGroupSettings(CompassEnvironment.PropertyAccessor.PREFIX, DomUtils.getElementAttribute(propertyAccessorEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }
+    }
+
+    public void bindPropertyNamingStrategy(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        String type = DomUtils.getElementAttribute(ele, "type");
+        if (type == null) {
+            type = DomUtils.getElementAttribute(ele, "typeClass");
+        }
+        settings.setSetting(CompassEnvironment.NamingStrategy.TYPE, type);
     }
 
     public void bindSearchEngine(Element ele, CompassConfiguration config) {

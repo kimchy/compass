@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.osem;
 
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.util.Parameter;
@@ -74,9 +75,9 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
         }
     }
 
-    private String collectionTypePath;
+    private PropertyPath collectionTypePath;
 
-    private String colSizePath;
+    private PropertyPath colSizePath;
 
     private Mapping elementMapping;
 
@@ -105,19 +106,19 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
         this.elementMapping = elementMapping;
     }
 
-    public String getCollectionTypePath() {
+    public PropertyPath getCollectionTypePath() {
         return collectionTypePath;
     }
 
-    public void setCollectionTypePath(String collectionTypePath) {
+    public void setCollectionTypePath(PropertyPath collectionTypePath) {
         this.collectionTypePath = collectionTypePath;
     }
 
-    public String getColSizePath() {
+    public PropertyPath getColSizePath() {
         return colSizePath;
     }
 
-    public void setColSizePath(String colSizePath) {
+    public void setColSizePath(PropertyPath colSizePath) {
         this.colSizePath = colSizePath;
     }
 

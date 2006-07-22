@@ -36,6 +36,7 @@ import org.compass.core.Resource;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
@@ -83,7 +84,7 @@ public abstract class LuceneUtils {
             for (int i = 0; i < properties.length; i++) {
                 Property property = properties[i];
                 ResourcePropertyMapping resourcePropertyMapping =
-                        resourceMapping.getResourcePropertyMappingByPath(property.getName());
+                        resourceMapping.getResourcePropertyMapping(property.getName());
                 if (resourcePropertyMapping == null) {
                     if (!propertyNamingStrategy.isInternal(property.getName())) {
                         if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {

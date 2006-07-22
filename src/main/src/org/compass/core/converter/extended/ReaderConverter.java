@@ -42,7 +42,7 @@ public class ReaderConverter implements Converter {
             return false;
         }
 
-        String propertyName = resourcePropertyMapping.getPath();
+        String propertyName = resourcePropertyMapping.getPath().getPath();
         Reader value = (Reader) root;
         Property p = searchEngine.createProperty(propertyName, value, resourcePropertyMapping.getTermVector());
         p.setBoost(resourcePropertyMapping.getBoost());

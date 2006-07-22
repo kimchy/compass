@@ -24,6 +24,7 @@ import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ContractMapping;
@@ -43,11 +44,11 @@ import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
+import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.mapping.xsem.XmlIdMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.mapping.xsem.XmlPropertyAnalyzerController;
 import org.compass.core.mapping.xsem.XmlPropertyMapping;
-import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
@@ -214,12 +215,13 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     }
 
     private void bindXmlContent(ConfigurationHelper xmlContentConf, XmlContentMapping xmlContentMapping) {
+        
         String name = xmlContentConf.getAttribute("name", null);
         if (name != null) {
             name = valueLookup.lookupMetaDataName(name);
         }
         xmlContentMapping.setName(name);
-        xmlContentMapping.setPath(name);
+        xmlContentMapping.setPath(new StaticPropertyPath(name));
         bindConverter(xmlContentConf, xmlContentMapping);
         String storeType = xmlContentConf.getAttribute("store", "yes");
         xmlContentMapping.setStore(Property.Store.fromString(storeType));
@@ -233,7 +235,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
         xmlPropertyMapping.setBoost(getBoost(xmlPropConf));
         xmlPropertyMapping.setName(name);
-        xmlPropertyMapping.setPath(name);
+        xmlPropertyMapping.setPath((name == null ? null : new StaticPropertyPath(name)));
         bindConverter(xmlPropConf, xmlPropertyMapping);
         String storeType = xmlPropConf.getAttribute("store", "yes");
         xmlPropertyMapping.setStore(Property.Store.fromString(storeType));
@@ -339,7 +341,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String name = valueLookup.lookupMetaDataName(resourcePropConf.getAttribute("name"));
         propertyMapping.setBoost(getBoost(resourcePropConf));
         propertyMapping.setName(name);
-        propertyMapping.setPath(name);
+        propertyMapping.setPath(new StaticPropertyPath(name));
         bindConverter(resourcePropConf, propertyMapping);
         String storeType = resourcePropConf.getAttribute("store", "yes");
         propertyMapping.setStore(Property.Store.fromString(storeType));

@@ -41,7 +41,7 @@ public class ObjectByteArrayConverter implements Converter {
             return false;
         }
 
-        String propertyName = resourcePropertyMapping.getPath();
+        String propertyName = resourcePropertyMapping.getPath().getPath();
         Byte[] oValue = (Byte[]) root;
         byte value[] = new byte[oValue.length];
         for (int i = 0; i < oValue.length; i++) {
@@ -62,7 +62,7 @@ public class ObjectByteArrayConverter implements Converter {
             return null;
         }
 
-        String propertyName = resourcePropertyMapping.getPath();
+        String propertyName = resourcePropertyMapping.getPath().getPath();
         Property p = resource.getProperty(propertyName);
 
         // don't set anything if null

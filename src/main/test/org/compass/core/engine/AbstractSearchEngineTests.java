@@ -18,7 +18,7 @@ package org.compass.core.engine;
 
 import org.compass.core.Compass;
 import org.compass.core.converter.DefaultConverterLookup;
-import org.compass.core.engine.naming.DefaultPropertyNamingStrategy;
+import org.compass.core.engine.naming.StaticPropertyNamingStrategy;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
@@ -46,7 +46,7 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
     protected void setUp() throws Exception {
         super.setUp();
         this.searchEngineFactory = createSearchEngineFactory();
-        this.compass = new DefaultCompass(getMapping(), new DefaultConverterLookup(), new DefaultCompassMetaData(), new DefaultPropertyNamingStrategy(),
+        this.compass = new DefaultCompass(getMapping(), new DefaultConverterLookup(), new DefaultCompassMetaData(), new StaticPropertyNamingStrategy(),
                 getSettings(), false, (LuceneSearchEngineFactory) searchEngineFactory);
         this.searchEngine = searchEngineFactory.openSearchEngine();
     }

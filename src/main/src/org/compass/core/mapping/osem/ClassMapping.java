@@ -21,14 +21,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.compass.core.mapping.*;
+import org.compass.core.engine.naming.PropertyPath;
+import org.compass.core.mapping.AbstractResourceMapping;
+import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.PostProcessingMapping;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
 public class ClassMapping extends AbstractResourceMapping implements ResourceMapping, PostProcessingMapping {
 
-    private String classPath;
+    private PropertyPath classPath;
 
     private Class clazz;
 
@@ -128,11 +135,11 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         this.poly = poly;
     }
 
-    public String getClassPath() {
+    public PropertyPath getClassPath() {
         return classPath;
     }
 
-    public void setClassPath(String classPath) {
+    public void setClassPath(PropertyPath classPath) {
         this.classPath = classPath;
     }
 

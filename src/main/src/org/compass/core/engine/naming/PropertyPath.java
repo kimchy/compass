@@ -17,27 +17,25 @@
 package org.compass.core.engine.naming;
 
 /**
- * A naming strategy that uses {@link DefaultPropertyPath} when building
- * {@link PropertyPath}.
+ * A path representation abstraction. Note, implementations should
+ * take care and override <code>equals</code> and <code>hashCode</code>.
  *
  * @author kimchy
- * @author lexi
- * @see PropertyPath
- * @see DefaultPropertyPath
- * @see PropertyNamingStrategyFactory
- * @see DefaultPropertyNamingStrategyFactory
+ * @see DynamicPropertyNamingStrategy
+ * @see StaticPropertyNamingStrategy
  */
-public class DefaultPropertyNamingStrategy implements PropertyNamingStrategy {
+public interface PropertyPath {
 
-    public boolean isInternal(String name) {
-        return name.charAt(0) == '$';
-    }
+    /**
+     * Returns the path. Note, the dynamic path construction might occur.
+     */
+    String getPath();
 
-    public PropertyPath getRootPath() {
-        return new StaticPropertyPath("$");
-    }
-
-    public PropertyPath buildPath(PropertyPath root, String name) {
-        return new DefaultPropertyPath(root, name);
-    }
+    /**
+     * Compass path construction process will hint on heavily used path
+     * elements that might be better off made static. The implementation
+     * might decide to create a {@link PropertyPath} implementation that
+     * is more static in nature.
+     */
+    PropertyPath hintStatic();
 }

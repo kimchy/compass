@@ -690,6 +690,29 @@ public abstract class StringUtils {
     }
 
     /**
+     * Convenience method to return a String array as a delimited (e.g. CSV)
+     * String. E.g. useful for toString() implementations.
+     *
+     * @param arr   array to display. Elements may be of any type (toString
+     *              will be called on each element).
+     * @param delim delimiter to use (probably a ",")
+     */
+    public static String arrayToDelimitedString(Object[] arr, char delim) {
+        if (arr == null) {
+            return "";
+        }
+
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < arr.length; i++) {
+            if (i > 0) {
+                sb.append(delim);
+            }
+            sb.append(arr[i]);
+        }
+        return sb.toString();
+    }
+
+    /**
      * Convenience method to return a Collection as a delimited (e.g. CSV)
      * String. E.g. useful for toString() implementations.
      *

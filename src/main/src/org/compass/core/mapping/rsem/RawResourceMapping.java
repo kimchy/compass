@@ -47,11 +47,11 @@ public class RawResourceMapping extends AbstractResourceMapping implements PostP
         // no duplicate mapping names are allowed
         if (mapping instanceof ResourcePropertyMapping) {
             ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-            if (mappingsMap.get(resourcePropertyMapping.getPath()) != null) {
+            if (mappingsByNameMap.get(resourcePropertyMapping.getName()) != null) {
                 if (!(resourcePropertyMapping instanceof OverrideByNameMapping) ||
                         !((OverrideByNameMapping) resourcePropertyMapping).isOverrideByName()) {
                     throw new InvalidMappingException("Two resource property mappings are mapped to property path ["
-                            + resourcePropertyMapping.getPath() + "], it is not allowed");
+                            + resourcePropertyMapping.getPath().getPath() + "], it is not allowed");
                 }
             }
         }
@@ -67,7 +67,7 @@ public class RawResourceMapping extends AbstractResourceMapping implements PostP
     }
 
     public ResourcePropertyMapping getResourcePropertyMappingByDotPath(String path) {
-        return (ResourcePropertyMapping) mappingsMap.get(path);
+        return (ResourcePropertyMapping) mappingsByNameMap.get(path);
     }
 
     public ResourcePropertyMapping[] getResourcePropertyMappings() {

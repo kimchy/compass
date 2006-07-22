@@ -275,6 +275,29 @@ CompassHits hits =  queryBuilder.bool()
 String fragment = hits.highlighter(0).fragment("description");
 ]]></programlisting>
         </para>
+        
+        <para>
+           Highlighting can only be used with <literal>CompassHits</literal>, which operations can only be used within a transactional context. When working with pure hits results, <literal>CompassHits</literal> can be detached, and then used outside of a transactional context, the question is: what can be done with highlighting?
+        </para>
+        
+        <para>
+           Each highlighting operation (as seen in the previous code) is also cached within the hits object. When detaching the hits, the cache is passed to the detached hits, which can then be used outside of a transaction. Here is an example:
+<programlisting><![CDATA[CompassHits hits =  session.find("london");
+for (int i = 0.; i < 10; i++) {
+    hits.highlighter(i).fragment("description"); // this will cache the highlighted fragment
+}
+CompassHit[] detachedHits = hits.detach(0, 10).getHits();
+
+// outside of a transaction (maybe in a view technology)
+for (int i = 0; i < detachedHits.length; i++) {
+    // this will return the first fragment
+    detachedHits[i].getHighlightedText().getHighlightedText();
+    // this will return the description fragment, note that the implementation
+    // implements the Map interface, which allows it to be used simply in JSTL env and others
+    detachedHits[i].getHighlightedText().getHighlightedText("description"); 
+}
+]]></programlisting>
+        </para>
 
       </sect2>
 

@@ -53,17 +53,17 @@ public class ResourceTests extends AbstractTestCase {
         ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getResourcePropertyMappingByDotPath("id");
         assertNotNull(resourcePropertyMapping);
         assertEquals("id", resourcePropertyMapping.getName());
-        assertEquals("id", resourcePropertyMapping.getPath());
+        assertEquals("id", resourcePropertyMapping.getPath().getPath());
 
         resourceMapping = mapping.getResourceMappingByAlias("b");
         resourcePropertyMapping = resourceMapping.getResourcePropertyMappingByDotPath("id1");
         assertNotNull(resourcePropertyMapping);
         assertEquals("id1", resourcePropertyMapping.getName());
-        assertEquals("id1", resourcePropertyMapping.getPath());
+        assertEquals("id1", resourcePropertyMapping.getPath().getPath());
         resourcePropertyMapping = resourceMapping.getResourcePropertyMappingByDotPath("id2");
         assertNotNull(resourcePropertyMapping);
         assertEquals("id2", resourcePropertyMapping.getName());
-        assertEquals("id2", resourcePropertyMapping.getPath());
+        assertEquals("id2", resourcePropertyMapping.getPath().getPath());
 
         session.close();
     }

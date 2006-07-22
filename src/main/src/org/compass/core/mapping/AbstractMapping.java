@@ -17,6 +17,7 @@
 package org.compass.core.mapping;
 
 import org.compass.core.converter.Converter;
+import org.compass.core.engine.naming.PropertyPath;
 
 /**
  * @author kimchy
@@ -25,7 +26,7 @@ public abstract class AbstractMapping implements Mapping {
 
     private String name;
 
-    private String path;
+    private PropertyPath path;
 
     private String converterName;
 
@@ -58,11 +59,11 @@ public abstract class AbstractMapping implements Mapping {
         this.name = name;
     }
 
-    public String getPath() {
+    public PropertyPath getPath() {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath(PropertyPath path) {
         this.path = path;
     }
 

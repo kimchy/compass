@@ -21,6 +21,7 @@ import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.engine.SearchEngine;
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.xsem.XmlPropertyMapping;
@@ -48,7 +49,8 @@ public class SimpleXmlValueConverter implements Converter {
         if (root != null) {
             sValue = toString(xmlObject, xmlPropertyMapping);
         }
-        String propertyName = xmlPropertyMapping.getPath();
+        PropertyPath path = xmlPropertyMapping.getPath();
+        String propertyName = path == null ? null : path.getPath();
         if (propertyName == null) {
             if (xmlObject == null) {
                 // nothing we can do here, no name, no nothing...

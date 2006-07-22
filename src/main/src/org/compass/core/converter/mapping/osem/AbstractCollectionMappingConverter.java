@@ -44,13 +44,13 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         SearchEngine searchEngine = context.getSearchEngine();
 
         if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
-            Property p = searchEngine.createProperty(colMapping.getCollectionTypePath(),
+            Property p = searchEngine.createProperty(colMapping.getCollectionTypePath().getPath(),
                     AbstractCollectionMapping.CollectionType.toString(getRuntimeCollectionType(root)),
                     Property.Store.YES, Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
         }
 
-        // for null values in enteties within the collection, they must be saved
+        // for null values in entities within the collection, they must be saved
         // so the order will be maintained
         context.setHandleNulls(colMapping.getPath());
 
@@ -59,7 +59,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         context.removeHandleNulls(colMapping.getPath());
         
         if (size > 0) {
-            Property p = searchEngine.createProperty(colMapping.getColSizePath(), Integer.toString(size),
+            Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
                     Property.Store.YES, Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
             return true;
@@ -79,7 +79,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
 
-        Property pColSize = resource.getProperty(colMapping.getColSizePath());
+        Property pColSize = resource.getProperty(colMapping.getColSizePath().getPath());
         if (pColSize == null) {
             // when we marshalled it, it was null
             return null;
@@ -89,7 +89,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         AbstractCollectionMapping.CollectionType collectionType = colMapping.getCollectionType();
         if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
             // try and read the collection from the index
-            Property pColllectionType = resource.getProperty(colMapping.getCollectionTypePath());
+            Property pColllectionType = resource.getProperty(colMapping.getCollectionTypePath().getPath());
             if (pColllectionType == null) {
                 throw new ConversionException("Expected to find the collection/arraytype stored in the resource");
             }

@@ -18,6 +18,7 @@ package org.compass.core.marshall;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.impl.ResourceIdKey;
@@ -58,10 +59,10 @@ public interface MarshallingContext {
     /**
      * Sets on the path to use null values
      */
-    void setHandleNulls(String path);
+    void setHandleNulls(PropertyPath path);
 
     /**
      * Removes the fact that a null value should be used.
      */
-    void removeHandleNulls(String path);
+    void removeHandleNulls(PropertyPath path);
 }

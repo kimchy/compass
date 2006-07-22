@@ -22,6 +22,7 @@ import java.util.Iterator;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.ResourcePropertyConverter;
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 
@@ -50,7 +51,7 @@ public class CompassMapping {
                 if (resourcePropertyMapping == null) {
                     path = name;
                 } else {
-                    path = resourcePropertyMapping.getPath();
+                    path = resourcePropertyMapping.getPath().getPath();
                 }
             }
         }
@@ -89,7 +90,7 @@ public class CompassMapping {
 
     private HashSet hasMutipleClassMappingByClass = new HashSet();
 
-    private String path;
+    private PropertyPath path;
 
     public CompassMapping() {
     }
@@ -288,11 +289,11 @@ public class CompassMapping {
         return converterLookup;
     }
 
-    public String getPath() {
+    public PropertyPath getPath() {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath(PropertyPath path) {
         this.path = path;
     }
 }

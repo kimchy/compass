@@ -16,13 +16,15 @@
 
 package org.compass.core.engine.naming;
 
+
 /**
  * The property naming strategy that compass will use for hidden properties.
  * Created using {@link PropertyNamingStrategyFactory}
  *
  * @author kimchy
  * @see PropertyNamingStrategyFactory
- * @see DefaultPropertyNamingStrategy
+ * @see StaticPropertyNamingStrategy
+ * @see DynamicPropertyNamingStrategy
  */
 public interface PropertyNamingStrategy {
 
@@ -39,7 +41,7 @@ public interface PropertyNamingStrategy {
      *
      * @return The root path for intenral properties.
      */
-    String getRootPath();
+    PropertyPath getRootPath();
 
     /**
      * Builds the path for a root property, base on the root part and the
@@ -49,5 +51,6 @@ public interface PropertyNamingStrategy {
      * @param name The name to add to the path
      * @return The generated path from the root and the name
      */
-    String buildPath(String root, String name);
+    PropertyPath buildPath(PropertyPath root, String name);
+
 }

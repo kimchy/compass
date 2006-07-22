@@ -51,7 +51,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
         if (id instanceof Resource) {
             for (int i = 0; i < ids.length; i++) {
                 Resource rId = (Resource) id;
-                idResource.addProperty(rId.getProperty(ids[i].getPath()));
+                idResource.addProperty(rId.getProperty(ids[i].getPath().getPath()));
             }
         } else if (id.getClass().isArray()) {
             if (Array.getLength(id) != ids.length) {
@@ -64,7 +64,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
                 }
             } else {
                 for (int i = 0; i < ids.length; i++) {
-                    idResource.addProperty(searchEngine.createProperty(ids[i].getPath(), Array.get(id, i).toString(),
+                    idResource.addProperty(searchEngine.createProperty(ids[i].getPath().getPath(), Array.get(id, i).toString(),
                             Property.Store.YES, Property.Index.UN_TOKENIZED));
                 }
             }
@@ -76,7 +76,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
             if (id instanceof Property) {
                 idResource.addProperty((Property) id);
             } else {
-                idResource.addProperty(searchEngine.createProperty(ids[0].getPath(), id.toString(), Property.Store.YES,
+                idResource.addProperty(searchEngine.createProperty(ids[0].getPath().getPath(), id.toString(), Property.Store.YES,
                         Property.Index.UN_TOKENIZED));
             }
         }
@@ -90,7 +90,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
         if (id instanceof Resource) {
             Resource resource = (Resource) id;
             for (int i = 0; i < ids.length; i++) {
-                idsValues[i] = resource.getProperty(ids[i].getPath());
+                idsValues[i] = resource.getProperty(ids[i].getPath().getPath());
             }
         } else {
             throw new ConversionException("Object [" + id + "] not supported");

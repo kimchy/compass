@@ -73,7 +73,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
             return null;
         }
 
-        String propertyName = resourcePropertyMapping.getPath();
+        String propertyName = resourcePropertyMapping.getPath().getPath();
         Property p = resource.getProperty(propertyName);
 
         // don't set anything if null

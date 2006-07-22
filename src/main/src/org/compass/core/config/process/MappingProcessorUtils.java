@@ -23,6 +23,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.DelegateConverter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
@@ -82,9 +83,9 @@ public abstract class MappingProcessorUtils {
 
         if (mdMapping.isInternal()) {
             // Thats the key, save it directly under the class property mapping path
-            mdMapping.setPath(classPropertyMapping.getPath());
+            mdMapping.setPath(classPropertyMapping.getPath().hintStatic());
         } else {
-            mdMapping.setPath(mdMapping.getName());
+            mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
         }
     }
 

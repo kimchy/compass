@@ -90,12 +90,12 @@ public class MapConverter implements Converter, CompassConfigurable {
             PropertyNamingStrategy propertyNamingStrategy =
                     context.getSession().getCompass().getSearchEngineFactory().getPropertyNamingStrategy();
             // save keys (under an internal name)
-            String keyPath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "keys");
+            String keyPath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "keys").getPath();
             Property p = searchEngine.createProperty(keyPath, keys.toString(),
                     Property.Store.YES, Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
             // save values (under an internal name)
-            String valuePath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "values");
+            String valuePath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "values").getPath();
             p = searchEngine.createProperty(valuePath, values.toString(), Property.Store.YES, Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
         }
@@ -114,12 +114,12 @@ public class MapConverter implements Converter, CompassConfigurable {
         PropertyNamingStrategy propertyNamingStrategy =
                 context.getSession().getCompass().getSearchEngineFactory().getPropertyNamingStrategy();
         // save keys (under an internal name)
-        String keyPath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "keys");
+        String keyPath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "keys").getPath();
         String strKeys = resource.get(keyPath);
         if (strKeys == null) {
             return null;
         }
-        String valuePath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "values");
+        String valuePath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "values").getPath();
         String strValues = resource.get(valuePath);
         String[] keys = StringUtils.tokenizeToStringArray(strKeys, ",");
         String[] values = StringUtils.tokenizeToStringArray(strValues, ",");

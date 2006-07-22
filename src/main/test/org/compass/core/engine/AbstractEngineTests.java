@@ -17,9 +17,11 @@
 package org.compass.core.engine;
 
 import junit.framework.TestCase;
+
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -85,9 +87,9 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected CompassMapping buildCompassMapping() {
-        ResourcePropertyMapping id1 = new MockPropertyMapping(PROPERTY_ID1, PROPERTY_ID1);
-        ResourcePropertyMapping id2 = new MockPropertyMapping(PROPERTY_ID2, PROPERTY_ID2);
-        ResourcePropertyMapping id3 = new MockPropertyMapping(PROPERTY_ID3, PROPERTY_ID3);
+        ResourcePropertyMapping id1 = new MockPropertyMapping(PROPERTY_ID1, new StaticPropertyPath(PROPERTY_ID1));
+        ResourcePropertyMapping id2 = new MockPropertyMapping(PROPERTY_ID2, new StaticPropertyPath(PROPERTY_ID2));
+        ResourcePropertyMapping id3 = new MockPropertyMapping(PROPERTY_ID3, new StaticPropertyPath(PROPERTY_ID3));
 
 //        PropertyMapping val1 = new MockPropertyMapping(PROPERTY_VAL1, PROPERTY_VAL1);
 //        PropertyMapping val2 = new MockPropertyMapping(PROPERTY_VAL2, PROPERTY_VAL2);

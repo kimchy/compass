@@ -99,7 +99,7 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
         XmlObject xmlObject = (XmlObject) root;
         XmlContentMapping xmlContentMapping = (XmlContentMapping) mapping;
         String sValue = xmlContentConverter.toXml(xmlObject);
-        String propertyName = xmlContentMapping.getPath();
+        String propertyName = xmlContentMapping.getPath().getPath();
         Property p = searchEngine.createProperty(propertyName, sValue, xmlContentMapping);
         resource.addProperty(p);
 
@@ -109,7 +109,7 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         XmlContentMapping xmlContentMapping = (XmlContentMapping) mapping;
 
-        String propertyName = xmlContentMapping.getPath();
+        String propertyName = xmlContentMapping.getPath().getPath();
         Property p = resource.getProperty(propertyName);
 
         // don't set anything if null

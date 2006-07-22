@@ -17,17 +17,16 @@
 package org.compass.core.engine.naming;
 
 /**
- * A naming strategy that uses {@link DefaultPropertyPath} when building
+ * A naming strategy that uses {@link StaticPropertyPath} when building
  * {@link PropertyPath}.
  *
  * @author kimchy
- * @author lexi
  * @see PropertyPath
- * @see DefaultPropertyPath
+ * @see StaticPropertyPath
  * @see PropertyNamingStrategyFactory
  * @see DefaultPropertyNamingStrategyFactory
  */
-public class DefaultPropertyNamingStrategy implements PropertyNamingStrategy {
+public class StaticPropertyNamingStrategy implements PropertyNamingStrategy {
 
     public boolean isInternal(String name) {
         return name.charAt(0) == '$';
@@ -38,6 +37,6 @@ public class DefaultPropertyNamingStrategy implements PropertyNamingStrategy {
     }
 
     public PropertyPath buildPath(PropertyPath root, String name) {
-        return new DefaultPropertyPath(root, name);
+        return new StaticPropertyPath(root, name);
     }
 }

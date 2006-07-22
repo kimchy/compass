@@ -124,14 +124,14 @@ public class AllTests extends AbstractTestCase {
         Long id = new Long(1);
         A a = new A();
         a.setId(id);
-        a.setValue1("test1");
-        a.setValue2("test2");
+        a.setValue1("test1111");
+        a.setValue2("test2222");
         session.save("a4", a);
 
-        CompassHits result = session.find("test1");
+        CompassHits result = session.find("test1111");
         assertEquals(0, result.getLength());
 
-        result = session.find("test2");
+        result = session.find("test2222");
         assertEquals(1, result.getLength());
 
         result = session.find("cValue11");

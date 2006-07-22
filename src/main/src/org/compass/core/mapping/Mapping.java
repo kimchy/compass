@@ -17,6 +17,7 @@
 package org.compass.core.mapping;
 
 import org.compass.core.converter.Converter;
+import org.compass.core.engine.naming.PropertyPath;
 
 /**
  * A general interface for all things Mapping in compass. Has a name and a path, where the
@@ -46,13 +47,13 @@ public interface Mapping {
      * Returns the path of the mapping. The path is the value under which it will
      * be saved in the Search Engine.
      */
-    String getPath();
+    PropertyPath getPath();
 
     /**
      * Sets the path of the mapping. The path is the value under which it will
      * be saved in the Search Engine.
      */
-    void setPath(String path);
+    void setPath(PropertyPath path);
 
     /**
      * Returns the conveter associated with the mapping. The converter is responsible for

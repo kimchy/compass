@@ -40,7 +40,7 @@ public class RawResourcePropertyAnalyzerController extends RawResourcePropertyMa
     }
 
     public String getAnalyzerResourcePropertyName() {
-        return getPath();
+        return getPath().getPath();
     }
 
     public Index getIndex() {
