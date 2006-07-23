@@ -1,0 +1,13 @@
+Release Process:
+
+1. Run svn update
+2. Change project.properties compass-version to the actual version number
+   (for example from x.y-SNAPSHOT to x.y)
+3. Change docs/reference/src/compass.xml releaseInfo to the actual version number
+4. Run ant clean
+5. Run ant release
+6. Extract compass-x.y-with-dependencies
+  6.a Verify the samples
+  6.b Run ant tests
+7. Run svn commit
+

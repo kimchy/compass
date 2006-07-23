@@ -59,7 +59,7 @@ public class LibraryTests extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         CompassConfiguration config = new CompassConfiguration().configure(
-                "org/compass/sample/library/compass.cfg.xml").addClass(Author.class).addClass(Article.class)
+                "/org/compass/sample/library/compass.cfg.xml").addClass(Author.class).addClass(Article.class)
                 .addClass(Book.class);
         compass = config.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
