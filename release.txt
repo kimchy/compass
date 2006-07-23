@@ -10,4 +10,13 @@ Release Process:
   6.a Verify the samples
   6.b Run ant tests
 7. Run svn commit
-
+8. Tag using svn copy, branch if required
+9. Build the project with open symphony ci (documentation will be created under the actual version number) 
+10. Change compass.version to the next version
+11. Change project.properties compass-version to the next version with SNAPSHOT
+12. Change docs/reference/src/compass.xml releaseInfo to the next version with SNAPSHOT
+13. Upload the two compass distributions to java.net
+14. Release the actual version in Jira
+15. Update site/meta.xml and documentation.html with both the new actual version, and the new SNAPSHOT
+16. Run svn commit
+17. Build the project with open symphony ci (documentation will be created under the SNAPSHOT version number) 
