@@ -27,11 +27,13 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public class ComponentMappingConverter extends AbstractRefAliasMappingConverter {
 
-    protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping, ClassMapping refMapping, MarshallingContext context) throws ConversionException {
+    protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping,
+                                 ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         return refMapping.getConverter().marshall(resource, root, refMapping, context);
     }
 
-    protected Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping, ClassMapping refMapping, MarshallingContext context) throws ConversionException {
+    protected Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping,
+                                  ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         return refMapping.getConverter().unmarshall(resource, refMapping, context);
     }
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.inheritance">
+
+    <class name="BaseA" alias="polybase" poly="true">
+
+        <id name="id" />
+
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+
+    </class>
+
+    <class name="ExtendsA" alias="polyextends" poly="true" extends="polybase">
+
+        <property name="extendsValue">
+            <meta-data>mextendsValue</meta-data>
+        </property>
+
+    </class>
+
+    <class name="B" alias="bComponent">
+        <id name="id" accessor="field" />
+
+        <component name="a" accessor="field" ref-alias="polybase, polyextends" />
+    </class>
+
+    <class name="B" alias="bReference">
+        <id name="id" accessor="field" />
+
+        <component name="a" accessor="field" ref-alias="polybase, polyextends" />
+    </class>
+
+    <class name="C" alias="cComponent">
+        <id name="id" accessor="field" />
+
+        <component name="a" accessor="field" ref-alias="polybase, polyextends" />
+    </class>
+
+</compass-core-mapping>

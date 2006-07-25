@@ -1,22 +1,23 @@
 Release Process:
 
-1. Run svn update
-2. Change project.properties compass-version to the actual version number
+* Run svn update
+* Change project.properties compass-version to the actual version number
    (for example from x.y-SNAPSHOT to x.y)
-3. Change docs/reference/src/compass.xml releaseInfo to the actual version number
-4. Run ant clean
-5. Run ant release
-6. Extract compass-x.y-with-dependencies
-  6.a Verify the samples
-  6.b Run ant tests
-7. Run svn commit
-8. Tag using svn copy, branch if required
-9. Build the project with open symphony ci (documentation will be created under the actual version number) 
-10. Change compass.version to the next version
-11. Change project.properties compass-version to the next version with SNAPSHOT
-12. Change docs/reference/src/compass.xml releaseInfo to the next version with SNAPSHOT
-13. Upload the two compass distributions to java.net
-14. Release the actual version in Jira
-15. Update site/meta.xml and documentation.html with both the new actual version, and the new SNAPSHOT
-16. Run svn commit
-17. Build the project with open symphony ci (documentation will be created under the SNAPSHOT version number) 
+* Change docs/reference/src/compass.xml releaseInfo to the actual version number
+* update update.txt
+* Run ant clean
+* Run ant release
+* Extract compass-x.y-with-dependencies
+  - Verify the samples
+  - Run ant tests
+* Run svn commit
+* Tag using svn copy, branch if required
+* Build the project with open symphony ci (documentation will be created under the actual version number)
+* Change compass.version to the next version
+* Change project.properties compass-version to the next version with SNAPSHOT
+* Change docs/reference/src/compass.xml releaseInfo to the next version with SNAPSHOT
+* Upload the two compass distributions to java.net
+* Release the actual version in Jira
+* Update site/meta.xml and documentation.html with both the new actual version, and the new SNAPSHOT
+* Run svn commit
+* Build the project with open symphony ci (documentation will be created under the SNAPSHOT version number)

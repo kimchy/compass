@@ -18,8 +18,11 @@ package org.compass.core.converter.mapping.osem;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.util.StringUtils;
+import org.compass.core.util.ClassUtils;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.CollectionResourceWrapper;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.HasRefAliasMapping;
@@ -42,26 +45,16 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
         if (classMappings.length == 1) {
             classMapping = classMappings[0];
         } else {
-            classMapping = context.getCompassMapping().getClassMappingByClass(root.getClass());
-            if (classMapping == null) {
-                throw new ConversionException("No class mapping found when marshalling root alias [" 
-                        + resource.getAlias() + "] and class [" + root.getClass() + "]");
-            }
-            classMapping = hasRefAliasMapping.getRefClassMapping(classMapping.getAlias());
-            if (classMapping == null) {
-                throw new ConversionException("Mapping for root alias [" + resource.getAlias() + 
-                        "] with one of its mappings with multiple ref-alias [" + hasRefAliasMapping.getRefAliases() 
-                        + "] did not match [" + classMapping.getAlias() + "]");
-            }
+            classMapping = extractClassMapping(context, root.getClass(), resource, hasRefAliasMapping);
         }
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
         return doMarshall(resource, root, hasRefAliasMapping, classMapping, context);
     }
-    
-    protected abstract boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping, 
-            ClassMapping refMapping, MarshallingContext context) throws ConversionException;
-    
+
+    protected abstract boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping,
+                                          ClassMapping refMapping, MarshallingContext context) throws ConversionException;
+
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         HasRefAliasMapping hasRefAliasMapping = (HasRefAliasMapping) mapping;
         ClassMapping[] classMappings = hasRefAliasMapping.getRefClassMappings();
@@ -69,12 +62,28 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
         if (classMappings.length == 1) {
             classMapping = classMappings[0];
         } else {
+            // this for loop is really not requires, since all of them
+            // will have the same class path
             for (int i = 0; i < classMappings.length; i++) {
                 if (classMappings[i].isPoly()) {
-                    Property pClassName = resource.getProperty(classMappings[i].getClassPath().getPath());
+                    String classPath = classMappings[i].getClassPath().getPath();
+                    Property pClassName = resource.getProperty(classPath);
+                    // HACK HACK HACK
+                    // since ClassMappingConverter will also read the path, we need
+                    // to take special care when working with a collection resource wrapper
+                    // and rollback the fact that we read the path
+                    if (resource instanceof CollectionResourceWrapper) {
+                        ((CollectionResourceWrapper) resource).rollbackGetProperty(classPath);
+                    }
                     if (pClassName != null && pClassName.getStringValue() != null) {
-                        // we found the classMapping we marshalled, use it
-                        classMapping = classMappings[i];
+                        // we stored the class, use it to find the "nearset" class mappings
+                        Class clazz;
+                        try {
+                            clazz = ClassUtils.forName(pClassName.getStringValue());
+                        } catch (ClassNotFoundException e) {
+                            throw new ConversionException("Failed to create class [" + pClassName.getStringValue() + "]", e);
+                        }
+                        classMapping = extractClassMapping(context, clazz, resource, hasRefAliasMapping);
                         break;
                     }
                 }
@@ -89,9 +98,10 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
                 }
             }
             if (classMapping == null) {
-                // this should noy happen
-                throw new ConversionException("Mapping for root alias [" + resource.getAlias() + 
-                        "] with one of its mappings with multiple ref-alias [" + hasRefAliasMapping.getRefAliases() 
+                // this should noy happen because we should be validating the mappings
+                throw new ConversionException("Mapping for root alias [" + resource.getAlias() +
+                        "] with one of its mappings with multiple ref-alias ["
+                        + StringUtils.arrayToCommaDelimitedString(hasRefAliasMapping.getRefAliases())
                         + "] could not find a matching class (either stored in the index or configured)");
             }
         }
@@ -99,7 +109,30 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
         context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
         return doUnmarshall(resource, hasRefAliasMapping, classMapping, context);
     }
-    
-    protected abstract Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping, 
-            ClassMapping refMapping, MarshallingContext context) throws ConversionException;
+
+    /**
+     * Extracts the given class mappings based on the provided class. Will find the "nearest"
+     * class mapping that match the class, then will check if it was set in the ref-alias,
+     * and return the class mapping set against the ref-alias.
+     */
+    private ClassMapping extractClassMapping(MarshallingContext context, Class clazz, Resource resource,
+                                             HasRefAliasMapping hasRefAliasMapping) throws ConversionException {
+        ClassMapping classMapping;
+        ClassMapping origClassMapping = context.getCompassMapping().getClassMappingByClass(clazz);
+        if (origClassMapping == null) {
+            throw new ConversionException("No class mapping found when marshalling root alias ["
+                    + resource.getAlias() + "] and class [" + clazz + "]");
+        }
+        classMapping = hasRefAliasMapping.getRefClassMapping(origClassMapping.getAlias());
+        if (classMapping == null) {
+            throw new ConversionException("Mapping for root alias [" + resource.getAlias() +
+                    "] with one of its mappings with multiple ref-alias ["
+                    + StringUtils.arrayToCommaDelimitedString(hasRefAliasMapping.getRefAliases())
+                    + "] did not match [" + origClassMapping.getAlias() + "]");
+        }
+        return classMapping;
+    }
+
+    protected abstract Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping,
+                                           ClassMapping refMapping, MarshallingContext context) throws ConversionException;
 }

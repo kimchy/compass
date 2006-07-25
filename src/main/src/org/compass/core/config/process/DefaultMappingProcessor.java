@@ -190,6 +190,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
         secondPassConverter(referenceMapping);
         ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
 
+        ClassMapping[] copyRefClassMappings = new ClassMapping[refMappings.length];
         for (int i = 0; i < refMappings.length; i++) {
             ClassMapping refClass = (ClassMapping) refMappings[i].copy();
             refClass.setPath(referenceMapping.getPath());
@@ -211,8 +212,9 @@ public class DefaultMappingProcessor implements MappingProcessor {
             // since we create our own special ref class mapping that only holds the
             // ids, we need to call the post process here
             refClass.postProcess();
-            refMappings[i] = refClass;
+            copyRefClassMappings[i] = refClass;
         }
+        referenceMapping.setRefClassMappings(copyRefClassMappings);
 
         // now configure the component mapping if exists
         if (referenceMapping.getRefCompAlias() != null) {
@@ -255,13 +257,15 @@ public class DefaultMappingProcessor implements MappingProcessor {
         secondPassConverter(compMapping);
         ClassMapping[] refClassMappings = compMapping.getRefClassMappings();
 
+        ClassMapping[] copyRefClassMappings = new ClassMapping[refClassMappings.length];
         for (int i = 0; i < refClassMappings.length; i++) {
             ClassMapping refClassMapping = (ClassMapping) refClassMappings[i].copy();
             refClassMapping.setPath(compMapping.getPath());
             secondPass(refClassMapping, false);
             refClassMapping.setRoot(false);
-            refClassMappings[i] = refClassMapping;
+            copyRefClassMappings[i] = refClassMapping;
         }
+        compMapping.setRefClassMappings(copyRefClassMappings);
 
         chainedComponents.remove(compMapping);
 

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.util.StringUtils;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.spi.MultiResource;
@@ -32,8 +33,6 @@ public class LuceneMultiResource implements MultiResource {
 
     private Resource currentResource;
 
-    private int currentResourceIndex = -1;
-
     private ArrayList resources = new ArrayList();
 
     private String alias;
@@ -44,7 +43,6 @@ public class LuceneMultiResource implements MultiResource {
         this.alias = alias;
         this.searchEngine = searchEngine;
         currentResource = new LuceneResource(alias, searchEngine);
-        currentResourceIndex = 0;
         resources.add(currentResource);
     }
 
@@ -61,7 +59,6 @@ public class LuceneMultiResource implements MultiResource {
     public void addResource() {
         currentResource = new LuceneResource(alias, searchEngine);
         resources.add(currentResource);
-        ++currentResourceIndex;
     }
 
     public Resource resource(int i) {
@@ -71,7 +68,6 @@ public class LuceneMultiResource implements MultiResource {
     public void clear() {
         resources.clear();
         currentResource = null;
-        currentResourceIndex = -1;
     }
 
     // Resource interfaces
@@ -149,8 +145,14 @@ public class LuceneMultiResource implements MultiResource {
             }
         } else {
             currentResource = resource;
-            currentResourceIndex = 0;
             resources.add(resource);
         }
+    }
+
+    public String toString() {
+        if (resources.size() == 1) {
+            return resource(0).toString();
+        }
+        return StringUtils.collectionToCommaDelimitedString(resources);
     }
 }

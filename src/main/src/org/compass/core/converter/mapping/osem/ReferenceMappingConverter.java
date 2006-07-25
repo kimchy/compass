@@ -29,9 +29,10 @@ import org.compass.core.marshall.MarshallingEnvironment;
  */
 public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter {
 
-    protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping, ClassMapping refMapping, MarshallingContext context) throws ConversionException {
+    protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping,
+                                 ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
-        
+
         ReferenceMapping referenceMapping = (ReferenceMapping) hasRefAliasMapping;
         boolean stored = context.getMarshallingStrategy().marshallIds(resource, refMapping, root, context);
 
@@ -42,7 +43,8 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
         return stored;
     }
 
-    protected Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping, ClassMapping refMapping, MarshallingContext context) throws ConversionException {
+    protected Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping,
+                                  ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         Object[] ids = context.getMarshallingStrategy().unmarshallIds(refMapping, resource, context);
         if (ids == null) {
             // the reference was not marshalled
@@ -50,4 +52,4 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
         }
         return context.getSession().get(refMapping.getAlias(), ids, context);
     }
-    }
+}

@@ -43,7 +43,7 @@ public class CollectionResourceWrapper implements Resource {
 
         public boolean equals(Object object) {
             PropertiesWrapper copy = (PropertiesWrapper) object;
-            return name.equals( copy.name );
+            return name.equals(copy.name);
         }
     }
 
@@ -114,6 +114,17 @@ public class CollectionResourceWrapper implements Resource {
             return null;
         }
         return wrapper.properties[wrapper.counter++];
+    }
+
+    public void rollbackGetProperty(String name) {
+        PropertiesWrapper wrapper = (PropertiesWrapper) propertiesMap.get(name);
+        if (wrapper == null) {
+            return;
+        }
+        if (wrapper.properties.length == 0) {
+            return;
+        }
+        wrapper.counter--;
     }
 
     public Property[] getProperties(String name) {

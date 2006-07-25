@@ -84,7 +84,7 @@ public class CompassMapping {
 
     private ConverterLookup converterLookup;
 
-    private final HashMap cachedRootMappignsByClass = new HashMap();
+    private final HashMap cachedRootMappingsByClass = new HashMap();
     
     private final HashMap cachedMappingsByClass = new HashMap();
 
@@ -113,7 +113,7 @@ public class CompassMapping {
         rootMappingsByAlias.clear();
         rootMappingsByClass.clear();
         rootMappingsArr = new ResourceMapping[0];
-        cachedRootMappignsByClass.clear();
+        cachedRootMappingsByClass.clear();
         hasMutipleClassMappingByClass.clear();
         mappingsByClass.clear();
     }
@@ -218,7 +218,12 @@ public class CompassMapping {
     public ClassMapping getDirectClassMappingByClass(Class clazz) {
         return (ClassMapping) mappingsByClass.get(clazz.getName());
     }
-    
+
+    /**
+     * Finds the Class mapping that is the "nearest" to the provided class.
+     * Similar way that {@link #findRootMappingByClass(Class)} except the search
+     * is on all the ClassMappings (even ones that are not marked as root).
+     */
     public ClassMapping getClassMappingByClass(Class clazz) {
         return (ClassMapping) doGetResourceMappingByClass(clazz, false, mappingsByClass, cachedMappingsByClass);
     }
@@ -234,11 +239,15 @@ public class CompassMapping {
      * @return The resource mapping
      */
     public ResourceMapping findRootMappingByClass(Class clazz) throws MappingException {
-        return doGetResourceMappingByClass(clazz, true, rootMappingsByClass, cachedRootMappignsByClass);
+        return doGetResourceMappingByClass(clazz, true, rootMappingsByClass, cachedRootMappingsByClass);
     }
 
+    /**
+     * Does exactly the same as {@link #findRootMappingByClass(Class)}, but returns <code>null</code>
+     * if nothing is found (does not throw an exception).
+     */
     public ResourceMapping getRootMappingByClass(Class clazz) throws MappingException {
-        return doGetResourceMappingByClass(clazz, false, rootMappingsByClass, cachedRootMappignsByClass);
+        return doGetResourceMappingByClass(clazz, false, rootMappingsByClass, cachedRootMappingsByClass);
     }
     
     private ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx, 
