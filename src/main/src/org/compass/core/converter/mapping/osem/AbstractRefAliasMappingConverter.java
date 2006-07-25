@@ -16,6 +16,7 @@
 
 package org.compass.core.converter.mapping.osem;
 
+import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
@@ -64,11 +65,35 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         HasRefAliasMapping hasRefAliasMapping = (HasRefAliasMapping) mapping;
         ClassMapping[] classMappings = hasRefAliasMapping.getRefClassMappings();
-        ClassMapping classMapping;
+        ClassMapping classMapping = null;
         if (classMappings.length == 1) {
             classMapping = classMappings[0];
         } else {
-            throw new UnsupportedOperationException("Not supported yet");
+            for (int i = 0; i < classMappings.length; i++) {
+                if (classMappings[i].isPoly()) {
+                    Property pClassName = resource.getProperty(classMappings[i].getClassPath().getPath());
+                    if (pClassName != null && pClassName.getStringValue() != null) {
+                        // we found the classMapping we marshalled, use it
+                        classMapping = classMappings[i];
+                        break;
+                    }
+                }
+            }
+            if (classMapping == null) {
+                // we did not find anything stored in the index, it most have poly-class set
+                for (int i = 0; i < classMappings.length; i++) {
+                    if (classMappings[i].getPolyClass() != null) {
+                        classMapping = classMappings[i];
+                        break;
+                    }
+                }
+            }
+            if (classMapping == null) {
+                // this should noy happen
+                throw new ConversionException("Mapping for root alias [" + resource.getAlias() + 
+                        "] with one of its mappings with multiple ref-alias [" + hasRefAliasMapping.getRefAliases() 
+                        + "] could not find a matching class (either stored in the index or configured)");
+            }
         }
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
