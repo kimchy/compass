@@ -16,14 +16,19 @@
 
 package org.compass.core.config.process;
 
+import java.util.Iterator;
+
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.InvalidMappingException;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.HasRefAliasMapping;
 
 /**
  * @author kimchy
@@ -42,6 +47,7 @@ public class ValidatorMappingProcessor implements MappingProcessor {
 
     private void validateRootMapping(ResourceMapping resourceMapping) throws MappingException {
         validatieHasAtLeastOneId(resourceMapping);
+        validateMulitRefAliasHasPoly(resourceMapping);
         String[] resourcePropertyNames = resourceMapping.getResourcePropertyNames();
         for (int i = 0; i < resourcePropertyNames.length; i++) {
             String propertyName = resourcePropertyNames[i];
@@ -58,6 +64,29 @@ public class ValidatorMappingProcessor implements MappingProcessor {
                     "Either you forgot to add id mappings for it, or it is a component mapping that requires no ids and it " +
                     "is not configured with root=false");
         }
+    }
+    
+    private void validateMulitRefAliasHasPoly(ResourceMapping resourceMapping) {
+        if (!(resourceMapping instanceof ClassMapping)) {
+            return;
+        }
+        ClassMapping classMapping = (ClassMapping) resourceMapping;
+        for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
+            Mapping innerMapping = (Mapping) it.next();
+            if (innerMapping instanceof HasRefAliasMapping) {
+                ClassMapping[] refMappings = ((HasRefAliasMapping) innerMapping).getRefClassMappings();
+                if (refMappings.length > 1) {
+                    for (int i = 0; i < refMappings.length; i++) {
+                        if (!refMappings[i].isPoly()) {
+                            throw new MappingException("Mapping for alias [" + classMapping.getAlias() + "] and reference/component mapping [" 
+                                    + innerMapping.getName() + "] has more than one ref-alias mappings, but class mapping [" 
+                                    + refMappings[i].getAlias() + "] is not defined as poly");
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     private void validateDuplicateExcludeFromAll(ResourceMapping resourceMapping, String propertyName,

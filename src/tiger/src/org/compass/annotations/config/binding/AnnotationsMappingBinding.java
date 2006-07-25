@@ -19,6 +19,7 @@ package org.compass.annotations.config.binding;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.compass.annotations.*;
@@ -390,7 +391,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         bindConverter(referenceMapping, searchableReference.converter(), clazz, type);
 
         if (StringUtils.hasLength(searchableReference.refAlias())) {
-            referenceMapping.setRefAlias(valueLookup.lookupAliasName(searchableReference.refAlias()));
+            referenceMapping.setRefAliases(getAliases(searchableReference.refAlias()));
         } else {
             referenceMapping.setRefClass(AnnotationsBindingUtils.getCollectionParameterClass(clazz, type));
         }
@@ -406,7 +407,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         bindConverter(componentMapping, searchableComponent.converter(), clazz, type);
 
         if (StringUtils.hasLength(searchableComponent.refAlias())) {
-            componentMapping.setRefAlias(valueLookup.lookupAliasName(searchableComponent.refAlias()));
+            componentMapping.setRefAliases(getAliases(searchableComponent.refAlias()));
         } else {
             componentMapping.setRefClass(AnnotationsBindingUtils.getCollectionParameterClass(clazz, type));
         }
@@ -666,6 +667,24 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         objectMapping.setName(name);
         objectMapping.setObjClass(classMapping.getClazz());
         objectMapping.setPropertyName(name);
+    }
+    
+    /**
+     * Returns a string array of aliases from a comma separated string
+     */
+    private String[] getAliases(String commaSeparatedAliases) {
+        ArrayList aliases = new ArrayList();
+        StringTokenizer st = new StringTokenizer(commaSeparatedAliases, ",");
+        while (st.hasMoreTokens()) {
+            String extendedAlias = st.nextToken().trim();
+            Alias alias = valueLookup.lookupAlias(extendedAlias);
+            if (alias == null) {
+                aliases.add(extendedAlias);
+            } else {
+                aliases.add(alias.getName());
+            }
+        }
+        return (String[]) aliases.toArray(new String[aliases.size()]);
     }
 
     private void handleFormat(ClassPropertyMetaDataMapping mdMapping, String name, String format) {

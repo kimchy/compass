@@ -18,9 +18,8 @@ package org.compass.core.converter.mapping.osem;
 
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.Converter;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.HasRefAliasMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
@@ -28,19 +27,13 @@ import org.compass.core.marshall.MarshallingEnvironment;
 /**
  * @author kimchy
  */
-public class ReferenceMappingConverter implements Converter {
+public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter {
 
-    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
-            throws ConversionException {
-        // no need to marshall if it is null
-        if (root == null) {
-            return false;
-        }
-        ReferenceMapping referenceMapping = (ReferenceMapping) mapping;
-
+    protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping, ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
-        context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-        boolean stored = context.getMarshallingStrategy().marshallIds(resource, referenceMapping.getRefClassMapping(), root, context);
+        
+        ReferenceMapping referenceMapping = (ReferenceMapping) hasRefAliasMapping;
+        boolean stored = context.getMarshallingStrategy().marshallIds(resource, refMapping, root, context);
 
         if (referenceMapping.getRefCompMapping() != null) {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
@@ -49,16 +42,12 @@ public class ReferenceMappingConverter implements Converter {
         return stored;
     }
 
-    public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        ReferenceMapping referenceMapping = (ReferenceMapping) mapping;
-        ClassMapping classMapping = referenceMapping.getRefClassMapping();
-        Object[] ids = context.getMarshallingStrategy().unmarshallIds(classMapping, resource, context);
+    protected Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping, ClassMapping refMapping, MarshallingContext context) throws ConversionException {
+        Object[] ids = context.getMarshallingStrategy().unmarshallIds(refMapping, resource, context);
         if (ids == null) {
             // the reference was not marshalled
             return null;
         }
-        Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
-        context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-        return context.getSession().get(referenceMapping.getRefAlias(), ids, context);
+        return context.getSession().get(refMapping.getAlias(), ids, context);
     }
-}
+    }

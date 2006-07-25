@@ -16,38 +16,76 @@
 
 package org.compass.core.mapping.osem;
 
+import java.util.HashMap;
+
+
 /**
  * @author kimchy
  */
 public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping implements HasRefAliasMapping {
 
-    private String refAlias;
+    private String[] refAliases;
 
-    private ClassMapping refClassMapping;
+    private ClassMapping[] refClassMappings;
 
     private Class refClass;
+    
+    private HashMap refAliasesMap = new HashMap();
 
     protected void copy(AbstractRefAliasMapping mapping) {
         super.copy(mapping);
-        mapping.setRefAlias(getRefAlias());
+        if (refAliases != null) {
+            String[] copyRefAliases = new String[refAliases.length];
+            System.arraycopy(refAliases, 0, copyRefAliases, 0, refAliases.length);
+            mapping.setRefAliases(copyRefAliases);
+        }
         mapping.setRefClass(getRefClass());
-        mapping.setRefClassMapping(getRefClassMapping());
+        if (refClassMappings != null) {
+            ClassMapping[] copyRefClassMappings = new ClassMapping[refClassMappings.length];
+            System.arraycopy(refClassMappings, 0, copyRefClassMappings, 0, refClassMappings.length);
+            mapping.setRefClassMappings(copyRefClassMappings);
+        }
+    }
+    
+    public boolean hasRefAlias(String refAlias) {
+        return refAliasesMap.get(refAlias) != null;
+    }
+    
+    public boolean hasAtLeastOnRefAlias(String[] refAliases) {
+        if (refAliases == null) {
+            return false;
+        }
+        for (int i = 0; i < refAliases.length; i++) {
+            if (hasRefAlias(refAliases[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public ClassMapping getRefClassMapping(String alias) {
+        return (ClassMapping) refAliasesMap.get(alias);
     }
 
-    public String getRefAlias() {
-        return refAlias;
+    public String[] getRefAliases() {
+        return refAliases;
     }
 
-    public void setRefAlias(String refAlias) {
-        this.refAlias = refAlias;
+    public void setRefAliases(String[] refAliases) {
+        this.refAliases = refAliases;
     }
 
-    public ClassMapping getRefClassMapping() {
-        return refClassMapping;
+    public ClassMapping[] getRefClassMappings() {
+        return refClassMappings;
     }
 
-    public void setRefClassMapping(ClassMapping refClassMapping) {
-        this.refClassMapping = refClassMapping;
+    public void setRefClassMappings(ClassMapping[] refClassMappings) {
+        this.refClassMappings = refClassMappings;
+        if (refClassMappings != null) {
+            for (int i = 0; i < refClassMappings.length; i++) {
+                refAliasesMap.put(refClassMappings[i].getAlias(), refClassMappings[i]);
+            }
+        }
     }
 
     public Class getRefClass() {

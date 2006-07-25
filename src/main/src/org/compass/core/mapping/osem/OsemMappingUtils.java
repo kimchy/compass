@@ -171,7 +171,10 @@ public abstract class OsemMappingUtils {
                 callback.onBeginMultipleMapping(componentMapping);
 
                 callback.onComponentMapping(componentMapping);
-                OsemMappingUtils.iterateMappings(callback, componentMapping.getRefClassMapping().mappingsIt());
+                ClassMapping[] refMappings = componentMapping.getRefClassMappings();
+                for (int i = 0; i < refMappings.length; i++) {
+                    OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                }
 
                 callback.onEndMultiplMapping(componentMapping);
             } else if (m instanceof ReferenceMapping) {
@@ -179,7 +182,10 @@ public abstract class OsemMappingUtils {
                 callback.onBeginMultipleMapping(referenceMapping);
 
                 callback.onReferenceMapping(referenceMapping);
-                OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefClassMapping().mappingsIt());
+                ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
+                for (int i = 0; i < refMappings.length; i++) {
+                    OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                }
 
                 if (referenceMapping.getRefCompMapping() != null) {
                     OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefCompMapping().mappingsIt());
@@ -212,7 +218,10 @@ public abstract class OsemMappingUtils {
                     callback.onBeginMultipleMapping(componentMapping);
 
                     callback.onComponentMapping(componentMapping);
-                    OsemMappingUtils.iterateMappings(callback, componentMapping.getRefClassMapping().mappingsIt());
+                    ClassMapping[] refMappings = componentMapping.getRefClassMappings();
+                    for (int i = 0; i < refMappings.length; i++) {
+                        OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                    }
 
                     callback.onEndMultiplMapping(componentMapping);
                 } else if (elementMapping instanceof ReferenceMapping) {
@@ -221,7 +230,10 @@ public abstract class OsemMappingUtils {
 
                     callback.onReferenceMapping(referenceMapping);
                     callback.onReferenceMapping(referenceMapping);
-                    OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefClassMapping().mappingsIt());
+                    ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
+                    for (int i = 0; i < refMappings.length; i++) {
+                        OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                    }
 
                     if (referenceMapping.getRefCompMapping() != null) {
                         OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefCompMapping().mappingsIt());

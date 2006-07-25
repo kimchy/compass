@@ -53,13 +53,18 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
     }
 
     void processMapping(ClassMapping classMapping, HasRefAliasMapping mapping) throws MappingException {
-        if (mapping.getRefAlias() != null) {
-            ClassMapping refClassMapping = (ClassMapping) compassMapping.getResourceMappingByAlias(mapping.getRefAlias());
-            if (refClassMapping == null) {
-                throw new MappingException("Failed to resolve ref-alias [" + mapping.getRefAlias() + "] for ["
-                        + mapping.getName() + "] in alias [" + classMapping.getAlias() + "]");
+        if (mapping.getRefAliases() != null) {
+            String[] aliases = mapping.getRefAliases();
+            ClassMapping[] refMappings = new ClassMapping[aliases.length];
+            for (int i = 0; i< aliases.length; i++) {
+                ClassMapping refClassMapping = (ClassMapping) compassMapping.getResourceMappingByAlias(aliases[i]);
+                if (refClassMapping == null) {
+                    throw new MappingException("Failed to resolve ref-alias [" + aliases[i] + "] for ["
+                            + mapping.getName() + "] in alias [" + classMapping.getAlias() + "]");
+                }
+                refMappings[i] = refClassMapping;
             }
-            mapping.setRefClassMapping(refClassMapping);
+            mapping.setRefClassMappings(refMappings);
             return;
         }
         Class clazz = mapping.getRefClass();
@@ -69,7 +74,7 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
         if (clazz == null) {
             throw new MappingException("This should not happen");
         }
-        ClassMapping refClassMapping = compassMapping.getClassMappingByClass(clazz.getName());
+        ClassMapping refClassMapping = compassMapping.getDirectClassMappingByClass(clazz);
         if (refClassMapping == null) {
             if (Collection.class.isAssignableFrom(mapping.getGetter().getReturnType())) {
                 throw new MappingException("Failed to resolve ref-alias for collection property [" + mapping.getName() + "] in alias [" +
@@ -85,7 +90,7 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
                     classMapping.getAlias() + "], but there are multiple class mappings for [" + clazz.getName()
                     + "]. Please set the ref-alias explicitly.");
         }
-        mapping.setRefAlias(refClassMapping.getAlias());
-        mapping.setRefClassMapping(refClassMapping);
+        mapping.setRefAliases(new String[] {refClassMapping.getAlias()});
+        mapping.setRefClassMappings(new ClassMapping[] {refClassMapping});
     }
 }

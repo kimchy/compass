@@ -491,7 +491,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         referenceMapping.setName(name);
 
         String refAlias = referenceConf.getAttribute("ref-alias", null);
-        referenceMapping.setRefAlias(valueLookup.lookupAliasName(refAlias));
+        if (refAlias != null) {
+            
+            referenceMapping.setRefAliases(getAliases(refAlias));
+        }
 
         String refCompAlias = referenceConf.getAttribute("ref-comp-alias", null);
         if (refCompAlias != null) {
@@ -512,7 +515,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String name = componentConf.getAttribute("name");
         compMapping.setName(name);
         String refAlias = componentConf.getAttribute("ref-alias", null);
-        compMapping.setRefAlias(valueLookup.lookupAliasName(refAlias));
+        compMapping.setRefAliases(getAliases(refAlias));
 
         int maxDepth = componentConf.getAttributeAsInteger("max-depth", 5);
         compMapping.setMaxDepth(maxDepth);
@@ -659,19 +662,29 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     private void bindExtends(ConfigurationHelper conf, AliasMapping mapping) throws ConfigurationException {
         String extendsAliases = conf.getAttribute("extends", null);
         if (extendsAliases != null) {
-            ArrayList extendedMappings = new ArrayList();
-            StringTokenizer st = new StringTokenizer(extendsAliases, ",");
-            while (st.hasMoreTokens()) {
-                String extendedAlias = st.nextToken().trim();
-                Alias alias = valueLookup.lookupAlias(extendedAlias);
-                if (alias == null) {
-                    extendedMappings.add(extendedAlias);
-                } else {
-                    extendedMappings.add(alias.getName());
-                }
-            }
-            mapping.setExtendedMappings((String[]) extendedMappings.toArray(new String[extendedMappings.size()]));
+            mapping.setExtendedMappings(getAliases(extendsAliases));
         }
+    }
+    
+    /**
+     * Returns a string array of aliases from a comma separated string
+     */
+    private String[] getAliases(String commaSeparatedAliases) {
+        if (commaSeparatedAliases == null) {
+            return null;
+        }
+        ArrayList aliases = new ArrayList();
+        StringTokenizer st = new StringTokenizer(commaSeparatedAliases, ",");
+        while (st.hasMoreTokens()) {
+            String extendedAlias = st.nextToken().trim();
+            Alias alias = valueLookup.lookupAlias(extendedAlias);
+            if (alias == null) {
+                aliases.add(extendedAlias);
+            } else {
+                aliases.add(alias.getName());
+            }
+        }
+        return (String[]) aliases.toArray(new String[aliases.size()]);
     }
 
     private void bindConverter(ConfigurationHelper conf, Mapping mapping) {

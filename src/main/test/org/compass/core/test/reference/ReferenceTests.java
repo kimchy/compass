@@ -42,7 +42,7 @@ public class ReferenceTests extends AbstractTestCase {
 
         CompassMapping mapping = session.getMapping();
         ClassMapping xMapping = (ClassMapping) mapping.getRootMappingByAlias("x");
-        ClassMapping yMapping = ((ReferenceMapping) xMapping.getMapping("y")).getRefClassMapping();
+        ClassMapping yMapping = ((ReferenceMapping) xMapping.getMapping("y")).getRefClassMappings()[0];
         ClassIdPropertyMapping[] idMappings = yMapping.getClassPropertyIdMappings();
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();

@@ -18,36 +18,20 @@ package org.compass.core.converter.mapping.osem;
 
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.Converter;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ComponentMapping;
+import org.compass.core.mapping.osem.HasRefAliasMapping;
 import org.compass.core.marshall.MarshallingContext;
-import org.compass.core.marshall.MarshallingEnvironment;
 
 /**
  * @author kimchy
  */
-public class ComponentMappingConverter implements Converter {
+public class ComponentMappingConverter extends AbstractRefAliasMappingConverter {
 
-    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
-            throws ConversionException {
-        // no need to marshall if it is null
-        if (root == null) {
-            return false;
-        }
-        ComponentMapping cMapping = (ComponentMapping) mapping;
-        ClassMapping classMapping = cMapping.getRefClassMapping();
-        Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
-        context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-        return classMapping.getConverter().marshall(resource, root, classMapping, context);
+    protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping, ClassMapping refMapping, MarshallingContext context) throws ConversionException {
+        return refMapping.getConverter().marshall(resource, root, refMapping, context);
     }
 
-    public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        ComponentMapping cMapping = (ComponentMapping) mapping;
-        ClassMapping classMapping = cMapping.getRefClassMapping();
-        Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
-        context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
-        return classMapping.getConverter().unmarshall(resource, classMapping, context);
+    protected Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping, ClassMapping refMapping, MarshallingContext context) throws ConversionException {
+        return refMapping.getConverter().unmarshall(resource, refMapping, context);
     }
 }

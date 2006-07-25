@@ -188,46 +188,42 @@ public class DefaultMappingProcessor implements MappingProcessor {
     private boolean secondPass(ReferenceMapping referenceMapping, Mapping fatherMapping) {
         referenceMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), referenceMapping.getName()));
         secondPassConverter(referenceMapping);
-        ClassMapping pointerClass = referenceMapping.getRefClassMapping();
+        ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
 
-        if (pointerClass == null) {
-            throw new MappingException("Failed to locate mapping for reference ref-alias ["
-                    + referenceMapping.getRefAlias() + "]");
+        for (int i = 0; i < refMappings.length; i++) {
+            ClassMapping refClass = (ClassMapping) refMappings[i].copy();
+            refClass.setPath(referenceMapping.getPath());
+            secondPass(refClass, true);
+
+            // in case of reference, use internal ids for the refrence ids
+            List ids = refClass.findClassPropertyIdMappings();
+            // after we got the ids, we can clear the mappings from the ref class
+            // mapping and add only internal ids
+            refClass.clearMappings();
+            for (Iterator it = ids.iterator(); it.hasNext();) {
+                ClassIdPropertyMapping idMapping = (ClassIdPropertyMapping) it.next();
+                idMapping.clearMappings();
+                // create the internal id
+                MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping);
+                // re-add it to the ref class mapping
+                refClass.addMapping(idMapping);
+            }
+            // since we create our own special ref class mapping that only holds the
+            // ids, we need to call the post process here
+            refClass.postProcess();
+            refMappings[i] = refClass;
         }
-
-        ClassMapping refClass = (ClassMapping) pointerClass.copy();
-        refClass.setPath(referenceMapping.getPath());
-        secondPass(refClass, true);
-
-        // in case of reference, use internal ids for the refrence ids
-        List ids = refClass.findClassPropertyIdMappings();
-        // after we got the ids, we can clear the mappings from the ref class
-        // mapping and add only internal ids
-        refClass.clearMappings();
-        for (Iterator it = ids.iterator(); it.hasNext();) {
-            ClassIdPropertyMapping idMapping = (ClassIdPropertyMapping) it.next();
-            idMapping.clearMappings();
-            // create the internal id
-            MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping);
-            // re-add it to the ref class mapping
-            refClass.addMapping(idMapping);
-        }
-        // since we create our own special ref class mapping that only holds the
-        // ids, we need to call the post process here
-        refClass.postProcess();
-
-        referenceMapping.setRefClassMapping(refClass);
 
         // now configure the component mapping if exists
         if (referenceMapping.getRefCompAlias() != null) {
-            pointerClass = (ClassMapping) compassMapping.getResourceMappingByAlias(referenceMapping
+            ClassMapping pointerClass = (ClassMapping) compassMapping.getResourceMappingByAlias(referenceMapping
                     .getRefCompAlias());
             if (pointerClass == null) {
                 throw new MappingException("Failed to locate mapping for reference ref-comp-alias ["
                         + referenceMapping.getRefCompAlias() + "]");
             }
 
-            refClass = (ClassMapping) pointerClass.copy();
+            ClassMapping refClass = (ClassMapping) pointerClass.copy();
             refClass.setPath(namingStrategy.buildPath(referenceMapping.getPath(), referenceMapping.getRefCompAlias()));
             // we do not want to create intenral ids, since we will never unmarshall it
             managedId = ClassPropertyMapping.ManagedId.FALSE;
@@ -245,7 +241,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
         int numberOfComponentsWithTheSameAlias = 0;
         for (Iterator it = chainedComponents.iterator(); it.hasNext();) {
             ComponentMapping tempComponentMapping = (ComponentMapping) it.next();
-            if (compMapping.getRefAlias().equals(tempComponentMapping.getRefAlias())) {
+            if (compMapping.hasAtLeastOnRefAlias(tempComponentMapping.getRefAliases())) {
                 numberOfComponentsWithTheSameAlias++;
             }
         }
@@ -257,14 +253,15 @@ public class DefaultMappingProcessor implements MappingProcessor {
 
         compMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), compMapping.getName()));
         secondPassConverter(compMapping);
-        ClassMapping refClassMapping = compMapping.getRefClassMapping();
+        ClassMapping[] refClassMappings = compMapping.getRefClassMappings();
 
-        refClassMapping = (ClassMapping) refClassMapping.copy();
-        refClassMapping.setPath(compMapping.getPath());
-        secondPass(refClassMapping, false);
-        refClassMapping.setRoot(false);
-
-        compMapping.setRefClassMapping(refClassMapping);
+        for (int i = 0; i < refClassMappings.length; i++) {
+            ClassMapping refClassMapping = (ClassMapping) refClassMappings[i].copy();
+            refClassMapping.setPath(compMapping.getPath());
+            secondPass(refClassMapping, false);
+            refClassMapping.setRoot(false);
+            refClassMappings[i] = refClassMapping;
+        }
 
         chainedComponents.remove(compMapping);
 

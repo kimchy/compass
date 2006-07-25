@@ -85,6 +85,8 @@ public class CompassMapping {
     private ConverterLookup converterLookup;
 
     private final HashMap cachedRootMappignsByClass = new HashMap();
+    
+    private final HashMap cachedMappingsByClass = new HashMap();
 
     private final NullResourceMapping nullResourceMappingEntryInCache = new NullResourceMapping();
 
@@ -213,10 +215,14 @@ public class CompassMapping {
         return hasMutipleClassMappingByClass.contains(className);
     }
 
-    public ClassMapping getClassMappingByClass(String className) {
-        return (ClassMapping) mappingsByClass.get(className);
+    public ClassMapping getDirectClassMappingByClass(Class clazz) {
+        return (ClassMapping) mappingsByClass.get(clazz.getName());
     }
-
+    
+    public ClassMapping getClassMappingByClass(Class clazz) {
+        return (ClassMapping) doGetResourceMappingByClass(clazz, false, mappingsByClass, cachedMappingsByClass);
+    }
+    
     /**
      * Finds a root mapping by the class name. If a root mapping is not found
      * for the class name, than searches for mappings for the interfaces, if not
@@ -228,17 +234,18 @@ public class CompassMapping {
      * @return The resource mapping
      */
     public ResourceMapping findRootMappingByClass(Class clazz) throws MappingException {
-        return doGetResourceMappingByClass(clazz, true);
+        return doGetResourceMappingByClass(clazz, true, rootMappingsByClass, cachedRootMappignsByClass);
     }
 
     public ResourceMapping getRootMappingByClass(Class clazz) throws MappingException {
-        return doGetResourceMappingByClass(clazz, false);
+        return doGetResourceMappingByClass(clazz, false, rootMappingsByClass, cachedRootMappignsByClass);
     }
-
-    private ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx) throws MappingException {
+    
+    private ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx, 
+            HashMap mappingClassMap, HashMap cachedMappingsMap) throws MappingException {
         // not the most thread safe caching, but suffiecient for our needs (I think),
         // seems waste to use a thread safe collection
-        ResourceMapping rm = (ResourceMapping) cachedRootMappignsByClass.get(clazz);
+        ResourceMapping rm = (ResourceMapping) cachedMappingsMap.get(clazz);
         if (rm != null) {
             if (rm == nullResourceMappingEntryInCache) {
                 if (throwEx) {
@@ -248,11 +255,11 @@ public class CompassMapping {
             }
             return rm;
         }
-        synchronized (cachedRootMappignsByClass) {
-            rm = doGetActualResourceMappingByClass(clazz);
-            cachedRootMappignsByClass.put(clazz, rm);
+        synchronized (cachedMappingsMap) {
+            rm = doGetActualResourceMappingByClass(clazz, mappingClassMap);
+            cachedMappingsMap.put(clazz, rm);
             if (rm == null) {
-                cachedRootMappignsByClass.put(clazz, nullResourceMappingEntryInCache);
+                cachedMappingsMap.put(clazz, nullResourceMappingEntryInCache);
                 if (throwEx) {
                     throw new MappingException("Failed to find any mappings for class [" + clazz.getName() + "]");
                 }
@@ -262,14 +269,14 @@ public class CompassMapping {
         }
     }
 
-    private ResourceMapping doGetActualResourceMappingByClass(Class clazz) {
-        ResourceMapping rm = (ResourceMapping) rootMappingsByClass.get(clazz.getName());
+    private ResourceMapping doGetActualResourceMappingByClass(Class clazz, HashMap mappingClassMap) {
+        ResourceMapping rm = (ResourceMapping) mappingClassMap.get(clazz.getName());
         if (rm != null) {
             return rm;
         }
         Class[] interfaces = clazz.getInterfaces();
         for (int i = 0; i < interfaces.length; i++) {
-            rm = (ResourceMapping) rootMappingsByClass.get(interfaces[i].getName());
+            rm = (ResourceMapping) mappingClassMap.get(interfaces[i].getName());
             if (rm != null) {
                 return rm;
             }
@@ -278,7 +285,7 @@ public class CompassMapping {
         if (superClass == null) {
             return null;
         }
-        return doGetActualResourceMappingByClass(superClass);
+        return doGetActualResourceMappingByClass(superClass, mappingClassMap);
     }
 
     public ResourceMapping[] getRootMappings() {

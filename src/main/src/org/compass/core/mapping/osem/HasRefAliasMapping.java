@@ -21,13 +21,19 @@ package org.compass.core.mapping.osem;
  */
 public interface HasRefAliasMapping extends ObjectMapping {
 
-    String getRefAlias();
+    boolean hasRefAlias(String refAlias);
+    
+    boolean hasAtLeastOnRefAlias(String[] refAliases);
+    
+    ClassMapping getRefClassMapping(String alias);
+    
+    String[] getRefAliases();
 
-    void setRefAlias(String refAlias);
+    void setRefAliases(String[] refAliases);
 
-    ClassMapping getRefClassMapping();
+    ClassMapping[] getRefClassMappings();
 
-    void setRefClassMapping(ClassMapping refClassMapping);
+    void setRefClassMappings(ClassMapping[] refClassMapping);
 
     Class getRefClass();
 
