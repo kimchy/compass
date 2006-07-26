@@ -103,21 +103,17 @@ public abstract class OsemMappingUtils {
 
         private HashMap pathMappings = new HashMap();
 
-        private String currentPath = "";
-
+        private ArrayList pathSteps = new ArrayList();
+        
+        private StringBuffer sb = new StringBuffer();
+        
         private void addToPath(Mapping mapping) {
-            if (currentPath.length() != 0) {
-                currentPath += ".";
-            }
-            currentPath += mapping.getName();
+            pathSteps.add(mapping.getName());
         }
 
         private void removeFromPath(Mapping mapping) {
-            int endIndex = currentPath.length() - mapping.getName().length();
-            if (endIndex <= 0) {
-                currentPath = "";
-            } else {
-                currentPath = currentPath.substring(0, endIndex - 1);
+            if (pathSteps.size() > 0) {
+                pathSteps.remove(pathSteps.size() - 1);
             }
         }
 
@@ -134,7 +130,7 @@ public abstract class OsemMappingUtils {
         public void onClassPropertyMapping(ClassPropertyMapping mapping) {
             super.onClassPropertyMapping(mapping);
             ResourcePropertyMapping resourcePropertyMapping = mapping.getIdMapping();
-            pathMappings.put(currentPath, resourcePropertyMapping);
+            pathMappings.put(currentPath(), resourcePropertyMapping);
         }
 
         public void onResourcePropertyMapping(ResourcePropertyMapping mapping) {
@@ -142,7 +138,7 @@ public abstract class OsemMappingUtils {
             if (!mapping.isInternal()) {
                 addToPath(mapping);
             }
-            pathMappings.put(currentPath, mapping);
+            pathMappings.put(currentPath(), mapping);
             if (!mapping.isInternal()) {
                 removeFromPath(mapping);
             }
@@ -150,6 +146,17 @@ public abstract class OsemMappingUtils {
 
         public HashMap getPathMappings() {
             return pathMappings;
+        }
+        
+        private String currentPath() {
+            sb.setLength(0);
+            for (int i = 0; i < pathSteps.size(); i++) {
+                if (i > 0) {
+                    sb.append('.');
+                }
+                sb.append(pathSteps.get(i));
+            }
+            return sb.toString();
         }
     }
 
