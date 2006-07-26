@@ -353,7 +353,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "mmap", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
-            String path = DomUtils.getElementAttribute(connEle, "mmap");
+            String path = DomUtils.getElementAttribute(connEle, "path");
             if (!path.startsWith("mmap://")) {
                 path = "mmap://" + path;
             }
@@ -364,7 +364,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "ram", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
-            String path = DomUtils.getElementAttribute(connEle, "ram");
+            String path = DomUtils.getElementAttribute(connEle, "path");
             if (!path.startsWith("ram://")) {
                 path = "ram://" + path;
             }

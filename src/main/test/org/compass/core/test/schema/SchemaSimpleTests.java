@@ -30,6 +30,26 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testRamConnectionSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/ram-connection.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals("default", settings.getSetting(CompassEnvironment.NAME));
+        assertEquals("ram://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+
+    public void testMmapConnectionSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/mmap-connection.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals("default", settings.getSetting(CompassEnvironment.NAME));
+        assertEquals("mmap://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+
     public void testPropertiesSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/properties.cfg.xml");
