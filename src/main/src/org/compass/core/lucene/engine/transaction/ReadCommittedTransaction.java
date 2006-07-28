@@ -24,8 +24,21 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.index.*;
-import org.apache.lucene.search.*;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiReader;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.index.TermFreqVector;
+import org.apache.lucene.index.TransIndex;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.MultiSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -34,7 +47,12 @@ import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.LuceneTermInfoVector;
-import org.compass.core.lucene.engine.*;
+import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.lucene.engine.LuceneSearchEngineHighlighter;
+import org.compass.core.lucene.engine.LuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
+import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.ChainedFilter;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -425,7 +443,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 }
             }
             Hits hits = findByQuery(indexSeracher, query, qFilter);
-            return new LuceneSearchEngineHits(hits, indexHolders, getSearchEngine(), query);
+            return new LuceneSearchEngineHits(hits, indexHolders, getSearchEngine(), query, indexSeracher);
         } catch (IOException e) {
             for (Iterator it = indexHolders.iterator(); it.hasNext();) {
                 LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =

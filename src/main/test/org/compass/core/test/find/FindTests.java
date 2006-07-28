@@ -18,6 +18,7 @@ package org.compass.core.test.find;
 
 import java.util.NoSuchElementException;
 
+import org.apache.lucene.search.Explanation;
 import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassHit;
 import org.compass.core.CompassHitIterator;
@@ -25,6 +26,7 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.lucene.util.LuceneHelper;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -129,6 +131,22 @@ public class FindTests extends AbstractTestCase {
                 .setSubIndexes(new String[] {"a1"})
                 .setAliases(new String[] {"a1"}).hits();
         assertEquals(10, hits.getLength());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testLuceneExplanation() {
+        addDataA(0, 10);
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+        CompassHits hits = session.find("alias:a1 or alias:b1");
+        assertEquals(10, hits.getLength());
+
+        Explanation explanation = LuceneHelper.getLuceneSearchEngineHits(hits).explain(0);
+        assertNotNull(explanation);
+        assertEquals("product of:", explanation.getDescription());
 
         tr.commit();
         session.close();

@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.Searcher;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneResource;
@@ -33,12 +35,15 @@ public class LuceneSearchEngineHits extends AbstractLuceneSearchEngineHits {
 
     private Hits hits;
 
+    private Searcher searcher;
+
     public LuceneSearchEngineHits(Hits hits, List indexHolders, LuceneSearchEngine searchEngine,
-                                  LuceneSearchEngineQuery query) {
+                                  LuceneSearchEngineQuery query, Searcher searcher) {
         this.hits = hits;
         this.indexHolders = indexHolders;
         this.searchEngine = searchEngine;
         this.query = query;
+        this.searcher = searcher;
     }
 
     public Resource getResource(int i) throws SearchEngineException {
@@ -46,7 +51,7 @@ public class LuceneSearchEngineHits extends AbstractLuceneSearchEngineHits {
             Document doc = hits.doc(i);
             return new LuceneResource(doc, hits.id(i), searchEngine);
         } catch (IOException ioe) {
-            throw new SearchEngineException("Failed to find resource[" + i + "].", ioe);
+            throw new SearchEngineException("Failed to find hit [" + i + "]", ioe);
         }
     }
 
@@ -58,7 +63,19 @@ public class LuceneSearchEngineHits extends AbstractLuceneSearchEngineHits {
         try {
             return hits.score(i);
         } catch (IOException ioe) {
-            throw new SearchEngineException("Failed to fetch score for resource[" + i + "].", ioe);
+            throw new SearchEngineException("Failed to fetch score for hit [" + i + "]", ioe);
+        }
+    }
+
+    public Hits getHits() {
+        return this.hits;
+    }
+
+    public Explanation explain(int i) throws SearchEngineException {
+        try {
+            return searcher.explain(query.getQuery(), hits.id(i));
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to explain hit [" + i + "]", e);
         }
     }
 

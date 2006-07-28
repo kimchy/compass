@@ -18,17 +18,20 @@ package org.compass.core.lucene.util;
 
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
+import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryFilter;
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryFilter;
+import org.compass.core.impl.DefaultCompassHits;
 import org.compass.core.impl.DefaultCompassQuery;
 import org.compass.core.impl.DefaultCompassQueryFilter;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * Allows to create Compass related objects based on external (internally no supported by Compass)
@@ -95,5 +98,15 @@ public abstract class LuceneHelper {
      */
     public static LuceneSearchEngineQueryFilter getLuceneSearchEngineQueryFilter(CompassQueryFilter filter) {
         return (LuceneSearchEngineQueryFilter) ((DefaultCompassQueryFilter) filter).getFilter();
+    }
+
+    /**
+     * Returns the underlying {@link LuceneSearchEngineHits} of the given {@link CompassHits}.
+     *
+     * Used mainly to access the actual Lucene {@link org.apache.lucene.search.Hits}, or get
+     * Lucene {@link org.apache.lucene.search.Explanation}.
+     */
+    public static LuceneSearchEngineHits getLuceneSearchEngineHits(CompassHits hits) {
+        return (LuceneSearchEngineHits) ((DefaultCompassHits) hits).getSearchEngineHits();
     }
 }
