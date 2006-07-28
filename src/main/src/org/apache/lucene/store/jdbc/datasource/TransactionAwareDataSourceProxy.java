@@ -25,7 +25,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.apache.lucene.store.jdbc.index.FetchPerTransactionJdbcIndexInput;
@@ -38,11 +37,11 @@ import org.apache.lucene.store.jdbc.index.FetchPerTransactionJdbcIndexInput;
  * and a <code>DataSource</code> that supports it. Should be used when no tranasction
  * managers are used (like JTA or Spring) in order to get simpler support for transactions.
  * <p/>
- * It is by no means aimed at replacing the usage of a propert transaction manager, by is provided
+ * It is by no means aimed at replacing the usage of a proper transaction manager, but is provided
  * for a simple implementation of transactions for {@link org.apache.lucene.store.jdbc.JdbcDirectory}
  * (resulting in better performance), and integration with an existing <code>DataSource</code> code.
  * <p/>
- * Wraps the creates Jdbc <code>Connection</code> with a {@link ConnectionProxy}, which
+ * Wraps the created Jdbc <code>Connection</code> with a {@link ConnectionProxy}, which
  * will only close the target connection if it is controlled by it.
  * <p/>
  * The most outer <code>Connection</code> within the context of a thread, is the controlling
