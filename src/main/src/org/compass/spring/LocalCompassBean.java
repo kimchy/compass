@@ -30,15 +30,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
-import org.compass.core.util.ClassUtils;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.InputStreamMappingResolver;
 import org.compass.core.converter.Converter;
-import org.compass.core.spi.InternalCompass;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.jdbc.ExternalDataSourceProvider;
+import org.compass.core.spi.InternalCompass;
+import org.compass.core.util.ClassUtils;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
@@ -54,6 +54,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class LocalCompassBean implements FactoryBean, InitializingBean, DisposableBean, BeanNameAware {
 
     protected static final Log log = LogFactory.getLog(LocalCompassBean.class);
+
+    private Resource connection;
 
     private Resource configLocation;
 
@@ -85,6 +87,18 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
+    }
+
+    /**
+     * Sets an optional connection based on Spring <code>Resource</code>
+     * abstraction. Will be used if none is set as part of other possible
+     * configuration of Compass connection.
+     * <p/>
+     * Will use <code>Resource#getFile</code> in order to get the absolute
+     * path.
+     */
+    public void setConnection(Resource connection) {
+        this.connection = connection;
     }
 
     /**
@@ -283,6 +297,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         }
         if (config.getSettings().getSetting(CompassEnvironment.NAME) == null) {
             config.getSettings().setSetting(CompassEnvironment.NAME, beanName);
+        }
+
+        if (config.getSettings().getSetting(CompassEnvironment.CONNECTION) == null && connection != null) {
+            config.getSettings().setSetting(CompassEnvironment.CONNECTION, connection.getFile().getAbsolutePath());
         }
 
         this.compass = newCompass(config);
