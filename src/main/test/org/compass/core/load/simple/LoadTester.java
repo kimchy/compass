@@ -61,7 +61,9 @@ public class LoadTester {
             conf.getSettings().addSettings(testProps);
         }
         conf.addClass(A.class);
-        runTest("Default", conf.buildCompass(), printer);
+        Compass compass = conf.buildCompass();
+        runTest("Default", compass, printer);
+        compass.close();
     }
 
     public void runTest(String runName, Compass compass, PrintStream writer) throws IOException {

@@ -1,0 +1,15 @@
+<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+
+    <compass name="default">
+
+        <connection>
+            <file path="target/test-index" />
+            <directoryWrapperProvider name="test" type="eg.DWPImpl">
+                <setting name="setting1" value="value1" />
+            </directoryWrapperProvider>
+        </connection>
+    </compass>
+
+</compass-core-config>

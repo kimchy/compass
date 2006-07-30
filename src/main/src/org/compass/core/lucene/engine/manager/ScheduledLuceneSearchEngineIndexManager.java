@@ -26,8 +26,8 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
-import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
 import org.compass.core.util.backport.java.util.concurrent.Executors;
+import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
 import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
@@ -173,8 +173,8 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
         return indexManager.openIndexWriter(dir, create);
     }
 
-    public void closeIndexWriter(IndexWriter indexWriter, Directory dir) throws SearchEngineException {
-        indexManager.closeIndexWriter(indexWriter, dir);
+    public void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException {
+        indexManager.closeIndexWriter(subIndex, indexWriter, dir);
     }
 
     public LuceneIndexHolder openIndexHolderByAlias(String alias) throws SearchEngineException {

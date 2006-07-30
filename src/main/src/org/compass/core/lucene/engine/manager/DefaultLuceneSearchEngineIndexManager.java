@@ -16,10 +16,12 @@
 
 package org.compass.core.lucene.engine.manager;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.engine.SearchEngineException;
@@ -28,9 +30,6 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.util.LuceneUtils;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * @author kimchy
@@ -49,9 +48,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     // holds the index cache per sub index
     private HashMap indexHolders = new HashMap();
-
-    // holds the directories cache per sub index
-    private HashMap dirs = new HashMap();
 
     private long[] lastModifiled;
 
@@ -152,7 +148,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             clearCache();
             notifyAllToClearCache();
 
-            if (waitForCacheInvalidationBeforeSecondStep != 0 && luceneSettings.isWaitForCacheInvalidationOnIndexOperation()) {
+            if (waitForCacheInvalidationBeforeSecondStep != 0 && luceneSettings.isWaitForCacheInvalidationOnIndexOperation())
+            {
                 // now wait for the cache invalidation
                 try {
                     if (log.isDebugEnabled()) {
@@ -246,15 +243,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (indexHolder != null) {
             indexHolder.markForClose();
         }
-
-        Directory dir = (Directory) dirs.remove(subIndex);
-        if (dir != null) {
-            try {
-                searchEngineStore.closeDirectory(dir);
-            } catch (Exception e) {
-                log.error("Failed to clear cached index directory for sub-index [" + subIndex + "]", e);
-            }
-        }
     }
 
     public synchronized LuceneIndexHolder openIndexHolderByAlias(String alias) throws SearchEngineException {
@@ -271,7 +259,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 // get a new directory and put it in the cache
                 dir = getDirectory(subIndex);
                 // do the same with index holder
-                indexHolder = new LuceneIndexHolder(new IndexSearcher(dir));
+                indexHolder = new LuceneIndexHolder(subIndex, dir);
                 indexHolders.put(subIndex, indexHolder);
             }
             indexHolder.acquire();
@@ -316,7 +304,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return indexWriter;
     }
 
-    public void closeIndexWriter(IndexWriter indexWriter, Directory dir) throws SearchEngineException {
+    public void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException {
         Exception ex = null;
         try {
             closeIndexWriter(indexWriter);
@@ -324,7 +312,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             ex = e;
         }
         try {
-            searchEngineStore.closeDirectory(dir);
+            searchEngineStore.closeDirectory(subIndex, dir);
         } catch (Exception e) {
             if (ex == null) {
                 ex = e;
@@ -355,13 +343,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return searchEngineStore;
     }
 
-    public Directory getDirectory(String subIndex) {
-        Directory dir = (Directory) dirs.get(subIndex);
-        if (dir == null) {
-            dir = getStore().getDirectoryBySubIndex(subIndex, false);
-            dirs.put(subIndex, dir);
-        }
-        return dir;
+    protected Directory getDirectory(String subIndex) {
+        return searchEngineStore.getDirectoryBySubIndex(subIndex, false);
     }
 
     public void start() {

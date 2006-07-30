@@ -863,4 +863,11 @@ public class LuceneEnvironment {
             public static final String INDEX_OUTPUT_THRESHOLD = RAMAndFileJdbcIndexOutput.INDEX_OUTPUT_THRESHOLD_SETTING;
         }
     }
+
+    public static abstract class DirectoryWrapperProvider {
+
+        public static final String PREFIX = "compass.engine.store.wrapper";
+
+        public static final String TYPE = "type";
+    }
 }

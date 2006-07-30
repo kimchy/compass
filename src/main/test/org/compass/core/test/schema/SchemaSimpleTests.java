@@ -3,17 +3,17 @@ package org.compass.core.test.schema;
 import java.util.Map;
 
 import junit.framework.TestCase;
+import org.compass.core.accessor.DirectPropertyAccessor;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.engine.naming.DynamicPropertyNamingStrategy;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider;
-import org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider;
 import org.compass.core.transaction.JTASyncTransactionFactory;
 import org.compass.core.transaction.manager.JBoss;
-import org.compass.core.accessor.DirectPropertyAccessor;
-import org.compass.core.engine.naming.DynamicPropertyNamingStrategy;
 
 /**
  * @author kimchy
@@ -28,6 +28,16 @@ public class SchemaSimpleTests extends TestCase {
 
         assertEquals("default", settings.getSetting(CompassEnvironment.NAME));
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+
+    public void testDirectoryWrapperProvider() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/wrapper-connection.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("eg.DWPImpl", settings.getSetting(LuceneEnvironment.DirectoryWrapperProvider.PREFIX + ".test."
+                + LuceneEnvironment.DirectoryWrapperProvider.TYPE));
+        assertEquals("value1", settings.getSetting(LuceneEnvironment.DirectoryWrapperProvider.PREFIX + ".test.setting1"));
     }
 
     public void testRamConnectionSchema() throws Exception {

@@ -56,15 +56,15 @@ public class FSLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore {
         return "org.apache.lucene.store.FSDirectory";
     }
 
-    protected Directory doGetDirectoryForPath(String path, boolean create) throws SearchEngineException {
+    protected Directory doOpenDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
         try {
-            return FSDirectory.getDirectory(indexPath + "/" + path, create);
+            return FSDirectory.getDirectory(indexPath + "/" + subIndex, create);
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to open directory for path [" + path + "]", e);
+            throw new SearchEngineException("Failed to open directory for path [" + subIndex + "]", e);
         }
     }
 
-    public void deleteIndex() throws SearchEngineException {
+    protected void doDeleteIndex() throws SearchEngineException {
         File indexPathFile = new File(indexPath);
         if (indexPathFile.exists()) {
             boolean deleted = LuceneUtils.deleteDir(indexPathFile);

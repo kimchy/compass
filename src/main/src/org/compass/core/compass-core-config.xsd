@@ -1112,12 +1112,35 @@
                 Controls the search engine connection type and settings.
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:choice>
-            <xsd:element name="file" type="fileConnType"/>
-            <xsd:element name="mmap" type="mmapConnType"/>
-            <xsd:element name="ram" type="ramConnType"/>
-            <xsd:element name="jdbc" type="jdbcConnType"/>
-        </xsd:choice>
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="file" type="fileConnType"/>
+                <xsd:element name="mmap" type="mmapConnType"/>
+                <xsd:element name="ram" type="ramConnType"/>
+                <xsd:element name="jdbc" type="jdbcConnType"/>
+            </xsd:choice>
+            <xsd:element name="directoryWrapperProvider" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Defines a Lucene directory wrapper (an implementation of DirectoryWrapperProvider)
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Allows to set additonal settings to a DirectoryWrapperProvider. Handy when using
+                                    user defined implementations.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required"/>
+                    <xsd:attribute name="type" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
     </xsd:complexType>
     <xsd:complexType name="fileConnType">
         <xsd:annotation>

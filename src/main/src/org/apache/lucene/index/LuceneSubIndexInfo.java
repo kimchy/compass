@@ -16,17 +16,17 @@
 
 package org.apache.lucene.index;
 
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * Provides information about the segments within a Lucene index and about the
@@ -158,12 +158,6 @@ public class LuceneSubIndexInfo {
         } catch (FileNotFoundException e) {
             // the segments file was not found, return null.
             return null;
-        } finally {
-            try {
-                directory.close();
-            } catch (IOException e) {
-                // ignore this one
-            }
         }
     }
 }

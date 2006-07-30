@@ -25,8 +25,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
-import org.compass.core.*;
-import org.compass.core.spi.InternalCompass;
+import org.compass.core.Compass;
+import org.compass.core.CompassCallback;
+import org.compass.core.CompassCallbackWithoutResult;
+import org.compass.core.CompassException;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTemplate;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.FirstLevelCacheFactory;
 import org.compass.core.config.CompassEnvironment;
@@ -50,6 +54,7 @@ import org.compass.core.lucene.engine.optimizer.ScheduledLuceneSearchEngineOptim
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.transaction.TransactionFactoryFactory;
 
@@ -390,8 +395,8 @@ public class DefaultCompass implements InternalCompass {
             return indexManager.openIndexWriter(dir, create);
         }
 
-        public void closeIndexWriter(IndexWriter indexWriter, Directory dir) throws SearchEngineException {
-            indexManager.closeIndexWriter(indexWriter, dir);
+        public void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException {
+            indexManager.closeIndexWriter(subIndex, indexWriter, dir);
         }
 
         public LuceneIndexHolder openIndexHolderByAlias(String alias) throws SearchEngineException {

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -29,14 +30,18 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.LuceneUtils;
 import org.apache.lucene.store.Directory;
+import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.event.SearchEngineEventManager;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.util.ClassUtils;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -59,6 +64,11 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     protected String subContext;
 
     private LuceneSettings luceneSettings;
+
+    private org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider[] directoryWrapperProviders;
+
+    // holds the directories cache per sub index
+    private HashMap dirs = new HashMap();
 
     public AbstractLuceneSearchEngineStore(String connectionString, String subContext) {
         this.connectionString = connectionString;
@@ -86,10 +96,53 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             list.add(alias);
         }
         subIndexes = (String[]) subIndexesSet.toArray(new String[subIndexesSet.size()]);
+
+        // set up directory wrapper providers
+        Map dwSettingGroups = settings.getSettingGroups(LuceneEnvironment.DirectoryWrapperProvider.PREFIX);
+        if (dwSettingGroups.size() > 0) {
+            ArrayList dws = new ArrayList();
+            for (Iterator it = dwSettingGroups.entrySet().iterator(); it.hasNext();) {
+                Map.Entry entry = (Map.Entry) it.next();
+                String dwName = (String) entry.getKey();
+                if (log.isInfoEnabled()) {
+                    log.info("Building directory wrapper [" + dwName + "]");
+                }
+                CompassSettings dwSettings = (CompassSettings) entry.getValue();
+                String dwType = dwSettings.getSetting(LuceneEnvironment.DirectoryWrapperProvider.TYPE);
+                if (dwType == null) {
+                    throw new ConfigurationException("Directory wrapper [" + dwName + "] has not type associated with it");
+                }
+                org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider dw;
+                try {
+                     dw = (org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider) ClassUtils.forName(dwType).newInstance();
+                } catch (Exception e) {
+                    throw new ConfigurationException("Failed to create directory wrapper [" + dwName + "]", e);
+                }
+                if (dw instanceof CompassConfigurable) {
+                    ((CompassConfigurable) dw).configure(dwSettings);
+                }
+                dws.add(dw);
+            }
+            directoryWrapperProviders = (org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider[]) dws.toArray(new org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider[dws.size()]);
+        }
+
     }
 
     public void close() {
+        closeDirectories();
         doClose();
+    }
+
+    protected void closeDirectories() {
+        for (Iterator it = dirs.values().iterator(); it.hasNext();) {
+            Directory dir = (Directory) it.next();
+            try {
+                dir.close();
+            } catch (IOException e) {
+                log.debug("Failed to close directory while shutting down, ignoring", e);
+            }
+        }
+        dirs.clear();
     }
 
     protected void doClose() {
@@ -100,14 +153,8 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         // do nothing
     }
 
-    public void closeDirectory(Directory dir) throws SearchEngineException {
-        try {
-            if (dir != null) {
-                dir.close();
-            }
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to close directory store", e);
-        }
+    public void closeDirectory(String subIndex, Directory dir) throws SearchEngineException {
+        // do nothing since we cache directories
     }
 
     public String getSubIndexForAlias(String alias) {
@@ -123,14 +170,40 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     public Directory getDirectoryByAlias(String alias, boolean create) throws SearchEngineException {
-        return doGetDirectoryForPath(getSubIndexForAlias(alias), create);
+        return getDirectoryBySubIndex(getSubIndexForAlias(alias), create);
     }
 
     public Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
-        return doGetDirectoryForPath(subIndex, create);
+        Directory dir = (Directory) dirs.get(subIndex);
+        if (dir == null) {
+            dir = openDirectoryBySubIndex(subIndex, create);
+            dirs.put(subIndex, dir);
+            return dir;
+        }
+        if (create) {
+            // in case of create, we need to refresh the cache
+            try {
+                dir.close();
+            } catch (IOException e) {
+                log.warn("Failed to close directory", e);
+            }
+            dir = openDirectoryBySubIndex(subIndex, create);
+            dirs.put(subIndex, dir);
+        }
+        return dir;
     }
 
-    protected abstract Directory doGetDirectoryForPath(String path, boolean create) throws SearchEngineException;
+    private Directory openDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
+        Directory dir = doOpenDirectoryBySubIndex(subIndex, create);
+        if (directoryWrapperProviders != null) {
+            for (int i = 0; i < directoryWrapperProviders.length; i++) {
+                dir = directoryWrapperProviders[i].wrap(subIndex, dir);
+            }
+        }
+        return dir;
+    }
+
+    protected abstract Directory doOpenDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException;
 
     private void createIndex(final String subIndex) throws SearchEngineException {
         template.executeForSubIndex(subIndex, true, new LuceneStoreCallback() {
@@ -196,6 +269,13 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         return true;
     }
 
+    public void deleteIndex() throws SearchEngineException {
+        closeDirectories();
+        doDeleteIndex();
+    }
+
+    protected abstract void doDeleteIndex() throws SearchEngineException;
+
     public String[] getSubIndexes() {
         return subIndexes;
     }
@@ -247,14 +327,14 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     public void copyFrom(final LuceneSearchEngineStore searchEngineStore) throws SearchEngineException {
         CopyFromHolder holder = doBeforeCopyFrom();
         final byte[] buffer = new byte[32768];
+        final LuceneStoreTemplate srcTemplate = new LuceneStoreTemplate(searchEngineStore);
         try {
             for (int i = 0; i < getSubIndexes().length; i++) {
                 final String subIndex = getSubIndexes()[i];
                 template.executeForSubIndex(subIndex, holder.createOriginalDirectory, new LuceneStoreCallback() {
                     public Object doWithStore(final Directory dest) {
-                        final Directory src = searchEngineStore.getDirectoryBySubIndex(subIndex, false);
-                        template.execute(src, new LuceneStoreCallback() {
-                            public Object doWithStore(Directory dir) throws IOException {
+                        srcTemplate.executeForSubIndex(subIndex, false, new LuceneStoreCallback() {
+                            public Object doWithStore(Directory src) throws IOException {
                                 LuceneUtils.copy(src, searchEngineStore.getLuceneSettings().isUseCompoundFile(),
                                         dest, luceneSettings.isUseCompoundFile(), buffer,
                                         luceneSettings.getTransactionCommitTimeout());

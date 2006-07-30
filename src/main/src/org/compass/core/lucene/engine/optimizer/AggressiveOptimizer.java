@@ -84,7 +84,7 @@ public class AggressiveOptimizer extends AbstractLuceneSearchEngineOptimizer imp
                 throw new SearchEngineException("Failed to optimize sub-index [" + subIndex + "]", e);
             }
         } finally {
-            indexManager.closeIndexWriter(indexWriter, dir);
+            indexManager.closeIndexWriter(subIndex, indexWriter, dir);
         }
     }
 }

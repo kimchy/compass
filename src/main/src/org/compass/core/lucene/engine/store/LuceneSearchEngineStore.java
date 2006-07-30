@@ -79,9 +79,9 @@ public interface LuceneSearchEngineStore {
 	/**
 	 * Closes the given directory.
 	 */
-	void closeDirectory(Directory dir) throws SearchEngineException;
+	void closeDirectory(String subIndex, Directory dir) throws SearchEngineException;
 
-	/**
+    /**
 	 * Returns the directory that maps to the given alias.
 	 */
 	Directory getDirectoryByAlias(String alias, boolean create) throws SearchEngineException;

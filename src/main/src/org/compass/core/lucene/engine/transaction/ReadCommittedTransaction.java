@@ -196,7 +196,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                     e = ex;
                 }
                 try {
-                    indexManager.getStore().closeDirectory(wrapper.dir);
+                    indexManager.getStore().closeDirectory(wrapper.subIndex, wrapper.dir);
                 } catch (Exception ex) {
                     e = ex;
                 }

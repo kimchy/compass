@@ -16,12 +16,12 @@
 
 package org.compass.core.lucene.engine.store;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.compass.core.engine.SearchEngineException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author kimchy
@@ -35,16 +35,16 @@ public class RAMLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore 
         // nothing to do with the path yet..
     }
 
-    protected synchronized Directory doGetDirectoryForPath(String path, boolean create) throws SearchEngineException {
-        RAMDirectory directory = (RAMDirectory) ramIndexes.get(path);
+    protected synchronized Directory doOpenDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
+        RAMDirectory directory = (RAMDirectory) ramIndexes.get(subIndex);
         if (directory == null && create) {
             directory = new RAMDirectory();
-            ramIndexes.put(path, directory);
+            ramIndexes.put(subIndex, directory);
         }
         return directory;
     }
 
-    public synchronized void deleteIndex() throws SearchEngineException {
+    protected synchronized void doDeleteIndex() throws SearchEngineException {
         if (ramIndexes != null) {
             ramIndexes.clear();
         }

@@ -340,7 +340,20 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
 
     public void bindConnection(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        List child = DomUtils.getChildElementsByTagName(ele, "file", true);
+
+        // directory wrapper providers
+        List child = DomUtils.getChildElementsByTagName(ele, "directoryWrapperProvider", true);
+        for (Iterator it = child.iterator(); it.hasNext();) {
+            Element dwEle = (Element) it.next();
+            SettingsHolder settingsHolder = processSettings(dwEle);
+            settingsHolder.names.add(LuceneEnvironment.DirectoryWrapperProvider.TYPE);
+            settingsHolder.values.add(DomUtils.getElementAttribute(dwEle, "type"));
+            settings.setGroupSettings(LuceneEnvironment.DirectoryWrapperProvider.PREFIX,
+                    DomUtils.getElementAttribute(dwEle, "name"),
+                    settingsHolder.names(), settingsHolder.values());
+        }
+
+        child = DomUtils.getChildElementsByTagName(ele, "file", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
             String path = DomUtils.getElementAttribute(connEle, "path");

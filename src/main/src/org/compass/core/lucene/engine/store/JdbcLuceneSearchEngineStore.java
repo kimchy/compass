@@ -209,8 +209,8 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         }
     }
 
-    protected Directory doGetDirectoryForPath(String path, boolean create) throws SearchEngineException {
-        String totalPath = subContext + "_" + path;
+    protected Directory doOpenDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
+        String totalPath = subContext + "_" + subIndex;
         JdbcTable jdbcTable = (JdbcTable) cachedJdbcTables.get(totalPath);
         if (jdbcTable == null) {
             jdbcTable = new JdbcTable(jdbcSettings, dialect, totalPath);
@@ -236,7 +236,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         super.createIndex();
     }
 
-    public void deleteIndex() throws SearchEngineException {
+    protected void doDeleteIndex() throws SearchEngineException {
         String[] subIndexes = getSubIndexes();
         for (int i = 0; i < subIndexes.length; i++) {
             template.executeForSubIndex(subIndexes[i], false,

@@ -16,6 +16,8 @@
 
 package org.compass.core.lucene.engine.optimizer;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.LuceneSegmentsMerger;
 import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.apache.lucene.store.Directory;
@@ -25,8 +27,6 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
-
-import java.io.IOException;
 
 /**
  * @author kimchy
@@ -85,7 +85,7 @@ public class AdaptiveOptimizer extends AbstractLuceneSearchEngineOptimizer imple
         try {
             long time = System.currentTimeMillis();
             Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
-            segmentsMerger = new LuceneSegmentsMerger(dir, true, getSearchEngineFactory().getLuceneSettings());
+            segmentsMerger = new LuceneSegmentsMerger(dir, false, getSearchEngineFactory().getLuceneSettings());
             long lockTime = System.currentTimeMillis() - time;
             time = System.currentTimeMillis();
             segmentsMerger.mergeFromSegment(mergeFromSegment);

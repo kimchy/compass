@@ -34,17 +34,11 @@ public class LuceneStoreTemplate {
     public Object executeForSubIndex(String subIndex, boolean create, LuceneSearchEngineStore.LuceneStoreCallback callback)
             throws SearchEngineException {
         Directory dir = searchEngineStore.getDirectoryBySubIndex(subIndex, create);
-        return execute(dir, callback);
+        return execute(subIndex, dir, callback);
     }
 
-    public Object executeForAlias(String alias, boolean create, LuceneSearchEngineStore.LuceneStoreCallback callback)
-            throws SearchEngineException {
-        Directory dir = searchEngineStore.getDirectoryByAlias(alias, create);
-        return execute(dir, callback);
-    }
-
-    public Object execute(Directory dir, LuceneSearchEngineStore.LuceneStoreCallback callback) throws SearchEngineException {
-        Exception ex = null;
+    public Object execute(String subIndex, Directory dir, LuceneSearchEngineStore.LuceneStoreCallback callback) throws SearchEngineException {
+        Exception ex;
         try {
             return callback.doWithStore(dir);
         } catch (Exception e) {
@@ -52,7 +46,7 @@ public class LuceneStoreTemplate {
         }
         try {
             if (dir != null) {
-                dir.close();
+                searchEngineStore.closeDirectory(subIndex, dir);
             }
         } catch (Exception e) {
             if (ex == null) {

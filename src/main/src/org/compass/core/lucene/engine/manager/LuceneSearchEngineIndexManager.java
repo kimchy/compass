@@ -38,21 +38,20 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
 
         private long lastCacheInvalidation = System.currentTimeMillis();
 
-        private Directory dir;
-
         private IndexSearcher indexSearcher;
 
         private int count = 0;
 
         private boolean markForClose = false;
 
-        public LuceneIndexHolder(Directory dir) throws IOException {
+        private Directory dir;
+
+        private String subIndex;
+
+        public LuceneIndexHolder(String subIndex, Directory dir) throws IOException {
             this.dir = dir;
             this.indexSearcher = new IndexSearcher(dir);
-        }
-
-        public LuceneIndexHolder(IndexSearcher indexSearcher) throws IOException {
-            this.indexSearcher = indexSearcher;
+            this.subIndex = subIndex;
         }
 
         public IndexSearcher getIndexSearcher() {
@@ -61,6 +60,14 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
 
         public IndexReader getIndexReader() {
             return indexSearcher.getIndexReader();
+        }
+
+        public Directory getDirectory() {
+            return this.dir;
+        }
+
+        public String getSubIndex() {
+            return this.subIndex;
         }
 
         public synchronized void acquire() {
@@ -84,13 +91,6 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
                 } catch (Exception e) {
                     // do nothing
                 }
-                if (dir != null) {
-                    try {
-                        dir.close();
-                    } catch (Exception e) {
-                        // do nothing
-                    }
-                }
             }
         }
 
@@ -109,7 +109,7 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
 
     IndexWriter openIndexWriter(Directory dir, boolean create) throws IOException;
 
-    void closeIndexWriter(IndexWriter indexWriter, Directory dir) throws SearchEngineException;
+    void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException;
 
     LuceneIndexHolder openIndexHolderByAlias(String alias) throws SearchEngineException;
 

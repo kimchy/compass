@@ -148,7 +148,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
                 }
                 if (withDirs) {
                     try {
-                        indexManager.getStore().closeDirectory(writer.dir);
+                        indexManager.getStore().closeDirectory(writer.subIndex, writer.dir);
                     } catch (Exception ex) {
                         e = ex;
                     }
