@@ -9,6 +9,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.naming.DynamicPropertyNamingStrategy;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.optimizer.NullOptimizer;
 import org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider;
@@ -28,6 +29,17 @@ public class SchemaSimpleTests extends TestCase {
 
         assertEquals("default", settings.getSetting(CompassEnvironment.NAME));
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+    
+    public void testOptimizer() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/optimizer.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals(NullOptimizer.class.getName(), settings.getSetting(LuceneEnvironment.Optimizer.TYPE));
+        assertEquals("true", settings.getSetting(LuceneEnvironment.Optimizer.SCHEDULE));
+        assertEquals("90", settings.getSetting(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD));
     }
 
     public void testDirectoryWrapperProvider() throws Exception {
