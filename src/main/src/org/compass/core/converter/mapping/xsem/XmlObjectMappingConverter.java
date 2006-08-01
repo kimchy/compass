@@ -129,7 +129,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
                 throw new ConversionException("Trying to load resource with [" + Array.getLength(id)
                         + "] while has ids mappings of [" + ids.length + "]");
             }
-            if (id.getClass().getComponentType().isAssignableFrom(Property.class)) {
+            if (Property.class.isAssignableFrom(id.getClass().getComponentType())) {
                 for (int i = 0; i < ids.length; i++) {
                     idResource.addProperty((Property) Array.get(id, i));
                 }
