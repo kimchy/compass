@@ -287,7 +287,6 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
                             + "] even though there should be support for versioning ignoring the alias"));
                     continue;
                 }
-                oldAliasSnapshot.toString();
                 JdbcAliasSnapshot newAliasSnapshot = new JdbcAliasSnapshot(mapping.getAlias());
                 ArrayList createdRows = new ArrayList();
                 ArrayList updatedRows = new ArrayList();
