@@ -61,30 +61,14 @@ public interface LuceneSearchEngineStore {
 	String[] getSubIndexes();
 
 	/**
-	 * Returns the sub index value that match the given alias.
-	 */
-	String getSubIndexForAlias(String alias);
-
-	/**
 	 * Returns the number of aliases that map to the given sub index.
 	 */
 	int getNumberOfAliasesBySubIndex(String subIndex);
 
 	/**
-	 * Returns the number of aliaes that map to the sub index that is derived by
-	 * the given alias.
-	 */
-	int getNumberOfAliasesByAlias(String alias);
-
-	/**
 	 * Closes the given directory.
 	 */
 	void closeDirectory(String subIndex, Directory dir) throws SearchEngineException;
-
-    /**
-	 * Returns the directory that maps to the given alias.
-	 */
-	Directory getDirectoryByAlias(String alias, boolean create) throws SearchEngineException;
 
 	/**
 	 * Returns the directory that match the given sub index.

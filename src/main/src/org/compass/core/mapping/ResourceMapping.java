@@ -18,6 +18,7 @@ package org.compass.core.mapping;
 
 import org.compass.core.Property;
 import org.compass.core.engine.naming.PropertyPath;
+import org.compass.core.engine.subindex.SubIndexHash;
 
 /**
  * A mapping defining a {@link org.compass.core.Resource} saved in the Search Engine.
@@ -35,7 +36,7 @@ public interface ResourceMapping extends Mapping {
      * The sub index that the {@link org.compass.core.Resource} will be saved to in the
      * search engine.
      */
-    String getSubIndex();
+    SubIndexHash getSubIndexHash();
 
     /**
      * Returns the analyzer name that need to be used with the resouce.

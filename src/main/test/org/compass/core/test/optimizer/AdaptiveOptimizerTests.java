@@ -52,7 +52,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         getCompass().getSearchEngineOptimizer().optimize();
 
         CompassSession session = openSession();
-        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         assertEquals(1, infos.size());
         session.close();
 
@@ -74,7 +74,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         getCompass().getSearchEngineOptimizer().optimize();
 
         CompassSession session = openSession();
-        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         assertEquals(1, infos.size());
         session.close();
 
@@ -97,7 +97,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
         CompassSession session = openSession();
-        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         session.close();
         assertEquals(2, infos.size());
         assertEquals(20, infos.info(0).docCount());
@@ -124,7 +124,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
         CompassSession session = openSession();
-        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         session.close();
         assertEquals(2, infos.size());
         assertEquals(10, infos.info(0).docCount());
@@ -150,7 +150,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
         CompassSession session = openSession();
-        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         session.close();
         assertEquals(1, infos.size());
         assertEquals(25, infos.info(0).docCount());

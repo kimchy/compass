@@ -36,7 +36,7 @@ public final class ResourceIdKey {
     private int hashCode = Integer.MIN_VALUE;
 
     public ResourceIdKey(CompassMapping compassMapping, Resource idResource) {
-        this(idResource.getAlias(), ResourceHelper.toIds(idResource.getAlias(), idResource, compassMapping));
+        this(idResource.getAlias(), ResourceHelper.toIds(idResource, compassMapping));
     }
 
     public ResourceIdKey(ResourceMapping resourceMapping, Object[] values) {

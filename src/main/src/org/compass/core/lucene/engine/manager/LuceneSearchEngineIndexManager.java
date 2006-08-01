@@ -111,8 +111,6 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
 
     void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException;
 
-    LuceneIndexHolder openIndexHolderByAlias(String alias) throws SearchEngineException;
-
     LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException;
 
     /**

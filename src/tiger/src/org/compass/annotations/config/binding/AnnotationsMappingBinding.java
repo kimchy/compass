@@ -17,16 +17,28 @@
 package org.compass.annotations.config.binding;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.compass.annotations.*;
-import org.compass.core.config.*;
+import org.compass.core.config.CommonMetaDataLookup;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.binding.MappingBindingSupport;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
+import org.compass.core.engine.subindex.ConstantSubIndexHash;
+import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
@@ -42,6 +54,8 @@ import org.compass.core.util.StringUtils;
  * @author kimchy
  */
 public class AnnotationsMappingBinding extends MappingBindingSupport {
+
+    public static final Log log = LogFactory.getLog(AnnotationsMappingBinding.class);
 
     private CommonMetaDataLookup valueLookup;
 
@@ -212,12 +226,34 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         classMapping.setName(clazz.getName());
         classMapping.setClazz(clazz);
 
-        // sub index
+        // sub index (including hash support)
         String subIndex = searchable.subIndex();
         if (!StringUtils.hasLength(subIndex)) {
             subIndex = alias;
         }
-        classMapping.setSubIndex(subIndex);
+        SearchableSubIndexHash searchableSubIndexHash = annotationClass.getAnnotation(SearchableSubIndexHash.class);
+        if (searchableSubIndexHash == null) {
+            classMapping.setSubIndexHash(new ConstantSubIndexHash(subIndex));
+        } else {
+            SubIndexHash subIndexHash = null;
+            try {
+                subIndexHash = searchableSubIndexHash.value().newInstance();
+            } catch (Exception e) {
+                throw new MappingException("Failed to create sub index hash [" + searchableSubIndexHash.value().getName() + "]", e);
+            }
+            if (subIndexHash instanceof CompassConfigurable) {
+                CompassSettings settings = new CompassSettings();
+                for (int i = 0; i < searchableSubIndexHash.settings().length; i++) {
+                    SearchSetting setting = searchableSubIndexHash.settings()[i];
+                    settings.setSetting(setting.name(), setting.value());
+                }
+                ((CompassConfigurable) subIndexHash).configure(settings);
+            }
+            classMapping.setSubIndexHash(subIndexHash);
+        }
+        if (log.isTraceEnabled()) {
+            log.trace("Alias [" + classMapping.getAlias() + "] is mapped to sub index hash [" + classMapping.getSubIndexHash() + "]");
+        }
 
         classMapping.setAllSupported(searchable.enableAll());
         SearchableAllMetaData allMetaData = annotationClass.getAnnotation(SearchableAllMetaData.class);
@@ -668,7 +704,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         objectMapping.setObjClass(classMapping.getClazz());
         objectMapping.setPropertyName(name);
     }
-    
+
     /**
      * Returns a string array of aliases from a comma separated string
      */

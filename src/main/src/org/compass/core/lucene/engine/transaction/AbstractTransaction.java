@@ -41,13 +41,13 @@ import org.compass.core.mapping.ResourceMapping;
  */
 public abstract class AbstractTransaction implements LuceneSearchEngineTransaction {
 
-    private LuceneSearchEngine searchEngine;
+    protected LuceneSearchEngine searchEngine;
 
-    private LuceneSearchEngineIndexManager indexManager;
+    protected LuceneSearchEngineIndexManager indexManager;
 
-    private CompassMapping mapping;
+    protected CompassMapping mapping;
 
-    private LuceneAnalyzerManager analyzerManager;
+    protected LuceneAnalyzerManager analyzerManager;
 
     private ArrayList delegateClose = new ArrayList();
 
@@ -135,21 +135,5 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
 
     protected ResourceMapping getResourceMapping(String alias) {
         return mapping.getRootMappingByAlias(alias);
-    }
-
-    public LuceneSearchEngine getSearchEngine() {
-        return searchEngine;
-    }
-
-    public LuceneSearchEngineIndexManager getIndexManager() {
-        return indexManager;
-    }
-
-    public CompassMapping getMapping() {
-        return mapping;
-    }
-
-    public LuceneAnalyzerManager getAnalyzerManager() {
-        return analyzerManager;
     }
 }

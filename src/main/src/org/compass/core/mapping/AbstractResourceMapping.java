@@ -16,13 +16,14 @@
 
 package org.compass.core.mapping;
 
-import org.compass.core.Property;
-import org.compass.core.engine.naming.PropertyPath;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.compass.core.Property;
+import org.compass.core.engine.naming.PropertyPath;
+import org.compass.core.engine.subindex.SubIndexHash;
 
 /**
  * @author kimchy
@@ -32,7 +33,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private String alias;
 
-    private String subIndex;
+    private SubIndexHash subIndexHash;
 
     private String[] extendedMappings;
 
@@ -74,7 +75,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     public void shallowCopy(AbstractResourceMapping resourceMapping) {
         super.shallowCopy(resourceMapping);
         resourceMapping.setAlias(getAlias());
-        resourceMapping.setSubIndex(getSubIndex());
+        resourceMapping.setSubIndexHash(getSubIndexHash());
         resourceMapping.setExtendedMappings(getExtendedMappings());
         resourceMapping.setAllProperty(getAllProperty());
         resourceMapping.setAllSupported(isAllSupported());
@@ -234,18 +235,12 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         this.isAllSupported = isAllSupported;
     }
 
-    public String getSubIndex() {
-        return subIndex;
+    public SubIndexHash getSubIndexHash() {
+        return subIndexHash;
     }
 
-    public void setSubIndex(String subIndex) {
-        this.subIndex = subIndex;
-        if (this.subIndex != null) {
-            // we lower case it since all subindexes must be lowercase
-            // Effectivly they are directories, so we don'e want
-            // different ones.
-            this.subIndex = this.subIndex.toLowerCase();
-        }
+    public void setSubIndexHash(SubIndexHash subIndexHash) {
+        this.subIndexHash = subIndexHash;
     }
 
     public Property.TermVector getAllTermVector() {

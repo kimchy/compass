@@ -16,6 +16,7 @@
 
 package org.compass.core.test.singleindex;
 
+import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.test.AbstractTestCase;
@@ -41,14 +42,28 @@ public class SingleIndexTests extends AbstractTestCase {
         b.setValue("value");
         session.save(b);
 
-        b = (B) session.load(B.class, id);
-        a = (A) session.load(A.class, id);
+        session.load(B.class, id);
+        session.load(A.class, id);
 
         transaction.commit();
 
         transaction = session.beginTransaction();
-        b = (B) session.load(B.class, id);
-        a = (A) session.load(A.class, id);
+        session.load(B.class, id);
+        session.load(A.class, id);
         transaction.commit();
+
+        LuceneSubIndexInfo.getIndexInfo("index", session);
+        try {
+            LuceneSubIndexInfo.getIndexInfo("a", session);
+            fail();
+        } catch (Exception e) {
+            // all is well
+        }
+        try {
+            LuceneSubIndexInfo.getIndexInfo("b", session);
+            fail();
+        } catch (Exception e) {
+            // all is well
+        }
     }
 }

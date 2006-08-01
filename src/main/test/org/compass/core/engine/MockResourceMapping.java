@@ -18,7 +18,15 @@ package org.compass.core.engine;
 
 import org.compass.core.Property;
 import org.compass.core.engine.naming.PropertyPath;
-import org.compass.core.mapping.*;
+import org.compass.core.engine.subindex.ConstantSubIndexHash;
+import org.compass.core.engine.subindex.SubIndexHash;
+import org.compass.core.mapping.AbstractMultipleMapping;
+import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.ResourceAnalyzerController;
+import org.compass.core.mapping.ResourceIdMappingProvider;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.util.config.ConfigurationHelper;
 
 /**
@@ -49,7 +57,7 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
 
     private float boost = 1.0f;
 
-    private String subIndex;
+    private SubIndexHash subIndexHash;
 
     private MockResourceIdMapping idMapping = new MockResourceIdMapping();
 
@@ -64,18 +72,18 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
     public void addId(ResourcePropertyMapping id) {
         idMapping.addId(id);
     }
-    
+
     public ResourcePropertyMapping[] getIdMappings() {
         return idMapping.getIdMappings();
     }
 
-    public String getSubIndex() {
-        if (subIndex == null) {
-            return getAlias();
+    public SubIndexHash getSubIndexHash() {
+        if (this.subIndexHash != null) {
+            return this.subIndexHash;
         }
-        return subIndex;
+        return new ConstantSubIndexHash(getAlias());
     }
-    
+
     public boolean isIncludePropertiesWithNoMappingsInAll() {
         return true;
     }
@@ -120,8 +128,8 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
         this.extendedMappings = extendedMappings;
     }
 
-    public void setSubIndex(String subIndex) {
-        this.subIndex = subIndex;
+    public void setSubIndexHash(SubIndexHash subIndexHash) {
+        this.subIndexHash = subIndexHash;
     }
 
     public Property.TermVector getAllTermVector() {
@@ -159,15 +167,15 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
     public String getAllAnalyzer() {
         return null;
     }
-    
+
     public ResourceAnalyzerController getAnalyzerController() {
         return null;
     }
-    
+
     public String[] getResourcePropertyNames() {
         return new String[0];
     }
-    
+
     public ResourcePropertyMapping getResourcePropertyMappingByDotPath(String path) {
         return null;
     }

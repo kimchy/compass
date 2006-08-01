@@ -116,18 +116,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             this.luceneSettings = searchEngineFactory.getLuceneSettings();
         }
 
-        public TransIndexWrapper getTransIndexByAlias(String alias) {
-            String subIndex = indexManager.getStore().getSubIndexForAlias(alias);
-            return getTransIndexBySubIndex(subIndex);
-        }
-
         public TransIndexWrapper getTransIndexBySubIndex(String subIndex) {
             return (TransIndexWrapper) transIndexMap.get(subIndex);
-        }
-
-        public TransIndexWrapper openTransIndexByAlias(String alias) throws SearchEngineException {
-            String subIndex = indexManager.getStore().getSubIndexForAlias(alias);
-            return openTransIndexBySubIndex(subIndex);
         }
 
         public TransIndexWrapper openTransIndexBySubIndex(String subIndex) throws SearchEngineException {
@@ -203,7 +193,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             }
             if (e != null) {
                 if (e instanceof SearchEngineException) {
-                    throw (SearchEngineException) e;
+                    throw(SearchEngineException) e;
                 }
                 throw new SearchEngineException("Failed to close index writers", e);
             }
@@ -233,7 +223,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     protected TransIndexManager transIndexManager;
 
     protected void doBegin() throws SearchEngineException {
-        transIndexManager = new TransIndexManager(getSearchEngine().getSearchEngineFactory());
+        transIndexManager = new TransIndexManager(searchEngine.getSearchEngineFactory());
         filter = new BitSetByAliasFilter();
     }
 
@@ -266,11 +256,11 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 doPrepare();
             }
             transIndexManager.secondPhase();
-            if (getSearchEngine().getSearchEngineFactory().getLuceneSettings().isClearCacheOnCommit()) {
+            if (searchEngine.getSearchEngineFactory().getLuceneSettings().isClearCacheOnCommit()) {
                 // clear cache here for all the dirty sub indexes
                 for (Iterator it = transIndexManager.transIndexMap.keySet().iterator(); it.hasNext();) {
                     String subIndex = (String) it.next();
-                    getIndexManager().clearCache(subIndex);
+                    indexManager.clearCache(subIndex);
                 }
             }
         } finally {
@@ -310,24 +300,24 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     }
 
     protected void doCreate(Resource resource) throws SearchEngineException {
-        String alias = resource.getAlias();
-        TransIndexWrapper wrapper = transIndexManager.openTransIndexByAlias(alias);
+        String subIndex = ResourceHelper.computeSubIndex(resource, mapping);
+        TransIndexWrapper wrapper = transIndexManager.openTransIndexBySubIndex(subIndex);
         try {
-            Property[] ids = ResourceHelper.toIds(alias, resource, getSearchEngine().getSearchEngineFactory()
-                    .getMapping());
-            Analyzer analyzer = getAnalyzerManager().getAnalyzerByResource(resource);
+            Property[] ids = ResourceHelper.toIds(resource, mapping);
+            Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
             wrapper.transIndex.addResource(resource, ids, analyzer);
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to create resource for alias [" + alias + "] and resource "
-                    + resource, e);
+            throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()
+                    + "] and resource " + resource, e);
         }
     }
 
     protected void doDelete(Property[] ids, String alias) throws SearchEngineException {
-        TransIndexWrapper wrapper = transIndexManager.openTransIndexByAlias(alias);
+        String subIndex = ResourceHelper.computeSubIndex(alias, ids, mapping);
+        TransIndexWrapper wrapper = transIndexManager.openTransIndexBySubIndex(subIndex);
 
         // mark for deletion in the actual index
-        markDelete(wrapper, alias, ids, filter);
+        markDelete(wrapper, subIndex, alias, ids, filter);
 
         // delete it from the transactional data
         try {
@@ -343,9 +333,10 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         Hits hits;
         LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = null;
         try {
-            TransIndexWrapper wrapper = transIndexManager.getTransIndexByAlias(alias);
+            String subIndex = ResourceHelper.computeSubIndex(alias, ids, mapping);
+            TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
             if (wrapper == null) {
-                indexHolder = getIndexManager().openIndexHolderByAlias(alias);
+                indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
                 indexSearcher = indexHolder.getIndexSearcher();
             } else {
                 indexSearcher = wrapper.transIndex.getFullIndexSearcher();
@@ -354,8 +345,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             if (filter.hasDeletes()) {
                 qFilter = filter;
             }
-            hits = findByIds(indexSearcher, alias, ids, qFilter);
-            return LuceneUtils.hitsToResourceArray(hits, getSearchEngine());
+            hits = findByIds(indexSearcher, subIndex, alias, ids, qFilter);
+            return LuceneUtils.hitsToResourceArray(hits, searchEngine);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to find for alias [" + alias + "] and ids ["
                     + StringUtils.arrayToCommaDelimitedString(ids) + "]", e);
@@ -371,14 +362,14 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         MultiReader indexReader;
         ArrayList indexHolders = new ArrayList();
         try {
-            String[] subIndexes = getIndexManager().getStore().getSubIndexes();
+            String[] subIndexes = indexManager.getStore().getSubIndexes();
             ArrayList readers = new ArrayList();
             for (int i = 0; i < subIndexes.length; i++) {
                 String subIndex = subIndexes[i];
                 TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
                 if (wrapper == null) {
-                    LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = getIndexManager()
-                            .openIndexHolderBySubIndex(subIndex);
+                    LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
+                            indexManager.openIndexHolderBySubIndex(subIndex);
                     indexHolders.add(indexHolder);
                     if (indexHolder.getIndexReader().numDocs() > 0) {
                         readers.add(indexHolder.getIndexReader());
@@ -391,7 +382,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 }
             }
             indexReader = new MultiReader((IndexReader[]) readers.toArray(new IndexReader[readers.size()]));
-            return new LuceneSearchEngineHighlighter(query, indexHolders, indexReader, getSearchEngine());
+            return new LuceneSearchEngineHighlighter(query, indexHolders, indexReader, searchEngine);
         } catch (Exception e) {
             for (Iterator it = indexHolders.iterator(); it.hasNext();) {
                 LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = (LuceneSearchEngineIndexManager.LuceneIndexHolder) it
@@ -407,14 +398,14 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         MultiSearcher indexSeracher;
         ArrayList indexHolders = new ArrayList();
         try {
-            String[] subIndexes = getIndexManager().getStore().calcSubIndexes(query.getSubIndexes(), query.getAliases());
+            String[] subIndexes = indexManager.getStore().calcSubIndexes(query.getSubIndexes(), query.getAliases());
             ArrayList searchers = new ArrayList();
             for (int i = 0; i < subIndexes.length; i++) {
                 String subIndex = subIndexes[i];
                 TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
                 if (wrapper == null) {
-                    LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = getIndexManager()
-                            .openIndexHolderBySubIndex(subIndex);
+                    LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
+                            indexManager.openIndexHolderBySubIndex(subIndex);
                     indexHolders.add(indexHolder);
                     if (indexHolder.getIndexReader().numDocs() > 0) {
                         searchers.add(indexHolder.getIndexSearcher());
@@ -443,7 +434,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 }
             }
             Hits hits = findByQuery(indexSeracher, query, qFilter);
-            return new LuceneSearchEngineHits(hits, indexHolders, getSearchEngine(), query, indexSeracher);
+            return new LuceneSearchEngineHits(hits, indexHolders, searchEngine, query, indexSeracher);
         } catch (IOException e) {
             for (Iterator it = indexHolders.iterator(); it.hasNext();) {
                 LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
@@ -460,12 +451,12 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                     "Resource is not associated with a Lucene document number, can not retrieve term info");
         }
         IndexReader indexReader;
-        String alias = resource.getAlias();
         LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = null;
         try {
-            TransIndexWrapper wrapper = transIndexManager.getTransIndexByAlias(alias);
+            String subIndex = ResourceHelper.computeSubIndex(resource, mapping);
+            TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
             if (wrapper == null) {
-                indexHolder = getIndexManager().openIndexHolderByAlias(alias);
+                indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
                 indexReader = indexHolder.getIndexReader();
             } else {
                 indexReader = wrapper.transIndex.getFullIndexReader();
@@ -491,12 +482,12 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                     "Resource is not associated with a Lucene document number, can not retrieve term info");
         }
         IndexReader indexReader;
-        String alias = resource.getAlias();
         LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = null;
         try {
-            TransIndexWrapper wrapper = transIndexManager.getTransIndexByAlias(alias);
+            String subIndex = ResourceHelper.computeSubIndex(resource, mapping);
+            TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
             if (wrapper == null) {
-                indexHolder = getIndexManager().openIndexHolderByAlias(alias);
+                indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
                 indexReader = indexHolder.getIndexReader();
             } else {
                 indexReader = wrapper.transIndex.getFullIndexReader();
@@ -519,16 +510,16 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         }
     }
 
-    private Hits findByIds(Searcher indexSearcher, String alias, Property ids[], Filter filter)
+    private Hits findByIds(Searcher indexSearcher, String subIndex, String alias, Property ids[], Filter filter)
             throws SearchEngineException {
         Query query;
-        int numberOfAliases = getIndexManager().getStore().getNumberOfAliasesByAlias(alias);
+        int numberOfAliases = indexManager.getStore().getNumberOfAliasesBySubIndex(subIndex);
         if (numberOfAliases == 1 && ids.length == 1) {
             query = new TermQuery(new Term(ids[0].getName(), ids[0].getStringValue()));
         } else {
             BooleanQuery bQuery = new BooleanQuery();
             if (numberOfAliases > 1) {
-                String aliasProperty = getSearchEngine().getSearchEngineFactory().getLuceneSettings().getAliasProperty();
+                String aliasProperty = searchEngine.getSearchEngineFactory().getLuceneSettings().getAliasProperty();
                 Term t = new Term(aliasProperty, alias);
                 bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
             }
@@ -567,12 +558,11 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         return hits;
     }
 
-    private void markDelete(TransIndexWrapper wrapper, String alias, Property[] ids, BitSetByAliasFilter filter)
+    private void markDelete(TransIndexWrapper wrapper, String subIndex, String alias, Property[] ids, BitSetByAliasFilter filter)
             throws SearchEngineException {
         try {
-            String subIndex = getIndexManager().getStore().getSubIndexForAlias(alias);
-            boolean moreThanOneAliasPerSubIndex = getIndexManager().getStore().getNumberOfAliasesByAlias(
-                    alias) > 1;
+            boolean moreThanOneAliasPerSubIndex =
+                    indexManager.getStore().getNumberOfAliasesBySubIndex(subIndex) > 1;
             if (ids.length == 1 && !moreThanOneAliasPerSubIndex) {
                 Property id = ids[0];
                 Term t = new Term(id.getName(), id.getStringValue());
@@ -601,7 +591,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                     }
                 }
             } else {
-                Hits hits = findByIds(wrapper.transIndex.getIndexSearcher(), alias, ids, null);
+                Hits hits = findByIds(wrapper.transIndex.getIndexSearcher(), subIndex, alias, ids, null);
                 if (hits.length() != 0) {
                     int maxDoc = wrapper.transIndex.getIndexSearcher().maxDoc();
                     for (int i = 0; i < hits.length(); i++) {

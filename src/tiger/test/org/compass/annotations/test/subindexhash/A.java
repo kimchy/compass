@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package org.compass.annotations;
+package org.compass.annotations.test.subindexhash;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.compass.annotations.SearchSetting;
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
+import org.compass.annotations.SearchableSubIndexHash;
+import org.compass.core.engine.subindex.ModuloSubIndexHash;
 
 /**
- * A general search setting applied to different search annotations.
- *
  * @author kimchy
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface SearchSetting {
+@Searchable
+@SearchableSubIndexHash(value = ModuloSubIndexHash.class,
+        settings = {@SearchSetting(name = "prefix", value = "index"), @SearchSetting(name = "size", value = "2")})
+public class A {
 
-    /**
-     * The name of the setting.
-     */
-    String name();
+    @SearchableId
+    Integer id;
 
-    /**
-     * The value of the setting.
-     */
-    String value();
+    @SearchableProperty
+    String value;
 }

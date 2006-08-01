@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package org.compass.annotations;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.compass.core.test.subindexhash;
 
 /**
- * A general search setting applied to different search annotations.
- *
  * @author kimchy
  */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface SearchSetting {
+public class B {
 
-    /**
-     * The name of the setting.
-     */
-    String name();
+    private Long id;
 
-    /**
-     * The value of the setting.
-     */
-    String value();
+    private String value;
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

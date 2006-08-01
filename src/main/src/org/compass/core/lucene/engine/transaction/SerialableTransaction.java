@@ -30,7 +30,7 @@ public class SerialableTransaction extends ReadCommittedTransaction {
 
     public void begin() throws SearchEngineException {
         super.begin();
-        String[] subIndexes = getIndexManager().getStore().getSubIndexes();
+        String[] subIndexes = indexManager.getStore().getSubIndexes();
         for (int i = 0; i < subIndexes.length; i++) {
             transIndexManager.openTransIndexBySubIndex(subIndexes[i]);
         }

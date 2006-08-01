@@ -33,6 +33,7 @@ import org.compass.core.lucene.LuceneTermInfoVector;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.util.ResourceHelper;
 
 /**
  * A batch update transaction management. Only support save (add) operations.
@@ -87,8 +88,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
             writersMap.clear();
         }
 
-        public IndexWriterWrapper openWriterByAlias(String alias) throws SearchEngineException {
-            String subIndex = indexManager.getStore().getSubIndexForAlias(alias);
+        public IndexWriterWrapper openWriterBySubIndex(String subIndex) throws SearchEngineException {
             IndexWriterWrapper wrapper = (IndexWriterWrapper) writersMap.get(subIndex);
             if (wrapper == null) {
                 wrapper = new IndexWriterWrapper();
@@ -99,8 +99,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
                 try {
                     wrapper.indexWriter = indexManager.openIndexWriter(wrapper.dir, false);
                 } catch (IOException e) {
-                    throw new SearchEngineException("Failed to open index writer for alias [" + alias
-                            + "] and sub-index [" + subIndex + "]", e);
+                    throw new SearchEngineException("Failed to open index writer for sub-index [" + subIndex + "]", e);
                 }
             }
             return wrapper;
@@ -166,7 +165,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
     private WriterManager writerManager;
 
     protected void doBegin() throws SearchEngineException {
-        writerManager = new WriterManager(getIndexManager());
+        writerManager = new WriterManager(indexManager);
     }
 
     protected void doRollback() throws SearchEngineException {
@@ -185,7 +184,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
     protected void doCommit(boolean onePhase) throws SearchEngineException {
         try {
             writerManager.closeIndexWriters(true, true);
-            getIndexManager().clearCache();
+            indexManager.clearCache();
         } finally {
             writerManager.clear();
         }
@@ -204,8 +203,9 @@ public class BatchInsertTransaction extends AbstractTransaction {
 
     protected void doCreate(final Resource resource) throws SearchEngineException {
         // open the original index writer, so we lock it for changes
-        WriterManager.IndexWriterWrapper wrapper = writerManager.openWriterByAlias(resource.getAlias());
-        Analyzer analyzer = getAnalyzerManager().getAnalyzerByResource(resource);
+        String subIndex = ResourceHelper.computeSubIndex(resource, mapping);
+        WriterManager.IndexWriterWrapper wrapper = writerManager.openWriterBySubIndex(subIndex);
+        Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
         LuceneUtils.createResource(wrapper.indexWriter, resource, analyzer);
     }
 

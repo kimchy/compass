@@ -346,9 +346,9 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         for (Iterator it = child.iterator(); it.hasNext();) {
             Element dwEle = (Element) it.next();
             SettingsHolder settingsHolder = processSettings(dwEle);
-            settingsHolder.names.add(LuceneEnvironment.DirectoryWrapperProvider.TYPE);
+            settingsHolder.names.add(LuceneEnvironment.DirectoryWrapper.TYPE);
             settingsHolder.values.add(DomUtils.getElementAttribute(dwEle, "type"));
-            settings.setGroupSettings(LuceneEnvironment.DirectoryWrapperProvider.PREFIX,
+            settings.setGroupSettings(LuceneEnvironment.DirectoryWrapper.PREFIX,
                     DomUtils.getElementAttribute(dwEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }

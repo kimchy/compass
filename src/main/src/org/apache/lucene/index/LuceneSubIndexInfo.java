@@ -40,6 +40,9 @@ import org.compass.core.spi.InternalCompassSession;
  */
 public class LuceneSubIndexInfo {
 
+    /**
+     * A Lucene single segment information
+     */
     public static class LuceneSegmentInfo {
         private String name;
 
@@ -50,10 +53,16 @@ public class LuceneSubIndexInfo {
             this.docCount = docCount;
         }
 
+        /**
+         * Returns the name of the segment
+         */
         public String name() {
             return this.name;
         }
 
+        /**
+         * Returns the number of documents within the segment
+         */
         public int docCount() {
             return docCount;
         }
@@ -108,13 +117,22 @@ public class LuceneSubIndexInfo {
         return this.subIndex;
     }
 
-    public static LuceneSubIndexInfo getIndexInfoByAlias(final String alias, final CompassSession session) throws IOException {
+    /**
+     * Returns low level Lucene index sub index information. Note, this method
+     * can be called outside of a transactional context.
+     *
+     * @param subIndex The sub index to get the info for
+     * @param session  The compass session that will be used for transactional support
+     * @return The sub index info
+     * @throws IOException Failed to read the segments from the directory
+     */
+    public static LuceneSubIndexInfo getIndexInfo(final String subIndex, final CompassSession session) throws IOException {
         LuceneSearchEngine searchEngine = (LuceneSearchEngine) ((InternalCompassSession) session).getSearchEngine();
         final LuceneSearchEngineIndexManager indexManager = (LuceneSearchEngineIndexManager) searchEngine.getSearchEngineFactory().getIndexManager();
         CompassTransaction tx = null;
         try {
             tx = session.beginTransaction();
-            LuceneSubIndexInfo info = getIndexInfo(indexManager.getStore().getSubIndexForAlias(alias), indexManager);
+            LuceneSubIndexInfo info = getIndexInfo(subIndex, indexManager);
             tx.commit();
             return info;
         } catch (RuntimeException e) {
@@ -130,8 +148,13 @@ public class LuceneSubIndexInfo {
     }
 
     /**
-     * Contructs the <code>LuceneIndexInfo</code> for the given index path. If the segments file does not exists,
-     * return <code>null</code>.
+     * Returns low level Lucene index sub index information. Note, this method must
+     * be called within a transactional context.
+     *
+     * @param subIndex     The sub index to get the info for
+     * @param indexManager An index manager used to get compass index informations
+     * @return The sub index info
+     * @throws IOException Failed to read the segments from the directory
      */
     public static LuceneSubIndexInfo getIndexInfo(String subIndex, LuceneSearchEngineIndexManager indexManager)
             throws IOException {

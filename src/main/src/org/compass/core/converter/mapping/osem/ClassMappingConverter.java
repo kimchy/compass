@@ -84,7 +84,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         // handle a cache of all the unmarshalled objects already, used for
         // cyclic references
         if (classMapping.isRoot()) {
-            Property[] ids = ResourceHelper.toIds(classMapping.getAlias(), resource, context.getCompassMapping());
+            Property[] ids = ResourceHelper.toIds(resource, context.getCompassMapping());
             resourceIdKey = new ResourceIdKey(classMapping.getAlias(), ids);
             Object cached = context.getUnmarshalled(resourceIdKey);
             if (cached != null) {

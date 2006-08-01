@@ -35,9 +35,9 @@ public class SchemaSimpleTests extends TestCase {
                 .configure("/org/compass/core/test/schema/wrapper-connection.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
-        assertEquals("eg.DWPImpl", settings.getSetting(LuceneEnvironment.DirectoryWrapperProvider.PREFIX + ".test."
-                + LuceneEnvironment.DirectoryWrapperProvider.TYPE));
-        assertEquals("value1", settings.getSetting(LuceneEnvironment.DirectoryWrapperProvider.PREFIX + ".test.setting1"));
+        assertEquals("eg.DWPImpl", settings.getSetting(LuceneEnvironment.DirectoryWrapper.PREFIX + ".test."
+                + LuceneEnvironment.DirectoryWrapper.TYPE));
+        assertEquals("value1", settings.getSetting(LuceneEnvironment.DirectoryWrapper.PREFIX + ".test.setting1"));
     }
 
     public void testRamConnectionSchema() throws Exception {

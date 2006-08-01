@@ -399,10 +399,6 @@ public class DefaultCompass implements InternalCompass {
             indexManager.closeIndexWriter(subIndex, indexWriter, dir);
         }
 
-        public LuceneIndexHolder openIndexHolderByAlias(String alias) throws SearchEngineException {
-            return indexManager.openIndexHolderByAlias(alias);
-        }
-
         public LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
             return indexManager.openIndexHolderBySubIndex(subIndex);
         }

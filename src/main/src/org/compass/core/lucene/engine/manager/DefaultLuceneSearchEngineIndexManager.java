@@ -245,11 +245,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
-    public synchronized LuceneIndexHolder openIndexHolderByAlias(String alias) throws SearchEngineException {
-        String subIndex = searchEngineStore.getSubIndexForAlias(alias);
-        return openIndexHolderBySubIndex(subIndex);
-    }
-
     public synchronized LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
         try {
             Directory dir = getDirectory(subIndex);

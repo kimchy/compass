@@ -39,6 +39,7 @@ import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
+import org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.util.ClassUtils;
@@ -51,9 +52,9 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     protected Log log = LogFactory.getLog(getClass());
 
-    private Map aliasBySubIndex = new HashMap();
+    private Map aliasesBySubIndex = new HashMap();
 
-    private Map subIndexByAlias = new HashMap();
+    private Map subIndexesByAlias = new HashMap();
 
     private String[] subIndexes;
 
@@ -84,21 +85,31 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         ResourceMapping[] rootMappings = mapping.getRootMappings();
         for (int i = 0; i < rootMappings.length; i++) {
             ResourceMapping resourceMapping = rootMappings[i];
-            String subIndex = resourceMapping.getSubIndex();
             String alias = resourceMapping.getAlias();
-            aliasBySubIndex.put(alias, subIndex);
-            subIndexesSet.add(subIndex);
-            ArrayList list = (ArrayList) subIndexByAlias.get(subIndex);
-            if (subIndexByAlias.get(subIndex) == null) {
-                list = new ArrayList();
-                subIndexByAlias.put(subIndex, list);
+            String[] tempSubIndexes = resourceMapping.getSubIndexHash().getSubIndexes();
+            for (int j = 0; j < tempSubIndexes.length; j++) {
+                String subIndex = tempSubIndexes[j];
+                subIndexesSet.add(subIndex);
+
+                ArrayList list = (ArrayList) subIndexesByAlias.get(alias);
+                if (list == null) {
+                    list = new ArrayList();
+                    subIndexesByAlias.put(alias, list);
+                }
+                list.add(subIndex);
+
+                list = (ArrayList) aliasesBySubIndex.get(subIndex);
+                if (aliasesBySubIndex.get(subIndex) == null) {
+                    list = new ArrayList();
+                    aliasesBySubIndex.put(subIndex, list);
+                }
+                list.add(alias);
             }
-            list.add(alias);
         }
         subIndexes = (String[]) subIndexesSet.toArray(new String[subIndexesSet.size()]);
 
         // set up directory wrapper providers
-        Map dwSettingGroups = settings.getSettingGroups(LuceneEnvironment.DirectoryWrapperProvider.PREFIX);
+        Map dwSettingGroups = settings.getSettingGroups(LuceneEnvironment.DirectoryWrapper.PREFIX);
         if (dwSettingGroups.size() > 0) {
             ArrayList dws = new ArrayList();
             for (Iterator it = dwSettingGroups.entrySet().iterator(); it.hasNext();) {
@@ -108,13 +119,13 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                     log.info("Building directory wrapper [" + dwName + "]");
                 }
                 CompassSettings dwSettings = (CompassSettings) entry.getValue();
-                String dwType = dwSettings.getSetting(LuceneEnvironment.DirectoryWrapperProvider.TYPE);
+                String dwType = dwSettings.getSetting(LuceneEnvironment.DirectoryWrapper.TYPE);
                 if (dwType == null) {
                     throw new ConfigurationException("Directory wrapper [" + dwName + "] has not type associated with it");
                 }
                 org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider dw;
                 try {
-                     dw = (org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider) ClassUtils.forName(dwType).newInstance();
+                    dw = (DirectoryWrapperProvider) ClassUtils.forName(dwType).newInstance();
                 } catch (Exception e) {
                     throw new ConfigurationException("Failed to create directory wrapper [" + dwName + "]", e);
                 }
@@ -123,7 +134,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                 }
                 dws.add(dw);
             }
-            directoryWrapperProviders = (org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider[]) dws.toArray(new org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider[dws.size()]);
+            directoryWrapperProviders = (DirectoryWrapperProvider[]) dws.toArray(new DirectoryWrapperProvider[dws.size()]);
         }
 
     }
@@ -157,20 +168,8 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         // do nothing since we cache directories
     }
 
-    public String getSubIndexForAlias(String alias) {
-        return (String) aliasBySubIndex.get(alias);
-    }
-
-    public int getNumberOfAliasesByAlias(String alias) {
-        return getNumberOfAliasesBySubIndex(getSubIndexForAlias(alias));
-    }
-
     public int getNumberOfAliasesBySubIndex(String subIndex) {
-        return ((ArrayList) subIndexByAlias.get(subIndex)).size();
-    }
-
-    public Directory getDirectoryByAlias(String alias, boolean create) throws SearchEngineException {
-        return getDirectoryBySubIndex(getSubIndexForAlias(alias), create);
+        return ((ArrayList) aliasesBySubIndex.get(subIndex)).size();
     }
 
     public Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
@@ -289,11 +288,13 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         }
         HashSet ret = new HashSet();
         for (int i = 0; i < aliases.length; i++) {
-            String subIndex = getSubIndexForAlias(aliases[i]);
-            if (subIndex == null) {
+            ArrayList subIndexesList = (ArrayList) subIndexesByAlias.get(aliases[i]);
+            if (subIndexesList == null) {
                 throw new IllegalArgumentException("No sub-index is mapped to alias [" + aliases[i] + "]");
             }
-            ret.add(subIndex);
+            for (int j = 0; j < subIndexesList.size(); j++) {
+                ret.add(subIndexesList.get(j));
+            }
         }
         if (subIndexes != null) {
             for (int i = 0; i < subIndexes.length; i++) {
@@ -348,7 +349,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         } catch (Exception e) {
             doAfterFailedCopyFrom(holder);
             if (e instanceof SearchEngineException) {
-                throw (SearchEngineException) e;
+                throw(SearchEngineException) e;
             }
             throw new SearchEngineException("Failed to copy from " + searchEngineStore, e);
         }

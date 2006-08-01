@@ -11,6 +11,7 @@
     <!ATTLIST compass-core-mapping package CDATA #IMPLIED>
 
 <!ELEMENT xml-object (
+    sub-index-hash?,
     xml-id*,
     (xml-analyzer?),
     (xml-property)*,
@@ -72,6 +73,7 @@
     <!ATTLIST resource-contract analyzer CDATA #IMPLIED>
 
 <!ELEMENT resource ( 
+    sub-index-hash?,
     resource-id*,
     (resource-analyzer?),
     (resource-property)*
@@ -129,6 +131,7 @@
     mapped properties/fields.
 -->
 <!ELEMENT class (
+    sub-index-hash?,
     id*,
     parent?,
     (analyzer?),
@@ -310,3 +313,13 @@
 <!ELEMENT meta-data-value (
     #PCDATA
 )>
+
+<!ELEMENT sub-index-hash (
+    setting*
+)>
+    <!ATTLIST sub-index-hash type CDATA #REQUIRED>
+
+<!ELEMENT setting EMPTY
+>
+    <!ATTLIST setting name CDATA #REQUIRED>
+    <!ATTLIST setting value CDATA #REQUIRED>

@@ -864,7 +864,7 @@ public class LuceneEnvironment {
         }
     }
 
-    public static abstract class DirectoryWrapperProvider {
+    public static abstract class DirectoryWrapper {
 
         public static final String PREFIX = "compass.engine.store.wrapper";
 

@@ -20,6 +20,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -32,22 +33,47 @@ public abstract class ResourceHelper {
     private ResourceHelper() {
     }
 
-    public static Property[] toIds(String alias, Resource resource, CompassMapping mapping)
-            throws SearchEngineException {
+    public static String computeSubIndex(Resource resource, CompassMapping mapping) throws SearchEngineException {
+        String alias = resource.getAlias();
         ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
         if (resourceMapping == null) {
             throw new SearchEngineException("Failed to find mappings for alias [" + alias + "]");
         }
+        SubIndexHash subIndexHash = resourceMapping.getSubIndexHash();
+        Property[] ids = toIds(resource, resourceMapping);
+        return subIndexHash.mapSubIndex(alias, ids);
+    }
+
+    public static String computeSubIndex(String alias, Property[] ids, CompassMapping mapping) throws SearchEngineException {
+        ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
+        if (resourceMapping == null) {
+            throw new SearchEngineException("Failed to find mappings for alias [" + alias + "]");
+        }
+        SubIndexHash subIndexHash = resourceMapping.getSubIndexHash();
+        return subIndexHash.mapSubIndex(alias, ids);
+    }
+
+    public static Property[] toIds(Resource resource, CompassMapping mapping)
+            throws SearchEngineException {
+        ResourceMapping resourceMapping = mapping.getRootMappingByAlias(resource.getAlias());
+        if (resourceMapping == null) {
+            throw new SearchEngineException("Failed to find mappings for alias [" + resource.getAlias() + "]");
+        }
+        return toIds(resource, resourceMapping);
+    }
+
+    public static Property[] toIds(Resource resource, ResourceMapping resourceMapping)
+            throws SearchEngineException {
         ResourcePropertyMapping[] pMappings = resourceMapping.getIdMappings();
         Property[] ids = new Property[pMappings.length];
         for (int i = 0; i < pMappings.length; i++) {
             ids[i] = resource.getProperty(pMappings[i].getPath().getPath());
             if (ids[i] == null) {
-                throw new SearchEngineException("Id with path [" + pMappings[i].getPath() + "] for alias [" + alias
-                        + "] not found");
+                throw new SearchEngineException("Id with path [" + pMappings[i].getPath() + "] for alias ["
+                        + resource.getAlias() + "] not found");
             }
             if (!ids[i].isIndexed() || ids[i].isTokenized() || !ids[i].isStored()) {
-                throw new SearchEngineException("Id [" + ids[i].getName() + "] for alias [" + alias
+                throw new SearchEngineException("Id [" + ids[i].getName() + "] for alias [" + resource.getAlias()
                         + "] must be stored and un_tokenized");
             }
         }

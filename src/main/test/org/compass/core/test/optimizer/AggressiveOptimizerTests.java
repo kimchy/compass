@@ -45,7 +45,7 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
         assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
 
         CompassSession session = openSession();
-        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         assertEquals(1, infos.size());
         session.close();
 
@@ -54,7 +54,7 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
         assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
 
         session = openSession();
-        infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         assertEquals(2, infos.size());
         session.close();
 
@@ -65,7 +65,7 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
         assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
 
         session = openSession();
-        infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         assertEquals(1, infos.size());
         session.close();
 
@@ -97,7 +97,7 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
         getCompass().getSearchEngineOptimizer().optimize();
 
         CompassSession session = openSession();
-        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfoByAlias("a", session);
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         assertEquals(1, infos.size());
         LuceneSubIndexInfo.LuceneSegmentInfo segmentInfo = infos.info(0);
         assertEquals("_8", segmentInfo.name());

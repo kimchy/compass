@@ -22,10 +22,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Field;
 import org.compass.core.CompassTermInfoVector;
+import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.spi.MultiResource;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
@@ -36,21 +35,22 @@ import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.engine.event.SearchEngineEventManager;
+import org.compass.core.lucene.LuceneMultiResource;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
-import org.compass.core.lucene.LuceneMultiResource;
+import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
+import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.transaction.BatchInsertTransaction;
 import org.compass.core.lucene.engine.transaction.LuceneSearchEngineTransaction;
 import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
 import org.compass.core.lucene.engine.transaction.SerialableTransaction;
-import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
-import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.MultiResource;
 import org.compass.core.util.ResourceHelper;
-import org.compass.core.util.reader.ReverseStringReader;
 import org.compass.core.util.StringUtils;
+import org.compass.core.util.reader.ReverseStringReader;
 
 /**
  * @author kimchy
@@ -280,11 +280,11 @@ public class LuceneSearchEngine implements SearchEngine {
         if (resource instanceof MultiResource) {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
-                delete(ResourceHelper.toIds(resource.getAlias(), multiResource.resource(i), searchEngineFactory.getMapping()),
+                delete(ResourceHelper.toIds(multiResource.resource(i), searchEngineFactory.getMapping()),
                         resource.getAlias());
             }
         } else {
-            delete(ResourceHelper.toIds(resource.getAlias(), resource, searchEngineFactory.getMapping()),
+            delete(ResourceHelper.toIds(resource, searchEngineFactory.getMapping()),
                     resource.getAlias());
         }
     }
@@ -332,8 +332,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public Resource get(Resource idResource) throws SearchEngineException {
-        String alias = idResource.getAlias();
-        return get(ResourceHelper.toIds(alias, idResource, searchEngineFactory.getMapping()), alias);
+        return get(ResourceHelper.toIds(idResource, searchEngineFactory.getMapping()), idResource.getAlias());
     }
 
     public Resource get(String[] ids, String alias) throws SearchEngineException {

@@ -19,12 +19,18 @@ package org.compass.core.config.binding;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.Property;
 import org.compass.core.config.CommonMetaDataLookup;
+import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
+import org.compass.core.engine.subindex.ConstantSubIndexHash;
+import org.compass.core.engine.subindex.SubIndexHash;
+import org.compass.core.mapping.AbstractResourceMapping;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ContractMapping;
@@ -60,6 +66,8 @@ import org.xml.sax.EntityResolver;
  * @author kimchy
  */
 public class XmlMappingBinding extends AbstractXmlMappingBinding {
+
+    public static final Log log = LogFactory.getLog(XmlMappingBinding.class);
 
     private CommonMetaDataLookup valueLookup;
 
@@ -147,8 +155,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             xmlObjectMapping.setAlias(alias.getName());
         }
 
-        String subIndex = xmlObjectConf.getAttribute("sub-index", xmlObjectMapping.getAlias());
-        xmlObjectMapping.setSubIndex(subIndex);
+        bindSubIndexHash(xmlObjectConf, xmlObjectMapping);
 
         bindExtends(xmlObjectConf, xmlObjectMapping);
 
@@ -215,7 +222,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     }
 
     private void bindXmlContent(ConfigurationHelper xmlContentConf, XmlContentMapping xmlContentMapping) {
-        
+
         String name = xmlContentConf.getAttribute("name", null);
         if (name != null) {
             name = valueLookup.lookupMetaDataName(name);
@@ -281,8 +288,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             rawResourceMapping.setAlias(alias.getName());
         }
 
-        String subIndex = resourceConf.getAttribute("sub-index", rawResourceMapping.getAlias());
-        rawResourceMapping.setSubIndex(subIndex);
+        bindSubIndexHash(resourceConf, rawResourceMapping);
 
         bindExtends(resourceConf, rawResourceMapping);
 
@@ -394,8 +400,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         bindExtends(classConf, classMapping);
 
-        String subIndex = classConf.getAttribute("sub-index", classMapping.getAlias());
-        classMapping.setSubIndex(subIndex);
+        bindSubIndexHash(classConf, classMapping);
 
         String analyzer = classConf.getAttribute("analyzer", null);
         classMapping.setAnalyzer(analyzer);
@@ -492,7 +497,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         String refAlias = referenceConf.getAttribute("ref-alias", null);
         if (refAlias != null) {
-            
+
             referenceMapping.setRefAliases(getAliases(refAlias));
         }
 
@@ -665,7 +670,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             mapping.setExtendedMappings(getAliases(extendsAliases));
         }
     }
-    
+
     /**
      * Returns a string array of aliases from a comma separated string
      */
@@ -690,6 +695,43 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     private void bindConverter(ConfigurationHelper conf, Mapping mapping) {
         String converterName = conf.getAttribute("converter", null);
         mapping.setConverterName(converterName);
+    }
+
+    private void bindSubIndexHash(ConfigurationHelper conf, AbstractResourceMapping resourceMapping) {
+        ConfigurationHelper subIndexHashConf = conf.getChild("sub-index-hash", false);
+        if (subIndexHashConf == null) {
+            String subIndex = conf.getAttribute("sub-index", resourceMapping.getAlias());
+            resourceMapping.setSubIndexHash(new ConstantSubIndexHash(subIndex));
+            if (log.isTraceEnabled()) {
+                log.trace("Alias [" + resourceMapping.getAlias() + "] is mapped to sub index hash [" + resourceMapping.getSubIndexHash() + "]");
+            }
+            return;
+        }
+
+        String type = subIndexHashConf.getAttribute("type", null);
+        SubIndexHash subIndexHash;
+        try {
+            subIndexHash = (SubIndexHash) ClassUtils.forName(type).newInstance();
+        } catch (Exception e) {
+            throw new ConfigurationException("Failed to create sub index hash of type [" + type + "]", e);
+        }
+        CompassSettings settings = new CompassSettings();
+        ConfigurationHelper[] settingsConf = subIndexHashConf.getChildren("setting");
+        if (subIndexHash instanceof CompassConfigurable) {
+            for (int i = 0; i < settingsConf.length; i++) {
+                settings.setSetting(settingsConf[i].getAttribute("name"), settingsConf[i].getAttribute("value"));
+            }
+            ((CompassConfigurable) subIndexHash).configure(settings);
+        } else {
+            if (settingsConf.length < 0) {
+                throw new ConfigurationException("Sub index hash [" + subIndexHash + "] does not implement " +
+                        "CompassConfigurable, but settings have been set for it");
+            }
+        }
+        resourceMapping.setSubIndexHash(subIndexHash);
+        if (log.isTraceEnabled()) {
+            log.trace("Alias [" + resourceMapping.getAlias() + "] is mapped to sub index hash [" + resourceMapping.getSubIndexHash() + "]");
+        }
     }
 
     private static float getBoost(ConfigurationHelper conf) {
