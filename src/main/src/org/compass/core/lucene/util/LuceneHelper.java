@@ -18,6 +18,7 @@ package org.compass.core.lucene.util;
 
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
+import org.compass.core.Compass;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryFilter;
@@ -28,9 +29,12 @@ import org.compass.core.impl.DefaultCompassHits;
 import org.compass.core.impl.DefaultCompassQuery;
 import org.compass.core.impl.DefaultCompassQueryFilter;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
+import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
@@ -108,5 +112,13 @@ public abstract class LuceneHelper {
      */
     public static LuceneSearchEngineHits getLuceneSearchEngineHits(CompassHits hits) {
         return (LuceneSearchEngineHits) ((DefaultCompassHits) hits).getSearchEngineHits();
+    }
+    
+    /**
+     * Returns Compass own internal <code>LuceneAnalyzerManager</code>. Can be used
+     * to access Lucene {@link org.apache.lucene.analysis.Analyzer} at runtime.
+     */
+    public static LuceneAnalyzerManager getLuceneAnalyzerManager(Compass compass) {
+        return ((LuceneSearchEngineFactory)((InternalCompass) compass).getSearchEngineFactory()).getAnalyzerManager();
     }
 }

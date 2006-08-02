@@ -79,7 +79,7 @@ public interface CompassAnalyzerHelper {
     /**
      * Analyzes the given text, using (if needed) the anlayzer that is bound
      * to the supplied property. Should be used with {@link #setAnalyzer(Resource)}
-     * so the analyzer can be dynamically detectede from the resource.
+     * so the analyzer can be dynamically detected from the resource.
      *
      * @param propertyName The property name for analyze bound properties
      * @param text The text to analyze
@@ -100,7 +100,7 @@ public interface CompassAnalyzerHelper {
     /**
      * Analyzes the given text, using (if needed) the anlayzer that is bound
      * to the supplied property. Should be used with {@link #setAnalyzer(Resource)}
-     * so the analyzer can be dynamically detectede from the resource.
+     * so the analyzer can be dynamically detected from the resource.
      *
      * @param propertyName The property name for analyze bound properties
      * @param textReader The text to analyze

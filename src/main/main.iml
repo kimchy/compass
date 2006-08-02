@@ -288,7 +288,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../../opensource/lucene/java/src/java" />
+          <root url="file://C:/opensource/lucene/java/src/java" />
         </SOURCES>
       </library>
     </orderEntry>

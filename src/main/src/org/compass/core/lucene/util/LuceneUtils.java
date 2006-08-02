@@ -36,7 +36,6 @@ import org.compass.core.Resource;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
-import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;

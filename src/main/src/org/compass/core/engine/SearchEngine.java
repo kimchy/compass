@@ -22,7 +22,6 @@ import org.compass.core.CompassTermInfoVector;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.CompassTransaction.TransactionIsolation;
-import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
