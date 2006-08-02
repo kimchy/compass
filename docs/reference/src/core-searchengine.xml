@@ -1,7 +1,7 @@
 <chapter id="core-searchengine">
   <title>Search Engine</title>
 
-    <sect1 id="searchengine-introduction">
+    <sect1 id="core-searchengine-introduction">
       <title>Introduction</title>
 
       <para>
@@ -29,7 +29,7 @@
 
     </sect1>
 
-    <sect1 id="CreatingResourceProperty">
+    <sect1 id="core-searchengine-CreatingResourceProperty">
       <title>Creating Resource and Property</title>
 
       <para>
@@ -179,7 +179,7 @@ tx.commit();
 ]]></programlisting>
       </para>
 
-    <sect2 id="BoostingResourceProperty">
+    <sect2 id="core-searchengine-BoostingResourceProperty">
       <title>Boosting Resource and Property</title>
 
       <para>
@@ -196,7 +196,7 @@ tx.commit();
 
   </sect1>
 
-  <sect1 id="searchegngine-analyzers">
+  <sect1 id="core-searchengine-analyzers">
     <title>Analyzers</title>
 
     <para>
@@ -241,7 +241,7 @@ tx.commit();
 
   </sect1>
 
-  <sect1 id="IndexStructure">
+  <sect1 id="core-searchengine-indexstructure">
     <title>Index Structure</title>
 
     <para>
@@ -270,7 +270,7 @@ tx.commit();
     </para>
   </sect1>
 
-  <sect1 id="SearchEngineTransaction">
+  <sect1 id="core-searchengine-transaction">
     <title>Transaction</title>
 
     <para>
@@ -328,7 +328,7 @@ tx.commit();
 
   </sect1>
 
-  <sect1 id="Optimizers">
+  <sect1 id="core-searchengine-optimizers">
     <title>Optimizers</title>
 
     <para>

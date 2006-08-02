@@ -1,0 +1,78 @@
+<sidebar>
+  <title>Compass Goal</title>
+  <para>Simplify the integration of Search Engine into any application.</para>
+  <para>As you will see, Compass is geared towards integrating Search Engine funtionality into any type of application (web app, rich client, middleware, ...). We ask you, the user, to give feedback on how complex it was to integrate Compass into your application, and places where Compass can be enhanced to make things even simpler.</para>
+</sidebar>
+   
+<para>Compass is a powerful, transactional Java Search Engine framework. Compass allows you to declaratively map your Object domain model to the underlying Search Engine, synchronising data changes between search engine index and different datasources. Compass provides a high level abstraction on top of the Lucene low level API. Compass also implements fast index operations and optimization and introduces transaction capabilities to the Search Engine.</para>
+
+<para>
+Compass aim is to provide the following:
+  <itemizedlist>
+    <listitem>
+      <para>
+        The simplest solution for enabling search capabilities within your application stack.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Promote the use of Search Engine as a lightweight application datasource.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Provide rich Search Engine semantics to find application data.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Synchronize data changes between Search Engine and different datasources.
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Write less code, find data quicker.
+      </para>
+    </listitem>
+  </itemizedlist>
+</para>
+
+<sect1 id="i-use">
+  <title>I use ...</title>
+  
+  <para>
+    The following sections are aimed to be a brief introduction and a navigation map for people who are familiar or use this different technologies:
+  </para>
+  
+  <sect2 id="i-use-lucene">
+    <title>... Lucene</title>
+    
+    <para>
+      Compass created a search engine abstraction, with its main (and only) implementation using <ulink url="http://lucene.apache.org">Lucene</ulink>. Lucene is an amazing, fast, and stable search engine (or IR library), yet the main problem with integrating Lucene with our application is its low-level usage and API.
+    </para>
+
+    <para>
+      For people who use or know Lucene, it is important to explain new terms that are introduced by Compass. <classname>Resource</classname> is Compass abstraction on top of a Lucene <classname>Document</classname>, and <classname>Property</classname> is Compass abstraction on top of Lucene <classname>Field</classname>. Both do not add much on top of the actual Lucene implementations, except for <classname>Resource</classname>, which is associated with an <emphasis>Alias</emphasis>. For more information, please read <xref linkend="core-searchengine"/>.
+    </para>
+    
+    <para>
+      <classname>Resource</classname> is the lowest level data object used in Compass, with all different mapping technoligies are geared towards generating it. Compass comes with a low level mapping technology called <emphasis>RSEM</emphasis> (Resource/Search Engine Mapping), which allows to declerativly define resource mapping definitions. RSEM can be used when an existing system alredy uses Lucene (upgrade to Compass should be minimal), or when an application does not have a rich domain model (Object or XML). For more information, please read <xref linkend="core-resourcemaping"/>.
+    </para>
+    
+    <para>
+      Compass exposes a very simple API. If you have experiance with an ORM tool (Hibernate, JPA, ...), you should feel very comfortible with Compass API. Also, Lucene has three main classes, <classname>IndexReader</classname>, <classname>Searcher</classname> and <classname>IndexWriter</classname>. It is difficult, especially for developers unfamiliar with Lucene, to understand how to perform operations against the index (while still having a performant system). Compass has a single interface, with all operations available through it. Compass also abstract the user from the gory details of opening and closing readers/searchers/writers, as well as caching and invalidating them. For more intformation, please read <xref linkend="core-introduction"/>, and <xref linkend="core-workingwithobjects"/>.
+    </para>
+    
+    <para>
+      Lucene is not transactional. This causes problems when trying to integrate Lucene with other transactional resources (like database or messaging). Compass provides support for two phase commits transactions (read_committed and serializable), implemented on top of Lucene index segmentations. The implementation provides fast commits (faster than Lucene), though they do require the concept of Optimizers that will keep the index at bay. For more information, please read <xref linkend="core-searchengine-transaction"/>, and <xref linkend="core-searchengine-optimizers"/>.
+    </para>
+    
+    <para>
+      On top of providing support for a transactional index, Compass provides integration with different transaction managers (like JTA), and provides a local one. For more information, please read  <xref linkend="core-transaction"/>.
+    </para>
+    
+    <para>
+      In Lucene, in order to perform an update, you must first delete the old <classname>Document</classname> and then create a new <classname>Document</classname>. This is not trivial, especially because of the usage of two different interfaces to perform the delete (IndexReader) and create (IndexWriter) operations, it is also very delicate in terms of performance. Thanks to Compass support for transactional index, and the fact that each saved <classname>Resource</classname> in Compass must be identifiable (through the use of mapping definition), makes executing an update using Compass both simple (the operation is called <literal>save</literal>), and fast.
+    </para>
+  </sect2>
+</sect1>

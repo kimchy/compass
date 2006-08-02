@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
  <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "../lib/docbook-dtd/docbookx.dtd"
 [
+<!ENTITY preface  SYSTEM "preface.xml">
 <!ENTITY core-intro  SYSTEM "core-intro.xml">
 <!ENTITY core-introduction  SYSTEM "core-introduction.xml">
 <!ENTITY core-configuration  SYSTEM "core-configuration.xml">
@@ -68,42 +69,7 @@
 
   <preface id="preface">
     <title>Preface</title>
-
-    <para>Compass is a powerful, transactional Object to Search Engine Mapping (OSEM) Java framework. Compass allows you to declaratively map your Object domain model to the underlying Search Engine, synchronising data changes between Index and different datasources. Compass provides a high level abstraction on top of the Lucene low level API. Compass also implements fast index operations and optimization and introduces transaction capabilities to the Search Engine.</para>
-
-    <para>
-    Compass aim is to provide the following:
-
-      <itemizedlist>
-        <listitem>
-          <para>
-            The simplest solution for enabling search capabilities within your application stack.
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Promote the use of Search Engine as a lightweight application datasource.
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Provide rich Search Engine semantics to find application data.
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Synchronize data changes between Search Engine and datasource.
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Write less code, find data quicker.
-          </para>
-        </listitem>
-      </itemizedlist>
-
-    </para>
-
+    &preface;
   </preface>
 
 

@@ -1,7 +1,7 @@
 <chapter id="core-transaction">
   <title>Transaction</title>
 
-  <sect1 id="transaction-inroduction">
+  <sect1 id="core-transaction-inroduction">
     <title>Introduction</title>
 
     <para>
@@ -14,7 +14,7 @@
 
   </sect1>
 
-  <sect1 id="transaction-sessionLifecycle">
+  <sect1 id="core-transaction-sessionLifecycle">
     <title>Session Lifecycle</title>
 
     <para>
@@ -23,7 +23,7 @@
 
   </sect1>
 
-  <sect1 id="transaction-localTransaction">
+  <sect1 id="core-transaction-localTransaction">
     <title>Local Transaction</title>
 
     <para>
@@ -40,7 +40,7 @@
 
   </sect1>
 
-  <sect1 id="transaction-JTASynchronizationTransaction">
+  <sect1 id="core-transaction-JTASynchronizationTransaction">
     <title>JTA Synchronization Transaction</title>
 
     <para>

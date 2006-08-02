@@ -1,6 +1,6 @@
-<chapter id="core">
+<chapter id="core-introduction">
   <title>Inroduction</title>
-  <sect1 id="overview">
+  <sect1 id="core-introduction-overview">
     <title>Overview</title>
 
     <para>
@@ -45,7 +45,7 @@ try {
 
   </sect1>
 
-  <sect1 id="TemplateandCallback">
+  <sect1 id="core-introduction-TemplateandCallback">
   <title>Template and Callback</title>
 
     <para>
