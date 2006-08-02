@@ -9,7 +9,7 @@
       </para>
     </sect1>
 
-    <sect1 id="AliasResourceProperty">
+    <sect1 id="core-searchengine-AliasResourceProperty">
       <title>Alias, Resource and Property</title>
 
       <para>
@@ -188,8 +188,7 @@ tx.commit();
       </para>
 
       <para>
-        Initially, <literal>Resource</literal> and <literal>Property</literal> have no boost (actually, a boost of 1.0). You can set the boost level on a <literal>Resource</literal> (which propagates to all
-        the properties that have no boosting set) or on a specific <literal>Property</literal>. Higher values than 1.0 makes it more relevant and values lower than 1.0 make it less relevant.
+        Initially, <literal>Resource</literal> and <literal>Property</literal> have no boost (actually, a boost of 1.0). You can set the boost level on a <literal>Resource</literal> (which propagates to all the properties that have no boosting set) or on a specific <literal>Property</literal>. Higher values than 1.0 makes it more relevant and values lower than 1.0 make it less relevant.
       </para>
 
     </sect2>
