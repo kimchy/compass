@@ -11,6 +11,6 @@ for Ant. Targets included are:
 * doc.htmlsingle - generates single page HTML documentation
 * doc.clean      - clean any output directories for docs
 
-Thanks to Hibernate, for providing the skeleton for
+Thanks to Hibernate & Spring, for providing the skeleton for
 DocBook documentation!
 
