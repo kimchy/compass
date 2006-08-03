@@ -18,9 +18,9 @@ package org.compass.core.impl;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.util.ResourceHelper;
 
 /**
  * A simple resource id key helper.

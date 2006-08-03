@@ -35,6 +35,7 @@ import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.engine.event.SearchEngineEventManager;
+import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneMultiResource;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
@@ -48,7 +49,6 @@ import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.MultiResource;
-import org.compass.core.util.ResourceHelper;
 import org.compass.core.util.StringUtils;
 import org.compass.core.util.reader.ReverseStringReader;
 

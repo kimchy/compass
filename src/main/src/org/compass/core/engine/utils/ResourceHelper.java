@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.util;
+package org.compass.core.engine.utils;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -24,6 +24,7 @@ import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.util.StringUtils;
 
 /**
  * @author kimchy

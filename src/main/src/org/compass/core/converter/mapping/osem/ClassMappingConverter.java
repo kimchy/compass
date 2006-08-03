@@ -26,6 +26,7 @@ import org.compass.core.accessor.Setter;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
+import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.impl.ResourceIdKey;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -36,7 +37,6 @@ import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
 import org.compass.core.util.ClassUtils;
-import org.compass.core.util.ResourceHelper;
 
 /**
  * @author kimchy
