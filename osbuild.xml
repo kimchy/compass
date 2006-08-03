@@ -37,6 +37,11 @@
         <copy todir="${os.docs.dir}/versions/${compass-version}/api">
             <fileset dir="${javadoc.dir}" />
         </copy>
+        <copy todir="${os.docs.dir}/versions/${compass-version}/styles">
+            <fileset dir="${reference.dir}/styles">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
         <copy todir="${os.docs.dir}/versions/${compass-version}/html">
             <fileset dir="${reference.dir}/html" />
         </copy>

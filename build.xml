@@ -651,7 +651,7 @@
             </fileset>
         </copy>
 
-        <copy todir="${reference.dir}/html/">
+        <copy todir="${reference.dir}/styles">
             <fileset dir="${reference.dir}/styles">
                 <include name="*.css"/>
             </fileset>
@@ -721,7 +721,7 @@
             <exclude name="docs/reference/*"/>
             <exclude name="docs/reference/src/**"/>
             <exclude name="docs/reference/images/**"/>
-            <exclude name="docs/reference/styles/**"/>
+            <exclude name="docs/reference/styles/*.xsl"/>
             <exclude name="docs/reference/lib/**"/>
             <exclude name="docs/reference/html/**"/>
             <exclude name="docs/reference/pdf/images/**"/>
