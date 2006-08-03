@@ -1,0 +1,167 @@
+<chapter id="introduction">
+  <title>Introduction</title>
+
+  <sidebar>
+    <title>History</title>
+    <para>
+      Shay Banon (kimchy), the creator of Compass, decided to write a simple Java based recipe management software for his wife (who happens to be a chef). Main requirement for the tool, since it was going to hold substantial cooking knowledge, was to be able to get to the relevant data fast. Using Spring Framework, Hibernate, and all the other tools out there that makes a developer life simple, he was surprised to find nothing similar in the search engine department. Now, don't get him wrong, Lucene is an amazing search engine (or IR library), but developers want simplicity, and Lucene comes with an added complexity that caused Shay to start Compass.
+    </para>
+  </sidebar>
+
+  <para>
+     In todays applications, search is becoming a "must have" requirement. Users expect applications (rich clients, web based, sever side, ...) to provide snappy and relevant search results the same way Google does for the web. Let it be a recipe management software, a trading application, or a content management driven web site, users expect search results across the whole app business domain model.
+  </para>
+  
+  <para>
+    Java developers on the other hand, need to implement it. As Java developers are getting used to simplified development model, with Hibernate, Spring Framework, and EJB3 to name a few, up until now there was a lack in a simple to use Java Search Engine solution. Compass aim is to fill this gap.
+  </para>
+  
+  <para>
+    Many applications, once starting to use a search engine in order to implement that illusive search box, find that the search engine can then be used for many data extraction related operations. Once a search engine holds a valid representation of the application business model, many times it just makes sense to execute simple queries against it instead of going to the actual data store (usually a database). Two prime examples are <ulink url="http://www.atlassian.com/software/jira/">Jira</ulink> and <ulink url="http://www.atlassian.com/software/confluence/">Confluence</ulink>, which perform many of the reporting and search (natuarally) operations using a search engine instead of the usual database operations.
+  </para>
+
+  <sect1 id="overview">
+    <title>Overview</title>
+    
+    <para>
+      TODO
+    </para>
+  </sect1>
+
+  <sect1 id="i-use">
+    <title>I use ...</title>
+
+    <para>
+      The following sections are aimed to be a brief introduction and a navigation map for people who are familiar or use this different technologies:
+    </para>
+
+    <sect2 id="i-use-lucene">
+      <title>... Lucene</title>
+
+      <para><emphasis>Search Engine Abstraction</emphasis></para>
+      <para>
+        Compass created a search engine abstraction, with its main (and only) implementation using <ulink url="http://lucene.apache.org">Lucene</ulink>. Lucene is an amazing, fast, and stable search engine (or IR library), yet the main problem with integrating Lucene with our application is its low-level usage and API.
+      </para>
+
+      <para>
+        For people who use or know Lucene, it is important to explain new terms that are introduced by Compass. <classname>Resource</classname> is Compass abstraction on top of a Lucene <classname>Document</classname>, and <classname>Property</classname> is Compass abstraction on top of Lucene <classname>Field</classname>. Both do not add much on top of the actual Lucene implementations, except for <classname>Resource</classname>, which is associated with an <emphasis>Alias</emphasis>. For more information, please read <xref linkend="core-searchengine"/>.
+      </para>
+
+      <para><emphasis>RSEM - Resource/Search Engine Mapping</emphasis></para>
+      <para>
+        <classname>Resource</classname> is the lowest level data object used in Compass, with all different mapping technologies are geared towards generating it. Compass comes with a low level mapping technology called <emphasis>RSEM</emphasis> (Resource/Search Engine Mapping), which allows to declaratively define resource mapping definitions. RSEM can be used when an existing system already uses Lucene (upgrade to Compass should be minimal), or when an application does not have a rich domain model (Object or XML). 
+      </para>
+
+      <para>
+        An additional feature built on top of Compass converter framework, is that a <classname>Property</classname> value does not have to be a String (as in Lucene <classname>Field</classname>). Objects can be used as values, with specific or default converters applied to them. For more information, please read <xref linkend="core-resourcemaping"/>.
+      </para>
+
+      <para><emphasis>Simple API</emphasis></para>
+      <para>
+        Compass exposes a very simple API. If you have experience with an ORM tool (Hibernate, JPA, ...), you should feel very comfortable with Compass API. Also, Lucene has three main classes, <classname>IndexReader</classname>, <classname>Searcher</classname> and <classname>IndexWriter</classname>. It is difficult, especially for developers unfamiliar with Lucene, to understand how to perform operations against the index (while still having a performant system). Compass has a single interface, with all operations available through it. Compass also abstract the user from the gory details of opening and closing readers/searchers/writers, as well as caching and invalidating them. For more information, please read <xref linkend="core-introduction"/>, and <xref linkend="core-workingwithobjects"/>.
+      </para>
+
+      <para><emphasis>Transactional Index and Integration</emphasis></para>
+      <para>
+        Lucene is not transactional. This causes problems when trying to integrate Lucene with other transactional resources (like database or messaging). Compass provides support for two phase commits transactions (read_committed and serializable), implemented on top of Lucene index segmentations. The implementation provides fast commits (faster than Lucene), though they do require the concept of Optimizers that will keep the index at bay. For more information, please read <xref linkend="core-searchengine-transaction"/>, and <xref linkend="core-searchengine-optimizers"/>.
+      </para>
+
+      <para>
+        On top of providing support for a transactional index, Compass provides integration with different transaction managers (like JTA), and provides a local one. For more information, please read <xref linkend="core-transaction"/>.
+      </para>
+
+      <para><emphasis>Fast Updates</emphasis></para>
+      <para>
+        In Lucene, in order to perform an update, you must first delete the old <classname>Document</classname> and then create a new <classname>Document</classname>. This is not trivial, especially because of the usage of two different interfaces to perform the delete (IndexReader) and create (IndexWriter) operations, it is also very delicate in terms of performance. Thanks to Compass support for transactional index, and the fact that each saved <classname>Resource</classname> in Compass must be identifiable (through the use of mapping definition), makes executing an update using Compass both simple (the operation is called <literal>save</literal>), and fast.
+      </para>
+
+      <para><emphasis>All Support</emphasis></para>
+      <para>
+        When working with Lucene, there is no way to search on all the fields stored in a Document. One must programmatically create synthetic fields that aggregate all the other fields in order to provide an "all" field, as well as providing it when querying the index. Compass does it all for you, by default Compass creates that "all" field and it acts as the default search field. Of course, in the spirit of being as configurable as possible, the "all" property can be enabled or disabled, have a different name, or not act as the default search property. One can also exclude certain mappings from participating in the all property.
+      </para>
+
+      <para><emphasis>Index Fragmentation</emphasis></para>
+      <para>
+        When building a Lucene enabled application, sometimes (for performance reasons) the index actually consists of several indexes. Compass will automatically fragment the index into several sub indexes using a configurable sub index hashing function, allowing to hash different searchable objects (<classname>Resource</classname>, mapped object, or an <classname>XmlObject</classname>) into a sub index (or several of them). For more information, please read <xref linkend="core-searchengine-indexstructure"/>.
+      </para>
+    </sect2>
+
+    <sect2 id="i-use-domainmodel">
+      <title>... Domain Model</title>
+
+      <para>
+        One of Compass main features is OSEM (Object/Search Engine Mapping). Using either annotations or xml definitions (or a combination), mapping definitions from a rich domain model into a search engine can be defined. For more information, please read <xref linkend="core-osem-xml"/> and <xref linkend="core-osem-annotations"/>.
+      </para>
+
+    </sect2>
+
+    <sect2 id="i-use-xmlmodel">
+      <title>... Xml Model</title>
+
+      <para>
+        One of Compass main features is XSEM (Xml/Search Engine Mapping). If your application is built around Xml data, you can map it directly to the search engine using simple xml based mapping definitions based on xpath expressions. For more information, please read <xref linkend="core-xsem"/>.
+      </para>
+
+    </sect2>
+
+    <sect2 id="i-use-nomodel">
+      <title>... No Model</title>
+
+      <para>
+        If no specific domain model is defined for the application (for example, in a messaging system based on properties), RSEM (Resource/Search Engine Mapping) can be used. A <classname>Resource</classname> can be considered as a fancy hash map, allowing for completely open data that can be saved in Compass. A resource mapping definition needs to be defined for "types" of resources, with at least one resource id definition (a resource must be identifiable). Additional resource properties mapping can be defined, with declarative definition of its characteristics (search engine, converter, ...). For more information, please read <xref linkend="core-resourcemaping"/>.
+      </para>
+
+    </sect2>
+
+    <sect2 id="i-use-orm">
+      <title>... ORM Framework</title>
+
+      <para>
+        Built on top of Compass Core, Compass Gps (which is aimed at integrating Compass with other datasources) integrates with most popular ORM frameworks. The integration consists of two main features:
+      </para>
+
+      <para><emphasis>Index Operation</emphasis></para>
+      <para>
+        Automatically index data from the database using the ORM framework into the search engine using Compass (and OSEM). Objects that have both OSEM and ORM definitions will be indexed, with the ability to provide custom filters.
+      </para>
+
+      <para><emphasis>Mirror Operation</emphasis></para>
+      <para>
+        For ORM frameworks that support event registration (most do), Compass will automatically register its own event listeners to reflect any changes made to the database using the ORM API into the search engine.
+      </para>
+
+      <para>
+        For more information, please read <xref linkend="gps-introduction"/>. Some of the ORM frameworks supports are: <xref linkend="gps-hibernate"/>, <xref linkend="gps-jpa"/>, <xref linkend="gps-jdo"/>, <xref linkend="gps-ojb"/> and <xref linkend="gps-ibatis"/>.
+      </para>
+
+    </sect2>
+
+    <sect2 id="i-use-spring">
+      <title>... Spring Framework</title>
+
+      <para>
+        The aim of Compass::Spring module is to provide seamless integration with the Spring Framework (as if a Spring developer wrote it :)).
+      </para>
+
+      <para>
+        First level of integration is very similar to Spring provided ORM integration, with a <classname>LocalCompassBean</classname> which allows to configure Compass within a Spring context, and a <classname>CompassDaoSupport</classname> class. For more information, please read <xref linkend="spring-introduction"/> and <xref linkend="spring-dao"/>.
+      </para>
+
+      <para>
+        Spring AOP integration, providing simple advices which helps to mirror data changes done within a Spring powered application. For applications with a data source or a tool with no Gps device that works with it (or it does not have mirroring capabilities - like iBatis), the mirror advices can make synchronizing changes made to the data source and Compass index simpler. For more information, please read <xref linkend="spring-aop"/>.
+      </para>
+
+      <para>
+        Spring <classname>PlatformTransactionManager</classname> abstraction integration, using its <classname>SpringSyncTransactionFactory</classname> to register synchronization with Spring on going transaction. This allows Compass to work in environments where Spring specific transactions managers are used, like <classname>HibernateTransactionManager</classname>. For more information, please read <xref linkend="spring-transaction"/>.
+      </para>
+
+      <para>
+        For web applications that use Spring MVC, Compass provides a search and index controllers. The index controller can automatically perform the index operation on a <classname>CompassGps</classname>, only the initiator view and result view need to be written. The search controller can automatically perform the search operation (With pagination), requiring only the search initiator and search results view (usually the same one). For more information, please read <xref linkend="spring-mvc"/>.
+      </para>
+
+      <para>
+        Last, <classname>LocalCompassBean</classname> can be configured using Spring 2 new schema based configuration.
+      </para>
+    </sect2>
+  </sect1>
+</chapter>

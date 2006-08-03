@@ -2,6 +2,7 @@
  <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "../lib/docbook-dtd/docbookx.dtd"
 [
 <!ENTITY preface  SYSTEM "preface.xml">
+<!ENTITY introduction  SYSTEM "introduction.xml">
 <!ENTITY core-intro  SYSTEM "core-intro.xml">
 <!ENTITY core-introduction  SYSTEM "core-introduction.xml">
 <!ENTITY core-configuration  SYSTEM "core-configuration.xml">
@@ -72,6 +73,7 @@
     &preface;
   </preface>
 
+  &introduction;
 
   <part>
     <title>Compass::Core</title>
