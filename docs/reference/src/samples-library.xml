@@ -3,7 +3,7 @@
     <title>Library Sample</title>
 
     <sect1 id="samples-library-introduction">
-        <title>Intoduction</title>
+        <title>Introduction</title>
 
         <para>
             Compass::Samples [library] is a basic example, that highlights the main features of Compass::Core. The application contains a small library domain model, containing <literal>Author</literal>, <literal>Article</literal> and <literal>Book</literal> Objects.

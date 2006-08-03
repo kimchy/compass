@@ -609,6 +609,7 @@
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
+                <include name="*.png"/>
             </fileset>
         </copy>
 
@@ -648,6 +649,7 @@
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
+                <include name="*.png"/>
             </fileset>
         </copy>
 
@@ -679,6 +681,7 @@
                 <include name="*.gif"/>
                 <include name="*.svg"/>
                 <include name="*.jpg"/>
+                <include name="*.png"/>
             </fileset>
         </copy>
 

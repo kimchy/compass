@@ -9,7 +9,7 @@
       </para>
 
       <para>
-        The Jdbc Gps device does not use OSEM, since no POJOs are defined that map the <literal>ResultSet</literal> to objects. For applications that use ORM tools, Compass::Gps provides several devices that integrate with popular ORM tools such as Hibernate, JDO, and OJB. For more information about Compass <literal>Resource</literal>, <literal>Resource Property</literal> and resource mapping, please read the <link linkend="core-searchengine">Search Engine</link> and <link linkend="core-resourcemaping">Resource Mapping</link> sections.
+        The Jdbc Gps device does not use OSEM, since no POJOs are defined that map the <literal>ResultSet</literal> to objects. For applications that use ORM tools, Compass::Gps provides several devices that integrate with popular ORM tools such as Hibernate, JDO, and OJB. For more information about Compass <literal>Resource</literal>, <literal>Resource Property</literal> and resource mapping, please read the <link linkend="core-searchengine">Search Engine</link> and <link linkend="core-rsem">Resource Mapping</link> sections.
       </para>
 
       <para>

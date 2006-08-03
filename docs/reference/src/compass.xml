@@ -75,8 +75,8 @@
 
   &introduction;
 
-  <part>
-    <title>Compass::Core</title>
+  <part id="compass-core">
+    <title>Compass Core</title>
     <partintro>
     &core-intro;
     </partintro>
@@ -92,8 +92,8 @@
     &core-workingwithobjects;
   </part>
 
-  <part>
-    <title>Compass::Vocabulary</title>
+  <part id="compass-vocabulary">
+    <title>Compass Vocabulary</title>
     <partintro>
     &vocabulary-intro;
     </partintro>
@@ -101,8 +101,8 @@
     &vocabulary-dublincore;
   </part>
 
-  <part>
-    <title>Compass::Gps</title>
+  <part id="compass-gps">
+    <title>Compass Gps</title>
     <partintro>
     &gps-intro;
     </partintro>
@@ -115,8 +115,8 @@
     &gps-ibatis;
   </part>
 
-  <part>
-    <title>Compass::Spring</title>
+  <part id="compass-spring">
+    <title>Compass Spring</title>
     <partintro>
     &spring-intro;
     </partintro>
@@ -131,7 +131,7 @@
   </part>
 
   <part>
-    <title>Compass::Samples</title>
+    <title>Compass Samples</title>
     <partintro>
     &samples-intro;
     </partintro>

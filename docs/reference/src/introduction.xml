@@ -4,7 +4,7 @@
   <sidebar>
     <title>History</title>
     <para>
-      Shay Banon (kimchy), the creator of Compass, decided to write a simple Java based recipe management software for his wife (who happens to be a chef). Main requirement for the tool, since it was going to hold substantial cooking knowledge, was to be able to get to the relevant data fast. Using Spring Framework, Hibernate, and all the other tools out there that makes a developer life simple, he was surprised to find nothing similar in the search engine department. Now, don't get him wrong, Lucene is an amazing search engine (or IR library), but developers want simplicity, and Lucene comes with an added complexity that caused Shay to start Compass.
+      Shay Banon (kimchy), the creator of Compass, decided to write a simple Java based recipe management software for his wife (who happens to be a chef). Main requirement for the tool, since it was going to hold substantial cooking knowledge, was to be able to get to the relevant information fast. Using Spring Framework, Hibernate, and all the other tools out there that makes a developer life simple, he was surprised to find nothing similar in the search engine department. Now, don't get him wrong, Lucene is an amazing search engine (or IR library), but developers want simplicity, and Lucene comes with an added complexity that caused Shay to start Compass.
     </para>
   </sidebar>
 
@@ -17,15 +17,38 @@
   </para>
   
   <para>
-    Many applications, once starting to use a search engine in order to implement that illusive search box, find that the search engine can then be used for many data extraction related operations. Once a search engine holds a valid representation of the application business model, many times it just makes sense to execute simple queries against it instead of going to the actual data store (usually a database). Two prime examples are <ulink url="http://www.atlassian.com/software/jira/">Jira</ulink> and <ulink url="http://www.atlassian.com/software/confluence/">Confluence</ulink>, which perform many of the reporting and search (natuarally) operations using a search engine instead of the usual database operations.
+    Many applications, once starting to use a search engine in order to implement that illusive search box, find that the search engine can then be used for many data extraction related operations. Once a search engine holds a valid representation of the application business model, many times it just makes sense to execute simple queries against it instead of going to the actual data store (usually a database). Two prime examples are <ulink url="http://www.atlassian.com/software/jira/">Jira</ulink> and <ulink url="http://www.atlassian.com/software/confluence/">Confluence</ulink>, which perform many of the reporting and search (naturally) operations using a search engine instead of the usual database operations.
   </para>
 
   <sect1 id="overview">
     <title>Overview</title>
     
     <para>
-      TODO
+      Compass provides a breadth of features geared towards integrating search engine functionality. The next diagram shows the different Compass modules, followed by a short description of each one.
     </para>
+    
+		<para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="images/compass-overview.png" format="PNG" align="center" />
+				</imageobject>
+				<caption>
+					<para>Overview of Compass</para>
+				</caption>
+			</mediaobject>
+		</para>
+		
+		<para>
+		  <link linkend="compass-core"><emphasis>Compass Core</emphasis></link> is the most fundamental part of Compass. It holds Lucene extensions for transactional index, search engine abstraction, ORM like API, transaction management integration, different mappings technologies (OSEM, XSEM and RSEM), and more. The aim of Compass core is to be usable within different scenarios and environments, and simplify the core operations done with a search engine.
+		</para>
+
+		<para>
+		  <link linkend="compass-gps"><emphasis>Compass Gps</emphasis></link> aim is to integrate with different content sources. The prime feature is the integration with different ORM frameworks (Hibernate, JPA, JDO, OJB), allowing for almost transparent integration between a search engine and an ORM view of content that resides in a database. Other features include a Jdbc integration, which allows to index database content using configurable SQL expression responsible for extracting the content.
+		</para>
+
+		<para>
+		  <link linkend="compass-spring"><emphasis>Compass Spring</emphasis></link> integrate Compass with the <ulink url="http://www.springframework.org">Spring Framework</ulink>. Spring, being an easy to use application framework, provides a simpler development model (based on dependency injection and much more). Compass integrates with Spring in the same manner ORM Frameworks integration is done within the Spring Framework code-base. It also integrates with Spring transaction abstraction layer, AOP support, and MVC library.
+		</para>
   </sect1>
 
   <sect1 id="i-use">
@@ -37,6 +60,13 @@
 
     <sect2 id="i-use-lucene">
       <title>... Lucene</title>
+
+      <sidebar>
+        <title>Direct Lucene</title>
+        <para>
+          Compass tries to be a good Lucene citizen, allowing to use most of Lucene classes directly within Compass. If your application has a specialized Query, Analyzer, or Filter, you can use them directly with Compass. Compass does have its own index structure, divided into sub indexes, but each sub index is a fully functional Lucene index. 
+        </para>
+      </sidebar>
 
       <para><emphasis>Search Engine Abstraction</emphasis></para>
       <para>
@@ -53,7 +83,7 @@
       </para>
 
       <para>
-        An additional feature built on top of Compass converter framework, is that a <classname>Property</classname> value does not have to be a String (as in Lucene <classname>Field</classname>). Objects can be used as values, with specific or default converters applied to them. For more information, please read <xref linkend="core-resourcemaping"/>.
+        An additional feature built on top of Compass converter framework, is that a <classname>Property</classname> value does not have to be a String (as in Lucene <classname>Field</classname>). Objects can be used as values, with specific or default converters applied to them. For more information, please read <xref linkend="core-rsem"/>.
       </para>
 
       <para><emphasis>Simple API</emphasis></para>
@@ -108,7 +138,7 @@
       <title>... No Model</title>
 
       <para>
-        If no specific domain model is defined for the application (for example, in a messaging system based on properties), RSEM (Resource/Search Engine Mapping) can be used. A <classname>Resource</classname> can be considered as a fancy hash map, allowing for completely open data that can be saved in Compass. A resource mapping definition needs to be defined for "types" of resources, with at least one resource id definition (a resource must be identifiable). Additional resource properties mapping can be defined, with declarative definition of its characteristics (search engine, converter, ...). For more information, please read <xref linkend="core-resourcemaping"/>.
+        If no specific domain model is defined for the application (for example, in a messaging system based on properties), RSEM (Resource/Search Engine Mapping) can be used. A <classname>Resource</classname> can be considered as a fancy hash map, allowing for completely open data that can be saved in Compass. A resource mapping definition needs to be defined for "types" of resources, with at least one resource id definition (a resource must be identifiable). Additional resource properties mapping can be defined, with declarative definition of its characteristics (search engine, converter, ...). For more information, please read <xref linkend="core-rsem"/>.
       </para>
 
     </sect2>

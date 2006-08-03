@@ -60,7 +60,7 @@
       </para>
 
       <para>
-        Another option when creating <literal>Resource</literal> <literal>Property</literal> is to define resource mapping and within it a <literal>resource-id</literal> and <literal>resource-property</literal> mappings (please see the <link linkend="core-resourcemaping">Resource Mapping Section</link>). When defining the mappings, Compass can be smart enough to guess the type, index, store, and other options using the mappings, allowing the usage of the simple <literal>addProeprty(String propertyName, Object value)</literal> API of <literal>Resource</literal> (even auto converting the Object to the correct value using Compass converter architecture).
+        Another option when creating <literal>Resource</literal> <literal>Property</literal> is to define resource mapping and within it a <literal>resource-id</literal> and <literal>resource-property</literal> mappings (please see the <link linkend="core-rsem">Resource Mapping Section</link>). When defining the mappings, Compass can be smart enough to guess the type, index, store, and other options using the mappings, allowing the usage of the simple <literal>addProeprty(String propertyName, Object value)</literal> API of <literal>Resource</literal> (even auto converting the Object to the correct value using Compass converter architecture).
       </para>
 
       <para>

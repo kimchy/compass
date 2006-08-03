@@ -36,3 +36,11 @@ Compass aim is to provide the following:
     </listitem>
   </itemizedlist>
 </para>
+
+<para>
+  This document provides a reference guide to Compass's features. Since this document is still to be considered very much work-in-progress, if you have any requests or comments, please post them on Compass forum, or Compass JIRA (issue tracking).
+</para>
+
+<para>
+  Before we continue, the Compass team would like to thank the <ulink url="http://www.hibernate.org">Hibernate</ulink> and <ulink url="http://www.springframework.org">Spring Framework</ulink> teams, for providing the template DocBook definition and configuration, which help us create this reference guide.
+</para>
