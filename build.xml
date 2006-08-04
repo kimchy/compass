@@ -590,7 +590,7 @@
         <fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
             <condition>
                 <not>
-                    <available filepath="${reference.dir}/lib"/>
+                    <available file="${reference.dir}/lib"/>
                 </not>
             </condition>
         </fail>
