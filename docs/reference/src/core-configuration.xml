@@ -1,14 +1,9 @@
 <chapter id="core-configuration">
   <title>Configuration</title>
 
-  <sect1 id="introduction">
-    <title>Introduction</title>
-
-    <para>
-      Compass must be configured to work with a specific applications domain model. There are a large number of configuration parameters available (with default settings), which controls how Compass works internal and with the underlying Search Engine. This section describes the configuration API and parameters.
-    </para>
-
-  </sect1>
+  <para>
+    Compass must be configured to work with a specific applications domain model. There are a large number of configuration parameters available (with default settings), which controls how Compass works internal and with the underlying Search Engine. This section describes the configuration API and parameters.
+  </para>
 
   <sect1 id="ProgrammaticConfiguration">
     <title>Programmatic Configuration</title>

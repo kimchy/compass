@@ -144,6 +144,20 @@
 
     </target>
 
+    <macrodef name="jar-module">
+        <attribute name="includes"/>
+        <attribute name="name"/>
+        <attribute name="target-dir" default="${dist.dir}/modules"/>
+        <sequential>
+            <jar jarfile="@{target-dir}/@{name}.jar" basedir="${target.classes.dir}" includes="@{includes}">
+                <manifest>
+                    <attribute name="Implementation-Title" value="${compass-title}"/>
+                    <attribute name="Implementation-Version" value="${compass-version}"/>
+                    <attribute name="Compass-Version" value="${compass-version}"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
 
     <target name="fulljar" depends="build,initdist" description="Create full JAR file with all Compass classes">
 
@@ -164,22 +178,6 @@
         <jar-module name="${compass-name}-annotations" includes="org/compass/annotations/**"/>
 
     </target>
-
-    <macrodef name="jar-module">
-        <attribute name="includes"/>
-        <attribute name="name"/>
-        <attribute name="target-dir" default="${dist.dir}/modules"/>
-        <sequential>
-            <jar jarfile="@{target-dir}/@{name}.jar" basedir="${target.classes.dir}" includes="@{includes}">
-                <manifest>
-                    <attribute name="Implementation-Title" value="${compass-title}"/>
-                    <attribute name="Implementation-Version" value="${compass-version}"/>
-                    <attribute name="Compass-Version" value="${compass-version}"/>
-                </manifest>
-            </jar>
-        </sequential>
-    </macrodef>
-
 
     <target name="srczip" depends="initdist" description="Create source ZIP (containing Java sources)">
 
@@ -351,7 +349,7 @@
             <classpath location="${target.classes.dir}"/>
 
             <!-- Need files loaded as resources -->
-            <classpath location="${test.dir}"/>
+            <classpath location="${main.test.dir}"/>
 
             <classpath refid="all-libs"/>
 
@@ -384,7 +382,7 @@
             <classpath location="${target.classes.dir}"/>
 
             <!-- Need files loaded as resources -->
-            <classpath location="${test.dir}"/>
+            <classpath location="${tiget.test.dir}"/>
 
             <classpath refid="all-libs"/>
 
@@ -432,7 +430,7 @@
             <classpath location="${target.classes.dir}"/>
 
             <!-- Need files loaded as resources -->
-            <classpath location="${test.dir}"/>
+            <classpath location="${main.test.dir}"/>
 
             <classpath refid="all-libs"/>
 
@@ -528,7 +526,7 @@
             <classpath location="${target.clover.dir}"/>
 
             <!-- Need files loaded as resources -->
-            <classpath location="${test.dir}"/>
+            <classpath location="${main.test.dir}"/>
 
             <classpath refid="all-libs"/>
 
@@ -592,7 +590,7 @@
         <fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
             <condition>
                 <not>
-                    <available file="${reference.dir}/lib"/>
+                    <available filepath="${reference.dir}/lib"/>
                 </not>
             </condition>
         </fail>
@@ -858,7 +856,7 @@
     </target>
 
 
-    <target name="sandbox.buildtests" depends=""
+    <target name="sandbox.buildtests" depends="sandbox.build"
             description="Compile test source tree Java files into class files">
 
         <mkdir dir="${sandbox.target.testclasses.dir}"/>

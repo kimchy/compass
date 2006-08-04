@@ -50,7 +50,8 @@ public class SpringHibernate3GpsDevice extends org.compass.gps.device.hibernate.
                 target.setAccessible(true);
                 sessionFactory = (SessionFactory) target.get(invocationHandler);
             } catch (Exception e) {
-                throw new HibernateGpsDeviceException("Failed to fetch actual session factory", e);
+                throw new HibernateGpsDeviceException("Failed to fetch actual session factory, " +
+                        "sessionFactory[" + sessionFactory + "], invocationHandler[" + invocationHandler + "]", e);
             }
         }
         return sessionFactory;
