@@ -16,6 +16,11 @@
 
 package org.compass.gps.device.hibernate;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
@@ -24,17 +29,22 @@ import org.compass.core.util.ClassUtils;
 import org.compass.core.util.FieldInvoker;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.PassiveMirrorGpsDevice;
-import org.hibernate.*;
+import org.hibernate.EntityMode;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.event.*;
+import org.hibernate.event.PostDeleteEvent;
+import org.hibernate.event.PostDeleteEventListener;
+import org.hibernate.event.PostInsertEvent;
+import org.hibernate.event.PostInsertEventListener;
+import org.hibernate.event.PostUpdateEvent;
+import org.hibernate.event.PostUpdateEventListener;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.tuple.EntityMetamodel;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A {@link HibernateGpsDevice} which works with hibernate 3.
@@ -465,7 +475,8 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                     new Hibernate3GpsDevicePostDelete((PostDeleteEventListener) eventListener.get(sessionEventListenerConfig), mirrorFilter));
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(
-                    buildMessage("Failed to inject compass gps device events into hibernate 3.0 session factory"), e);
+                    buildMessage("Failed to inject compass gps device events into hibernate 3.0 session factory [" +
+                            sessionFactory.getClass().getName() + "]"), e);
         }
     }
 
@@ -499,7 +510,8 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(
-                    buildMessage("Failed to inject compass gps device events into hibernate 3.1 session factory"), e);
+                    buildMessage("Failed to inject compass gps device events into hibernate 3.1 session factory [" +
+                            sessionFactory.getClass().getName() + "]"), e);
         }
     }
 
