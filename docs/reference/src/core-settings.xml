@@ -590,10 +590,6 @@
                 <entry>The type of the <literal>org.compass.converter.Converter</literal> implementation. Should either be the fully qualified class name, or the Converter Type (shorthand version for compass internal converter classes, defined in the previous table).</entry>
               </row>
               <row>
-                <entry>compass.converter.[converter name].type</entry>
-                <entry>The type of the <literal>org.compass.converter.Converter</literal> implementation. Should either be the fully qualified class name, or the Converter Type (shorthand version for compass internal converter classes, defined in the previous table).</entry>
-              </row>
-              <row>
                 <entry>compass.converter.[converter name].format</entry>
                 <entry>Applies to format-able converters. The format that will be used to format the data converted (see Java <literal>java.text.DecimalFormat</literal> and <literal>java.text.SimpleDateFormat</literal>).</entry>
               </row>

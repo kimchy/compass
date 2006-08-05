@@ -1,22 +1,40 @@
 <chapter id="core-configuration">
   <title>Configuration</title>
 
+  <sidebar>
+    <title>Configuration Samples</title>
+    <para>
+      Throughout this manual, we will use the schema based configuration file to show examples of how to configure certain features. This does not mean that they can not be expressed in a settings based configuration (either programmatic or DTD based configuration file). For a complete list of all the different settings in compass, please refer to <xref linkend="core-settings"/>.
+    </para>
+  </sidebar>
+
   <para>
-    Compass must be configured to work with a specific applications domain model. There are a large number of configuration parameters available (with default settings), which controls how Compass works internal and with the underlying Search Engine. This section describes the configuration API and parameters.
+    Compass must be configured to work with a specific applications domain model. There are a large number of configuration parameters available (with default settings), which controls how Compass works internally and with the underlying Search Engine. This section describes the configuration API.
   </para>
 
-  <sect1 id="ProgrammaticConfiguration">
+  <para>
+    In order to create a <classname>Compass</classname> instance, it first must be configured. <classname>CompassConfiguration</classname> can be used in order to configure a <classname>Compass</classname> instance, by having the ability to add different mapping definitions, configure Compass based on xml configuration files, and expose a programmatic configuration options.
+  </para>
+  
+  <para>
+    For Java 5 based applications (mainly ones that use OSEM annotations), <classname>CompassAnnotationsConfiguration</classname> can be used (which extends <classname>CompassConfiguration</classname>). For simplicity, Compass comes with <classname>CompassConfigurationFactory</classname>, which tries to be smart and detect based on the JVM version and the included compass modules, which configuration to create. Here is an example of the preferred way to obtain a <classname>CompassConfiguration</classname> instance:
+    <programlisting><![CDATA[CompassConfiguration conf = 
+      CompassConfigurationFactory.newConfiguration();
+    ]]></programlisting>
+  </para>
+
+  <sect1 id="core-configuration-programmatic">
     <title>Programmatic Configuration</title>
 
     <para>
-      An instance of <literal>CompassConfiguration</literal> represents a set of mappings (one or more OSEM or Resource mappings), Common Meta Data definitions, transaction and Search Engine parameters. <literal>CompassConfiguration</literal> is used to build an immutable <literal>Compass</literal> instance.
+      A <classname>Compass</classname> instance can be programatically configured using <classname>CompassConfiguration</classname>. Two main configuration aspects are adding mapping definitions, and setting different settings.
     </para>
 
     <para>
-      <literal>CompassConfiguration</literal> provides several API's for adding OSEM and Resource mapping (suffixed <literal>.cpm.xml</literal>), as well as Common Meta Data definition (suffixed <literal>.cmd.xml</literal>). The following table summarizes the most important API's:
+      <classname>CompassConfiguration</classname> provides several API's for adding mapping definitions (xml mapping files suffixed <literal>.cpm.xml</literal> or annotated classes), as well as Common Meta Data definition (xml mapping files suffixed <literal>.cmd.xml</literal>). The following table summarizes the most important API's:
 
       <table>
-         <title>Configuration Mapping API</title>
+        <title>Configuration Mapping API</title>
         <tgroup cols="2">
           <colspec colname="c1" colwidth="4*" />
           <colspec colname="c2" colwidth="5*" />
@@ -36,7 +54,7 @@
             </row>
             <row>
               <entry><literal>addClass(Class)</literal></entry>
-              <entry>Loads the mapping file (<literal>cpm</literal>) according to the specified class. <literal>test.Author.class</literal> will map to <literal>test/Author.cpm.xml</literal> within the class path.</entry>
+              <entry>Loads the mapping file (<literal>cpm</literal>) according to the specified class. <literal>test.Author.class</literal> will map to <literal>test/Author.cpm.xml</literal> within the class path. Can also add annotated classes if using Compass annotations support.</entry>
             </row>
             <row>
               <entry><literal>addURL(URL)</literal></entry>
@@ -69,11 +87,11 @@
     </para>
 
     <para>
-       Other than mapping file configuration API (<literal>CompassConfiguration</literal>), Compass::Core can be configured through the <literal>CompassSettings</literal> interface. <literal>CompassSettings</literal> is similar to Java <literal>Properties</literal> class and is accessible via the <literal>CompassConfiguration.getSettings()</literal> or the <literal>CopmassConfiguration.setSetting(String setting, String value)</literal> methods. Compass's many different settings are explained in the Configuration Settings apendix.
+       Other than mapping file configuration API, Compass can be configured through the <classname>CompassSettings</classname> interface. <classname>CompassSettings</classname> is similar to Java <literal>Properties</literal> class and is accessible via the <literal>CompassConfiguration.getSettings()</literal> or the <literal>CopmassConfiguration.setSetting(String setting, String value)</literal> methods. Compass's many different settings are explained in <xref linkend="core-settings"/>.
     </para>
 
     <para>
-      Compass setting can also be defined programmatically using the <literal>org.compass.core.config.CompassEnvironment</literal> and <literal>org.compass.core.lucene.LuceneEnvironment</literal> classes (hold programmatic manifestation of all the different settings).
+      Compass setting can also be defined programmatically using the <literal>org.compass.core.config.CompassEnvironment</literal> and <literal>org.compass.core.lucene.LuceneEnvironment</literal> classes (hold programmatic manifestation of all the different settings names).
     </para>
 
     <para>
@@ -81,7 +99,7 @@
     </para>
 
     <para>
-      Global Converters (classes that implement Compass <literal>Converter</literal>) can also be registered with the configuration to be used by the created compass instances. The <literal>Converter</literal>s are registered under a logical name, and can be referenced in the mapping definitions. The method to register a global converter is <literal>registerConverter</literal>.
+      Global Converters (classes that implement Compass <classname>Converter</classname>) can also be registered with the configuration to be used by the created compass instances. The converters are registered under a logical name, and can be referenced in the mapping definitions. The method to register a global converter is <literal>registerConverter</literal>.
     </para>
 
     <para>
@@ -92,15 +110,29 @@
      .addClass(Author.class);
 ]]></programlisting>
     </para>
+    
+    <para>
+      An important aspect of settings (properties like) configuration is the notion of group settings. Similar to the way <ulink url="http://logging.apache.org/log4j/">log4j</ulink> properties configuration file works, different aspects of Compass need to be configured in a grouped nature. If we take Compass converter configuration as an example, here is an example of a set of settings to configure a custom converter called <literal>test</literal>:
+<programlisting><![CDATA[org.compass.converter.test.type=eg.TestConverter
+org.compass.converter.test.param1=value1
+org.compass.converter.test.param2=value2
+]]></programlisting>
+    </para>
+    
+    <para>
+      Compass defined prefix for all converter configuration is <literal>org.compass.converter</literal>. The segment that comes afterwards (up until the next '.') is the converter (group) name, which is set to <literal>test</literal>. This will be the converter name that the converter will be registered under (and referenced by in different mapping definitions).  Within the group, the following settings are defined: <literal>type</literal>, <literal>param1</literal>, and <literal>param2</literal>. <literal>type</literal> is one of the required settings for a custom Compass converter, and has the value of the fully qualified class name of the converter implementation. <literal>param1</literal> and <literal>param2</literal> are custom settings, that can be used by the custom converter (it should implement <classname>CompassConfigurable</classname>).
+    </para>
 
   </sect1>
 
-  <sect1 id="XMLConfiguration">
+  <sect1 id="core-configuration-xml">
      <title>XML Configuration</title>
 
      <para>
-       All of Compass's operational configuration (apart from mapping definitions) can be defined in a single xml configuration file, with the default name <literal>compass.cfg.xml</literal>. You can define the environmental settings and mapping file locations within this file. The following table shows the different <literal>CompassConfiguration</literal> API's for locating the main configuration file:
-
+       All of Compass's operational configuration (apart from mapping definitions) can be defined in a single xml configuration file, with the default name <literal>compass.cfg.xml</literal>. You can define the environmental settings and mapping file locations within this file. The following table shows the different <classname>CompassConfiguration</classname> API's for locating the main configuration file:
+     </para>
+     
+     <para>
        <table>
          <title>Compass Configuration API</title>
          <tgroup cols="2">
@@ -124,15 +156,22 @@
 
      </para>
      
-     <sect2 id="XmlConfigurationSchema">
+     <sect2 id="core-configuration-xml-schema">
         <title>Schema Based Configuration</title>
      
-        <para>
-           The preferred way to configure Compass (and the simplest way) is to use an Xml configuration file, which validates against a Schema. It allows for richer and more descriptive (and less erroneous) configuration of Compass. The schema is fully annotated, with each element, attribute documented within the schema. Note, that some additional information is explained in the Configuration Settings appendix, even if it does not apply in terms of the name of the setting to be used, it is advisable to read the appropriate section for more fuller explanation (such as converters, highlighters, analyzers, and so on).
-        </para>
+        <sidebar>
+          <title>Schema and Settings</title>
+          <para>
+            Compass uses the schema based configuration as a different view on top of its support for settings based configuration (properties like). Compass translates all the different, more expressive, xml structure into their equivalent settings as described in <xref linkend="core-settings"/>.
+          </para>
+        </sidebar>
      
         <para>
-           Here are a few sample configuration files, the first is a simple file based index with the OSEM definitions for the Author class.
+           The preferred way to configure Compass (and the simplest way) is to use an Xml configuration file, which validates against a Schema. It allows for richer and more descriptive (and less erroneous) configuration of Compass. The schema is fully annotated, with each element and attribute documented within the schema. Note, that some additional information is explained in the Configuration Settings appendix, even if it does not apply in terms of the name of the setting to be used, it is advisable to read the appropriate section for more fuller explanation (such as converters, highlighters, analyzers, and so on).
+        </para>
+        
+        <para>
+           Here are a few sample configuration files, just to get a feeling of the structure and nature of the configuration file. The first is a simple file based index with the OSEM definitions for the Author class.
 
 <programlisting><![CDATA[<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -261,13 +300,14 @@ xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
 </compass-core-config>
 ]]></programlisting>     
         </para>
+        
     </sect2>
 
-  <sect2 id="XMLConfigurationDTD">
+  <sect2 id="core-configuration-xml-dtd">
     <title>DTD Based Configuration</title>
       
       <para>
-         Compass can be configured using a DTD based xml configuration. The DTD configuration is less expressive than the schema based one, allowing to configure mappings and Compass settings. The Configuration Settings are explained in an appendix.
+         Compass can be configured using a DTD based xml configuration. The DTD configuration is less expressive than the schema based one, allowing to configure mappings and Compass settings. The Configuration Settings are explained in <xref linkend="core-settings"/>.
       </para>
 
       <para>
@@ -292,14 +332,14 @@ xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
 
   </sect1>
 
-  <sect1 id="ObtainingCompassReference">
+  <sect1 id="core-configuration-reference">
     <title>Obtaining a Compass reference</title>
 
     <para>
-      After <literal>CompassConfiguration</literal> has been set (either programmatic or using the XML configuration file), you can now build a <literal>Compass</literal> instance. <literal>Compass</literal> is intended to be shared among different application threads. The following simple code example shows how to obtain a <literal>Compass</literal> reference.
-<programlisting><![CDATA[Compass compass = cfg.buildCompass();
-]]></programlisting>
-            Note: It is possible to have multiple <literal>Compass</literal> instances within the same application, each with a different configuration.
+      After <classname>CompassConfiguration</classname> has been set (either programmatic or using the XML configuration file), you can now build a <classname>Compass</classname> instance. <classname>Compass</classname> is intended to be shared among different application threads. The following simple code example shows how to obtain a <classname>Compass</classname> reference.
+      <programlisting><![CDATA[Compass compass = cfg.buildCompass();
+      ]]></programlisting>
+      Note: It is possible to have multiple <classname>Compass</classname> instances within the same application, each with a different configuration.
     </para>
 
   </sect1>
