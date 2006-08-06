@@ -22,13 +22,38 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassSettings;
 
 /**
+ * Resposible for providing a Jdbc {@link DataSource} for
+ * {@link org.compass.core.lucene.engine.store.JdbcLuceneSearchEngineStore}.
+ * <p/>
+ * The {@link DataSource} is a shared data source that should be used throughout
+ * the lifecycle of this class.
+ *
  * @author kimchy
  */
 public interface DataSourceProvider {
 
-    void configure(String url, CompassSettings settings) throws CompassException ;
+    /**
+     * Configures the data source provider with the give settings and url,
+     * the configuration will control the {@link DataSource} that will be
+     * instansiated.
+     *
+     * @param url      The jdbc url connection string
+     * @param settings The settings for the given data source provider (and the {@link DataSource}).
+     * @throws CompassException
+     */
+    void configure(String url, CompassSettings settings) throws CompassException;
 
+    /**
+     * Retuns an instance of the data source, as per the configuration set for it.
+     * <p/>
+     * Note, that the instance should be created (either in the configure method,
+     * or lazily in this method), and shared for all repeating calls. This will
+     * also allow {@link #closeDataSource()} to close the actual data source.
+     */
     DataSource getDataSource();
 
+    /**
+     * Closes the created data source.
+     */
     void closeDataSource();
 }

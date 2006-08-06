@@ -6,6 +6,7 @@
 <!ENTITY core-intro  SYSTEM "core-intro.xml">
 <!ENTITY core-introduction  SYSTEM "core-introduction.xml">
 <!ENTITY core-configuration  SYSTEM "core-configuration.xml">
+<!ENTITY core-connection  SYSTEM "core-connection.xml">
 <!ENTITY core-searchengine  SYSTEM "core-searchengine.xml">
 <!ENTITY core-osem-xml  SYSTEM "core-osem-xml.xml">
 <!ENTITY core-osem-annotations  SYSTEM "core-osem-annotations.xml">
@@ -82,6 +83,7 @@
     </partintro>
     &core-introduction;
     &core-configuration;
+    &core-connection;
     &core-searchengine;
     &core-osem-xml;
     &core-osem-annotations;

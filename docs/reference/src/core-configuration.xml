@@ -316,7 +316,8 @@ xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
 "-//Compass/Compass Core Configuration DTD 1.0//EN"
 "http://www.opensymphony.com/compass/dtd/compass-core-configuration.dtd">
 
-<compass-core-configuration>
+<compass-core-configurationshaysheli75shaysheli75
+  
   <compass>
     <setting name="compass.engine.connection">my/index/dir</setting>
 

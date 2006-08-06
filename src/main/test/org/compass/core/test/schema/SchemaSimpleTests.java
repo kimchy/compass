@@ -10,8 +10,10 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.naming.DynamicPropertyNamingStrategy;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.optimizer.NullOptimizer;
+import org.compass.core.lucene.engine.store.jdbc.C3P0DataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider;
+import org.compass.core.lucene.engine.store.jdbc.ExternalDataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider;
 import org.compass.core.transaction.JTASyncTransactionFactory;
 import org.compass.core.transaction.manager.JBoss;
@@ -30,7 +32,16 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("default", settings.getSetting(CompassEnvironment.NAME));
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
-    
+
+    public void testLockDir() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/lock-dir.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals("target/test", settings.getSetting(LuceneEnvironment.Transaction.LOCK_DIR));
+    }
+
     public void testOptimizer() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/optimizer.cfg.xml");
@@ -145,6 +156,21 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.POOL_PREPARED_STATEMENTS));
     }
 
+    public void testJdbcC3p0() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/jdbc-c3p0.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
+        assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.DISABLE_SCHEMA_OPERATIONS));
+        assertEquals(C3P0DataSourceProvider.class.getName(),
+                settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS));
+        assertEquals("testusername", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME));
+        assertEquals("testpassword", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD));
+        assertEquals("testDriverClass", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS));
+        assertEquals("jdbc://testurl", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+
     public void testJdbcJndiSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/jdbc-jndi.cfg.xml");
@@ -156,6 +182,19 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("testusername", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME));
         assertEquals("testpassword", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD));
         assertEquals("jdbc://testds", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+
+    public void testJdbcExternalSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/jdbc-external.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("false", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
+        assertEquals(ExternalDataSourceProvider.class.getName(),
+                settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS));
+        assertEquals("testusername", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME));
+        assertEquals("testpassword", settings.getSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD));
+        assertEquals("jdbc://", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
     public void testConvertersSchema() throws Exception {
