@@ -197,6 +197,26 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("jdbc://", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testJdbcFESchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/jdbc-fe.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        String defaultPrefix = LuceneEnvironment.JdbcStore.FileEntry.PREFIX + ".__default__.";
+        assertEquals("4096", settings.getSetting(defaultPrefix + LuceneEnvironment.JdbcStore.FileEntry.INDEX_INPUT_BUFFER_SIZE));
+        assertEquals("4096", settings.getSetting(defaultPrefix + LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_BUFFER_SIZE));
+    }
+
+    public void testJdbcDDLSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/jdbc-ddl.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("myname", settings.getSetting(LuceneEnvironment.JdbcStore.DDL.NAME_NAME));
+        assertEquals("70", settings.getSetting(LuceneEnvironment.JdbcStore.DDL.NAME_LENGTH));
+        assertEquals("mysize", settings.getSetting(LuceneEnvironment.JdbcStore.DDL.SIZE_NAME));
+    }
+
     public void testConvertersSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/converters.cfg.xml");

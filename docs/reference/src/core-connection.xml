@@ -206,13 +206,12 @@
           The jndi lookup environment, including the <literal>java.naming.factory.initial</literal> and <literal>java.naming.provider.url</literal> JNDI settings, can be configured in the other :) <literal>jndi</literal> element, directly under the <literal>compass</literal> element. Note, the <literal>username</literal> and <literal>password</literal> are used for the <classname>DataSource</classname>, and are completely optional.
         </para>
       </sect3>
-    </sect2>
 
-    <sect3 id="core-connection-jdbc-dsp-external">
-      <title>External</title>
-      
-      <para>
-        Compass can be configured to use an external data source using the <classname>ExteranlDataSourceProvider</classname>. It uses Java thread local to store the <classname>DataSource</classname> for later use by the data source provider. Setting the data source uses the static method <literal>setDataSource(DataSource dataSource)</literal> on <classname>ExteranlDataSourceProvider</classname>. Here is an example of how it can be configured:
+      <sect3 id="core-connection-jdbc-dsp-external">
+        <title>External</title>
+
+        <para>
+          Compass can be configured to use an external data source using the <classname>ExteranlDataSourceProvider</classname>. It uses Java thread local to store the <classname>DataSource</classname> for later use by the data source provider. Setting the data source uses the static method <literal>setDataSource(DataSource dataSource)</literal> on <classname>ExteranlDataSourceProvider</classname>. Here is an example of how it can be configured:
 <programlisting><![CDATA[<compass name="default">
   <connection>
       <jdbc>
@@ -223,11 +222,72 @@
   </connection>
 </compass>
 ]]></programlisting>
-      </para>
+        </para>
+        <para>
+           Note, the <literal>username</literal> and <literal>password</literal> are used for the <classname>DataSource</classname>, and are completely optional.˙
+        </para>
+      </sect3>
+    </sect2>
+    
+    <sect2 id="core-connection-jdbc-fe">
+      <title>File Entry Handler</title>
+      
       <para>
-         Note, the <literal>username</literal> and <literal>password</literal> are used for the <classname>DataSource</classname>, and are completely optional.
+        Configuring the Jdbc store with Compass also allows defining <classname>FileEntryHandler</classname> settings for different file entries in the database. FileEntryHandlers are explained in <xref linkend="jdbcdirectory"/> (and require some Lucene knowledge). The Lucene Jdbc Directory implementation already comes with sensible defaults, but they can be changed using Compass configuration.
       </para>
-    </sect3>
+      
+      <para>
+        One of the things that comes free with Compass is automatically using the more performant <classname>FetchPerTransactoinJdbcIndexInput</classname> if possible (based on the dialect). Special care need to be taken when using the mentioned index input, and it is done automatically by Compass.
+      </para>
+      
+      <para>
+        File entries configuration are associated with a name. The name can be either <literal>__default__</literal> which is used for all unmapped files, it can be the full name of the file stored, or the suffix of the file (the last 3 characters).
+      </para>
+      
+      <para>
+        Here is an example of the most common configuration of file entries, changing their buffer size for both index input (used for reading data) and index output (used for writing data):
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <jdbc>
+        <dataSourceProvider>
+          <external username="testusername" password="testpassword"/>
+        </dataSourceProvider>
+        
+        <fileEntries>
+            <fileEntry name="__default__">
+                <indexInput bufferSize="4096" />
+                <indexOutput bufferSize="4096" />
+            </fileEntry>
+        </fileEntries>
+      </jdbc>
+  </connection>
+</compass>
+]]></programlisting>
+      </para>
+    </sect2>
+    
+    <sect2 id="core-connection-jdbc-ddl">
+      <title>DDL</title>
+      
+      <para>
+        Compass by default can create the database schema, and has defaults for the column names, types, sizes and so on. The schema definition is configurable as well, here is an example of how to configure it:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <jdbc>
+        <dataSourceProvider>
+          <external username="testusername" password="testpassword"/>
+        </dataSourceProvider>
+
+        <ddl>
+            <nameColumn name="myname" length="70" />
+            <sizeColumn name="mysize" />
+        </ddl>
+      </jdbc>
+  </connection>
+</compass>
+]]></programlisting>
+      </para>
+    </sect2>
     
   </sect1>
   
