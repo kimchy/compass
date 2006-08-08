@@ -26,7 +26,6 @@ import org.apache.lucene.store.Directory;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneResource;
@@ -219,10 +218,6 @@ public class BatchInsertTransaction extends AbstractTransaction {
 
     public Resource[] find(Property[] ids, String alias) throws SearchEngineException {
         throw new SearchEngineException("Find operation not supported for batch insert transaction");
-    }
-
-    protected SearchEngineHighlighter doHighlighter(LuceneSearchEngineQuery query) throws SearchEngineException {
-        throw new SearchEngineException("Highlighter not supported for batch insert transaction");
     }
 
     public LuceneTermInfoVector getTermInfo(LuceneResource resource, String propertyName) {

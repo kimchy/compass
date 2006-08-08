@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.MultiSearcher;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneResource;
@@ -35,10 +35,8 @@ public class LuceneSearchEngineHits extends AbstractLuceneSearchEngineHits {
 
     private Hits hits;
 
-    private Searcher searcher;
-
     public LuceneSearchEngineHits(Hits hits, List indexHolders, LuceneSearchEngine searchEngine,
-                                  LuceneSearchEngineQuery query, Searcher searcher) {
+                                  LuceneSearchEngineQuery query, MultiSearcher searcher) {
         this.hits = hits;
         this.indexHolders = indexHolders;
         this.searchEngine = searchEngine;

@@ -19,7 +19,6 @@ package org.compass.core.lucene.engine.transaction;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.LuceneResource;
@@ -59,8 +58,6 @@ public interface LuceneSearchEngineTransaction {
 
     Resource[] find(Property[] ids, String alias) throws SearchEngineException;
     
-    SearchEngineHighlighter highlighter(SearchEngineQuery query) throws SearchEngineException;
-
     LuceneTermInfoVector[] getTermInfos(LuceneResource resource) throws SearchEngineException;
 
     LuceneTermInfoVector getTermInfo(LuceneResource resource, String propertyName) throws SearchEngineException;

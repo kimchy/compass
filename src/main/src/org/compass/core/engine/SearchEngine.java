@@ -244,8 +244,6 @@ public interface SearchEngine {
      */
     Resource get(Property[] ids, String alias) throws SearchEngineException;
 
-    SearchEngineHighlighter highlighter(SearchEngineQuery query) throws SearchEngineException;
-
     CompassTermInfoVector[] getTermInfos(Resource resource) throws SearchEngineException;
 
     CompassTermInfoVector getTermInfo(Resource resource, String propertyName) throws SearchEngineException;

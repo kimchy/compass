@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneDelegatedClose;
@@ -94,15 +93,6 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
     }
 
     protected abstract SearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException;
-
-    public SearchEngineHighlighter highlighter(SearchEngineQuery query) throws SearchEngineException {
-        SearchEngineHighlighter highlighter = doHighlighter((LuceneSearchEngineQuery) query);
-        delegateClose.add(highlighter);
-        return highlighter;
-    }
-
-    protected abstract SearchEngineHighlighter doHighlighter(LuceneSearchEngineQuery query)
-            throws SearchEngineException;
 
     public void create(final Resource resource) throws SearchEngineException {
         dirty = true;

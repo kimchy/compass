@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermFreqVector;
@@ -43,14 +42,12 @@ import org.apache.lucene.store.Directory;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.LuceneTermInfoVector;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.LuceneSearchEngineHighlighter;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSettings;
@@ -354,42 +351,6 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             if (indexHolder != null) {
                 indexHolder.release();
             }
-        }
-    }
-
-    protected SearchEngineHighlighter doHighlighter(LuceneSearchEngineQuery query) throws SearchEngineException {
-        // TODO Add caching of the generated index reader, and invalidate it when a dirty operation happens
-        MultiReader indexReader;
-        ArrayList indexHolders = new ArrayList();
-        try {
-            String[] subIndexes = indexManager.getStore().getSubIndexes();
-            ArrayList readers = new ArrayList();
-            for (int i = 0; i < subIndexes.length; i++) {
-                String subIndex = subIndexes[i];
-                TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
-                if (wrapper == null) {
-                    LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
-                            indexManager.openIndexHolderBySubIndex(subIndex);
-                    indexHolders.add(indexHolder);
-                    if (indexHolder.getIndexReader().numDocs() > 0) {
-                        readers.add(indexHolder.getIndexReader());
-                    }
-                } else {
-                    IndexReader[] transReaders = wrapper.transIndex.getFullIndexReaderAsArray();
-                    for (int j = 0; j < transReaders.length; j++) {
-                        readers.add(transReaders[j]);
-                    }
-                }
-            }
-            indexReader = new MultiReader((IndexReader[]) readers.toArray(new IndexReader[readers.size()]));
-            return new LuceneSearchEngineHighlighter(query, indexHolders, indexReader, searchEngine);
-        } catch (Exception e) {
-            for (Iterator it = indexHolders.iterator(); it.hasNext();) {
-                LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = (LuceneSearchEngineIndexManager.LuceneIndexHolder) it
-                        .next();
-                indexHolder.release();
-            }
-            throw new SearchEngineException("Failed to highlight query [" + query + "]", e);
         }
     }
 

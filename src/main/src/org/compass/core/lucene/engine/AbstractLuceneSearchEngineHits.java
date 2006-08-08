@@ -16,8 +16,14 @@
 
 package org.compass.core.lucene.engine;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiReader;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiSearcher;
+import org.apache.lucene.search.Searchable;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.engine.SearchEngineHits;
@@ -33,6 +39,8 @@ public abstract class AbstractLuceneSearchEngineHits implements SearchEngineHits
     protected LuceneSearchEngineQuery query;
     private SearchEngineHighlighter highlighter;
     protected boolean closed;
+    protected MultiSearcher searcher;
+    protected MultiReader reader;
 
     public AbstractLuceneSearchEngineHits() {
         closed = false;
@@ -40,7 +48,19 @@ public abstract class AbstractLuceneSearchEngineHits implements SearchEngineHits
 
     public SearchEngineHighlighter getHighlighter() throws SearchEngineException {
         if (highlighter == null) {
-            highlighter = searchEngine.highlighter(query);
+            Searchable[] searchables = searcher.getSearchables();
+            if (reader == null) {
+                IndexReader[] readers = new IndexReader[searchables.length];
+                for (int i = 0; i < searchables.length; i++) {
+                    readers[i] = ((IndexSearcher)searchables[i]).getIndexReader();
+                }
+                try {
+                    reader = new MultiReader(readers);
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to open readers for highlighting", e);
+                }
+            }
+            highlighter = new LuceneSearchEngineHighlighter(query, reader, searchEngine);
         }
         return highlighter.clear();
     }

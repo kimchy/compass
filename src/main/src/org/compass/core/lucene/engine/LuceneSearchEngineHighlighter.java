@@ -18,7 +18,6 @@ package org.compass.core.lucene.engine;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -39,7 +38,6 @@ import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterSettings;
-import org.compass.core.lucene.engine.manager.ScheduledLuceneSearchEngineIndexManager;
 
 /**
  * 
@@ -49,8 +47,6 @@ import org.compass.core.lucene.engine.manager.ScheduledLuceneSearchEngineIndexMa
 public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, LuceneDelegatedClose {
 
     private IndexReader indexReader;
-
-    private List indexHolders;
 
     private boolean closed;
 
@@ -72,9 +68,8 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
 
     private CompassHighlighter.TextTokenizer textTokenizer;
 
-    public LuceneSearchEngineHighlighter(LuceneSearchEngineQuery searchEngineQuery, List indexHolders,
+    public LuceneSearchEngineHighlighter(LuceneSearchEngineQuery searchEngineQuery,
                                          IndexReader indexReader, LuceneSearchEngine searchEngine) throws SearchEngineException {
-        this.indexHolders = indexHolders;
         this.indexReader = indexReader;
         this.highlighterManager = searchEngine.getSearchEngineFactory().getHighlighterManager();
         this.highlighterSettings = highlighterManager.getDefaultHighlighterSettings();
@@ -273,13 +268,5 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
             return;
         }
         closed = true;
-
-        if (indexHolders != null) {
-            for (int i = 0; i < indexHolders.size(); i++) {
-                ScheduledLuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
-                        (ScheduledLuceneSearchEngineIndexManager.LuceneIndexHolder) indexHolders.get(i);
-                indexHolder.release();
-            }
-        }
     }
 }

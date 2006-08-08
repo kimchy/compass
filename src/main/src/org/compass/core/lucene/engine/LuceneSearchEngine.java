@@ -29,7 +29,6 @@ import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineHighlighter;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
@@ -390,11 +389,6 @@ public class LuceneSearchEngine implements SearchEngine {
             log.debug("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
         }
         return hits;
-    }
-
-    public SearchEngineHighlighter highlighter(SearchEngineQuery query) throws SearchEngineException {
-        checkTransactionStarted();
-        return transaction.highlighter(query);
     }
 
     public CompassTermInfoVector[] getTermInfos(Resource resource) throws SearchEngineException {
