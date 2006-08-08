@@ -287,6 +287,10 @@
 </compass>
 ]]></programlisting>
       </para>
+      
+      <para>
+        Compass by default will drop the tables when deleting the index, and create them when creating the index. If performing schema based operations is not allowed, the <literal>disableSchemaOperations</literal> flag can be set to <literal>true</literal>. This will cause Compass not to perform any schema based operations.
+      </para>
     </sect2>
     
   </sect1>

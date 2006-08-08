@@ -1,196 +1,46 @@
 <chapter id="core-searchengine">
   <title>Search Engine</title>
 
-    <sect1 id="core-searchengine-introduction">
-      <title>Introduction</title>
+  <sect1 id="core-searchengine-introduction">
+    <title>Introduction</title>
+
+    <para>
+      Compass Core provides an abstraction layer on top of the wonderful <ulink url="http://lucene.apache.org">Lucene</ulink> Search Engine. Compass also provides several additional features on top of Lucene, like two phase transaction management, fast updates, and optimizers. When trying to explain how Compass works with the Search Engine, first we need to understand the Search Engine domain model.
+    </para>
+  </sect1>
+
+  <sect1 id="core-searchengine-AliasResourceProperty">
+    <title>Alias, Resource and Property</title>
+
+    <para>
+      <literal>Resource</literal> represents a collection of properties. You can think about it as a virtual document - a chunk of data, such as a web page, an email message, or a serialization of the Author object. A <literal>Resource</literal> is always associated with a single Alias and
+      several <literal>Resource</literal>s can have the same Alias. The alias acts as the connection between a <literal>Resource</literal> and its mapping definitions (OSEM/XSEM/RSEM). A <literal>Property</literal> is just a place holder for a name and value (both strings). A <literal>Property</literal> within a <literal>Resource</literal> represents some kind of meta-data that is associated with the
+      <literal>Resource</literal> like the author name. 
+    </para>
+
+    <para>
+      Every <literal>Resource</literal> is associated with one or more id properties. They are required for Compass to manage <literal>Resource</literal> loading based on ids and <literal>Resource</literal>
+      updates (a well known difficulty when using Lucene directly). Id properties are defined either explicitly in RSEM definitions or implicitly in OSEM/XSEM definitions.
+    </para>
+
+    <para>
+      For Lucene users, Compass <literal>Resource</literal> maps to Lucene <literal>Document</literal> and Compass <literal>Property</literal> maps to Lucene <literal>Field</literal>.
+    </para>
+
+    <sect2 id="core-searchengine-arp-using">
+      <title>Using Resource/Property</title>
 
       <para>
-        Compass::Core provides an abstraction layer on top of the wonderful <ulink url="http://lucene.apache.org">Lucene</ulink> Search Engine. Compass::Core also provides several additional features on top of Lucene, like two phase transaction management, fast updates, and optimizers. When trying to explain how Compass::Core works with the Search Engine, first we need to understand the Search Engine domain model.
-      </para>
-    </sect1>
-
-    <sect1 id="core-searchengine-AliasResourceProperty">
-      <title>Alias, Resource and Property</title>
-
-      <para>
-        <literal>Resource</literal> represents a collection of properties. You can think about it as a virtual document - a chunk of data, such as a web page, an email message, or a serialization of the Author object. A <literal>Resource</literal> is always associated with a single Alias and
-        several <literal>Resource</literal>s can have the same Alias. A <literal>Property</literal> is just a place holder for a name and value (both strings). A <literal>Property</literal> within a <literal>Resource </literal> represents some kind of meta-data that is associated with the
-        <literal>Resource</literal> like the author name. In data-base terms, you can think of an Alias as a table, the <literal>Resource</literal> as a row in the table and <literal>Property</literal> as the column (with a value). Note: a <literal>Resource</literal> can have several properties with the same name.
-      </para>
-
-      <para>
-        Every <literal>Resource</literal> is associated with one or more id properties. They are required for Compass::Core to manage <literal>Resource</literal> loading based on ids and <literal>Resource</literal>
-        updates (a well known difficulty when using Lucene directly). Id properties are defined either explicitly in the Resource Mapping definition or implicitly in the OSEM definition.
-      </para>
-
-      <para>
-        For Lucene users, Compass <literal>Resource</literal> maps to Lucene <literal>Document</literal> and Compass <literal>Property</literal> maps to Lucene <literal>Field</literal>.
-      </para>
-
-    </sect1>
-
-    <sect1 id="core-searchengine-CreatingResourceProperty">
-      <title>Creating Resource and Property</title>
-
-      <para>
-        In order to create a <literal>Resource</literal> and a <literal>Property</literal>, you use the <literal>CompassSession</literal> which acts as a factory. <literal>CompassSession</literal> provides several API's:
-
-        <itemizedlist>
-          <listitem>
-            <para>
-              <literal>createResource(String alias)</literal>: Creates a <literal>Resource</literal> with the specified alias.
-            </para>
-          </listitem>
-          <listitem>
-            <para>
-              <literal>createProperty(String name, String value, Property.Store store, Property.Index index)</literal>: Creates a <literal>Property</literal> with the specified name and value. As well as
-              the <literal>Property</literal> behavioural aspect within the Search Engine.
-            </para>
-          </listitem>
-          <listitem>
-            <para>
-              <literal>createProperty(String name, String value, Property.Store store, Property.Index index, Property.TermVector termVector)</literal>: Creates a <literal>Property</literal> with the specified name and value. As well as the <literal>Property</literal> behavioural aspect within the Search Engine.
-            </para>
-          </listitem>
-        </itemizedlist>
+        When working with RSEM, resources acts as your prime data model. They are used to construct searchable content, as well as manipulate it. When performing a search, resources be used to display the search results.
       </para>
 
       <para>
-        When creating a <literal>Property</literal>, you must specify the <literal>store</literal> and the <literal>index</literal> parameters.
+        Another important place where resources can be used, which is often ignored, is with OSEM/XSEM. When manipulating search content through the use of the application domain model (in case of OSEM), or through the use of xml data structures (in case of XSEM), resources are rarely used. They can be used when performing search operations. Based on your mapping definition, the semantic model could be accessed in a uniformed way through resources and properties.
       </para>
 
       <para>
-        Another option when creating <literal>Resource</literal> <literal>Property</literal> is to define resource mapping and within it a <literal>resource-id</literal> and <literal>resource-property</literal> mappings (please see the <link linkend="core-rsem">Resource Mapping Section</link>). When defining the mappings, Compass can be smart enough to guess the type, index, store, and other options using the mappings, allowing the usage of the simple <literal>addProeprty(String propertyName, Object value)</literal> API of <literal>Resource</literal> (even auto converting the Object to the correct value using Compass converter architecture).
+        Lets simplify this statement by using an example. If our application has two object types, Recipe and Ingredient, we can map both recipe title and ingredient title into the same semantic meta-data name, <literal>title</literal> (Resource Property name). This will allow us when searching to display the search results (hits) only on the Resource level, presenting the value of the property title from the list of resources returned.
       </para>
-
-      <para>
-        The following table specifies the available values for the <literal>store</literal> parameter:
-
-        <table>
-          <tgroup cols="2">
-            <colspec colname="c1" colwidth="3*" />
-            <colspec colname="c2" colwidth="5*" />
-            <thead>
-              <row>
-                <entry>Store</entry><entry>Description</entry>
-              </row>
-            </thead>
-            <tbody>
-              <row>
-                <entry><literal>Property.Store.NO</literal></entry>
-                <entry>Do not store the property value in the index (won't be able to retrieve it later on).</entry>
-              </row>
-              <row>
-                <entry><literal>Property.Store.YES</literal></entry>
-                <entry>Stores the original property value in the index.</entry>
-              </row>
-              <row>
-                <entry><literal>Property.Store.COMPRESS</literal></entry>
-                <entry>Stores the original property value in the index in a compressed form.</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table>
-
-      </para>
-
-      <para>
-        The following table specifies the available values for the <literal>index</literal> parameter:
-
-        <table>
-          <tgroup cols="2">
-            <colspec colname="c1" colwidth="3*" />
-            <colspec colname="c2" colwidth="5*" />
-            <thead>
-              <row>
-                <entry>Index</entry><entry>Description</entry>
-              </row>
-            </thead>
-            <tbody>
-              <row>
-                <entry><literal>Property.Index.NO</literal></entry>
-                <entry>Do not index the property value. This property can thus not be searched, but one can still access its contents provided it is stored.</entry>
-              </row>
-              <row>
-                <entry><literal>Property.Index.TOKENIZED</literal></entry>
-                <entry>Index the property value so it can be searched. An Analyzer will be used to tokenize and possibly further normalize the text before its terms will be stored in the index.</entry>
-              </row>
-              <row>
-                <entry><literal>Property.Index.UN_TOKENIZED</literal></entry>
-                <entry>Index the property value without using an Analyzer, so it can be searched. As no analyzer is used, the value will be stored as a single term (perfect for id like properties).</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table>
-
-      </para>
-
-      <para>
-        The following table specifies the available values for the <literal>termVector</literal> parameter:
-
-        <table>
-          <tgroup cols="2">
-            <colspec colname="c1" colwidth="5*" />
-            <colspec colname="c2" colwidth="3*" />
-            <thead>
-              <row>
-                <entry>Term Vector</entry><entry>Description</entry>
-              </row>
-            </thead>
-            <tbody>
-              <row>
-                <entry><literal>Property.TermVector.NO</literal></entry>
-                <entry>Do not store any term vector information (the default behavior).</entry>
-              </row>
-              <row>
-                <entry><literal>Property.TermVector.YES</literal></entry>
-                <entry>Store the term vectors of each document. A term vector is a list of the resources's terms and their number of occurences in that document.</entry>
-              </row>
-              <row>
-                <entry><literal>Property.TermVector.WITH_POSITIONS</literal></entry>
-                <entry>Store the term vector + Token offset information.</entry>
-              </row>
-              <row>
-                <entry><literal>Property.TermVector.WITH_OFFSETS</literal></entry>
-                <entry>Store the term vector + Token offset information.</entry>
-              </row>
-              <row>
-                <entry><literal>Property.TermVector.WITH_POSITIONS_OFFSETS</literal></entry>
-                <entry>Store the term vector + Token position and offset information.</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table>
-
-      </para>
-
-      <para>The following code shows how you can create a <literal>Resource</literal> with Compass::Core and save it.
-<programlisting><![CDATA[CompassSession session = compass.openSession();
-CompassTransaction tx = session.beginTransaction();
-Resource authorResource = session.createResource("author");
-Property authorIdProp = session.createProperty("id", "AUTHOR0812",
-     Property.Store.YES, Property.Index.UN_TOKENIZED);
-Property authorNameProp = session.createProperty("name",
-     "Jack London", Property.Store.YES, Property.Index.TOKENIZED);
-authorResource.addProperty(authorIdProp);
-authorResource.addProperty(authorNameProp);
-session.save(resource);
-tx.commit();
-]]></programlisting>
-      </para>
-
-    <sect2 id="core-searchengine-BoostingResourceProperty">
-      <title>Boosting Resource and Property</title>
-
-      <para>
-        Compass::Core allows you to set the boosting factor for <literal>Resource</literal> and <literal>Property</literal> (through Lucene boosting feature). Boosting is the process of making a <literal>Resource
-        </literal> or a <literal>Property</literal> more or less "important" than others.
-      </para>
-
-      <para>
-        Initially, <literal>Resource</literal> and <literal>Property</literal> have no boost (actually, a boost of 1.0). You can set the boost level on a <literal>Resource</literal> (which propagates to all the properties that have no boosting set) or on a specific <literal>Property</literal>. Higher values than 1.0 makes it more relevant and values lower than 1.0 make it less relevant.
-      </para>
-
     </sect2>
 
   </sect1>
@@ -199,45 +49,133 @@ tx.commit();
     <title>Analyzers</title>
 
     <para>
-      <literal>Analyzer</literal>s are components that pre-process input text. They are also used when searching (the search string has to be processed the same way that the indexed text was processed). Therefore, it is important to use the same <literal>Analyzer</literal> for both indexing and searching.
+      <literal>Analyzer</literal>s are components that pre-process input text. They are also used when searching (the search string has to be processed the same way that the indexed text was processed). Therefore, it is usually important to use the same <literal>Analyzer</literal> for both indexing and searching.
     </para>
 
     <para>
-      Compass::Core can be configured to have multiple analyzers, registered under different analyzer names. It has two internal analyzers: <literal>default</literal> and <literal>search</literal>, as defined in the <link linkend="core-configuration-searchengineanalyzers">Analyzers section</link> in the Configuration chapter.
-    </para>
+      <literal>Analyzer</literal> is a Lucene class (which qualifies to <literal>org.apache.lucene.analysis.Analyzer</literal> class). Lucene core itself comes with several <literal>Analyzer</literal>s and you can configure Compass to work with either one of them. If we take the following sentence: "The quick brown fox jumped over the lazy dogs", we can see how the different <literal>Analyzer</literal>s handle it:
+      
+<programlisting><![CDATA[
+whitespace (org.apache.lucene.analysis.WhitespaceAnalyzer):
+  [The] [quick] [brown] [fox] [jumped] [over] [the] [lazy] [dogs]
+  
+simple (org.apache.lucene.analysis.SimpleAnalyzer):
+  [the] [quick] [brown] [fox] [jumped] [over] [the] [lazy] [dogs]
+  
+stop (org.apache.lucene.analysis.StopAnalyzer):
+  [quick] [brown] [fox] [jumped] [over] [lazy] [dogs]
 
-    <para>
-      <literal>Analyzer</literal> is a Lucene class (which qualifies to <literal>org.apache.lucene.analysis.Analyzer</literal> class). Lucene core itself comes with several <literal>Analyzer</literal>s and you can configure Compass::Core to work with either one of them. If we take the following sentence: "The quick brown fox jumped over the lazy dogs", we can see how the different <literal>Analyzer</literal>s handle it:
-    </para>
+standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
+  [quick] [brown] [fox] [jumped] [over] [lazy] [dogs]
+]]></programlisting>
 
-    <para>
-      <literal>whitespace</literal> (<literal>org.apache.lucene.analysis.WhitespaceAnalyzer</literal>)
     </para>
+    
     <para>
-      [The] [quick] [brown] [fox] [jumped] [over] [the] [lazy] [dogs]
+      Lucene also comes with an extension library, holding many more analyzer implementations (including language specific analyzers). Compass can be configured to work with all of them as well.
     </para>
-    <para>
-      <literal>simple</literal> (<literal>org.apache.lucene.analysis.SimpleAnalyzer</literal>)
-    </para>
-    <para>
-      [the] [quick] [brown] [fox] [jumped] [over] [the] [lazy] [dogs]
-    </para>
-    <para>
-      <literal>stop</literal> (<literal>org.apache.lucene.analysis.StopAnalyzer</literal>)
-    </para>
-    <para>
-      [quick] [brown] [fox] [jumped] [over] [lazy] [dogs]
-    </para>
-    <para>
-      <literal>standard</literal> (<literal>org.apache.lucene.analysis.standard.StandardAnalyzer</literal>)
-    </para>
-    <para>
-      [quick] [brown] [fox] [jumped] [over] [lazy] [dogs]
-    </para>
-    <para>
-      <literal>Analyzer</literal>s have a list of stop words which they exclude while analyzing, you can control both the <literal>Analyzer</literal> and the stop words using Compass::Core configuration parameters.
-    </para>
+    
+    <sect2 id="core-searchengine-analyzers-config">
+      <title>Configuring Analyzers</title>
+      
+      <para>
+        A Compass instance acts as a registry of analyzers, with each analyzer bound to a lookup name. Two internal analyzer names within Compass are: <literal>deafult</literal> and <literal>search</literal>. <literal>default</literal> is the default analyzer that is used when no other analyzer is configured (configuration of using different analyzer is usually done in the mapping definition by referencing a different analyzer lookup name). <literal>search</literal> is the analyzer used on a search query string when no other analyzer is configured (configuring a different analyzer when executing a search based on a query string is done through the query builder API). By default, when nothing is configured, Compass will use Lucene standard analyzer as the <literal>default</literal> analyzer.
+      </para>
+      
+      <para>
+        The following is an example of configuring two analyzers, one that will replace the <literal>deafult</literal> analyzer, and another one registered against <literal>myAnalyzer</literal> (it will probably later be referenced from within the different mapping definitions).
+<programlisting><![CDATA[<compass name="default">
 
+    <connection>
+        <file path="target/test-index" />
+    </connection>
+
+    <searchEngine>
+        <analyzer name="deault" type="Snowball" snowballType="Lovins">
+            <stopWords>
+                <stopWord value="no" />
+            </stopWords>
+        </analyzer>
+        <analyzer name="myAnalyzer" type="Standard" />
+    </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+      
+      <para>
+        Compass also supports custom implementations of Lucene <classname>Analyzer</classname> class (note, the same goal might be acheived by implementing an analyzer filter, described later). If the implementation also implements <classname>CompassConfigurable</classname>, additional settings (parameteres) can be injected to it using the configuration file. Here is an example configuration that registeres a custom analyzer implementation that accepts a parameter named threshold:
+<programlisting><![CDATA[<compass name="default">
+
+    <connection>
+        <file path="target/test-index" />
+    </connection>
+
+    <searchEngine>
+        <analyzer name="deault" type="CustomAnalyzer" analyzerClass="eg.MyAnalyzer">
+          <setting name="threshold">5</setting>
+        </analyzer>
+    </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+    </sect2>
+    
+    <sect2 id="core-searchengine-analyzers-filter">
+      <title>Analyzer Filter</title>
+      
+      <para>
+        Filters are provided for simpler support for additional filtering (or enrichment) of analyzed streams, without the hassle of creating your own analyzer. Also, filters, can be shared across different analyzers, potentially having different analyzer types.
+      </para>
+      
+      <para>
+        A custom filter implementation need to implement Compass <classname>LuceneAnalyzerTokenFilterProvider</classname>, which single method creates a Lucene <classname>TokenFilter</classname>. Filteres are registered against a name as well, which can then be used in the analyzer configuration to reference them. The next example configured two analyzer filters, which are applied on to the <literal>default</literal> analyzer:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+      <analyzer name="deafult" type="Standard" filters="test1, test2" />
+      
+      <analyzerFilter name="test1" type="eg.AnalyzerTokenFilterProvider1">
+          <setting name="param1" value="value1" />
+      </analyzerFilter>
+      <analyzerFilter name="test2" type="eg.AnalyzerTokenFilterProvider2">
+          <setting name="paramX" value="valueY" />
+      </analyzerFilter>
+  </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+    </sect2>
+    
+    <sect2 id="core-searchengine-analyzers-synonym">
+      <title>Handling Synonyms</title>
+      
+      <para>
+        Since synonyms are a common requirement with a search application, Compass comes with a simple synonym analyzer filter: <classname>SynonymAnalyzerTokenFilterProvider</classname>. The implementation requires as a parameter (setting) an implementation of a <classname>SynonymLookupProvider</classname>, which can return all the synonyms for a given value. No implementation is provided, though one that goes to a public synonym database, or a file input structure is simple to implement. Here is an example of how to configure it:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+      <analyzer name="deafult" type="Standard" filters="synonymFilter" />
+      
+      <analyzerFilter name="synonymFilter" type="synonym">
+          <setting name="lookup" value="eg.MySynonymLookupProvider" />
+      </analyzerFilter>
+  </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+      
+      <para>
+        Note the fact that we did not set the fully qualified class name for the type, and used <literal>synonym</literal>. This is a simplification that comes with Compass (naturally, you can still use the fully qualified class name of the synonym token filter provider).
+      </para>
+    </sect2>
   </sect1>
 
   <sect1 id="core-searchengine-indexstructure">
