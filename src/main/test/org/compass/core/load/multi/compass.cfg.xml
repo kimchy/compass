@@ -50,6 +50,9 @@
                 </dataSourceProvider>
             </jdbc>
             -->
+            <!--
+            <directoryWrapperProvider name="sync-mem" type="org.compass.core.lucene.engine.store.wrapper.AsyncMemoryMirrorDirectoryWrapperProvider" />
+            -->
         </connection>
 
         <cache>

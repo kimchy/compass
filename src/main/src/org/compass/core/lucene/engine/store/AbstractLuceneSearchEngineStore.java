@@ -66,7 +66,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     private LuceneSettings luceneSettings;
 
-    private org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider[] directoryWrapperProviders;
+    private DirectoryWrapperProvider[] directoryWrapperProviders;
 
     // holds the directories cache per sub index
     private HashMap dirs = new HashMap();
@@ -121,9 +121,9 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                 CompassSettings dwSettings = (CompassSettings) entry.getValue();
                 String dwType = dwSettings.getSetting(LuceneEnvironment.DirectoryWrapper.TYPE);
                 if (dwType == null) {
-                    throw new ConfigurationException("Directory wrapper [" + dwName + "] has not type associated with it");
+                    throw new ConfigurationException("Directory wrapper [" + dwName + "] has no type associated with it");
                 }
-                org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider dw;
+                DirectoryWrapperProvider dw;
                 try {
                     dw = (DirectoryWrapperProvider) ClassUtils.forName(dwType).newInstance();
                 } catch (Exception e) {

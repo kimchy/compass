@@ -13,9 +13,9 @@
     <title>Alias, Resource and Property</title>
 
     <para>
-      <literal>Resource</literal> represents a collection of properties. You can think about it as a virtual document - a chunk of data, such as a web page, an email message, or a serialization of the Author object. A <literal>Resource</literal> is always associated with a single Alias and
+      <literal>Resource</literal> represents a collection of properties. You can think about it as a virtual document - a chunk of data, such as a web page, an e-mail message, or a serialization of the Author object. A <literal>Resource</literal> is always associated with a single Alias and
       several <literal>Resource</literal>s can have the same Alias. The alias acts as the connection between a <literal>Resource</literal> and its mapping definitions (OSEM/XSEM/RSEM). A <literal>Property</literal> is just a place holder for a name and value (both strings). A <literal>Property</literal> within a <literal>Resource</literal> represents some kind of meta-data that is associated with the
-      <literal>Resource</literal> like the author name. 
+      <literal>Resource</literal> like the author name.
     </para>
 
     <para>
@@ -54,14 +54,14 @@
 
     <para>
       <literal>Analyzer</literal> is a Lucene class (which qualifies to <literal>org.apache.lucene.analysis.Analyzer</literal> class). Lucene core itself comes with several <literal>Analyzer</literal>s and you can configure Compass to work with either one of them. If we take the following sentence: "The quick brown fox jumped over the lazy dogs", we can see how the different <literal>Analyzer</literal>s handle it:
-      
+
 <programlisting><![CDATA[
 whitespace (org.apache.lucene.analysis.WhitespaceAnalyzer):
   [The] [quick] [brown] [fox] [jumped] [over] [the] [lazy] [dogs]
-  
+
 simple (org.apache.lucene.analysis.SimpleAnalyzer):
   [the] [quick] [brown] [fox] [jumped] [over] [the] [lazy] [dogs]
-  
+
 stop (org.apache.lucene.analysis.StopAnalyzer):
   [quick] [brown] [fox] [jumped] [over] [lazy] [dogs]
 
@@ -70,20 +70,20 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 ]]></programlisting>
 
     </para>
-    
+
     <para>
       Lucene also comes with an extension library, holding many more analyzer implementations (including language specific analyzers). Compass can be configured to work with all of them as well.
     </para>
-    
+
     <sect2 id="core-searchengine-analyzers-config">
       <title>Configuring Analyzers</title>
-      
+
       <para>
-        A Compass instance acts as a registry of analyzers, with each analyzer bound to a lookup name. Two internal analyzer names within Compass are: <literal>deafult</literal> and <literal>search</literal>. <literal>default</literal> is the default analyzer that is used when no other analyzer is configured (configuration of using different analyzer is usually done in the mapping definition by referencing a different analyzer lookup name). <literal>search</literal> is the analyzer used on a search query string when no other analyzer is configured (configuring a different analyzer when executing a search based on a query string is done through the query builder API). By default, when nothing is configured, Compass will use Lucene standard analyzer as the <literal>default</literal> analyzer.
+        A Compass instance acts as a registry of analyzers, with each analyzer bound to a lookup name. Two internal analyzer names within Compass are: <literal>default</literal> and <literal>search</literal>. <literal>default</literal> is the default analyzer that is used when no other analyzer is configured (configuration of using different analyzer is usually done in the mapping definition by referencing a different analyzer lookup name). <literal>search</literal> is the analyzer used on a search query string when no other analyzer is configured (configuring a different analyzer when executing a search based on a query string is done through the query builder API). By default, when nothing is configured, Compass will use Lucene standard analyzer as the <literal>default</literal> analyzer.
       </para>
-      
+
       <para>
-        The following is an example of configuring two analyzers, one that will replace the <literal>deafult</literal> analyzer, and another one registered against <literal>myAnalyzer</literal> (it will probably later be referenced from within the different mapping definitions).
+        The following is an example of configuring two analyzers, one that will replace the <literal>default</literal> analyzer, and another one registered against <literal>myAnalyzer</literal> (it will probably later be referenced from within the different mapping definitions).
 <programlisting><![CDATA[<compass name="default">
 
     <connection>
@@ -101,9 +101,9 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 </compass>
 ]]></programlisting>
       </para>
-      
+
       <para>
-        Compass also supports custom implementations of Lucene <classname>Analyzer</classname> class (note, the same goal might be acheived by implementing an analyzer filter, described later). If the implementation also implements <classname>CompassConfigurable</classname>, additional settings (parameteres) can be injected to it using the configuration file. Here is an example configuration that registeres a custom analyzer implementation that accepts a parameter named threshold:
+        Compass also supports custom implementations of Lucene <classname>Analyzer</classname> class (note, the same goal might be achieved by implementing an analyzer filter, described later). If the implementation also implements <classname>CompassConfigurable</classname>, additional settings (parameters) can be injected to it using the configuration file. Here is an example configuration that registers a custom analyzer implementation that accepts a parameter named threshold:
 <programlisting><![CDATA[<compass name="default">
 
     <connection>
@@ -119,16 +119,16 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 ]]></programlisting>
       </para>
     </sect2>
-    
+
     <sect2 id="core-searchengine-analyzers-filter">
       <title>Analyzer Filter</title>
-      
+
       <para>
         Filters are provided for simpler support for additional filtering (or enrichment) of analyzed streams, without the hassle of creating your own analyzer. Also, filters, can be shared across different analyzers, potentially having different analyzer types.
       </para>
-      
+
       <para>
-        A custom filter implementation need to implement Compass <classname>LuceneAnalyzerTokenFilterProvider</classname>, which single method creates a Lucene <classname>TokenFilter</classname>. Filteres are registered against a name as well, which can then be used in the analyzer configuration to reference them. The next example configured two analyzer filters, which are applied on to the <literal>default</literal> analyzer:
+        A custom filter implementation need to implement Compass <classname>LuceneAnalyzerTokenFilterProvider</classname>, which single method creates a Lucene <classname>TokenFilter</classname>. Filters are registered against a name as well, which can then be used in the analyzer configuration to reference them. The next example configured two analyzer filters, which are applied on to the <literal>default</literal> analyzer:
 <programlisting><![CDATA[<compass name="default">
 
   <connection>
@@ -137,7 +137,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 
   <searchEngine>
       <analyzer name="deafult" type="Standard" filters="test1, test2" />
-      
+
       <analyzerFilter name="test1" type="eg.AnalyzerTokenFilterProvider1">
           <setting name="param1" value="value1" />
       </analyzerFilter>
@@ -149,10 +149,10 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 ]]></programlisting>
       </para>
     </sect2>
-    
+
     <sect2 id="core-searchengine-analyzers-synonym">
       <title>Handling Synonyms</title>
-      
+
       <para>
         Since synonyms are a common requirement with a search application, Compass comes with a simple synonym analyzer filter: <classname>SynonymAnalyzerTokenFilterProvider</classname>. The implementation requires as a parameter (setting) an implementation of a <classname>SynonymLookupProvider</classname>, which can return all the synonyms for a given value. No implementation is provided, though one that goes to a public synonym database, or a file input structure is simple to implement. Here is an example of how to configure it:
 <programlisting><![CDATA[<compass name="default">
@@ -163,7 +163,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 
   <searchEngine>
       <analyzer name="deafult" type="Standard" filters="synonymFilter" />
-      
+
       <analyzerFilter name="synonymFilter" type="synonym">
           <setting name="lookup" value="eg.MySynonymLookupProvider" />
       </analyzerFilter>
@@ -171,7 +171,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 </compass>
 ]]></programlisting>
       </para>
-      
+
       <para>
         Note the fact that we did not set the fully qualified class name for the type, and used <literal>synonym</literal>. This is a simplification that comes with Compass (naturally, you can still use the fully qualified class name of the synonym token filter provider).
       </para>

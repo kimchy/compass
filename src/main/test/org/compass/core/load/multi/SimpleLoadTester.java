@@ -29,8 +29,6 @@ import org.compass.core.config.CompassConfiguration;
  */
 public class SimpleLoadTester {
 
-    private static CompassTemplate template;
-
     private static Long id = new Long(0);
 
     private static final Object idLock = new Object();
@@ -51,11 +49,14 @@ public class SimpleLoadTester {
         private int writeFactor;
 
         private Long lastIdWritten;
+        
+        private CompassTemplate template;
 
-        public SimpleLoadTesterRunnable(long runId, long cycles, int writeFactor) {
+        public SimpleLoadTesterRunnable(CompassTemplate template, long runId, long cycles, int writeFactor) {
             this.cycles = cycles;
             this.runId = runId;
             this.writeFactor = writeFactor;
+            this.template = template;
         }
 
         private String failureStringPrefix(long cycle, Long id) {
@@ -122,6 +123,7 @@ public class SimpleLoadTester {
         int numberOfRuns = 5;
         long numberOfCycles = 200;
         int writeFactor = 10;
+        int numberOfCompassInstances = 1;
 
         CompassConfiguration conf = new CompassConfiguration();
         conf.configure("/org/compass/core/load/multi/compass.cfg.xml");
@@ -133,17 +135,18 @@ public class SimpleLoadTester {
         }
         conf.addClass(A.class);
 
-        Compass compass = conf.buildCompass();
-//        compass.getSearchEngineOptimizer().stop();
-//        compass.getSearchEngineIndexManager().stop();
-        compass.getSearchEngineIndexManager().deleteIndex();
-        compass.getSearchEngineIndexManager().createIndex();
+        CompassTemplate[] templates = new CompassTemplate[numberOfCompassInstances];
+        for (int i = 0; i < numberOfCompassInstances; i++) {
+            Compass compass = conf.buildCompass();
+            templates[i] = new CompassTemplate(compass);
+        }
 
-        template = new CompassTemplate(compass);
+        templates[0].getCompass().getSearchEngineIndexManager().deleteIndex();
+        templates[0].getCompass().getSearchEngineIndexManager().createIndex();
 
         Thread[] threads = new Thread[numberOfRuns];
         for (int i = 0; i < threads.length; i++) {
-            threads[i] = new Thread(new SimpleLoadTesterRunnable(i, numberOfCycles, writeFactor), "L" + i);
+            threads[i] = new Thread(new SimpleLoadTesterRunnable(templates[i % numberOfCompassInstances], i, numberOfCycles, writeFactor), "L" + i);
         }
 
         for (int i = 0; i < threads.length; i++) {
@@ -159,6 +162,20 @@ public class SimpleLoadTester {
         }
 
         // now check that everything is in the index
+        check(templates[0]);
+        
+        for (int i = 0; i < numberOfCompassInstances; i++) {
+            templates[i].getCompass().close();
+        }
+        
+        // now build a new one and check again
+        CompassTemplate template = new CompassTemplate(conf.buildCompass());
+        check(template);
+        template.getCompass().close();
+    }
+
+
+    private static void check(CompassTemplate template) {
         long time = System.currentTimeMillis();
         long limit = id.longValue();
         for (long i = 1; i < limit; i++) {
@@ -173,7 +190,5 @@ public class SimpleLoadTester {
             });
         }
         System.out.println("FINISHED CHECK [1-" + limit + "] TOOK [" + (System.currentTimeMillis() - time) + "]");
-
-        compass.close();
     }
 }
