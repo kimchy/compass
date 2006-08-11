@@ -22,6 +22,7 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassMappingBinding;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.basic.EnumConverter;
+import org.compass.core.converter.basic.StringBuilderConverter;
 
 /**
  * A specialized Compass configuration that can handle classes that have
@@ -44,5 +45,6 @@ public class CompassAnnotationsConfiguration extends CompassConfiguration {
 
     protected void registerExtraConverters(ConverterLookup converterLookup) {
         converterLookup.registerConverter("enum", new EnumConverter(), Enum.class);
+        converterLookup.registerConverter("stringbuilder", new StringBuilderConverter(), StringBuilder.class);
     }
 }
