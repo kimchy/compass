@@ -24,7 +24,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.engine.SearchEngineException;
 
 /**
- * Uses a has function based on has code computation of alias and ids,
+ * Uses a hash function based on hash code computation of alias and ids,
  * and using the modulo operation against the configured size.
  * <p/>
  * The sub index name is <code>prefix_(hashCode % size)</code>.

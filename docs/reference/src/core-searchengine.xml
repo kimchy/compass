@@ -13,14 +13,11 @@
     <title>Alias, Resource and Property</title>
 
     <para>
-      <literal>Resource</literal> represents a collection of properties. You can think about it as a virtual document - a chunk of data, such as a web page, an e-mail message, or a serialization of the Author object. A <literal>Resource</literal> is always associated with a single Alias and
-      several <literal>Resource</literal>s can have the same Alias. The alias acts as the connection between a <literal>Resource</literal> and its mapping definitions (OSEM/XSEM/RSEM). A <literal>Property</literal> is just a place holder for a name and value (both strings). A <literal>Property</literal> within a <literal>Resource</literal> represents some kind of meta-data that is associated with the
-      <literal>Resource</literal> like the author name.
+      <literal>Resource</literal> represents a collection of properties. You can think about it as a virtual document - a chunk of data, such as a web page, an e-mail message, or a serialization of the Author object. A <literal>Resource</literal> is always associated with a single Alias and several <literal>Resource</literal>s can have the same Alias. The alias acts as the connection between a <literal>Resource</literal> and its mapping definitions (OSEM/XSEM/RSEM). A <literal>Property</literal> is just a place holder for a name and value (both strings). A <literal>Property</literal> within a <literal>Resource</literal> represents some kind of meta-data that is associated with the <literal>Resource</literal> like the author name.
     </para>
 
     <para>
-      Every <literal>Resource</literal> is associated with one or more id properties. They are required for Compass to manage <literal>Resource</literal> loading based on ids and <literal>Resource</literal>
-      updates (a well known difficulty when using Lucene directly). Id properties are defined either explicitly in RSEM definitions or implicitly in OSEM/XSEM definitions.
+      Every <literal>Resource</literal> is associated with one or more id properties. They are required for Compass to manage <literal>Resource</literal> loading based on ids and <literal>Resource</literal> updates (a well known difficulty when using Lucene directly). Id properties are defined either explicitly in RSEM definitions or implicitly in OSEM/XSEM definitions.
     </para>
 
     <para>
@@ -267,6 +264,113 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       </mediaobject>
     </para>
     
+    <para>
+      In the above diagram A, B, C, and D represent aliases which in turn stands for the mapping definitions of the searchable content. A1, B2, and so on, are actual instances of the mentioned searchable content. The diagram shows the different options of mapping searchable content into different sub indexes.
+    </para>
+    
+    <sect2 id="core-searchengine-subindexhash-constant">
+      <title>Constant Sub Index Hashing</title>
+      
+      <para>
+        The simplest way to map aliases (stands for the mapping definitions of a searchable content) is by mapping all its searchable content instances into the same sub index. Defining how searchable content mapping to the search engine (OSEM/XSEM/RSEM) is done within the respectable mapping definitions. There are two ways to define a constant mapping to a sub index, the first one (which is simpler) is:
+<programlisting><![CDATA[<compass-core-mapping>
+  <[mapping] alias="test-alias" sub-index="test-subindex">
+    <!-- ... -->
+  </[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+      <para>
+        The mentioned <literal>[mapping]</literal> that is represented by the alias <literal>test-alias</literal> will map all its instances to <literal>test-subindex</literal>. Note, if <literal>sub-index</literal> is not defined, it will default to the <literal>alias</literal> value.
+      </para>
+      <para>
+        Another option, which probably will not be used to define constant sub index hashing, but shown here for completeness, is by specifying the constant implementation of <classname>SubIndexHash</classname> within the mapping definition (explained in details later in this section):
+<programlisting><![CDATA[<compass-core-mapping>
+  <[mapping] alias="test-alias">
+    <sub-index-hash type="org.compass.core.engine.subindex.ConstantSubIndexHash">
+        <setting name="subIndex" value="test-subindex" />
+    </sub-index-hash>
+    <!-- ... -->
+  </[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+      <para>
+        Here is an example of how three different aliases: A, B and C can be mapped using constant sub index hashing:
+      </para>
+      <para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/subindex-constant.png" format="PNG" align="center" />
+          </imageobject>
+          <caption>
+            <para>Modulo Sub Index Hashing</para>
+          </caption>
+        </mediaobject>
+      </para>
+    </sect2>
+    
+    <sect2 id="core-searchengine-subindexhash-modulo">
+      <title>Modulo Sub Index Hashing</title>
+      
+      <para>
+        Constant sub index hashing allows to map an alias (and all its searchable instances it represents) into the same sub index. The modulo sub index hashing allows for partitioning an alias into several sub indexes. The partitioning is done by hashing the alias value with all the string values of the searchable content ids, and then using the modulo operation against a specified size. It also allows setting a constant prefix for the generated sub index value. This is shown in the following diagram:
+      </para>
+      <para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/subindex-modulo1.png" format="PNG" align="center" />
+          </imageobject>
+          <caption>
+            <para>Modulo Sub Index Hashing</para>
+          </caption>
+        </mediaobject>
+      </para>
+      <para>
+        Here, A1, A2 and A3 represent different instances of alias A (let it be a mapped Java class in OSEM, a Resource in RSEM, or an XmlObject in XSEM), with a single id mapping with the value of 1, 2, and 3. A modulo hashing is configured with a prefix of <literal>test</literal>, and a size of 2. This resulted in the creation of 2 sub indexes, called <literal>test_0</literal> and <literal>test_1</literal>. Based on the hashing function (the alias String hash code and the different ids string hash code), instances of A will be directed to their respective sub index. Here is how A alias would be configured:
+<programlisting><![CDATA[<compass-core-mapping>
+  <[mapping] alias="A">
+    <sub-index-hash type="org.compass.core.engine.subindex.ModuloSubIndexHash">
+        <setting name="prefix" value="test" />
+        <setting name="size" value="2" />
+    </sub-index-hash>
+    <!-- ... -->
+  </[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+      <para>
+        Naturally, more than one mapping definition can map to the same sub indexes using the same modulo configuration:
+      </para>
+      <para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/subindex-modulo2.png" format="PNG" align="center" />
+          </imageobject>
+          <caption>
+            <para>Complex Modulo Sub Index Hashing</para>
+          </caption>
+        </mediaobject>
+      </para>
+    </sect2>
+    
+    <sect2 id="core-searchengine-subindexhash-custom">
+      <title>Custom Sub Index Hashing</title>
+      
+      <para>
+        <classname>ConstantSubIndexHash</classname> and <classname>ModuloSubIndexHash</classname> are implementation of Compass <classname>SubIndexHash</classname> interface that comes built in with Compass. Naturally, a custom implementation of the <classname>SubIndexHash</classname> interface can be configured in the mapping definition.
+      </para>
+      
+      <para>
+        An implementation of <classname>SubIndexHash</classname> must provide two operations. The first, <literal>getSubIndexes</literal>, must return all the possible sub indexes the sub index hash implementation can produce. The second, <literal>mapSubIndex(String alias, Property[] ids)</literal> uses the provided aliases and ids in order to compute the given sub index. If the sub index hash implementation also implements the <classname>CompassConfigurable</classname> interface, different settings can be injected to it. Here is an example of a mapping definition with custom sub index hash implementation:
+<programlisting><![CDATA[<compass-core-mapping>
+  <[mapping] alias="A">
+    <sub-index-hash type="eg.MySubIndexHash">
+        <setting name="param1" value="value1" />
+        <setting name="param2" value="value2" />
+    </sub-index-hash>
+    <!-- ... -->
+  </[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+    </sect2>
   </sect1>
 
   <sect1 id="core-searchengine-optimizers">
