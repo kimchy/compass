@@ -248,6 +248,26 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       </para>
     </sect2>
   </sect1>
+  
+  <sect1 id="core-searchengine-subindexhash">
+    <title>Sub Index Hashing</title>
+    
+    <para>
+      Searchable content is mapped to the search engine using Compass different mapping definitions (OSEM/XSEM/RSEM). Compass provides the ability to partition the searchable content into different sub indexes, as shown in the next diagram:
+    </para>
+    
+    <para>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/subindex-hash.png" format="PNG" align="center" />
+        </imageobject>
+        <caption>
+          <para>Sub Index Hashing</para>
+        </caption>
+      </mediaobject>
+    </para>
+    
+  </sect1>
 
   <sect1 id="core-searchengine-optimizers">
     <title>Optimizers</title>
