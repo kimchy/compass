@@ -16,12 +16,15 @@
 
 package org.compass.core.test.all;
 
+import org.apache.lucene.index.TermFreqVector;
+import org.apache.lucene.index.TermPositionVector;
+import org.apache.lucene.index.TermVectorOffsetInfo;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
-import org.compass.core.CompassTermInfoVector;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.lucene.util.LuceneHelper;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -30,7 +33,7 @@ import org.compass.core.test.AbstractTestCase;
 public class AllTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "all/All.cpm.xml" };
+        return new String[]{"all/All.cpm.xml"};
     }
 
     public void testAll() {
@@ -139,7 +142,7 @@ public class AllTests extends AbstractTestCase {
 
         result = session.find("cValue21");
         assertEquals(1, result.getLength());
-        
+
         tr.commit();
         session.close();
     }
@@ -156,17 +159,17 @@ public class AllTests extends AbstractTestCase {
         session.save("a5", a);
 
         Resource r = session.loadResource("a5", id);
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "all");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "all");
         assertNotNull(termInfoVector);
         try {
-            termInfoVector.getTermPositions(0);
+            int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
             fail();
         } catch (Exception e) {
 
         }
 
         try {
-            termInfoVector.getOffsets(0);
+            TermVectorOffsetInfo[] offsets = ((TermPositionVector) termInfoVector).getOffsets(0);
             fail();
         } catch (Exception e) {
 
@@ -188,12 +191,12 @@ public class AllTests extends AbstractTestCase {
         session.save("a6", a);
 
         Resource r = session.loadResource("a6", id);
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "all");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "all");
         assertNotNull(termInfoVector);
-        int[] positions = termInfoVector.getTermPositions(0);
+        int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNotNull(positions);
 
-        CompassTermInfoVector.OffsetInfo[] offsets = termInfoVector.getOffsets(0);
+        TermVectorOffsetInfo[] offsets = ((TermPositionVector) termInfoVector).getOffsets(0);
         assertNull(offsets);
 
         tr.commit();
@@ -212,12 +215,12 @@ public class AllTests extends AbstractTestCase {
         session.save("a7", a);
 
         Resource r = session.loadResource("a7", id);
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "all");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "all");
         assertNotNull(termInfoVector);
-        int[] positions = termInfoVector.getTermPositions(0);
+        int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNull(positions);
 
-        CompassTermInfoVector.OffsetInfo[] offsets = termInfoVector.getOffsets(0);
+        TermVectorOffsetInfo[] offsets = ((TermPositionVector) termInfoVector).getOffsets(0);
         assertNotNull(offsets);
 
         tr.commit();
@@ -236,12 +239,12 @@ public class AllTests extends AbstractTestCase {
         session.save("a8", a);
 
         Resource r = session.loadResource("a8", id);
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "all");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "all");
         assertNotNull(termInfoVector);
-        int[] positions = termInfoVector.getTermPositions(0);
+        int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNotNull(positions);
 
-        CompassTermInfoVector.OffsetInfo[] offsets = termInfoVector.getOffsets(0);
+        TermVectorOffsetInfo[] offsets = ((TermPositionVector) termInfoVector).getOffsets(0);
         assertNotNull(offsets);
 
         tr.commit();

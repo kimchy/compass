@@ -16,9 +16,6 @@
 
 package org.compass.core.test.property;
 
-import org.compass.core.*;
-import org.compass.core.test.AbstractTestCase;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +24,16 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import org.apache.lucene.index.TermFreqVector;
+import org.apache.lucene.index.TermPositionVector;
+import org.apache.lucene.index.TermVectorOffsetInfo;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
+import org.compass.core.Resource;
+import org.compass.core.lucene.util.LuceneHelper;
+import org.compass.core.test.AbstractTestCase;
 
 /**
  * @author kimchy
@@ -465,10 +472,10 @@ public class PropertyTests extends AbstractTestCase {
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(false, r.getProperty("mvalue1").isTermVectorStored());
 
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "mvalue1");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "mvalue1");
         assertNull(termInfoVector);
 
-        CompassTermInfoVector[] termInfoVectors = session.getTermInfos(r);
+        TermFreqVector[] termInfoVectors = LuceneHelper.getTermFreqVectors(session, r);
         assertNull(termInfoVectors);
 
         tr.commit();
@@ -494,8 +501,8 @@ public class PropertyTests extends AbstractTestCase {
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());
 
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "mvalue1");
-        assertEquals("mvalue1", termInfoVector.getProperty());
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "mvalue1");
+        assertEquals("mvalue1", termInfoVector.getField());
         String[] terms = termInfoVector.getTerms();
         assertEquals(3, terms.length);
         assertEquals("first", terms[0]);
@@ -506,20 +513,20 @@ public class PropertyTests extends AbstractTestCase {
         assertEquals(3, freqs.length);
 
         try {
-            termInfoVector.getTermPositions(0);
+            ((TermPositionVector) termInfoVector).getTermPositions(0);
             fail();
         } catch (Exception e) {
 
         }
 
         try {
-            termInfoVector.getOffsets(0);
+            ((TermPositionVector) termInfoVector).getOffsets(0);
             fail();
         } catch (Exception e) {
 
         }
 
-        CompassTermInfoVector[] termInfoVectors = session.getTermInfos(r);
+        TermFreqVector[] termInfoVectors = LuceneHelper.getTermFreqVectors(session, r);
         assertEquals(1, termInfoVectors.length);
 
         tr.commit();
@@ -545,8 +552,8 @@ public class PropertyTests extends AbstractTestCase {
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());
 
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "mvalue1");
-        assertEquals("mvalue1", termInfoVector.getProperty());
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "mvalue1");
+        assertEquals("mvalue1", termInfoVector.getField());
         String[] terms = termInfoVector.getTerms();
         assertEquals(3, terms.length);
         assertEquals("first", terms[0]);
@@ -556,14 +563,14 @@ public class PropertyTests extends AbstractTestCase {
         int[] freqs = termInfoVector.getTermFrequencies();
         assertEquals(3, freqs.length);
 
-        int[] positions = termInfoVector.getTermPositions(0);
+        int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNotNull(positions);
         assertEquals(1, positions.length);
 
-        CompassTermInfoVector.OffsetInfo[] offsets = termInfoVector.getOffsets(0);
+        TermVectorOffsetInfo[] offsets = ((TermPositionVector) termInfoVector).getOffsets(0);
         assertNull(offsets);
 
-        CompassTermInfoVector[] termInfoVectors = session.getTermInfos(r);
+        TermFreqVector[] termInfoVectors = LuceneHelper.getTermFreqVectors(session, r);
         assertEquals(1, termInfoVectors.length);
 
         tr.commit();
@@ -589,8 +596,8 @@ public class PropertyTests extends AbstractTestCase {
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());
 
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "mvalue1");
-        assertEquals("mvalue1", termInfoVector.getProperty());
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "mvalue1");
+        assertEquals("mvalue1", termInfoVector.getField());
         String[] terms = termInfoVector.getTerms();
         assertEquals(3, terms.length);
         assertEquals("first", terms[0]);
@@ -600,14 +607,14 @@ public class PropertyTests extends AbstractTestCase {
         int[] freqs = termInfoVector.getTermFrequencies();
         assertEquals(3, freqs.length);
 
-        int[] positions = termInfoVector.getTermPositions(0);
+        int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNull(positions);
 
-        CompassTermInfoVector.OffsetInfo[] offsets = termInfoVector.getOffsets(0);
+        TermVectorOffsetInfo[] offsets = ((TermPositionVector) termInfoVector).getOffsets(0);
         assertNotNull(offsets);
         assertEquals(1, offsets.length);
 
-        CompassTermInfoVector[] termInfoVectors = session.getTermInfos(r);
+        TermFreqVector[] termInfoVectors = LuceneHelper.getTermFreqVectors(session, r);
         assertEquals(1, termInfoVectors.length);
 
         tr.commit();
@@ -648,8 +655,8 @@ public class PropertyTests extends AbstractTestCase {
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());
 
-        CompassTermInfoVector termInfoVector = session.getTermInfo(r, "mvalue1");
-        assertEquals("mvalue1", termInfoVector.getProperty());
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "mvalue1");
+        assertEquals("mvalue1", termInfoVector.getField());
         String[] terms = termInfoVector.getTerms();
         assertEquals(3, terms.length);
         assertEquals("first", terms[0]);
@@ -659,15 +666,15 @@ public class PropertyTests extends AbstractTestCase {
         int[] freqs = termInfoVector.getTermFrequencies();
         assertEquals(3, freqs.length);
 
-        int[] positions = termInfoVector.getTermPositions(0);
+        int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNotNull(positions);
         assertEquals(1, positions.length);
 
-        CompassTermInfoVector.OffsetInfo[] offsets = termInfoVector.getOffsets(0);
+        TermVectorOffsetInfo[] offsets = ((TermPositionVector) termInfoVector).getOffsets(0);
         assertNotNull(offsets);
         assertEquals(1, offsets.length);
 
-        CompassTermInfoVector[] termInfoVectors = session.getTermInfos(r);
+        TermFreqVector[] termInfoVectors = LuceneHelper.getTermFreqVectors(session, r);
         assertEquals(1, termInfoVectors.length);
     }
 

@@ -22,8 +22,6 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineQuery;
-import org.compass.core.lucene.LuceneResource;
-import org.compass.core.lucene.LuceneTermInfoVector;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 
 /**
@@ -60,8 +58,4 @@ public interface LuceneSearchEngineTransaction {
     Resource[] find(Property[] ids, String alias) throws SearchEngineException;
 
     SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
-    
-    LuceneTermInfoVector[] getTermInfos(LuceneResource resource) throws SearchEngineException;
-
-    LuceneTermInfoVector getTermInfo(LuceneResource resource, String propertyName) throws SearchEngineException;
 }

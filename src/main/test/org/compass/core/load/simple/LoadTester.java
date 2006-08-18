@@ -28,6 +28,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.lucene.util.LuceneHelper;
 
 /**
  * @author kimchy
@@ -166,7 +167,7 @@ public class LoadTester {
             temp = System.currentTimeMillis();
             try {
                 Resource r = session.loadResource(A.class, new Long(1));
-                session.getTermInfos(r);
+                LuceneHelper.getTermFreqVectors(session, r);
                 termInfo[cycle] = System.currentTimeMillis() - temp;
             } catch (Exception e) {
                 termInfo[cycle] = -1;

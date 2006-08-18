@@ -21,7 +21,6 @@ import java.io.Reader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.document.Field;
-import org.compass.core.CompassTermInfoVector;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -38,7 +37,6 @@ import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneMultiResource;
 import org.compass.core.lucene.LuceneProperty;
-import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.transaction.BatchInsertTransaction;
@@ -395,16 +393,6 @@ public class LuceneSearchEngine implements SearchEngine {
     public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         checkTransactionStarted();
         return transaction.internalSearch(subIndexes, aliases);
-    }
-
-    public CompassTermInfoVector[] getTermInfos(Resource resource) throws SearchEngineException {
-        checkTransactionStarted();
-        return transaction.getTermInfos((LuceneResource) resource);
-    }
-
-    public CompassTermInfoVector getTermInfo(Resource resource, String propertyName) throws SearchEngineException {
-        checkTransactionStarted();
-        return transaction.getTermInfo((LuceneResource) resource, propertyName);
     }
 
     public LuceneSearchEngineFactory getSearchEngineFactory() {

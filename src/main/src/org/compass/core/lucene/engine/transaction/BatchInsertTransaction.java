@@ -29,8 +29,6 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.utils.ResourceHelper;
-import org.compass.core.lucene.LuceneResource;
-import org.compass.core.lucene.LuceneTermInfoVector;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -40,13 +38,13 @@ import org.compass.core.lucene.util.LuceneUtils;
  * Find and delete operations throws an exception. The transaction is very fast
  * when adding new resources, note that if a resource with the save id already
  * exists, we will have two resources with the same id.
- * <p>
+ * <p/>
  * The Batch Transaction support uses Lucene directly, and the Lucene settings
  * apply and affect greatly on the performance of the batch indexing. Among them
  * are the {@link org.compass.core.lucene.LuceneEnvironment.SearchEngineIndex#MAX_BUFFERED_DOCS},
  * {@link org.compass.core.lucene.LuceneEnvironment.SearchEngineIndex#MAX_MERGE_DOCS},
  * {@link org.compass.core.lucene.LuceneEnvironment.SearchEngineIndex#MERGE_FACTOR}.
- * 
+ *
  * @author kimchy
  */
 public class BatchInsertTransaction extends AbstractTransaction {
@@ -155,7 +153,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
             }
             if (e != null) {
                 if (e instanceof SearchEngineException) {
-                    throw (SearchEngineException) e;
+                    throw(SearchEngineException) e;
                 }
                 throw new SearchEngineException("Failed to close index writers", e);
             }
@@ -223,13 +221,5 @@ public class BatchInsertTransaction extends AbstractTransaction {
 
     protected SearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         throw new SearchEngineException("Internal search operation not supported for batch insert transaction");
-    }
-
-    public LuceneTermInfoVector getTermInfo(LuceneResource resource, String propertyName) {
-        throw new SearchEngineException("Term info not supported for batch insert transaction");
-    }
-
-    public LuceneTermInfoVector[] getTermInfos(LuceneResource resource) {
-        throw new SearchEngineException("Term info not supported for batch insert transaction");
     }
 }

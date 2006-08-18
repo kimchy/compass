@@ -18,10 +18,10 @@ package org.compass.core;
 
 import java.io.Reader;
 import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassTransaction.TransactionIsolation;
-import org.compass.core.engine.SearchEngineException;
 
 /**
  * Helper class that simplifies the Compass access code using the template
@@ -370,23 +370,6 @@ public class CompassTemplate implements CompassOperations {
 			public Object doInCompass(CompassSession session) throws CompassException {
 				session.save(alias, obj);
 				return null;
-			}
-		});
-	}
-
-	public CompassTermInfoVector getTermInfo(final Resource resource, final String propertyName)
-			throws SearchEngineException {
-		return (CompassTermInfoVector) execute(new CompassCallback() {
-			public Object doInCompass(CompassSession session) throws CompassException {
-				return session.getTermInfo(resource, propertyName);
-			}
-		});
-	}
-
-	public CompassTermInfoVector[] getTermInfos(final Resource resource) throws SearchEngineException {
-		return (CompassTermInfoVector[]) execute(new CompassCallback() {
-			public Object doInCompass(CompassSession session) throws CompassException {
-				return session.getTermInfos(resource);
 			}
 		});
 	}

@@ -18,7 +18,6 @@ package org.compass.core.engine;
 
 import java.io.Reader;
 
-import org.compass.core.CompassTermInfoVector;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -248,8 +247,4 @@ public interface SearchEngine {
      * Returns a search engine internal implementation.
      */
     SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
-
-    CompassTermInfoVector[] getTermInfos(Resource resource) throws SearchEngineException;
-
-    CompassTermInfoVector getTermInfo(Resource resource, String propertyName) throws SearchEngineException;
 }

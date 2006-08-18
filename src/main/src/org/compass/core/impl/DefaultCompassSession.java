@@ -19,19 +19,7 @@ package org.compass.core.impl;
 import java.io.Reader;
 import java.io.Serializable;
 
-import org.compass.core.CompassAnalyzerHelper;
-import org.compass.core.CompassException;
-import org.compass.core.CompassHits;
-import org.compass.core.CompassQuery;
-import org.compass.core.CompassQueryBuilder;
-import org.compass.core.CompassQueryFilterBuilder;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTermInfoVector;
-import org.compass.core.CompassTransaction;
-import org.compass.core.Property;
-import org.compass.core.Resource;
-import org.compass.core.spi.InternalCompass;
-import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.*;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.NullFirstLevelCache;
@@ -44,6 +32,8 @@ import org.compass.core.marshall.DefaultMarshallingStrategy;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingStrategy;
 import org.compass.core.metadata.CompassMetaData;
+import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.TransactionFactory;
 
 /**
@@ -299,14 +289,6 @@ public class DefaultCompassSession implements InternalCompassSession {
         for (int i = 0; i < hits.length(); i++) {
             delete(hits.resource(i));
         }
-    }
-
-    public CompassTermInfoVector getTermInfo(Resource resource, String propertyName) throws CompassException {
-        return searchEngine.getTermInfo(resource, propertyName);
-    }
-
-    public CompassTermInfoVector[] getTermInfos(Resource resource) throws CompassException {
-        return searchEngine.getTermInfos(resource);
     }
 
     public void evict(Object obj) {

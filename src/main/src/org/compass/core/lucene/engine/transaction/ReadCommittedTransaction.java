@@ -27,7 +27,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
-import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.index.TransIndex;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -45,8 +44,6 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.utils.ResourceHelper;
-import org.compass.core.lucene.LuceneResource;
-import org.compass.core.lucene.LuceneTermInfoVector;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
@@ -413,71 +410,6 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         }
         Hits hits = findByQuery(internalSearch.getSearcher(), query, qFilter);
         return new LuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
-    }
-
-    public LuceneTermInfoVector getTermInfo(LuceneResource resource, String propertyName) throws SearchEngineException {
-        if (resource.getDocNum() == -1) {
-            throw new SearchEngineException(
-                    "Resource is not associated with a Lucene document number, can not retrieve term info");
-        }
-        IndexReader indexReader;
-        LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = null;
-        try {
-            String subIndex = ResourceHelper.computeSubIndex(resource, mapping);
-            TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
-            if (wrapper == null) {
-                indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
-                indexReader = indexHolder.getIndexReader();
-            } else {
-                indexReader = wrapper.transIndex.getFullIndexReader();
-            }
-            TermFreqVector termFreqVector = indexReader.getTermFreqVector(resource.getDocNum(), propertyName);
-            if (termFreqVector == null) {
-                return null;
-            }
-            return new LuceneTermInfoVector(termFreqVector);
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to fetch term info for resource [" + resource + "] and property ["
-                    + propertyName + "]", e);
-        } finally {
-            if (indexHolder != null) {
-                indexHolder.release();
-            }
-        }
-    }
-
-    public LuceneTermInfoVector[] getTermInfos(LuceneResource resource) throws SearchEngineException {
-        if (resource.getDocNum() == -1) {
-            throw new SearchEngineException(
-                    "Resource is not associated with a Lucene document number, can not retrieve term info");
-        }
-        IndexReader indexReader;
-        LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = null;
-        try {
-            String subIndex = ResourceHelper.computeSubIndex(resource, mapping);
-            TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
-            if (wrapper == null) {
-                indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
-                indexReader = indexHolder.getIndexReader();
-            } else {
-                indexReader = wrapper.transIndex.getFullIndexReader();
-            }
-            TermFreqVector[] termFreqVectors = indexReader.getTermFreqVectors(resource.getDocNum());
-            if (termFreqVectors == null) {
-                return null;
-            }
-            LuceneTermInfoVector[] luceneTermInfoVectors = new LuceneTermInfoVector[termFreqVectors.length];
-            for (int i = 0; i < termFreqVectors.length; i++) {
-                luceneTermInfoVectors[i] = new LuceneTermInfoVector(termFreqVectors[i]);
-            }
-            return luceneTermInfoVectors;
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to fetch term info for resource [" + resource + "]", e);
-        } finally {
-            if (indexHolder != null) {
-                indexHolder.release();
-            }
-        }
     }
 
     private Hits findByIds(Searcher indexSearcher, String subIndex, String alias, Property ids[], Filter filter)

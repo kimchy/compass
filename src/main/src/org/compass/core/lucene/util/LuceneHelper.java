@@ -16,6 +16,10 @@
 
 package org.compass.core.lucene.util;
 
+import java.io.IOException;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
 import org.compass.core.Compass;
@@ -23,11 +27,15 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryFilter;
 import org.compass.core.CompassSession;
+import org.compass.core.Resource;
+import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryFilter;
+import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.impl.DefaultCompassHits;
 import org.compass.core.impl.DefaultCompassQuery;
 import org.compass.core.impl.DefaultCompassQueryFilter;
+import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
@@ -153,5 +161,54 @@ public abstract class LuceneHelper {
      */
     public static LuceneSearchEngineInternalSearch getLuceneInternalSearch(CompassSession session, String[] subIndexes, String[] aliases) {
         return (LuceneSearchEngineInternalSearch) ((InternalCompassSession) session).getSearchEngine().internalSearch(subIndexes, aliases);
+    }
+
+    /**
+     * Returns the actual Lucene {@link Document} that the {@link Resource} wraps.
+     *
+     * @param resource The resource to get the document from
+     * @return The Lucene document that resource wraps
+     */
+    public Document getDocument(Resource resource) {
+        return ((LuceneResource) resource).getDocument();
+    }
+
+    /**
+     * Returns Lucene {@link TermFreqVector} using the given Compass session and {@link Resource}.
+     *
+     * @param session  Compass session
+     * @param resource The resource to get the term freq vector for
+     * @return The term infos freq vector for the given resource
+     * @throws SearchEngineException
+     */
+    public static TermFreqVector[] getTermFreqVectors(CompassSession session, Resource resource)
+            throws SearchEngineException {
+        String subIndex = ResourceHelper.computeSubIndex(resource, ((InternalCompassSession) session).getMapping());
+        LuceneSearchEngineInternalSearch internalSearch = getLuceneInternalSearch(session, new String[]{subIndex}, null);
+        try {
+            return internalSearch.getReader().getTermFreqVectors(((LuceneResource) resource).getDocNum());
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to fetch term info for resource [" + resource + "]", e);
+        }
+    }
+
+    /**
+     * Returns Lucene {@link TermFreqVector} for the given property and resource, using the session.
+     *
+     * @param session      Compass session
+     * @param resource     The resource to get the term freq vector for
+     * @param propertyName Theh property name (Lucene field name) to get the term freq vector for
+     * @return Teh term info freq vector for the given resource and property
+     * @throws SearchEngineException
+     */
+    public static TermFreqVector getTermFreqVector(CompassSession session, Resource resource, String propertyName)
+            throws SearchEngineException {
+        String subIndex = ResourceHelper.computeSubIndex(resource, ((InternalCompassSession) session).getMapping());
+        LuceneSearchEngineInternalSearch internalSearch = getLuceneInternalSearch(session, new String[]{subIndex}, null);
+        try {
+            return internalSearch.getReader().getTermFreqVector(((LuceneResource) resource).getDocNum(), propertyName);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to fetch term info for resource [" + resource + "]", e);
+        }
     }
 }

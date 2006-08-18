@@ -4,6 +4,9 @@ COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log
 VERSION 1.1 M1 ()
 =============================
 
+1. Removed CompassTermInfo and CompassSession API supporting it, and added it to 
+   LuceneHelper. It now uses actual Lucene classes.
+
 
 VERSION 1.0.0 (July 23, 2006)
 =============================

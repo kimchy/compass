@@ -337,29 +337,6 @@ public interface CompassOperations {
     void save(String alias, Object obj) throws CompassException;
 
     /**
-     * Returns a list of term vectors for the specified resource.
-     * 
-     * @param resource
-     *            The resource for the term vectors.
-     * @return All the term vectors for the resource.
-     * @throws CompassException
-     */
-    CompassTermInfoVector[] getTermInfos(Resource resource) throws CompassException;
-
-    /**
-     * Returns the term vector associated with the resource, and the given
-     * property name.
-     * 
-     * @param resource
-     *            The resource for the term vector.
-     * @param propertyName
-     *            The property for the term vector.
-     * @return The term vector.
-     * @throws CompassException
-     */
-    CompassTermInfoVector getTermInfo(Resource resource, String propertyName) throws CompassException;
-
-    /**
      * Evicts the given object from the first level cache (transaction scoped
      * cache).
      * 
