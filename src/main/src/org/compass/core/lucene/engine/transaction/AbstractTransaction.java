@@ -22,6 +22,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
+import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneDelegatedClose;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
@@ -60,14 +61,14 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
     }
 
     public void begin() throws SearchEngineException {
-        closeHits();
+        closeDelegateClosed();
         doBegin();
     }
 
     protected abstract void doBegin() throws SearchEngineException;
 
     public void rollback() throws SearchEngineException {
-        closeHits();
+        closeDelegateClosed();
         doRollback();
     }
 
@@ -80,7 +81,7 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
     protected abstract void doPrepare() throws SearchEngineException;
 
     public void commit(boolean onePhase) throws SearchEngineException {
-        closeHits();
+        closeDelegateClosed();
         doCommit(onePhase);
     }
 
@@ -93,6 +94,15 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
     }
 
     protected abstract SearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException;
+
+    public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        SearchEngineInternalSearch internalSearch = doInternalSearch(subIndexes, aliases);
+        delegateClose.add(internalSearch);
+        return internalSearch;
+    }
+
+    protected abstract SearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases)
+            throws SearchEngineException;
 
     public void create(final Resource resource) throws SearchEngineException {
         dirty = true;
@@ -112,7 +122,7 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
         return dirty;
     }
 
-    protected void closeHits() throws SearchEngineException {
+    protected void closeDelegateClosed() throws SearchEngineException {
         for (int i = 0; i < delegateClose.size(); i++) {
             try {
                 ((LuceneDelegatedClose) delegateClose.get(i)).close();

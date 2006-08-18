@@ -30,6 +30,7 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
+import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
@@ -389,6 +390,11 @@ public class LuceneSearchEngine implements SearchEngine {
             log.debug("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
         }
         return hits;
+    }
+
+    public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        checkTransactionStarted();
+        return transaction.internalSearch(subIndexes, aliases);
     }
 
     public CompassTermInfoVector[] getTermInfos(Resource resource) throws SearchEngineException {

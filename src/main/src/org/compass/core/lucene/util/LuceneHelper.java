@@ -31,6 +31,7 @@ import org.compass.core.impl.DefaultCompassQueryFilter;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
@@ -106,19 +107,51 @@ public abstract class LuceneHelper {
 
     /**
      * Returns the underlying {@link LuceneSearchEngineHits} of the given {@link CompassHits}.
-     *
+     * <p/>
      * Used mainly to access the actual Lucene {@link org.apache.lucene.search.Hits}, or get
      * Lucene {@link org.apache.lucene.search.Explanation}.
      */
     public static LuceneSearchEngineHits getLuceneSearchEngineHits(CompassHits hits) {
         return (LuceneSearchEngineHits) ((DefaultCompassHits) hits).getSearchEngineHits();
     }
-    
+
     /**
      * Returns Compass own internal <code>LuceneAnalyzerManager</code>. Can be used
      * to access Lucene {@link org.apache.lucene.analysis.Analyzer} at runtime.
      */
     public static LuceneAnalyzerManager getLuceneAnalyzerManager(Compass compass) {
-        return ((LuceneSearchEngineFactory)((InternalCompass) compass).getSearchEngineFactory()).getAnalyzerManager();
+        return ((LuceneSearchEngineFactory) ((InternalCompass) compass).getSearchEngineFactory()).getAnalyzerManager();
+    }
+
+    /**
+     * Returns the given search engine "internals" used for search. For Lucene, returns
+     * {@link LuceneSearchEngineInternalSearch} which allows to access Lucene
+     * {@link org.apache.lucene.index.IndexReader} and {@link org.apache.lucene.search.Searcher}.
+     * <p/>
+     * The search intenrals will be ones that are executed against the whole index. In order to search on
+     * specific aliases or sub indexes, please use {@link #getLuceneInternalSearch(org.compass.core.CompassSession,String[],String[])} .
+     *
+     * @param session A compass session within a transaction
+     * @return Lucene search "internals"
+     */
+    public static LuceneSearchEngineInternalSearch getLuceneInternalSearch(CompassSession session) {
+        return (LuceneSearchEngineInternalSearch) ((InternalCompassSession) session).getSearchEngine().internalSearch(null, null);
+    }
+
+    /**
+     * Returns the given search engine "internals" used for search. For Lucene, returns
+     * {@link LuceneSearchEngineInternalSearch} which allows to access Lucene
+     * {@link org.apache.lucene.index.IndexReader} and {@link org.apache.lucene.search.Searcher}.
+     * <p/>
+     * The search can be narrowed down to specific sub indexes or aliases. A <code>null</code> value
+     * means all the sub indexes/aliases.
+     *
+     * @param session    A compass sessino within a transaction
+     * @param subIndexes A set of sub indexes to narrow down the index scope
+     * @param aliases    A set of aliases to narrow down the index scope
+     * @return Lucene search "internals"
+     */
+    public static LuceneSearchEngineInternalSearch getLuceneInternalSearch(CompassSession session, String[] subIndexes, String[] aliases) {
+        return (LuceneSearchEngineInternalSearch) ((InternalCompassSession) session).getSearchEngine().internalSearch(subIndexes, aliases);
     }
 }

@@ -18,11 +18,13 @@ package org.compass.core.lucene.engine;
 
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.engine.SearchEngineHighlighter;
+import org.compass.core.engine.SearchEngineHits;
 
 /**
  * @author kimchy
  */
-public class EmptyLuceneSearchEngineHits extends AbstractLuceneSearchEngineHits {
+public class EmptyLuceneSearchEngineHits implements SearchEngineHits {
 
     public Resource getResource(int n) throws SearchEngineException {
         throw new IndexOutOfBoundsException("No resource for hit [" + n + "], length is [0]");
@@ -30,6 +32,16 @@ public class EmptyLuceneSearchEngineHits extends AbstractLuceneSearchEngineHits 
 
     public int getLength() {
         return 0;
+    }
+
+
+    public SearchEngineHighlighter getHighlighter() throws SearchEngineException {
+        throw new IndexOutOfBoundsException("No highlighter for empty hits");
+    }
+
+
+    public void close() throws SearchEngineException {
+        // do nothing
     }
 
     public float score(int i) throws SearchEngineException {

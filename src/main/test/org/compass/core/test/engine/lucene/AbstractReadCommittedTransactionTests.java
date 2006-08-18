@@ -16,11 +16,16 @@
 
 package org.compass.core.test.engine.lucene;
 
+import java.util.ArrayList;
+
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermEnum;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
+import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 
 /**
  * @author kimchy
@@ -106,6 +111,41 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         assertEquals("475", hits.getResource(0).getProperty(PROPERTY_ID1).getStringValue());
         assertEquals("he's my special boy", hits.getResource(0).getProperty(PROPERTY_VAL1).getStringValue());
         searchEngine.commit(true);
+    }
+
+    public void testTermDocs() throws Exception {
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceNotExists(getSearchEngine());
+        // create an index with data and commit it
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
+
+        // start one index engine again, and perform reads
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+
+        LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) getSearchEngine().internalSearch(null, null);
+        TermEnum termEnum = internalSearch.getReader().terms(new Term(PROPERTY_VAL1, ""));
+        ArrayList tempList = new ArrayList();
+        while (PROPERTY_VAL1.equals(termEnum.term().field())) {
+            tempList.add(termEnum.term().text());
+
+            if (!termEnum.next()) {
+                break;
+            }
+        }
+        assertEquals(1, tempList.size());
+        assertEquals("val1value", tempList.get(0));
+
+        getSearchEngine().commit(true);
     }
 
     public void testConcurrentReads() throws Exception {

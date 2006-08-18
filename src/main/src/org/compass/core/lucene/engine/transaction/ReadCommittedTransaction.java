@@ -43,12 +43,14 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
+import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.LuceneTermInfoVector;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
@@ -354,15 +356,13 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         }
     }
 
-    protected SearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
-        // TODO Add caching of the generated index searcher, and invalidate it when a dirty operation happens
-        MultiSearcher indexSeracher;
+    protected SearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         ArrayList indexHolders = new ArrayList();
         try {
-            String[] subIndexes = indexManager.getStore().calcSubIndexes(query.getSubIndexes(), query.getAliases());
+            String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(subIndexes, aliases);
             ArrayList searchers = new ArrayList();
-            for (int i = 0; i < subIndexes.length; i++) {
-                String subIndex = subIndexes[i];
+            for (int i = 0; i < calcSubIndexes.length; i++) {
+                String subIndex = calcSubIndexes[i];
                 TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
                 if (wrapper == null) {
                     LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
@@ -379,31 +379,40 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 }
             }
             if (searchers.size() == 0) {
-                return new EmptyLuceneSearchEngineHits();
+                return new LuceneSearchEngineInternalSearch(null, null);
             }
-            indexSeracher = new MultiSearcher((Searcher[]) searchers.toArray(new Searcher[searchers.size()]));
-            Filter qFilter = null;
-            if (filter.hasDeletes()) {
-                if (query.getFilter() == null) {
-                    qFilter = filter;
-                } else {
-                    qFilter = new ChainedFilter(new Filter[]{filter, query.getFilter().getFilter()}, ChainedFilter.ChainedFilterType.AND);
-                }
-            } else {
-                if (query.getFilter() != null) {
-                    qFilter = query.getFilter().getFilter();
-                }
-            }
-            Hits hits = findByQuery(indexSeracher, query, qFilter);
-            return new LuceneSearchEngineHits(hits, indexHolders, searchEngine, query, indexSeracher);
+            MultiSearcher indexSeracher = new MultiSearcher((Searcher[]) searchers.toArray(new Searcher[searchers.size()]));
+            return new LuceneSearchEngineInternalSearch(indexSeracher, indexHolders);
         } catch (IOException e) {
             for (Iterator it = indexHolders.iterator(); it.hasNext();) {
                 LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
                         (LuceneSearchEngineIndexManager.LuceneIndexHolder) it.next();
                 indexHolder.release();
             }
-            throw new SearchEngineException("Failed to find query [" + query + "]", e);
+            throw new SearchEngineException("Failed to open Lucene reader/searcher", e);
         }
+    }
+
+    protected SearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
+        LuceneSearchEngineInternalSearch internalSearch =
+                (LuceneSearchEngineInternalSearch) internalSearch(query.getSubIndexes(), query.getAliases());
+        if (internalSearch.isEmpty()) {
+            return new EmptyLuceneSearchEngineHits();
+        }
+        Filter qFilter = null;
+        if (filter.hasDeletes()) {
+            if (query.getFilter() == null) {
+                qFilter = filter;
+            } else {
+                qFilter = new ChainedFilter(new Filter[]{filter, query.getFilter().getFilter()}, ChainedFilter.ChainedFilterType.AND);
+            }
+        } else {
+            if (query.getFilter() != null) {
+                qFilter = query.getFilter().getFilter();
+            }
+        }
+        Hits hits = findByQuery(internalSearch.getSearcher(), query, qFilter);
+        return new LuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
     }
 
     public LuceneTermInfoVector getTermInfo(LuceneResource resource, String propertyName) throws SearchEngineException {

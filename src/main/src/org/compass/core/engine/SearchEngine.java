@@ -19,9 +19,9 @@ package org.compass.core.engine;
 import java.io.Reader;
 
 import org.compass.core.CompassTermInfoVector;
+import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
@@ -243,6 +243,11 @@ public interface SearchEngine {
      * alias. Return null if it is not found.
      */
     Resource get(Property[] ids, String alias) throws SearchEngineException;
+
+    /**
+     * Returns a search engine internal implementation.
+     */
+    SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
 
     CompassTermInfoVector[] getTermInfos(Resource resource) throws SearchEngineException;
 

@@ -27,6 +27,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
+import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.LuceneTermInfoVector;
@@ -218,6 +219,10 @@ public class BatchInsertTransaction extends AbstractTransaction {
 
     public Resource[] find(Property[] ids, String alias) throws SearchEngineException {
         throw new SearchEngineException("Find operation not supported for batch insert transaction");
+    }
+
+    protected SearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        throw new SearchEngineException("Internal search operation not supported for batch insert transaction");
     }
 
     public LuceneTermInfoVector getTermInfo(LuceneResource resource, String propertyName) {

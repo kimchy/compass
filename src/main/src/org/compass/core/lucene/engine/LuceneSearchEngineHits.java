@@ -17,31 +17,38 @@
 package org.compass.core.lucene.engine;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.MultiSearcher;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.engine.SearchEngineHighlighter;
+import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.lucene.LuceneResource;
 
 /**
  * @author kimchy
  */
 
-public class LuceneSearchEngineHits extends AbstractLuceneSearchEngineHits {
+public class LuceneSearchEngineHits implements SearchEngineHits {
+
+    private LuceneSearchEngine searchEngine;
+
+    private LuceneSearchEngineQuery query;
+
+    private LuceneSearchEngineInternalSearch internalSearch;
+
+    private SearchEngineHighlighter highlighter;
 
     private Hits hits;
 
-    public LuceneSearchEngineHits(Hits hits, List indexHolders, LuceneSearchEngine searchEngine,
-                                  LuceneSearchEngineQuery query, MultiSearcher searcher) {
+    public LuceneSearchEngineHits(Hits hits, LuceneSearchEngine searchEngine,
+                                  LuceneSearchEngineQuery query, LuceneSearchEngineInternalSearch internalSearch) {
         this.hits = hits;
-        this.indexHolders = indexHolders;
         this.searchEngine = searchEngine;
         this.query = query;
-        this.searcher = searcher;
+        this.internalSearch = internalSearch;
     }
 
     public Resource getResource(int i) throws SearchEngineException {
@@ -69,12 +76,26 @@ public class LuceneSearchEngineHits extends AbstractLuceneSearchEngineHits {
         return this.hits;
     }
 
+    public SearchEngineHighlighter getHighlighter() throws SearchEngineException {
+        if (highlighter == null) {
+            highlighter = new LuceneSearchEngineHighlighter(query, internalSearch.getReader(), searchEngine);
+        }
+        return highlighter.clear();
+    }
+
     public Explanation explain(int i) throws SearchEngineException {
         try {
-            return searcher.explain(query.getQuery(), hits.id(i));
+            return internalSearch.getSearcher().explain(query.getQuery(), hits.id(i));
         } catch (IOException e) {
             throw new SearchEngineException("Failed to explain hit [" + i + "]", e);
         }
     }
 
+
+    public void close() throws SearchEngineException {
+        if (internalSearch != null) {
+            internalSearch.close();
+            internalSearch = null;
+        }
+    }
 }
