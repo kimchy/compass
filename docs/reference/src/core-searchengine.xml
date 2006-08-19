@@ -209,19 +209,28 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       Compass Search Engine abstraction provides support for transaction management on top of Lucene. The abstraction support common transaction levels: <literal>read_committed</literal> and <literal>serializable</literal>, as well as the special <literal>batch_insert</literal> one. Compass provides two phase commit support for the common transaction levels only.
     </para>
 
-    <sect2 id="Locking">
+    <sect2 id="core-searchengine-transaction-locking">
       <title>Locking</title>
 
       <para>
-        Compass utilizes Lucene inter and outer process locking mechanism and uses them to establish it's transaction locking. Note that the transaction locking is on the "sub-index" level (the sub index based index), which means that dirty operations only lock their respective sub-index index. So the more aliases / searchable content map to the same index (next section will explain how to do it), the more aliases / searchable content will be locked when performing dirty operations, yet the faster the searches will be. Lucene uses a special lock file to manage the inter and outer process locking which can be set in the Compass configuration. You can manage the transaction timeout and polling interval using Compass configuration.
+        Compass utilizes Lucene inter and outer process locking mechanism and uses them to establish it's transaction locking. Note that the transaction locking is on the "sub-index" level (the sub index based index), which means that dirty operations only lock their respective sub-index index. So, the more aliases / searchable content map to the same index (next section will explain how to do it - called sub index hashing), the more aliases / searchable content will be locked when performing dirty operations, yet the faster the searches will be. Lucene uses a special lock file to manage the inter and outer process locking which can be set in the Compass configuration. You can manage the transaction timeout and polling interval using Compass configuration.
       </para>
 
       <para>
-        A Compass transaction acquires a lock only when a dirty (i.e. <literal>create</literal>, <literal>save</literal> or <literal>delete</literal>) operation occurs, which makes "read only" transactions as fast as they should and can be.
+        A Compass transaction acquires a lock only when a dirty (i.e. <literal>create</literal>, <literal>save</literal> or <literal>delete</literal>) operation occurs, which makes "read only" transactions as fast as they should and can be. The following configuration file shows how to control the two main settings for locking, the locking timeout (which defaults to 10 seconds) and the locking polling interval (how often Compass will check and see if a lock is released or not) (defaults to 100 milli-seconds):
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <transaction lockTimeout="15" lockPollInterval="200" />
+</compass>
+]]></programlisting>
       </para>
     </sect2>
 
-    <sect2 id="read_committed">
+    <sect2 id="core-searchengine-transaction-read_committed">
       <title>read_committed</title>
 
       <para>
@@ -229,7 +238,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       </para>
     </sect2>
 
-    <sect2 id="serializable">
+    <sect2 id="core-searchengine-transaction-serializable">
       <title>serializable</title>
 
       <para>
@@ -237,7 +246,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       </para>
     </sect2>
 
-    <sect2 id="batch_insert">
+    <sect2 id="core-searchengine-transaction-batch_insert">
       <title>batch_insert</title>
 
       <para>
@@ -377,56 +386,122 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
     <title>Optimizers</title>
 
     <para>
-      As mentioned in the <literal>read_committed</literal> section, every dirty transaction that is committed successfully creates another segment in the respective index. The more segments the index has, the slower the fetching operations take. That's why it is important to keep the index optimized and with a controlled number of segments. We do this by merging small segments into larger segments.
+      As mentioned in the <literal>read_committed</literal> section, every dirty transaction that is committed successfully creates another segment in the respective sub index. The more segments the index has, the slower the fetching operations take. That's why it is important to keep the index optimized and with a controlled number of segments. We do this by merging small segments into larger segments.
     </para>
-
+    
     <para>
-      In order to solve the problem, Compass::Core has a <literal>SearchEngineOptimizer</literal> which is responsible for keeping the number of segments at bay. When <literal>Compass</literal> is built using
-      <literal>CompassConfiguration</literal>, the <literal>SearchEngineOptimizer</literal> is started and when the <literal>Compass</literal> is closed, the <literal>SearchEngineOptimizer</literal> is
-      stopped.
+      In order to solve the problem, Compass has a <classname>SearchEngineOptimizer</classname> which is responsible for keeping the number of segments at bay. When <classname>Compass</classname> is built using <classname>CompassConfiguration</classname>, the <classname>SearchEngineOptimizer</classname> is started and when <classname>Compass</classname> is closed, the <classname>SearchEngineOptimizer</classname> is stopped.
+    </para>
+    
+    <para>
+      The optimization process works on a sub index level, performing the optimization for each one. During the optimization process, optimizers will lock the sub index for dirty operations. This causes a tradeoff between having an optimized index, and spending less time on the optimization process in order to allow for other dirty operations.
     </para>
 
-    <sect2 id="ScheduledOptimizers">
+    <sect2 id="core-searchengine-optimizers-scheduledOptimizers">
       <title>Scheduled Optimizers</title>
       <para>
-        Compass::Core provides support for scheduled optimizers. The scheduled optimizers uses Java <literal>Timer</literal> to control it's execution. <literal>SearchEngineOptimizer</literal> starts and stops the
-        timer when it starts and stops. There are several settings parameters that can be set to control the scheduling.
-      </para>
+        Each optimizer in Compass can be wrapped to b executed in a scheduled manner. The default behavior within Compass is to schedule the configured optimizer (unless it is the null optimizer). Here is a sample configuration file that controls the scheduling of an optimizer:
+<programlisting><![CDATA[<compass name="default">
 
-      <para>
-        Note: each optimizer that Compass provides can be scheduled.
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+  	<optimizer scheduleInterval="90" schedule="true" />
+  </searchEngine>
+</compass>
+]]></programlisting>
       </para>
 
     </sect2>
 
-    <sect2 id="AggressiveOptimizer">
+    <sect2 id="core-searchengine-optimizers-aggressiveOptimizer">
       <title>Aggressive Optimizer</title>
 
       <para>
-        The <literal>AggressiveOptimizer</literal> uses Lucene optimization feature to optimize the index. Lucene optimization merges all the segments into one segment. You can set the limit of the number of segments, after which the index is considered to need optimization (the aggressive optimizer merge factor).
+        The <classname>AggressiveOptimizer</classname> uses Lucene optimization feature to optimize the index. Lucene optimization merges all the segments into one segment. You can set the limit of the number of segments, after which the index is considered to need optimization (the aggressive optimizer merge factor).
+      </para>
+      
+      <para>
+        Since this optimizer causes all the segments in the index to be optimized into a single segment, the optimization process might take a long time to happen. This means that for large indexes, the optimizer will block other dirty operations for a long time in order to perform the index optimization. It also means that the index will be fully optimized after it, which means that search operations will execute faster. For most cases, the <classname>AdaptiveOptimizer</classname> should be the one used.
       </para>
     </sect2>
 
-    <sect2 id="AdaptiveOptimizer">
+    <sect2 id="core-searchengine-optimizers-adaptiveOptimizer">
       <title>Adaptive Optimizer</title>
 
       <para>
-        The <literal>AdaptiveOptimizer</literal> uses optimize the segments while trying to manage the optimization time at bay. As an example, when we have a large segment in our index (for example, after we batched indexed the data), and we perform several interactive transactions, the aggressive optimizer will than merge all the segments together, while the adaptive optimizer will only merge the new small segments. You can set the limit of the number of segments, after which the index is considered to need optimization (the adaptive optimizer merge factor).
+        The <classname>AdaptiveOptimizer</classname> optimizes the segments while trying to keep the optimization time at bay. As an example, when we have a large segment in our index (for example, after we batched indexed the data), and we perform several interactive transactions, the aggressive optimizer will than merge all the segments together, while the adaptive optimizer will only merge the new small segments. You can set the limit of the number of segments, after which the index is considered to need optimization (the adaptive optimizer merge factor).
       </para>
 
     </sect2>
 
-    <sect2 id="NullOptimizer">
+    <sect2 id="core-searchengine-optimizers-nullOptimizer">
       <title>Null Optimizer</title>
 
       <para>
-        Compass::Core also comes with a <literal>NullOptimizer</literal>, which performs no optimizations. It is mainly there if the hosting application developed it's own optimization which is maintained by other means than the <literal>SearchEngineOptimizer</literal>. It also makes sense to use it when configuring a <literal>Compass</literal> instance with a <literal>batch_insert</literal> transaction.
+        Compass also comes with a <classname>NullOptimizer</classname>, which performs no optimizations. It is mainly there if the hosting application developed it's own optimization which is maintained by other means than the <classname>SearchEngineOptimizer</classname>. It also makes sense to use it when configuring a <classname>Compass</classname> instance with a <literal>batch_insert</literal> transaction. It can also be used when the index was built offline and has been fully optimized, and later it is only used for search/read operations.
       </para>
 
+    </sect2>
+  </sect1>
+  
+  <sect1 id="core-searchengine-directlucene">
+    <title>Direct Lucene</title>
+    
+    <para>
+      Compass provides a helpful abstraction layer on top of Lucene, but it also acknowledges that there are cases where direct Lucene access, both in terms of API and constructs, is required. Most of the direct Lucene access is done using the <classname>LuceneHelper</classname> class. The next sections will describe its main features, for a complete list, please consult its javadoc.
+    </para>
+    
+    <sect2 id="core-searchengine-dl-wrapper">
+      <title>Wrappers</title>
       <para>
-        Note that when using the <literal>NullOptimizer</literal> it makes no sense to use the scheduling feature, so remember to set the <literal>compass.engine.optimizer.schedule</literal> to <literal>false</literal>.
+        Compass wraps some of Lucene classes, like <classname>Query</classname> and <classname>Filter</classname>. There are cases where a Compass wrapper will need to be created out of an actual Lucene class, or an actual Lucene class need to be accessed out of a wrapper.
+      </para>
+      <para>
+        Here is an example for wrapping the a custom implementation of a Lucene <classname>Query</classname> with a <classname>CompassQuery</classname>:
+<programlisting><![CDATA[CompassSession session = // obtain a compass session
+Query myQ = new MyQuery(param1, param2);
+CompassQuery myCQ = LuceneHelper.createCompassQuery(session, myQ);
+CompassHits hits = myCQ.hits();
+]]></programlisting>
+      </para>
+      <para>
+        The next sample shows how to get Lucene <classname>Explanation</classname>, which is useful to understand how a query works and executes:
+<programlisting><![CDATA[CompassSession session = // obtain a compass session
+CompassHits hits = session.find("london");
+for (int i = 0; i < hits.length(); i++) {
+  Explanation exp = LuceneHelper.getLuceneSearchEngineHits(hits).explain(i);
+  System.out.println(exp.toString());
+}
+]]></programlisting>
       </para>
     </sect2>
+    
+    <sect2 id="core-searchengine-dl-searcher">
+      <title>Searcher And IndexReader</title>
+      <para>
+        When performing read operations against the index, most of the time Compass abstraction layer is enough. Sometimes, direct access to Lucene own <classname>IndexReader</classname> and <classname>Searcher</classname> are required. Here is an example of using the reader to get all the available terms for the category property name (Note, this is a prime candidate for future inclusion as part of Compass API):
+<programlisting><![CDATA[CompassSession session = // obtain a compass session
+LuceneSearchEngineInternalSearch internalSearch = LuceneHelper.getLuceneInternalSearch(session);
+TermEnum termEnum = internalSearch.getReader().terms(new Term("category", ""));
+try {
+  ArrayList tempList = new ArrayList();
+  while ("category".equals(termEnum.term().field())) {
+    tempList.add(termEnum.term().text());
+
+    if (!termEnum.next()) {
+        break;
+    }
+  }
+} finally {
+  termEnum.close();
+}  
+]]></programlisting>
+      </para>
+    </sect2>
+    
   </sect1>
 </chapter>
 

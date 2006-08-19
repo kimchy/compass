@@ -33,6 +33,16 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testLocking() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/locking.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals("15", settings.getSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT));
+        assertEquals("200", settings.getSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL));
+    }
+
     public void testLockDir() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/lock-dir.cfg.xml");

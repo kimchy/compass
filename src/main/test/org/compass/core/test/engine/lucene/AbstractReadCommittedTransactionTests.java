@@ -134,16 +134,20 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
 
         LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) getSearchEngine().internalSearch(null, null);
         TermEnum termEnum = internalSearch.getReader().terms(new Term(PROPERTY_VAL1, ""));
-        ArrayList tempList = new ArrayList();
-        while (PROPERTY_VAL1.equals(termEnum.term().field())) {
-            tempList.add(termEnum.term().text());
+        try {
+            ArrayList tempList = new ArrayList();
+            while (PROPERTY_VAL1.equals(termEnum.term().field())) {
+                tempList.add(termEnum.term().text());
 
-            if (!termEnum.next()) {
-                break;
+                if (!termEnum.next()) {
+                    break;
+                }
             }
+            assertEquals(1, tempList.size());
+            assertEquals("val1value", tempList.get(0));
+        } finally {
+            termEnum.close();
         }
-        assertEquals(1, tempList.size());
-        assertEquals("val1value", tempList.get(0));
 
         getSearchEngine().commit(true);
     }
