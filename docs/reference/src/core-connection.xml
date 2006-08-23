@@ -295,4 +295,89 @@
     
   </sect1>
   
+  <sect1 id="core-connection-directoryWrapper">
+    <title>Lucene Directory Wrapper</title>
+    
+    <para>
+      All the different connection options end up as an instance of a Lucene <classname>Directory</classname> per sub index. Compass provides the ability to wrap the actual <classname>Directory</classname> (think of it as a <classname>Directory</classname> aspect). In order to configure a wrapper, <classname>DirectoryWrapperProvider</classname> implementation must be provided. The <classname>DirectoryWrapperProvider</classname> implementation must implement <literal>Directory wrap(String subIndex, Directory dir)</literal>, which accepts the actual directory and the sub index it is associated with, and return a wrapped <classname>Directory</classname> implementation.
+    </para>
+    
+    <para>
+      Compass comes with several built in directory wrappers:
+    </para>
+    
+    <sect2 id="core-connection-dw-syncmemorymirror">
+      <title>SyncMemoryMirrorDirectoryWrapperProvider</title>
+      
+      <para>
+        Wraps the given Lucene directory with <classname>SyncMemoryMirrorDirectoryWrapper</classname> (which is also provided by Compass). The wrapper wraps the directory with an in memory directory which mirrors it synchronously.
+      </para>
+      
+      <para>
+        The original directory is read into memory when the wrapper is constructed. All read related operations are performed against the in memory directory. All write related operations are performed both against the in memory directory and the original directory. Locking is performed using the in memory directory.
+      </para>
+      
+      <para>
+        The wrapper will allow for the performance gains that comes with an in memory index (for read/search operations), while still maintaining a synchronized actual directory which usually uses a more persistent store than memory (i.e. file system).
+      </para>
+      
+      <para>
+        This wrapper will only work in cases when either the index is read only (i.e. only search operations are performed against it), or when there is a single instance which updates the directory.
+      </para>
+      
+      <para>
+        Here is an example of how to configure a directory wrapper:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+    <file path="target/test-index"/>
+    <directoryWrapperProvider name="test"
+      type="org.compass.core.lucene.engine.store.wrapper.SyncMemoryMirrorDirectoryWrapperProvider">
+    </directoryWrapperProvider>
+  </connection>
+</compass>
+]]></programlisting>
+      </para>
+    </sect2>  
+    
+    <sect2 id="core-connection-dw-asyncmemorymirror">
+      <title>AsyncMemoryMirrorDirectoryWrapperProvider</title>
+      
+      <para>
+        Wraps the given Lucene directory with <classname>AsyncMemoryMirrorDirectoryWrapper</classname> (which is also provided by Compass). The wrapper wraps the directory with an in memory directory which mirrors it asynchronously.
+      </para>
+      
+      <para>
+        The original directory is read into memory when the wrapper is constructed. All read related operations are performed against the in memory directory. All write related operations are performed against the in memory directory and are scheduled to be performed against the original directory (in a separate thread). Locking is performed using the in memory directory.
+      </para>
+      
+      <para>
+        The wrapper will allow for the performance gains that comes with an in memory index (for read/search operations), while still maintaining an asynchronous actual directory which usually uses a more persistent store than memory (i.e. file system).
+      </para>
+      
+      <para>
+        This wrapper will only work in cases when either the index is read only (i.e. only search operations are performed against it), or when there is a single instance which updates the directory.
+      </para>
+      
+      <para>
+        Here is an example of how to configure a directory wrapper:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+    <file path="target/test-index"/>
+    <directoryWrapperProvider name="test"
+      type="org.compass.core.lucene.engine.store.wrapper.AsyncMemoryMirrorDirectoryWrapperProvider">
+      <setting name="awaitTermination">10</setting>
+      <setting name="sharedThread">true</setting>
+    </directoryWrapperProvider>
+  </connection>
+</compass>
+]]></programlisting>
+      </para>
+      
+      <para>
+        <literal>awaitTermination</literal> controls how long the wrapper will wait for the async write tasks to finish. When closing Compass, there might be still async tasks pending to be written to the actual directory, and the setting control how long (in seconds) Compass will wait for tasks to be executed against the actual directory. <literal>sharedThread</literal> set to <literal>false</literal> controls if each sub index will have its own thread to perform pending "write" operations. If it is set to <literal>true</literal>, a single thread will be shared among all the sub indexes.
+      </para>  
+      
+    </sect2>
+  </sect1>
+  
 </chapter>

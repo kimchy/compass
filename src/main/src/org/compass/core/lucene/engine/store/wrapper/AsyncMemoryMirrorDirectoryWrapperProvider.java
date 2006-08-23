@@ -29,16 +29,26 @@ import org.compass.core.util.backport.java.util.concurrent.Executors;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
+ * Wraps a Lucene {@link Directory} with {@link AsyncMemoryMirrorDirectoryWrapper}.
+ *
  * @author kimchy
+ * @see AsyncMemoryMirrorDirectoryWrapper
  */
 public class AsyncMemoryMirrorDirectoryWrapperProvider implements DirectoryWrapperProvider, CompassConfigurable {
 
     private long awaitTermination;
-    
+
     private boolean sharedThread;
-    
+
     private ExecutorService executorService;
-    
+
+    /**
+     * Configures {@link AsyncMemoryMirrorDirectoryWrapper}.
+     * <p/>
+     * <code>awaitTermination</code> is the first setting, and defaults to 5 seconds.
+     * <code>sharedThread</code> causes all the differnet async wrappers (wrapping
+     * the {@link Directory}) to share the same thread (default to <code>true</code>).
+     */
     public void configure(CompassSettings settings) throws CompassException {
         awaitTermination = settings.getSettingAsLong("awaitTermination", 5);
         sharedThread = settings.getSettingAsBoolean("sharedThread", true);
@@ -46,7 +56,7 @@ public class AsyncMemoryMirrorDirectoryWrapperProvider implements DirectoryWrapp
             executorService = doCreateExecutorService();
         }
     }
-    
+
     public Directory wrap(String subIndex, Directory dir) throws SearchEngineException {
         try {
             if (sharedThread) {
@@ -57,7 +67,7 @@ public class AsyncMemoryMirrorDirectoryWrapperProvider implements DirectoryWrapp
             throw new SearchEngineException("Failed to wrap directory [" + dir + "] with async memory wrapper", e);
         }
     }
-    
+
     protected ExecutorService doCreateExecutorService() {
         return Executors.newSingleThreadExecutor(new SingleThreadThreadFactory("AsyncMirror Directory Wrapper", false));
     }
