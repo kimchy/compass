@@ -65,16 +65,31 @@
 
     <releases>
         <release>
-            <version>1.1M1-SNAPSHOT</version>
+            <version>1.1M2-SNAPSHOT</version>
             <date>Latest svn build</date>
-            <jiraId>10060</jiraId>
+            <jiraId>10062</jiraId>
             <downloads>
                 <download>
-                    <url>versions/1.1M1-SNAPSHOT/release/compass-1.1M1-SNAPSHOT.zip</url>
+                    <url>versions/1.1M2-SNAPSHOT/release/compass-1.1M2-SNAPSHOT.zip</url>
                     <name>Compass</name>
                 </download>
                 <download>
-                    <url>versions/1.1M1-SNAPSHOT/release/compass-1.1M1-SNAPSHOT-with-dependencies.zip</url>
+                    <url>versions/1.1M2-SNAPSHOT/release/compass-1.1M2-SNAPSHOT-with-dependencies.zip</url>
+                    <name>With Dependencies</name>
+                </download>
+            </downloads>
+        </release>
+        <release>
+            <version>1.1M1</version>
+            <date>Friday, August 25, 2006</date>
+            <jiraId>10060</jiraId>
+            <downloads>
+                <download>
+                    <url>https://compass.dev.java.net/files/documents/4669/39537/compass-1.1M1.zip</url>
+                    <name>Compass</name>
+                </download>
+                <download>
+                    <url>https://compass.dev.java.net/files/documents/4669/39543/compass-1.1M1-with-dependencies.zip</url>
                     <name>With Dependencies</name>
                 </download>
             </downloads>
