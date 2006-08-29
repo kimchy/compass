@@ -46,10 +46,10 @@ import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSettings;
+import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.ChainedFilter;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -409,7 +409,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             }
         }
         Hits hits = findByQuery(internalSearch.getSearcher(), query, qFilter);
-        return new LuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
+        return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
     }
 
     private Hits findByIds(Searcher indexSearcher, String subIndex, String alias, Property ids[], Filter filter)
