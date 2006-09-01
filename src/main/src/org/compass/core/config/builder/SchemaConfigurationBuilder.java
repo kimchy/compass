@@ -91,6 +91,12 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         }
     }
 
+    public void bindOsem(Element ele, CompassConfiguration config) {
+        CompassSettings settings = config.getSettings();
+        settings.setSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, DomUtils.getElementAttribute(ele, "managedIdIndex"));
+        settings.setSetting(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, DomUtils.getElementAttribute(ele, "supportUnmarshall"));
+    }
+
     public void bindConverters(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
         List convertersEle = DomUtils.getChildElementsByTagName(ele, "converter");

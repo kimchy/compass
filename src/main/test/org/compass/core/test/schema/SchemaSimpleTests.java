@@ -33,6 +33,16 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testOsem() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/osem.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals("false", settings.getSetting(CompassEnvironment.Osem.SUPPORT_UNMARSHALL));
+        assertEquals("tokenized", settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX));
+    }
+
     public void testLocking() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/locking.cfg.xml");
@@ -114,7 +124,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testBatchInsertSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-            .configure("/org/compass/core/test/schema/batchInsert.cfg.xml");
+                .configure("/org/compass/core/test/schema/batchInsert.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("100", settings.getSetting(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS));

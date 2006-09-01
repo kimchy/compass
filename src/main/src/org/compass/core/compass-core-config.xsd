@@ -24,6 +24,7 @@
             <xsd:element name="propertyAccessors" type="propertyAccessorsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="propertyNamingStrategy" type="propertyNamingStrategyType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="searchEngine" type="searchEngineType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="osem" type="osemType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
@@ -31,6 +32,30 @@
             <xsd:annotation>
                 <xsd:documentation>
                     The name of the Compass instance. Will be used as the registration name when using Jndi registation.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- OSEM -->
+    <xsd:complexType name="osemType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Controls osem level settings and configuration
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="supportUnmarshall" type="booleanType" default="true">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Controls if the default support for un-marshalling within class mappings will default to true or
+                    false (unless it is explicitly set in the class mapping). Defaults to true.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="managedIdIndex" type="xsd:string" default="no">
+            <xsd:annotation>
+                <xsd:documentation>
+                    A setting for managed id index feature. When an internal managed id is created, it's index setting
+                    will be created using this global setting (if not defined locally in the mapping file).
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
