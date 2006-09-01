@@ -21,25 +21,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.compass.core.config.CompassSettings;
-import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.ConverterLookup;
-import org.compass.core.converter.xsem.SimpleXmlValueConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.xsem.XmlObjectMapping;
-import org.compass.core.mapping.xsem.XmlPropertyMapping;
-import org.compass.core.mapping.xsem.XmlIdMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.*;
-import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.marshall.MarshallingEnvironment;
 
 /**
  * @author kimchy
  */
-public class DefaultMappingProcessor implements MappingProcessor {
+public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private CompassMapping compassMapping;
 
@@ -72,52 +67,21 @@ public class DefaultMappingProcessor implements MappingProcessor {
             Mapping m = (Mapping) it.next();
             if (m instanceof ClassMapping) {
                 clearRootClassMappingState();
-                secondPass((ClassMapping) m, compassMapping);
-            } else if (m instanceof RawResourceMapping) {
-                secondPass((RawResourceMapping) m);
-            } else if (m instanceof XmlObjectMapping) {
-                secondPass((XmlObjectMapping) m, compassMapping);
+                ClassMapping classMapping = (ClassMapping) m;
+                if (classMapping.isSupportUnmarshall()) {
+                    secondPass(classMapping, compassMapping);
+                } else {
+                    secondPassNoUnmarshalling(classMapping);
+                }
             }
         }
 
         return compassMapping;
     }
 
-    private void secondPass(XmlObjectMapping xmlObjectMapping, CompassMapping fatherMapping) {
-        xmlObjectMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), xmlObjectMapping.getAlias()));
-        secondPassConverter(xmlObjectMapping, true);
-        for (Iterator it = xmlObjectMapping.mappingsIt(); it.hasNext();) {
-            Mapping mapping = (Mapping) it.next();
-            secondPassConverter(mapping, true);
-            if (mapping instanceof XmlIdMapping) {
-                XmlIdMapping xmlIdMapping = (XmlIdMapping) mapping;
-                // in case of xml id mapping, we always use it as internal id
-                // and build its own internal path (because other xml properties names might be dynamic)
-                xmlIdMapping.setInternal(true);
-                xmlIdMapping.setPath(namingStrategy.buildPath(xmlObjectMapping.getPath(), xmlIdMapping.getName()));
-            }
-            if (mapping instanceof XmlPropertyMapping) {
-                XmlPropertyMapping xmlPropertyMapping = (XmlPropertyMapping) mapping;
-                if (xmlPropertyMapping.getValueConverterName() != null) {
-                    String converterName = xmlPropertyMapping.getValueConverterName();
-                    xmlPropertyMapping.setValueConverter(converterLookup.lookupConverter(converterName));
-                    if (xmlPropertyMapping.getValueConverter() == null) {
-                        throw new ConfigurationException("Failed to find converter [" + converterName + "] for mapping " +
-                                "[" + xmlPropertyMapping.getName() + "]");
-                    }
-                } else {
-                    // this should probably be handled in the actual converteres
-                    xmlPropertyMapping.setValueConverter(new SimpleXmlValueConverter());
-                }
-            }
-        }
-    }
-
-    private void secondPass(RawResourceMapping resourceMapping) {
-        secondPassConverter(resourceMapping, true);
-        for (Iterator it = resourceMapping.mappingsIt(); it.hasNext();) {
-            secondPassConverter((Mapping) it.next(), false);
-        }
+    private void secondPassNoUnmarshalling(ClassMapping classMapping) {
+        classMapping.setPath(namingStrategy.buildPath(compassMapping.getPath(), classMapping.getAlias()));
+        OsemMappingUtils.iterateMappings(new NoUnmarshallingCallback(classMapping), classMapping.mappingsIt(), false);
     }
 
     private void secondPass(ClassMapping classMapping, CompassMapping fatherMapping) {
@@ -128,7 +92,6 @@ public class DefaultMappingProcessor implements MappingProcessor {
     private void secondPass(ClassMapping classMapping, boolean onlyProperties) {
         classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(),
                 MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
-        secondPassConverter(classMapping);
         ArrayList innerMappingsCopy = new ArrayList();
         for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
@@ -145,7 +108,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
                     } else if (copyMapping instanceof ConstantMetaDataMapping) {
                         removeMapping = secondPass((ConstantMetaDataMapping) copyMapping);
                     } else if (copyMapping instanceof ParentMapping) {
-                        removeMapping = secondPass((ParentMapping) copyMapping);
+                        // nothing to do here
                     } else if (copyMapping instanceof AbstractCollectionMapping) {
                         removeMapping = secondPass((AbstractCollectionMapping) copyMapping, classMapping);
                     }
@@ -162,7 +125,6 @@ public class DefaultMappingProcessor implements MappingProcessor {
     }
 
     private boolean secondPass(AbstractCollectionMapping collectionMapping, Mapping fatherMapping) {
-        secondPassConverter(collectionMapping);
         Mapping elementMapping = collectionMapping.getElementMapping();
         Mapping elementMappingCopy = elementMapping.copy();
         boolean removeMapping = false;
@@ -186,35 +148,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
     }
 
     private boolean secondPass(ReferenceMapping referenceMapping, Mapping fatherMapping) {
-        referenceMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), referenceMapping.getName()));
-        secondPassConverter(referenceMapping);
-        ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
-
-        ClassMapping[] copyRefClassMappings = new ClassMapping[refMappings.length];
-        for (int i = 0; i < refMappings.length; i++) {
-            ClassMapping refClass = (ClassMapping) refMappings[i].copy();
-            refClass.setPath(referenceMapping.getPath());
-            secondPass(refClass, true);
-
-            // in case of reference, use internal ids for the refrence ids
-            List ids = refClass.findClassPropertyIdMappings();
-            // after we got the ids, we can clear the mappings from the ref class
-            // mapping and add only internal ids
-            refClass.clearMappings();
-            for (Iterator it = ids.iterator(); it.hasNext();) {
-                ClassIdPropertyMapping idMapping = (ClassIdPropertyMapping) it.next();
-                idMapping.clearMappings();
-                // create the internal id
-                MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping);
-                // re-add it to the ref class mapping
-                refClass.addMapping(idMapping);
-            }
-            // since we create our own special ref class mapping that only holds the
-            // ids, we need to call the post process here
-            refClass.postProcess();
-            copyRefClassMappings[i] = refClass;
-        }
-        referenceMapping.setRefClassMappings(copyRefClassMappings);
+        secondPassJustReference(referenceMapping, fatherMapping);
 
         // now configure the component mapping if exists
         if (referenceMapping.getRefCompAlias() != null) {
@@ -239,6 +173,39 @@ public class DefaultMappingProcessor implements MappingProcessor {
         return false;
     }
 
+    private void secondPassJustReference(ReferenceMapping referenceMapping, Mapping fatherMapping) {
+        referenceMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), referenceMapping.getName()));
+        ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
+
+        ClassMapping[] copyRefClassMappings = new ClassMapping[refMappings.length];
+        for (int i = 0; i < refMappings.length; i++) {
+            // in case of reference, use internal ids for the refrence ids
+            // get the original ids, since we will copy them later
+            List ids = refMappings[i].findClassPropertyIdMappings();
+
+            // shallow copy the ref class mappings, and ony add the ids (as copies)
+            ClassMapping refClass = (ClassMapping) refMappings[i].shallowCopy();
+            for (Iterator it = ids.iterator(); it.hasNext();) {
+                refClass.addMapping(((Mapping) it.next()).copy());
+            }
+
+            refClass.setPath(referenceMapping.getPath());
+            secondPass(refClass, true);
+
+            for (Iterator it = refClass.mappingsIt(); it.hasNext();) {
+                ClassIdPropertyMapping idMapping = (ClassIdPropertyMapping) it.next();
+                idMapping.clearMappings();
+                // create the internal id
+                MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping);
+            }
+            // since we create our own special ref class mapping that only holds the
+            // ids, we need to call the post process here
+            refClass.postProcess();
+            copyRefClassMappings[i] = refClass;
+        }
+        referenceMapping.setRefClassMappings(copyRefClassMappings);
+    }
+
     private boolean secondPass(ComponentMapping compMapping, Mapping fatherMapping) {
         int numberOfComponentsWithTheSameAlias = 0;
         for (Iterator it = chainedComponents.iterator(); it.hasNext();) {
@@ -254,9 +221,8 @@ public class DefaultMappingProcessor implements MappingProcessor {
         chainedComponents.add(compMapping);
 
         compMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), compMapping.getName()));
-        secondPassConverter(compMapping);
-        ClassMapping[] refClassMappings = compMapping.getRefClassMappings();
 
+        ClassMapping[] refClassMappings = compMapping.getRefClassMappings();
         ClassMapping[] copyRefClassMappings = new ClassMapping[refClassMappings.length];
         for (int i = 0; i < refClassMappings.length; i++) {
             ClassMapping refClassMapping = (ClassMapping) refClassMappings[i].copy();
@@ -272,13 +238,7 @@ public class DefaultMappingProcessor implements MappingProcessor {
         return false;
     }
 
-    private boolean secondPass(ParentMapping parentMapping) {
-        secondPassConverter(parentMapping);
-        return false;
-    }
-
     private boolean secondPass(ClassPropertyMapping classPropertyMapping, Mapping fatherMapping) {
-        secondPassConverter(classPropertyMapping);
         classPropertyMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), classPropertyMapping.getName()));
 
         // we check if we override the managedId option
@@ -301,36 +261,74 @@ public class DefaultMappingProcessor implements MappingProcessor {
     }
 
     private boolean secondPass(ConstantMetaDataMapping constantMapping) {
-        secondPassConverter(constantMapping);
         constantMapping.setPath(new StaticPropertyPath(constantMapping.getName()));
         return false;
-    }
-
-    private void secondPassConverter(Mapping mapping) {
-        secondPassConverter(mapping, true);
-    }
-
-    private void secondPassConverter(Mapping mapping, boolean forceConverter) {
-        if (mapping.getConverter() == null) {
-            if (mapping.getConverterName() != null) {
-                String converterName = mapping.getConverterName();
-                mapping.setConverter(converterLookup.lookupConverter(converterName));
-                if (mapping.getConverter() == null && forceConverter) {
-                    throw new ConfigurationException("Failed to find converter [" + converterName + "] for mapping " +
-                            "[" + mapping.getName() + "]");
-                }
-            } else {
-                mapping.setConverter(converterLookup.lookupConverter(mapping.getClass()));
-                if (mapping.getConverter() == null && forceConverter) {
-                    throw new ConfigurationException("Failed to find converter for class [" + mapping.getClass() + "]" +
-                            " for mapping [" + mapping.getName() + "]");
-                }
-            }
-        }
     }
 
     private void clearRootClassMappingState() {
         chainedComponents.clear();
     }
 
+    private class NoUnmarshallingCallback implements OsemMappingUtils.ClassMappingCallback {
+
+        private ClassPropertyMapping classPropertyMapping;
+
+        private ClassMapping classMapping;
+
+        public NoUnmarshallingCallback(ClassMapping classMapping) {
+            this.classMapping = classMapping;
+        }
+
+        public void onBeginMultipleMapping(Mapping mapping) {
+        }
+
+        public void onEndMultiplMapping(Mapping mapping) {
+        }
+
+        public void onBeginCollectionMapping(AbstractCollectionMapping collectionMapping) {
+        }
+
+        public void onEndCollectionMapping(AbstractCollectionMapping collectionMapping) {
+        }
+
+        public void onClassPropertyMapping(ClassPropertyMapping classPropertyMapping) {
+            this.classPropertyMapping = classPropertyMapping;
+            classPropertyMapping.setPath(namingStrategy.buildPath(classMapping.getPath(), classPropertyMapping.getName()));
+        }
+
+        public void onParentMapping(ParentMapping parentMapping) {
+        }
+
+        public void onComponentMapping(ComponentMapping componentMapping) {
+            ClassMapping[] refClassMappings = componentMapping.getRefClassMappings();
+            ClassMapping[] copyRefClassMappings = new ClassMapping[refClassMappings.length];
+            for (int i = 0; i < refClassMappings.length; i++) {
+                // perform a shalow copy, and copy over the child mappings
+                ClassMapping refClassMapping = (ClassMapping) refClassMappings[i].shallowCopy();
+                refClassMapping.replaceMappings(refClassMappings[i]);
+
+                refClassMapping.setPath(componentMapping.getPath());
+                refClassMapping.setRoot(false);
+                refClassMapping.setSupportUnmarshall(classMapping.isSupportUnmarshall());
+                copyRefClassMappings[i] = refClassMapping;
+            }
+            componentMapping.setRefClassMappings(copyRefClassMappings);
+        }
+
+        public void onReferenceMapping(ReferenceMapping referenceMapping) {
+            secondPassJustReference(referenceMapping, classMapping);
+        }
+
+        public void onConstantMetaDataMappaing(ConstantMetaDataMapping constantMetaDataMapping) {
+            constantMetaDataMapping.setPath(new StaticPropertyPath(constantMetaDataMapping.getName()));
+        }
+
+
+        public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {
+            MappingProcessorUtils.process(classPropertyMetaDataMapping, classPropertyMapping, converterLookup);
+        }
+
+        public void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping) {
+        }
+    }
 }

@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.annotations.test.nounmarshall.setting;
+
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
  */
-public interface AliasMapping extends MultipleMapping {
+@Searchable
+public class A {
 
-    /**
-     * Performs a shalow copy of this mapping, not including any internal mappings
-     * belonging to {@link MultipleMapping}.
-     */
-    AliasMapping shallowCopy();
+    @SearchableId
+    Integer id;
 
-    String getAlias();
+    @SearchableProperty(name = "value")
+    String value;
 
-    void setAlias(String alias);
-
-    String[] getExtendedMappings();
-
-    void setExtendedMappings(String[] extendedMappings);
+    @SearchableProperty(name = "value")
+    String value2;
 }

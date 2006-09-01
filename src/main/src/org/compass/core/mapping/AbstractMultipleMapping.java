@@ -53,6 +53,17 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
         return mappings.size() - 1;
     }
 
+    public void addMappings(MultipleMapping mapping) {
+        for (Iterator it = mapping.mappingsIt(); it.hasNext();) {
+            addMapping((Mapping) it.next());
+        }
+    }
+
+    public void replaceMappings(MultipleMapping mapping) {
+        clearMappings();
+        addMappings(mapping);
+    }
+
     public Iterator mappingsIt() {
         return mappings.iterator();
     }

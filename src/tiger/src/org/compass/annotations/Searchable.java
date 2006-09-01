@@ -172,6 +172,18 @@ public @interface Searchable {
     String analyzer() default "";
 
     /**
+     * Controls if the searchable class will support unmarshalling from the search engine
+     * or using {@link org.compass.core.Resource} is enough. Un-marshalling is the process
+     * of converting a raw {@link org.compass.core.Resource} into the actual domain object.
+     * If support un-marshall is enabled extra information will be stored within the search
+     * engine, as well as consumes extra memory.
+     * <p/>
+     * By default Compass global osem setting supportUnmarshall controls it unless exlicitly
+     * set here.
+     */
+    SupportUnmarshall supportUnmsarshll() default SupportUnmarshall.NA;
+
+    /**
      * A list of aliases to extend. Extending the aliases allows to include other
      * mapping definitions, defined via annotations or xml.
      * <p/>

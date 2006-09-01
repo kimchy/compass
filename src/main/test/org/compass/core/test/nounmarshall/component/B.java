@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.core.test.nounmarshall.component;
 
 /**
  * @author kimchy
  */
-public interface AliasMapping extends MultipleMapping {
+public class B {
 
-    /**
-     * Performs a shalow copy of this mapping, not including any internal mappings
-     * belonging to {@link MultipleMapping}.
-     */
-    AliasMapping shallowCopy();
+    String value;
 
-    String getAlias();
-
-    void setAlias(String alias);
-
-    String[] getExtendedMappings();
-
-    void setExtendedMappings(String[] extendedMappings);
+    String value2;
 }

@@ -136,6 +136,9 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
     }
 
     public ClassPropertyMetaDataMapping getIdMapping() {
+        if (!isIdPropertySet()) {
+            return null;
+        }
         return (ClassPropertyMetaDataMapping) getMapping(idPropertyIndex);
     }
 

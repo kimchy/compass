@@ -231,6 +231,12 @@
         Defaults to 1.0.
     -->
     <!ATTLIST class boost CDATA #IMPLIED>
+    <!--
+        Controls if the class mapping will support the ability to un-marshall it from the search engine.
+
+        Defaults to true.
+    -->
+    <!ATTLIST class support-unmarshall (true|false) #IMPLIED>
 
 <!ELEMENT id (
     meta-data*

@@ -28,7 +28,11 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.OsemMappingUtils;
 
 /**
  * @author kimchy
@@ -48,10 +52,26 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
             if (m instanceof ClassMapping) {
-                buildClassMetaDataIds((ClassMapping) m);
+                ClassMapping classMapping = (ClassMapping) m;
+                if (classMapping.isSupportUnmarshall()) {
+                    buildClassMetaDataIds(classMapping);
+                } else {
+                    buildInternalIdForIdProperties(classMapping);
+                }
             }
         }
         return compassMapping;
+    }
+
+    /**
+     * Build internal ids only for the class property id mappings when we
+     * do not support un-marshalling.
+     */
+    private void buildInternalIdForIdProperties(ClassMapping classMapping) {
+        List idMappings = classMapping.findClassPropertyIdMappings();
+        for (Iterator it = idMappings.iterator(); it.hasNext();) {
+            MappingProcessorUtils.addInternalId(settings, converterLookup, (ClassPropertyMapping) it.next());
+        }
     }
 
     /**

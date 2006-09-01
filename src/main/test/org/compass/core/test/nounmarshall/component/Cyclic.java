@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.core.test.nounmarshall.component;
+
+import java.util.List;
 
 /**
  * @author kimchy
  */
-public interface AliasMapping extends MultipleMapping {
+public class Cyclic {
 
-    /**
-     * Performs a shalow copy of this mapping, not including any internal mappings
-     * belonging to {@link MultipleMapping}.
-     */
-    AliasMapping shallowCopy();
+    Long id;
 
-    String getAlias();
+    String value;
 
-    void setAlias(String alias);
+    Cyclic cyclic;
 
-    String[] getExtendedMappings();
-
-    void setExtendedMappings(String[] extendedMappings);
+    List cyclics;
 }

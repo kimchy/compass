@@ -19,11 +19,11 @@ package org.compass.core.test.component;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -44,7 +44,7 @@ public class ComponentTests extends AbstractTestCase {
         ClassMapping firstMapping = (ClassMapping) mapping.getRootMappingByClass(CFirst.class);
         String[] propertyNames = firstMapping.getResourcePropertyNames();
         assertEquals(2, propertyNames.length);
-        ClassIdPropertyMapping[] idMappings = firstMapping.getClassPropertyIdMappings();
+        ClassIdPropertyMapping[] idMappings = firstMapping.getClassIdPropertyMappings();
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
         assertEquals(1, resourcePropertyMappings.length);

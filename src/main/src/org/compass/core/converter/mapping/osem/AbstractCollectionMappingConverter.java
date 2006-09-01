@@ -25,10 +25,10 @@ import org.compass.core.converter.mapping.CollectionResourceWrapper;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
+import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
- * 
  * @author kimchy
  */
 public abstract class AbstractCollectionMappingConverter implements Converter {
@@ -42,29 +42,32 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         }
         AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
+        ClassMapping rootClassMapping = (ClassMapping) context.getAttribute(ClassMappingConverter.ROOT_CLASS_MAPPING_KEY);
 
-        if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
-            Property p = searchEngine.createProperty(colMapping.getCollectionTypePath().getPath(),
-                    AbstractCollectionMapping.CollectionType.toString(getRuntimeCollectionType(root)),
-                    Property.Store.YES, Property.Index.UN_TOKENIZED);
-            resource.addProperty(p);
+        if (rootClassMapping.isSupportUnmarshall()) {
+            if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
+                Property p = searchEngine.createProperty(colMapping.getCollectionTypePath().getPath(),
+                        AbstractCollectionMapping.CollectionType.toString(getRuntimeCollectionType(root)),
+                        Property.Store.YES, Property.Index.UN_TOKENIZED);
+                resource.addProperty(p);
+            }
+            // for null values in entities within the collection, they must be saved
+            // so the order will be maintained
+            context.setHandleNulls(colMapping.getPath());
         }
-
-        // for null values in entities within the collection, they must be saved
-        // so the order will be maintained
-        context.setHandleNulls(colMapping.getPath());
 
         int size = marshallIterateData(root, colMapping, resource, context);
 
-        context.removeHandleNulls(colMapping.getPath());
-        
-        if (size > 0) {
-            Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
-                    Property.Store.YES, Property.Index.UN_TOKENIZED);
-            resource.addProperty(p);
-            return true;
+        if (rootClassMapping.isSupportUnmarshall()) {
+            context.removeHandleNulls(colMapping.getPath());
+            if (size > 0) {
+                Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
+                        Property.Store.YES, Property.Index.UN_TOKENIZED);
+                resource.addProperty(p);
+            }
         }
-        return false;
+
+        return size > 0;
     }
 
     protected abstract AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root);
@@ -74,7 +77,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
      * (and can later be read).
      */
     protected abstract int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
-            MarshallingContext context);
+                                               MarshallingContext context);
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
@@ -97,9 +100,9 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         }
 
         int size = Integer.parseInt(sColSize);
-        
+
         Object col = createColObject(colMapping.getGetter(), collectionType, size);
-        
+
         // for null values in enteties within the collection, they must be saved
         // so the order will be maintained
         context.setHandleNulls(colMapping.getPath());
@@ -127,11 +130,11 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         }
 
         context.removeHandleNulls(colMapping.getPath());
-        
+
         return col;
     }
-    
+
     protected abstract Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size);
-    
+
     protected abstract void addValue(Object col, int index, Object value);
 }

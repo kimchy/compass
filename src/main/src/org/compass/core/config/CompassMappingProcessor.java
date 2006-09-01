@@ -36,7 +36,12 @@ public class CompassMappingProcessor implements MappingProcessor {
         mappingProcessors.add(new PropertyAccessorMappingProcessor());
         mappingProcessors.add(new ResolveRefAliasProcessor());
         mappingProcessors.add(new CollectionMappingProcessor());
-        mappingProcessors.add(new DefaultMappingProcessor());
+        mappingProcessors.add(new ResolveLateAttributesMappingProcessor());
+        mappingProcessors.add(new ConverterLookupMappingProcessor());
+        // start late binding
+        mappingProcessors.add(new LateBindingOsemMappingProcessor());
+        mappingProcessors.add(new LateBindingXsemMappingProcessor());
+        // end late binding
         mappingProcessors.add(new InternalIdsMappingProcessor());
         mappingProcessors.add(new PostProcessorMappingProcessor());
         mappingProcessors.add(new ValidatorMappingProcessor());

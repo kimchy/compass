@@ -16,12 +16,12 @@
 
 package org.compass.core.mapping.osem;
 
-import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
@@ -44,7 +44,11 @@ public abstract class OsemMappingUtils {
 
         void onReferenceMapping(ReferenceMapping referenceMapping);
 
+        void onParentMapping(ParentMapping parentMapping);
+
         void onConstantMetaDataMappaing(ConstantMetaDataMapping constantMetaDataMapping);
+
+        void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping);
 
         void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping);
     }
@@ -83,6 +87,9 @@ public abstract class OsemMappingUtils {
             classPropertyMappings.add(classPropertyMapping);
         }
 
+        public void onParentMapping(ParentMapping parentMapping) {
+        }
+
         public void onComponentMapping(ComponentMapping componentMapping) {
         }
 
@@ -90,6 +97,9 @@ public abstract class OsemMappingUtils {
         }
 
         public void onConstantMetaDataMappaing(ConstantMetaDataMapping constantMetaDataMapping) {
+        }
+
+        public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {
         }
 
         public void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping) {
@@ -104,9 +114,9 @@ public abstract class OsemMappingUtils {
         private HashMap pathMappings = new HashMap();
 
         private ArrayList pathSteps = new ArrayList();
-        
+
         private StringBuffer sb = new StringBuffer();
-        
+
         private void addToPath(Mapping mapping) {
             pathSteps.add(mapping.getName());
         }
@@ -147,7 +157,7 @@ public abstract class OsemMappingUtils {
         public HashMap getPathMappings() {
             return pathMappings;
         }
-        
+
         private String currentPath() {
             sb.setLength(0);
             for (int i = 0; i < pathSteps.size(); i++) {
@@ -162,6 +172,10 @@ public abstract class OsemMappingUtils {
 
 
     public static void iterateMappings(ClassMappingCallback callback, Iterator mappingsIt) {
+        iterateMappings(callback, mappingsIt, true);
+    }
+
+    public static void iterateMappings(ClassMappingCallback callback, Iterator mappingsIt, boolean recursive) {
         for (; mappingsIt.hasNext();) {
             Mapping m = (Mapping) mappingsIt.next();
             if (m instanceof ClassPropertyMapping) {
@@ -169,18 +183,23 @@ public abstract class OsemMappingUtils {
                 callback.onBeginMultipleMapping(classPropertyMapping);
                 callback.onClassPropertyMapping(classPropertyMapping);
                 for (Iterator resIt = classPropertyMapping.mappingsIt(); resIt.hasNext();) {
-                    ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) resIt.next();
-                    callback.onResourcePropertyMapping(resourcePropertyMapping);
+                    ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) resIt.next();
+                    callback.onClassPropertyMetaDataMapping(classPropertyMetaDataMapping);
+                    callback.onResourcePropertyMapping(classPropertyMetaDataMapping);
                 }
                 callback.onEndMultiplMapping(classPropertyMapping);
+            } else if (m instanceof ParentMapping) {
+                callback.onParentMapping((ParentMapping) m);
             } else if (m instanceof ComponentMapping) {
                 ComponentMapping componentMapping = (ComponentMapping) m;
                 callback.onBeginMultipleMapping(componentMapping);
 
                 callback.onComponentMapping(componentMapping);
-                ClassMapping[] refMappings = componentMapping.getRefClassMappings();
-                for (int i = 0; i < refMappings.length; i++) {
-                    OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                if (recursive) {
+                    ClassMapping[] refMappings = componentMapping.getRefClassMappings();
+                    for (int i = 0; i < refMappings.length; i++) {
+                        OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                    }
                 }
 
                 callback.onEndMultiplMapping(componentMapping);
@@ -189,13 +208,16 @@ public abstract class OsemMappingUtils {
                 callback.onBeginMultipleMapping(referenceMapping);
 
                 callback.onReferenceMapping(referenceMapping);
-                ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
-                for (int i = 0; i < refMappings.length; i++) {
-                    OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
-                }
 
-                if (referenceMapping.getRefCompMapping() != null) {
-                    OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefCompMapping().mappingsIt());
+                if (recursive) {
+                    ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
+                    for (int i = 0; i < refMappings.length; i++) {
+                        OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                    }
+
+                    if (referenceMapping.getRefCompMapping() != null) {
+                        OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefCompMapping().mappingsIt());
+                    }
                 }
 
                 callback.onEndMultiplMapping(referenceMapping);
@@ -203,6 +225,7 @@ public abstract class OsemMappingUtils {
                 ConstantMetaDataMapping constantMetaDataMapping = (ConstantMetaDataMapping) m;
                 callback.onBeginMultipleMapping(constantMetaDataMapping);
 
+                callback.onConstantMetaDataMappaing(constantMetaDataMapping);
                 callback.onResourcePropertyMapping(constantMetaDataMapping);
 
                 callback.onEndMultiplMapping(constantMetaDataMapping);
@@ -216,8 +239,9 @@ public abstract class OsemMappingUtils {
                     callback.onBeginMultipleMapping(classPropertyMapping);
                     callback.onClassPropertyMapping(classPropertyMapping);
                     for (Iterator resIt = classPropertyMapping.mappingsIt(); resIt.hasNext();) {
-                        ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) resIt.next();
-                        callback.onResourcePropertyMapping(resourcePropertyMapping);
+                        ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) resIt.next();
+                        callback.onClassPropertyMetaDataMapping(classPropertyMetaDataMapping);
+                        callback.onResourcePropertyMapping(classPropertyMetaDataMapping);
                     }
                     callback.onEndMultiplMapping(classPropertyMapping);
                 } else if (elementMapping instanceof ComponentMapping) {
@@ -225,9 +249,12 @@ public abstract class OsemMappingUtils {
                     callback.onBeginMultipleMapping(componentMapping);
 
                     callback.onComponentMapping(componentMapping);
-                    ClassMapping[] refMappings = componentMapping.getRefClassMappings();
-                    for (int i = 0; i < refMappings.length; i++) {
-                        OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+
+                    if (recursive) {
+                        ClassMapping[] refMappings = componentMapping.getRefClassMappings();
+                        for (int i = 0; i < refMappings.length; i++) {
+                            OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                        }
                     }
 
                     callback.onEndMultiplMapping(componentMapping);
@@ -236,14 +263,16 @@ public abstract class OsemMappingUtils {
                     callback.onBeginMultipleMapping(referenceMapping);
 
                     callback.onReferenceMapping(referenceMapping);
-                    callback.onReferenceMapping(referenceMapping);
-                    ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
-                    for (int i = 0; i < refMappings.length; i++) {
-                        OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
-                    }
 
-                    if (referenceMapping.getRefCompMapping() != null) {
-                        OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefCompMapping().mappingsIt());
+                    if (recursive) {
+                        ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
+                        for (int i = 0; i < refMappings.length; i++) {
+                            OsemMappingUtils.iterateMappings(callback, refMappings[i].mappingsIt());
+                        }
+
+                        if (referenceMapping.getRefCompMapping() != null) {
+                            OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefCompMapping().mappingsIt());
+                        }
                     }
 
                     callback.onEndMultiplMapping(referenceMapping);

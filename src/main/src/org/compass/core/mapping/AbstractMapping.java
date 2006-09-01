@@ -33,10 +33,10 @@ public abstract class AbstractMapping implements Mapping {
     private Converter converter;
 
     protected void copy(Mapping copy) {
-        copy.setConverter(getConverter());
         copy.setName(getName());
         copy.setPath(getPath());
         copy.setConverterName(getConverterName());
+        copy.setConverter(getConverter());
     }
 
     public boolean controlsObjectNullability() {

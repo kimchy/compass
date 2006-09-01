@@ -7,11 +7,11 @@
     <para>
         Compass's various settings have been logically grouped in the following section, with a short description of each setting. Note: the only mandatory setting is the index file location specified in <literal>compass.engine.connection</literal>.
     </para>
-    
+
     <para>
        Note, that configuring Compass is simpler when using a schema based configuration file. But in its core, all of Compass configuration is driven by the following settings. You can use only settings to configure Compass (either programatically or using the Compass configuration based on DTD).
     </para>
-    
+
     <para>
     </para>
 
@@ -279,7 +279,7 @@
        <para>
           The configuration uses Compass support for group properties, with the <literal>compass.propertyAccessor</literal> group prefix. The name the property accessor will be registered under is the group name. In order to set the default property accessor, the <literal>default</literal> group name should be used.
        </para>
-       
+
        <para>
           Custom implementations of <literal>PropertyAccessor</literal> can optionally implement the <literal>CompassConfigurable</literal> interface, which allows for additional settings to be injected into the implementations.
        </para>
@@ -1167,8 +1167,12 @@
           </thead>
           <tbody>
             <row>
-              <entry>compass.managedId.index</entry>
+              <entry>compass.osem.managedId.index</entry>
               <entry>Can be either <literal>un_tokenized</literal> or <literal>no</literal> (defaults to <literal>no</literal>). It is the index setting that will be used when creating an internal managed id for a class property mapping (if it is not a property id, if it is, it will always be <literal>un_tokenized</literal>).</entry>
+            </row>
+            <row>
+              <entry>compass.osem.supportUnmarshall</entry>
+              <entry>Controls if the default support for un-marshalling within the class mappings will default to <literal>true</literal> or <literal>false</literal> (unless it is explicitly set in the class mapping). Defaults to <literal>true</literal>. Controls if the searchable class will support unmarshalling from the search engine or using <literal>Resource</literal> is enough. Un-marshalling is the process of converting a raw <literal>Resource</literal> into the actual domain object. If support un-marshall is enabled extra information will be stored within the search engine, as well as consumes extra memory</entry>
             </row>
           </tbody>
         </tgroup></table>

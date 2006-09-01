@@ -43,6 +43,8 @@ import org.compass.core.util.ClassUtils;
  */
 public class ClassMappingConverter implements ResourceMappingConverter {
 
+    public static final String ROOT_CLASS_MAPPING_KEY = "$rcmk";
+
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         SearchEngine searchEngine = context.getSearchEngine();
@@ -53,13 +55,18 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         if (classMapping.isRoot()) {
             resource.setAlias(classMapping.getAlias());
             doSetBoost(resource, root, classMapping, context);
+            context.setAttribute(ROOT_CLASS_MAPPING_KEY, classMapping);
         }
-        if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
-            // if the class is defined as poly, persist the class name as well
-            String className = root.getClass().getName();
-            Property p = searchEngine.createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
-                    Property.Index.UN_TOKENIZED);
-            resource.addProperty(p);
+
+        // only add specilized properties for un-marshalling when it is supported
+        if (classMapping.isSupportUnmarshall()) {
+            if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
+                // if the class is defined as poly, persist the class name as well
+                String className = root.getClass().getName();
+                Property p = searchEngine.createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
+                        Property.Index.UN_TOKENIZED);
+                resource.addProperty(p);
+            }
         }
 
         boolean store = false;
@@ -84,6 +91,9 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         // handle a cache of all the unmarshalled objects already, used for
         // cyclic references
         if (classMapping.isRoot()) {
+            if (!classMapping.isSupportUnmarshall()) {
+                throw new ConversionException("Class Mapping [" + classMapping.getAlias() + "] is configured not to support un-marshalling");
+            }
             Property[] ids = ResourceHelper.toIds(resource, context.getCompassMapping());
             resourceIdKey = new ResourceIdKey(classMapping.getAlias(), ids);
             Object cached = context.getUnmarshalled(resourceIdKey);

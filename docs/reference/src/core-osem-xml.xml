@@ -243,6 +243,7 @@ public class Author {
         poly="false|true"
         poly-class="the class name that will be used to instantiate poly mapping (optional)"
         extends="a comma separated list of aliases to extend"
+        support-unmarshall="true|false"
         boost="boost value for the class"
         all="true|false"
         all-term-vector="no|yes|positions|offsets|positios_offsets"
@@ -294,6 +295,10 @@ public class Author {
             <row>
               <entry>extends (optional)</entry>
               <entry>A comma separated list of aliases to extend. Can extend a <literal>class</literal> mapping or a <literal>contract</literal> mapping. Note that can extend more than one <literal>class/contract</literal></entry> mapping.
+            </row>
+            <row>
+              <entry>support-unmarhsall (optional)</entry>
+              <entry>Controls if the searchable class will support unmarshalling from the search engine or using <literal>Resource</literal> is enough. Un-marshalling is the process of converting a raw <literal>Resource</literal> into the actual domain object. If support un-marshall is enabled extra information will be stored within the search engine, as well as consumes extra memory. Defaults to Compass global setting <literal>compass.osem.supportUnmarshall</literal> (which in turn defaults to <literal>true</literal>).</entry>
             </row>
             <row>
               <entry>boost (optional, defaults to <literal>1.0</literal>)</entry>

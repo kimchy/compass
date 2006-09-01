@@ -43,11 +43,13 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private Class polyClass;
 
+    private Boolean supportUnmarshall;
+
     private ResourcePropertyMapping[] resourcePropertyMappings;
 
     private ClassPropertyMapping[] classPropertyMappings;
 
-    private ClassIdPropertyMapping[] classPropertyIdMappings;
+    private ClassIdPropertyMapping[] classIdPropertyMappings;
 
     private HashMap pathMappings;
 
@@ -58,6 +60,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setClassPath(getClassPath());
         copy.setClazz(getClazz());
         copy.setPolyClass(getPolyClass());
+        copy.supportUnmarshall = supportUnmarshall;
         return copy;
     }
 
@@ -68,6 +71,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setClassPath(getClassPath());
         copy.setClazz(getClazz());
         copy.setPolyClass(getPolyClass());
+        copy.supportUnmarshall = supportUnmarshall;
         return copy;
     }
 
@@ -79,14 +83,17 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
     protected void doPostProcess() throws MappingException {
         OsemMappingUtils.ClassPropertyAndResourcePropertyGathererAndPathBuilder callback =
                 new OsemMappingUtils.ClassPropertyAndResourcePropertyGathererAndPathBuilder();
-        OsemMappingUtils.iterateMappings(callback, mappingsIt());
+        // since we do not perform static bindings when no unmarshalling, we will get OOME
+        // (we do not copy the mappings or use max-depth)
+        boolean recursive = isSupportUnmarshall();
+        OsemMappingUtils.iterateMappings(callback, mappingsIt(), recursive);
         List findList = callback.getResourcePropertyMappings();
-        resourcePropertyMappings = (ResourcePropertyMapping[]) findList.toArray(new ResourcePropertyMapping[findList
-                .size()]);
+        resourcePropertyMappings = (ResourcePropertyMapping[])
+                findList.toArray(new ResourcePropertyMapping[findList.size()]);
         findList = callback.getClassPropertyMappings();
         classPropertyMappings = (ClassPropertyMapping[]) findList.toArray(new ClassPropertyMapping[findList.size()]);
         findList = findClassPropertyIdMappings();
-        classPropertyIdMappings = (ClassIdPropertyMapping[]) findList.toArray(new ClassIdPropertyMapping[findList
+        classIdPropertyMappings = (ClassIdPropertyMapping[]) findList.toArray(new ClassIdPropertyMapping[findList
                 .size()]);
         pathMappings = callback.getPathMappings();
     }
@@ -99,8 +106,8 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         return classPropertyMappings;
     }
 
-    public ClassIdPropertyMapping[] getClassPropertyIdMappings() {
-        return classPropertyIdMappings;
+    public ClassIdPropertyMapping[] getClassIdPropertyMappings() {
+        return classIdPropertyMappings;
     }
 
     /**
@@ -162,5 +169,18 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public void setPolyClass(Class polyClass) {
         this.polyClass = polyClass;
+    }
+
+    public boolean isSupportUnmarshall() {
+        // possible NPE, will take care of it in setting it
+        return supportUnmarshall.booleanValue();
+    }
+
+    public void setSupportUnmarshall(boolean supportUnmarshall) {
+        this.supportUnmarshall = Boolean.valueOf(supportUnmarshall);
+    }
+
+    public boolean isSupportUnmarshallSet() {
+        return supportUnmarshall != null;
     }
 }

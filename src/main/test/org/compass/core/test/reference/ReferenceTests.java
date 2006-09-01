@@ -19,12 +19,12 @@ package org.compass.core.test.reference;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -43,7 +43,7 @@ public class ReferenceTests extends AbstractTestCase {
         CompassMapping mapping = session.getMapping();
         ClassMapping xMapping = (ClassMapping) mapping.getRootMappingByAlias("x");
         ClassMapping yMapping = ((ReferenceMapping) xMapping.getMapping("y")).getRefClassMappings()[0];
-        ClassIdPropertyMapping[] idMappings = yMapping.getClassPropertyIdMappings();
+        ClassIdPropertyMapping[] idMappings = yMapping.getClassIdPropertyMappings();
         assertEquals(1, idMappings.length);
         ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
         assertEquals(1, resourcePropertyMappings.length);

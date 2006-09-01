@@ -438,6 +438,17 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         boolean root = classConf.getAttributeAsBoolean("root", true);
         classMapping.setRoot(root);
         classMapping.setBoost(getBoost(classConf));
+
+        // don't set support unmarshall unless it is set, since it might be globally set
+        String supportUnmarshall = classConf.getAttribute("support-unmarshall", null);
+        if (supportUnmarshall != null) {
+            if (supportUnmarshall.equalsIgnoreCase("true")) {
+                classMapping.setSupportUnmarshall(true);
+            } else {
+                classMapping.setSupportUnmarshall(false);
+            }
+        }
+
         bindConverter(classConf, classMapping);
 
         bindClassMappingChildren(classConf, classMapping);
@@ -626,6 +637,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String name = valueLookup.lookupMetaDataName(metadataConf.getValue().trim());
         mdMapping.setBoost(getBoost(metadataConf, classPropertyMapping.getBoost()));
         mdMapping.setName(name);
+        mdMapping.setPath(new StaticPropertyPath(name));
 
         mdMapping.setAccessor(classPropertyMapping.getAccessor());
         mdMapping.setObjClass(classPropertyMapping.getObjClass());

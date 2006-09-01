@@ -489,17 +489,21 @@ public class CompassEnvironment {
         }
     }
 
-    /**
-     * Settings relating to global handling of managed id (meta-data) creation
-     */
-    public abstract class ManagedId {
+    public abstract class Osem {
 
         /**
          * A setting for managed id index feature. When an internal managed id is
          * created, it's index setting will be created using this global setting (if
          * not defined locally in the mapping file).
          */
-        public static final String INDEX = "compass.managedId.index";
+        public static final String MANAGED_ID_INDEX = "compass.osem.managedId.index";
+
+        /**
+         * Controls if the default support for un-marshalling within class mappings will
+         * default to <code>true</code> or <code>false</code> (unless it is explicitly set
+         * in the class mapping). Defaults to <code>true</code>.
+         */
+        public static final String SUPPORT_UNMARSHALL = "compass.osem.supportUnmarshall";
     }
 
 }

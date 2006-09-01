@@ -37,6 +37,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.binding.MappingBindingSupport;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.lucene.LuceneEnvironment;
@@ -277,6 +278,12 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             classMapping.setAnalyzer(searchable.analyzer());
         }
 
+        if (searchable.supportUnmsarshll() == SupportUnmarshall.TRUE) {
+            classMapping.setSupportUnmarshall(true);
+        } else if (searchable.supportUnmsarshll() == SupportUnmarshall.FALSE) {
+            classMapping.setSupportUnmarshall(false);
+        }
+
         bindConverter(classMapping, searchable.converter());
 
         SearchableConstant searchableConstant =
@@ -488,6 +495,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 name = classPropertyMapping.getName();
             }
             mdMapping.setName(valueLookup.lookupMetaDataName(name));
+            mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
             mdMapping.setBoost(classPropertyMapping.getBoost());
 
             mdMapping.setAccessor(classPropertyMapping.getAccessor());
@@ -561,6 +569,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 name = classPropertyMapping.getName();
             }
             mdMapping.setName(valueLookup.lookupMetaDataName(name));
+            mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
             mdMapping.setBoost(classPropertyMapping.getBoost());
 
             bindConverter(mdMapping, searchableProp.converter(), clazz, type);
@@ -602,6 +611,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         ClassPropertyMetaDataMapping mdMapping = new ClassPropertyMetaDataMapping();
         String name = searchableMetaData.name();
         mdMapping.setName(valueLookup.lookupMetaDataName(name));
+        mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
         mdMapping.setBoost(classPropertyMapping.getBoost());
 
         bindConverter(classPropertyMapping, searchableMetaData.converter(), clazz, type);
