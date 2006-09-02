@@ -236,6 +236,19 @@ public class CompassEnvironment {
 
                 public static final String PARENT_MAPPING = "parentMapping";
             }
+
+            public abstract class Dynamic {
+
+                public static final String JEXL = "jexl";
+
+                public static final String VELOCITY = "velocity";
+
+                public static final String JAKARTA_EL = "el";
+
+                public static final String OGNL = "ognl";
+
+                public static final String GROOVY = "groovy";
+            }
         }
 
         /**

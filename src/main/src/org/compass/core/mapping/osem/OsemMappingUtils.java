@@ -50,6 +50,8 @@ public abstract class OsemMappingUtils {
 
         void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping);
 
+        void onDynamicMetaDataMapping(DynamicMetaDataMapping dynamicMetaDataMapping);
+
         void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping);
     }
 
@@ -100,6 +102,9 @@ public abstract class OsemMappingUtils {
         }
 
         public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {
+        }
+
+        public void onDynamicMetaDataMapping(DynamicMetaDataMapping dynamicMetaDataMapping) {
         }
 
         public void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping) {
@@ -190,6 +195,10 @@ public abstract class OsemMappingUtils {
                 callback.onEndMultiplMapping(classPropertyMapping);
             } else if (m instanceof ParentMapping) {
                 callback.onParentMapping((ParentMapping) m);
+            } else if (m instanceof DynamicMetaDataMapping) {
+                DynamicMetaDataMapping dynamicMetaDataMapping = (DynamicMetaDataMapping) m;
+                callback.onDynamicMetaDataMapping(dynamicMetaDataMapping);
+                callback.onResourcePropertyMapping(dynamicMetaDataMapping);
             } else if (m instanceof ComponentMapping) {
                 ComponentMapping componentMapping = (ComponentMapping) m;
                 callback.onBeginMultipleMapping(componentMapping);

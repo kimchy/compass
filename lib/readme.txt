@@ -141,6 +141,11 @@ distribution/website before using any of them in your own applications.
 - Commons Pool 1.2 (http://jakarta.apache.org/commons/pool)
 - required for running (by Commons DBCP)
 
+* jakarta-commons/commons-jexl-1.0.jar
+- Commons JEXL (http://jakarta.apache.org/commons/jexl)
+- required building Compass
+- required at runtime when using JEXL based dynamic meta data
+
 * jakarta-taglibs/standard.jar
 - Jakarta's JSTL implementation 1.0.6 (http://jakarta.apache.org/taglibs)
 - required for running PetClinic
@@ -211,10 +216,20 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 - required at runtime when using Compass's OJB support
 
+* ognl/ognl-2.6.5.jar
+- OpenSymphony Ognl (http://www.opensymphony.com/ognl)
+- required for building compass
+- required at runtime when using dynamic meta data with ognl
+
 * spring/spring.jar (and spring-*.jar)
 - Spring Framework 2.0 RC2 (http://www.springframework.org)
 - required for building compass
 - required at runtime when using Compass's Spring support
+
+* velocity/velocity-1.4.jar
+- Apache Jakarta Velocity (http://jakarta.apache.org/velocity)
+- required for building compass
+- required at runtime when using velocity for dynamic meta-data
 
 * oracle/toplink-essentials
 - Oracle Toplink Essential Reference implementation of JPA (part of glass fish) v2 build 03 (http://www.oracle.com/technology/products/ias/toplink/jpa)

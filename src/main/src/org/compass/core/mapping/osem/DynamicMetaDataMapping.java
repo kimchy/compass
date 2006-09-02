@@ -16,33 +16,30 @@
 
 package org.compass.core.mapping.osem;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.compass.core.mapping.AbstractResourcePropertyMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 
 /**
- * 
  * @author kimchy
- * 
  */
+public class DynamicMetaDataMapping extends AbstractResourcePropertyMapping implements OverrideByNameMapping, OsemMapping {
 
-public class ConstantMetaDataMapping extends AbstractResourcePropertyMapping
-        implements OverrideByNameMapping, OsemMapping {
-
-    private ArrayList metaDataValues = new ArrayList();
-    
     private boolean overrideByName;
 
+    private String expression;
+
+    private String format;
+
+    private Class type;
+
     public Mapping copy() {
-        ConstantMetaDataMapping copy = new ConstantMetaDataMapping();
+        DynamicMetaDataMapping copy = new DynamicMetaDataMapping();
         super.copy(copy);
         copy.setOverrideByName(isOverrideByName());
-        for (Iterator it = metaDataValuesIt(); it.hasNext();) {
-            copy.addMetaDataValue((String) it.next());
-        }
+        copy.setExpression(getExpression());
+        copy.setFormat(getFormat());
+        copy.setType(getType());
         return copy;
     }
 
@@ -50,19 +47,35 @@ public class ConstantMetaDataMapping extends AbstractResourcePropertyMapping
         return false;
     }
 
-    public void addMetaDataValue(String value) {
-        metaDataValues.add(value);
-    }
-
-    public Iterator metaDataValuesIt() {
-        return metaDataValues.iterator();
-    }
-
     public boolean isOverrideByName() {
-        return overrideByName;
+        return this.overrideByName;
     }
 
     public void setOverrideByName(boolean overrideByName) {
         this.overrideByName = overrideByName;
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public Class getType() {
+        return type;
+    }
+
+    public void setType(Class type) {
+        this.type = type;
     }
 }

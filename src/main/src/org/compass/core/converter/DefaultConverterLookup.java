@@ -37,6 +37,11 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.basic.*;
+import org.compass.core.converter.dynamic.GroovyDynamicConverter;
+import org.compass.core.converter.dynamic.JakartaElDynamicConverter;
+import org.compass.core.converter.dynamic.JexlDynamicConverter;
+import org.compass.core.converter.dynamic.OgnlDynamicConverter;
+import org.compass.core.converter.dynamic.VelocityDynamicConverter;
 import org.compass.core.converter.extended.FileConverter;
 import org.compass.core.converter.extended.InputStreamConverter;
 import org.compass.core.converter.extended.LocaleConverter;
@@ -59,15 +64,7 @@ import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlIdMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlObjectMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter;
-import org.compass.core.mapping.osem.ArrayMapping;
-import org.compass.core.mapping.osem.ClassIdPropertyMapping;
-import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyMapping;
-import org.compass.core.mapping.osem.CollectionMapping;
-import org.compass.core.mapping.osem.ComponentMapping;
-import org.compass.core.mapping.osem.ConstantMetaDataMapping;
-import org.compass.core.mapping.osem.ParentMapping;
-import org.compass.core.mapping.osem.ReferenceMapping;
+import org.compass.core.mapping.osem.*;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.mapping.xsem.XmlIdMapping;
@@ -174,6 +171,42 @@ public class DefaultConverterLookup implements ConverterLookup {
                 java.sql.Time.class, new SqlTimeConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.SQL_TIMESTAMP,
                 java.sql.Timestamp.class, new SqlTimestampConverter());
+        // dynamic converters
+        try {
+            addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.JEXL,
+                    DynamicMetaDataMapping.class, new JexlDynamicConverter());
+            log.debug("Dynamic converter - JEXL found in the class path, registering it");
+        } catch (Exception e) {
+            // do nothing
+        }
+        try {
+            addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.VELOCITY,
+                    DynamicMetaDataMapping.class, new VelocityDynamicConverter());
+            log.debug("Dynamic converter - Velocity found in the class path, registering it");
+        } catch (Exception e) {
+            // do nothing
+        }
+        try {
+            addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.JAKARTA_EL,
+                    DynamicMetaDataMapping.class, new JakartaElDynamicConverter());
+            log.debug("Dynamic converter - Jakarta EL found in the class path, registering it");
+        } catch (Exception e) {
+            // do nothing
+        }
+        try {
+            addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.OGNL,
+                    DynamicMetaDataMapping.class, new OgnlDynamicConverter());
+            log.debug("Dynamic converter - OGNL found in the class path, registering it");
+        } catch (Exception e) {
+            // do nothing
+        }
+        try {
+            addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.GROOVY,
+                    DynamicMetaDataMapping.class, new GroovyDynamicConverter());
+            log.debug("Dynamic converter - GRROVY found in the class path, registering it");
+        } catch (Exception e) {
+            // do nothing
+        }
         // add mapping converters
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.RAW_RESOURCE_MAPPING,
                 RawResourceMapping.class, new RawResourceMappingConverter());

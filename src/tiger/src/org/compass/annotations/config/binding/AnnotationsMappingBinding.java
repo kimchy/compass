@@ -36,7 +36,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.binding.MappingBindingSupport;
 import org.compass.core.converter.Converter;
-import org.compass.core.converter.MetaDataFormatDelegateConverter;
+import org.compass.core.converter.mapping.osem.MetaDataFormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
@@ -297,6 +297,17 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (searchableConstants != null) {
             for (SearchableConstant metaData : searchableConstants.value()) {
                 bindConstantMetaData(metaData);
+            }
+        }
+
+        SearchableDynamicMetaData searchableDynamicMetaData = annotationClass.getAnnotation(SearchableDynamicMetaData.class);
+        if (searchableDynamicMetaData != null) {
+            bindDynamicMetaData(searchableDynamicMetaData);
+        }
+        SearchableDynamicMetaDatas searchableDynamicMetaDatas = annotationClass.getAnnotation(SearchableDynamicMetaDatas.class);
+        if (searchableDynamicMetaDatas != null) {
+            for (SearchableDynamicMetaData metaData : searchableDynamicMetaDatas.value()) {
+                bindDynamicMetaData(metaData);
             }
         }
 
@@ -612,9 +623,13 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         String name = searchableMetaData.name();
         mdMapping.setName(valueLookup.lookupMetaDataName(name));
         mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
-        mdMapping.setBoost(classPropertyMapping.getBoost());
+        if (searchableMetaData.boost() == 1.0f) {
+            mdMapping.setBoost(classPropertyMapping.getBoost());
+        } else {
+            mdMapping.setBoost(searchableMetaData.boost());
+        }
 
-        bindConverter(classPropertyMapping, searchableMetaData.converter(), clazz, type);
+        bindConverter(mdMapping, searchableMetaData.converter(), clazz, type);
 
         mdMapping.setAccessor(classPropertyMapping.getAccessor());
         mdMapping.setObjClass(classPropertyMapping.getObjClass());
@@ -635,6 +650,36 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         mdMapping.setExcludeFromAll(searchableMetaData.excludeFromAll());
 
         classPropertyMapping.addMapping(mdMapping);
+    }
+
+    private void bindDynamicMetaData(SearchableDynamicMetaData searchableMetaData) {
+
+        DynamicMetaDataMapping mdMapping = new DynamicMetaDataMapping();
+        String name = searchableMetaData.name();
+        mdMapping.setName(valueLookup.lookupMetaDataName(name));
+        mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
+        mdMapping.setBoost(searchableMetaData.boost());
+
+        mdMapping.setConverterName(searchableMetaData.converter());
+        mdMapping.setExpression(searchableMetaData.expression());
+        if (StringUtils.hasLength(searchableMetaData.format())) {
+            mdMapping.setFormat(searchableMetaData.format());
+        }
+        mdMapping.setType(searchableMetaData.type());
+
+        mdMapping.setStore(AnnotationsBindingUtils.convert(searchableMetaData.store()));
+        mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableMetaData.index()));
+        mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableMetaData.termVector()));
+        mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableMetaData.reverse()));
+
+        mdMapping.setInternal(false);
+
+        if (StringUtils.hasLength(searchableMetaData.analyzer())) {
+            mdMapping.setAnalyzer(searchableMetaData.analyzer());
+        }
+        mdMapping.setExcludeFromAll(searchableMetaData.excludeFromAll());
+
+        classMapping.addMapping(mdMapping);
     }
 
     private void bindConstantMetaData(SearchableConstant searchableConstant) {

@@ -46,6 +46,11 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
         copy.setPropertyName(getPropertyName());
     }
 
+
+    public boolean hasAccessors() {
+        return true;
+    }
+
     public Getter getGetter() {
         return getter;
     }

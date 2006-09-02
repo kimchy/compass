@@ -21,9 +21,7 @@ import org.compass.core.accessor.Setter;
 import org.compass.core.mapping.AbstractMultipleMapping;
 
 /**
- * 
  * @author kimchy
- *
  */
 public abstract class AbstractAccessorMultipleMapping extends AbstractMultipleMapping implements ObjectMapping {
 
@@ -35,6 +33,11 @@ public abstract class AbstractAccessorMultipleMapping extends AbstractMultipleMa
         super.copy(copy);
         copy.setGetter(getGetter());
         copy.setSetter(getSetter());
+    }
+
+
+    public boolean hasAccessors() {
+        return true;
     }
 
     public Getter getGetter() {

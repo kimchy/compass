@@ -47,6 +47,10 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
         return copy;
     }
 
+    public boolean hasAccessors() {
+        return true;
+    }
+
     public boolean canBeCollectionWrapped() {
         return false;
     }

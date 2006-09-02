@@ -111,6 +111,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
                         // nothing to do here
                     } else if (copyMapping instanceof AbstractCollectionMapping) {
                         removeMapping = secondPass((AbstractCollectionMapping) copyMapping, classMapping);
+                    } else if (copyMapping instanceof DynamicMetaDataMapping) {
                     }
                 }
             }
@@ -323,6 +324,9 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             constantMetaDataMapping.setPath(new StaticPropertyPath(constantMetaDataMapping.getName()));
         }
 
+
+        public void onDynamicMetaDataMapping(DynamicMetaDataMapping dynamicMetaDataMapping) {
+        }
 
         public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {
             MappingProcessorUtils.process(classPropertyMetaDataMapping, classPropertyMapping, converterLookup);

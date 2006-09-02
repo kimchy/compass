@@ -135,7 +135,7 @@
     id*,
     parent?,
     (analyzer?),
-    (property|component|reference|constant)*
+    (property|dynamic-meta-data|component|reference|constant)*
 )>
     <!--
         The fully qualified class name (or relative if the package is declared in compass-core-mapping).
@@ -302,6 +302,21 @@
     <!ATTLIST constant exclude-from-all (true|false) "false">
     <!ATTLIST constant override (true|false) "true">
     <!ATTLIST constant converter CDATA #IMPLIED>
+
+<!ELEMENT dynamic-meta-data (
+    #PCDATA
+)>
+    <!ATTLIST dynamic-meta-data name CDATA #REQUIRED>
+    <!ATTLIST dynamic-meta-data store (no|yes|compress) "yes">
+    <!ATTLIST dynamic-meta-data index (no|tokenized|un_tokenized) "tokenized">
+    <!ATTLIST dynamic-meta-data term-vector (no|yes|positions|offsets|positions_offsets) "no">
+    <!ATTLIST dynamic-meta-data reverse (no|reader|string) "no">
+    <!ATTLIST dynamic-meta-data analyzer CDATA #IMPLIED>
+    <!ATTLIST dynamic-meta-data exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST dynamic-meta-data converter CDATA #IMPLIED>
+    <!ATTLIST dynamic-meta-data boost CDATA #IMPLIED>
+    <!ATTLIST dynamic-meta-data format CDATA #IMPLIED>
+    <!ATTLIST dynamic-meta-data type CDATA #IMPLIED>
 
 <!ELEMENT meta-data (
     #PCDATA

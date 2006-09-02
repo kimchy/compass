@@ -19,21 +19,16 @@ package org.compass.core.config.process;
 import java.util.Iterator;
 
 import org.compass.core.config.CompassSettings;
+import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
+import org.compass.core.converter.basic.FormatConverter;
+import org.compass.core.converter.dynamic.DynamicConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.AbstractCollectionMapping;
-import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyMapping;
-import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
-import org.compass.core.mapping.osem.ComponentMapping;
-import org.compass.core.mapping.osem.ConstantMetaDataMapping;
-import org.compass.core.mapping.osem.OsemMappingUtils;
-import org.compass.core.mapping.osem.ParentMapping;
-import org.compass.core.mapping.osem.ReferenceMapping;
+import org.compass.core.mapping.osem.*;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 
@@ -123,6 +118,30 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
 
         public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, classPropertyMetaDataMapping, classPropertyMapping);
+        }
+
+        public void onDynamicMetaDataMapping(DynamicMetaDataMapping dynamicMetaDataMapping) {
+            Converter converter = converterLookup.lookupConverter(dynamicMetaDataMapping.getConverterName());
+            if (!(converter instanceof DynamicConverter)) {
+                throw new MappingException("Dynamic meta-data [" + dynamicMetaDataMapping + "] converter name [" +
+                        dynamicMetaDataMapping.getConverterName() + "] is not a dynamic converter");
+            }
+            DynamicConverter dynamicConverter = ((DynamicConverter) converter).copy();
+            dynamicConverter.setType(dynamicMetaDataMapping.getType());
+            dynamicConverter.setExpression(dynamicMetaDataMapping.getExpression());
+
+            if (dynamicMetaDataMapping.getFormat() != null) {
+                converter = converterLookup.lookupConverter(dynamicMetaDataMapping.getType());
+                if (!(converter instanceof FormatConverter)) {
+                    throw new MappingException("Dynamic meta data [" + dynamicMetaDataMapping.getName() +
+                            "] type [" + dynamicMetaDataMapping.getType().getName() + "] is not a formattable type");
+                }
+                FormatConverter formatConverter = ((FormatConverter) converter).copy();
+                formatConverter.setFormat(dynamicMetaDataMapping.getFormat());
+                dynamicConverter.setFormatConverter(formatConverter);
+            }
+
+            dynamicMetaDataMapping.setConverter(dynamicConverter);
         }
 
         /**

@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.basic;
+package org.compass.core.mapping.osem;
 
-import org.compass.core.converter.Converter;
-import org.compass.core.converter.ResourcePropertyConverter;
+import org.compass.core.mapping.Mapping;
 
 /**
- * A {@link Converter} that can handle format parameter.
- *
  * @author kimchy
  */
-public interface FormatConverter extends ResourcePropertyConverter {
+public interface OsemMapping extends Mapping {
 
-    /**
-     * Sets the format for the {@link Converter}.
-     */
-    void setFormat(String format);
-
-    /**
-     * Returns a copy of the format converter.
-     */
-    FormatConverter copy();
+    boolean hasAccessors();
 }

@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter;
+package org.compass.core.converter.mapping.osem;
 
 import org.compass.core.Resource;
+import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.Converter;
+import org.compass.core.converter.DelegateConverter;
 import org.compass.core.converter.basic.FormatConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.marshall.MarshallingContext;

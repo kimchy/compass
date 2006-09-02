@@ -26,7 +26,7 @@ import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
-import org.compass.core.converter.MetaDataFormatDelegateConverter;
+import org.compass.core.converter.mapping.osem.MetaDataFormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
@@ -37,15 +37,7 @@ import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.ClassIdPropertyMapping;
-import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
-import org.compass.core.mapping.osem.ClassPropertyMapping;
-import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
-import org.compass.core.mapping.osem.ComponentMapping;
-import org.compass.core.mapping.osem.ConstantMetaDataMapping;
-import org.compass.core.mapping.osem.ParentMapping;
-import org.compass.core.mapping.osem.ReferenceMapping;
+import org.compass.core.mapping.osem.*;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
@@ -499,6 +491,47 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
             classMapping.addMapping(analyzerController);
         }
+
+        ConfigurationHelper dynamicConf = classConf.getChild("dynamic-meta-data", false);
+        if (dynamicConf != null) {
+            DynamicMetaDataMapping dynamicMetaDataMapping = new DynamicMetaDataMapping();
+            bindDynamicMetaData(dynamicConf, classMapping, dynamicMetaDataMapping);
+            classMapping.addMapping(dynamicMetaDataMapping);
+        }
+    }
+
+    private void bindDynamicMetaData(ConfigurationHelper dynamicConf, AliasMapping aliasMapping,
+                                     DynamicMetaDataMapping dynamicMetaDataMapping) {
+        String name = valueLookup.lookupMetaDataName(dynamicConf.getAttribute("name"));
+        dynamicMetaDataMapping.setBoost(getBoost(dynamicConf));
+        dynamicMetaDataMapping.setName(name);
+        dynamicMetaDataMapping.setPath(new StaticPropertyPath(name));
+
+        dynamicMetaDataMapping.setExpression(dynamicConf.getValue().trim());
+
+        dynamicMetaDataMapping.setFormat(dynamicConf.getAttribute("format", null));
+        String type = dynamicConf.getAttribute("type", null);
+        if (type != null) {
+            try {
+                dynamicMetaDataMapping.setType(ClassUtils.forName(type));
+            } catch (ClassNotFoundException e) {
+                throw new MappingException("Failed to find class [" + type + "]", e);
+            }
+        }
+
+        bindConverter(dynamicConf, dynamicMetaDataMapping);
+
+        String storeType = dynamicConf.getAttribute("store", "yes");
+        dynamicMetaDataMapping.setStore(Property.Store.fromString(storeType));
+        String indexType = dynamicConf.getAttribute("index", "tokenized");
+        dynamicMetaDataMapping.setIndex(Property.Index.fromString(indexType));
+        String termVectorType = dynamicConf.getAttribute("term-vector", "no");
+        dynamicMetaDataMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        String reverseType = dynamicConf.getAttribute("reverse", "no");
+        dynamicMetaDataMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
+        dynamicMetaDataMapping.setInternal(false);
+        dynamicMetaDataMapping.setAnalyzer(dynamicConf.getAttribute("analyzer", null));
+        dynamicMetaDataMapping.setExcludeFromAll(dynamicConf.getAttributeAsBoolean("exclude-from-all", false));
     }
 
     private void bindReference(ConfigurationHelper referenceConf, AliasMapping aliasMapping,

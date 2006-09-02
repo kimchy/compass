@@ -34,6 +34,7 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
+import org.compass.core.mapping.osem.OsemMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
 import org.compass.core.util.ClassUtils;
@@ -72,9 +73,9 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         boolean store = false;
         for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, root);
-            Mapping m = (Mapping) mappingsIt.next();
+            OsemMapping m = (OsemMapping) mappingsIt.next();
             Object value;
-            if (m instanceof ObjectMapping) {
+            if (m.hasAccessors()) {
                 Getter getter = ((ObjectMapping) m).getGetter();
                 value = getter.get(root);
             } else {
@@ -134,8 +135,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             boolean isNullClass = true;
             for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
                 context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, obj);
-                Mapping m = (Mapping) mappingsIt.next();
-                if (m instanceof ObjectMapping) {
+                OsemMapping m = (OsemMapping) mappingsIt.next();
+                if (m.hasAccessors()) {
                     Setter setter = ((ObjectMapping) m).getSetter();
                     if (setter == null) {
                         continue;

@@ -18,14 +18,13 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
-import org.compass.core.mapping.Mapping;
 
 /**
  * 
  * @author kimchy
  *
  */
-public interface ObjectMapping extends Mapping {
+public interface ObjectMapping extends OsemMapping {
 
     Class getObjClass();
 

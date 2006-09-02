@@ -772,9 +772,11 @@
                 <include name="lib/lucene/**"/>
                 <include name="lib/odmg/**"/>
                 <include name="lib/ojb/**"/>
+                <include name="lib/ognl/**"/>
                 <include name="lib/spring/**"/>
                 <include name="lib/sunfsjndi/**"/>
                 <include name="lib/toplink/**"/>
+                <include name="lib/velocity/**"/>
                 <include name="lib/xpp/**"/>
             </zipfileset>
         </zip>
