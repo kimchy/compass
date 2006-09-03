@@ -756,6 +756,7 @@
                 <include name="lib/c3p0/**"/>
                 <include name="lib/cglib/**"/>
                 <include name="lib/dom4j/**"/>
+                <include name="lib/groovy/**"/>
                 <include name="lib/ehcache/**"/>
                 <include name="lib/hibernate/**"/>
                 <include name="lib/hsqldb/**"/>
