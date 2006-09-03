@@ -222,7 +222,7 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using dynamic meta data with ognl
 
 * spring/spring.jar (and spring-*.jar)
-- Spring Framework 2.0 RC2 (http://www.springframework.org)
+- Spring Framework 2.0 RC3 (http://www.springframework.org)
 - required for building compass
 - required at runtime when using Compass's Spring support
 
