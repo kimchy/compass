@@ -232,7 +232,7 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using velocity for dynamic meta-data
 
 * oracle/toplink-essentials
-- Oracle Toplink Essential Reference implementation of JPA (part of glass fish) v2 build 03 (http://www.oracle.com/technology/products/ias/toplink/jpa)
+- Oracle Toplink Essential Reference implementation of JPA (part of glass fish) v2 build 15 (http://www.oracle.com/technology/products/ias/toplink/jpa)
 - required for building compass
 - required at runtime when using Compass Gps JPA support with Toplink Essentials
 
