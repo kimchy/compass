@@ -254,7 +254,7 @@ public class Author {
     (id)*,
     parent?,
     (analyzer?),
-    (property|component|reference|constant)*
+    (property|dynamic-meta-data|component|reference|constant)*
 </class>]]></programlisting>
 
         <table><tgroup cols="2">
@@ -363,7 +363,7 @@ public class Author {
 >
     (id)*,
     (analyzer?),
-    (property|component|reference|constant)*
+    (property|dynamic-meta-data|component|reference|constant)*
 </contract>]]></programlisting>
 
         <table><tgroup cols="2">
@@ -674,6 +674,88 @@ public class Author {
 
         <para>
           You can control the format of the marshalled values when mapping a <literal>java.lang.Number</literal> (or the equivalent primitive value) using the format provided by the <literal>java.text.DecimalFormat</literal>. You can also format a <literal>java.util.Date</literal> using the format provided by <literal>java.text.SimpleDateFormat</literal>. You set the format string in the <literal>format</literal> attribute.
+        </para>
+
+      </para>
+
+    </sect2>
+
+    <sect2 id="dynamic-meta-data">
+      <title>dynamic-meta-data</title>
+
+      <para>
+        Declaring and using the <literal>dynamic-meta-data</literal> element.
+
+<programlisting><![CDATA[<dynamci-meta-data
+      name="The name the meta data will be saved under"
+      store="yes|no|compress"
+      index="tokenized|un_tokenized|no"
+      boost="boost value for the meta-data"
+      analyzer="name of the analyzer"
+      reverse="no|reader|string"
+      exclude-from-all="[parent's exclude-from-all]|false|true"
+      converter="the Dynamic Converter lookup name (required)"
+      format="the format string (only applies to formatted elements)"
+>
+</meta-data>]]></programlisting>
+
+        <table><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>name</entry>
+              <entry>The name the dynamic meta data will be saved under (similar to the tag name of the <literal>meta-data</literal> mapping).</entry>
+            </row>
+            <row>
+              <entry>store (optional, defaults to <literal>yes</literal>)</entry>
+              <entry>If the value of the class property that the meta-data maps to, is going to be stored in the index.</entry>
+            </row>
+            <row>
+              <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
+              <entry>If the value of the class property that the meta-data maps to, is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analysed
+              (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+            </row>
+            <row>
+              <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
+              <entry>Controls the boost level for the <literal>meta-data</literal>.</entry>
+            </row>
+            <row>
+              <entry>analyzer (optional, defaults to the parent analyzer)</entry>
+              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+            </row>
+            <row>
+              <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
+              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more perform ant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
+            </row>
+            <row>
+              <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
+              <entry>Excludes the meta-data from participating in the "all" meta-data.</entry>
+            </row>
+            <row>
+              <entry>converter (required)</entry>
+              <entry>The global dynamic converter lookup name registered with the configuration. Built in dynamic converters include: el, jexl, velocity, ognl and groovy.</entry>
+            </row>
+            <row>
+              <entry>format (optional)</entry>
+              <entry>Allows for quickly setting a format for format-able types (dates, and numbers), without creating/registering a specialized converter under a lookup name. Applies when the dynamic expression evaluates to a formatable object. Must set the type attribute as well.</entry>
+            </row>
+            <row>
+              <entry>type (optional)</entry>
+              <entry>The fully qualified class name of the object evaluated as a result of the dynamic expression. Applies when using formats.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
+
+        <para>
+          The dynamic meta data mapping allows to define meta-data saved into the search engine as a result of evaluating an expression. The mapping does not map to any class property and acts as a syntactic meta-data (similar to the constant mapping). The value of the dynamic meta-data tag is the expression evaluated by a Dynamic Converter. Compass comes with several built in dynamic converters: el (Jakarta commons el), jexl (Jakarta commons jexl), velocity, ognl, and groovy. When defining the expression, the root class is registered under the <literal>data</literal> key (for libraries that require it).
+        </para>
+
+        <para>
+          The element <literal>dynamic-meta-data</literal> is a <literal>Property</literal> within a <literal>Resource</literal>.
         </para>
 
       </para>

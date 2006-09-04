@@ -118,7 +118,7 @@
     id*,
     parent?,
     (analyzer?),
-    (property|component|reference|constant)*
+    (property|dynamic-meta-data|component|reference|constant)*
 )>
     <!ATTLIST contract alias CDATA #REQUIRED>
     <!ATTLIST contract extends CDATA #IMPLIED>
@@ -313,7 +313,7 @@
     <!ATTLIST dynamic-meta-data reverse (no|reader|string) "no">
     <!ATTLIST dynamic-meta-data analyzer CDATA #IMPLIED>
     <!ATTLIST dynamic-meta-data exclude-from-all (true|false) #IMPLIED>
-    <!ATTLIST dynamic-meta-data converter CDATA #IMPLIED>
+    <!ATTLIST dynamic-meta-data converter CDATA #REQUIRED>
     <!ATTLIST dynamic-meta-data boost CDATA #IMPLIED>
     <!ATTLIST dynamic-meta-data format CDATA #IMPLIED>
     <!ATTLIST dynamic-meta-data type CDATA #IMPLIED>
