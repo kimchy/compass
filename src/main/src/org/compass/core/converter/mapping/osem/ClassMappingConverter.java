@@ -17,6 +17,7 @@
 package org.compass.core.converter.mapping.osem;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.util.Iterator;
 
 import org.compass.core.Property;
@@ -102,64 +103,76 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 return cached;
             }
         }
-        String className = classMapping.getName();
+
+        // resolve the actual class and constructor
+        Class clazz = classMapping.getClazz();
+        Constructor constructor = classMapping.getConstructor();
         if (classMapping.isPoly()) {
             if (classMapping.getPolyClass() != null) {
-                className = classMapping.getPolyClass().getName();
+                clazz = classMapping.getPolyClass();
+                constructor = classMapping.getPolyConstructor();
             } else {
                 Property pClassName = resource.getProperty(classMapping.getClassPath().getPath());
                 if (pClassName == null) {
-                    throw new ConversionException("The class [" + className
+                    throw new ConversionException("The class [" + classMapping.getAlias()
                             + "] is configured as poly, but no class information is stored in the resource");
                 }
-                className = pClassName.getStringValue();
+                String className = pClassName.getStringValue();
                 if (className == null) {
-                    throw new ConversionException("The class [" + className
+                    throw new ConversionException("The class [" + classMapping.getAlias()
                             + "] is configured as poly, but no class information is stored in the resource");
                 }
-            }
-        }
-        try {
-            Class clazz = ClassUtils.forName(className);
-            Object obj = ClassUtils.getDefaultConstructor(clazz).newInstance(null);
-
-            context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, obj);
-            // we will set here the object, even though no ids have been set,
-            // since the ids are the first mappings that will be unmarshalled,
-            // and it's all we need to handle cyclic refernces in case of
-            // references
-            if (classMapping.isRoot()) {
-                context.setUnmarshalled(resourceIdKey, obj);
-            }
-
-            boolean isNullClass = true;
-            for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
-                context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, obj);
-                OsemMapping m = (OsemMapping) mappingsIt.next();
-                if (m.hasAccessors()) {
-                    Setter setter = ((ObjectMapping) m).getSetter();
-                    if (setter == null) {
-                        continue;
-                    }
-                    Object value = m.getConverter().unmarshall(resource, m, context);
-                    if (value == null) {
-                        continue;
-                    }
-                    setter.set(obj, value);
-                    if (m.controlsObjectNullability()) {
-                        isNullClass = false;
-                    }
-                } else {
-                    m.getConverter().unmarshall(resource, m, context);
+                try {
+                    clazz = ClassUtils.forName(className);
+                } catch (ClassNotFoundException e) {
+                    throw new ConversionException("Failed to create class [" + className + "] for unmarshalling", e);
                 }
+                constructor = ClassUtils.getDefaultConstructor(clazz);
             }
-            if (isNullClass) {
-                return null;
-            }
-            return obj;
-        } catch (Exception e) {
-            throw new ConversionException("Failed to create class [" + className + "] for unmarshalling", e);
         }
+
+        // create the object
+        Object obj;
+        try {
+            obj = constructor.newInstance(null);
+        } catch (Exception e) {
+            throw new ConversionException("Failed to create class [" + clazz.getName() + "] for unmarshalling", e);
+        }
+
+        context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, obj);
+        // we will set here the object, even though no ids have been set,
+        // since the ids are the first mappings that will be unmarshalled,
+        // and it's all we need to handle cyclic refernces in case of
+        // references
+        if (classMapping.isRoot()) {
+            context.setUnmarshalled(resourceIdKey, obj);
+        }
+
+        boolean isNullClass = true;
+        for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
+            context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, obj);
+            OsemMapping m = (OsemMapping) mappingsIt.next();
+            if (m.hasAccessors()) {
+                Setter setter = ((ObjectMapping) m).getSetter();
+                if (setter == null) {
+                    continue;
+                }
+                Object value = m.getConverter().unmarshall(resource, m, context);
+                if (value == null) {
+                    continue;
+                }
+                setter.set(obj, value);
+                if (m.controlsObjectNullability()) {
+                    isNullClass = false;
+                }
+            } else {
+                m.getConverter().unmarshall(resource, m, context);
+            }
+        }
+        if (isNullClass) {
+            return null;
+        }
+        return obj;
     }
 
     public boolean marshallIds(Resource idResource, Object id, ResourceMapping resourceMapping, MarshallingContext context)
@@ -248,6 +261,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
      * @param resource     The resource to set the boost on
      * @param root         The Object that is marshalled into the respective Resource
      * @param classMapping The Class Mapping deifnition
+     * @param context      The marshalling context
      * @throws ConversionException
      */
     protected void doSetBoost(Resource resource, Object root, ClassMapping classMapping,

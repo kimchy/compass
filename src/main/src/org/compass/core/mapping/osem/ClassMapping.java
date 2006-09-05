@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.osem;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,6 +54,10 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private HashMap pathMappings;
 
+    private Constructor constructor;
+
+    private Constructor polyConstructor;
+
     public Mapping copy() {
         ClassMapping copy = new ClassMapping();
         super.copy(copy);
@@ -60,6 +65,8 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setClassPath(getClassPath());
         copy.setClazz(getClazz());
         copy.setPolyClass(getPolyClass());
+        copy.setConstructor(getConstructor());
+        copy.setPolyConstructor(getPolyConstructor());
         copy.supportUnmarshall = supportUnmarshall;
         return copy;
     }
@@ -71,6 +78,8 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setClassPath(getClassPath());
         copy.setClazz(getClazz());
         copy.setPolyClass(getPolyClass());
+        copy.setConstructor(getConstructor());
+        copy.setPolyConstructor(getPolyConstructor());
         copy.supportUnmarshall = supportUnmarshall;
         return copy;
     }
@@ -182,5 +191,21 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public boolean isSupportUnmarshallSet() {
         return supportUnmarshall != null;
+    }
+
+    public Constructor getConstructor() {
+        return constructor;
+    }
+
+    public void setConstructor(Constructor constructor) {
+        this.constructor = constructor;
+    }
+
+    public Constructor getPolyConstructor() {
+        return polyConstructor;
+    }
+
+    public void setPolyConstructor(Constructor polyConstructor) {
+        this.polyConstructor = polyConstructor;
     }
 }

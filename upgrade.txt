@@ -7,8 +7,8 @@ VERSION 1.1 M2 ()
 1. OSEM setting compass.managedId.index changed to compass.osem.managedId.index .
 
 
-VERSION 1.1 M1 ()
-=============================
+VERSION 1.1 M1 (August 25, 2006)
+================================
 
 1. Removed CompassTermInfo and CompassSession API supporting it, and added it to 
    LuceneHelper. It now uses actual Lucene classes.

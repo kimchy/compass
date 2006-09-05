@@ -29,6 +29,7 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.MultipleMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
+import org.compass.core.util.ClassUtils;
 
 /**
  * @author kimchy
@@ -46,6 +47,13 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
             Mapping mapping = (Mapping) rIt.next();
             if (mapping instanceof ClassMapping) {
                 ClassMapping classMapping = (ClassMapping) mapping;
+
+                // resolve the class mapping constructor
+                classMapping.setConstructor(ClassUtils.getDefaultConstructor(classMapping.getClazz()));
+                if (classMapping.getPolyClass() != null) {
+                    classMapping.setPolyConstructor(ClassUtils.getDefaultConstructor(classMapping.getPolyClass()));
+                }
+
                 for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
                     processMapping((Mapping) it.next(), classMapping.getClazz(), propertyAccessorFactory);
                 }
