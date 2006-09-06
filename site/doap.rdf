@@ -1,0 +1,49 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	xmlns="http://usefulinc.com/ns/doap#">
+
+	<name>Compass</name>
+	<homepage rdf:resource="http://www.opensymphony.com/compass" />
+	<created>2004-10-10</created>
+	<shortdesc xml:lang="en">
+	  Java Search Engine framework for integrating Lucene
+      into any application stack, including Spring Framework, JEE, JSE, Hibernate, JPA, and more.
+    </shortdesc>
+	<description xml:lang="en">
+        Java Search Engine framework for integrating Lucene
+        into any application stack, including Spring Framework, JEE, JSE, Hibernate, JPA, and more.
+	</description>
+
+    <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
+    <download-page rdf:resource="http://opensymphony.com/compass/download.action" />
+    <bug-database rdf:resource="http://jira.compassframework.org" />
+    <programming-language>Java</programming-language>
+    
+    <maintainer>
+		<foaf:Person>
+			<foaf:name>Shay Banon (kimchy)</foaf:name>
+			<foaf:homepage rdf:resource="http://jroller.com/page/kimchy" />
+		</foaf:Person>
+	</maintainer>
+
+	<!-- currently supported versions -->
+	<release>
+		<Version>
+			<name>1.0.0</name>
+			<created>2006-07-23</created>
+			<revision>1.0.0</revision>
+		</Version>
+	</release>
+
+	<category rdf:resource="http://freshmeat.net/browse/856/" />
+    <category rdf:resource="http://freshmeat.net/browse/913/" />
+
+	<repository>
+		<SVNRepository>
+			<location rdf:resource="http://svn.opensymphony.com/svn/compass/trunk" />
+			<browse rdf:resource="http://svn.opensymphony.com/fisheye/viewrep/compass/trunk" />
+		</SVNRepository>
+	</repository>
+
+</Project>
