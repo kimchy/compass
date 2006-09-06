@@ -21,10 +21,10 @@ import java.util.ArrayList;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.util.StringUtils;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.spi.MultiResource;
+import org.compass.core.util.StringUtils;
 
 /**
  * @author kimchy
@@ -79,6 +79,23 @@ public class LuceneMultiResource implements MultiResource {
     public Resource setAlias(String alias) {
         currentResource.setAlias(alias);
         return this;
+    }
+
+
+    public String getId() {
+        return currentResource.getId();
+    }
+
+    public String[] getIds() {
+        return currentResource.getIds();
+    }
+
+    public Property getIdProperty() {
+        return currentResource.getIdProperty();
+    }
+
+    public Property[] getIdProperties() {
+        return currentResource.getIdProperties();
     }
 
     public String get(String name) {

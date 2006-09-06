@@ -18,6 +18,7 @@ package org.compass.core.test.simple;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.Resource;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -40,6 +41,15 @@ public class SimpleTests extends AbstractTestCase {
 
         a = (A) session.load(A.class, new Long(1));
         assertEquals("value", a.getValue());
+
+        Resource resource = session.loadResource(A.class, new Long(1));
+        assertEquals("value", resource.get("value"));
+        assertEquals("1", resource.getId());
+        assertEquals(1, resource.getIds().length);
+        assertEquals("1", resource.getIds()[0]);
+        assertEquals(1, resource.getIdProperties().length);
+        assertEquals("1", resource.getIdProperties()[0].getStringValue());
+        assertEquals("1", resource.getIdProperty().getStringValue());
 
         tr.commit();
         session.close();

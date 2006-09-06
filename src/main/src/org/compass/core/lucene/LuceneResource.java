@@ -29,13 +29,13 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.spi.AliasedObject;
 import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.AliasedObject;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -84,7 +84,7 @@ public class LuceneResource implements AliasedObject, Resource, Map {
         this.searchEngine = luceneResource.searchEngine;
         this.resourceMapping = luceneResource.resourceMapping;
     }
-    
+
     public Document getDocument() {
         return this.document;
     }
@@ -111,6 +111,38 @@ public class LuceneResource implements AliasedObject, Resource, Map {
                 Field.Index.UN_TOKENIZED));
         addProperty(aliasProp);
         return this;
+    }
+
+    public String getId() {
+        String[] ids = getIds();
+        return ids[0];
+    }
+
+    public String[] getIds() {
+        Property[] idProperties = getIdProperties();
+        String[] ids = new String[idProperties.length];
+        for (int i = 0; i < idProperties.length; i++) {
+            if (idProperties[i] != null) {
+                ids[i] = idProperties[i].getStringValue();
+            }
+        }
+        return ids;
+    }
+
+    public Property getIdProperty() {
+        Property[] idProperties = getIdProperties();
+        return idProperties[0];
+    }
+
+    public Property[] getIdProperties() {
+        ResourceMapping resourceMapping =
+                searchEngine.getSearchEngineFactory().getMapping().getResourceMappingByAlias(getAlias());
+        ResourcePropertyMapping[] resourcePropertyMappings = resourceMapping.getIdMappings();
+        Property[] idProperties = new Property[resourcePropertyMappings.length];
+        for (int i = 0; i < resourcePropertyMappings.length; i++) {
+            idProperties[i] = getProperty(resourcePropertyMappings[i].getPath().getPath());
+        }
+        return idProperties;
     }
 
     public Resource addProperty(String name, Object value) throws SearchEngineException {

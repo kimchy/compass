@@ -26,14 +26,14 @@ import org.compass.core.spi.AliasedObject;
  * A Resource holds a list of meta data properties. The Resource is the basic
  * data that is saved in Compass. Compass provides object to Resource mapping as
  * well in the CompassSession object.
- * 
+ *
  * @author kimchy
  */
 public interface Resource extends AliasedObject, Serializable {
 
     /**
      * Returns the mapping alias of the associated Resource
-     * 
+     *
      * @return The alias
      */
     String getAlias();
@@ -41,17 +41,46 @@ public interface Resource extends AliasedObject, Serializable {
     /**
      * Sets the alias of the Resource. Advance method, since it is handled by
      * Compass marshlling based on mapping file if using OSEM.
-     * 
-     * @param alias
+     *
+     * @param alias The resource alias
      */
     Resource setAlias(String alias);
+
+    /**
+     * Returns the id of the resource. Used when there is only one id
+     * for the resource.
+     *
+     * @return The id of the resource.
+     */
+    String getId();
+
+    /**
+     * Returns the id values of the resource.
+     *
+     * @return The id values of the resource
+     */
+    String[] getIds();
+
+    /**
+     * Returns the id property of the resource
+     *
+     * @return The id properties of the resource
+     */
+    Property getIdProperty();
+
+    /**
+     * Returns the id properties of the resource
+     *
+     * @return The id properties of the resource
+     */
+    Property[] getIdProperties();
 
     /**
      * Returns the string value of the property with the given name if any exist
      * in this resource, or null. If multiple properties exist with this name,
      * this method returns the first value added.
-     * 
-     * @param name
+     *
+     * @param name The name of the property
      * @return The first value that match the name
      */
     String get(String name);
@@ -59,9 +88,8 @@ public interface Resource extends AliasedObject, Serializable {
     /**
      * Returns an array of values of the property specified as the method
      * parameter. This method can return <code>null</code>.
-     * 
-     * @param name
-     *            the name of the property
+     *
+     * @param name the name of the property
      * @return a <code>String[]</code> of property values
      */
     String[] getValues(String name);
@@ -71,11 +99,9 @@ public interface Resource extends AliasedObject, Serializable {
      * the property already exists in the resource (the name exists), it will be
      * added on top of it (won't replace it). ONLY use this method with resource
      * mapping.
-     * 
-     * @param name
-     *            the name of the property
-     * @param value
-     *            the value to be set (will be converted to a string).
+     *
+     * @param name  the name of the property
+     * @param value the value to be set (will be converted to a string).
      * @throws SearchEngineException
      */
     Resource addProperty(String name, Object value) throws SearchEngineException;
@@ -85,11 +111,9 @@ public interface Resource extends AliasedObject, Serializable {
      * the property already exists in the resource (the name exists), it will be
      * added on top of it (won't replace it). ONLY use this method with resource
      * mapping.
-     * 
-     * @param name
-     *            the name of the property
-     * @param value
-     *            the value to be set (will be converted to a string).
+     *
+     * @param name  the name of the property
+     * @param value the value to be set (will be converted to a string).
      * @throws SearchEngineException
      */
     Resource addProperty(String name, Reader value) throws SearchEngineException;
@@ -100,59 +124,59 @@ public interface Resource extends AliasedObject, Serializable {
      * it). Note: Compass adds all properties specified in mapping file, adding
      * extra properties to a Resource will make the index out of sync with
      * mapping.
-     * 
-     * @param property
+     *
+     * @param property The properyt to add
      */
     Resource addProperty(Property property);
 
     /**
      * Remove the latest property added under the given name.
-     * 
-     * @param name
+     *
+     * @param name The last property name to remove
      */
     Resource removeProperty(String name);
 
     /**
      * Removes all the properties under the given name.
-     * 
-     * @param name
+     *
+     * @param name The properties name to remove
      */
     Resource removeProperties(String name);
 
     /**
      * Returns the first property under the name.
-     * 
-     * @param name
+     *
+     * @param name The name of the property
      * @return The first proeprty that match the name
      */
     Property getProperty(String name);
 
     /**
      * Returns all the properties under the given name.
-     * 
-     * @param name
+     *
+     * @param name The name of the properties
      * @return An array of properties that match the name
      */
     Property[] getProperties(String name);
 
     /**
      * Returns all the properties for the resource.
-     * 
+     *
      * @return All the properties
      */
     Property[] getProperties();
 
     /**
      * Returns the boost for the property.
-     * 
+     *
      * @return The boost value
      */
     float getBoost();
 
     /**
-     * Sets the boost level for the property.
-     * 
-     * @param boost
+     * Sets the boost level for the resource.
+     *
+     * @param boost The boost level for the resource
      */
     Resource setBoost(float boost);
 

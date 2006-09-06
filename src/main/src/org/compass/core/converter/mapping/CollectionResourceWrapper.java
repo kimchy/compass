@@ -72,6 +72,22 @@ public class CollectionResourceWrapper implements Resource {
         return this;
     }
 
+    public String getId() {
+        throw new ConversionException("should not be called");
+    }
+
+    public String[] getIds() {
+        throw new ConversionException("should not be called");
+    }
+
+    public Property getIdProperty() {
+        throw new ConversionException("should not be called");
+    }
+
+    public Property[] getIdProperties() {
+        throw new ConversionException("should not be called");
+    }
+
     public Resource addProperty(String name, Object value) throws SearchEngineException {
         throw new ConversionException("should not be called");
     }
