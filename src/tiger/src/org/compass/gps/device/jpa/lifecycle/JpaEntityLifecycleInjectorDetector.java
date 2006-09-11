@@ -16,16 +16,17 @@
 
 package org.compass.gps.device.jpa.lifecycle;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-
-import javax.persistence.EntityManagerFactory;
+import org.compass.gps.device.jpa.support.NativeJpaHelper;
 
 /**
  * A {@link JpaEntityLifecycleInjector} detector. Tries to check for the actual implementation of JPA
  * <code>EntityManagerFactory</code>, and based on it, check if the current set of actual JPA
  * implementations is one of compass supported ones (like Hibernate).
- * <p>
+ * <p/>
  * Currently support the following JPA implementations: Hibernate, TopLink Essentials (Glassfish Persistence).
  * <p/>
  * Assumes that the <code>EntityManagerFactory</code> is the native one, since the
@@ -38,15 +39,26 @@ public abstract class JpaEntityLifecycleInjectorDetector {
 
     public static JpaEntityLifecycleInjector detectInjector(EntityManagerFactory entityManagerFactory)
             throws JpaGpsDeviceException {
-        String injectorClassName = null;
-        if (entityManagerFactory.getClass().getName().equals("org.hibernate.ejb.EntityManagerFactoryImpl")) {
-            injectorClassName = "org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityLifecycleInjector";
-        } else if (entityManagerFactory.getClass().getName().equals("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
-            injectorClassName = "org.compass.gps.device.jpa.lifecycle.TopLinkEssentialsJpaEntityLifecycleInjector";
-        }
+        String injectorClassName =
+                NativeJpaHelper.detectNativeJpa(entityManagerFactory, new NativeJpaHelper.NativeJpaCallback<String>() {
+
+                    public String onHibernate() {
+                        return "org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityLifecycleInjector";
+                    }
+
+                    public String onTopLinkEssentials() {
+                        return "org.compass.gps.device.jpa.lifecycle.TopLinkEssentialsJpaEntityLifecycleInjector";
+                    }
+
+                    public String onUnknown() {
+                        return null;
+                    }
+                });
+
         if (injectorClassName == null) {
             return null;
         }
+
         try {
             Class injectorClass = ClassUtils.forName(injectorClassName);
             return (JpaEntityLifecycleInjector) injectorClass.newInstance();

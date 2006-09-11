@@ -17,8 +17,10 @@
 package org.compass.gps.device.jpa.entities;
 
 import javax.persistence.EntityManagerFactory;
+
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.compass.gps.device.jpa.support.NativeJpaHelper;
 
 /**
  * A {@link JpaEntitiesLocator} detector. Tries to check for the actual implementation of JPA
@@ -33,19 +35,29 @@ import org.compass.gps.device.jpa.JpaGpsDeviceException;
  * Assumes that the <code>EntityManagerFactory</code> is the native one, since the
  * {@link org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor} of the
  * {@link org.compass.gps.device.jpa.JpaGpsDevice} was used to extract it.
- * 
  *
  * @author kimchy
  */
 public abstract class JpaEntitiesLocatorDetector {
 
     public static JpaEntitiesLocator detectLocator(EntityManagerFactory entityManagerFactory) {
-        String locatorClassName = DefaultJpaEntitiesLocator.class.getName();
-        if (entityManagerFactory.getClass().getName().equals("org.hibernate.ejb.EntityManagerFactoryImpl")) {
-            locatorClassName = "org.compass.gps.device.jpa.entities.HibernateJpaEntitiesLocator";
-        } else if (entityManagerFactory.getClass().getName().equals("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
-            locatorClassName = "org.compass.gps.device.jpa.entities.TopLinkEssentialsJpaEntitiesLocator";
-        }
+
+        String locatorClassName =
+                NativeJpaHelper.detectNativeJpa(entityManagerFactory, new NativeJpaHelper.NativeJpaCallback<String>() {
+
+            public String onHibernate() {
+                return "org.compass.gps.device.jpa.entities.HibernateJpaEntitiesLocator";
+            }
+
+            public String onTopLinkEssentials() {
+                return "org.compass.gps.device.jpa.entities.TopLinkEssentialsJpaEntitiesLocator";
+            }
+
+            public String onUnknown() {
+                return DefaultJpaEntitiesLocator.class.getName();
+            }
+        });
+
         try {
             Class locatorClass = ClassUtils.forName(locatorClassName);
             return (JpaEntitiesLocator) locatorClass.newInstance();
