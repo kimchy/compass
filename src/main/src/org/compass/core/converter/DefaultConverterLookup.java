@@ -176,35 +176,35 @@ public class DefaultConverterLookup implements ConverterLookup {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.JEXL,
                     DynamicMetaDataMapping.class, new JexlDynamicConverter());
             log.debug("Dynamic converter - JEXL found in the class path, registering it");
-        } catch (Exception e) {
+        } catch (Error e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.VELOCITY,
                     DynamicMetaDataMapping.class, new VelocityDynamicConverter());
             log.debug("Dynamic converter - Velocity found in the class path, registering it");
-        } catch (Exception e) {
+        } catch (Error e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.JAKARTA_EL,
                     DynamicMetaDataMapping.class, new JakartaElDynamicConverter());
             log.debug("Dynamic converter - Jakarta EL found in the class path, registering it");
-        } catch (Exception e) {
+        } catch (Error e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.OGNL,
                     DynamicMetaDataMapping.class, new OgnlDynamicConverter());
             log.debug("Dynamic converter - OGNL found in the class path, registering it");
-        } catch (Exception e) {
+        } catch (Error e) {
             // do nothing
         }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.GROOVY,
                     DynamicMetaDataMapping.class, new GroovyDynamicConverter());
-            log.debug("Dynamic converter - GRROVY found in the class path, registering it");
-        } catch (Exception e) {
+            log.debug("Dynamic converter - GROOVY found in the class path, registering it");
+        } catch (Error e) {
             // do nothing
         }
         // add mapping converters
