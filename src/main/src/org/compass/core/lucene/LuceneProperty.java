@@ -109,6 +109,6 @@ public class LuceneProperty implements Property {
     }
 
     public String toString() {
-        return "[" + getName() + "," + getStringValue() + "]";
+        return "[" + field + "]";
     }
 }

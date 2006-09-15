@@ -18,10 +18,10 @@ package org.compass.core.test.sort;
 
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
 import org.compass.core.CompassQuery.SortDirection;
 import org.compass.core.CompassQuery.SortImplicitType;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
 import org.compass.core.test.AbstractTestCase;
 
 public class SortTests extends AbstractTestCase {
@@ -35,15 +35,55 @@ public class SortTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
         
-        A a = new A(new Long(1), "aab test testA", 1, 1.1f);
+        A a = new A(new Long(1), "aab test testA", 1, 1.1f, new B(new Integer(2), "aab"));
         session.save(a);
-        a = new A(new Long(2), "aac test testA", 2, 1.0f);
+        a = new A(new Long(2), "aac test testA", 2, 1.0f, new B(new Integer(1), "aac"));
         session.save(a);
-        a = new A(new Long(3), "bbc test testB", 10, -1.0f);
+        a = new A(new Long(3), "bbc test testB", 10, -1.0f, new B(new Integer(3), "aaa"));
         session.save(a);
-        a = new A(new Long(4), "zx test testB", -10, 1.3f);
+        a = new A(new Long(4), "zx test testB", -10, 1.3f, new B(new Integer(4), "aad"));
         session.save(a);
         
+        tr.commit();
+        session.close();
+    }
+
+    public void testSortComponent() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        CompassHits hits = session.queryBuilder().queryString("test").toQuery()
+                .addSort("a.id", SortDirection.AUTO).hits();
+        assertEquals(4, hits.length());
+        assertAId(1, 0, hits);
+        assertAId(2, 1, hits);
+        assertAId(3, 2, hits);
+        assertAId(4, 3, hits);
+
+        hits = session.queryBuilder().queryString("test").toQuery()
+                .addSort("a.b.id", SortDirection.AUTO).hits();
+        assertEquals(4, hits.length());
+        assertAId(2, 0, hits);
+        assertAId(1, 1, hits);
+        assertAId(3, 2, hits);
+        assertAId(4, 3, hits);
+
+        hits = session.queryBuilder().queryString("test").toQuery()
+                .addSort("a.value2", SortDirection.AUTO).hits();
+        assertEquals(4, hits.length());
+        assertAId(1, 0, hits);
+        assertAId(2, 1, hits);
+        assertAId(3, 2, hits);
+        assertAId(4, 3, hits);
+
+        hits = session.queryBuilder().queryString("test").toQuery()
+                .addSort("a.b.value2", SortDirection.AUTO).hits();
+        assertEquals(4, hits.length());
+        assertAId(3, 0, hits);
+        assertAId(1, 1, hits);
+        assertAId(2, 2, hits);
+        assertAId(4, 3, hits);
+
         tr.commit();
         session.close();
     }

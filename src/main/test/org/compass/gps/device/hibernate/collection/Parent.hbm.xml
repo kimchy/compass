@@ -11,7 +11,7 @@
             <generator class="native"/>
         </id>
         <property name="value" />
-        <set name="childs" lazy="true" inverse="true" cascade="all-delete-orphan">
+        <set name="childs" lazy="true" inverse="true" cascade="all">
             <key column="parent_id"/>
             <one-to-many class="Child"/>
         </set>

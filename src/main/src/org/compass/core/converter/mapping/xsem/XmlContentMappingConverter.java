@@ -63,9 +63,9 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
     public void configure(CompassSettings settings) throws CompassException {
         String wrapper = settings.getSetting(CompassEnvironment.Converter.XmlContent.WRAPPER,
                 CompassEnvironment.Converter.XmlContent.WRAPPER_PROTOTYPE);
-        if (log.isInfoEnabled()) {
+        if (log.isDebugEnabled()) {
             String type = settings.getSetting(CompassEnvironment.Converter.XmlContent.TYPE);
-            log.info("Using xmlContentMapping [" + type + "] with wrapper [" + wrapper + "] and settings [" + settings + "]");
+            log.debug("Using xmlContentMapping [" + type + "] with wrapper [" + wrapper + "] and settings [" + settings + "]");
         }
         if (CompassEnvironment.Converter.XmlContent.WRAPPER_PROTOTYPE.equals(wrapper)) {
             xmlContentConverter = new PrototypeXmlContentConverterWrapper();

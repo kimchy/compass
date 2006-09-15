@@ -12,6 +12,10 @@
             <meta-data index="un_tokenized">value</meta-data>
         </property>
 
+        <property name="value2" managed-id-index="un_tokenized">
+            <meta-data index="un_tokenized">value2</meta-data>
+        </property>
+
         <property name="floatValue">
             <meta-data index="un_tokenized">floatValue</meta-data>
         </property>
@@ -19,7 +23,16 @@
         <property name="intValue">
             <meta-data index="un_tokenized">intValue</meta-data>
         </property>
-    
+
+        <component name="b" />
     </class>
-    
+
+    <class name="B" alias="b">
+        <id name="id" accessor="field" />
+
+        <property name="value2" accessor="field" managed-id-index="un_tokenized">
+            <meta-data index="un_tokenized">value2</meta-data>
+        </property>
+    </class>
+
 </compass-core-mapping>

@@ -44,7 +44,9 @@
           <root url="jar://$MODULE_DIR$/../../lib/hibernate/hibernate3.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://F:/libs/hibernate/core/3.2rc2/src" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
@@ -287,9 +289,7 @@
           <root url="jar://$MODULE_DIR$/../../lib/lucene/lucene-core.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://C:/opensource/lucene/java/src/java" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">

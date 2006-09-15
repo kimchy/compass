@@ -11,7 +11,7 @@
             <generator class="native"/>
         </id>
         <property name="value" />
-        <many-to-one name="parent" column="parent_id" not-null="true"/>
+        <many-to-one name="parent" column="parent_id" not-null="true" />
     </class>
 
 </hibernate-mapping>

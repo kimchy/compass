@@ -22,20 +22,26 @@ public class A {
     private Long id;
     
     private String value;
+
+    private String value2;
     
     private int intValue;
     
     private float floatValue;
+
+    private B b;
     
     private A() {
         
     }
     
-    public A(Long id, String value, int intValue, float floatValue) {
+    public A(Long id, String value, int intValue, float floatValue, B b) {
         this.id = id;
         this.intValue = intValue;
         this.floatValue = floatValue;
         this.value = value;
+        this.value2 = value;
+        this.b = b;
     }
 
     public float getFloatValue() {
@@ -68,5 +74,21 @@ public class A {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public B getB() {
+        return b;
+    }
+
+    public void setB(B b) {
+        this.b = b;
+    }
+
+    public String getValue2() {
+        return value2;
+    }
+
+    public void setValue2(String value2) {
+        this.value2 = value2;
     }
 }

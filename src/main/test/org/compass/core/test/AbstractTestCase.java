@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
@@ -82,8 +83,12 @@ public abstract class AbstractTestCase extends TestCase {
 
 	protected void tearDown() throws Exception {
 		compass.close();
-		compass.getSearchEngineIndexManager().deleteIndex();
-		super.tearDown();
+        try {
+            compass.getSearchEngineIndexManager().deleteIndex();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.tearDown();
 	}
 
 	protected void addSettings(CompassSettings settings) {

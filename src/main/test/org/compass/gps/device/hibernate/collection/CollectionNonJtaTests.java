@@ -16,9 +16,6 @@
 
 package org.compass.gps.device.hibernate.collection;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
@@ -31,14 +28,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
-import org.objectweb.jotm.Jotm;
+import org.hibernate.collection.PersistentCollection;
 
 /**
  * @author kimchy
  */
-public class CollectionTests extends TestCase {
-
-    private Jotm jotm;
+public class CollectionNonJtaTests extends TestCase {
 
     private Compass compass;
 
@@ -49,21 +44,9 @@ public class CollectionTests extends TestCase {
     private SessionFactory sessionFactory;
 
     protected void setUp() throws Exception {
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.rmi.registry.RegistryContextFactory");
-        System.setProperty(Context.PROVIDER_URL, "rmi://localhost:1099");
-
-        try {
-            java.rmi.registry.LocateRegistry.createRegistry(1099);
-        } catch (Exception e) {
-
-        }
-
-        jotm = new Jotm(true, true);
-        Context ctx = new InitialContext();
-        ctx.rebind("java:comp/UserTransaction", jotm.getUserTransaction());
 
         CompassConfiguration cpConf = new CompassConfiguration()
-                .configure("/org/compass/gps/device/hibernate/collection/compass.cfg.xml");
+                .configure("/org/compass/gps/device/hibernate/collection/compass-nonjta.cfg.xml");
         compass = cpConf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
@@ -72,7 +55,7 @@ public class CollectionTests extends TestCase {
 
         compassGps = new SingleCompassGps(compass);
 
-        Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/collection/hibernate.cfg.xml")
+        Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/collection/hibernate-nonjta.cfg.xml")
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         sessionFactory = conf.buildSessionFactory();
 
@@ -84,7 +67,6 @@ public class CollectionTests extends TestCase {
     }
 
     public void testCollection() {
-
         Session s = sessionFactory.openSession();
         Transaction tx = s.beginTransaction();
         Parent parent = new Parent();
@@ -105,6 +87,7 @@ public class CollectionTests extends TestCase {
         s = sessionFactory.openSession();
         tx = s.beginTransaction();
         parent = (Parent) s.load(Parent.class, parent.getId());
+        assertEquals(false, ((PersistentCollection) parent.getChilds()).wasInitialized());
         parent.setValue("newvalue");
         s.flush();
         tx.commit();
@@ -122,6 +105,6 @@ public class CollectionTests extends TestCase {
         sessionFactory.close();
         compassGps.stop();
         compass.close();
-        jotm.stop();
     }
+
 }
