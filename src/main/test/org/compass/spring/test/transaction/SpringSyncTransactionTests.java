@@ -19,7 +19,6 @@ package org.compass.spring.test.transaction;
 import javax.transaction.UserTransaction;
 
 import junit.framework.TestCase;
-
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -65,6 +64,38 @@ public class SpringSyncTransactionTests extends TestCase {
 
         jotmFactoryBean.destroy();
     }
+
+    public void testWithCommitNoSessionOrTransactionManagment() throws Exception {
+
+        final Long id = new Long(1);
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                CompassSession session = compass.openSession();
+                A a = new A();
+                a.setId(id);
+                session.save(a);
+                a = (A) session.get(A.class, id);
+                assertNotNull(a);
+
+                CompassSession oldSession = session;
+                session = compass.openSession();
+                assertTrue(oldSession == session);
+                a = (A) session.get(A.class, id);
+                assertNotNull(a);
+            }
+        });
+
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                CompassSession session = compass.openSession();
+                A a = (A) session.get(A.class, id);
+                assertNotNull(a);
+            }
+        });
+    }
+
 
     public void testWithCommit() throws Exception {
 

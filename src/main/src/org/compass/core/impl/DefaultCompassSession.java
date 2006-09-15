@@ -37,9 +37,7 @@ import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.TransactionFactory;
 
 /**
- * 
  * @author kimchy
- * 
  */
 // TODO we need to support multiple resource with ResourceIdKey and first cache
 public class DefaultCompassSession implements InternalCompassSession {
@@ -67,6 +65,8 @@ public class DefaultCompassSession implements InternalCompassSession {
         this.firstLevelCache = firstLevelCache;
         this.marshallingStrategy = new DefaultMarshallingStrategy(mapping, searchEngine, compass.getConverterLookup(),
                 this);
+
+        transactionFactory.tryJoinExistingTransaction(this);
     }
 
     public Resource createResource(String alias) throws CompassException {
@@ -79,7 +79,7 @@ public class DefaultCompassSession implements InternalCompassSession {
     }
 
     public Property createProperty(String name, String value, Property.Store store, Property.Index index,
-            Property.TermVector termVector) throws CompassException {
+                                   Property.TermVector termVector) throws CompassException {
         return searchEngine.createProperty(name, value, store, index, termVector);
     }
 
@@ -124,7 +124,7 @@ public class DefaultCompassSession implements InternalCompassSession {
     public CompassTransaction beginTransaction() throws CompassException {
         return transactionFactory.beginTransaction(this, null);
     }
-    
+
     public CompassTransaction beginTransaction(TransactionIsolation transactionIsolation) throws CompassException {
         if (transactionIsolation == TransactionIsolation.BATCH_INSERT) {
             firstLevelCache = new NullFirstLevelCache();
@@ -319,7 +319,7 @@ public class DefaultCompassSession implements InternalCompassSession {
             searchEngine.close();
         }
     }
-    
+
     public InternalCompass getCompass() {
         return compass;
     }

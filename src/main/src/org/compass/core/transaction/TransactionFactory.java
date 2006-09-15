@@ -42,4 +42,14 @@ public interface TransactionFactory {
      */
     CompassSession getTransactionBoundSession() throws CompassException;
 
+    /**
+     * If there is an outer running existing transaction, try and join it. This method
+     * is called when opening a session and will ease the usage of Compass since there
+     * won't be a need to begin a transaction explicitly.
+     * <p/>
+     * Note, this might end up working as if {@link org.compass.core.CompassSession#beginTransaction()}
+     * was called, commit/rollback will not be called afterwards. Actually, beginTransaction might be
+     * called again for the same session.
+     */
+    boolean tryJoinExistingTransaction(InternalCompassSession session) throws CompassException;
 }

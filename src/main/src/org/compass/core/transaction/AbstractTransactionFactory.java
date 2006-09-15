@@ -20,10 +20,10 @@ import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * @author kimchy
@@ -44,6 +44,16 @@ public abstract class AbstractTransactionFactory implements TransactionFactory {
     protected void doConfigure(CompassSettings settings) {
 
     }
+
+    public boolean tryJoinExistingTransaction(InternalCompassSession session) throws CompassException {
+        if (!isWithinExistingTransaction(session)) {
+            return false;
+        }
+        beginTransaction(session, null);
+        return true;
+    }
+
+    protected abstract boolean isWithinExistingTransaction(InternalCompassSession session) throws CompassException;
 
     public CompassTransaction beginTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation)
             throws CompassException {

@@ -19,8 +19,8 @@ package org.compass.core.transaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * @author kimchy
@@ -88,12 +88,16 @@ public class LocalTransaction extends AbstractTransaction {
         }
 
         session.evictAll();
-        ((LocalTransactionFactory)compass.getTransactionFactory()).unbindSessionFromTransaction(this, session);
+        ((LocalTransactionFactory) compass.getTransactionFactory()).unbindSessionFromTransaction(this, session);
         session.getSearchEngine().commit(true);
         state = COMMIT;
     }
 
     protected void doRollback() throws CompassException {
+        if (session.getSearchEngine().wasRolledBack()) {
+            // don't do anything, since it was rolled back already
+        }
+        
         if (state == UNKNOWN) {
             if (log.isDebugEnabled()) {
                 log.debug("Rolling back local transaction, which exists within another local transaction "
@@ -106,7 +110,7 @@ public class LocalTransaction extends AbstractTransaction {
                         "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
             }
 
-            ((LocalTransactionFactory)compass.getTransactionFactory()).unbindSessionFromTransaction(this, session);
+            ((LocalTransactionFactory) compass.getTransactionFactory()).unbindSessionFromTransaction(this, session);
         }
 
         state = ROLLBACK;

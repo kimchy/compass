@@ -38,6 +38,10 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
      */
     private static final ThreadLocal context = new ThreadLocal();
 
+    protected boolean isWithinExistingTransaction(InternalCompassSession session) throws CompassException {
+        return getTransactionBoundSession() == session;
+    }
+
     protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
                                                             TransactionIsolation transactionIsolation) throws CompassException {
         LocalTransaction tx = new LocalTransaction(session, transactionIsolation);

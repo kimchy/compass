@@ -22,14 +22,14 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.gps.device.MockIndexGpsDevice;
 import org.compass.gps.device.MockIndexGpsDeviceObject;
 import org.compass.gps.impl.SingleCompassGps;
-import org.compass.spring.transaction.SpringSyncTransactionFactory;
 import org.compass.spring.device.SpringSyncTransactionGpsDeviceWrapper;
+import org.compass.spring.transaction.SpringSyncTransactionFactory;
 import org.springframework.transaction.jta.JotmFactoryBean;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
@@ -90,6 +90,9 @@ public class SpringSyncGpsIndexTests extends TestCase {
         compassGps.index();
 
         assertExists(new Long(1));
+
+        compassGps.stop();
+        compass.close();
     }
 
     private void assertExists(Long id) {

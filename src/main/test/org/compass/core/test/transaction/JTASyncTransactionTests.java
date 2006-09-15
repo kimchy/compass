@@ -23,7 +23,6 @@ import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
 import junit.framework.TestCase;
-
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -141,6 +140,38 @@ public class JTASyncTransactionTests extends TestCase {
         session.close();
     }
 
+    public void testOuterUTManagementWithCommitAndNoSessionOrTransactionManagement() throws Exception {
+        Context ctx = new InitialContext();
+        UserTransaction ut = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
+        ut.begin();
+
+        CompassSession session = compass.openSession();
+        Long id = new Long(1);
+        A a = new A();
+        a.setId(id);
+        session.save(a);
+        a = (A) session.get(A.class, id);
+        assertNotNull(a);
+
+        CompassSession oldSession = session;
+        session = compass.openSession();
+        assertTrue(oldSession == session);
+        a = (A) session.get(A.class, id);
+        assertNotNull(a);
+
+        ut.commit();
+
+        // now check that things were committed
+        // here we do need explicit session/transaciton mangement
+        // just cause we are lazy and want to let Comapss to manage JTA
+        session = compass.openSession();
+        CompassTransaction tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
+        assertNotNull(a);
+        tr.commit();
+        session.close();
+    }
+
     public void testOuterUTManagementWithRollback() throws Exception {
         Context ctx = new InitialContext();
         UserTransaction ut = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
@@ -205,6 +236,43 @@ public class JTASyncTransactionTests extends TestCase {
 
         session = compass.openSession();
         tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
+        assertNotNull(a);
+        tr.commit();
+        session.close();
+    }
+
+    public void testOuterUTManagementWithSuspendAndNoSessionOrTransactionManagement() throws Exception {
+        Context ctx = new InitialContext();
+        UserTransaction ut = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
+        ut.begin();
+
+        CompassSession session = compass.openSession();
+        Long id = new Long(1);
+        A a = new A();
+        a.setId(id);
+        session.save(a);
+        a = (A) session.get(A.class, id);
+        assertNotNull(a);
+
+        TransactionManager transactionManager = Current.getTransactionManager();
+        Transaction jtaTrans = transactionManager.suspend();
+
+        UserTransaction newUt = (UserTransaction) ctx.lookup("java:comp/UserTransaction");
+        newUt.begin();
+        CompassSession newSession = compass.openSession();
+        assertTrue(session != newSession);
+        a = (A) newSession.get(A.class, id);
+        assertNull(a);
+        newUt.commit();
+
+        transactionManager.resume(jtaTrans);
+
+        ut.commit();
+
+        // here we are lazy and let Compass manage a verifying JTa transaction
+        session = compass.openSession();
+        CompassTransaction tr = session.beginTransaction();
         a = (A) session.get(A.class, id);
         assertNotNull(a);
         tr.commit();

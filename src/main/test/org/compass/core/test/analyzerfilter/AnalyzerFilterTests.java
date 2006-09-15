@@ -82,5 +82,6 @@ public class AnalyzerFilterTests extends AbstractTestCase {
         assertEquals(1, hits.getLength());
 
         tr.commit();
+        session.close();
     }
 }

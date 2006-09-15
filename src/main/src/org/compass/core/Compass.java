@@ -17,7 +17,6 @@
 package org.compass.core;
 
 import java.io.Serializable;
-
 import javax.naming.Referenceable;
 
 import org.compass.core.config.CompassSettings;
@@ -49,9 +48,19 @@ public interface Compass extends Referenceable, Serializable {
      * returns a new session.
      * <p/>
      * A transactional bound session is bounded to the transaction when calling
-     * the CompassSession.beginTransaction().
+     * the CompassSession.beginTransaction() or if Compass tries to automatically join
+     * an already running transaction (see next paragraph).
+     * <p/>
+     * If creating a new session, will try to automatically join an existing
+     * outer transaction. An outer transaction might be an already running Compass
+     * local transaction, or an external transaciton (JTA or Spring for example). In
+     * such cases, there is no need to perform any transaction managment code (begin
+     * or commit/rollback transaction) or closing the opened session. Compass will also
+     * bind the session to the same transaction if an outer transaction exists. Note, when
+     * doing so, the mentioned code will have to always be excuted within an already running
+     * transaction.
      *
-     * @return CompassSession
+     * @return CompassSession The compass session
      * @throws CompassException
      */
     CompassSession openSession() throws CompassException;

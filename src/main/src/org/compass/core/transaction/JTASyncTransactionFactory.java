@@ -38,7 +38,7 @@ import org.compass.core.jndi.NamingHelper;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
- * Factory for <code>JTATransaction</code>.
+ * Factory for {@link JTASyncTransaction}s.
  *
  * @author kimchy
  * @see JTASyncTransaction
@@ -92,6 +92,15 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
                 log.debug("Caching JTA UserTransaction from Jndi [" + utName + "]");
             }
             userTransaction = lookupUserTransaction();
+        }
+    }
+
+
+    protected boolean isWithinExistingTransaction(InternalCompassSession session) throws CompassException {
+        try {
+            return getUserTransaction().getStatus() != Status.STATUS_NO_TRANSACTION;
+        } catch (SystemException e) {
+            throw new CompassException("Failed to get staus on JTA transaciton", e);
         }
     }
 

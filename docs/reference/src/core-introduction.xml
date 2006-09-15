@@ -56,8 +56,20 @@ try {
 
   </sect1>
 
+  <sect1 id="core-introduction-sessionLifecycle">
+    <title>Session Lifecycle</title>
+
+    <para>
+      Compass::Core <literal>Compass</literal> interface manages the creation of <literal>CompassSession</literal> using the <literal>openSession()</literal> method. When <literal>beginTransaction()</literal> is called on the <literal>CompassTransaction</literal>, the session is bound to the created transaction (JTA, Spring or Local) and used throughout the life-cycle of the transaction. It means that if an additional session is opened within the current transaction, the originating session will be returned by the <literal>openSession()</literal> method.
+    </para>
+
+    <para>
+      When using the <literal>openSession</literal> method, Compass will automatically try and join an already running outer transaction. An outer transaction can be an already running local Compass transaction, a JTA transaction, or a Spring managed transaction. If Compass manages to join an existing outer transaction, the application does not need to call <literal>CompassSession#beginTransaction()</literal> or use <literal>CompassTransaction</literal> to manage the transaction (since it is already managed). This allows to simplify the usage of Compass within managed environments (CMT or Spring) where a transaction is already in progress by not requiring explicit Compass code to manage a Compass transaction.
+    </para>
+  </sect1>
+
   <sect1 id="core-introduction-TemplateandCallback">
-  <title>Template and Callback</title>
+    <title>Template and Callback</title>
 
     <para>
       Compass also provides a simple implementation of the template design pattern, using the <classname>CompassTemplate</classname> and the <classname>CompassCallback</classname> classes. Using it, one does not have to worry about the Compass session or transaction handling. The <classname>CompassTemplate</classname> provides all the
