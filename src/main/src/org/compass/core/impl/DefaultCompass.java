@@ -157,6 +157,10 @@ public class DefaultCompass implements InternalCompass {
         return new DefaultCompass(mapping, converterLookup, compassMetaData, propertyNamingStrategy, copySettings, true);
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public CompassMapping getMapping() {
         return this.mapping;
     }

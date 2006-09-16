@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:compass="http://www.opensymphony.com/compass/schema/spring-core-config"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.opensymphony.com/compass/schema/spring-core-config http://www.opensymphony.com/compass/schema/spring-compass-core-config.xsd">
+
+    <bean class="org.compass.spring.support.CompassContextBeanPostProcessor"/>
+
+    <compass:compass name="compass">
+        <compass:connection>
+            <compass:file path="target/test-index" />
+        </compass:connection>
+        <compass:mappings>
+            <compass:class name="org.compass.spring.test.context.A" />
+        </compass:mappings>
+    </compass:compass>
+
+    <bean id="dao" class="org.compass.spring.test.context.CompassContextDao" />
+</beans>

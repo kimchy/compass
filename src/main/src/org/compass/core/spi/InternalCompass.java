@@ -26,6 +26,8 @@ import org.compass.core.transaction.TransactionFactory;
 
 public interface InternalCompass extends Compass {
 
+    String getName();
+
     CompassSettings getSettings();
 
     CompassMapping getMapping();
