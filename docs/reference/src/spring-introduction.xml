@@ -85,6 +85,34 @@
         Also, of storing the index within a database, be sure to set the <literal>dataSource</literal> property of the <literal>LocalCompassBean</literal>. It will be automatically wrapped by Spring's <literal>TransactionAwareDataSourceProxy</literal> if not wrapped already.
     </para>
 
+    <para>
+      Compass Spring integration also supports Spring 2 new schema based configuration. Using Compass own schema definition, the configuration of a Compass instance can be embedded within a Spring beans schema based configuration. Here is an example of using the new schema based configuration:
+
+<programlisting><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:compass="http://www.opensymphony.com/compass/schema/spring-core-config"
+     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.opensymphony.com/compass/schema/spring-core-config http://www.opensymphony.com/compass/schema/spring-compass-core-config.xsd">
+
+    <bean id="transactionManager" ...>
+      ...
+    </bean>
+
+    <compass:compass name="compass" txManager="transactionManager">
+        <compass:connection>
+            <compass:file path="target/test-index" />
+        </compass:connection>
+    </compass:compass>
+</beans>
+]]></programlisting>
+
+    </para>
+
+    <para>
+      Compass also supports <classname>@CompassContext</classname> annotations to inject either <classname>Compass</classname> instance or <classname>CompassSession</classname> instance. The annotation can be used on either a class field or on a property setter. In order to inject the annotation, the bean <classname>org.compass.spring.support.CompassContextBeanPostProcessor</classname> need to be added to the bean configuration.
+    </para>
+
   </sect1>
 
 </chapter>
