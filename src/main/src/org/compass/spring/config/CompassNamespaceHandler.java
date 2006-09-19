@@ -16,11 +16,14 @@
 
 package org.compass.spring.config;
 
+import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.builder.SchemaConfigurationBuilder;
+import org.compass.core.util.ClassUtils;
 import org.compass.core.util.DomUtils;
 import org.compass.spring.LocalCompassBean;
+import org.compass.spring.LocalCompassSessionBean;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
@@ -36,34 +39,59 @@ public class CompassNamespaceHandler extends NamespaceHandlerSupport {
 
     public void init() {
         registerBeanDefinitionParser("compass", new CompassBeanDefinitionParser());
+        registerBeanDefinitionParser("context", new CompassBeanDefinitionParser());
+        registerBeanDefinitionParser("session", new CompassBeanDefinitionParser());
     }
 
     private static class CompassBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
         protected void doParse(Element element, BeanDefinitionBuilder beanDefinitionBuilder) {
-            String id = element.getAttribute("name");
+            if (element.getLocalName().equals("compass")) {
+                String id = element.getAttribute("name");
 
-            // set the id so it will be registered under it in the base class
-            element.setAttribute(ID_ATTRIBUTE, id);
+                // set the id so it will be registered under it in the base class
+                element.setAttribute(ID_ATTRIBUTE, id);
 
-            SchemaConfigurationBuilder schemaConfigurationBuilder = new SchemaConfigurationBuilder();
-            CompassConfiguration config = CompassConfigurationFactory.newConfiguration();
-            schemaConfigurationBuilder.processCompass(element, config);
-            beanDefinitionBuilder.addPropertyValue("compassConfiguration", config);
+                SchemaConfigurationBuilder schemaConfigurationBuilder = new SchemaConfigurationBuilder();
+                CompassConfiguration config = CompassConfigurationFactory.newConfiguration();
+                schemaConfigurationBuilder.processCompass(element, config);
+                beanDefinitionBuilder.addPropertyValue("compassConfiguration", config);
 
-            String txManagerRef = DomUtils.getElementAttribute(element, "txManager");
-            if (txManagerRef != null) {
-                beanDefinitionBuilder.addPropertyReference("transactionManager", txManagerRef);
-            }
+                String txManagerRef = DomUtils.getElementAttribute(element, "txManager");
+                if (txManagerRef != null) {
+                    beanDefinitionBuilder.addPropertyReference("transactionManager", txManagerRef);
+                }
 
-            String dataSourceRef = DomUtils.getElementAttribute(element, "dataSource");
-            if (dataSourceRef != null) {
-                beanDefinitionBuilder.addPropertyReference("dataSource", dataSourceRef);
+                String dataSourceRef = DomUtils.getElementAttribute(element, "dataSource");
+                if (dataSourceRef != null) {
+                    beanDefinitionBuilder.addPropertyReference("dataSource", dataSourceRef);
+                }
+            } else if (element.getLocalName().equals("context")) {
+                element.setAttribute(ID_ATTRIBUTE, "" + System.currentTimeMillis());
+            } else if (element.getLocalName().equals("session")) {
+                String compassRef = DomUtils.getElementAttribute(element, "compass");
+                if (compassRef != null) {
+                    beanDefinitionBuilder.addPropertyReference("compass", compassRef);
+                }
             }
         }
 
         protected Class getBeanClass(Element element) {
-            return LocalCompassBean.class;
+            if (element.getLocalName().equals("compass")) {
+                return LocalCompassBean.class;
+            } else if (element.getLocalName().equals("context")) {
+                try {
+                    return ClassUtils.forName(COMPASS_CONTEXT_BEAN_POST_PROCESSOR);
+                } catch (ClassNotFoundException e) {
+                    throw new CompassException("Failed to find class [" + COMPASS_CONTEXT_BEAN_POST_PROCESSOR + "]");
+                }
+            } else if (element.getLocalName().equals("session")) {
+                return LocalCompassSessionBean.class;
+            } else {
+                throw new CompassException("Failed to parse element [" + element.getLocalName() + "]");
+            }
         }
     }
+
+    private static final String COMPASS_CONTEXT_BEAN_POST_PROCESSOR = "org.compass.spring.support.CompassContextBeanPostProcessor";
 }

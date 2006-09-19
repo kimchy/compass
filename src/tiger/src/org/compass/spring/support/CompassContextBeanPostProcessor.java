@@ -18,7 +18,6 @@ package org.compass.spring.support;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -34,6 +33,7 @@ import org.compass.core.CompassContext;
 import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.support.CompassSessionInvocationHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
@@ -246,40 +246,11 @@ public class CompassContextBeanPostProcessor extends InstantiationAwareBeanPostP
                 return compass;
             } else {
                 // We need to inject aa CompassSession.
-                return (InternalCompassSession) Proxy.newProxyInstance(
+                return Proxy.newProxyInstance(
                         CompassContextBeanPostProcessor.class.getClassLoader(),
                         new Class[]{InternalCompassSession.class},
                         new CompassSessionInvocationHandler(compass));
 
-            }
-        }
-    }
-
-    /**
-     * InvocationHandler for Compass Session.
-     */
-    private static class CompassSessionInvocationHandler implements InvocationHandler {
-
-        private Compass compass;
-
-        private CompassSessionInvocationHandler(Compass compass) {
-            this.compass = compass;
-        }
-
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            if (method.getName().equals("equals")) {
-                // Only consider equal when proxies are identical.
-                return (proxy == args[0]);
-            } else if (method.getName().equals("hashCode")) {
-                // Use hashCode of Compass proxy.
-                return hashCode();
-            }
-            InternalCompassSession session = (InternalCompassSession) compass.openSession();
-            try {
-                return method.invoke(session, args);
-            }
-            catch (InvocationTargetException ex) {
-                throw ex.getTargetException();
             }
         }
     }

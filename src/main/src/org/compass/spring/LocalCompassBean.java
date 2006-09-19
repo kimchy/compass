@@ -85,6 +85,17 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     private CompassConfiguration config;
 
+    private LocalCompassBeanPostProcessor postProcessor;
+
+    /**
+     * Allows to register a post processor for the Compass configuration.
+     *
+     * @param postProcessor
+     */
+    public void setPostProcessor(LocalCompassBeanPostProcessor postProcessor) {
+        this.postProcessor = postProcessor;
+    }
+
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
@@ -281,8 +292,7 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         }
 
         String compassTransactionFactory = config.getSettings().getSetting(CompassEnvironment.Transaction.FACTORY);
-        if (compassTransactionFactory != null && compassTransactionFactory.equals(SpringSyncTransactionFactory.class.getName()))
-        {
+        if (compassTransactionFactory != null && compassTransactionFactory.equals(SpringSyncTransactionFactory.class.getName())) {
             if (transactionManager == null) {
                 throw new IllegalArgumentException("When using SpringSyncTransactionFactory the transactionManager property must be set");
             }
@@ -303,6 +313,9 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
             config.getSettings().setSetting(CompassEnvironment.CONNECTION, connection.getFile().getAbsolutePath());
         }
 
+        if (postProcessor != null) {
+            postProcessor.process(config);
+        }
         this.compass = newCompass(config);
         this.compass = (Compass) Proxy.newProxyInstance(SpringCompassInvocationHandler.class.getClassLoader(),
                 new Class[]{InternalCompass.class}, new SpringCompassInvocationHandler(this.compass));

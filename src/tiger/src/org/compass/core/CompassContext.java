@@ -32,5 +32,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CompassContext {
 
+    /**
+     * The Compass name that will be used to lookup the Compass instance.
+     */
     String name() default "";
 }

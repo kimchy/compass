@@ -78,11 +78,19 @@
     </para>
 
     <para>
-        If using a Spring <literal>PlatformTransactionManager</literal>, you should also initialize the <literal>transactionManager</literal> property of the <literal>LocalCompassBean</literal>.
+       If using a Spring <literal>PlatformTransactionManager</literal>, you should also initialize the <literal>transactionManager</literal> property of the <literal>LocalCompassBean</literal>.
     </para>
 
     <para>
-        Also, of storing the index within a database, be sure to set the <literal>dataSource</literal> property of the <literal>LocalCompassBean</literal>. It will be automatically wrapped by Spring's <literal>TransactionAwareDataSourceProxy</literal> if not wrapped already.
+       Also, of storing the index within a database, be sure to set the <literal>dataSource</literal> property of the <literal>LocalCompassBean</literal>. It will be automatically wrapped by Spring's <literal>TransactionAwareDataSourceProxy</literal> if not wrapped already.
+    </para>
+
+    <para>
+      When using Compass code within an already managed code (within a transaction), it is enough to just use <literal>Compass#openSession()</literal>, without worrying about Compass transaction management code, or even closing the session. Since even opening the session should not be really required, a <literal>LocalCompassSessionBean</literal> can be used to directly inject <literal>CompassSession</literal> to be used. It can be initialized with a <literal>Compass</literal> instance, but if there is only one within Spring application context, it will automatically identify and used it (this feature is similar to @CompassContext annotation explained later).
+    </para>
+
+    <para>
+      Compass also supports <classname>@CompassContext</classname> annotations to inject either <classname>Compass</classname> instance or <classname>CompassSession</classname> instance. The annotation can be used on either a class field or on a property setter. In order to inject the annotation, the bean <classname>org.compass.spring.support.CompassContextBeanPostProcessor</classname> need to be added to the bean configuration. If Spring 2 new schema based support is used, <literal>compass:context</literal> can be used.
     </para>
 
     <para>
@@ -104,13 +112,12 @@
             <compass:file path="target/test-index" />
         </compass:connection>
     </compass:compass>
+
+    <!-- A direct LocalCompassSessionBean, used with code within a transaciton context -->
+    <compass:session id="sess" />
 </beans>
 ]]></programlisting>
 
-    </para>
-
-    <para>
-      Compass also supports <classname>@CompassContext</classname> annotations to inject either <classname>Compass</classname> instance or <classname>CompassSession</classname> instance. The annotation can be used on either a class field or on a property setter. In order to inject the annotation, the bean <classname>org.compass.spring.support.CompassContextBeanPostProcessor</classname> need to be added to the bean configuration.
     </para>
 
   </sect1>

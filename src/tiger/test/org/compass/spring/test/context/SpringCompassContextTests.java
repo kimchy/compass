@@ -47,4 +47,24 @@ public class SpringCompassContextTests extends TestCase {
         tr.commit();
         session.close();
     }
+
+    public void testSimpleDaoWithLocalCompassSession() {
+        ApplicationContext ctx = new ClassPathXmlApplicationContext("org/compass/spring/test/context/simple-context.xml");
+
+        CompassContextDao2 dao = (CompassContextDao2) ctx.getBean("dao2");
+        assertEquals("compass", ((InternalCompass)dao.compass).getName());
+
+        // using local transaciton, check that outer/inner works
+        CompassSession session = dao.session;
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        dao.session.save(a);
+
+        dao.session.load(A.class, 1);
+
+        tr.commit();
+        session.close();
+    }
 }
