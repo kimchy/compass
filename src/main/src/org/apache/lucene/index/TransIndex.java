@@ -433,7 +433,8 @@ public class TransIndex {
         }
     }
 
-    protected void finalize() throws IOException {
+    protected void finalize() throws Throwable {
+        super.finalize();
         if (writeLock != null) {
             writeLock.release(); // release write lock
             writeLock = null;
