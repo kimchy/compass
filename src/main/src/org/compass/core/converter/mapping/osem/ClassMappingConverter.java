@@ -55,7 +55,6 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         // treated as a component (the binding part of the configuration takes
         // care and "unroots" it)
         if (classMapping.isRoot()) {
-            resource.setAlias(classMapping.getAlias());
             doSetBoost(resource, root, classMapping, context);
             context.setAttribute(ROOT_CLASS_MAPPING_KEY, classMapping);
         }

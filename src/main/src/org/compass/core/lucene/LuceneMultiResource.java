@@ -76,12 +76,6 @@ public class LuceneMultiResource implements MultiResource {
         return currentResource.getAlias();
     }
 
-    public Resource setAlias(String alias) {
-        currentResource.setAlias(alias);
-        return this;
-    }
-
-
     public String getId() {
         return currentResource.getId();
     }

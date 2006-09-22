@@ -5,6 +5,7 @@ VERSION 1.1 M2 ()
 =============================
 
 1. OSEM setting compass.managedId.index changed to compass.osem.managedId.index .
+2. Removed Resource#setAlias.
 
 
 VERSION 1.1 M1 (August 25, 2006)

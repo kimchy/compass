@@ -67,11 +67,6 @@ public class CollectionResourceWrapper implements Resource {
         return resource.getAlias();
     }
 
-    public Resource setAlias(String alias) {
-        resource.setAlias(alias);
-        return this;
-    }
-
     public String getId() {
         throw new ConversionException("should not be called");
     }

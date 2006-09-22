@@ -58,21 +58,35 @@ public class LuceneResource implements AliasedObject, Resource, Map {
     private transient ResourceMapping resourceMapping;
 
     public LuceneResource(String alias, LuceneSearchEngine searchEngine) {
-        this(new Document(), -1, searchEngine);
-        setAlias(alias);
+        this(alias, new Document(), -1, searchEngine);
     }
 
     public LuceneResource(Document document, int docNum, LuceneSearchEngine searchEngine) {
+        this(null, document, docNum, searchEngine);
+    }
+
+    public LuceneResource(String alias, Document document, int docNum, LuceneSearchEngine searchEngine) {
         this.document = document;
         this.searchEngine = searchEngine;
         this.aliasProperty = searchEngine.getSearchEngineFactory().getLuceneSettings().getAliasProperty();
+        this.docNum = docNum;
+        if (alias != null) {
+            removeProperties(aliasProperty);
+            LuceneProperty aliasProp = new LuceneProperty(new Field(aliasProperty, alias, Field.Store.YES, Field.Index.UN_TOKENIZED));
+            properties.add(aliasProp);
+            document.add(aliasProp.getField());
+        }
+
+        verifyResourceMapping();
+        
         Enumeration fields = document.fields();
         while (fields.hasMoreElements()) {
             Field field = (Field) fields.nextElement();
             LuceneProperty lProperty = new LuceneProperty(field);
+            lProperty.setPropertyMapping(resourceMapping.getResourcePropertyMapping(field.name()));
             properties.add(lProperty);
         }
-        this.docNum = docNum;
+
     }
 
     public void copy(Resource resource) {
@@ -93,24 +107,20 @@ public class LuceneResource implements AliasedObject, Resource, Map {
         return document.get(name);
     }
 
+    public Object getObject(String name) {
+        Property prop = getProperty(name);
+        if (prop == null) {
+            return null;
+        }
+        return prop.getObjectValue();
+    }
+
     public String[] getValues(String name) {
         return document.getValues(name);
     }
 
     public String getAlias() {
-        Property alias = getProperty(aliasProperty);
-        if (alias == null) {
-            return null;
-        }
-        return alias.getStringValue();
-    }
-
-    public Resource setAlias(String alias) {
-        removeProperties(aliasProperty);
-        Property aliasProp = new LuceneProperty(new Field(aliasProperty, alias, Field.Store.YES,
-                Field.Index.UN_TOKENIZED));
-        addProperty(aliasProp);
-        return this;
+        return get(aliasProperty);
     }
 
     public String getId() {
@@ -135,8 +145,6 @@ public class LuceneResource implements AliasedObject, Resource, Map {
     }
 
     public Property[] getIdProperties() {
-        ResourceMapping resourceMapping =
-                searchEngine.getSearchEngineFactory().getMapping().getResourceMappingByAlias(getAlias());
         ResourcePropertyMapping[] resourcePropertyMappings = resourceMapping.getIdMappings();
         Property[] idProperties = new Property[resourcePropertyMappings.length];
         for (int i = 0; i < resourcePropertyMappings.length; i++) {
@@ -147,7 +155,6 @@ public class LuceneResource implements AliasedObject, Resource, Map {
 
     public Resource addProperty(String name, Object value) throws SearchEngineException {
         String alias = getAlias();
-        verifyRawResourceMapping();
 
         ResourcePropertyMapping propertyMapping = resourceMapping.getResourcePropertyMapping(name);
         if (propertyMapping == null) {
@@ -168,7 +175,6 @@ public class LuceneResource implements AliasedObject, Resource, Map {
 
     public Resource addProperty(String name, Reader value) throws SearchEngineException {
         String alias = getAlias();
-        verifyRawResourceMapping();
 
         ResourcePropertyMapping propertyMapping = resourceMapping.getResourcePropertyMapping(name);
         if (propertyMapping == null) {
@@ -180,11 +186,13 @@ public class LuceneResource implements AliasedObject, Resource, Map {
         Field field = new Field(name, value, fieldTermVector);
         LuceneProperty property = new LuceneProperty(field);
         property.setBoost(propertyMapping.getBoost());
+        property.setPropertyMapping(propertyMapping);
         return addProperty(property);
     }
 
     public Resource addProperty(Property property) {
         LuceneProperty lProperty = (LuceneProperty) property;
+        lProperty.setPropertyMapping(resourceMapping.getResourcePropertyMapping(property.getName()));
         properties.add(property);
         document.add(lProperty.getField());
         return this;
@@ -218,8 +226,9 @@ public class LuceneResource implements AliasedObject, Resource, Map {
     public Property getProperty(String name) {
         for (int i = 0; i < properties.size(); i++) {
             Property property = (Property) properties.get(i);
-            if (property.getName().equals(name))
+            if (property.getName().equals(name)) {
                 return property;
+            }
         }
         return null;
     }
@@ -264,7 +273,7 @@ public class LuceneResource implements AliasedObject, Resource, Map {
         return this.docNum;
     }
 
-    private void verifyRawResourceMapping() throws SearchEngineException {
+    private void verifyResourceMapping() throws SearchEngineException {
         String alias = getAlias();
         if (resourceMapping == null) {
             if (alias == null) {

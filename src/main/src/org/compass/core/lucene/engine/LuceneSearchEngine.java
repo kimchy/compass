@@ -109,6 +109,7 @@ public class LuceneSearchEngine implements SearchEngine {
             property = createProperty(name, StringUtils.reverse(value), mapping.getStore(), mapping.getIndex(), mapping.getTermVector());
         }
         property.setBoost(mapping.getBoost());
+        ((LuceneProperty) property).setPropertyMapping(mapping);
         return property;
     }
 

@@ -234,6 +234,16 @@ public interface Property extends Serializable {
     String getStringValue();
 
     /**
+     * Returns the object value of the property. If a converter is associated
+     * with the property in one of Compass mapping definitions, it will be used
+     * to convert the string value to an object value. If there is no converter
+     * associated with the property, the string value will be returned.
+     *
+     * @return The converted object value
+     */
+    Object getObjectValue();
+
+    /**
      * Returns the binary values of the property. Only valid if <code>isBinary</code> is true.
      *
      * @return the binary value

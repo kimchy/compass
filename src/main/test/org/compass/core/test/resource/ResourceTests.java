@@ -19,13 +19,17 @@ package org.compass.core.test.resource;
 import java.io.StringReader;
 import java.util.Calendar;
 
-import org.compass.core.*;
-import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
+import org.compass.core.Property;
+import org.compass.core.Resource;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -147,7 +151,7 @@ public class ResourceTests extends AbstractTestCase {
         r.addProperty("value3", "this is a test");
         r.addProperty("value4", "this is a test");
         Calendar cal = Calendar.getInstance();
-        cal.set(2000, 1, 1);
+        cal.set(2000, 1, 1, 0, 0, 0);
         r.addProperty("value5", cal.getTime());
         r.addProperty("value6", new StringReader("reader"));
 
@@ -184,6 +188,7 @@ public class ResourceTests extends AbstractTestCase {
 
         prop = r.getProperty("value5");
         assertEquals("2000-02-01", prop.getStringValue());
+        assertEquals(cal.getTime().toString(), prop.getObjectValue().toString());
         assertTrue(prop.isIndexed());
         assertTrue(prop.isStored());
         assertTrue(prop.isTokenized());

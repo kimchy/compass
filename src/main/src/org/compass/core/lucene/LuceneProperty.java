@@ -18,7 +18,9 @@ package org.compass.core.lucene;
 
 import org.apache.lucene.document.Field;
 import org.compass.core.Property;
+import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.RepeatableReader;
+import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
@@ -31,6 +33,8 @@ public class LuceneProperty implements Property {
 
     private RepeatableReader reader;
 
+    private transient ResourcePropertyMapping propertyMapping;
+
     public LuceneProperty(Field field) {
         this.field = field;
     }
@@ -38,6 +42,10 @@ public class LuceneProperty implements Property {
     public LuceneProperty(Field field, RepeatableReader reader) {
         this.field = field;
         this.reader = reader;
+    }
+
+    public void setPropertyMapping(ResourcePropertyMapping propertyMapping) {
+        this.propertyMapping = propertyMapping;
     }
 
     public RepeatableReader getRepeatableReader() {
@@ -50,6 +58,18 @@ public class LuceneProperty implements Property {
 
     public String getName() {
         return field.name();
+    }
+
+    public Object getObjectValue() {
+        String value = getStringValue();
+        if (propertyMapping == null) {
+            return value;
+        }
+        ResourcePropertyConverter converter = (ResourcePropertyConverter) propertyMapping.getConverter();
+        if (converter == null) {
+            return null;
+        }
+        return converter.fromString(value, propertyMapping);
     }
 
     public String getStringValue() {
