@@ -253,7 +253,8 @@ public class CompassMapping {
     private ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx, 
             HashMap mappingClassMap, HashMap cachedMappingsMap) throws MappingException {
         // not the most thread safe caching, but suffiecient for our needs (I think),
-        // seems waste to use a thread safe collection
+        // seems waste to use a proper thread safe code, at the worst case, we would
+        // perform it twice
         ResourceMapping rm = (ResourceMapping) cachedMappingsMap.get(clazz);
         if (rm != null) {
             if (rm == nullResourceMappingEntryInCache) {

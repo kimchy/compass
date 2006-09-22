@@ -16,7 +16,12 @@
 
 package org.compass.core.config;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 import org.compass.core.util.ClassUtils;
 
@@ -29,9 +34,9 @@ public class CompassSettings {
 
     private Properties settings;
 
-    private HashMap groups = new HashMap();
+    private final HashMap groups = new HashMap();
 
-    private Map registry = new HashMap();
+    private Map registry = Collections.synchronizedMap(new HashMap());
 
     public CompassSettings() {
         this(new Properties());
@@ -191,8 +196,13 @@ public class CompassSettings {
      * settings are appended to the settingPrefix, and the matching values are
      * set.
      * <p/>
-     * The constructed setting is: settingPrefix + "." + groupName + "." +
-     * settings[i].
+     * The constructed setting is: settingPrefix + "." + groupName + "." + settings[i].
+     *
+     * @param settingPrefix The prefix used for all settings
+     * @param groupName     The name of the setting group
+     * @param settings      The settings name appended to settingsPrefix + "." + groupName + "."
+     * @param values        The values of the settings matched against the settings parameters
+     * @return This settings instance for method chaining
      */
     public CompassSettings setGroupSettings(String settingPrefix, String groupName, String[] settings, String[] values) {
         if (settings.length != values.length) {
