@@ -211,17 +211,22 @@ public class SpringSyncTransaction extends AbstractTransaction {
             session.getSearchEngine().commit(true);
         }
 
+        public void afterCommit() {
+            
+        }
+
         public void afterCompletion(int status) {
             try {
                 if (status == STATUS_COMMITTED) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Committing compass transaction using Spring synchronization afterCompletion on therad [" +
-                                Thread.currentThread().getName() + "]");
-                    }
                     if (!commitBeforeCompletion) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Committing compass transaction using Spring synchronization afterCompletion on therad [" +
+                                    Thread.currentThread().getName() + "]");
+                        }
                         session.getSearchEngine().commit(true);
                     }
-                } else if (status == STATUS_ROLLED_BACK) {
+                } else {
+                    // in case of STATUS_ROLLBACK or STATUS_UNKNOWN
                     if (log.isDebugEnabled()) {
                         log.debug("Rolling back compass transaction using Spring synchronization afterCompletion on therad [" +
                                 Thread.currentThread().getName() + "]");
