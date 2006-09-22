@@ -96,6 +96,10 @@ public class LuceneMultiResource implements MultiResource {
         return currentResource.get(name);
     }
 
+    public Object getObject(String name) {
+        return currentResource.getObject(name);
+    }
+
     public String[] getValues(String name) {
         return currentResource.getValues(name);
     }
