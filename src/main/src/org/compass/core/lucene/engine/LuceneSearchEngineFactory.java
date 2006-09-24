@@ -35,6 +35,7 @@ import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexMana
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
+import org.compass.core.lucene.engine.queryparser.LuceneQueryParserManager;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStoreFactory;
 import org.compass.core.mapping.CompassMapping;
@@ -66,6 +67,8 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
 
     private LuceneHighlighterManager highlighterManager;
 
+    private LuceneQueryParserManager queryParserManager;
+
     private CompassSettings settings;
 
     private SearchEngineEventManager eventManager = new SearchEngineEventManager();
@@ -92,6 +95,10 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
         // build the analyzers
         analyzerManager = new LuceneAnalyzerManager();
         analyzerManager.configure(settings, mapping, luceneSettings);
+
+        // build the query parsers
+        queryParserManager = new LuceneQueryParserManager(this);
+        queryParserManager.configure(settings);
 
         // build the search engine store
         String subContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "index");
@@ -183,5 +190,9 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
             throw new SearchEngineException("Trying to use highlighter, but no highlighter jar included");
         }
         return highlighterManager;
+    }
+
+    public LuceneQueryParserManager getQueryParserManager() {
+        return this.queryParserManager;
     }
 }

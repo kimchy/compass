@@ -16,15 +16,14 @@
 
 package org.compass.core.lucene.engine.query;
 
-import org.compass.core.engine.SearchEngineQueryBuilder;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Query;
 import org.compass.core.engine.SearchEngineQuery;
-import org.compass.core.engine.SearchEngineQueryParseException;
+import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
-import org.compass.core.lucene.util.LuceneQueryParser;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.queryParser.ParseException;
+import org.compass.core.lucene.engine.queryparser.LuceneQueryParser;
 
 /**
  * @author kimchy
@@ -39,12 +38,15 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
 
     private String queryString;
 
-    private LuceneQueryParser.Operator operator = LuceneQueryParser.Operator.OR;
+    private QueryParser.Operator operator = QueryParser.Operator.OR;
+
+    private LuceneQueryParser queryParser;
 
     public LuceneSearchEngineQueryStringBuilder(LuceneSearchEngine searchEngine, String queryString) {
         this.searchEngine = searchEngine;
         this.queryString = queryString;
         this.analyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getSearchAnalyzer();
+        this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getDefaultQueryParser();
     }
 
     public SearchEngineQueryBuilder.SearchEngineQueryStringBuilder setAnalyzer(String analyzer) {
@@ -63,7 +65,12 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
     }
 
     public SearchEngineQueryBuilder.SearchEngineQueryStringBuilder useAndDefaultOperator() {
-        this.operator = LuceneQueryParser.Operator.AND;
+        this.operator = QueryParser.Operator.AND;
+        return this;
+    }
+
+    public SearchEngineQueryBuilder.SearchEngineQueryStringBuilder setQueryParser(String queryParser) {
+        this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getQueryParser(queryParser);
         return this;
     }
 
@@ -72,14 +79,7 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
         if (defaultSearch == null) {
             defaultSearch = searchEngine.getSearchEngineFactory().getLuceneSettings().getDefaultSearchPropery();
         }
-        Query qQuery;
-        try {
-            LuceneQueryParser queryParser = new LuceneQueryParser(defaultSearch, analyzer);
-            queryParser.setDefaultOperator(operator);
-            qQuery = queryParser.parse(queryString);
-        } catch (ParseException e) {
-            throw new SearchEngineQueryParseException(queryString, e);
-        }
+        Query qQuery = queryParser.parse(defaultSearch, operator, analyzer, queryString);
         return new LuceneSearchEngineQuery(searchEngine, qQuery);
     }
 }

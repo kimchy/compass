@@ -61,6 +61,8 @@ public interface SearchEngineQueryBuilder {
         SearchEngineQueryStringBuilder setDefaultSearchProperty(String defaultSearchProperty);
 
         SearchEngineQueryStringBuilder useAndDefaultOperator();
+
+        SearchEngineQueryStringBuilder setQueryParser(String queryParser);
     }
 
     public static interface SearchEngineMultiPropertyQueryStringBuilder extends SearchEngineToQuery {
@@ -72,6 +74,8 @@ public interface SearchEngineQueryBuilder {
         SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName);
 
         SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator();
+
+        SearchEngineMultiPropertyQueryStringBuilder setQueryParser(String queryParser);
     }
     
     public static interface SearchEngineQuerySpanNearBuilder {

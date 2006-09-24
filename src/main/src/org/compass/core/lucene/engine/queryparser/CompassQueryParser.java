@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package org.compass.core.lucene.util;
+package org.compass.core.lucene.engine.queryparser;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
 
 /**
- * Extends Lucene {@link MultiFieldQueryParser} and overrides {@link #getRangeQuery(String, String, String, boolean)}
+ * Extends Lucene {@link org.apache.lucene.queryParser.QueryParser} and overrides {@link #getRangeQuery(String, String, String, boolean)}
  * since lucene performs data parsing which is a performance killer. Anyhow, handling dates in Compass
  * is different and simpler than Lucene.
  *
  * @author kimchy
  */
-public class LuceneMultiFieldQueryParser extends MultiFieldQueryParser {
+public class CompassQueryParser extends QueryParser {
 
-    public LuceneMultiFieldQueryParser(String[] fields, Analyzer analyzer) {
-        super(fields, analyzer);
+    public CompassQueryParser(String f, Analyzer a) {
+        super(f, a);
     }
 
     /**
@@ -49,5 +49,4 @@ public class LuceneMultiFieldQueryParser extends MultiFieldQueryParser {
                 "*".equals(part2) ? null : part2,
                 inclusive, inclusive);
     }
-
 }

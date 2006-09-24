@@ -148,14 +148,14 @@ public interface SearchEngine {
     /**
      * Was this transaction rolled back
      */
-    public boolean wasRolledBack() throws SearchEngineException;
+    boolean wasRolledBack() throws SearchEngineException;
 
     /**
      * Check if this transaction was successfully committed. This method could
      * return <code>false</code> even after successful invocation of
      * <code>commit()</code>.
      */
-    public boolean wasCommitted() throws SearchEngineException;
+    boolean wasCommitted() throws SearchEngineException;
 
     /**
      * Closes and disposes of the search engine.

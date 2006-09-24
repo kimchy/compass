@@ -33,6 +33,20 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testQueryParser() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/queryParser.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        Map groupSettings = settings.getSettingGroups(LuceneEnvironment.QueryParser.PREFIX);
+        assertEquals(1, groupSettings.size());
+        settings = (CompassSettings) groupSettings.get("test");
+        assertNotNull(settings);
+        assertEquals("eg.QueryParser", settings.getSetting(LuceneEnvironment.QueryParser.TYPE));
+        assertEquals("value1", settings.getSetting("param1"));
+    }
+
     public void testOsem() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/osem.cfg.xml");

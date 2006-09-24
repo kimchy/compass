@@ -870,4 +870,26 @@ public class LuceneEnvironment {
 
         public static final String TYPE = "type";
     }
+
+    /**
+     * Settings for different query parser implementations.
+     */
+    public static abstract class QueryParser {
+
+        /**
+         * The prefix used for query parser groups.
+         */
+        public static final String PREFIX = "compass.engine.queryParser";
+
+        /**
+         * The type of the query parser. A fully qualified class name, must
+         * implement {@link org.compass.core.lucene.engine.queryparser.LuceneQueryParser}.
+         */
+        public static final String TYPE = "type";
+
+        /**
+         * The default query parser group that must be set.
+         */
+        public static final String DEFAULT_GROUP = "default";
+    }
 }

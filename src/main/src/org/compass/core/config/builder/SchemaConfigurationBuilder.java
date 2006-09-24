@@ -83,7 +83,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 try {
                     method.invoke(this, new Object[]{ele, config});
                 } catch (InvocationTargetException e) {
-                    throw new ConfigurationException("Failed to invoke binding metod for node [" + nodeName + "]", e);
+                    throw new ConfigurationException("Failed to invoke binding metod for node [" + nodeName + "]", e.getTargetException());
                 } catch (IllegalAccessException e) {
                     throw new ConfigurationException("Failed to access binding metod for node [" + nodeName + "]", e);
                 }
@@ -305,6 +305,15 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settingsHolder.names.add(LuceneEnvironment.AnalyzerFilter.TYPE);
             settingsHolder.values.add(DomUtils.getElementAttribute(analyzerFilterEle, "type"));
             settings.setGroupSettings(LuceneEnvironment.AnalyzerFilter.PREFIX, DomUtils.getElementAttribute(analyzerFilterEle, "name"),
+                    settingsHolder.names(), settingsHolder.values());
+        }
+        child = DomUtils.getChildElementsByTagName(ele, "queryParser", true);
+        for (Iterator it = child.iterator(); it.hasNext();) {
+            Element queryParserEle = (Element) it.next();
+            SettingsHolder settingsHolder = processSettings(queryParserEle);
+            settingsHolder.names.add(LuceneEnvironment.QueryParser.TYPE);
+            settingsHolder.values.add(DomUtils.getElementAttribute(queryParserEle, "type"));
+            settings.setGroupSettings(LuceneEnvironment.QueryParser.PREFIX, DomUtils.getElementAttribute(queryParserEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }
     }

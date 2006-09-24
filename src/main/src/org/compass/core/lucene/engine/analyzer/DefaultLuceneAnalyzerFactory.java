@@ -16,10 +16,10 @@
 
 package org.compass.core.lucene.engine.analyzer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,27 +38,27 @@ public class DefaultLuceneAnalyzerFactory implements LuceneAnalyzerFactory {
 
     private static final Log log = LogFactory.getLog(DefaultLuceneAnalyzerFactory.class);
 
-    private static final Map extednedAnalyzers;
+    private static final Set extednedAnalyzers;
 
-    private static final Map coreAnalyzers;
+    private static final Set coreAnalyzers;
 
     static {
-        coreAnalyzers = new HashMap();
-        coreAnalyzers.put(LuceneEnvironment.Analyzer.CoreTypes.WHITESPACE, "");
-        coreAnalyzers.put(LuceneEnvironment.Analyzer.CoreTypes.STANDARD, "");
-        coreAnalyzers.put(LuceneEnvironment.Analyzer.CoreTypes.SIMPLE, "");
-        coreAnalyzers.put(LuceneEnvironment.Analyzer.CoreTypes.STOP, "");
+        coreAnalyzers = new HashSet();
+        coreAnalyzers.add(LuceneEnvironment.Analyzer.CoreTypes.WHITESPACE);
+        coreAnalyzers.add(LuceneEnvironment.Analyzer.CoreTypes.STANDARD);
+        coreAnalyzers.add(LuceneEnvironment.Analyzer.CoreTypes.SIMPLE);
+        coreAnalyzers.add(LuceneEnvironment.Analyzer.CoreTypes.STOP);
 
-        extednedAnalyzers = new HashMap();
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.BRAZILIAN, "");
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.CJK, "");
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.CHINESE, "");
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.CZECH, "");
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.GERMAN, "");
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.GREEK, "");
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.FRENCH, "");
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.DUTCH, "");
-        extednedAnalyzers.put(LuceneEnvironment.Analyzer.ExtendedTypes.RUSSIAN, "");
+        extednedAnalyzers = new HashSet();
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.BRAZILIAN);
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.CJK);
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.CHINESE);
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.CZECH);
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.GERMAN);
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.GREEK);
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.FRENCH);
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.DUTCH);
+        extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.RUSSIAN);
     }
 
     public Analyzer createAnalyzer(String analyzerName, CompassSettings settings) throws SearchEngineException {
@@ -68,13 +68,13 @@ public class DefaultLuceneAnalyzerFactory implements LuceneAnalyzerFactory {
         if (log.isDebugEnabled()) {
             log.debug("Analyzer [" + analyzerName + "] uses Lucene analyzer [" + analyzerSetting + "]");
         }
-        if (coreAnalyzers.get(analyzerSetting.toLowerCase()) != null) {
+        if (coreAnalyzers.contains(analyzerSetting.toLowerCase())) {
             AnalyzerBuilderDelegate analyzerBuilderDelegate = new CoreAnalyzerBuilderDelegate();
             analyzer = analyzerBuilderDelegate.buildAnalyzer(analyzerName, settings, this);
         } else if (LuceneEnvironment.Analyzer.Snowball.SNOWBALL.equalsIgnoreCase(analyzerSetting)) {
             AnalyzerBuilderDelegate analyzerBuilderDelegate = new SnowballAnalyzerBuilderDelegate();
             analyzer = analyzerBuilderDelegate.buildAnalyzer(analyzerName, settings, this);
-        } else if (extednedAnalyzers.get(analyzerSetting.toLowerCase()) != null) {
+        } else if (extednedAnalyzers.contains(analyzerSetting.toLowerCase())) {
             AnalyzerBuilderDelegate analyzerBuilderDelegate = new ExtendedAnalyzerBuilderDelegate();
             analyzer = analyzerBuilderDelegate.buildAnalyzer(analyzerName, settings, this);
         } else {
@@ -116,7 +116,7 @@ public class DefaultLuceneAnalyzerFactory implements LuceneAnalyzerFactory {
             }
         }
         String[] arrStopWords = (String[]) listStopWords.toArray(new String[listStopWords.size()]);
-        
+
         if (addStopWords) {
             if (log.isTraceEnabled()) {
                 log.trace("Analyzer [" + analyzerName + "] uses default stop words ["

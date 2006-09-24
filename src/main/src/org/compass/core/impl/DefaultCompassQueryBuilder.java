@@ -16,26 +16,24 @@
 
 package org.compass.core.impl;
 
-import org.compass.core.CompassQuery;
-import org.compass.core.CompassQueryBuilder;
 import org.compass.core.CompassException;
-import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.CompassQuery;
 import org.compass.core.CompassQuery.CompassSpanQuery;
+import org.compass.core.CompassQueryBuilder;
 import org.compass.core.engine.SearchEngineQuery;
-import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
+import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineBooleanQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineMultiPhraseQueryBuilder;
+import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder;
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQuerySpanNearBuilder;
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQuerySpanOrBuilder;
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQueryStringBuilder;
-import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder;
 import org.compass.core.mapping.CompassMapping.ResourcePropertyLookup;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
@@ -46,7 +44,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         private InternalCompassSession session;
 
         public DefaultCompassBooleanQueryBuilder(SearchEngineBooleanQueryBuilder queryBuilder,
-                InternalCompassSession session) {
+                                                 InternalCompassSession session) {
             this.queryBuilder = queryBuilder;
             this.session = session;
         }
@@ -82,7 +80,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         private ResourcePropertyLookup lookup;
 
         public DefaultCompassMultiPhraseQueryBuilder(SearchEngineMultiPhraseQueryBuilder queryBuilder,
-                InternalCompassSession session, ResourcePropertyLookup lookup) {
+                                                     InternalCompassSession session, ResourcePropertyLookup lookup) {
             this.queryBuilder = queryBuilder;
             this.session = session;
             this.lookup = lookup;
@@ -134,7 +132,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         private InternalCompassSession session;
 
         public DefaultCompassQueryStringBuilder(SearchEngineQueryStringBuilder queryBuilder,
-                InternalCompassSession session) {
+                                                InternalCompassSession session) {
             this.queryBuilder = queryBuilder;
             this.session = session;
         }
@@ -146,6 +144,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         public CompassQueryStringBuilder setAnalyzerByAlias(String alias) throws CompassException {
             queryBuilder.setAnalyzerByAlias(alias);
+            return this;
+        }
+
+        public CompassQueryStringBuilder setQueryParser(String queryParser) throws CompassException {
+            queryBuilder.setQueryParser(queryParser);
             return this;
         }
 
@@ -173,7 +176,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         private InternalCompassSession session;
 
         public DefaultCompassMultiPropertyQueryStringBuilder(SearchEngineMultiPropertyQueryStringBuilder queryBuilder,
-                InternalCompassSession session) {
+                                                             InternalCompassSession session) {
             this.queryBuilder = queryBuilder;
             this.session = session;
         }
@@ -185,6 +188,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         public CompassMultiPropertyQueryStringBuilder setAnalyzerByAlias(String alias) throws CompassException {
             queryBuilder.setAnalyzerByAlias(alias);
+            return this;
+        }
+
+        public CompassMultiPropertyQueryStringBuilder setQueryParser(String queryParser) throws CompassException {
+            queryBuilder.setQueryParser(queryParser);
             return this;
         }
 
@@ -213,7 +221,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         private ResourcePropertyLookup lookup;
 
         public DefaultCompassQuerySpanNearBuilder(SearchEngineQuerySpanNearBuilder queryBuilder,
-                InternalCompassSession session, ResourcePropertyLookup lookup) {
+                                                  InternalCompassSession session, ResourcePropertyLookup lookup) {
             this.queryBuilder = queryBuilder;
             this.session = session;
             this.lookup = lookup;
@@ -252,11 +260,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         private InternalCompassSession session;
 
         public DefaultCompassQuerySpanOrBuilder(SearchEngineQuerySpanOrBuilder queryBuilder,
-                InternalCompassSession session) {
+                                                InternalCompassSession session) {
             this.queryBuilder = queryBuilder;
             this.session = session;
         }
-        
+
         public CompassQuerySpanOrBuilder add(CompassSpanQuery query) {
             queryBuilder.add(((DefaultCompassQuery.DefaultCompassSpanQuey) query).getSearchEngineSpanQuery());
             return this;
@@ -406,7 +414,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
                 .getSearchEngineSpanQuery());
         return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
     }
-    
+
     public CompassQuerySpanOrBuilder spanOr() {
         return new DefaultCompassQuerySpanOrBuilder(queryBuilder.spanOr(), session);
     }

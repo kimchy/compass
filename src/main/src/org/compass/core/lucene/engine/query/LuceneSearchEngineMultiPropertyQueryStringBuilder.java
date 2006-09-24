@@ -18,16 +18,14 @@ package org.compass.core.lucene.engine.query;
 
 import java.util.ArrayList;
 
-import org.compass.core.engine.SearchEngineQueryBuilder;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Query;
 import org.compass.core.engine.SearchEngineQuery;
-import org.compass.core.engine.SearchEngineQueryParseException;
+import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
-import org.compass.core.lucene.util.LuceneQueryParser;
-import org.compass.core.lucene.util.LuceneMultiFieldQueryParser;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.queryParser.ParseException;
+import org.compass.core.lucene.engine.queryparser.LuceneQueryParser;
 
 /**
  * @author kimchy
@@ -40,14 +38,17 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
 
     private String queryString;
 
-    private LuceneQueryParser.Operator operator = LuceneQueryParser.Operator.OR;
+    private QueryParser.Operator operator = QueryParser.Operator.OR;
 
     private ArrayList propertyNames = new ArrayList();
+
+    private LuceneQueryParser queryParser;
 
     public LuceneSearchEngineMultiPropertyQueryStringBuilder(LuceneSearchEngine searchEngine, String queryString) {
         this.searchEngine = searchEngine;
         this.queryString = queryString;
         this.analyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getSearchAnalyzer();
+        this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getDefaultQueryParser();
     }
 
     public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder setAnalyzer(String analyzer) {
@@ -66,20 +67,18 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
     }
 
     public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator() {
-        this.operator = LuceneQueryParser.Operator.AND;
+        this.operator = QueryParser.Operator.AND;
+        return this;
+    }
+
+    public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder setQueryParser(String queryParser) {
+        this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getQueryParser(queryParser);
         return this;
     }
 
     public SearchEngineQuery toQuery() {
-        Query qQuery;
-        try {
-            LuceneMultiFieldQueryParser queryParser = new LuceneMultiFieldQueryParser(
-                    (String[]) propertyNames.toArray(new String[propertyNames.size()]), analyzer);
-            queryParser.setDefaultOperator(operator);
-            qQuery = queryParser.parse(queryString);
-        } catch (ParseException e) {
-            throw new SearchEngineQueryParseException(queryString, e);
-        }
+        Query qQuery = queryParser.parse((String[]) propertyNames.toArray(new String[propertyNames.size()]),
+                operator, analyzer, queryString);
         return new LuceneSearchEngineQuery(searchEngine, qQuery);
     }
 }

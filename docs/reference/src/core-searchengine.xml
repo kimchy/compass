@@ -175,6 +175,31 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
     </sect2>
   </sect1>
 
+  <sect1 id="core-searchengine-queryparser">
+    <title>Query Parser</title>
+
+    <para>
+      By default, Compass uses its own query parser based on Lucene query parser. Compass allows to configure several query parsers (registered under a lookup name), as well as override the default Compass query parser (registered under the name <literal>default</literal>). Custom query parsers can be used to extend the default query language support, to add parsed query caching, and so on. A custom query parser must implement the <classname>LuceneQueryParser</classname> interface.
+    </para>
+
+    <para>
+      Here is an example of configuring a custom query parser registered under the name <literal>test</literal>:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+    <queryParser name="test" type="eg.MyQueryParser">
+      <setting name="param1" value="value1" />
+    </queryParser>
+  </searchEngine>
+</compass>
+]]></programlisting>
+    </para>
+  </sect1>
+
   <sect1 id="core-searchengine-indexstructure">
     <title>Index Structure</title>
 
@@ -196,12 +221,12 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
     <para>
       Every sub-index has it's own fully functional index structure (which maps to a single Lucene index). The Lucene index part holds a "meta data" file about the index (called <literal>segments</literal>) and 0 to N segment files. The segments can be a single file (if the compound setting is enabled) or multiple files (if the compound setting is disable). A segment is close to a fully functional index, which hold the actual inverted index data (see <ulink url="http://lucene.apache.org">Lucene</ulink> documentation for a detailed description of these concepts).
     </para>
-    
+
     <para>
       Index partitioning is one of Compass main features, allowing for flexible and configurable way to manage complex indexes and performance considerations. The next sections will explain in more details why this feature is important, especially in terms of transaction management.
     </para>
   </sect1>
-  
+
   <sect1 id="core-searchengine-transaction">
     <title>Transaction</title>
 
@@ -254,14 +279,14 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       </para>
     </sect2>
   </sect1>
-  
+
   <sect1 id="core-searchengine-subindexhash">
     <title>Sub Index Hashing</title>
-    
+
     <para>
       Searchable content is mapped to the search engine using Compass different mapping definitions (OSEM/XSEM/RSEM). Compass provides the ability to partition the searchable content into different sub indexes, as shown in the next diagram:
     </para>
-    
+
     <para>
       <mediaobject>
         <imageobject>
@@ -272,14 +297,14 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         </caption>
       </mediaobject>
     </para>
-    
+
     <para>
       In the above diagram A, B, C, and D represent aliases which in turn stands for the mapping definitions of the searchable content. A1, B2, and so on, are actual instances of the mentioned searchable content. The diagram shows the different options of mapping searchable content into different sub indexes.
     </para>
-    
+
     <sect2 id="core-searchengine-subindexhash-constant">
       <title>Constant Sub Index Hashing</title>
-      
+
       <para>
         The simplest way to map aliases (stands for the mapping definitions of a searchable content) is by mapping all its searchable content instances into the same sub index. Defining how searchable content mapping to the search engine (OSEM/XSEM/RSEM) is done within the respectable mapping definitions. There are two ways to define a constant mapping to a sub index, the first one (which is simpler) is:
 <programlisting><![CDATA[<compass-core-mapping>
@@ -316,10 +341,10 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         </mediaobject>
       </para>
     </sect2>
-    
+
     <sect2 id="core-searchengine-subindexhash-modulo">
       <title>Modulo Sub Index Hashing</title>
-      
+
       <para>
         Constant sub index hashing allows to map an alias (and all its searchable instances it represents) into the same sub index. The modulo sub index hashing allows for partitioning an alias into several sub indexes. The partitioning is done by hashing the alias value with all the string values of the searchable content ids, and then using the modulo operation against a specified size. It also allows setting a constant prefix for the generated sub index value. This is shown in the following diagram:
       </para>
@@ -359,14 +384,14 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         </mediaobject>
       </para>
     </sect2>
-    
+
     <sect2 id="core-searchengine-subindexhash-custom">
       <title>Custom Sub Index Hashing</title>
-      
+
       <para>
         <classname>ConstantSubIndexHash</classname> and <classname>ModuloSubIndexHash</classname> are implementation of Compass <classname>SubIndexHash</classname> interface that comes built in with Compass. Naturally, a custom implementation of the <classname>SubIndexHash</classname> interface can be configured in the mapping definition.
       </para>
-      
+
       <para>
         An implementation of <classname>SubIndexHash</classname> must provide two operations. The first, <literal>getSubIndexes</literal>, must return all the possible sub indexes the sub index hash implementation can produce. The second, <literal>mapSubIndex(String alias, Property[] ids)</literal> uses the provided aliases and ids in order to compute the given sub index. If the sub index hash implementation also implements the <classname>CompassConfigurable</classname> interface, different settings can be injected to it. Here is an example of a mapping definition with custom sub index hash implementation:
 <programlisting><![CDATA[<compass-core-mapping>
@@ -388,11 +413,11 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
     <para>
       As mentioned in the <literal>read_committed</literal> section, every dirty transaction that is committed successfully creates another segment in the respective sub index. The more segments the index has, the slower the fetching operations take. That's why it is important to keep the index optimized and with a controlled number of segments. We do this by merging small segments into larger segments.
     </para>
-    
+
     <para>
       In order to solve the problem, Compass has a <classname>SearchEngineOptimizer</classname> which is responsible for keeping the number of segments at bay. When <classname>Compass</classname> is built using <classname>CompassConfiguration</classname>, the <classname>SearchEngineOptimizer</classname> is started and when <classname>Compass</classname> is closed, the <classname>SearchEngineOptimizer</classname> is stopped.
     </para>
-    
+
     <para>
       The optimization process works on a sub index level, performing the optimization for each one. During the optimization process, optimizers will lock the sub index for dirty operations. This causes a tradeoff between having an optimized index, and spending less time on the optimization process in order to allow for other dirty operations.
     </para>
@@ -408,7 +433,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
   </connection>
 
   <searchEngine>
-  	<optimizer scheduleInterval="90" schedule="true" />
+    <optimizer scheduleInterval="90" schedule="true" />
   </searchEngine>
 </compass>
 ]]></programlisting>
@@ -422,7 +447,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       <para>
         The <classname>AggressiveOptimizer</classname> uses Lucene optimization feature to optimize the index. Lucene optimization merges all the segments into one segment. You can set the limit of the number of segments, after which the index is considered to need optimization (the aggressive optimizer merge factor).
       </para>
-      
+
       <para>
         Since this optimizer causes all the segments in the index to be optimized into a single segment, the optimization process might take a long time to happen. This means that for large indexes, the optimizer will block other dirty operations for a long time in order to perform the index optimization. It also means that the index will be fully optimized after it, which means that search operations will execute faster. For most cases, the <classname>AdaptiveOptimizer</classname> should be the one used.
       </para>
@@ -446,14 +471,14 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 
     </sect2>
   </sect1>
-  
+
   <sect1 id="core-searchengine-directlucene">
     <title>Direct Lucene</title>
-    
+
     <para>
       Compass provides a helpful abstraction layer on top of Lucene, but it also acknowledges that there are cases where direct Lucene access, both in terms of API and constructs, is required. Most of the direct Lucene access is done using the <classname>LuceneHelper</classname> class. The next sections will describe its main features, for a complete list, please consult its javadoc.
     </para>
-    
+
     <sect2 id="core-searchengine-dl-wrapper">
       <title>Wrappers</title>
       <para>
@@ -478,7 +503,7 @@ for (int i = 0; i < hits.length(); i++) {
 ]]></programlisting>
       </para>
     </sect2>
-    
+
     <sect2 id="core-searchengine-dl-searcher">
       <title>Searcher And IndexReader</title>
       <para>
@@ -497,11 +522,11 @@ try {
   }
 } finally {
   termEnum.close();
-}  
+}
 ]]></programlisting>
       </para>
     </sect2>
-    
+
   </sect1>
 </chapter>
 
