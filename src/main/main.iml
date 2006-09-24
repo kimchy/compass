@@ -504,15 +504,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/ehcache/ehcache-1.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/antlr/antlr-2.7.6.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -586,6 +577,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/groovy/groovy-all-1.0-JSR-06.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/ehcache/ehcache-1.2.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
