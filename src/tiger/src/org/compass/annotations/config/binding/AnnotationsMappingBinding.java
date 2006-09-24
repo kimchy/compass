@@ -423,6 +423,11 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindObjectMapping(parentMapping, accessor, name, searchableParent.accessor());
             bindParent(searchableParent, parentMapping, clazz, type);
             classMapping.addMapping(parentMapping);
+        } else if ((annotation instanceof SearchableMetaData) ||
+                (annotation instanceof SearchableMetaDatas)) {
+            if (!annotatedElement.isAnnotationPresent(SearchableProperty.class)) {
+                throw new MappingException("SearchableMetaData/s annotation exists without a SearchableProperty, it will be ignored");
+            }
         }
     }
 
