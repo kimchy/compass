@@ -7,20 +7,19 @@
 
 package org.compass.core.util.backport.java.util;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.AbstractSet;
-import java.util.SortedSet;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.SortedMap;
-import java.util.NoSuchElementException;
-import java.util.ConcurrentModificationException;
-import java.io.Serializable;
-import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.AbstractSet;
+import java.util.Comparator;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 /**
  * Sorted map implementation based on a red-black tree and implementing
@@ -40,11 +39,10 @@ public class TreeMap extends AbstractMap
     private transient int size = 0;
     private transient int modCount = 0;
 
-    private transient Set entrySet;
-//    private transient Set valueSet;
-//    private transient Set keySet;
-    private transient Set descendingEntrySet;
-    private transient Set descendingKeySet;
+    private transient EntrySet entrySet;
+    private transient KeySet navigableKeySet;
+    private transient NavigableMap descendingMap;
+    private transient Comparator reverseComparator;
 
     public TreeMap() {
         this.comparator = null;
@@ -703,12 +701,21 @@ public class TreeMap extends AbstractMap
             lastRet = curr;
             return curr;
         }
+        Entry prevEntry() {
+            Entry curr = cursor;
+            if (curr == null) throw new NoSuchElementException();
+            if (expectedModCount != modCount)
+                throw new ConcurrentModificationException();
+            cursor = predecessor(curr);
+            lastRet = curr;
+            return curr;
+        }
         public void remove() {
             if (lastRet == null) throw new IllegalStateException();
             if (expectedModCount != modCount)
                 throw new ConcurrentModificationException();
             // if removal strictly internal, it swaps places with a successor
-            if (lastRet.left != null && lastRet.right != null) cursor = lastRet;
+            if (lastRet.left != null && lastRet.right != null && cursor != null) cursor = lastRet;
             delete(lastRet);
             lastRet = null;
             expectedModCount++;
@@ -730,49 +737,17 @@ public class TreeMap extends AbstractMap
         public Object next() { return nextEntry().element; }
     }
 
-    private class BaseDescendingEntryIterator {
-        Entry cursor;
-        Entry lastRet;
-        int expectedModCount;
-        BaseDescendingEntryIterator(Entry cursor) {
-            this.cursor = cursor;
-            this.expectedModCount = modCount;
-        }
-        public boolean hasNext() {
-            return (cursor != null);
-        }
-        Entry prevEntry() {
-            Entry curr = cursor;
-            if (curr == null) throw new NoSuchElementException();
-            if (expectedModCount != modCount)
-                throw new ConcurrentModificationException();
-            cursor = predecessor(curr);
-            lastRet = curr;
-            return curr;
-        }
-        public void remove() {
-            if (lastRet == null) throw new IllegalStateException();
-            if (expectedModCount != modCount)
-                throw new ConcurrentModificationException();
-            // if removal strictly internal, it swaps places with a successor
-            if (lastRet.left != null && lastRet.right != null) cursor = lastRet;
-            delete(lastRet);
-            lastRet = null;
-            expectedModCount++;
-        }
-    }
-
-    class DescendingEntryIterator extends BaseDescendingEntryIterator implements Iterator {
+    class DescendingEntryIterator extends BaseEntryIterator implements Iterator {
         DescendingEntryIterator(Entry cursor) { super(cursor); }
         public Object next() { return prevEntry(); }
     }
 
-    class DescendingKeyIterator extends BaseDescendingEntryIterator implements Iterator {
+    class DescendingKeyIterator extends BaseEntryIterator implements Iterator {
         DescendingKeyIterator(Entry cursor) { super(cursor); }
         public Object next() { return prevEntry().key; }
     }
 
-    class DescendingValueIterator extends BaseDescendingEntryIterator implements Iterator {
+    class DescendingValueIterator extends BaseEntryIterator implements Iterator {
         DescendingValueIterator(Entry cursor) { super(cursor); }
         public Object next() { return prevEntry().element; }
     }
@@ -838,7 +813,7 @@ public class TreeMap extends AbstractMap
         }
     }
 
-    class KeySet extends AbstractSet {
+    abstract class KeySet extends AbstractSet implements NavigableSet {
         public int size() { return TreeMap.this.size(); }
         public boolean isEmpty() { return TreeMap.this.isEmpty(); }
         public void clear() { TreeMap.this.clear(); }
@@ -847,21 +822,106 @@ public class TreeMap extends AbstractMap
             return getEntry(o) != null;
         }
 
-        public Iterator iterator() {
-            return new KeyIterator(getFirstEntry());
-        }
-
         public boolean remove(Object o) {
             Entry found = getEntry(o);
             if (found == null) return false;
             delete(found);
             return true;
         }
+        public SortedSet subSet(Object fromElement, Object toElement) {
+            return subSet(fromElement, true, toElement, false);
+        }
+        public SortedSet headSet(Object toElement) {
+            return headSet(toElement, false);
+        }
+        public SortedSet tailSet(Object fromElement) {
+            return tailSet(fromElement, true);
+        }
+    }
+
+    class AscendingKeySet extends KeySet {
+
+        public Iterator iterator() {
+            return new KeyIterator(getFirstEntry());
+        }
+
+        public Iterator descendingIterator() {
+            return new DescendingKeyIterator(getFirstEntry());
+        }
+
+        public Object lower(Object e)   { return lowerKey(e); }
+        public Object floor(Object e)   { return floorKey(e); }
+        public Object ceiling(Object e) { return ceilingKey(e); }
+        public Object higher(Object e)  { return higherKey(e); }
+        public Object first()           { return firstKey(); }
+        public Object last()            { return lastKey(); }
+        public Comparator comparator()  { return TreeMap.this.comparator(); }
+
+        public Object pollFirst() {
+            Map.Entry e = pollFirstEntry();
+            return e == null? null : e.getKey();
+        }
+        public Object pollLast() {
+            Map.Entry e = pollLastEntry();
+            return e == null? null : e.getKey();
+        }
+
+        public NavigableSet subSet(Object fromElement, boolean fromInclusive,
+                                   Object toElement,   boolean toInclusive) {
+            return (NavigableSet)(subMap(fromElement, fromInclusive,
+                                         toElement,   toInclusive)).keySet();
+        }
+        public NavigableSet headSet(Object toElement, boolean inclusive) {
+            return (NavigableSet)(headMap(toElement, inclusive)).keySet();
+        }
+        public NavigableSet tailSet(Object fromElement, boolean inclusive) {
+            return (NavigableSet)(tailMap(fromElement, inclusive)).keySet();
+        }
+        public NavigableSet descendingSet() {
+            return (NavigableSet)descendingMap().keySet();
+        }
     }
 
     class DescendingKeySet extends KeySet {
+
         public Iterator iterator() {
             return new DescendingKeyIterator(getLastEntry());
+        }
+
+        public Iterator descendingIterator() {
+            return new KeyIterator(getFirstEntry());
+        }
+
+        public Object lower(Object e)   { return higherKey(e); }
+        public Object floor(Object e)   { return ceilingKey(e); }
+        public Object ceiling(Object e) { return floorKey(e); }
+        public Object higher(Object e)  { return lowerKey(e); }
+        public Object first()           { return lastKey(); }
+        public Object last()            { return firstKey(); }
+        public Comparator comparator()  { return descendingMap().comparator(); }
+
+        public Object pollFirst() {
+            Map.Entry e = pollLastEntry();
+            return e == null? null : e.getKey();
+        }
+        public Object pollLast() {
+            Map.Entry e = pollFirstEntry();
+            return e == null? null : e.getKey();
+        }
+
+        public NavigableSet subSet(Object fromElement, boolean fromInclusive,
+                                   Object toElement,   boolean toInclusive) {
+            return (NavigableSet)(descendingMap().subMap(fromElement, fromInclusive,
+                                          toElement,   toInclusive)).keySet();
+        }
+        public NavigableSet headSet(Object toElement, boolean inclusive) {
+            return (NavigableSet)(descendingMap().headMap(toElement, inclusive)).keySet();
+        }
+        public NavigableSet tailSet(Object fromElement, boolean inclusive) {
+            return (NavigableSet)(descendingMap().tailMap(fromElement, inclusive)).keySet();
+        }
+        public NavigableSet descendingSet() {
+            return (NavigableSet)keySet();
         }
     }
 
@@ -977,56 +1037,71 @@ public class TreeMap extends AbstractMap
         return res;
     }
 
-    public Set descendingKeySet() {
-        if (descendingKeySet == null) {
-            descendingKeySet = new DescendingKeySet();
+    /**
+     * @since 1.6
+     */
+    public NavigableMap descendingMap() {
+        NavigableMap map = descendingMap;
+        if (map == null) {
+            descendingMap = map = new DescendingSubMap(true, null, true,
+                                                       true, null, true);
         }
-        return descendingKeySet;
+        return map;
     }
 
-    public Set descendingEntrySet() {
-        if (descendingEntrySet == null) {
-            descendingEntrySet = new DescendingEntrySet();
-        }
-        return descendingEntrySet;
+    public NavigableSet descendingKeySet() {
+        return descendingMap().navigableKeySet();
     }
 
-    public NavigableMap navigableSubMap(Object fromKey, Object toKey) {
-        return new SubMap(fromKey, toKey);
+    public SortedMap subMap(Object fromKey, Object toKey) {
+        return subMap(fromKey, true, toKey, false);
     }
 
-    public NavigableMap navigableHeadMap(Object toKey) {
-        return new SubMap(null, toKey);
+    public SortedMap headMap(Object toKey) {
+        return headMap(toKey, false);
     }
 
-    public NavigableMap navigableTailMap(Object fromKey) {
-        return new SubMap(fromKey, null);
+    public SortedMap tailMap(Object fromKey) {
+        return tailMap(fromKey, true);
+    }
+
+    public NavigableMap subMap(Object fromKey, boolean fromInclusive,
+                               Object toKey,   boolean toInclusive) {
+        return new AscendingSubMap(false, fromKey, fromInclusive,
+                                   false, toKey, toInclusive);
+    }
+
+    public NavigableMap headMap(Object toKey, boolean toInclusive) {
+        return new AscendingSubMap(true,  null,  true,
+                                   false, toKey, toInclusive);
+    }
+
+    public NavigableMap tailMap(Object fromKey, boolean fromInclusive) {
+        return new AscendingSubMap(false, fromKey, fromInclusive,
+                                   true,  null,    true);
     }
 
     public Comparator comparator() {
         return comparator;
     }
 
-    public SortedMap subMap(Object fromKey, Object toKey) {
-        return navigableSubMap(fromKey, toKey);
-    }
-
-    public SortedMap headMap(Object toKey) {
-        return navigableHeadMap(toKey);
-    }
-
-    public SortedMap tailMap(Object fromKey) {
-        return navigableTailMap(fromKey);
+    final Comparator reverseComparator() {
+        if (reverseComparator == null) {
+            reverseComparator = Collections.reverseOrder(comparator);
+        }
+        return reverseComparator;
     }
 
     public Object firstKey() {
         Entry e = getFirstEntry();
-        return (e == null) ? null : e.key;
+        if (e == null) throw new NoSuchElementException();
+        return e.key;
     }
 
     public Object lastKey() {
         Entry e = getLastEntry();
-        return (e == null) ? null : e.key;
+        if (e == null) throw new NoSuchElementException();
+        return e.key;
     }
 
     public boolean isEmpty() {
@@ -1072,13 +1147,17 @@ public class TreeMap extends AbstractMap
         super.putAll(map);
     }
 
-//    public Set keySet() {
-//        if (keySet == null) {
-//            keySet = new KeySet();
-//        }
-//        return keySet;
-//    }
-//
+    public Set keySet() {
+        return navigableKeySet();
+    }
+
+    public NavigableSet navigableKeySet() {
+        if (navigableKeySet == null) {
+            navigableKeySet = new AscendingKeySet();
+        }
+        return navigableKeySet;
+    }
+
 //    public Collection values() {
 //        if (valueSet == null) {
 //            valueSet = new ValueSet();
@@ -1086,96 +1165,109 @@ public class TreeMap extends AbstractMap
 //        return valueSet;
 //    }
 //
-    private class SubMap extends AbstractMap implements NavigableMap, Serializable {
+    private abstract class NavigableSubMap extends AbstractMap
+                                           implements NavigableMap, Serializable {
 
         private static final long serialVersionUID = -6520786458950516097L;
 
         final Object fromKey, toKey;
+        final boolean fromStart, toEnd;
+        final boolean fromInclusive, toInclusive;
         transient int cachedSize = -1, cacheVersion;
-        transient Set entrySet;
-        transient Set descendingEntrySet;
-        transient Set descendingKeySet;
+        transient SubEntrySet entrySet;
+        transient NavigableMap descendingMap;
+        transient NavigableSet navigableKeySet;
 
-        SubMap(Object fromKey, Object toKey) {
-            if (fromKey != null && toKey != null && compare(fromKey, toKey, comparator) > 0) {
-                throw new IllegalArgumentException("fromKey > toKey");
+        NavigableSubMap(boolean fromStart, Object fromKey, boolean fromInclusive,
+                        boolean toEnd,     Object toKey,   boolean toInclusive) {
+            if (!fromStart && !toEnd) {
+                if (compare(fromKey, toKey, comparator) > 0) {
+                    throw new IllegalArgumentException("fromKey > toKey");
+                }
             }
+            else {
+                if (!fromStart) compare(fromKey, fromKey, comparator);
+                if (!toEnd) compare(toKey, toKey, comparator);
+            }
+            this.fromStart = fromStart;
+            this.toEnd = toEnd;
             this.fromKey = fromKey;
             this.toKey = toKey;
+            this.fromInclusive = fromInclusive;
+            this.toInclusive = toInclusive;
         }
 
-        private boolean tooHigh(Object key) {
-            return (toKey != null && compare(key, toKey, comparator) >= 0);
+        final TreeMap.Entry checkLoRange(TreeMap.Entry e) {
+            return (e == null || absTooLow(e.key)) ? null : e;
         }
 
-        private boolean tooLow(Object key) {
-            return (fromKey != null && compare(key, fromKey, comparator) < 0);
+        final TreeMap.Entry checkHiRange(TreeMap.Entry e) {
+            return (e == null || absTooHigh(e.key)) ? null : e;
         }
 
-        private TreeMap.Entry lower(Object key) {
-            TreeMap.Entry e = tooHigh(key) ? getLowerEntry(toKey) : getLowerEntry(key);
-            return (e == null || tooLow(e.key)) ? null : e;
+        final boolean inRange(Object key) {
+            return !absTooLow(key) && !absTooHigh(key);
         }
 
-        public Map.Entry lowerEntry(Object key) {
-            TreeMap.Entry e = lower(key);
-            return (e == null) ? null : new AbstractMap.SimpleImmutableEntry(e);
+        final boolean inRangeExclusive(Object key) {
+            return (fromStart || compare(key, fromKey, comparator) >= 0)
+                && (toEnd     || compare(toKey, key, comparator) >= 0);
         }
 
-        public Object lowerKey(Object key) {
-            TreeMap.Entry e = lower(key);
-            return (e == null) ? null : e.key;
+        final boolean inRange(Object key, boolean inclusive) {
+            return inclusive ? inRange(key) : inRangeExclusive(key);
         }
 
-        private TreeMap.Entry floor(Object key) {
-            TreeMap.Entry e = tooHigh(key) ? getLowerEntry(toKey) : getFloorEntry(key);
-            return (e == null || tooLow(e.key)) ? null : e;
+
+        private boolean absTooHigh(Object key) {
+            if (toEnd) return false;
+            int c = compare(key, toKey, comparator);
+            return (c > 0 || (c == 0 && !toInclusive));
         }
 
-        public Map.Entry floorEntry(Object key) {
-            TreeMap.Entry e = floor(key);
-            return (e == null) ? null : new AbstractMap.SimpleImmutableEntry(e);
+        private boolean absTooLow(Object key) {
+            if (fromStart) return false;
+            int c = compare(key, fromKey, comparator);
+            return (c < 0 || (c == 0 && !fromInclusive));
         }
 
-        public Object floorKey(Object key) {
-            TreeMap.Entry e = floor(key);
-            return (e == null) ? null : e.key;
+        protected abstract TreeMap.Entry first();
+        protected abstract TreeMap.Entry last();
+        protected abstract TreeMap.Entry lower(Object key);
+        protected abstract TreeMap.Entry floor(Object key);
+        protected abstract TreeMap.Entry ceiling(Object key);
+        protected abstract TreeMap.Entry higher(Object key);
+        protected abstract TreeMap.Entry uncheckedHigher(TreeMap.Entry e);
+
+        // absolute comparisons, for use by subclasses
+
+        final TreeMap.Entry absLowest() {
+            return checkHiRange((fromStart) ? getFirstEntry() :
+                fromInclusive ? getCeilingEntry(fromKey) : getHigherEntry(fromKey));
         }
 
-        private TreeMap.Entry ceiling(Object key) {
-            TreeMap.Entry e = tooLow(key) ? getCeilingEntry(fromKey) : getCeilingEntry(key);
-            return (e == null || tooHigh(e.key)) ? null : e;
+        final TreeMap.Entry absHighest() {
+            return checkLoRange((toEnd) ? getLastEntry() :
+                toInclusive ? getFloorEntry(toKey) : getLowerEntry(toKey));
         }
 
-        public Map.Entry ceilingEntry(Object key) {
-            TreeMap.Entry e = ceiling(key);
-            return (e == null) ? null : new AbstractMap.SimpleImmutableEntry(e);
+        final TreeMap.Entry absLower(Object key) {
+            return absTooHigh(key) ? absHighest() : checkLoRange(getLowerEntry(key));
         }
 
-        public Object ceilingKey(Object key) {
-            TreeMap.Entry e = ceiling(key);
-            return (e == null) ? null : e.key;
+        final TreeMap.Entry absFloor(Object key) {
+            return absTooHigh(key) ? absHighest() : checkLoRange(getFloorEntry(key));
         }
 
-        private TreeMap.Entry higher(Object key) {
-            TreeMap.Entry e = tooLow(key) ? getCeilingEntry(fromKey) : getHigherEntry(key);
-            return (e == null || tooHigh(e.key)) ? null : e;
+        final TreeMap.Entry absCeiling(Object key) {
+            return absTooLow(key) ? absLowest() : checkHiRange(getCeilingEntry(key));
         }
 
-        public Map.Entry higherEntry(Object key) {
-            TreeMap.Entry e = higher(key);
-            return (e == null) ? null : new AbstractMap.SimpleImmutableEntry(e);
+        final TreeMap.Entry absHigher(Object key) {
+            return absTooLow(key) ? absLowest() : checkHiRange(getHigherEntry(key));
         }
 
-        public Object higherKey(Object key) {
-            TreeMap.Entry e = higher(key);
-            return (e == null) ? null : e.key;
-        }
-
-        private TreeMap.Entry first() {
-            TreeMap.Entry e = (fromKey != null) ? getCeilingEntry(fromKey) : getFirstEntry();
-            return (e == null || tooHigh(e.key)) ? null : e;
-        }
+        // navigable implementations, using subclass-defined comparisons
 
         public Map.Entry firstEntry() {
             TreeMap.Entry e = first();
@@ -1184,12 +1276,8 @@ public class TreeMap extends AbstractMap
 
         public Object firstKey() {
             TreeMap.Entry e = first();
-            return (e == null) ? null : e.key;
-        }
-
-        private TreeMap.Entry last() {
-            TreeMap.Entry e = (toKey != null) ? getLowerEntry(toKey) : getLastEntry();
-            return (e == null || tooLow(e.key)) ? null : e;
+            if (e == null) throw new NoSuchElementException();
+            return e.key;
         }
 
         public Map.Entry lastEntry() {
@@ -1199,7 +1287,8 @@ public class TreeMap extends AbstractMap
 
         public Object lastKey() {
             TreeMap.Entry e = last();
-            return (e == null) ? null : e.key;
+            if (e == null) throw new NoSuchElementException();
+            return e.key;
         }
 
         public Map.Entry pollFirstEntry() {
@@ -1218,54 +1307,60 @@ public class TreeMap extends AbstractMap
             return result;
         }
 
-        public Set descendingKeySet() {
-            if (descendingKeySet == null) descendingKeySet = new SubDescendingKeySet();
-            return descendingKeySet;
+        public Map.Entry lowerEntry(Object key) {
+            TreeMap.Entry e = lower(key);
+            return (e == null) ? null : new AbstractMap.SimpleImmutableEntry(e);
         }
 
-        public Set descendingEntrySet() {
-            if (descendingEntrySet == null) descendingEntrySet = new SubDescendingEntrySet();
-            return descendingEntrySet;
+        public Object lowerKey(Object key) {
+            TreeMap.Entry e = lower(key);
+            return (e == null) ? null : e.key;
         }
 
-        public NavigableMap navigableSubMap(Object fromKey, Object toKey) {
-            if (this.fromKey != null && compare(fromKey, this.fromKey, comparator) < 0) {
-                fromKey = this.fromKey;
-            }
-            if (this.toKey != null && compare(toKey, this.toKey, comparator) > 0) {
-                toKey = this.toKey;
-            }
-            return new SubMap(fromKey, toKey);
+        public Map.Entry floorEntry(Object key) {
+            TreeMap.Entry e = floor(key);
+            return (e == null) ? null : new AbstractMap.SimpleImmutableEntry(e);
         }
 
-        public NavigableMap navigableHeadMap(Object toKey) {
-            if (this.toKey != null && compare(toKey, this.toKey, comparator) > 0) {
-                toKey = this.toKey;
-            }
-            return new SubMap(this.fromKey, toKey);
+        public Object floorKey(Object key) {
+            TreeMap.Entry e = floor(key);
+            return (e == null) ? null : e.key;
         }
 
-        public NavigableMap navigableTailMap(Object fromKey) {
-            if (this.fromKey != null && compare(fromKey, this.fromKey, comparator) < 0) {
-                fromKey = this.fromKey;
-            }
-            return new SubMap(fromKey, this.toKey);
+        public Map.Entry ceilingEntry(Object key) {
+            TreeMap.Entry e = ceiling(key);
+            return (e == null) ? null : new AbstractMap.SimpleImmutableEntry(e);
         }
 
-        public Comparator comparator() {
-            return comparator;
+        public Object ceilingKey(Object key) {
+            TreeMap.Entry e = ceiling(key);
+            return (e == null) ? null : e.key;
+        }
+
+        public Map.Entry higherEntry(Object key) {
+            TreeMap.Entry e = higher(key);
+            return (e == null) ? null : new AbstractMap.SimpleImmutableEntry(e);
+        }
+
+        public Object higherKey(Object key) {
+            TreeMap.Entry e = higher(key);
+            return (e == null) ? null : e.key;
+        }
+
+        public NavigableSet descendingKeySet() {
+            return descendingMap().navigableKeySet();
         }
 
         public SortedMap subMap(Object fromKey, Object toKey) {
-            return navigableSubMap(fromKey, toKey);
+            return subMap(fromKey, true, toKey, false);
         }
 
         public SortedMap headMap(Object toKey) {
-            return navigableHeadMap(toKey);
+            return headMap(toKey, false);
         }
 
         public SortedMap tailMap(Object fromKey) {
-            return navigableTailMap(fromKey);
+            return tailMap(fromKey, true);
         }
 
         public int size() {
@@ -1277,70 +1372,71 @@ public class TreeMap extends AbstractMap
         }
 
         private int recalculateSize() {
-            Object terminalKey;
-            if (toKey != null) {
-                TreeMap.Entry terminator = getFloorEntry(toKey);
-                if (terminator == null) return 0;
-                terminalKey = terminator.key;
-            }
-            else {
-                terminalKey = null;
-            }
+            TreeMap.Entry terminator = absHighest();
+            Object terminalKey = terminator != null ? terminator.key : null;
 
             int size = 0;
-            for (TreeMap.Entry e = first(); e != null && e.key != terminalKey;
-                 e = successor(e)) {
+            for (TreeMap.Entry e = absLowest(); e != null;
+                 e = (e.key == terminalKey) ? null : successor(e)) {
                 size++;
             }
             return size;
         }
 
         public boolean isEmpty() {
-            return first() == null;
+            return absLowest() == null;
         }
 
         public boolean containsKey(Object key) {
-            return (!tooLow(key) && !tooHigh(key) && TreeMap.this.containsKey(key));
+            return (inRange(key) && TreeMap.this.containsKey(key));
         }
 
         public Object get(Object key) {
-            if (tooLow(key) || tooHigh(key)) return null;
+            if (!inRange(key)) return null;
             else return TreeMap.this.get(key);
         }
 
         public Object put(Object key, Object value) {
-            if (tooLow(key) || tooHigh(key))
+            if (!inRange(key))
                 throw new IllegalArgumentException("Key out of range");
             return TreeMap.this.put(key, value);
         }
 
         public Object remove(Object key) {
-            if (tooLow(key) || tooHigh(key)) return null;
+            if (!inRange(key)) return null;
             return TreeMap.this.remove(key);
         }
 
         public Set entrySet() {
-            if (entrySet == null) entrySet = new SubEntrySet();
+            if (entrySet == null) {
+                entrySet = new SubEntrySet();
+            }
             return entrySet;
+        }
+
+        public Set keySet() {
+            return navigableKeySet();
+        }
+
+        public NavigableSet navigableKeySet() {
+            if (navigableKeySet == null) {
+                navigableKeySet = new SubKeySet();
+            }
+            return navigableKeySet;
         }
 
         private TreeMap.Entry getMatchingSubEntry(Object o) {
             if (!(o instanceof Map.Entry)) return null;
             Map.Entry e = (Map.Entry)o;
             Object key = e.getKey();
-            if (tooLow(key) || tooHigh(key)) return null;
+            if (!inRange(key)) return null;
             TreeMap.Entry found = getEntry(key);
             return (found != null && eq(found.getValue(), e.getValue())) ? found : null;
         }
 
         class SubEntrySet extends AbstractSet {
-            public int size() { return SubMap.this.size(); }
-            public boolean isEmpty() { return SubMap.this.isEmpty(); }
-
-            public Iterator iterator() {
-                TreeMap.Entry terminator = (toKey != null) ? getFloorEntry(toKey) : null;
-                return new SubEntryIterator(first(), terminator);
-            }
+            public int size() { return NavigableSubMap.this.size(); }
+            public boolean isEmpty() { return NavigableSubMap.this.isEmpty(); }
 
             public boolean contains(Object o) {
                 return getMatchingSubEntry(o) != null;
@@ -1352,78 +1448,223 @@ public class TreeMap extends AbstractMap
                 delete(e);
                 return true;
             }
-        }
 
-        class SubDescendingEntrySet extends SubEntrySet {
             public Iterator iterator() {
-                TreeMap.Entry terminator = (fromKey != null) ? getLowerEntry(fromKey) : null;
-                return new SubDescendingEntryIterator(last(), terminator);
+                return new SubEntryIterator();
             }
         }
 
-        class SubDescendingKeySet extends AbstractSet {
-            public int size() { return SubMap.this.size(); }
-            public boolean isEmpty() { return SubMap.this.isEmpty(); }
-
-            public Iterator iterator() {
-                TreeMap.Entry terminator = (fromKey != null) ? getLowerEntry(fromKey) : null;
-                final Iterator itr = new SubDescendingEntryIterator(last(), terminator);
-                return new Iterator() {
-                    public boolean hasNext() { return itr.hasNext(); }
-                    public Object next() { return ((Map.Entry)itr.next()).getKey(); }
-                    public void remove() { itr.remove(); }
-                };
-            }
+        class SubKeySet extends AbstractSet implements NavigableSet {
+            public int size() { return NavigableSubMap.this.size(); }
+            public boolean isEmpty() { return NavigableSubMap.this.isEmpty(); }
+            public void clear() { NavigableSubMap.this.clear(); }
 
             public boolean contains(Object o) {
-                return SubMap.this.containsKey(o);
+                return getEntry(o) != null;
             }
 
             public boolean remove(Object o) {
-                return SubMap.this.remove(o) != null;
+                if (!inRange(o)) return false;
+                TreeMap.Entry found = getEntry(o);
+                if (found == null) return false;
+                delete(found);
+                return true;
+            }
+            public SortedSet subSet(Object fromElement, Object toElement) {
+                return subSet(fromElement, true, toElement, false);
+            }
+            public SortedSet headSet(Object toElement) {
+                return headSet(toElement, false);
+            }
+            public SortedSet tailSet(Object fromElement) {
+                return tailSet(fromElement, true);
+            }
+
+            public Iterator iterator() {
+                return new SubKeyIterator(NavigableSubMap.this.entrySet().iterator());
+            }
+
+            public Iterator descendingIterator() {
+                return new SubKeyIterator(NavigableSubMap.this.descendingMap().entrySet().iterator());
+            }
+
+            public Object lower(Object e)   { return NavigableSubMap.this.lowerKey(e); }
+            public Object floor(Object e)   { return NavigableSubMap.this.floorKey(e); }
+            public Object ceiling(Object e) { return NavigableSubMap.this.ceilingKey(e); }
+            public Object higher(Object e)  { return NavigableSubMap.this.higherKey(e); }
+            public Object first()           { return NavigableSubMap.this.firstKey(); }
+            public Object last()            { return NavigableSubMap.this.lastKey(); }
+            public Comparator comparator()  { return NavigableSubMap.this.comparator(); }
+
+            public Object pollFirst() {
+                Map.Entry e = NavigableSubMap.this.pollFirstEntry();
+                return e == null? null : e.getKey();
+            }
+            public Object pollLast() {
+                Map.Entry e = NavigableSubMap.this.pollLastEntry();
+                return e == null? null : e.getKey();
+            }
+
+            public NavigableSet subSet(Object fromElement, boolean fromInclusive,
+                                       Object toElement,   boolean toInclusive) {
+                return (NavigableSet)(NavigableSubMap.this.subMap(fromElement, fromInclusive,
+                                             toElement,   toInclusive)).keySet();
+            }
+            public NavigableSet headSet(Object toElement, boolean inclusive) {
+                return (NavigableSet)(NavigableSubMap.this.headMap(toElement, inclusive)).keySet();
+            }
+            public NavigableSet tailSet(Object fromElement, boolean inclusive) {
+                return (NavigableSet)(NavigableSubMap.this.tailMap(fromElement, inclusive)).keySet();
+            }
+            public NavigableSet descendingSet() {
+                return (NavigableSet)NavigableSubMap.this.descendingMap().keySet();
             }
         }
+
+        class SubEntryIterator extends BaseEntryIterator implements Iterator {
+            final Object terminalKey;
+            SubEntryIterator() {
+                super(first());
+                TreeMap.Entry terminator = last();
+                this.terminalKey = terminator == null ? null : terminator.key;
+            }
+            public boolean hasNext() {
+                return cursor != null;
+            }
+            public Object next() {
+                TreeMap.Entry curr = cursor;
+                if (curr == null) throw new NoSuchElementException();
+                if (expectedModCount != modCount)
+                    throw new ConcurrentModificationException();
+                cursor = (curr.key == terminalKey) ? null : uncheckedHigher(curr);
+                lastRet = curr;
+                return curr;
+            }
+        }
+
+        class SubKeyIterator implements Iterator {
+            final Iterator itr;
+            SubKeyIterator(Iterator itr) { this.itr = itr; }
+            public boolean hasNext()     { return itr.hasNext(); }
+            public Object next()         { return ((Map.Entry)itr.next()).getKey(); }
+            public void remove()         { itr.remove(); }
+        }
     }
 
-    class SubEntryIterator extends BaseEntryIterator implements Iterator {
-        final Object terminalKey;
-        SubEntryIterator(TreeMap.Entry cursor, TreeMap.Entry terminator) {
-            super(cursor);
-            this.terminalKey = terminator == null ? null : terminator.key;
+    class AscendingSubMap extends NavigableSubMap {
+        AscendingSubMap(boolean fromStart, Object fromKey, boolean fromInclusive,
+                        boolean toEnd,     Object toKey,   boolean toInclusive) {
+            super(fromStart, fromKey, fromInclusive, toEnd, toKey, toInclusive);
         }
-        public boolean hasNext() {
-            return cursor != null && cursor.key != terminalKey;
+
+        public Comparator comparator() {
+            return comparator;
         }
-        public Object next() {
-            Entry curr = cursor;
-            if (curr == null || cursor.key == terminalKey)
-                throw new NoSuchElementException();
-            if (expectedModCount != modCount)
-                throw new ConcurrentModificationException();
-            cursor = successor(curr);
-            lastRet = curr;
-            return curr;
+
+        protected TreeMap.Entry first()             { return absLowest(); }
+        protected TreeMap.Entry last()              { return absHighest(); }
+        protected TreeMap.Entry lower(Object key)   { return absLower(key); }
+        protected TreeMap.Entry floor(Object key)   { return absFloor(key); }
+        protected TreeMap.Entry ceiling(Object key) { return absCeiling(key); }
+        protected TreeMap.Entry higher(Object key)  { return absHigher(key); }
+
+        protected TreeMap.Entry uncheckedHigher(TreeMap.Entry e) {
+            return successor(e);
+        }
+
+        public NavigableMap subMap(Object fromKey, boolean fromInclusive,
+                                   Object toKey, boolean toInclusive) {
+            if (!inRange(fromKey, fromInclusive)) {
+                throw new IllegalArgumentException("fromKey out of range");
+            }
+            if (!inRange(toKey, toInclusive)) {
+                throw new IllegalArgumentException("toKey out of range");
+            }
+            return new AscendingSubMap(false, fromKey, fromInclusive,
+                                       false, toKey, toInclusive);
+        }
+
+        public NavigableMap headMap(Object toKey, boolean toInclusive) {
+            if (!inRange(toKey, toInclusive)) {
+                throw new IllegalArgumentException("toKey out of range");
+            }
+            return new AscendingSubMap(fromStart, fromKey, fromInclusive,
+                                       false, toKey, toInclusive);
+        }
+
+        public NavigableMap tailMap(Object fromKey, boolean fromInclusive) {
+            if (!inRange(fromKey, fromInclusive)) {
+                throw new IllegalArgumentException("fromKey out of range");
+            }
+            return new AscendingSubMap(false, fromKey, fromInclusive,
+                                       toEnd, toKey, toInclusive);
+        }
+
+        public NavigableMap descendingMap() {
+            if (descendingMap == null) {
+                descendingMap =
+                    new DescendingSubMap(fromStart, fromKey, fromInclusive,
+                                         toEnd,     toKey,   toInclusive);
+            }
+            return descendingMap;
         }
     }
 
-    class SubDescendingEntryIterator extends BaseEntryIterator implements Iterator {
-        final Object terminalKey;
-        SubDescendingEntryIterator(TreeMap.Entry cursor, TreeMap.Entry terminator) {
-            super(cursor);
-            this.terminalKey = terminator == null ? null : terminator.key;
+    class DescendingSubMap extends NavigableSubMap {
+        DescendingSubMap(boolean fromStart, Object fromKey, boolean fromInclusive,
+                         boolean toEnd,     Object toKey,   boolean toInclusive) {
+            super(fromStart, fromKey, fromInclusive, toEnd, toKey, toInclusive);
         }
-        public boolean hasNext() {
-            return cursor != null && cursor.key != terminalKey;
+
+        public Comparator comparator() { return TreeMap.this.reverseComparator(); }
+
+        protected TreeMap.Entry first()             { return absHighest(); }
+        protected TreeMap.Entry last()              { return absLowest(); }
+        protected TreeMap.Entry lower(Object key)   { return absHigher(key); }
+        protected TreeMap.Entry floor(Object key)   { return absCeiling(key); }
+        protected TreeMap.Entry ceiling(Object key) { return absFloor(key); }
+        protected TreeMap.Entry higher(Object key)  { return absLower(key); }
+
+        protected TreeMap.Entry uncheckedHigher(TreeMap.Entry e) {
+            return predecessor(e);
         }
-        public Object next() {
-            Entry curr = cursor;
-            if (curr == null || cursor.key == terminalKey)
-                throw new NoSuchElementException();
-            if (expectedModCount != modCount)
-                throw new ConcurrentModificationException();
-            cursor = predecessor(curr);
-            lastRet = curr;
-            return curr;
+
+        public NavigableMap subMap(Object fromKey, boolean fromInclusive,
+                                   Object toKey,   boolean toInclusive) {
+            if (!inRange(fromKey, fromInclusive)) {
+                throw new IllegalArgumentException("fromKey out of range");
+            }
+            if (!inRange(toKey, toInclusive)) {
+                throw new IllegalArgumentException("toKey out of range");
+            }
+            return new DescendingSubMap(false, toKey, toInclusive,
+                                        false, fromKey, fromInclusive);
+        }
+
+        public NavigableMap headMap(Object toKey, boolean toInclusive) {
+            if (!inRange(toKey, toInclusive)) {
+                throw new IllegalArgumentException("toKey out of range");
+            }
+            return new DescendingSubMap(false, toKey, toInclusive,
+                                        this.toEnd, this.toKey, this.toInclusive);
+        }
+
+        public NavigableMap tailMap(Object fromKey, boolean fromInclusive) {
+            if (!inRange(fromKey, fromInclusive)) {
+                throw new IllegalArgumentException("fromKey out of range");
+            }
+            return new DescendingSubMap(this.fromStart, this.fromKey, this.fromInclusive,
+                                        false, fromKey, fromInclusive);
+        }
+
+        public NavigableMap descendingMap() {
+            if (descendingMap == null) {
+                descendingMap =
+                    new AscendingSubMap(fromStart, fromKey, fromInclusive,
+                                        toEnd,     toKey,   toInclusive);
+
+            }
+            return descendingMap;
         }
     }
 
@@ -1493,5 +1734,59 @@ public class TreeMap extends AbstractMap
         catch (IteratorNoClassException e) {
             throw e.getException();
         }
+    }
+
+    private class SubMap extends AbstractMap implements Serializable, NavigableMap {
+
+        private static final long serialVersionUID = -6520786458950516097L;
+
+        final Object fromKey, toKey;
+
+        SubMap() { fromKey = toKey = null; }
+
+        private Object readResolve() {
+            return new AscendingSubMap(fromKey == null, fromKey, true,
+                                       toKey == null, toKey, false);
+        }
+
+        public Map.Entry lowerEntry(Object key)   { throw new Error(); }
+        public Object lowerKey(Object key)        { throw new Error(); }
+        public Map.Entry floorEntry(Object key)   { throw new Error(); }
+        public Object floorKey(Object key)        { throw new Error(); }
+        public Map.Entry ceilingEntry(Object key) { throw new Error(); }
+        public Object ceilingKey(Object key)      { throw new Error(); }
+        public Map.Entry higherEntry(Object key)  { throw new Error(); }
+        public Object higherKey(Object key)       { throw new Error(); }
+        public Map.Entry firstEntry()             { throw new Error(); }
+        public Map.Entry lastEntry()              { throw new Error(); }
+        public Map.Entry pollFirstEntry()         { throw new Error(); }
+        public Map.Entry pollLastEntry()          { throw new Error(); }
+        public NavigableMap descendingMap()       { throw new Error(); }
+        public NavigableSet navigableKeySet()     { throw new Error(); }
+        public NavigableSet descendingKeySet()    { throw new Error(); }
+        public Set entrySet()                     { throw new Error(); }
+
+        public NavigableMap subMap(Object fromKey, boolean fromInclusive,
+                                   Object toKey, boolean toInclusive) {
+            throw new Error();
+        }
+
+        public NavigableMap headMap(Object toKey, boolean inclusive) {
+            throw new Error();
+        }
+
+        public NavigableMap tailMap(Object fromKey, boolean inclusive) {
+            throw new Error();
+        }
+
+        public SortedMap subMap(Object fromKey, Object toKey) {
+            throw new Error();
+        }
+
+        public SortedMap headMap(Object toKey)     { throw new Error(); }
+        public SortedMap tailMap(Object fromKey)   { throw new Error(); }
+        public Comparator comparator()             { throw new Error(); }
+        public Object firstKey()                   { throw new Error(); }
+        public Object lastKey()                    { throw new Error(); }
     }
 }

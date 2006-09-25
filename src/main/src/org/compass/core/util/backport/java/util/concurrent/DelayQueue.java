@@ -6,12 +6,14 @@
 
 
 package org.compass.core.util.backport.java.util.concurrent;
-import org.compass.core.util.backport.java.util.concurrent.locks.*;
-import org.compass.core.util.backport.java.util.*;
+
 import java.util.Collection;
 import java.util.Iterator;
-import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
 import java.util.NoSuchElementException;
+
+import org.compass.core.util.backport.java.util.AbstractQueue;
+import org.compass.core.util.backport.java.util.PriorityQueue;
+import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
 
 /**
  * An unbounded {@linkplain BlockingQueue blocking queue} of
@@ -385,7 +387,7 @@ public class DelayQueue extends AbstractQueue
      * unexpired) in this queue. The iterator does not return the
      * elements in any particular order.  The returned
      * <tt>Iterator</tt> is a "weakly consistent" iterator that will
-     * never throw {@link ConcurrentModificationException}, and
+     * never throw {@link java.util.ConcurrentModificationException}, and
      * guarantees to traverse elements as they existed upon
      * construction of the iterator, and may (but is not guaranteed
      * to) reflect any modifications subsequent to construction.

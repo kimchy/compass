@@ -7,6 +7,7 @@
 package org.compass.core.util.backport.java.util.concurrent;
 
 import java.util.Collection;
+
 import org.compass.core.util.backport.java.util.Queue;
 
 /**
@@ -70,7 +71,7 @@ import org.compass.core.util.backport.java.util.Queue;
  *
  * <p> <tt>BlockingQueue</tt> implementations are designed to be used
  * primarily for producer-consumer queues, but additionally support
- * the {@link org.compass.core.util.backport.java.util.Collection} interface.  So, for example, it is
+ * the {@link java.util.Collection} interface.  So, for example, it is
  * possible to remove an arbitrary element from a queue using
  * <tt>remove(x)</tt>. However, such operations are in general
  * <em>not</em> performed very efficiently, and are intended for only
@@ -158,7 +159,7 @@ public interface BlockingQueue extends Queue {
      * use {@link #offer(Object) offer}.
      *
      * @param e the element to add
-     * @return <tt>true</tt> (as specified by {@link Collection#add})
+     * @return <tt>true</tt> (as specified by {@link java.util.Collection#add})
      * @throws IllegalStateException if the element cannot be added at this
      *         time due to capacity restrictions
      * @throws ClassCastException if the class of the specified element

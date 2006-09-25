@@ -1,15 +1,17 @@
 package org.compass.core.util.backport.java.util;
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.ListIterator;
-import java.util.AbstractSequentialList;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.AbstractSequentialList;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
-import java.util.*;
-import java.io.*;
 
 public class LinkedList extends AbstractSequentialList
     implements List, Deque, Cloneable, Serializable

@@ -1,66 +1,78 @@
 /*
- * Written by Doug Lea with assistance from members of JCP JSR-166
- * Expert Group and released to the public domain, as explained at
+ * Written by Doug Lea and Josh Bloch with assistance from members of JCP
+ * JSR-166 Expert Group and released to the public domain, as explained at
  * http://creativecommons.org/licenses/publicdomain
  */
 
 package org.compass.core.util.backport.java.util;
-import java.util.*;
+
+import java.util.Map;
+import java.util.SortedMap;
 
 /**
- * A {@link SortedMap} extended with navigation methods returning the
+ * A {@link java.util.SortedMap} extended with navigation methods returning the
  * closest matches for given search targets. Methods
- * <tt>lowerEntry</tt>, <tt>floorEntry</tt>, <tt>ceilingEntry</tt>,
- * and <tt>higherEntry</tt> return <tt>Map.Entry</tt> objects
+ * {@code lowerEntry}, {@code floorEntry}, {@code ceilingEntry},
+ * and {@code higherEntry} return {@code Map.Entry} objects
  * associated with keys respectively less than, less than or equal,
  * greater than or equal, and greater than a given key, returning
- * <tt>null</tt> if there is no such key.  Similarly, methods
- * <tt>lowerKey</tt>, <tt>floorKey</tt>, <tt>ceilingKey</tt>, and
- * <tt>higherKey</tt> return only the associated keys. All of these
+ * {@code null} if there is no such key.  Similarly, methods
+ * {@code lowerKey}, {@code floorKey}, {@code ceilingKey}, and
+ * {@code higherKey} return only the associated keys. All of these
  * methods are designed for locating, not traversing entries.
  *
- * <p>A <tt>NavigableMap</tt> may be viewed and traversed in either
- * ascending or descending key order.  The <tt>Map</tt> methods
- * <tt>keySet</tt> and <tt>entrySet</tt> return ascending views, and
- * the additional methods <tt>descendingKeySet</tt> and
- * <tt>descendingEntrySet</tt> return descending views. The
- * performance of ascending traversals is likely to be faster than
- * descending traversals.  Notice that it is possible to perform
- * subrange traversals in either direction using <tt>navigableSubMap</tt>.
- * Methods <tt>navigableSubMap</tt>, <tt>navigableHeadMap</tt>, and
- * <tt>navigableTailMap</tt> differ from the similarly named
- * <tt>SortedMap</tt> methods only in their declared return types.
- * Submaps of any <tt>NavigableMap<tt> must implement the
- * <tt>NavigableMap</tt> interface.
+ * <p>A {@code NavigableMap} may be accessed and traversed in either
+ * ascending or descending key order.  The {@code descendingMap}
+ * method returns a view of the map with the senses of all relational
+ * and directional methods inverted. The performance of ascending
+ * operations and views is likely to be faster than that of descending
+ * ones.  Methods {@code subMap}, {@code headMap},
+ * and {@code tailMap} differ from the like-named {@code
+ * SortedMap} methods in accepting additional arguments describing
+ * whether lower and upper bounds are inclusive versus exclusive.
+ * Submaps of any {@code NavigableMap} must implement the {@code
+ * NavigableMap} interface.
  *
- * <p>This interface additionally defines methods <tt>firstEntry</tt>,
- * <tt>pollFirstEntry</tt>, <tt>lastEntry</tt>, and
- * <tt>pollLastEntry</tt> that return and/or remove the least and
- * greatest mappings, if any exist, else returning <tt>null</tt>.
+ * <p>This interface additionally defines methods {@code firstEntry},
+ * {@code pollFirstEntry}, {@code lastEntry}, and
+ * {@code pollLastEntry} that return and/or remove the least and
+ * greatest mappings, if any exist, else returning {@code null}.
  *
- * <p> Implementations of entry-returning methods are expected to
- * return <tt>Map.Entry</tt> pairs representing snapshots of mappings
+ * <p>Implementations of entry-returning methods are expected to
+ * return {@code Map.Entry} pairs representing snapshots of mappings
  * at the time they were produced, and thus generally do <em>not</em>
- * support the optional <tt>Entry.setValue</tt> method. Note however
+ * support the optional {@code Entry.setValue} method. Note however
  * that it is possible to change mappings in the associated map using
- * method <tt>put</tt>.
+ * method {@code put}.
+ *
+ * <p>Methods
+ * {@link #subMap(Object, Object) subMap(K, K)},
+ * {@link #headMap(Object) headMap(K)}, and
+ * {@link #tailMap(Object) tailMap(K)}
+ * are specified to return {@code SortedMap} to allow existing
+ * implementations of {@code SortedMap} to be compatibly retrofitted to
+ * implement {@code NavigableMap}, but extensions and implementations
+ * of this interface are encouraged to override these methods to return
+ * {@code NavigableMap}.  Similarly,
+ * {@link #keySet()} can be overriden to return {@code NavigableSet}.
  *
  * <p>This interface is a member of the
- * <a href="{@docRoot}/../guide/collections/index.html">
+ * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
  *
  * @author Doug Lea
+ * @author Josh Bloch
  * @since 1.6
  */
 public interface NavigableMap extends SortedMap {
     /**
      * Returns a key-value mapping associated with the greatest key
-     * strictly less than the given key, or <tt>null</tt> if there is
+     * strictly less than the given key, or {@code null} if there is
      * no such key.
      *
      * @param key the key
-     * @return an entry with the greatest key less than <tt>key</tt>,
-     *         or <tt>null</tt> if there is no such key
+     * @return an entry with the greatest key less than {@code key},
+     *         or {@code null} if there is no such key
      * @throws ClassCastException if the specified key cannot be compared
      *         with the keys currently in the map
      * @throws NullPointerException if the specified key is null
@@ -70,11 +82,11 @@ public interface NavigableMap extends SortedMap {
 
     /**
      * Returns the greatest key strictly less than the given key, or
-     * <tt>null</tt> if there is no such key.
+     * {@code null} if there is no such key.
      *
      * @param key the key
-     * @return the greatest key less than <tt>key</tt>,
-     *         or <tt>null</tt> if there is no such key
+     * @return the greatest key less than {@code key},
+     *         or {@code null} if there is no such key
      * @throws ClassCastException if the specified key cannot be compared
      *         with the keys currently in the map
      * @throws NullPointerException if the specified key is null
@@ -84,12 +96,12 @@ public interface NavigableMap extends SortedMap {
 
     /**
      * Returns a key-value mapping associated with the greatest key
-     * less than or equal to the given key, or <tt>null</tt> if there
+     * less than or equal to the given key, or {@code null} if there
      * is no such key.
      *
      * @param key the key
      * @return an entry with the greatest key less than or equal to
-     *         <tt>key</tt>, or <tt>null</tt> if there is no such key
+     *         {@code key}, or {@code null} if there is no such key
      * @throws ClassCastException if the specified key cannot be compared
      *         with the keys currently in the map
      * @throws NullPointerException if the specified key is null
@@ -99,11 +111,11 @@ public interface NavigableMap extends SortedMap {
 
     /**
      * Returns the greatest key less than or equal to the given key,
-     * or <tt>null</tt> if there is no such key.
+     * or {@code null} if there is no such key.
      *
      * @param key the key
-     * @return the greatest key less than or equal to <tt>key</tt>,
-     *         or <tt>null</tt> if there is no such key
+     * @return the greatest key less than or equal to {@code key},
+     *         or {@code null} if there is no such key
      * @throws ClassCastException if the specified key cannot be compared
      *         with the keys currently in the map
      * @throws NullPointerException if the specified key is null
@@ -113,12 +125,12 @@ public interface NavigableMap extends SortedMap {
 
     /**
      * Returns a key-value mapping associated with the least key
-     * greater than or equal to the given key, or <tt>null</tt> if
+     * greater than or equal to the given key, or {@code null} if
      * there is no such key.
      *
      * @param key the key
      * @return an entry with the least key greater than or equal to
-     *         <tt>key</tt>, or <tt>null</tt> if there is no such key
+     *         {@code key}, or {@code null} if there is no such key
      * @throws ClassCastException if the specified key cannot be compared
      *         with the keys currently in the map
      * @throws NullPointerException if the specified key is null
@@ -128,11 +140,11 @@ public interface NavigableMap extends SortedMap {
 
     /**
      * Returns the least key greater than or equal to the given key,
-     * or <tt>null</tt> if there is no such key.
+     * or {@code null} if there is no such key.
      *
      * @param key the key
-     * @return the least key greater than or equal to <tt>key</tt>,
-     *         or <tt>null</tt> if there is no such key
+     * @return the least key greater than or equal to {@code key},
+     *         or {@code null} if there is no such key
      * @throws ClassCastException if the specified key cannot be compared
      *         with the keys currently in the map
      * @throws NullPointerException if the specified key is null
@@ -142,12 +154,12 @@ public interface NavigableMap extends SortedMap {
 
     /**
      * Returns a key-value mapping associated with the least key
-     * strictly greater than the given key, or <tt>null</tt> if there
+     * strictly greater than the given key, or {@code null} if there
      * is no such key.
      *
      * @param key the key
-     * @return an entry with the least key greater than <tt>key</tt>,
-     *         or <tt>null</tt> if there is no such key
+     * @return an entry with the least key greater than {@code key},
+     *         or {@code null} if there is no such key
      * @throws ClassCastException if the specified key cannot be compared
      *         with the keys currently in the map
      * @throws NullPointerException if the specified key is null
@@ -157,11 +169,11 @@ public interface NavigableMap extends SortedMap {
 
     /**
      * Returns the least key strictly greater than the given key, or
-     * <tt>null</tt> if there is no such key.
+     * {@code null} if there is no such key.
      *
      * @param key the key
-     * @return the least key greater than <tt>key</tt>,
-     *         or <tt>null</tt> if there is no such key
+     * @return the least key greater than {@code key},
+     *         or {@code null} if there is no such key
      * @throws ClassCastException if the specified key cannot be compared
      *         with the keys currently in the map
      * @throws NullPointerException if the specified key is null
@@ -171,161 +183,214 @@ public interface NavigableMap extends SortedMap {
 
     /**
      * Returns a key-value mapping associated with the least
-     * key in this map, or <tt>null</tt> if the map is empty.
+     * key in this map, or {@code null} if the map is empty.
      *
      * @return an entry with the least key,
-     *         or <tt>null</tt> if this map is empty
+     *         or {@code null} if this map is empty
      */
     Map.Entry firstEntry();
 
     /**
      * Returns a key-value mapping associated with the greatest
-     * key in this map, or <tt>null</tt> if the map is empty.
+     * key in this map, or {@code null} if the map is empty.
      *
      * @return an entry with the greatest key,
-     *         or <tt>null</tt> if this map is empty
+     *         or {@code null} if this map is empty
      */
     Map.Entry lastEntry();
 
     /**
      * Removes and returns a key-value mapping associated with
-     * the least key in this map, or <tt>null</tt> if the map is empty.
+     * the least key in this map, or {@code null} if the map is empty.
      *
      * @return the removed first entry of this map,
-     *         or <tt>null</tt> if this map is empty
+     *         or {@code null} if this map is empty
      */
     Map.Entry pollFirstEntry();
 
     /**
      * Removes and returns a key-value mapping associated with
-     * the greatest key in this map, or <tt>null</tt> if the map is empty.
+     * the greatest key in this map, or {@code null} if the map is empty.
      *
      * @return the removed last entry of this map,
-     *         or <tt>null</tt> if this map is empty
+     *         or {@code null} if this map is empty
      */
     Map.Entry pollLastEntry();
 
     /**
-     * Returns a {@link Set} view of the keys contained in this map.
-     * The set's iterator returns the keys in descending order.
-     * The set is backed by the map, so changes to the map are
-     * reflected in the set, and vice-versa.  If the map is modified
-     * while an iteration over the set is in progress (except through
-     * the iterator's own <tt>remove</tt> operation), the results of
-     * the iteration are undefined.  The set supports element removal,
-     * which removes the corresponding mapping from the map, via the
-     * <tt>Iterator.remove</tt>, <tt>Set.remove</tt>,
-     * <tt>removeAll</tt>, <tt>retainAll</tt>, and <tt>clear</tt>
-     * operations.  It does not support the <tt>add</tt> or <tt>addAll</tt>
-     * operations.
+     * Returns a reverse order view of the mappings contained in this map.
+     * The descending map is backed by this map, so changes to the map are
+     * reflected in the descending map, and vice-versa.  If either map is
+     * modified while an iteration over a collection view of either map
+     * is in progress (except through the iterator's own {@code remove}
+     * operation), the results of the iteration are undefined.
      *
-     * @return a set view of the keys contained in this map, sorted in
-     *         descending order
+     * <p>The returned map has an ordering equivalent to
+     * <tt>{@link Collections#reverseOrder(Comparator) Collections.reverseOrder}(comparator())</tt>.
+     * The expression {@code m.descendingMap().descendingMap()} returns a
+     * view of {@code m} essentially equivalent to {@code m}.
+     *
+     * @return a reverse order view of this map
      */
-    Set descendingKeySet();
+    NavigableMap descendingMap();
 
     /**
-     * Returns a {@link Set} view of the mappings contained in this map.
-     * The set's iterator returns the entries in descending key order.
-     * The set is backed by the map, so changes to the map are
-     * reflected in the set, and vice-versa.  If the map is modified
-     * while an iteration over the set is in progress (except through
-     * the iterator's own <tt>remove</tt> operation, or through the
-     * <tt>setValue</tt> operation on a map entry returned by the
-     * iterator) the results of the iteration are undefined.  The set
-     * supports element removal, which removes the corresponding
-     * mapping from the map, via the <tt>Iterator.remove</tt>,
-     * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
-     * <tt>clear</tt> operations.  It does not support the
-     * <tt>add</tt> or <tt>addAll</tt> operations.
+     * Returns a {@link NavigableSet} view of the keys contained in this map.
+     * The set's iterator returns the keys in ascending order.
+     * The set is backed by the map, so changes to the map are reflected in
+     * the set, and vice-versa.  If the map is modified while an iteration
+     * over the set is in progress (except through the iterator's own {@code
+     * remove} operation), the results of the iteration are undefined.  The
+     * set supports element removal, which removes the corresponding mapping
+     * from the map, via the {@code Iterator.remove}, {@code Set.remove},
+     * {@code removeAll}, {@code retainAll}, and {@code clear} operations.
+     * It does not support the {@code add} or {@code addAll} operations.
      *
-     * @return a set view of the mappings contained in this map,
-     *         sorted in descending key order
+     * @return a navigable set view of the keys in this map
      */
-    Set descendingEntrySet();
+    NavigableSet navigableKeySet();
+
+    /**
+     * Returns a reverse order {@link NavigableSet} view of the keys contained in this map.
+     * The set's iterator returns the keys in descending order.
+     * The set is backed by the map, so changes to the map are reflected in
+     * the set, and vice-versa.  If the map is modified while an iteration
+     * over the set is in progress (except through the iterator's own {@code
+     * remove} operation), the results of the iteration are undefined.  The
+     * set supports element removal, which removes the corresponding mapping
+     * from the map, via the {@code Iterator.remove}, {@code Set.remove},
+     * {@code removeAll}, {@code retainAll}, and {@code clear} operations.
+     * It does not support the {@code add} or {@code addAll} operations.
+     *
+     * @return a reverse order navigable set view of the keys in this map
+     */
+    NavigableSet descendingKeySet();
 
     /**
      * Returns a view of the portion of this map whose keys range from
-     * <tt>fromKey</tt>, inclusive, to <tt>toKey</tt>, exclusive.  (If
-     * <tt>fromKey</tt> and <tt>toKey</tt> are equal, the returned map
-     * is empty.)  The returned map is backed by this map, so changes
-     * in the returned map are reflected in this map, and vice-versa.
-     * The returned map supports all optional map operations that this
-     * map supports.
+     * {@code fromKey} to {@code toKey}.  If {@code fromKey} and
+     * {@code toKey} are equal, the returned map is empty unless
+     * {@code fromExclusive} and {@code toExclusive} are both true.  The
+     * returned map is backed by this map, so changes in the returned map are
+     * reflected in this map, and vice-versa.  The returned map supports all
+     * optional map operations that this map supports.
      *
-     * <p>The returned map will throw an <tt>IllegalArgumentException</tt>
-     * on an attempt to insert a key outside its range.
+     * <p>The returned map will throw an {@code IllegalArgumentException}
+     * on an attempt to insert a key outside of its range, or to construct a
+     * submap either of whose endpoints lie outside its range.
      *
-     * @param fromKey low endpoint (inclusive) of the keys in the returned map
-     * @param toKey high endpoint (exclusive) of the keys in the returned map
+     * @param fromKey low endpoint of the keys in the returned map
+     * @param fromInclusive {@code true} if the low endpoint
+     *        is to be included in the returned view
+     * @param toKey high endpoint of the keys in the returned map
+     * @param toInclusive {@code true} if the high endpoint
+     *        is to be included in the returned view
      * @return a view of the portion of this map whose keys range from
-     *         <tt>fromKey</tt>, inclusive, to <tt>toKey</tt>, exclusive
-     * @throws ClassCastException if <tt>fromKey</tt> and <tt>toKey</tt>
+     *         {@code fromKey} to {@code toKey}
+     * @throws ClassCastException if {@code fromKey} and {@code toKey}
      *         cannot be compared to one another using this map's comparator
      *         (or, if the map has no comparator, using natural ordering).
      *         Implementations may, but are not required to, throw this
-     *         exception if <tt>fromKey</tt> or <tt>toKey</tt>
+     *         exception if {@code fromKey} or {@code toKey}
      *         cannot be compared to keys currently in the map.
-     * @throws NullPointerException if <tt>fromKey</tt> or <tt>toKey</tt>
+     * @throws NullPointerException if {@code fromKey} or {@code toKey}
      *         is null and this map does not permit null keys
-     * @throws IllegalArgumentException if <tt>fromKey</tt> is greater than
-     *         <tt>toKey</tt>; or if this map itself has a restricted
-     *         range, and <tt>fromKey</tt> or <tt>toKey</tt> lies
+     * @throws IllegalArgumentException if {@code fromKey} is greater than
+     *         {@code toKey}; or if this map itself has a restricted
+     *         range, and {@code fromKey} or {@code toKey} lies
      *         outside the bounds of the range
      */
-    NavigableMap navigableSubMap(Object fromKey, Object toKey);
+    NavigableMap subMap(Object fromKey, boolean fromInclusive,
+                        Object toKey,   boolean toInclusive);
 
     /**
-     * Returns a view of the portion of this map whose keys are
-     * strictly less than <tt>toKey</tt>.  The returned map is backed
-     * by this map, so changes in the returned map are reflected in
-     * this map, and vice-versa.  The returned map supports all
-     * optional map operations that this map supports.
+     * Returns a view of the portion of this map whose keys are less than (or
+     * equal to, if {@code inclusive} is true) {@code toKey}.  The returned
+     * map is backed by this map, so changes in the returned map are reflected
+     * in this map, and vice-versa.  The returned map supports all optional
+     * map operations that this map supports.
      *
-     * <p>The returned map will throw an <tt>IllegalArgumentException</tt>
+     * <p>The returned map will throw an {@code IllegalArgumentException}
      * on an attempt to insert a key outside its range.
      *
-     * @param toKey high endpoint (exclusive) of the keys in the returned map
-     * @return a view of the portion of this map whose keys are strictly
-     *         less than <tt>toKey</tt>
-     * @throws ClassCastException if <tt>toKey</tt> is not compatible
+     * @param toKey high endpoint of the keys in the returned map
+     * @param inclusive {@code true} if the high endpoint
+     *        is to be included in the returned view
+     * @return a view of the portion of this map whose keys are less than
+     *         (or equal to, if {@code inclusive} is true) {@code toKey}
+     * @throws ClassCastException if {@code toKey} is not compatible
      *         with this map's comparator (or, if the map has no comparator,
-     *         if <tt>toKey</tt> does not implement {@link Comparable}).
+     *         if {@code toKey} does not implement {@link java.lang.Comparable}).
      *         Implementations may, but are not required to, throw this
-     *         exception if <tt>toKey</tt> cannot be compared to keys
+     *         exception if {@code toKey} cannot be compared to keys
      *         currently in the map.
-     * @throws NullPointerException if <tt>toKey</tt> is null
+     * @throws NullPointerException if {@code toKey} is null
      *         and this map does not permit null keys
      * @throws IllegalArgumentException if this map itself has a
-     *         restricted range, and <tt>toKey</tt> lies outside the
+     *         restricted range, and {@code toKey} lies outside the
      *         bounds of the range
      */
-    NavigableMap navigableHeadMap(Object toKey);
+    NavigableMap headMap(Object toKey, boolean inclusive);
 
     /**
-     * Returns a view of the portion of this map whose keys are
-     * greater than or equal to <tt>fromKey</tt>.  The returned map is
-     * backed by this map, so changes in the returned map are
-     * reflected in this map, and vice-versa.  The returned map
-     * supports all optional map operations that this map supports.
+     * Returns a view of the portion of this map whose keys are greater than (or
+     * equal to, if {@code inclusive} is true) {@code fromKey}.  The returned
+     * map is backed by this map, so changes in the returned map are reflected
+     * in this map, and vice-versa.  The returned map supports all optional
+     * map operations that this map supports.
      *
-     * <p>The returned map will throw an <tt>IllegalArgumentException</tt>
+     * <p>The returned map will throw an {@code IllegalArgumentException}
      * on an attempt to insert a key outside its range.
      *
-     * @param fromKey low endpoint (inclusive) of the keys in the returned map
-     * @return a view of the portion of this map whose keys are greater
-     *         than or equal to <tt>fromKey</tt>
-     * @throws ClassCastException if <tt>fromKey</tt> is not compatible
+     * @param fromKey low endpoint of the keys in the returned map
+     * @param inclusive {@code true} if the low endpoint
+     *        is to be included in the returned view
+     * @return a view of the portion of this map whose keys are greater than
+     *         (or equal to, if {@code inclusive} is true) {@code fromKey}
+     * @throws ClassCastException if {@code fromKey} is not compatible
      *         with this map's comparator (or, if the map has no comparator,
-     *         if <tt>fromKey</tt> does not implement {@link Comparable}).
+     *         if {@code fromKey} does not implement {@link java.lang.Comparable}).
      *         Implementations may, but are not required to, throw this
-     *         exception if <tt>fromKey</tt> cannot be compared to keys
+     *         exception if {@code fromKey} cannot be compared to keys
      *         currently in the map.
-     * @throws NullPointerException if <tt>fromKey</tt> is null
+     * @throws NullPointerException if {@code fromKey} is null
      *         and this map does not permit null keys
      * @throws IllegalArgumentException if this map itself has a
-     *         restricted range, and <tt>fromKey</tt> lies outside the
+     *         restricted range, and {@code fromKey} lies outside the
      *         bounds of the range
      */
-    NavigableMap navigableTailMap(Object fromKey);
+    NavigableMap tailMap(Object fromKey, boolean inclusive);
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Equivalent to {@code subMap(fromKey, true, toKey, false)}.
+     *
+     * @throws ClassCastException       {@inheritDoc}
+     * @throws NullPointerException     {@inheritDoc}
+     * @throws IllegalArgumentException {@inheritDoc}
+     */
+    SortedMap subMap(Object fromKey, Object toKey);
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Equivalent to {@code headMap(toKey, false)}.
+     *
+     * @throws ClassCastException       {@inheritDoc}
+     * @throws NullPointerException     {@inheritDoc}
+     * @throws IllegalArgumentException {@inheritDoc}
+     */
+    SortedMap headMap(Object toKey);
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Equivalent to {@code tailMap(fromKey, true)}.
+     *
+     * @throws ClassCastException       {@inheritDoc}
+     * @throws NullPointerException     {@inheritDoc}
+     * @throws IllegalArgumentException {@inheritDoc}
+     */
+    SortedMap tailMap(Object fromKey);
 }

@@ -6,17 +6,19 @@
 
 package org.compass.core.util.backport.java.util.concurrent;
 
-import java.util.*;
-import org.compass.core.util.backport.java.util.concurrent.locks.*;
-import org.compass.core.util.backport.java.util.concurrent.helpers.WaitQueue.*;
-import org.compass.core.util.backport.java.util.concurrent.helpers.*;
+import java.util.Collection;
+
+import org.compass.core.util.backport.java.util.concurrent.helpers.FIFOWaitQueue;
+import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
+import org.compass.core.util.backport.java.util.concurrent.helpers.WaitQueue;
+import org.compass.core.util.backport.java.util.concurrent.helpers.WaitQueue.QueuedSync;
 
 /**
  * A counting semaphore.  Conceptually, a semaphore maintains a set of
  * permits.  Each {@link #acquire} blocks if necessary until a permit is
  * available, and then takes it.  Each {@link #release} adds a permit,
  * potentially releasing a blocking acquirer.
- * However, no actual permit objects are used; the <tt>Semaphore</tt> just
+ * However, no actual permit objects are used; the {@code Semaphore} just
  * keeps a count of the number available and acts accordingly.
  *
  * <p>Semaphores are often used to restrict the number of threads than can
@@ -84,7 +86,8 @@ import org.compass.core.util.backport.java.util.concurrent.helpers.*;
  * exclusion lock.  This is more commonly known as a <em>binary
  * semaphore</em>, because it only has two states: one permit
  * available, or zero permits available.  When used in this way, the
- * binary semaphore has the property (unlike many {@link Lock}
+ * binary semaphore has the property (unlike many
+ * {@link org.compass.core.util.backport.java.util.concurrent.locks.Lock}
  * implementations), that the &quot;lock&quot; can be released by a
  * thread other than the owner (as semaphores have no notion of
  * ownership).  This can be useful in some specialized contexts, such
@@ -103,7 +106,7 @@ import org.compass.core.util.backport.java.util.concurrent.helpers.*;
  * (first-in-first-out; FIFO). Note that FIFO ordering necessarily
  * applies to specific internal points of execution within these
  * methods.  So, it is possible for one thread to invoke
- * <tt>acquire</tt> before another, but reach the ordering point after
+ * {@code acquire} before another, but reach the ordering point after
  * the other, and similarly upon return from the method.
  * Also note that the untimed {@link #tryAcquire() tryAcquire} methods do not
  * honor the fairness setting, but will take any permits that are
@@ -115,11 +118,10 @@ import org.compass.core.util.backport.java.util.concurrent.helpers.*;
  * synchronization control, the throughput advantages of non-fair
  * ordering often outweigh fairness considerations.
  *
- * <!--
  * <p>This class also provides convenience methods to {@link
  * #acquire(int) acquire} and {@link #release(int) release} multiple
- * permits at a time.  Beware of the increased risk of indefinite
- * postponement when these methods are used without fairness set true.-->
+ * permits at a time.  BACKPORT NOTE: currently, these methods are only
+ * supported for FAIR semaphores.
  *
  * <p>Memory consistency effects: Actions in a thread prior to calling
  * a "release" method such as {@code release()}
@@ -129,6 +131,7 @@ import org.compass.core.util.backport.java.util.concurrent.helpers.*;
  *
  * @since 1.5
  * @author Doug Lea
+ *
  */
 
 public class Semaphore implements java.io.Serializable {
@@ -150,14 +153,14 @@ public class Semaphore implements java.io.Serializable {
             this.permits_ = permits;
         }
 
-        abstract void acquireUninterruptibly();
+        abstract void acquireUninterruptibly(int n);
 
-        abstract void acquire() throws InterruptedException;
+        abstract void acquire(int n) throws InterruptedException;
 
-        public boolean attempt() {
+        public boolean attempt(int n) {
             synchronized (this) {
-                if (permits_ > 0) {
-                    --permits_;
+                if (permits_ >= n) {
+                    permits_ -= n;
                     return true;
                 }
                 else {
@@ -166,9 +169,9 @@ public class Semaphore implements java.io.Serializable {
             }
         }
 
-        abstract boolean attempt(long nanos) throws InterruptedException;
+        abstract boolean attempt(int n, long nanos) throws InterruptedException;
 
-        abstract void release(int requested);
+        abstract void release(int n);
 
         public synchronized int getPermits() {
             return permits_;
@@ -199,7 +202,16 @@ public class Semaphore implements java.io.Serializable {
             super(initialPermits);
         }
 
-        public void acquireUninterruptibly() {
+        private static void checkAgainstMultiacquire(int n) {
+            if (n != 1) {
+                throw new UnsupportedOperationException(
+                    "Atomic multi-acquire supported only in FAIR semaphores");
+            }
+        }
+
+        public void acquireUninterruptibly(int n) {
+            if (n == 0) return;
+            checkAgainstMultiacquire(n);
             synchronized (this) {
                 if (permits_ > 0) {
                     --permits_;
@@ -229,8 +241,10 @@ public class Semaphore implements java.io.Serializable {
             }
         }
 
-        public void acquire() throws InterruptedException {
+        public void acquire(int n) throws InterruptedException {
             if (Thread.interrupted()) throw new InterruptedException();
+            if (n == 0) return;
+            checkAgainstMultiacquire(n);
             synchronized (this) {
                 while (permits_ <= 0) {
                     try {
@@ -245,8 +259,10 @@ public class Semaphore implements java.io.Serializable {
             }
         }
 
-        public boolean attempt(long nanos) throws InterruptedException {
+        public boolean attempt(int n, long nanos) throws InterruptedException {
             if (Thread.interrupted()) throw new InterruptedException();
+            if (n == 0) return true;
+            checkAgainstMultiacquire(n);
 
             synchronized (this) {
                 if (permits_ > 0) {
@@ -311,62 +327,69 @@ public class Semaphore implements java.io.Serializable {
             super(initialPermits);
         }
 
-        public void acquireUninterruptibly() {
-            if (precheck()) return;
-            WaitQueue.WaitNode w = new WaitQueue.WaitNode();
+        public void acquireUninterruptibly(int n) {
+            if (precheck(n)) return;
+            WaitQueue.WaitNode w = new Node(n);
             w.doWaitUninterruptibly(this);
         }
 
-        public void acquire() throws InterruptedException {
+        public void acquire(int n) throws InterruptedException {
             if (Thread.interrupted()) throw new InterruptedException();
-            if (precheck()) return;
-            WaitQueue.WaitNode w = new WaitQueue.WaitNode();
+            if (precheck(n)) return;
+            WaitQueue.WaitNode w = new Node(n);
             w.doWait(this);
         }
 
-        public boolean attempt(long nanos) throws InterruptedException {
+        public boolean attempt(int n, long nanos) throws InterruptedException {
             if (Thread.interrupted()) throw new InterruptedException();
-            if (precheck()) return true;
+            if (precheck(n)) return true;
             if (nanos <= 0) return false;
 
-            WaitQueue.WaitNode w = new WaitQueue.WaitNode();
+            WaitQueue.WaitNode w = new Node(n);
             return w.doTimedWait(this, nanos);
         }
 
-        protected synchronized boolean precheck() {
-            boolean pass = (permits_ > 0);
-            if (pass) --permits_;
+        protected synchronized boolean precheck(int n) {
+            boolean pass = (permits_ >= n);
+            if (pass) permits_ -= n;
             return pass;
         }
 
         public synchronized boolean recheck(WaitQueue.WaitNode w) {
-            boolean pass = (permits_ > 0);
-            if (pass) --permits_;
-            else       wq_.insert(w);
+            Node node = (Node)w;
+            boolean pass = (permits_ >= node.requests);
+            if (pass) permits_ -= node.requests;
+            else      wq_.insert(w);
             return pass;
         }
 
         public void takeOver(WaitQueue.WaitNode n) {}
 
-        protected synchronized WaitQueue.WaitNode getSignallee() {
-            WaitQueue.WaitNode w = wq_.extract();
-            if (w == null) ++permits_; // if none, inc permits for new arrivals
-            return w;
-        }
-
-        public void release() {
-            for (;;) {
-                WaitQueue.WaitNode w = getSignallee();
-                if (w == null) return;  // no one to signal
-                if (w.signal(this)) return; // notify if still waiting, else skip
+        protected synchronized Node getSignallee(int n) {
+            Node w = (Node)wq_.extract();
+            permits_ += n;
+            if (w == null) {
+                return null;
+            }
+            else if (w.requests > permits_) {
+                // not enough permits released for the "next in line"
+                wq_.putBack(w);
+                return null;
+            }
+            else {
+                permits_ -= w.requests;
+                return w;
             }
         }
 
-        /** Release N permits **/
         public void release(int n) {
             if (n < 0) throw new IllegalArgumentException("Negative argument");
-
-            for (int i = 0; i < n; ++i) release();
+            for (;;) {
+                Node w = getSignallee(n);
+                if (w == null) return;  // no one to signal, or not enough permits
+                if (w.signal(this)) return; // notify if still waiting, else skip
+                n = w.requests;
+            }
         }
 
         public synchronized boolean hasQueuedThreads() {
@@ -388,27 +411,35 @@ public class Semaphore implements java.io.Serializable {
                 wq_ = new FIFOWaitQueue();
             }
         }
+
+        final static class Node extends WaitQueue.WaitNode {
+            final int requests;
+            Node(int requests) { this.requests = requests; }
+        }
     }
 
     /**
-     * Creates a <tt>Semaphore</tt> with the given number of
+     * Creates a {@code Semaphore} with the given number of
      * permits and nonfair fairness setting.
-     * @param permits the initial number of permits available. This
-     * value may be negative, in which case releases must
-     * occur before any acquires will be granted.
+     *
+     * @param permits the initial number of permits available.
+     *        This value may be negative, in which case releases
+     *        must occur before any acquires will be granted.
      */
     public Semaphore(int permits) {
         sync = new NonfairSync(permits);
     }
 
     /**
-     * Creates a <tt>Semaphore</tt> with the given number of
+     * Creates a {@code Semaphore} with the given number of
      * permits and the given fairness setting.
-     * @param permits the initial number of permits available. This
-     * value may be negative, in which case releases must
-     * occur before any acquires will be granted.
-     * @param fair true if this semaphore will guarantee first-in
-     * first-out granting of permits under contention, else false.
+     *
+     * @param permits the initial number of permits available.
+     *        This value may be negative, in which case releases
+     *        must occur before any acquires will be granted.
+     * @param fair {@code true} if this semaphore will guarantee
+     *        first-in first-out granting of permits under contention,
+     *        else {@code false}
      */
     public Semaphore(int permits, boolean fair) {
         sync = (fair)? (Sync)new FairSync(permits) : new NonfairSync(permits);
@@ -416,35 +447,34 @@ public class Semaphore implements java.io.Serializable {
 
     /**
      * Acquires a permit from this semaphore, blocking until one is
-     * available, or the thread is {@link Thread#interrupt interrupted}.
+     * available, or the thread is {@linkplain Thread#interrupt interrupted}.
      *
      * <p>Acquires a permit, if one is available and returns immediately,
      * reducing the number of available permits by one.
+     *
      * <p>If no permit is available then the current thread becomes
      * disabled for thread scheduling purposes and lies dormant until
      * one of two things happens:
      * <ul>
      * <li>Some other thread invokes the {@link #release} method for this
      * semaphore and the current thread is next to be assigned a permit; or
-     * <li>Some other thread {@link Thread#interrupt interrupts} the current
-     * thread.
+     * <li>Some other thread {@linkplain Thread#interrupt interrupts}
+     * the current thread.
      * </ul>
      *
      * <p>If the current thread:
      * <ul>
      * <li>has its interrupted status set on entry to this method; or
-     * <li>is {@link Thread#interrupt interrupted} while waiting
+     * <li>is {@linkplain Thread#interrupt interrupted} while waiting
      * for a permit,
      * </ul>
      * then {@link InterruptedException} is thrown and the current thread's
      * interrupted status is cleared.
      *
      * @throws InterruptedException if the current thread is interrupted
-     *
-     * @see Thread#interrupt
      */
     public void acquire() throws InterruptedException {
-        sync.acquire();
+        sync.acquire(1);
     }
 
     /**
@@ -453,35 +483,36 @@ public class Semaphore implements java.io.Serializable {
      *
      * <p>Acquires a permit, if one is available and returns immediately,
      * reducing the number of available permits by one.
+     *
      * <p>If no permit is available then the current thread becomes
      * disabled for thread scheduling purposes and lies dormant until
      * some other thread invokes the {@link #release} method for this
      * semaphore and the current thread is next to be assigned a permit.
      *
-     * <p>If the current thread
-     * is {@link Thread#interrupt interrupted} while waiting
-     * for a permit then it will continue to wait, but the time at which
-     * the thread is assigned a permit may change compared to the time it
-     * would have received the permit had no interruption occurred. When the
-     * thread does return from this method its interrupt status will be set.
-     *
+     * <p>If the current thread is {@linkplain Thread#interrupt interrupted}
+     * while waiting for a permit then it will continue to wait, but the
+     * time at which the thread is assigned a permit may change compared to
+     * the time it would have received the permit had no interruption
+     * occurred.  When the thread does return from this method its interrupt
+     * status will be set.
      */
     public void acquireUninterruptibly() {
-        sync.acquireUninterruptibly();
+        sync.acquireUninterruptibly(1);
     }
 
     /**
      * Acquires a permit from this semaphore, only if one is available at the
      * time of invocation.
+     *
      * <p>Acquires a permit, if one is available and returns immediately,
-     * with the value <tt>true</tt>,
+     * with the value {@code true},
      * reducing the number of available permits by one.
      *
      * <p>If no permit is available then this method will return
-     * immediately with the value <tt>false</tt>.
+     * immediately with the value {@code false}.
      *
      * <p>Even when this semaphore has been set to use a
-     * fair ordering policy, a call to <tt>tryAcquire()</tt> <em>will</em>
+     * fair ordering policy, a call to {@code tryAcquire()} <em>will</em>
      * immediately acquire a permit if one is available, whether or not
      * other threads are currently waiting.
      * This &quot;barging&quot; behavior can be useful in certain
@@ -490,66 +521,67 @@ public class Semaphore implements java.io.Serializable {
      * {@link #tryAcquire(long, TimeUnit) tryAcquire(0, TimeUnit.SECONDS) }
      * which is almost equivalent (it also detects interruption).
      *
-     * @return <tt>true</tt> if a permit was acquired and <tt>false</tt>
-     * otherwise.
+     * @return {@code true} if a permit was acquired and {@code false}
+     *         otherwise
      */
     public boolean tryAcquire() {
-        return sync.attempt();
+        return sync.attempt(1);
     }
 
     /**
      * Acquires a permit from this semaphore, if one becomes available
-     * within the given waiting time and the
-     * current thread has not been {@link Thread#interrupt interrupted}.
+     * within the given waiting time and the current thread has not
+     * been {@linkplain Thread#interrupt interrupted}.
+     *
      * <p>Acquires a permit, if one is available and returns immediately,
-     * with the value <tt>true</tt>,
+     * with the value {@code true},
      * reducing the number of available permits by one.
-     * <p>If no permit is available then
-     * the current thread becomes disabled for thread scheduling
-     * purposes and lies dormant until one of three things happens:
+     *
+     * <p>If no permit is available then the current thread becomes
+     * disabled for thread scheduling purposes and lies dormant until
+     * one of three things happens:
      * <ul>
      * <li>Some other thread invokes the {@link #release} method for this
      * semaphore and the current thread is next to be assigned a permit; or
-     * <li>Some other thread {@link Thread#interrupt interrupts} the current
-     * thread; or
+     * <li>Some other thread {@linkplain Thread#interrupt interrupts}
+     * the current thread; or
      * <li>The specified waiting time elapses.
      * </ul>
-     * <p>If a permit is acquired then the value <tt>true</tt> is returned.
+     *
+     * <p>If a permit is acquired then the value {@code true} is returned.
+     *
      * <p>If the current thread:
      * <ul>
      * <li>has its interrupted status set on entry to this method; or
-     * <li>is {@link Thread#interrupt interrupted} while waiting to acquire
-     * a permit,
+     * <li>is {@linkplain Thread#interrupt interrupted} while waiting
+     * to acquire a permit,
      * </ul>
      * then {@link InterruptedException} is thrown and the current thread's
      * interrupted status is cleared.
-     * <p>If the specified waiting time elapses then the value <tt>false</tt>
-     * is returned.
-     * If the time is less than or equal to zero, the method will not wait
-     * at all.
+     *
+     * <p>If the specified waiting time elapses then the value {@code false}
+     * is returned.  If the time is less than or equal to zero, the method
+     * will not wait at all.
      *
      * @param timeout the maximum time to wait for a permit
-     * @param unit the time unit of the <tt>timeout</tt> argument.
-     * @return <tt>true</tt> if a permit was acquired and <tt>false</tt>
-     * if the waiting time elapsed before a permit was acquired.
-     *
+     * @param unit the time unit of the {@code timeout} argument
+     * @return {@code true} if a permit was acquired and {@code false}
+     *         if the waiting time elapsed before a permit was acquired
      * @throws InterruptedException if the current thread is interrupted
-     *
-     * @see Thread#interrupt
-     *
      */
     public boolean tryAcquire(long timeout, TimeUnit unit)
         throws InterruptedException {
-        return sync.attempt(unit.toNanos(timeout));
+        return sync.attempt(1, unit.toNanos(timeout));
     }
 
     /**
      * Releases a permit, returning it to the semaphore.
-     * <p>Releases a permit, increasing the number of available permits
-     * by one.
-     * If any threads are trying to acquire a permit, then one
-     * is selected and given the permit that was just released.
-     * That thread is (re)enabled for thread scheduling purposes.
+     *
+     * <p>Releases a permit, increasing the number of available permits by
+     * one.  If any threads are trying to acquire a permit, then one is
+     * selected and given the permit that was just released.  That thread
+     * is (re)enabled for thread scheduling purposes.
+     *
      * <p>There is no requirement that a thread that releases a permit must
      * have acquired that permit by calling {@link #acquire}.
      * Correct usage of a semaphore is established by programming convention
@@ -559,170 +591,165 @@ public class Semaphore implements java.io.Serializable {
         sync.release(1);
     }
 
-//    /**
-//     * Acquires the given number of permits from this semaphore,
-//     * blocking until all are available,
-//     * or the thread is {@link Thread#interrupt interrupted}.
-//     *
-//     * <p>Acquires the given number of permits, if they are available,
-//     * and returns immediately,
-//     * reducing the number of available permits by the given amount.
-//     *
-//     * <p>If insufficient permits are available then the current thread becomes
-//     * disabled for thread scheduling purposes and lies dormant until
-//     * one of two things happens:
-//     * <ul>
-//     * <li>Some other thread invokes one of the {@link #release() release}
-//     * methods for this semaphore, the current thread is next to be assigned
-//     * permits and the number of available permits satisfies this request; or
-//     * <li>Some other thread {@link Thread#interrupt interrupts} the current
-//     * thread.
-//     * </ul>
-//     *
-//     * <p>If the current thread:
-//     * <ul>
-//     * <li>has its interrupted status set on entry to this method; or
-//     * <li>is {@link Thread#interrupt interrupted} while waiting
-//     * for a permit,
-//     * </ul>
-//     * then {@link InterruptedException} is thrown and the current thread's
-//     * interrupted status is cleared.
-//     * Any permits that were to be assigned to this thread are instead
-//     * assigned to other threads trying to acquire permits, as if
-//     * permits had been made available by a call to {@link #release()}.
-//     *
-//     * @param permits the number of permits to acquire
-//     *
-//     * @throws InterruptedException if the current thread is interrupted
-//     * @throws IllegalArgumentException if permits less than zero.
-//     *
-//     * @see Thread#interrupt
-//     */
-//    public void acquire(int permits) throws InterruptedException {
-//        if (permits < 0) throw new IllegalArgumentException();
-//        sync.acquire(permits);
-//    }
-//
-//    /**
-//     * Acquires the given number of permits from this semaphore,
-//     * blocking until all are available.
-//     *
-//     * <p>Acquires the given number of permits, if they are available,
-//     * and returns immediately,
-//     * reducing the number of available permits by the given amount.
-//     *
-//     * <p>If insufficient permits are available then the current thread becomes
-//     * disabled for thread scheduling purposes and lies dormant until
-//     * some other thread invokes one of the {@link #release() release}
-//     * methods for this semaphore, the current thread is next to be assigned
-//     * permits and the number of available permits satisfies this request.
-//     *
-//     * <p>If the current thread
-//     * is {@link Thread#interrupt interrupted} while waiting
-//     * for permits then it will continue to wait and its position in the
-//     * queue is not affected. When the
-//     * thread does return from this method its interrupt status will be set.
-//     *
-//     * @param permits the number of permits to acquire
-//     * @throws IllegalArgumentException if permits less than zero.
-//     *
-//     */
-//    public void acquireUninterruptibly(int permits) {
-//        sync.acquireUninterruptibly(permits);
-//    }
-//
-//    /**
-//     * Acquires the given number of permits from this semaphore, only
-//     * if all are available at the time of invocation.
-//     *
-//     * <p>Acquires the given number of permits, if they are available, and
-//     * returns immediately, with the value <tt>true</tt>,
-//     * reducing the number of available permits by the given amount.
-//     *
-//     * <p>If insufficient permits are available then this method will return
-//     * immediately with the value <tt>false</tt> and the number of available
-//     * permits is unchanged.
-//     *
-//     * <p>Even when this semaphore has been set to use a fair ordering
-//     * policy, a call to <tt>tryAcquire</tt> <em>will</em>
-//     * immediately acquire a permit if one is available, whether or
-//     * not other threads are currently waiting.  This
-//     * &quot;barging&quot; behavior can be useful in certain
-//     * circumstances, even though it breaks fairness. If you want to
-//     * honor the fairness setting, then use {@link #tryAcquire(int,
-//     * long, TimeUnit) tryAcquire(permits, 0, TimeUnit.SECONDS) }
-//     * which is almost equivalent (it also detects interruption).
-//     *
-//     * @param permits the number of permits to acquire
-//     *
-//     * @return <tt>true</tt> if the permits were acquired and <tt>false</tt>
-//     * otherwise.
-//     * @throws IllegalArgumentException if permits less than zero.
-//     */
-//    public boolean tryAcquire(int permits) {
-//        if (permits < 0) throw new IllegalArgumentException();
-//        return sync.attempt(permits);
-//    }
-//
-//    /**
-//     * Acquires the given number of permits from this semaphore, if all
-//     * become available within the given waiting time and the
-//     * current thread has not been {@link Thread#interrupt interrupted}.
-//     * <p>Acquires the given number of permits, if they are available and
-//     * returns immediately, with the value <tt>true</tt>,
-//     * reducing the number of available permits by the given amount.
-//     * <p>If insufficient permits are available then
-//     * the current thread becomes disabled for thread scheduling
-//     * purposes and lies dormant until one of three things happens:
-//     * <ul>
-//     * <li>Some other thread invokes one of the {@link #release() release}
-//     * methods for this semaphore, the current thread is next to be assigned
-//     * permits and the number of available permits satisfies this request; or
-//     * <li>Some other thread {@link Thread#interrupt interrupts} the current
-//     * thread; or
-//     * <li>The specified waiting time elapses.
-//     * </ul>
-//     * <p>If the permits are acquired then the value <tt>true</tt> is returned.
-//     * <p>If the current thread:
-//     * <ul>
-//     * <li>has its interrupted status set on entry to this method; or
-//     * <li>is {@link Thread#interrupt interrupted} while waiting to acquire
-//     * the permits,
-//     * </ul>
-//     * then {@link InterruptedException} is thrown and the current thread's
-//     * interrupted status is cleared.
-//     * Any permits that were to be assigned to this thread, are instead
-//     * assigned to other threads trying to acquire permits, as if
-//     * the permits had been made available by a call to {@link #release()}.
-//     *
-//     * <p>If the specified waiting time elapses then the value <tt>false</tt>
-//     * is returned.
-//     * If the time is
-//     * less than or equal to zero, the method will not wait at all.
-//     * Any permits that were to be assigned to this thread, are instead
-//     * assigned to other threads trying to acquire permits, as if
-//     * the permits had been made available by a call to {@link #release()}.
-//     *
-//     * @param permits the number of permits to acquire
-//     * @param timeout the maximum time to wait for the permits
-//     * @param unit the time unit of the <tt>timeout</tt> argument.
-//     * @return <tt>true</tt> if all permits were acquired and <tt>false</tt>
-//     * if the waiting time elapsed before all permits were acquired.
-//     *
-//     * @throws InterruptedException if the current thread is interrupted
-//     * @throws IllegalArgumentException if permits less than zero.
-//     *
-//     * @see Thread#interrupt
-//     *
-//     */
-//    public boolean tryAcquire(int permits, long timeout, TimeUnit unit)
-//        throws InterruptedException {
-//        if (permits < 0) throw new IllegalArgumentException();
-//        return sync.attempt(permits, unit.toNanos(timeout));
-//    }
+    /**
+     * Acquires the given number of permits from this semaphore,
+     * blocking until all are available,
+     * or the thread is {@linkplain Thread#interrupt interrupted}.
+     *
+     * <p>Acquires the given number of permits, if they are available,
+     * and returns immediately, reducing the number of available permits
+     * by the given amount.
+     *
+     * <p>If insufficient permits are available then the current thread becomes
+     * disabled for thread scheduling purposes and lies dormant until
+     * one of two things happens:
+     * <ul>
+     * <li>Some other thread invokes one of the {@link #release() release}
+     * methods for this semaphore, the current thread is next to be assigned
+     * permits and the number of available permits satisfies this request; or
+     * <li>Some other thread {@linkplain Thread#interrupt interrupts}
+     * the current thread.
+     * </ul>
+     *
+     * <p>If the current thread:
+     * <ul>
+     * <li>has its interrupted status set on entry to this method; or
+     * <li>is {@linkplain Thread#interrupt interrupted} while waiting
+     * for a permit,
+     * </ul>
+     * then {@link InterruptedException} is thrown and the current thread's
+     * interrupted status is cleared.
+     * Any permits that were to be assigned to this thread are instead
+     * assigned to other threads trying to acquire permits, as if
+     * permits had been made available by a call to {@link #release()}.
+     *
+     * @param permits the number of permits to acquire
+     * @throws InterruptedException if the current thread is interrupted
+     * @throws IllegalArgumentException if {@code permits} is negative
+     */
+    public void acquire(int permits) throws InterruptedException {
+        if (permits < 0) throw new IllegalArgumentException();
+        sync.acquire(permits);
+    }
+
+    /**
+     * Acquires the given number of permits from this semaphore,
+     * blocking until all are available.
+     *
+     * <p>Acquires the given number of permits, if they are available,
+     * and returns immediately, reducing the number of available permits
+     * by the given amount.
+     *
+     * <p>If insufficient permits are available then the current thread becomes
+     * disabled for thread scheduling purposes and lies dormant until
+     * some other thread invokes one of the {@link #release() release}
+     * methods for this semaphore, the current thread is next to be assigned
+     * permits and the number of available permits satisfies this request.
+     *
+     * <p>If the current thread is {@linkplain Thread#interrupt interrupted}
+     * while waiting for permits then it will continue to wait and its
+     * position in the queue is not affected.  When the thread does return
+     * from this method its interrupt status will be set.
+     *
+     * @param permits the number of permits to acquire
+     * @throws IllegalArgumentException if {@code permits} is negative
+     *
+     */
+    public void acquireUninterruptibly(int permits) {
+        sync.acquireUninterruptibly(permits);
+    }
+
+    /**
+     * Acquires the given number of permits from this semaphore, only
+     * if all are available at the time of invocation.
+     *
+     * <p>Acquires the given number of permits, if they are available, and
+     * returns immediately, with the value {@code true},
+     * reducing the number of available permits by the given amount.
+     *
+     * <p>If insufficient permits are available then this method will return
+     * immediately with the value {@code false} and the number of available
+     * permits is unchanged.
+     *
+     * <p>Even when this semaphore has been set to use a fair ordering
+     * policy, a call to {@code tryAcquire} <em>will</em>
+     * immediately acquire a permit if one is available, whether or
+     * not other threads are currently waiting.  This
+     * &quot;barging&quot; behavior can be useful in certain
+     * circumstances, even though it breaks fairness. If you want to
+     * honor the fairness setting, then use {@link #tryAcquire(int,
+     * long, TimeUnit) tryAcquire(permits, 0, TimeUnit.SECONDS) }
+     * which is almost equivalent (it also detects interruption).
+     *
+     * @param permits the number of permits to acquire
+     * @return {@code true} if the permits were acquired and
+     *         {@code false} otherwise
+     * @throws IllegalArgumentException if {@code permits} is negative
+     */
+    public boolean tryAcquire(int permits) {
+        if (permits < 0) throw new IllegalArgumentException();
+        return sync.attempt(permits);
+    }
+
+    /**
+     * Acquires the given number of permits from this semaphore, if all
+     * become available within the given waiting time and the current
+     * thread has not been {@linkplain Thread#interrupt interrupted}.
+     *
+     * <p>Acquires the given number of permits, if they are available and
+     * returns immediately, with the value {@code true},
+     * reducing the number of available permits by the given amount.
+     *
+     * <p>If insufficient permits are available then
+     * the current thread becomes disabled for thread scheduling
+     * purposes and lies dormant until one of three things happens:
+     * <ul>
+     * <li>Some other thread invokes one of the {@link #release() release}
+     * methods for this semaphore, the current thread is next to be assigned
+     * permits and the number of available permits satisfies this request; or
+     * <li>Some other thread {@linkplain Thread#interrupt interrupts}
+     * the current thread; or
+     * <li>The specified waiting time elapses.
+     * </ul>
+     *
+     * <p>If the permits are acquired then the value {@code true} is returned.
+     *
+     * <p>If the current thread:
+     * <ul>
+     * <li>has its interrupted status set on entry to this method; or
+     * <li>is {@linkplain Thread#interrupt interrupted} while waiting
+     * to acquire the permits,
+     * </ul>
+     * then {@link InterruptedException} is thrown and the current thread's
+     * interrupted status is cleared.
+     * Any permits that were to be assigned to this thread, are instead
+     * assigned to other threads trying to acquire permits, as if
+     * the permits had been made available by a call to {@link #release()}.
+     *
+     * <p>If the specified waiting time elapses then the value {@code false}
+     * is returned.  If the time is less than or equal to zero, the method
+     * will not wait at all.  Any permits that were to be assigned to this
+     * thread, are instead assigned to other threads trying to acquire
+     * permits, as if the permits had been made available by a call to
+     * {@link #release()}.
+     *
+     * @param permits the number of permits to acquire
+     * @param timeout the maximum time to wait for the permits
+     * @param unit the time unit of the {@code timeout} argument
+     * @return {@code true} if all permits were acquired and {@code false}
+     *         if the waiting time elapsed before all permits were acquired
+     * @throws InterruptedException if the current thread is interrupted
+     * @throws IllegalArgumentException if {@code permits} is negative
+     */
+    public boolean tryAcquire(int permits, long timeout, TimeUnit unit)
+        throws InterruptedException {
+        if (permits < 0) throw new IllegalArgumentException();
+        return sync.attempt(permits, unit.toNanos(timeout));
+    }
 
     /**
      * Releases the given number of permits, returning them to the semaphore.
+     *
      * <p>Releases the given number of permits, increasing the number of
      * available permits by that amount.
      * If any threads are trying to acquire permits, then one
@@ -740,7 +767,7 @@ public class Semaphore implements java.io.Serializable {
      * in the application.
      *
      * @param permits the number of permits to release
-     * @throws IllegalArgumentException if permits less than zero.
+     * @throws IllegalArgumentException if {@code permits} is negative
      */
     public void release(int permits) {
         if (permits < 0) throw new IllegalArgumentException();
@@ -749,8 +776,10 @@ public class Semaphore implements java.io.Serializable {
 
     /**
      * Returns the current number of permits available in this semaphore.
+     *
      * <p>This method is typically used for debugging and testing purposes.
-     * @return the number of permits available in this semaphore.
+     *
+     * @return the number of permits available in this semaphore
      */
     public int availablePermits() {
         return sync.getPermits();
@@ -758,7 +787,8 @@ public class Semaphore implements java.io.Serializable {
 
     /**
      * Acquires and returns all permits that are immediately available.
-     * @return the number of permits
+     *
+     * @return the number of permits acquired
      */
     public int drainPermits() {
         return sync.drain();
@@ -768,10 +798,11 @@ public class Semaphore implements java.io.Serializable {
      * Shrinks the number of available permits by the indicated
      * reduction. This method can be useful in subclasses that use
      * semaphores to track resources that become unavailable. This
-     * method differs from <tt>acquire</tt> in that it does not block
+     * method differs from {@code acquire} in that it does not block
      * waiting for permits to become available.
+     *
      * @param reduction the number of permits to remove
-     * @throws IllegalArgumentException if reduction is negative
+     * @throws IllegalArgumentException if {@code reduction} is negative
      */
     protected void reducePermits(int reduction) {
         if (reduction < 0) throw new IllegalArgumentException();
@@ -779,8 +810,9 @@ public class Semaphore implements java.io.Serializable {
     }
 
     /**
-     * Returns true if this semaphore has fairness set true.
-     * @return true if this semaphore has fairness set true.
+     * Returns {@code true} if this semaphore has fairness set true.
+     *
+     * @return {@code true} if this semaphore has fairness set true
      */
     public boolean isFair() {
         return sync instanceof FairSync;
@@ -788,25 +820,25 @@ public class Semaphore implements java.io.Serializable {
 
     /**
      * Queries whether any threads are waiting to acquire. Note that
-     * because cancellations may occur at any time, a <tt>true</tt>
+     * because cancellations may occur at any time, a {@code true}
      * return does not guarantee that any other thread will ever
      * acquire.  This method is designed primarily for use in
      * monitoring of the system state.
      *
-     * @return true if there may be other threads waiting to acquire
-     * the lock.
+     * @return {@code true} if there may be other threads waiting to
+     *         acquire the lock
      */
     public final boolean hasQueuedThreads() {
         return sync.hasQueuedThreads();
     }
 
     /**
-     * Returns an estimate of the number of threads waiting to
-     * acquire.  The value is only an estimate because the number of
-     * threads may change dynamically while this method traverses
-     * internal data structures.  This method is designed for use in
-     * monitoring of the system state, not for synchronization
-     * control.
+     * Returns an estimate of the number of threads waiting to acquire.
+     * The value is only an estimate because the number of threads may
+     * change dynamically while this method traverses internal data
+     * structures.  This method is designed for use in monitoring of the
+     * system state, not for synchronization control.
+     *
      * @return the estimated number of threads waiting for this lock
      */
     public final int getQueueLength() {
@@ -814,13 +846,13 @@ public class Semaphore implements java.io.Serializable {
     }
 
     /**
-     * Returns a collection containing threads that may be waiting to
-     * acquire.  Because the actual set of threads may change
-     * dynamically while constructing this result, the returned
-     * collection is only a best-effort estimate.  The elements of the
-     * returned collection are in no particular order.  This method is
-     * designed to facilitate construction of subclasses that provide
-     * more extensive monitoring facilities.
+     * Returns a collection containing threads that may be waiting to acquire.
+     * Because the actual set of threads may change dynamically while
+     * constructing this result, the returned collection is only a best-effort
+     * estimate.  The elements of the returned collection are in no particular
+     * order.  This method is designed to facilitate construction of
+     * subclasses that provide more extensive monitoring facilities.
+     *
      * @return the collection of threads
      */
     protected Collection getQueuedThreads() {
@@ -829,13 +861,12 @@ public class Semaphore implements java.io.Serializable {
 
     /**
      * Returns a string identifying this semaphore, as well as its state.
-     * The state, in brackets, includes the String
-     * &quot;Permits =&quot; followed by the number of permits.
-     * @return a string identifying this semaphore, as well as its
-     * state
+     * The state, in brackets, includes the String {@code "Permits ="}
+     * followed by the number of permits.
+     *
+     * @return a string identifying this semaphore, as well as its state
      */
     public String toString() {
         return super.toString() + "[Permits = " + sync.getPermits() + "]";
     }
-
 }

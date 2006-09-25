@@ -6,19 +6,20 @@
 
 package org.compass.core.util.backport.java.util.concurrent;
 
-import org.compass.core.util.backport.java.util.Arrays;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.ListIterator;
-import java.util.RandomAccess;
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.util.ConcurrentModificationException;
-import java.util.NoSuchElementException;
-import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+import java.util.RandomAccess;
+
+import org.compass.core.util.backport.java.util.Arrays;
 
 public class CopyOnWriteArrayList implements List, RandomAccess, Cloneable, Serializable {
 
@@ -463,10 +464,14 @@ public class CopyOnWriteArrayList implements List, RandomAccess, Cloneable, Seri
         }
     }
 
+    /** Note: the original j.u.c. class is NOT serializable */
     class COWSubList implements Serializable, List {
+
+        private static final long serialVersionUID = -8660955369431018984L;
+
         final int offset;
         int length;
-        Object[] expectedArray;
+        transient Object[] expectedArray;
 
         COWSubList(int offset, int length) {
             this.offset = offset;
@@ -811,6 +816,25 @@ public class CopyOnWriteArrayList implements List, RandomAccess, Cloneable, Seri
             }
             buf.append(']');
             return buf.toString();
+        }
+
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            synchronized (CopyOnWriteArrayList.this) {
+                if (getArray() != expectedArray) throw new ConcurrentModificationException();
+            }
+            out.defaultWriteObject();
+            synchronized (CopyOnWriteArrayList.this) {
+                if (getArray() != expectedArray) throw new ConcurrentModificationException();
+            }
+        }
+
+        private void readObject(ObjectInputStream in)
+            throws IOException, ClassNotFoundException
+        {
+            in.defaultReadObject();
+            synchronized (CopyOnWriteArrayList.this) {
+                expectedArray = getArray();
+            }
         }
     }
 

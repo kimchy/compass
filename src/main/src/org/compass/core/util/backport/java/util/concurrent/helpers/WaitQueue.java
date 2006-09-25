@@ -13,8 +13,9 @@
 
 package org.compass.core.util.backport.java.util.concurrent.helpers;
 
-import java.util.*;
-import org.compass.core.util.backport.java.util.concurrent.*;
+import java.util.Collection;
+
+import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
 
 /**
  * Base class for internal queue classes for semaphores, etc.
@@ -26,6 +27,7 @@ public abstract class WaitQueue {
 
     public abstract void insert(WaitNode w); // assumed not to block
     public abstract WaitNode extract(); // should return null if empty
+    public abstract void putBack(WaitNode w);
 
     public abstract boolean hasNodes();
     public abstract int getLength();

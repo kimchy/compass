@@ -6,7 +6,14 @@
 
 package org.compass.core.util.backport.java.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.SortedSet;
 
 /**
  * An unbounded {@linkplain Queue queue} that supports element retrieval
@@ -84,7 +91,6 @@ public class PriorityQueue extends AbstractQueue implements java.io.Serializable
      * capacity that orders its elements according to the specified
      * comparator.
      *
-     * @param initialCapacity the initial capacity for this priority queue
      * @param comparator the comparator used to order this priority queue.
      * If <tt>null</tt> then the order depends on the elements' natural
      * ordering.

@@ -6,11 +6,11 @@
 
 package org.compass.core.util.backport.java.util;
 
-import java.io.Serializable;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.*;
-import java.io.*;
 
 /**
  * Augments {@link java.util.Collections} with methods added in Java 5.0
@@ -214,7 +214,7 @@ public class Collections {
     public static Comparator reverseOrder(Comparator cmp) {
         return (cmp instanceof ReverseComparator)
             ? ((ReverseComparator)cmp).cmp
-            : new ReverseComparator(cmp);
+            : cmp == null ? reverseOrder() : new ReverseComparator(cmp);
     }
 
     public static Enumeration enumeration(Collection c) {
@@ -353,7 +353,7 @@ public class Collections {
         public int lastIndexOf(Object o) { return list.lastIndexOf(o); }
 
         public int hashCode()            { return list.hashCode(); }
-        public boolean equals(Object o)  { return list.equals(o); }
+        public boolean equals(Object o)  { return o == this || list.equals(o); }
 
         public Object set(int index, Object element) {
             typeCheck(element);
@@ -422,7 +422,7 @@ public class Collections {
         }
 
         public int hashCode()            { return coll.hashCode(); }
-        public boolean equals(Object o)  { return coll.equals(o); }
+        public boolean equals(Object o)  { return o == this || coll.equals(o); }
     }
 
     private static class CheckedSortedSet extends CheckedSet
@@ -503,7 +503,7 @@ public class Collections {
         }
 
         private void typeCheckKey(Object key) {
-            if (keyType.isInstance(key)) {
+            if (!keyType.isInstance(key)) {
                 throw new ClassCastException(
                     "Attempted to use a key of type " + key.getClass().getName() +
                     " with a map with keys of type " + keyType.getName());
@@ -511,7 +511,7 @@ public class Collections {
         }
 
         private void typeCheckValue(Object value) {
-            if (valueType.isInstance(value)) {
+            if (!valueType.isInstance(value)) {
                 throw new ClassCastException(
                     "Attempted to use a value of type " + value.getClass().getName() +
                     " with a map with values of type " + valueType.getName());
@@ -519,7 +519,7 @@ public class Collections {
         }
 
         public int hashCode()                  { return map.hashCode(); }
-        public boolean equals(Object o)        { return map.equals(o); }
+        public boolean equals(Object o)        { return o == this || map.equals(o); }
 
         public int size()                      { return map.size(); }
         public void clear()                    { map.clear(); }
@@ -717,7 +717,7 @@ public class Collections {
         public boolean isEmpty()            { return map.isEmpty(); }
         public boolean add(Object o)        { return map.put(o, PRESENT) == null; }
         public boolean contains(Object o)   { return map.containsKey(o); }
-        public boolean equals(Object o)     { return keySet.equals(o); }
+        public boolean equals(Object o)     { return o == this || keySet.equals(o); }
         public boolean remove(Object o)     { return map.remove(o) == PRESENT; }
 
         public boolean removeAll(Collection c) { return keySet.removeAll(c); }
@@ -761,6 +761,10 @@ public class Collections {
         public boolean contains(Object o)   { return deque.contains(o); }
         public boolean remove(Object o)     { return deque.remove(o); }
         public Iterator iterator()          { return deque.iterator(); }
+        public String toString()            { return deque.toString(); }
+	public boolean containsAll(Collection c) { return deque.containsAll(c); }
+        public boolean removeAll(Collection c)   { return deque.removeAll(c); }
+        public boolean retainAll(Collection c)   { return deque.retainAll(c); }
     }
 
     private static class ReverseComparator implements Comparator, Serializable {

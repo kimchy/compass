@@ -1,18 +1,20 @@
 /*
  * Written by Doug Lea with assistance from members of JCP JSR-166
- * Expert Group and released to the public domain. Use, modify, and
- * redistribute this code in any way without acknowledgement.
+ * Expert Group and released to the public domain, as explained at
+ * http://creativecommons.org/licenses/publicdomain
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
 
-import java.util.*;
-import org.compass.core.util.backport.java.util.concurrent.*; // for javadoc
-import org.compass.core.util.backport.java.util.concurrent.atomic.AtomicInteger;
 import java.security.AccessControlContext;
+import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
+import java.util.Collection;
+import java.util.List;
+
+import org.compass.core.util.backport.java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Factory and utility methods for {@link Executor}, {@link
@@ -37,8 +39,6 @@ import java.security.PrivilegedExceptionAction;
  *
  * @since 1.5
  * @author Doug Lea
- *
- * @todo complete
  */
 public class Executors {
 
@@ -50,10 +50,12 @@ public class Executors {
      * they will wait in the queue until a thread is available.
      * If any thread terminates due to a failure during execution
      * prior to shutdown, a new one will take its place if needed to
-     * execute subsequent tasks.
+     * execute subsequent tasks.  The threads in the pool will exist
+     * until it is explicitly {@link ExecutorService#shutdown shutdown}.
      *
      * @param nThreads the number of threads in the pool
      * @return the newly created thread pool
+     * @throws IllegalArgumentException if <tt>nThreads &lt;= 0</tt>
      */
     public static ExecutorService newFixedThreadPool(int nThreads) {
         return new ThreadPoolExecutor(nThreads, nThreads,
@@ -70,11 +72,15 @@ public class Executors {
      * active, they will wait in the queue until a thread is
      * available.  If any thread terminates due to a failure during
      * execution prior to shutdown, a new one will take its place if
-     * needed to execute subsequent tasks.
+     * needed to execute subsequent tasks.  The threads in the pool will
+     * exist until it is explicitly {@link ExecutorService#shutdown
+     * shutdown}.
      *
      * @param nThreads the number of threads in the pool
      * @param threadFactory the factory to use when creating new threads
      * @return the newly created thread pool
+     * @throws NullPointerException if threadFactory is null
+     * @throws IllegalArgumentException if <tt>nThreads &lt;= 0</tt>
      */
     public static ExecutorService newFixedThreadPool(int nThreads, ThreadFactory threadFactory) {
         return new ThreadPoolExecutor(nThreads, nThreads,
@@ -97,7 +103,7 @@ public class Executors {
      * @return the newly created single-threaded Executor
      */
     public static ExecutorService newSingleThreadExecutor() {
-        return new DelegatedExecutorService
+        return new FinalizableDelegatedExecutorService
             (new ThreadPoolExecutor(1, 1,
                                     0L, TimeUnit.MILLISECONDS,
                                     new LinkedBlockingQueue()));
@@ -115,9 +121,10 @@ public class Executors {
      * threads
      *
      * @return the newly created single-threaded Executor
+     * @throws NullPointerException if threadFactory is null
      */
     public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
-        return new DelegatedExecutorService
+        return new FinalizableDelegatedExecutorService
             (new ThreadPoolExecutor(1, 1,
                                     0L, TimeUnit.MILLISECONDS,
                                     new LinkedBlockingQueue(),
@@ -153,6 +160,7 @@ public class Executors {
      * ThreadFactory to create new threads when needed.
      * @param threadFactory the factory to use when creating new threads
      * @return the newly created thread pool
+     * @throws NullPointerException if threadFactory is null
      */
     public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
         return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
@@ -193,6 +201,7 @@ public class Executors {
      * @param threadFactory the factory to use when creating new
      * threads
      * @return a newly created scheduled executor
+     * @throws NullPointerException if threadFactory is null
      */
     public static ScheduledExecutorService newSingleThreadScheduledExecutor(ThreadFactory threadFactory) {
         return new DelegatedScheduledExecutorService
@@ -205,6 +214,7 @@ public class Executors {
      * @param corePoolSize the number of threads to keep in the pool,
      * even if they are idle.
      * @return a newly created scheduled thread pool
+     * @throws IllegalArgumentException if <tt>corePoolSize &lt; 0</tt>
      */
     public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) {
         return new ScheduledThreadPoolExecutor(corePoolSize);
@@ -218,6 +228,8 @@ public class Executors {
      * @param threadFactory the factory to use when the executor
      * creates a new thread.
      * @return a newly created scheduled thread pool
+     * @throws IllegalArgumentException if <tt>corePoolSize &lt; 0</tt>
+     * @throws NullPointerException if threadFactory is null
      */
     public static ScheduledExecutorService newScheduledThreadPool(
             int corePoolSize, ThreadFactory threadFactory) {
@@ -320,8 +332,8 @@ public class Executors {
      * <tt>Callable</tt> to an otherwise resultless action.
      * @param task the task to run
      * @param result the result to return
-     * @throws NullPointerException if task null
      * @return a callable object
+     * @throws NullPointerException if task null
      */
     public static Callable callable(Runnable task, Object result) {
         if (task == null)
@@ -353,7 +365,7 @@ public class Executors {
         if (action == null)
             throw new NullPointerException();
         return new Callable() {
-            public Object call() { return action.run(); }};
+	    public Object call() { return action.run(); }};
     }
 
     /**
@@ -367,8 +379,8 @@ public class Executors {
     public static Callable callable(final PrivilegedExceptionAction action) {
         if (action == null)
             throw new NullPointerException();
-        return new Callable() {
-            public Object call() throws Exception { return action.run(); }};
+	return new Callable() {
+	    public Object call() throws Exception { return action.run(); }};
     }
 
     /**
@@ -379,7 +391,7 @@ public class Executors {
      * to create callables that will, if possible, execute under the
      * selected permission settings holding within that action; or if
      * not possible, throw an associated {@link
-     * java.security.AccessControlException}.
+     * AccessControlException}.
      * @param callable the underlying task
      * @return a callable object
      * @throws NullPointerException if callable null
@@ -400,12 +412,12 @@ public class Executors {
      * to create callables that will, if possible, execute under the
      * selected permission settings holding within that action; or if
      * not possible, throw an associated {@link
-     * java.security.AccessControlException}.
+     * AccessControlException}.
      * @param callable the underlying task
      *
      * @return a callable object
      * @throws NullPointerException if callable null
-     * @throws java.security.AccessControlException if the current access control
+     * @throws AccessControlException if the current access control
      * context does not have permission to both set and get context
      * class loader.
      */
@@ -431,10 +443,6 @@ public class Executors {
             task.run();
             return result;
         }
-        // todo: consider
-        //public String toString() {
-        //    return task.toString();
-        //}
     }
 
     /**
@@ -466,10 +474,6 @@ public class Executors {
             else
                 return result;
         }
-        // todo: consider
-        //public String toString() {
-        //    return task.toString();
-        //}
     }
 
     /**
@@ -516,10 +520,6 @@ public class Executors {
             else
                 return result;
         }
-        // todo: consider
-        //public String toString() {
-        //    return task.toString();
-        //}
     }
 
     /**
@@ -583,8 +583,8 @@ public class Executors {
     }
 
     /**
-     * A wrapper class that exposes only the ScheduledExecutorService
-     * methods of a ScheduledExecutorService implementation.
+     * A wrapper class that exposes only the ExecutorService methods
+     * of an ExecutorService implementation.
      */
     static class DelegatedExecutorService extends AbstractExecutorService {
         private final ExecutorService e;
@@ -607,11 +607,12 @@ public class Executors {
         public Future submit(Runnable task, Object result) {
             return e.submit(task, result);
         }
-        public List invokeAll(Collection tasks) throws InterruptedException {
+        public List invokeAll(Collection tasks)
+            throws InterruptedException {
             return e.invokeAll(tasks);
         }
         public List invokeAll(Collection tasks,
-                              long timeout, TimeUnit unit)
+                                             long timeout, TimeUnit unit)
             throws InterruptedException {
             return e.invokeAll(tasks, timeout, unit);
         }
@@ -620,15 +621,25 @@ public class Executors {
             return e.invokeAny(tasks);
         }
         public Object invokeAny(Collection tasks,
-                                long timeout, TimeUnit unit)
+                               long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
             return e.invokeAny(tasks, timeout, unit);
         }
     }
 
+    static class FinalizableDelegatedExecutorService
+	extends DelegatedExecutorService {
+	FinalizableDelegatedExecutorService(ExecutorService executor) {
+	    super(executor);
+	}
+	protected void finalize()  {
+	    super.shutdown();
+	}
+    }
+
     /**
-     * A wrapper class that exposes only the ExecutorService and
-     * ScheduleExecutor methods of a ScheduledExecutorService implementation.
+     * A wrapper class that exposes only the ScheduledExecutorService
+     * methods of a ScheduledExecutorService implementation.
      */
     static class DelegatedScheduledExecutorService
             extends DelegatedExecutorService

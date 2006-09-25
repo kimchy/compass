@@ -7,17 +7,17 @@
 
 package org.compass.core.util.backport.java.util;
 
-import java.util.AbstractSet;
-import java.util.Iterator;
-import java.util.Comparator;
-import java.util.SortedSet;
-import java.util.Collection;
-import java.io.Serializable;
-import java.util.Map;
-import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.SortedSet;
 
 public class TreeSet extends AbstractSet
                      implements NavigableSet, Cloneable, Serializable {
@@ -83,32 +83,38 @@ public class TreeSet extends AbstractSet
         return map.descendingKeySet().iterator();
     }
 
-    public NavigableSet navigableSubSet(Object fromElement, Object toElement) {
-        return new TreeSet(map.navigableSubMap(fromElement, toElement));
+    public SortedSet subSet(Object fromElement, Object toElement) {
+        return subSet(fromElement, true, toElement, false);
     }
 
-    public NavigableSet navigableHeadSet(Object toElement) {
-        return new TreeSet(map.navigableHeadMap(toElement));
+    public SortedSet headSet(Object toElement) {
+        return headSet(toElement, false);
     }
 
-    public NavigableSet navigableTailSet(Object fromElement) {
-        return new TreeSet(map.navigableTailMap(fromElement));
+    public SortedSet tailSet(Object fromElement) {
+        return tailSet(fromElement, true);
+    }
+
+    public NavigableSet subSet(Object fromElement, boolean fromInclusive,
+                               Object toElement,   boolean toInclusive) {
+        return new TreeSet(map.subMap(fromElement, fromInclusive,
+                                      toElement,   toInclusive));
+    }
+
+    public NavigableSet headSet(Object toElement, boolean toInclusive) {
+        return new TreeSet(map.headMap(toElement, toInclusive));
+    }
+
+    public NavigableSet tailSet(Object fromElement, boolean fromInclusive) {
+        return new TreeSet(map.tailMap(fromElement, fromInclusive));
+    }
+
+    public NavigableSet descendingSet() {
+        return new TreeSet(map.descendingMap());
     }
 
     public Comparator comparator() {
         return map.comparator();
-    }
-
-    public SortedSet subSet(Object fromElement, Object toElement) {
-        return navigableSubSet(fromElement, toElement);
-    }
-
-    public SortedSet headSet(Object toElement) {
-        return navigableHeadSet(toElement);
-    }
-
-    public SortedSet tailSet(Object fromElement) {
-        return navigableTailSet(fromElement);
     }
 
     public Object first() {

@@ -6,8 +6,6 @@
 
 package org.compass.core.util.backport.java.util.concurrent.atomic;
 
-import java.util.*;
-
 /**
  * An array of object references in which elements may be updated
  * atomically.  See the {@link org.compass.core.util.backport.java.util.concurrent.atomic} package

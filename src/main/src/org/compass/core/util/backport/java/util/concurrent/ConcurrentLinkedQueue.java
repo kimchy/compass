@@ -5,12 +5,14 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import org.compass.core.util.backport.java.util.*;
-import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
-import java.io.*;
+
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import org.compass.core.util.backport.java.util.AbstractQueue;
+import org.compass.core.util.backport.java.util.Queue;
 
 
 /**
@@ -367,7 +369,7 @@ public class ConcurrentLinkedQueue extends AbstractQueue
     /**
      * Returns an iterator over the elements in this queue in proper sequence.
      * The returned iterator is a "weakly consistent" iterator that
-     * will never throw {@link ConcurrentModificationException},
+     * will never throw {@link java.util.ConcurrentModificationException},
      * and guarantees to traverse elements as they existed upon
      * construction of the iterator, and may (but is not guaranteed to)
      * reflect any modifications subsequent to construction.

@@ -5,10 +5,15 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import org.compass.core.util.backport.java.util.concurrent.*; // for javadoc (till 6280605 is fixed)
-import org.compass.core.util.backport.java.util.concurrent.locks.*;
-import java.util.*;
+
+import java.util.Arrays;
+import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
 import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
+import org.compass.core.util.backport.java.util.concurrent.locks.ReentrantLock;
 
 /**
  * An {@link ExecutorService} that executes each submitted task using
@@ -231,7 +236,18 @@ import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
  * supplied methods, {@link ThreadPoolExecutor#remove} and {@link
  * ThreadPoolExecutor#purge} are available to assist in storage
  * reclamation when large numbers of queued tasks become
- * cancelled.</dd> </dl>
+ * cancelled.</dd>
+ *
+ * <dt>Finalization</dt>
+ *
+ * <dd> A pool that is no longer referenced in a program <em>AND</em>
+ * has no remaining threads will be <tt>shutdown</tt>
+ * automatically. If you would like to ensure that unreferenced pools
+ * are reclaimed even if users forget to call {@link
+ * ThreadPoolExecutor#shutdown}, then you must arrange that unused
+ * threads eventually die, by setting appropriate keep-alive times,
+ * using a lower bound of zero core threads and/or setting {@link
+ * ThreadPoolExecutor#allowCoreThreadTimeOut}.  </dd> </dl>
  *
  * <p> <b>Extension example</b>. Most extensions of this class
  * override one or more of the protected hook methods. For example,
@@ -638,12 +654,11 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
             final ReentrantLock runLock = this.runLock;
             runLock.lock();
             try {
-                Thread.interrupted(); // clear interrupt status on entry
-                // Abort now if immediate cancel.  Otherwise, we have
-                // committed to run this task.
-                if (runState == STOP)
-                    return;
-
+                // If not shutting down then clear an outstanding interrupt.
+                if (runState != STOP &&
+                    Thread.interrupted() &&
+                    runState == STOP) // Re-interrupt if stopped after clearing
+                    thread.interrupt();
                 boolean ran = false;
                 beforeExecute(thread, task);
                 try {
@@ -881,14 +896,10 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * or the security manager's <tt>checkAccess</tt> method denies access.
      */
     public void shutdown() {
-        // Fail if caller doesn't have modifyThread permission. We
-        // explicitly check permissions directly because we can't trust
-        // implementations of SecurityManager to correctly override
-        // the "check access" methods such that our documented
-        // security policy is implemented.
+        // Fail if caller doesn't have modifyThread permission.
         SecurityManager security = System.getSecurityManager();
         if (security != null)
-            java.security.AccessController.checkPermission(shutdownPerm);
+            security.checkPermission(shutdownPerm);
 
         boolean fullyTerminated = false;
         synchronized (mainLock) {
@@ -955,7 +966,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         // Almost the same code as shutdown()
         SecurityManager security = System.getSecurityManager();
         if (security != null)
-            java.security.AccessController.checkPermission(shutdownPerm);
+            security.checkPermission(shutdownPerm);
 
         boolean fullyTerminated = false;
         synchronized (mainLock) {

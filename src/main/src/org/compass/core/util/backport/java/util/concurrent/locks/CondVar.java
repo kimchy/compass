@@ -11,9 +11,11 @@
 
 package org.compass.core.util.backport.java.util.concurrent.locks;
 
-import java.util.*;
-import org.compass.core.util.backport.java.util.concurrent.*;
-import org.compass.core.util.backport.java.util.concurrent.helpers.*;
+import java.util.Collection;
+import java.util.Date;
+
+import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
+import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
 
 class CondVar implements Condition, java.io.Serializable {
 

@@ -5,8 +5,8 @@
  */
 
 package org.compass.core.util.backport.java.util;
-import org.compass.core.util.backport.java.util.*; // for javadoc
-import java.util.*;
+
+import java.util.Iterator;
 
 /**
  * A linear collection that supports element insertion and removal at
@@ -105,7 +105,7 @@ import java.util.*;
  * </table>
  *
  * <p>Deques can also be used as LIFO (Last-In-First-Out) stacks.  This
- * interface should be used in preference to the legacy {@link Stack} class.
+ * interface should be used in preference to the legacy {@link java.util.Stack} class.
  * When a deque is used as a stack, elements are pushed and popped from the
  * beginning of the deque.  Stack methods are precisely equivalent to
  * <tt>Deque</tt> methods as indicated in the table below:
@@ -138,7 +138,7 @@ import java.util.*;
  * elements, {@link #removeFirstOccurrence removeFirstOccurrence} and
  * {@link #removeLastOccurrence removeLastOccurrence}.
  *
- * <p>Unlike the {@link List} interface, this interface does not
+ * <p>Unlike the {@link java.util.List} interface, this interface does not
  * provide support for indexed access to elements.
  *
  * <p>While <tt>Deque</tt> implementations are not strictly required
@@ -360,7 +360,7 @@ public interface Deque extends Queue {
      * <p>This method is equivalent to {@link #addLast}.
      *
      * @param e the element to add
-     * @return <tt>true</tt> (as specified by {@link Collection#add})
+     * @return <tt>true</tt> (as specified by {@link java.util.Collection#add})
      * @throws IllegalStateException if the element cannot be added at this
      *         time due to capacity restrictions
      * @throws ClassCastException if the class of the specified element

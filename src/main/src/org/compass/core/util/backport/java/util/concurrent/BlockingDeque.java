@@ -5,8 +5,10 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import java.util.*;
-import org.compass.core.util.backport.java.util.*;
+
+import java.util.Iterator;
+
+import org.compass.core.util.backport.java.util.Deque;
 
 /**
  * A {@link Deque} that additionally supports blocking operations that wait

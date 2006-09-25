@@ -5,12 +5,15 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import org.compass.core.util.backport.java.util.*;
-import org.compass.core.util.backport.java.util.concurrent.locks.*;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import org.compass.core.util.backport.java.util.AbstractQueue;
 import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
+import org.compass.core.util.backport.java.util.concurrent.locks.Condition;
+import org.compass.core.util.backport.java.util.concurrent.locks.ReentrantLock;
 
 /**
  * An optionally-bounded {@linkplain BlockingDeque blocking deque} based on
@@ -891,7 +894,7 @@ public class LinkedBlockingDeque
      * sequential order.  The elements will be returned in order from
      * last (tail) to first (head).
      * The returned <tt>Iterator</tt> is a "weakly consistent" iterator that
-     * will never throw {@link ConcurrentModificationException},
+     * will never throw {@link java.util.ConcurrentModificationException},
      * and guarantees to traverse elements as they existed upon
      * construction of the iterator, and may (but is not guaranteed to)
      * reflect any modifications subsequent to construction.

@@ -5,7 +5,8 @@
  */
 
 package org.compass.core.util.backport.java.util;
-import java.util.*;
+
+import java.util.Collection;
 
 /**
  * A collection designed for holding elements prior to processing.

@@ -5,7 +5,11 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import java.util.*;
+
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * A {@link java.util.Set} that uses an internal {@link CopyOnWriteArrayList}
@@ -310,7 +314,7 @@ public class CopyOnWriteArraySet extends AbstractSet
      * Compares the specified object with this set for equality.
      * Returns {@code true} if the specified object is the same object
      * as this object, or if it is also a {@link Set} and the elements
-     * returned by an {@linkplain List#iterator() iterator} over the
+     * returned by an {@linkplain java.util.List#iterator() iterator} over the
      * specified set are the same as the elements returned by an
      * iterator over this set.  More formally, the two iterators are
      * considered to return the same elements if they return the same

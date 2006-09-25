@@ -6,8 +6,12 @@
 
 package org.compass.core.util.backport.java.util.concurrent;
 
-import java.util.*;
-import org.compass.core.util.backport.java.util.concurrent.helpers.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
+import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
 
 /**
  * Provides default implementations of {@link ExecutorService}

@@ -5,7 +5,6 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent.atomic;
-import java.util.*;
 
 /**
  * A <tt>long</tt> array in which elements may be updated atomically.

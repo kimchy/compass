@@ -5,9 +5,9 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import org.compass.core.util.backport.java.util.concurrent.*; // for javadoc (till 6280605 is fixed)
-import java.util.List;
+
 import java.util.Collection;
+import java.util.List;
 
 /**
  * An {@link Executor} that provides methods to manage termination and
@@ -19,7 +19,8 @@ import java.util.Collection;
  * to stop accepting new tasks.  After being shut down, the executor
  * will eventually terminate, at which point no tasks are actively
  * executing, no tasks are awaiting execution, and no new tasks can be
- * submitted.
+ * submitted.  An unused <tt>ExecutorService</tt> should be shut down
+ * to allow reclamation of its resources.
  *
  * <p> Method <tt>submit</tt> extends base method {@link
  * Executor#execute} by creating and returning a {@link Future} that

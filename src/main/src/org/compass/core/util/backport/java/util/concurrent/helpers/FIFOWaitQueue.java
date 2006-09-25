@@ -1,6 +1,8 @@
 package org.compass.core.util.backport.java.util.concurrent.helpers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Simple linked list queue used in FIFOSemaphore.
@@ -10,6 +12,9 @@ import java.util.*;
  **/
 
 public class FIFOWaitQueue extends WaitQueue implements java.io.Serializable {
+
+    private final static long serialVersionUID = 2416444691925378811L;
+
     protected transient WaitNode head_ = null;
     protected transient WaitNode tail_ = null;
 
@@ -35,6 +40,13 @@ public class FIFOWaitQueue extends WaitQueue implements java.io.Serializable {
             w.next = null;
             return w;
         }
+    }
+
+    public void putBack(WaitNode w) {
+        w.next = head_;
+        head_ = w;
+        if (tail_ == null)
+            tail_ = w;
     }
 
     public boolean hasNodes() {

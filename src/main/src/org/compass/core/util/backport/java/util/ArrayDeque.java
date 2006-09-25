@@ -4,8 +4,15 @@
  */
 
 package org.compass.core.util.backport.java.util;
-import java.util.*;
-import java.io.*;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Resizable-array implementation of the {@link Deque} interface.  Array
@@ -13,7 +20,7 @@ import java.io.*;
  * usage.  They are not thread-safe; in the absence of external
  * synchronization, they do not support concurrent access by multiple threads.
  * Null elements are prohibited.  This class is likely to be faster than
- * {@link Stack} when used as a stack, and faster than {@link LinkedList}
+ * {@link java.util.Stack} when used as a stack, and faster than {@link LinkedList}
  * when used as a queue.
  *
  * <p>Most <tt>ArrayDeque</tt> operations run in amortized constant time.
@@ -785,9 +792,7 @@ public class ArrayDeque extends AbstractCollection
     public Object clone() {
         try {
             ArrayDeque result = (ArrayDeque) super.clone();
-            // These two lines are currently faster than cloning the array:
-            result.elements = (Object[]) new Object[elements.length];
-            System.arraycopy(elements, 0, result.elements, 0, elements.length);
+            result.elements = Arrays.copyOf(elements, elements.length);
             return result;
 
         } catch (CloneNotSupportedException e) {

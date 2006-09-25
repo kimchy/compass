@@ -9,10 +9,9 @@ package org.compass.core.util.backport.java.util.concurrent;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.io.Serializable;
 
-import org.compass.core.util.backport.java.util.*;
-import org.compass.core.util.backport.java.util.concurrent.helpers.*;
+import org.compass.core.util.backport.java.util.AbstractQueue;
+import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
 
 /**
  * An optionally-bounded {@linkplain BlockingQueue blocking queue} based on
@@ -34,7 +33,7 @@ import org.compass.core.util.backport.java.util.concurrent.helpers.*;
  * queue above capacity.
  *
  * <p>This class and its iterator implement all of the
- * <em>optional</em> methods of the {@link java.util.Collection} and {@link
+ * <em>optional</em> methods of the {@link Collection} and {@link
  * Iterator} interfaces.
  *
  * <p>This class is a member of the
@@ -747,7 +746,7 @@ public class LinkedBlockingQueue extends AbstractQueue
         }
     }
 
-    private static class SerializableLock implements Serializable {
+    private static class SerializableLock implements java.io.Serializable {
         private final static long serialVersionUID = -8856990691138858668L;
     }
 }

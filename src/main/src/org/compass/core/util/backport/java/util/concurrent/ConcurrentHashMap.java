@@ -5,19 +5,20 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import org.compass.core.util.backport.java.util.concurrent.locks.*;
-import org.compass.core.util.backport.java.util.*;
-import java.io.Serializable;
+
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collection;
-import java.util.Set;
-import java.util.Map;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
-import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
+import java.util.Set;
+
+import org.compass.core.util.backport.java.util.AbstractCollection;
+import org.compass.core.util.backport.java.util.AbstractMap;
+import org.compass.core.util.backport.java.util.AbstractSet;
+import org.compass.core.util.backport.java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A hash table supporting full concurrency of retrievals and
@@ -40,7 +41,7 @@ import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
  * removal of only some entries.  Similarly, Iterators and
  * Enumerations return elements reflecting the state of the hash table
  * at some point at or since the creation of the iterator/enumeration.
- * They do <em>not</em> throw {@link ConcurrentModificationException}.
+ * They do <em>not</em> throw {@link java.util.ConcurrentModificationException}.
  * However, iterators are designed to be used by only one thread at a time.
  *
  * <p> The allowed concurrency among update operations is guided by
@@ -65,7 +66,7 @@ import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
  * <em>optional</em> methods of the {@link Map} and {@link Iterator}
  * interfaces.
  *
- * <p> Like {@link Hashtable} but unlike {@link HashMap}, this class
+ * <p> Like {@link java.util.Hashtable} but unlike {@link java.util.HashMap}, this class
  * does <em>not</em> allow <tt>null</tt> to be used as a key or value.
  *
  * <p>This class is a member of the
@@ -878,7 +879,7 @@ public class ConcurrentHashMap extends AbstractMap
     public Object put(Object key, Object value) {
         if (value == null)
             throw new NullPointerException();
-        int hash = hash(key);
+        int hash = hash(key); // throws NullPointerException if key null
         return segmentFor(hash).put(key, hash, value, false);
     }
 
@@ -892,7 +893,7 @@ public class ConcurrentHashMap extends AbstractMap
     public Object putIfAbsent(Object key, Object value) {
         if (value == null)
             throw new NullPointerException();
-        int hash = hash(key);
+        int hash = hash(key); // throws NullPointerException if key null
         return segmentFor(hash).put(key, hash, value, true);
     }
 
@@ -920,7 +921,7 @@ public class ConcurrentHashMap extends AbstractMap
      * @throws NullPointerException if the specified key is null
      */
     public Object remove(Object key) {
-        int hash = hash(key);
+        int hash = hash(key); // throws NullPointerException if key null
         return segmentFor(hash).remove(key, hash, null);
     }
 
@@ -932,7 +933,7 @@ public class ConcurrentHashMap extends AbstractMap
     public boolean remove(Object key, Object value) {
         if (value == null)
             return false;
-        int hash = hash(key);
+        int hash = hash(key); // throws NullPointerException if key null
         return segmentFor(hash).remove(key, hash, value) != null;
     }
 
@@ -944,7 +945,7 @@ public class ConcurrentHashMap extends AbstractMap
     public boolean replace(Object key, Object oldValue, Object newValue) {
         if (oldValue == null || newValue == null)
             throw new NullPointerException();
-        int hash = hash(key);
+        int hash = hash(key); // throws NullPointerException if key null
         return segmentFor(hash).replace(key, hash, oldValue, newValue);
     }
 
@@ -958,7 +959,7 @@ public class ConcurrentHashMap extends AbstractMap
     public Object replace(Object key, Object value) {
         if (value == null)
             throw new NullPointerException();
-        int hash = hash(key);
+        int hash = hash(key); // throws NullPointerException if key null
         return segmentFor(hash).replace(key, hash, value);
     }
 
@@ -981,7 +982,7 @@ public class ConcurrentHashMap extends AbstractMap
      * <tt>addAll</tt> operations.
      *
      * <p>The view's <tt>iterator</tt> is a "weakly consistent" iterator
-     * that will never throw {@link ConcurrentModificationException},
+     * that will never throw {@link java.util.ConcurrentModificationException},
      * and guarantees to traverse elements as they existed upon
      * construction of the iterator, and may (but is not guaranteed to)
      * reflect any modifications subsequent to construction.
@@ -1002,7 +1003,7 @@ public class ConcurrentHashMap extends AbstractMap
      * support the <tt>add</tt> or <tt>addAll</tt> operations.
      *
      * <p>The view's <tt>iterator</tt> is a "weakly consistent" iterator
-     * that will never throw {@link ConcurrentModificationException},
+     * that will never throw {@link java.util.ConcurrentModificationException},
      * and guarantees to traverse elements as they existed upon
      * construction of the iterator, and may (but is not guaranteed to)
      * reflect any modifications subsequent to construction.
@@ -1023,7 +1024,7 @@ public class ConcurrentHashMap extends AbstractMap
      * <tt>addAll</tt> operations.
      *
      * <p>The view's <tt>iterator</tt> is a "weakly consistent" iterator
-     * that will never throw {@link ConcurrentModificationException},
+     * that will never throw {@link java.util.ConcurrentModificationException},
      * and guarantees to traverse elements as they existed upon
      * construction of the iterator, and may (but is not guaranteed to)
      * reflect any modifications subsequent to construction.

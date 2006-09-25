@@ -5,12 +5,13 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import org.compass.core.util.backport.java.util.concurrent.*; // for javadoc (till 6280605 is fixed)
-import org.compass.core.util.backport.java.util.concurrent.atomic.*;
-import java.util.List;
+
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+
+import org.compass.core.util.backport.java.util.concurrent.atomic.AtomicLong;
 import org.compass.core.util.backport.java.util.concurrent.helpers.Utils;
 
 /**
@@ -301,7 +302,7 @@ public class ScheduledThreadPoolExecutor
      *
      * @param corePoolSize the number of threads to keep in the pool,
      * even if they are idle
-     * @throws IllegalArgumentException if <tt>corePoolSize &lt;= 0</tt>
+     * @throws IllegalArgumentException if <tt>corePoolSize &lt; 0</tt>
      */
     public ScheduledThreadPoolExecutor(int corePoolSize) {
         super(corePoolSize, Integer.MAX_VALUE, 0, TimeUnit.NANOSECONDS,
@@ -316,7 +317,7 @@ public class ScheduledThreadPoolExecutor
      * even if they are idle
      * @param threadFactory the factory to use when the executor
      * creates a new thread
-     * @throws IllegalArgumentException if <tt>corePoolSize &lt;= 0</tt>
+     * @throws IllegalArgumentException if <tt>corePoolSize &lt; 0</tt>
      * @throws NullPointerException if threadFactory is null
      */
     public ScheduledThreadPoolExecutor(int corePoolSize,
@@ -333,7 +334,7 @@ public class ScheduledThreadPoolExecutor
      * even if they are idle
      * @param handler the handler to use when execution is blocked
      * because the thread bounds and queue capacities are reached
-     * @throws IllegalArgumentException if <tt>corePoolSize &lt;= 0</tt>
+     * @throws IllegalArgumentException if <tt>corePoolSize &lt; 0</tt>
      * @throws NullPointerException if handler is null
      */
     public ScheduledThreadPoolExecutor(int corePoolSize,
@@ -352,7 +353,7 @@ public class ScheduledThreadPoolExecutor
      * creates a new thread
      * @param handler the handler to use when execution is blocked
      * because the thread bounds and queue capacities are reached.
-     * @throws IllegalArgumentException if <tt>corePoolSize &lt;= 0</tt>
+     * @throws IllegalArgumentException if <tt>corePoolSize &lt; 0</tt>
      * @throws NullPointerException if threadFactory or handler is null
      */
     public ScheduledThreadPoolExecutor(int corePoolSize,

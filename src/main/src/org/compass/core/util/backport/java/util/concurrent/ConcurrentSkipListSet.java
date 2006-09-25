@@ -5,13 +5,17 @@
  */
 
 package org.compass.core.util.backport.java.util.concurrent;
-import org.compass.core.util.backport.java.util.*;
-import java.util.Comparator;
+
 import java.util.Collection;
-import java.util.SortedSet;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+
+import org.compass.core.util.backport.java.util.AbstractSet;
+import org.compass.core.util.backport.java.util.Collections;
+import org.compass.core.util.backport.java.util.NavigableSet;
 
 /**
  * A scalable concurrent {@link NavigableSet} implementation based on
@@ -27,7 +31,7 @@ import java.util.Map;
  * Iterators are <i>weakly consistent</i>, returning elements
  * reflecting the state of the set at some point at or since the
  * creation of the iterator.  They do <em>not</em> throw {@link
- * ConcurrentModificationException}, and may proceed concurrently with
+ * java.util.ConcurrentModificationException}, and may proceed concurrently with
  * other operations.  Ascending ordered views and their iterators are
  * faster than descending ones.
  *
@@ -49,7 +53,7 @@ import java.util.Map;
  * distinguished from the absence of elements.
  *
  * <p>This class is a member of the
- * <a href="{@docRoot}/../guide/collections/index.html">
+ * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
  *
  * @author Doug Lea
@@ -63,12 +67,10 @@ public class ConcurrentSkipListSet
 
     /**
      * The underlying map. Uses Boolean.TRUE as value for each
-     * element.  Note that this class relies on default serialization,
-     * which is a little wasteful in saving all of the useless value
-     * fields of the underlying map, but enables this field to be
-     * declared final, which is necessary for thread safety.
+     * element.  This field is declared final for the sake of thread
+     * safety, which entails some ugliness in clone()
      */
-    private final ConcurrentSkipListMap m;
+    private final ConcurrentNavigableMap m;
 
     /**
      * Constructs a new, empty set that orders its elements according to
@@ -120,22 +122,24 @@ public class ConcurrentSkipListSet
     }
 
     /**
+     * For use by submaps
+     */
+    ConcurrentSkipListSet(ConcurrentNavigableMap m) {
+        this.m = m;
+    }
+
+    /**
      * Returns a shallow copy of this <tt>ConcurrentSkipListSet</tt>
      * instance. (The elements themselves are not cloned.)
      *
      * @return a shallow copy of this set
      */
     public Object clone() {
-        ConcurrentSkipListSet clone = null;
-        try {
-            clone = (ConcurrentSkipListSet) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new InternalError();
+        if (this.getClass() != ConcurrentSkipListSet.class) {
+            // can't change m, since it is final
+            throw new UnsupportedOperationException("Can't clone subclasses");
         }
-
-        clone.m.initialize();
-        clone.addAll(this);
-        return clone;
+        return new ConcurrentSkipListSet(new ConcurrentSkipListMap(this.m));
     }
 
     /* ---------------- Set operations -------------- */
@@ -157,7 +161,7 @@ public class ConcurrentSkipListSet
      * @return the number of elements in this set
      */
     public int size() {
-        return m.size();
+	return m.size();
     }
 
     /**
@@ -165,7 +169,7 @@ public class ConcurrentSkipListSet
      * @return <tt>true</tt> if this set contains no elements
      */
     public boolean isEmpty() {
-        return m.isEmpty();
+	return m.isEmpty();
     }
 
     /**
@@ -180,7 +184,7 @@ public class ConcurrentSkipListSet
      * @throws NullPointerException if the specified element is null
      */
     public boolean contains(Object o) {
-        return m.containsKey(o);
+	return m.containsKey(o);
     }
 
     /**
@@ -198,7 +202,7 @@ public class ConcurrentSkipListSet
      * @throws NullPointerException if the specified element is null
      */
     public boolean add(Object e) {
-        return m.putIfAbsent(e, Boolean.TRUE) == null;
+	return m.putIfAbsent(e, Boolean.TRUE) == null;
     }
 
     /**
@@ -216,14 +220,14 @@ public class ConcurrentSkipListSet
      * @throws NullPointerException if the specified element is null
      */
     public boolean remove(Object o) {
-        return m.removep(o);
+	return m.remove(o, Boolean.TRUE);
     }
 
     /**
      * Removes all of the elements from this set.
      */
     public void clear() {
-        m.clear();
+	m.clear();
     }
 
     /**
@@ -232,7 +236,7 @@ public class ConcurrentSkipListSet
      * @return an iterator over the elements in this set in ascending order
      */
     public Iterator iterator() {
-        return m.keyIterator();
+        return m.navigableKeySet().iterator();
     }
 
     /**
@@ -241,8 +245,9 @@ public class ConcurrentSkipListSet
      * @return an iterator over the elements in this set in descending order
      */
     public Iterator descendingIterator() {
-        return m.descendingKeyIterator();
+	return m.descendingKeySet().iterator();
     }
+
 
     /* ---------------- AbstractSet Overrides -------------- */
 
@@ -260,11 +265,11 @@ public class ConcurrentSkipListSet
      */
     public boolean equals(Object o) {
         // Override AbstractSet version to avoid calling size()
-        if (o == this)
-            return true;
-        if (!(o instanceof Set))
-            return false;
-        Collection c = (Collection) o;
+	if (o == this)
+	    return true;
+	if (!(o instanceof Set))
+	    return false;
+	Collection c = (Collection) o;
         try {
             return containsAll(c) && c.containsAll(this);
         } catch (ClassCastException unused)   {
@@ -331,11 +336,13 @@ public class ConcurrentSkipListSet
     }
 
     public Object pollFirst() {
-        return m.pollFirstKey();
+        Map.Entry e = m.pollFirstEntry();
+        return e == null? null : e.getKey();
     }
 
     public Object pollLast() {
-        return m.pollLastKey();
+        Map.Entry e = m.pollLastEntry();
+        return e == null? null : e.getKey();
     }
 
 
@@ -362,172 +369,83 @@ public class ConcurrentSkipListSet
 
     /**
      * @throws ClassCastException {@inheritDoc}
-     * @throws NullPointerException if <tt>fromElement</tt> or
-     *         <tt>toElement</tt> is null
+     * @throws NullPointerException if {@code fromElement} or
+     *         {@code toElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet navigableSubSet(Object fromElement, Object toElement) {
-        return new ConcurrentSkipListSubSet(m, fromElement, toElement);
+    public NavigableSet subSet(Object fromElement,
+                                  boolean fromInclusive,
+                                  Object toElement,
+                                  boolean toInclusive) {
+	return new ConcurrentSkipListSet
+            ((ConcurrentNavigableMap)
+             m.subMap(fromElement, fromInclusive,
+                      toElement,   toInclusive));
     }
 
     /**
      * @throws ClassCastException {@inheritDoc}
-     * @throws NullPointerException if <tt>toElement</tt> is null
+     * @throws NullPointerException if {@code toElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet navigableHeadSet(Object toElement) {
-        return new ConcurrentSkipListSubSet(m, null, toElement);
+    public NavigableSet headSet(Object toElement, boolean inclusive) {
+	return new ConcurrentSkipListSet(
+               (ConcurrentNavigableMap)m.headMap(toElement, inclusive));
     }
 
     /**
      * @throws ClassCastException {@inheritDoc}
-     * @throws NullPointerException if <tt>fromElement</tt> is null
+     * @throws NullPointerException if {@code fromElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
-    public NavigableSet navigableTailSet(Object fromElement) {
-        return new ConcurrentSkipListSubSet(m, fromElement, null);
+    public NavigableSet tailSet(Object fromElement, boolean inclusive) {
+	return new ConcurrentSkipListSet(
+               (ConcurrentNavigableMap)m.tailMap(fromElement, inclusive));
     }
 
     /**
-     * Equivalent to {@link #navigableSubSet} but with a return type
-     * conforming to the <tt>SortedSet</tt> interface.
-     *
-     * <p>{@inheritDoc}
-     *
-     * @throws ClassCastException       {@inheritDoc}
-     * @throws NullPointerException if <tt>fromElement</tt> or
-     *         <tt>toElement</tt> is null
+     * @throws ClassCastException {@inheritDoc}
+     * @throws NullPointerException if {@code fromElement} or
+     *         {@code toElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
     public SortedSet subSet(Object fromElement, Object toElement) {
-        return navigableSubSet(fromElement, toElement);
+	return subSet(fromElement, true, toElement, false);
     }
 
     /**
-     * Equivalent to {@link #navigableHeadSet} but with a return type
-     * conforming to the <tt>SortedSet</tt> interface.
-     *
-     * <p>{@inheritDoc}
-     *
-     * @throws ClassCastException       {@inheritDoc}
-     * @throws NullPointerException if <tt>toElement</tt> is null
+     * @throws ClassCastException {@inheritDoc}
+     * @throws NullPointerException if {@code toElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
     public SortedSet headSet(Object toElement) {
-        return navigableHeadSet(toElement);
+	return headSet(toElement, false);
     }
 
-
     /**
-     * Equivalent to {@link #navigableTailSet} but with a return type
-     * conforming to the <tt>SortedSet</tt> interface.
-     *
-     * <p>{@inheritDoc}
-     *
-     * @throws ClassCastException       {@inheritDoc}
-     * @throws NullPointerException if <tt>fromElement</tt> is null
+     * @throws ClassCastException {@inheritDoc}
+     * @throws NullPointerException if {@code fromElement} is null
      * @throws IllegalArgumentException {@inheritDoc}
      */
     public SortedSet tailSet(Object fromElement) {
-        return navigableTailSet(fromElement);
+	return tailSet(fromElement, true);
     }
 
     /**
-     * Subsets returned by {@link ConcurrentSkipListSet} subset operations
-     * represent a subrange of elements of their underlying
-     * sets. Instances of this class support all methods of their
-     * underlying sets, differing in that elements outside their range are
-     * ignored, and attempts to add elements outside their ranges result
-     * in {@link IllegalArgumentException}.  Instances of this class are
-     * constructed only using the <tt>subSet</tt>, <tt>headSet</tt>, and
-     * <tt>tailSet</tt> methods of their underlying sets.
+     * Returns a reverse order view of the elements contained in this set.
+     * The descending set is backed by this set, so changes to the set are
+     * reflected in the descending set, and vice-versa.
+     *
+     * <p>The returned set has an ordering equivalent to
+     * <tt>{@link Collections#reverseOrder(Comparator) Collections.reverseOrder}(comparator())</tt>.
+     * The expression {@code s.descendingSet().descendingSet()} returns a
+     * view of {@code s} essentially equivalent to {@code s}.
+     *
+     * @return a reverse order view of this set
      */
-    static class ConcurrentSkipListSubSet
-        extends AbstractSet
-        implements NavigableSet, java.io.Serializable {
-
-        private static final long serialVersionUID = -7647078645896651609L;
-
-        /** The underlying submap  */
-        private final ConcurrentSkipListMap.ConcurrentSkipListSubMap s;
-
-        /**
-         * Creates a new submap.
-         * @param fromElement inclusive least value, or <tt>null</tt> if from start
-         * @param toElement exclusive upper bound or <tt>null</tt> if to end
-         * @throws IllegalArgumentException if fromElement and toElement
-         * nonnull and fromElement greater than toElement
-         */
-        ConcurrentSkipListSubSet(ConcurrentSkipListMap map,
-                                 Object fromElement, Object toElement) {
-            s = new ConcurrentSkipListMap.ConcurrentSkipListSubMap
-                (map, fromElement, toElement);
-        }
-
-        // subsubset construction
-
-        public NavigableSet navigableSubSet(Object fromElement, Object toElement) {
-            if (!s.inOpenRange(fromElement) || !s.inOpenRange(toElement))
-                throw new IllegalArgumentException("element out of range");
-            return new ConcurrentSkipListSubSet(s.getMap(),
-                                                   fromElement, toElement);
-        }
-
-        public NavigableSet navigableHeadSet(Object toElement) {
-            Object least = s.getLeast();
-            if (!s.inOpenRange(toElement))
-                throw new IllegalArgumentException("element out of range");
-            return new ConcurrentSkipListSubSet(s.getMap(),
-                                                   least, toElement);
-        }
-
-        public NavigableSet navigableTailSet(Object fromElement) {
-            Object fence = s.getFence();
-            if (!s.inOpenRange(fromElement))
-                throw new IllegalArgumentException("element out of range");
-            return new ConcurrentSkipListSubSet(s.getMap(),
-                                                   fromElement, fence);
-        }
-
-        public SortedSet subSet(Object fromElement, Object toElement) {
-            return navigableSubSet(fromElement, toElement);
-        }
-
-        public SortedSet headSet(Object toElement) {
-            return navigableHeadSet(toElement);
-        }
-
-        public SortedSet tailSet(Object fromElement) {
-            return navigableTailSet(fromElement);
-        }
-
-        // relays to submap methods
-
-        public int size()                 { return s.size(); }
-        public boolean isEmpty()          { return s.isEmpty(); }
-        public boolean contains(Object o) { return s.containsKey(o); }
-        public void clear()               { s.clear(); }
-        public Object first()                  { return s.firstKey(); }
-        public Object last()                   { return s.lastKey(); }
-        public Object ceiling(Object e)             { return s.ceilingKey(e); }
-        public Object lower(Object e)               { return s.lowerKey(e); }
-        public Object floor(Object e)               { return s.floorKey(e); }
-        public Object higher(Object e)              { return s.higherKey(e); }
-        public boolean remove(Object o) { return s.remove(o)==Boolean.TRUE; }
-        public boolean add(Object e)       { return s.put(e, Boolean.TRUE)==null; }
-        public Comparator comparator() { return s.comparator(); }
-        public Iterator iterator()     { return s.keySet().iterator(); }
-        public Iterator descendingIterator() {
-            return s.descendingKeySet().iterator();
-        }
-        public Object pollFirst() {
-            Map.Entry e = s.pollFirstEntry();
-            return (e == null)? null : e.getKey();
-        }
-        public Object pollLast() {
-            Map.Entry e = s.pollLastEntry();
-            return (e == null)? null : e.getKey();
-        }
-
+    public NavigableSet descendingSet() {
+	return new ConcurrentSkipListSet(
+               (ConcurrentNavigableMap)m.descendingMap());
     }
+
 }
