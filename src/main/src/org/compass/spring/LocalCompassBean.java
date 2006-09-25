@@ -199,6 +199,9 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
      * Note, that it will be automatically wrapped with Spring's <literal>TransactionAwareDataSourceProxy</literal> if not
      * already wrapped by one.
      * {@link org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy}.
+     * <p/>
+     * Also note that setting the data source is not enough to configure Compass to store the index
+     * within the database, the Compass connection string should also be set to <code>jdbc://</code>.
      */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
