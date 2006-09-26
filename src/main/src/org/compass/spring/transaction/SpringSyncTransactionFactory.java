@@ -51,10 +51,10 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
     protected void doConfigure(CompassSettings settings) {
         this.transactionManager = (PlatformTransactionManager) transactionManagerHolder.get();
         if (transactionManager == null) {
-            transactionManager = (PlatformTransactionManager) settings.getRegistry().get(transactionManagerKey);
+            transactionManager = (PlatformTransactionManager) settings.getRegistry(transactionManagerKey);
         }
         if (transactionManager != null) {
-            settings.getRegistry().put(transactionManagerKey, transactionManager);
+            settings.setRegistry(transactionManagerKey, transactionManager);
         }
         transactionManagerHolder.set(null);
     }

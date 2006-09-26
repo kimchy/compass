@@ -25,6 +25,7 @@ import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
+import org.compass.core.util.backport.java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author kimchy
@@ -84,9 +85,9 @@ public class CompassMapping {
 
     private ConverterLookup converterLookup;
 
-    private final HashMap cachedRootMappingsByClass = new HashMap();
-    
-    private final HashMap cachedMappingsByClass = new HashMap();
+    private final ConcurrentHashMap cachedRootMappingsByClass = new ConcurrentHashMap();
+
+    private final ConcurrentHashMap cachedMappingsByClass = new ConcurrentHashMap();
 
     private final NullResourceMapping nullResourceMappingEntryInCache = new NullResourceMapping();
 
@@ -227,7 +228,7 @@ public class CompassMapping {
     public ClassMapping getClassMappingByClass(Class clazz) {
         return (ClassMapping) doGetResourceMappingByClass(clazz, false, mappingsByClass, cachedMappingsByClass);
     }
-    
+
     /**
      * Finds a root mapping by the class name. If a root mapping is not found
      * for the class name, than searches for mappings for the interfaces, if not
@@ -249,12 +250,10 @@ public class CompassMapping {
     public ResourceMapping getRootMappingByClass(Class clazz) throws MappingException {
         return doGetResourceMappingByClass(clazz, false, rootMappingsByClass, cachedRootMappingsByClass);
     }
-    
-    private ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx, 
-            HashMap mappingClassMap, HashMap cachedMappingsMap) throws MappingException {
-        // not the most thread safe caching, but suffiecient for our needs (I think),
-        // seems waste to use a proper thread safe code, at the worst case, we would
-        // perform it twice
+
+    private ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx,
+                                                        HashMap mappingClassMap, ConcurrentHashMap cachedMappingsMap) throws MappingException {
+        // we don't really care that we might execute it twice (for caching)
         ResourceMapping rm = (ResourceMapping) cachedMappingsMap.get(clazz);
         if (rm != null) {
             if (rm == nullResourceMappingEntryInCache) {
@@ -265,18 +264,17 @@ public class CompassMapping {
             }
             return rm;
         }
-        synchronized (cachedMappingsMap) {
-            rm = doGetActualResourceMappingByClass(clazz, mappingClassMap);
-            cachedMappingsMap.put(clazz, rm);
-            if (rm == null) {
-                cachedMappingsMap.put(clazz, nullResourceMappingEntryInCache);
-                if (throwEx) {
-                    throw new MappingException("Failed to find any mappings for class [" + clazz.getName() + "]");
-                }
-                return null;
+        rm = doGetActualResourceMappingByClass(clazz, mappingClassMap);
+        if (rm == null) {
+            cachedMappingsMap.put(clazz, nullResourceMappingEntryInCache);
+            if (throwEx) {
+                throw new MappingException("Failed to find any mappings for class [" + clazz.getName() + "]");
             }
-            return rm;
+            return null;
+        } else {
+            cachedMappingsMap.put(clazz, rm);
         }
+        return rm;
     }
 
     private ResourceMapping doGetActualResourceMappingByClass(Class clazz, HashMap mappingClassMap) {

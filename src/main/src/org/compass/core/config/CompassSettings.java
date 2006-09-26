@@ -17,13 +17,13 @@
 package org.compass.core.config;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
 import org.compass.core.util.ClassUtils;
+import org.compass.core.util.backport.java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A set of settings that are used to configure the Compass instance.
@@ -34,9 +34,9 @@ public class CompassSettings {
 
     private Properties settings;
 
-    private final HashMap groups = new HashMap();
+    private final Map groups = new ConcurrentHashMap();
 
-    private Map registry = Collections.synchronizedMap(new HashMap());
+    private Map registry = new ConcurrentHashMap();
 
     public CompassSettings() {
         this(new Properties());
@@ -56,7 +56,7 @@ public class CompassSettings {
 
     public CompassSettings copy() {
         CompassSettings copySettings = new CompassSettings((Properties) settings.clone());
-        copySettings.setRegistry(getRegistry());
+        copySettings.registry = registry;
         return copySettings;
     }
 
@@ -84,30 +84,29 @@ public class CompassSettings {
         if (group != null) {
             return group;
         }
-        synchronized (groups) {
-            HashMap map = new HashMap();
-            for (Iterator it = settings.keySet().iterator(); it.hasNext();) {
-                String setting = (String) it.next();
-                if (setting.startsWith(settingPrefix)) {
-                    String nameValue = setting.substring(settingPrefix.length());
-                    int dotIndex = nameValue.indexOf('.');
-                    if (dotIndex == -1) {
-                        throw new ConfigurationException("Failed to get setting group for [" + settingPrefix
-                                + "] setting prefix and setting [" + setting + "] because of a missing '.'");
-                    }
-                    String name = nameValue.substring(0, dotIndex);
-                    String value = nameValue.substring(dotIndex + 1);
-                    CompassSettings groupSettings = (CompassSettings) map.get(name);
-                    if (groupSettings == null) {
-                        groupSettings = new CompassSettings();
-                        map.put(name, groupSettings);
-                    }
-                    groupSettings.setSetting(value, getSetting(setting));
+        // we don't really care that it might happen twice
+        HashMap map = new HashMap();
+        for (Iterator it = settings.keySet().iterator(); it.hasNext();) {
+            String setting = (String) it.next();
+            if (setting.startsWith(settingPrefix)) {
+                String nameValue = setting.substring(settingPrefix.length());
+                int dotIndex = nameValue.indexOf('.');
+                if (dotIndex == -1) {
+                    throw new ConfigurationException("Failed to get setting group for [" + settingPrefix
+                            + "] setting prefix and setting [" + setting + "] because of a missing '.'");
                 }
+                String name = nameValue.substring(0, dotIndex);
+                String value = nameValue.substring(dotIndex + 1);
+                CompassSettings groupSettings = (CompassSettings) map.get(name);
+                if (groupSettings == null) {
+                    groupSettings = new CompassSettings();
+                    map.put(name, groupSettings);
+                }
+                groupSettings.setSetting(value, getSetting(setting));
             }
-            groups.put(settingPrefix, map);
-            return map;
         }
+        groups.put(settingPrefix, map);
+        return map;
     }
 
     public float getSettingAsFloat(String setting, float defaultValue) {
@@ -220,15 +219,15 @@ public class CompassSettings {
     /**
      * ADANCE: An internal compass global registry
      */
-    public Map getRegistry() {
-        return registry;
+    public Object getRegistry(Object key) {
+        return registry.get(key);
     }
 
     /**
      * ADVANCE: An internal compass global registry
      */
-    public void setRegistry(Map registry) {
-        this.registry = registry;
+    public void setRegistry(Object key, Object value) {
+        registry.put(key, value);
     }
 
     public String toString() {

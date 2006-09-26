@@ -85,12 +85,12 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
         this.settings = settings;
         DataSource dataSource =  (DataSource) dataSourceHolder.get();
         if (dataSource == null) {
-            dataSource = (DataSource) settings.getRegistry().get(dataSourceKey);
+            dataSource = (DataSource) settings.getRegistry(dataSourceKey);
         }
         if (dataSource == null) {
             throw new CompassException("Failed to find data source, have you set the static set data source?");
         } else {
-            settings.getRegistry().put(dataSourceKey, dataSource);
+            settings.setRegistry(dataSourceKey, dataSource);
             dataSourceHolder.set(null);
         }
         return new UsernamePasswordDataSourceWrapper(dataSource, username, password, autoCommit);
@@ -98,6 +98,6 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
 
     public void closeDataSource() {
         dataSourceHolder.set(null);
-        settings.getRegistry().put(dataSourceKey, null);
+        settings.setRegistry(dataSourceKey, null);
     }
 }
