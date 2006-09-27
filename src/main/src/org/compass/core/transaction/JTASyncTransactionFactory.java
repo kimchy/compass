@@ -16,7 +16,6 @@
 
 package org.compass.core.transaction;
 
-import java.util.Hashtable;
 import java.util.Map;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -36,6 +35,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.jndi.NamingHelper;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.util.backport.java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Factory for {@link JTASyncTransaction}s.
@@ -49,7 +49,7 @@ public class JTASyncTransactionFactory extends AbstractTransactionFactory {
 
     private static final String DEFAULT_USER_TRANSACTION_NAME = "java:comp/UserTransaction";
 
-    private transient Map currentSessionMap = new Hashtable();
+    private transient Map currentSessionMap = new ConcurrentHashMap();
 
     private InitialContext context;
 
