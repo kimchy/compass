@@ -4,6 +4,7 @@ Release Process:
 * Change project.properties compass-version to the actual version number
    (for example from x.y-SNAPSHOT to x.y)
 * Change docs/reference/src/compass.xml releaseInfo to the actual version number
+* Change readme.txt to the version number
 * update update.txt
 * Run ant clean
 * Run ant release
@@ -16,6 +17,7 @@ Release Process:
 * Change compass.version to the next version
 * Change project.properties compass-version to the next version with SNAPSHOT
 * Change docs/reference/src/compass.xml releaseInfo to the next version with SNAPSHOT
+* Change readme.txt to the next version with SNAPSHOT
 * Upload the two compass distributions to java.net
 * Release the actual version in Jira
 * Update site/meta.xml and documentation.html with both the new actual version, and the new SNAPSHOT

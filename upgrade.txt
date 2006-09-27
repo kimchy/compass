@@ -1,8 +1,8 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 1.1 M2 ()
-=============================
+VERSION 1.1 M2 (September 27, 2006)
+===================================
 
 1. OSEM setting compass.managedId.index changed to compass.osem.managedId.index .
 2. Removed Resource#setAlias.
