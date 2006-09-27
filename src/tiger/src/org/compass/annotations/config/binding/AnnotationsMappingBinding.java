@@ -17,12 +17,20 @@
 package org.compass.annotations.config.binding;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.compass.annotations.*;
-import org.compass.core.config.*;
+import org.compass.core.config.CommonMetaDataLookup;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.binding.MappingBindingSupport;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.MetaDataFormatDelegateConverter;
@@ -567,7 +575,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         mdMapping.setName(valueLookup.lookupMetaDataName(name));
         mdMapping.setBoost(classPropertyMapping.getBoost());
 
-        bindConverter(classPropertyMapping, searchableMetaData.converter(), clazz, type);
+        bindConverter(mdMapping, searchableMetaData.converter(), clazz, type);
 
         mdMapping.setAccessor(classPropertyMapping.getAccessor());
         mdMapping.setObjClass(classPropertyMapping.getObjClass());
