@@ -19,8 +19,17 @@ package org.compass.core.impl;
 import java.io.Reader;
 import java.io.Serializable;
 
-import org.compass.core.*;
+import org.compass.core.CompassAnalyzerHelper;
+import org.compass.core.CompassException;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassQuery;
+import org.compass.core.CompassQueryBuilder;
+import org.compass.core.CompassQueryFilterBuilder;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
+import org.compass.core.Property;
+import org.compass.core.Resource;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.NullFirstLevelCache;
 import org.compass.core.engine.SearchEngine;
@@ -34,12 +43,14 @@ import org.compass.core.marshall.MarshallingStrategy;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 import org.compass.core.transaction.TransactionFactory;
 
 /**
  * @author kimchy
  */
-// TODO we need to support multiple resource with ResourceIdKey and first cache
+// TODO we need to support multiple resource with ResourceKey and first cache
 public class DefaultCompassSession implements InternalCompassSession {
 
     private InternalCompass compass;
@@ -137,22 +148,17 @@ public class DefaultCompassSession implements InternalCompassSession {
     }
 
     public void delete(Resource resource) throws CompassException {
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
-        firstLevelCache.evict(key);
+        firstLevelCache.evict(((InternalResource) resource).resourceKey());
         searchEngine.delete(resource);
     }
 
     public void delete(String alias, Object obj) throws CompassException {
         Resource idResource = marshallingStrategy.marshallIds(alias, obj);
-        ResourceIdKey key = new ResourceIdKey(mapping, idResource);
-        firstLevelCache.evict(key);
         delete(idResource);
     }
 
     public void delete(Object obj) throws CompassException {
         Resource idResource = marshallingStrategy.marshallIds(obj);
-        ResourceIdKey key = new ResourceIdKey(mapping, idResource);
-        firstLevelCache.evict(key);
         delete(idResource);
     }
 
@@ -167,7 +173,7 @@ public class DefaultCompassSession implements InternalCompassSession {
     }
 
     public Resource getResourceByIdResource(Resource idResource) {
-        ResourceIdKey key = new ResourceIdKey(mapping, idResource);
+        ResourceKey key = ((InternalResource) idResource).resourceKey();
         Resource cachedValue = firstLevelCache.getResource(key);
         if (cachedValue != null) {
             return cachedValue;
@@ -206,7 +212,7 @@ public class DefaultCompassSession implements InternalCompassSession {
     }
 
     public Object getByResource(Resource resource, MarshallingContext context) {
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
+        ResourceKey key = ((InternalResource) resource).resourceKey();
         Object cachedValue = firstLevelCache.get(key);
         if (cachedValue != null) {
             return cachedValue;
@@ -232,7 +238,7 @@ public class DefaultCompassSession implements InternalCompassSession {
     }
 
     public Resource loadResourceByIdResource(Resource idResource) {
-        ResourceIdKey key = new ResourceIdKey(mapping, idResource);
+        ResourceKey key = ((InternalResource) idResource).resourceKey();
         Resource cachedValue = firstLevelCache.getResource(key);
         if (cachedValue != null) {
             return cachedValue;
@@ -259,28 +265,28 @@ public class DefaultCompassSession implements InternalCompassSession {
     public void create(String alias, Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(alias, object);
         searchEngine.create(resource);
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
+        ResourceKey key = ((InternalResource) resource).resourceKey();
         firstLevelCache.set(key, object);
     }
 
     public void save(String alias, Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(alias, object);
         searchEngine.save(resource);
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
+        ResourceKey key = ((InternalResource) resource).resourceKey();
         firstLevelCache.set(key, object);
     }
 
     public void create(Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(object);
         searchEngine.create(resource);
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
+        ResourceKey key = ((InternalResource) resource).resourceKey();
         firstLevelCache.set(key, object);
     }
 
     public void save(Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(object);
         searchEngine.save(resource);
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
+        ResourceKey key = ((InternalResource) resource).resourceKey();
         firstLevelCache.set(key, object);
     }
 
@@ -293,18 +299,18 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void evict(Object obj) {
         Resource idResource = marshallingStrategy.marshallIds(obj.getClass(), obj);
-        ResourceIdKey key = new ResourceIdKey(mapping, idResource);
+        ResourceKey key = ((InternalResource) idResource).resourceKey();
         firstLevelCache.evict(key);
     }
 
     public void evict(String alias, Object id) {
         Resource idResource = marshallingStrategy.marshallIds(alias, id);
-        ResourceIdKey key = new ResourceIdKey(mapping, idResource);
+        ResourceKey key = ((InternalResource) idResource).resourceKey();
         firstLevelCache.evict(key);
     }
 
     public void evict(Resource resource) {
-        ResourceIdKey key = new ResourceIdKey(mapping, resource);
+        ResourceKey key = ((InternalResource) resource).resourceKey();
         firstLevelCache.evict(key);
     }
 

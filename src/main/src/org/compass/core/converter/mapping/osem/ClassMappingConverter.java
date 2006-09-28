@@ -28,7 +28,6 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.utils.ResourceHelper;
-import org.compass.core.impl.ResourceIdKey;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -38,6 +37,8 @@ import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.OsemMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -88,7 +89,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         ClassMapping classMapping = (ClassMapping) mapping;
-        ResourceIdKey resourceIdKey = null;
+        ResourceKey resourceKey = null;
         // handle a cache of all the unmarshalled objects already, used for
         // cyclic references
         if (classMapping.isRoot()) {
@@ -96,8 +97,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 throw new ConversionException("Class Mapping [" + classMapping.getAlias() + "] is configured not to support un-marshalling");
             }
             Property[] ids = ResourceHelper.toIds(resource, context.getCompassMapping());
-            resourceIdKey = new ResourceIdKey(classMapping.getAlias(), ids);
-            Object cached = context.getUnmarshalled(resourceIdKey);
+            resourceKey = ((InternalResource) resource).resourceKey();
+            Object cached = context.getUnmarshalled(resourceKey);
             if (cached != null) {
                 return cached;
             }
@@ -144,7 +145,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         // and it's all we need to handle cyclic refernces in case of
         // references
         if (classMapping.isRoot()) {
-            context.setUnmarshalled(resourceIdKey, obj);
+            context.setUnmarshalled(resourceKey, obj);
         }
 
         boolean isNullClass = true;

@@ -34,7 +34,6 @@ import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.engine.event.SearchEngineEventManager;
-import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneMultiResource;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
@@ -46,7 +45,9 @@ import org.compass.core.lucene.engine.transaction.SerialableTransaction;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.MultiResource;
+import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
 import org.compass.core.util.reader.ReverseStringReader;
 
@@ -270,32 +271,26 @@ public class LuceneSearchEngine implements SearchEngine {
         eventManager = null;
     }
 
-    public void delete(String[] ids, String alias) throws SearchEngineException {
-        ResourceMapping resourceMapping = searchEngineFactory.getMapping().getRootMappingByAlias(alias);
-        delete(ResourceHelper.toIds(this, ids, resourceMapping), alias);
-    }
-
     public void delete(Resource resource) throws SearchEngineException {
+        checkTransactionStarted();
         if (resource instanceof MultiResource) {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
-                delete(ResourceHelper.toIds(multiResource.resource(i), searchEngineFactory.getMapping()),
-                        resource.getAlias());
+                delete(((InternalResource) multiResource.resource(i)).resourceKey());
             }
         } else {
-            delete(ResourceHelper.toIds(resource, searchEngineFactory.getMapping()),
-                    resource.getAlias());
+            delete(((InternalResource) resource).resourceKey());
         }
     }
 
-    public void delete(final Property[] ids, String alias) throws SearchEngineException {
+    private void delete(ResourceKey resourceKey) throws SearchEngineException {
         checkTransactionStarted();
-        if (ids.length == 0) {
+        if (resourceKey.getIds().length == 0) {
             throw new SearchEngineException("Cannot delete a resource with no ids");
         }
-        transaction.delete(ids, alias);
+        transaction.delete(resourceKey);
         if (log.isDebugEnabled()) {
-            log.debug("RESOURCE DELETE {" + alias + "} " + StringUtils.arrayToCommaDelimitedString(ids));
+            log.debug("RESOURCE DELETE {" + resourceKey.getAlias() + "} " + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()));
         }
     }
 
@@ -311,14 +306,14 @@ public class LuceneSearchEngine implements SearchEngine {
             for (int i = 0; i < multiResource.size(); i++) {
                 Resource resource1 = multiResource.resource(i);
                 LuceneUtils.addAllPropertyIfNeeded(resource1, resourceMapping, this);
-                transaction.create(resource1);
+                transaction.create((InternalResource) resource1);
                 if (log.isDebugEnabled()) {
                     log.debug("RESOURCE CREATE " + resource1);
                 }
             }
         } else {
             LuceneUtils.addAllPropertyIfNeeded(resource, resourceMapping, this);
-            transaction.create(resource);
+            transaction.create((InternalResource) resource);
             if (log.isDebugEnabled()) {
                 log.debug("RESOURCE CREATE " + resource);
             }
@@ -331,25 +326,17 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public Resource get(Resource idResource) throws SearchEngineException {
-        return get(ResourceHelper.toIds(idResource, searchEngineFactory.getMapping()), idResource.getAlias());
-    }
-
-    public Resource get(String[] ids, String alias) throws SearchEngineException {
-        ResourceMapping resourceMapping = searchEngineFactory.getMapping().getRootMappingByAlias(alias);
-        return get(ResourceHelper.toIds(this, ids, resourceMapping), alias);
-    }
-
-    public Resource get(Property[] ids, String alias) throws SearchEngineException {
         checkTransactionStarted();
-        if (ids.length == 0) {
+        ResourceKey resourceKey = ((InternalResource) idResource).resourceKey();
+        if (resourceKey.getIds().length == 0) {
             throw new SearchEngineException("Cannot load a resource with no ids");
         }
-        Resource[] result = transaction.find(ids, alias);
+        Resource[] result = transaction.find(resourceKey);
         if (result.length == 0) {
             return null;
         } else if (result.length > 1) {
-            log.warn("Found several matches in get/load operation for resource alias [" + alias + "] and ids ["
-                    + StringUtils.arrayToCommaDelimitedString(ids) + "]");
+            log.warn("Found several matches in get/load operation for resource alias [" + resourceKey.getAlias() + "] and ids ["
+                    + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]");
             return result[result.length - 1];
         }
         return result[0];
@@ -360,24 +347,6 @@ public class LuceneSearchEngine implements SearchEngine {
         Resource resource = get(idResource);
         if (resource == null) {
             throw new SearchEngineException("Failed to find resource with alias [" + alias + "] and ids " + idResource);
-        }
-        return resource;
-    }
-
-    public Resource load(String[] ids, String alias) throws SearchEngineException {
-        Resource resource = get(ids, alias);
-        if (resource == null) {
-            throw new SearchEngineException("Failed to find resource with alias [" + alias + "] and ids ["
-                    + StringUtils.arrayToCommaDelimitedString(ids) + "]");
-        }
-        return resource;
-    }
-
-    public Resource load(Property[] ids, String alias) throws SearchEngineException {
-        Resource resource = get(ids, alias);
-        if (resource == null) {
-            throw new SearchEngineException("Failed to find resource with alias [" + alias + "] and ids ["
-                    + StringUtils.arrayToCommaDelimitedString(ids) + "]");
         }
         return resource;
     }

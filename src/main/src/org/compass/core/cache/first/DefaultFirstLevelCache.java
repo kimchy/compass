@@ -19,7 +19,7 @@ package org.compass.core.cache.first;
 import java.util.HashMap;
 
 import org.compass.core.Resource;
-import org.compass.core.impl.ResourceIdKey;
+import org.compass.core.spi.ResourceKey;
 
 /**
  * @author kimchy
@@ -30,23 +30,23 @@ public class DefaultFirstLevelCache implements FirstLevelCache {
 
     private HashMap resources = new HashMap();
 
-    public Object get(ResourceIdKey key) {
+    public Object get(ResourceKey key) {
         return objects.get(key);
     }
 
-    public Resource getResource(ResourceIdKey key) {
+    public Resource getResource(ResourceKey key) {
         return (Resource) resources.get(key);
     }
 
-    public void set(ResourceIdKey key, Object obj) {
+    public void set(ResourceKey key, Object obj) {
         objects.put(key, obj);
     }
 
-    public void setResource(ResourceIdKey key, Resource resource) {
+    public void setResource(ResourceKey key, Resource resource) {
         resources.put(key, resource);
     }
 
-    public void evict(ResourceIdKey key) {
+    public void evict(ResourceKey key) {
         objects.put(key, null);
         resources.put(key, null);
     }

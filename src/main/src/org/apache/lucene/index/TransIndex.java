@@ -31,11 +31,10 @@ import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.RAMDirectory;
-import org.compass.core.Property;
-import org.compass.core.Resource;
-import org.compass.core.impl.ResourceIdKey;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSettings;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 
 /**
  * Provides a transactional index based on Lucene IndexWriter. <p/> Maintains a
@@ -163,12 +162,12 @@ public class TransIndex {
      * transaction index map.
      */
     // logic taken from lucene, need to monitor
-    public void addResource(Resource resource, Property[] ids, Analyzer analyzer) throws IOException {
+    public void addResource(InternalResource resource, Analyzer analyzer) throws IOException {
         DocumentWriter dw = new DocumentWriter(transDir, analyzer, similarity, luceneSettings.getMaxFieldLength());
         dw.setInfoStream(infoStream);
         String segmentName = newTransSegmentName();
         dw.addDocument(segmentName, ((LuceneResource) resource).getDocument());
-        transCreates.add(new ResourceIdKey(resource.getAlias(), ids));
+        transCreates.add(resource.resourceKey());
         SegmentInfo segmentInfo = new SegmentInfo(segmentName, 1, transDir);
         transSegmentInfos.addElement(segmentInfo);
         ((LuceneResource) resource).setDocNum(indexReader.maxDoc() + transCreates.size() - 1);
@@ -186,15 +185,10 @@ public class TransIndex {
     /**
      * Deletets the transactional resource. Removes it from the resource <->
      * transactional index as well as the transactional reader (if created).
-     *
-     * @param ids
-     * @param alias
-     * @throws IOException
      */
-    public void deleteTransResource(Property[] ids, String alias) throws IOException {
-        ResourceIdKey idKey = new ResourceIdKey(alias, ids);
+    public void deleteTransResource(ResourceKey resourceKey) throws IOException {
         // TODO: Maybe can be implemented to have better performance
-        int i = transCreates.indexOf(idKey);
+        int i = transCreates.indexOf(resourceKey);
         if (i != -1) {
             transCreates.remove(i);
             transSegmentInfos.removeElementAt(i);

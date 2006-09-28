@@ -18,10 +18,10 @@ package org.compass.core.test.batch;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.impl.ResourceIdKey;
+import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalResource;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -61,11 +61,13 @@ public class BatchTests extends AbstractTestCase {
         session.create(cyclic1);
 
         // verify they are not in the first level cache
-        ResourceIdKey key = new ResourceIdKey("cyclic1", new Long[] { id });
-        Object val = ((InternalCompassSession) session).getFirstLevelCache().get(key);
+        InternalResource key = (InternalResource) session.createResource("cyclic1");
+        key.addProperty("id", id);
+        Object val = ((InternalCompassSession) session).getFirstLevelCache().get(key.resourceKey());
         assertNull(val);
-        key = new ResourceIdKey("cyclic2", new Long[] { id });
-        val = ((InternalCompassSession) session).getFirstLevelCache().get(key);
+        key = (InternalResource) session.createResource("cyclic2");
+        key.addProperty("id", id);
+        val = ((InternalCompassSession) session).getFirstLevelCache().get(key.resourceKey());
         assertNull(val);
 
         tr.commit();

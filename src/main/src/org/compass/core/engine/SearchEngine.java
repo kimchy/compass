@@ -188,28 +188,10 @@ public interface SearchEngine {
     void save(Resource resource) throws SearchEngineException;
 
     /**
-     * Deletes the resource that it's ids match the given array of ids under the
-     * given alias.
-     */
-    void delete(String[] ids, String alias) throws SearchEngineException;
-
-    /**
-     * Deletes the resource that it's ids match the given array of properties
-     * under the given alias.
-     */
-    void delete(Property[] ids, String alias) throws SearchEngineException;
-
-    /**
      * Deletes the resource, which has the property ids. The ResourceMapping is fetched
      * according to the alias.
      */
     void delete(Resource resource) throws SearchEngineException;
-
-    /**
-     * Loads a resource for the given array of string ids, under the specified
-     * alias. Throws an exception if the resource is not found.
-     */
-    Resource load(String[] ids, String alias) throws SearchEngineException;
 
     /**
      * Loads a resource for the given resource that holds the properties AND the
@@ -219,29 +201,11 @@ public interface SearchEngine {
     Resource load(Resource idResource) throws SearchEngineException;
 
     /**
-     * Loads a resource for the given array of properties, under the specified
-     * alias. Throws an exception if the resource if not found.
-     */
-    Resource load(Property[] ids, String alias) throws SearchEngineException;
-
-    /**
      * Returns a resource for the given resource that holds the properties AND
      * the alias, under the specified alias. Retrurns null if the resource is
      * not found.
      */
     Resource get(Resource idResource) throws SearchEngineException;
-
-    /**
-     * Returns a resource for the given array of string ids, under the specified
-     * alias. Retrurns null if the resource is not found.
-     */
-    Resource get(String[] ids, String alias) throws SearchEngineException;
-
-    /**
-     * Returns a resource for the given array of properties, under the specified
-     * alias. Return null if it is not found.
-     */
-    Resource get(Property[] ids, String alias) throws SearchEngineException;
 
     /**
      * Returns a search engine internal implementation.

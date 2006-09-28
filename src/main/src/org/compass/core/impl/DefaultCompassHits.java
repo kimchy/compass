@@ -28,6 +28,8 @@ import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.spi.InternalCompassHighlightedText;
 import org.compass.core.spi.InternalCompassHits;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 
 /**
  * @author kimchy
@@ -60,7 +62,7 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
 
     public Resource resource(int n) throws CompassException {
         Resource resource = hits.getResource(n);
-        ResourceIdKey key = new ResourceIdKey(session.getMapping(), resource);
+        ResourceKey key = ((InternalResource) resource).resourceKey();
         Resource cachedResource = session.getFirstLevelCache().getResource(key);
         if (cachedResource != null) {
             return cachedResource;

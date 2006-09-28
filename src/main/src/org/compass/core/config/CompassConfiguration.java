@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
-import org.compass.core.util.JdkVersion;
 import org.compass.core.config.binding.XmlMappingBinding;
 import org.compass.core.config.binding.XmlMetaDataBinding;
 import org.compass.core.config.builder.ConfigurationBuilder;
@@ -42,6 +41,7 @@ import org.compass.core.impl.DefaultCompass;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
+import org.compass.core.util.JdkVersion;
 
 /**
  * Used to configure <code>Compass</code> instances.
@@ -254,8 +254,13 @@ public class CompassConfiguration {
      * @param mappingResolver
      */
     public CompassConfiguration addMappingResover(InputStreamMappingResolver mappingResolver) throws ConfigurationException {
-        log.info("Mapping builder [" + mappingResolver + "]");
-        mappingBinding.addMappingResolver(mappingResolver);
+        boolean hasAddedResource = mappingBinding.addMappingResolver(mappingResolver);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match mapping resolver [" + mappingResolver + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping resolver [" + mappingResolver + "]");
+        }
         return this;
     }
 
@@ -266,8 +271,13 @@ public class CompassConfiguration {
      * @param classLoader a <code>ClassLoader</code> to use
      */
     public CompassConfiguration addResource(String path, ClassLoader classLoader) throws ConfigurationException {
-        log.info("Mapping resource [" + path + "] from class loaded [" + classLoader + "]");
-        mappingBinding.addResource(path, classLoader);
+        boolean hasAddedResource = mappingBinding.addResource(path, classLoader);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match resource [" + path + "] and class loader [" + classLoader + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping resource [" + path + "] from class loader [" + classLoader + "]");
+        }
         return this;
     }
 
@@ -279,8 +289,13 @@ public class CompassConfiguration {
      * @param path The path of the resource
      */
     public CompassConfiguration addResource(String path) throws ConfigurationException {
-        log.info("Mapping resource [" + path + "] in class loader");
-        mappingBinding.addResource(path);
+        boolean hasAddedResource = mappingBinding.addResource(path);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match resource [" + path + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping resource [" + path + "] in class loader");
+        }
         return this;
     }
 
@@ -290,8 +305,13 @@ public class CompassConfiguration {
      * @param filePath a path to a file
      */
     public CompassConfiguration addFile(String filePath) throws ConfigurationException {
-        log.info("Mapping file [" + filePath + "]");
-        mappingBinding.addFile(filePath);
+        boolean hasAddedResource = mappingBinding.addFile(filePath);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match file [" + filePath + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping file [" + filePath + "]");
+        }
         return this;
     }
 
@@ -301,8 +321,13 @@ public class CompassConfiguration {
      * @param file a path to a file
      */
     public CompassConfiguration addFile(File file) throws ConfigurationException {
-        log.info("Mapping file [" + file.getAbsolutePath() + "]");
-        mappingBinding.addFile(file);
+        boolean hasAddedResource = mappingBinding.addFile(file);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match file [" + file.getAbsolutePath() + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping file [" + file.getAbsolutePath() + "]");
+        }
         return this;
     }
 
@@ -312,8 +337,13 @@ public class CompassConfiguration {
      * @param packageName The package name to load
      */
     public CompassConfiguration addPackage(String packageName) throws ConfigurationException {
-        log.info("Mapping package [" + packageName + "]");
-        mappingBinding.addPackage(packageName);
+        boolean hasAddedResource = mappingBinding.addPackage(packageName);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match package [" + packageName + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping package [" + packageName + "]");
+        }
         return this;
     }
 
@@ -325,8 +355,13 @@ public class CompassConfiguration {
      * @param searchableClass the mapped class
      */
     public CompassConfiguration addClass(Class searchableClass) throws ConfigurationException {
-        log.info("Mapping class [" + searchableClass + "]");
-        mappingBinding.addClass(searchableClass);
+        boolean hasAddedResource = mappingBinding.addClass(searchableClass);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match class [" + searchableClass.getName() + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping class [" + searchableClass + "]");
+        }
         return this;
     }
 
@@ -338,8 +373,13 @@ public class CompassConfiguration {
      * @param dir a directory
      */
     public CompassConfiguration addDirectory(File dir) throws ConfigurationException {
-        log.info("Mapping directory [" + dir.getAbsolutePath() + "]");
-        mappingBinding.addDirectory(dir);
+        boolean hasAddedResource = mappingBinding.addDirectory(dir);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match directory [" + dir.getAbsolutePath() + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping directory [" + dir.getAbsolutePath() + "]");
+        }
         return this;
     }
 
@@ -351,19 +391,29 @@ public class CompassConfiguration {
      * @param jar a jar file
      */
     public CompassConfiguration addJar(File jar) throws ConfigurationException {
-        log.info("Mapping jar [" + jar.getName() + "]");
-        mappingBinding.addJar(jar);
+        boolean hasAddedResource = mappingBinding.addJar(jar);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match jar [" + jar.getAbsolutePath() + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping jar [" + jar.getName() + "]");
+        }
         return this;
     }
 
     /**
      * Read mappings from a <code>URL</code>.
      *
-     * @param url
+     * @param url the URL
      */
     public CompassConfiguration addURL(URL url) throws ConfigurationException {
-        log.info("Mapping URL [" + url.toExternalForm() + "]");
-        mappingBinding.addURL(url);
+        boolean hasAddedResource = mappingBinding.addURL(url);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match URL [" + url.toExternalForm() + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping URL [" + url.toExternalForm() + "]");
+        }
         return this;
     }
 
@@ -374,8 +424,13 @@ public class CompassConfiguration {
      */
     public CompassConfiguration addInputStream(InputStream inputStream, String resourceName)
             throws ConfigurationException {
-        log.info("Mapping InputStream [" + resourceName + "]");
-        mappingBinding.addInputStream(inputStream, resourceName);
+        boolean hasAddedResource = mappingBinding.addInputStream(inputStream, resourceName);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match input stream [" +resourceName + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Mapping InputStream [" + resourceName + "]");
+        }
         return this;
     }
 }

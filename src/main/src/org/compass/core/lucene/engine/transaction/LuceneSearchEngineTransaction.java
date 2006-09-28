@@ -16,13 +16,14 @@
 
 package org.compass.core.lucene.engine.transaction;
 
-import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 
 /**
  * A Lucene transaction interface. All Lucene based transactions must implement
@@ -49,13 +50,13 @@ public interface LuceneSearchEngineTransaction {
      */
     void flush() throws SearchEngineException;
 
-    void create(final Resource resource) throws SearchEngineException;
+    void create(final InternalResource resource) throws SearchEngineException;
 
-    void delete(final Property[] ids, String alias) throws SearchEngineException;
+    void delete(final ResourceKey resourceKey) throws SearchEngineException;
 
     SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException;
 
-    Resource[] find(Property[] ids, String alias) throws SearchEngineException;
+    Resource[] find(ResourceKey resourceKey) throws SearchEngineException;
 
     SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
 }

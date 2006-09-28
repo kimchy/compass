@@ -17,7 +17,6 @@
 package org.compass.core.engine;
 
 import junit.framework.TestCase;
-
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
@@ -126,8 +125,7 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource getSingleIdResource(SearchEngine searchEngine) {
-        String ids[] = new String[]{VALUE_ID1};
-        return searchEngine.get(ids, ALIAS_SINGLE);
+        return searchEngine.get(createSingleIdResource(searchEngine));
     }
 
     protected void assertSingleIdResourceExists(SearchEngine searchEngine) {
@@ -136,8 +134,7 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource getSingleId2Resource(SearchEngine searchEngine) {
-        String ids[] = new String[]{VALUE_ID1_2};
-        return searchEngine.get(ids, ALIAS_SINGLE);
+        return searchEngine.get(createSingleIdResource2(searchEngine));
     }
 
     protected void assertSingleId2ResourceExists(SearchEngine searchEngine) {
@@ -146,8 +143,7 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource getMulitIdResource(SearchEngine searchEngine) {
-        String ids[] = new String[]{VALUE_ID2, VALUE_ID3};
-        return searchEngine.get(ids, ALIAS_MUTLI);
+        return searchEngine.get(createMultiIdResource(searchEngine));
     }
 
     protected void assertMulitIdResourceExists(SearchEngine searchEngine) {
@@ -156,8 +152,7 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource getMulitId2Resource(SearchEngine searchEngine) {
-        String ids[] = new String[]{VALUE_ID2_2, VALUE_ID3_2};
-        return searchEngine.get(ids, ALIAS_MUTLI);
+        return searchEngine.get(createMultiIdResource2(searchEngine));
     }
 
     protected void assertMulitId2ResourceExists(SearchEngine searchEngine) {

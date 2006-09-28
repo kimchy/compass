@@ -17,28 +17,28 @@
 package org.compass.core.cache.first;
 
 import org.compass.core.Resource;
-import org.compass.core.impl.ResourceIdKey;
+import org.compass.core.spi.ResourceKey;
 
 /**
  * @author kimchy
  */
 public class NullFirstLevelCache implements FirstLevelCache {
 
-    public Object get(ResourceIdKey key) {
+    public Object get(ResourceKey key) {
         return null;
     }
 
-    public Resource getResource(ResourceIdKey key) {
+    public Resource getResource(ResourceKey key) {
         return null;
     }
 
-    public void set(ResourceIdKey key, Object obj) {
+    public void set(ResourceKey key, Object obj) {
     }
 
-    public void setResource(ResourceIdKey key, Resource resource) {
+    public void setResource(ResourceKey key, Resource resource) {
     }
 
-    public void evict(ResourceIdKey key) {
+    public void evict(ResourceKey key) {
     }
 
     public void evictAll() {

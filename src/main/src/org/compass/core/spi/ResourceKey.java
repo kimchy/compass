@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.compass.core.impl;
+package org.compass.core.spi;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.utils.ResourceHelper;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 
 /**
@@ -27,33 +26,24 @@ import org.compass.core.mapping.ResourceMapping;
  *
  * @author kimchy
  */
-public final class ResourceIdKey {
+public final class ResourceKey {
 
     private String alias;
 
-    private Object[] values;
+    private Property[] ids;
 
     private int hashCode = Integer.MIN_VALUE;
 
-    public ResourceIdKey(CompassMapping compassMapping, Resource idResource) {
-        this(idResource.getAlias(), ResourceHelper.toIds(idResource, compassMapping));
+    private ResourceMapping resourceMapping;
+
+    public ResourceKey(ResourceMapping resourceMapping, Resource idResource) {
+        this(resourceMapping, ResourceHelper.toIds(idResource, resourceMapping));
     }
 
-    public ResourceIdKey(ResourceMapping resourceMapping, Object[] values) {
-        this(resourceMapping.getAlias(), values);
-    }
-
-    public ResourceIdKey(String alias, Property[] ids) {
-        values = new Object[ids.length];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = ids[i].getStringValue();
-        }
-        this.alias = alias;
-    }
-
-    public ResourceIdKey(String alias, Object[] values) {
-        this.alias = alias;
-        this.values = values;
+    public ResourceKey(ResourceMapping resourceMapping, Property[] ids) {
+        this.resourceMapping = resourceMapping;
+        this.ids = ids;
+        this.alias = resourceMapping.getAlias();
     }
 
     public boolean equals(Object other) {
@@ -61,16 +51,16 @@ public final class ResourceIdKey {
             return true;
 
 //      We will make sure that it never happens
-//        if (!(other instanceof ResourceIdKey))
+//        if (!(other instanceof ResourceKey))
 //            return false;
 
-        final ResourceIdKey idKey = (ResourceIdKey) other;
-        if (!idKey.getAlias().equals(alias)) {
+        final ResourceKey key = (ResourceKey) other;
+        if (!key.getAlias().equals(alias)) {
             return false;
         }
 
-        for (int i = 0; i < values.length; i++) {
-            if (!idKey.getValues()[i].equals(values[i])) {
+        for (int i = 0; i < ids.length; i++) {
+            if (!key.ids[i].getStringValue().equals(ids[i].getStringValue())) {
                 return false;
             }
         }
@@ -89,14 +79,18 @@ public final class ResourceIdKey {
         return alias;
     }
 
-    public Object[] getValues() {
-        return values;
+    public Property[] getIds() {
+        return ids;
+    }
+
+    public ResourceMapping getResourceMapping() {
+        return this.resourceMapping;
     }
 
     private int getHashCode() {
         int result = alias.hashCode();
-        for (int i = 0; i < values.length; i++) {
-            result = 29 * result + values[i].hashCode();
+        for (int i = 0; i < ids.length; i++) {
+            result = 29 * result + ids[i].getStringValue().hashCode();
         }
         return result;
     }

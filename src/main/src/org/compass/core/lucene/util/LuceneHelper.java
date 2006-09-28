@@ -45,6 +45,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.InternalResource;
 
 /**
  * Allows to create Compass related objects based on external (internally no supported by Compass)
@@ -183,7 +184,7 @@ public abstract class LuceneHelper {
      */
     public static TermFreqVector[] getTermFreqVectors(CompassSession session, Resource resource)
             throws SearchEngineException {
-        String subIndex = ResourceHelper.computeSubIndex(resource, ((InternalCompassSession) session).getMapping());
+        String subIndex = ResourceHelper.computeSubIndex(((InternalResource) resource).resourceKey());
         LuceneSearchEngineInternalSearch internalSearch = getLuceneInternalSearch(session, new String[]{subIndex}, null);
         try {
             return internalSearch.getReader().getTermFreqVectors(((LuceneResource) resource).getDocNum());
@@ -203,7 +204,7 @@ public abstract class LuceneHelper {
      */
     public static TermFreqVector getTermFreqVector(CompassSession session, Resource resource, String propertyName)
             throws SearchEngineException {
-        String subIndex = ResourceHelper.computeSubIndex(resource, ((InternalCompassSession) session).getMapping());
+        String subIndex = ResourceHelper.computeSubIndex(((InternalResource) resource).resourceKey());
         LuceneSearchEngineInternalSearch internalSearch = getLuceneInternalSearch(session, new String[]{subIndex}, null);
         try {
             return internalSearch.getReader().getTermFreqVector(((LuceneResource) resource).getDocNum(), propertyName);

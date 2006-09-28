@@ -24,6 +24,7 @@ import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -34,24 +35,9 @@ public abstract class ResourceHelper {
     private ResourceHelper() {
     }
 
-    public static String computeSubIndex(Resource resource, CompassMapping mapping) throws SearchEngineException {
-        String alias = resource.getAlias();
-        ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
-        if (resourceMapping == null) {
-            throw new SearchEngineException("Failed to find mappings for alias [" + alias + "]");
-        }
-        SubIndexHash subIndexHash = resourceMapping.getSubIndexHash();
-        Property[] ids = toIds(resource, resourceMapping);
-        return subIndexHash.mapSubIndex(alias, ids);
-    }
-
-    public static String computeSubIndex(String alias, Property[] ids, CompassMapping mapping) throws SearchEngineException {
-        ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
-        if (resourceMapping == null) {
-            throw new SearchEngineException("Failed to find mappings for alias [" + alias + "]");
-        }
-        SubIndexHash subIndexHash = resourceMapping.getSubIndexHash();
-        return subIndexHash.mapSubIndex(alias, ids);
+    public static String computeSubIndex(ResourceKey resourceKey) throws SearchEngineException {
+        SubIndexHash subIndexHash = resourceKey.getResourceMapping().getSubIndexHash();
+        return subIndexHash.mapSubIndex(resourceKey.getAlias(), resourceKey.getIds());
     }
 
     public static Property[] toIds(Resource resource, CompassMapping mapping)

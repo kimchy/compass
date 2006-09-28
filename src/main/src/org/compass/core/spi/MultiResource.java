@@ -24,7 +24,7 @@ import org.compass.core.Resource;
  *
  * @author kimchy
  */
-public interface MultiResource extends Resource {
+public interface MultiResource extends InternalResource {
 
     /**
      * Returns the number of {@link Resource}s.

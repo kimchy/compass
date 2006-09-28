@@ -23,7 +23,9 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.MultiResource;
+import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -54,6 +56,10 @@ public class LuceneMultiResource implements MultiResource {
 
     public Resource currentResource() {
         return currentResource;
+    }
+
+    public ResourceKey resourceKey() {
+        return ((InternalResource) currentResource).resourceKey();
     }
 
     public void addResource() {

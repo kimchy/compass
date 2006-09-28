@@ -18,8 +18,6 @@ package org.compass.core.lucene.engine.transaction;
 
 import java.util.ArrayList;
 
-import org.compass.core.Property;
-import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
@@ -31,6 +29,8 @@ import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 
 /**
  * A base class for all Lucene based transactions. Provides helper methods for
@@ -104,19 +104,19 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
     protected abstract SearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases)
             throws SearchEngineException;
 
-    public void create(final Resource resource) throws SearchEngineException {
+    public void create(final InternalResource resource) throws SearchEngineException {
         dirty = true;
         doCreate(resource);
     }
 
-    protected abstract void doCreate(final Resource resource) throws SearchEngineException;
+    protected abstract void doCreate(final InternalResource resource) throws SearchEngineException;
 
-    public void delete(final Property[] ids, String alias) throws SearchEngineException {
+    public void delete(final ResourceKey resourceKey) throws SearchEngineException {
         dirty = true;
-        doDelete(ids, alias);
+        doDelete(resourceKey);
     }
 
-    protected abstract void doDelete(final Property[] ids, String alias) throws SearchEngineException;
+    protected abstract void doDelete(final ResourceKey resourceKey) throws SearchEngineException;
 
     public boolean isDirty() {
         return dirty;

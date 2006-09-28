@@ -19,9 +19,9 @@ package org.compass.core.marshall;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.naming.PropertyPath;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.mapping.CompassMapping;
-import org.compass.core.impl.ResourceIdKey;
+import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.spi.ResourceKey;
 
 /**
  * @author kimchy
@@ -44,9 +44,9 @@ public interface MarshallingContext {
 
     Object removeAttribute(Object key);
 
-    void setUnmarshalled(ResourceIdKey key, Object obj);
+    void setUnmarshalled(ResourceKey key, Object obj);
 
-    Object getUnmarshalled(ResourceIdKey key);
+    Object getUnmarshalled(ResourceKey key);
 
     void clearContext();
 

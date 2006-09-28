@@ -36,12 +36,14 @@ import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.AliasedObject;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
 
 /**
  * @author kimchy
  */
-public class LuceneResource implements AliasedObject, Resource, Map {
+public class LuceneResource implements AliasedObject, InternalResource, Map {
 
     private static final long serialVersionUID = 3904681565727306034L;
 
@@ -56,6 +58,8 @@ public class LuceneResource implements AliasedObject, Resource, Map {
     private transient LuceneSearchEngine searchEngine;
 
     private transient ResourceMapping resourceMapping;
+
+    private transient ResourceKey resourceKey;
 
     public LuceneResource(String alias, LuceneSearchEngine searchEngine) {
         this(alias, new Document(), -1, searchEngine);
@@ -101,6 +105,13 @@ public class LuceneResource implements AliasedObject, Resource, Map {
 
     public Document getDocument() {
         return this.document;
+    }
+
+    public ResourceKey resourceKey() {
+        if (resourceKey == null) {
+            resourceKey = new ResourceKey(resourceMapping, this);
+        }
+        return resourceKey;
     }
 
     public String get(String name) {

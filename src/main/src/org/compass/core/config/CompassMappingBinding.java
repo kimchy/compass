@@ -53,9 +53,6 @@ public class CompassMappingBinding implements MappingBinding {
                 hasAddedResource = true;
             }
         }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match resource [" + path + "]");
-        }
         return hasAddedResource;
     }
 
@@ -67,9 +64,6 @@ public class CompassMappingBinding implements MappingBinding {
             if (retVal) {
                 hasAddedResource = true;
             }
-        }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match resource [" + path + "] and class loader [" + classLoader + "]");
         }
         return hasAddedResource;
     }
@@ -83,9 +77,6 @@ public class CompassMappingBinding implements MappingBinding {
                 hasAddedResource = true;
             }
         }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match URL [" + url.toExternalForm() + "]");
-        }
         return hasAddedResource;
     }
 
@@ -97,9 +88,6 @@ public class CompassMappingBinding implements MappingBinding {
             if (retVal) {
                 hasAddedResource = true;
             }
-        }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match directory [" + dir.getAbsolutePath() + "]");
         }
         return hasAddedResource;
     }
@@ -113,9 +101,6 @@ public class CompassMappingBinding implements MappingBinding {
                 hasAddedResource = true;
             }
         }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match jar [" + jar.getAbsolutePath() + "]");
-        }
         return hasAddedResource;
     }
 
@@ -127,9 +112,6 @@ public class CompassMappingBinding implements MappingBinding {
             if (retVal) {
                 hasAddedResource = true;
             }
-        }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match file [" + filePath + "]");
         }
         return hasAddedResource;
     }
@@ -143,9 +125,6 @@ public class CompassMappingBinding implements MappingBinding {
                 hasAddedResource = true;
             }
         }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match file [" + file.getAbsolutePath() + "]");
-        }
         return hasAddedResource;
     }
 
@@ -157,9 +136,6 @@ public class CompassMappingBinding implements MappingBinding {
             if (retVal) {
                 hasAddedResource = true;
             }
-        }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match package [" + packageName + "]");
         }
         return hasAddedResource;
     }
@@ -173,9 +149,6 @@ public class CompassMappingBinding implements MappingBinding {
                 hasAddedResource = true;
             }
         }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match class [" + clazz.getName() + "]");
-        }
         return hasAddedResource;
     }
 
@@ -188,9 +161,6 @@ public class CompassMappingBinding implements MappingBinding {
                 hasAddedResource = true;
             }
         }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match mapping builder [" + mappingResolver + "]");
-        }
         return hasAddedResource;
     }
 
@@ -202,9 +172,6 @@ public class CompassMappingBinding implements MappingBinding {
             if (retVal) {
                 hasAddedResource = true;
             }
-        }
-        if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match input stream [" +resourceName + "]");
         }
         return hasAddedResource;
     }

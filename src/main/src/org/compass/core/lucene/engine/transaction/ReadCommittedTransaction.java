@@ -44,15 +44,17 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.utils.ResourceHelper;
+import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSettings;
-import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.ChainedFilter;
 import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.FieldInvoker;
 import org.compass.core.util.StringUtils;
 
@@ -295,41 +297,40 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         // we might want to actually perform a flush if the Lucene store allows it (like jdbc).
     }
 
-    protected void doCreate(Resource resource) throws SearchEngineException {
-        String subIndex = ResourceHelper.computeSubIndex(resource, mapping);
+    protected void doCreate(InternalResource resource) throws SearchEngineException {
+        String subIndex = ResourceHelper.computeSubIndex(resource.resourceKey());
         TransIndexWrapper wrapper = transIndexManager.openTransIndexBySubIndex(subIndex);
         try {
-            Property[] ids = ResourceHelper.toIds(resource, mapping);
             Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
-            wrapper.transIndex.addResource(resource, ids, analyzer);
+            wrapper.transIndex.addResource(resource, analyzer);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()
                     + "] and resource " + resource, e);
         }
     }
 
-    protected void doDelete(Property[] ids, String alias) throws SearchEngineException {
-        String subIndex = ResourceHelper.computeSubIndex(alias, ids, mapping);
+    protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
+        String subIndex = ResourceHelper.computeSubIndex(resourceKey);
         TransIndexWrapper wrapper = transIndexManager.openTransIndexBySubIndex(subIndex);
 
         // mark for deletion in the actual index
-        markDelete(wrapper, subIndex, alias, ids, filter);
+        markDelete(wrapper, subIndex, resourceKey, filter);
 
         // delete it from the transactional data
         try {
-            wrapper.transIndex.deleteTransResource(ids, alias);
+            wrapper.transIndex.deleteTransResource(resourceKey);
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to delete alias [" + alias + "] and ids ["
-                    + StringUtils.arrayToCommaDelimitedString(ids) + "]", e);
+            throw new SearchEngineException("Failed to delete alias [" + resourceKey.getAlias() + "] and ids ["
+                    + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]", e);
         }
     }
 
-    public Resource[] find(Property[] ids, String alias) throws SearchEngineException {
+    public Resource[] find(ResourceKey resourceKey) throws SearchEngineException {
         Searcher indexSearcher;
         Hits hits;
         LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = null;
         try {
-            String subIndex = ResourceHelper.computeSubIndex(alias, ids, mapping);
+            String subIndex = ResourceHelper.computeSubIndex(resourceKey);
             TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
             if (wrapper == null) {
                 indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
@@ -341,11 +342,11 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             if (filter.hasDeletes()) {
                 qFilter = filter;
             }
-            hits = findByIds(indexSearcher, subIndex, alias, ids, qFilter);
+            hits = findByIds(indexSearcher, subIndex, resourceKey, qFilter);
             return LuceneUtils.hitsToResourceArray(hits, searchEngine);
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to find for alias [" + alias + "] and ids ["
-                    + StringUtils.arrayToCommaDelimitedString(ids) + "]", e);
+            throw new SearchEngineException("Failed to find for alias [" + resourceKey.getAlias() + "] and ids ["
+                    + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]", e);
         } finally {
             if (indexHolder != null) {
                 indexHolder.release();
@@ -412,8 +413,9 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
     }
 
-    private Hits findByIds(Searcher indexSearcher, String subIndex, String alias, Property ids[], Filter filter)
+    private Hits findByIds(Searcher indexSearcher, String subIndex, ResourceKey resourceKey, Filter filter)
             throws SearchEngineException {
+        Property[] ids = resourceKey.getIds();
         Query query;
         int numberOfAliases = indexManager.getStore().getNumberOfAliasesBySubIndex(subIndex);
         if (numberOfAliases == 1 && ids.length == 1) {
@@ -422,7 +424,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             BooleanQuery bQuery = new BooleanQuery();
             if (numberOfAliases > 1) {
                 String aliasProperty = searchEngine.getSearchEngineFactory().getLuceneSettings().getAliasProperty();
-                Term t = new Term(aliasProperty, alias);
+                Term t = new Term(aliasProperty, resourceKey.getAlias());
                 bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
             }
             for (int i = 0; i < ids.length; i++) {
@@ -438,7 +440,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 return indexSearcher.search(query, filter);
             }
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to search for alias [" + alias + "] and properties ["
+            throw new SearchEngineException("Failed to search for alias [" + resourceKey.getAlias() + "] and properties ["
                     + StringUtils.arrayToCommaDelimitedString(ids) + "]", e);
         }
     }
@@ -460,8 +462,9 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         return hits;
     }
 
-    private void markDelete(TransIndexWrapper wrapper, String subIndex, String alias, Property[] ids, BitSetByAliasFilter filter)
+    private void markDelete(TransIndexWrapper wrapper, String subIndex, ResourceKey resourceKey, BitSetByAliasFilter filter)
             throws SearchEngineException {
+        Property[] ids = resourceKey.getIds();
         try {
             boolean moreThanOneAliasPerSubIndex =
                     indexManager.getStore().getNumberOfAliasesBySubIndex(subIndex) > 1;
@@ -493,7 +496,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                     }
                 }
             } else {
-                Hits hits = findByIds(wrapper.transIndex.getIndexSearcher(), subIndex, alias, ids, null);
+                Hits hits = findByIds(wrapper.transIndex.getIndexSearcher(), subIndex, resourceKey, null);
                 if (hits.length() != 0) {
                     int maxDoc = wrapper.transIndex.getIndexSearcher().maxDoc();
                     for (int i = 0; i < hits.length(); i++) {

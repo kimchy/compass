@@ -23,7 +23,6 @@ import java.util.HashMap;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
-import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
@@ -32,6 +31,8 @@ import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 
 /**
  * A batch update transaction management. Only support save (add) operations.
@@ -199,15 +200,15 @@ public class BatchInsertTransaction extends AbstractTransaction {
         }
     }
 
-    protected void doCreate(final Resource resource) throws SearchEngineException {
+    protected void doCreate(final InternalResource resource) throws SearchEngineException {
         // open the original index writer, so we lock it for changes
-        String subIndex = ResourceHelper.computeSubIndex(resource, mapping);
+        String subIndex = ResourceHelper.computeSubIndex(resource.resourceKey());
         WriterManager.IndexWriterWrapper wrapper = writerManager.openWriterBySubIndex(subIndex);
         Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
         LuceneUtils.createResource(wrapper.indexWriter, resource, analyzer);
     }
 
-    protected void doDelete(Property[] ids, String alias) throws SearchEngineException {
+    protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
         throw new SearchEngineException("Delete operation not supported for batch insert transaction");
     }
 
@@ -215,7 +216,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
         throw new SearchEngineException("Find operation not supported for batch insert transaction");
     }
 
-    public Resource[] find(Property[] ids, String alias) throws SearchEngineException {
+    public Resource[] find(ResourceKey resourceKey) throws SearchEngineException {
         throw new SearchEngineException("Find operation not supported for batch insert transaction");
     }
 
