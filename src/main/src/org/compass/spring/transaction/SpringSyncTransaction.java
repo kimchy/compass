@@ -118,7 +118,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
 
         if (status.isNewTransaction()) {
             if (log.isDebugEnabled()) {
-                log.debug("Committing Spring transaction controlled by compass on therad ["
+                log.debug("Committing Spring transaction controlled by compass on thread ["
                         + Thread.currentThread().getName() + "]");
             }
             try {
@@ -205,7 +205,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
                 return;
             }
             if (log.isDebugEnabled()) {
-                log.debug("Committing compass transaction using Spring synchronization beforeCompletion on therad [" +
+                log.debug("Committing compass transaction using Spring synchronization beforeCompletion on thread [" +
                         Thread.currentThread().getName() + "]");
             }
             session.getSearchEngine().commit(true);
@@ -220,7 +220,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
                 if (status == STATUS_COMMITTED) {
                     if (!commitBeforeCompletion) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Committing compass transaction using Spring synchronization afterCompletion on therad [" +
+                            log.debug("Committing compass transaction using Spring synchronization afterCompletion on thread [" +
                                     Thread.currentThread().getName() + "]");
                         }
                         session.getSearchEngine().commit(true);
@@ -228,7 +228,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
                 } else {
                     // in case of STATUS_ROLLBACK or STATUS_UNKNOWN
                     if (log.isDebugEnabled()) {
-                        log.debug("Rolling back compass transaction using Spring synchronization afterCompletion on therad [" +
+                        log.debug("Rolling back compass transaction using Spring synchronization afterCompletion on thread [" +
                                 Thread.currentThread().getName() + "]");
                     }
                     session.getSearchEngine().rollback();
