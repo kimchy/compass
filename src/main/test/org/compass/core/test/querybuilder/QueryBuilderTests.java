@@ -18,6 +18,7 @@ package org.compass.core.test.querybuilder;
 
 import java.util.Calendar;
 
+import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQueryBuilder;
 import org.compass.core.CompassSession;
@@ -97,8 +98,12 @@ public class QueryBuilderTests extends AbstractTestCase {
         CompassHits hits = queryBuilder.alias("a").hits();
         assertEquals(4, hits.length());
 
-        hits = queryBuilder.alias("b").hits();
-        assertEquals(0, hits.length());
+        try {
+            hits = queryBuilder.alias("b").hits();
+            fail();
+        } catch (CompassException e) {
+            // this is ok
+        }
 
         tr.commit();
         session.close();

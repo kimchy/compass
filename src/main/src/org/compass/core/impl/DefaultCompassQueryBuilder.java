@@ -307,6 +307,9 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
     }
 
     public CompassQuery alias(String aliasValue) {
+        if (!session.getCompass().getMapping().hasRootMappingByAlias(aliasValue)) {
+            throw new CompassException("Alias [" + aliasValue + "] not found in Compass mappings definitions");
+        }
         String aliasProperty = session.getCompass().getSearchEngineFactory().getAliasProperty();
         SearchEngineQuery query = queryBuilder.term(aliasProperty, aliasValue);
         return new DefaultCompassQuery(query, session);
