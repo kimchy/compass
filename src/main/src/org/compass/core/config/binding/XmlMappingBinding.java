@@ -37,7 +37,16 @@ import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.ComponentMapping;
+import org.compass.core.mapping.osem.ConstantMetaDataMapping;
+import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
@@ -51,6 +60,7 @@ import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.DTDEntityResolver;
+import org.compass.core.util.StringUtils;
 import org.compass.core.util.config.ConfigurationHelper;
 import org.xml.sax.EntityResolver;
 
@@ -632,7 +642,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         ConfigurationHelper[] metadatas = classPropertyConf.getChildren("meta-data");
         for (int i = 0; i < metadatas.length; i++) {
             ClassPropertyMetaDataMapping mdMapping = new ClassPropertyMetaDataMapping();
-            bindMetaData(metadatas[i], classPropertyMapping, mdMapping);
+            bindMetaData(metadatas[i], aliasMapping, classPropertyMapping, mdMapping);
             classPropertyMapping.addMapping(mdMapping);
         }
     }
@@ -640,6 +650,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     private void bindConstant(ConfigurationHelper constantConf, AliasMapping classMapping,
                               ConstantMetaDataMapping constantMapping) {
         ConfigurationHelper metadataConf = constantConf.getChild("meta-data");
+        if (!StringUtils.hasText(metadataConf.getValue())) {
+            throw new MappingException("Alias mapping [" + classMapping.getAlias() + "] has a constant mapping with an empty meta-data value");
+        }
         String metaDataValue = metadataConf.getValue().trim();
         constantMapping.setName(valueLookup.lookupMetaDataName(metaDataValue));
         constantMapping.setBoost(getBoost(metadataConf, 1.0f));
@@ -665,8 +678,12 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
     }
 
-    private void bindMetaData(ConfigurationHelper metadataConf, ClassPropertyMapping classPropertyMapping,
-                              ClassPropertyMetaDataMapping mdMapping) {
+    private void bindMetaData(ConfigurationHelper metadataConf, AliasMapping aliasMapping,
+                              ClassPropertyMapping classPropertyMapping, ClassPropertyMetaDataMapping mdMapping) {
+        if (!StringUtils.hasText(metadataConf.getValue())) {
+            throw new MappingException("Alias mapping [" + aliasMapping.getAlias() + "] and property [" +
+                    classPropertyMapping.getName() + "] has a meta-data mapping with no value");
+        }
         String name = valueLookup.lookupMetaDataName(metadataConf.getValue().trim());
         mdMapping.setBoost(getBoost(metadataConf, classPropertyMapping.getBoost()));
         mdMapping.setName(name);
