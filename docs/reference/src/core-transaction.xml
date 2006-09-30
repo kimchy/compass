@@ -48,7 +48,7 @@
     <title>JTA Synchronization Transaction</title>
 
     <para>
-        Compass::Core provides support for JTA transactions, using the JTA synchronization support. A JTA transaction will be joined if already started (by CMT for example) or will be started if non was initiated.
+        Compass provides support for JTA transactions using the JTA synchronization support. A JTA transaction will be joined if already started (by CMT for example) or will be started if non was initiated.
     </para>
 
     <para>
@@ -60,15 +60,32 @@
     </para>
 
     <para>
-        The current implementation performs the full transaction commit (first and second phase) at the <literal>afterCompletion</literal> method and any exception is logged but not propagated.
+        The current implementation performs the full transaction commit (first and second phase) at the <literal>afterCompletion</literal> method and any exception is logged but not propagated. It can be configured to perform the commit in the <literal>beforeCompletion</literal> phase, which is useful when storing the index in the database.
     </para>
 
     <para>
-        In order to configure Compass to work with the JTA Sync Transaction, you must set the <literal>compass.transaction.factory</literal> to <literal>org.compass.core.transaction.JTASyncTransactionFactory</literal>. You must also set the transaction manager lookup based on the environment your application will be running at.
+        In order to configure Compass to work with the JTA Sync Transaction, you must set the <literal>compass.transaction.factory</literal> to <literal>org.compass.core.transaction.JTASyncTransactionFactory</literal>. You can also set the transaction manager lookup based on the environment your application will be running at (Compass will try to automatically identify it).
+    </para>
+
+  </sect1>
+
+  <sect1 id="core-transaction-XATransaction">
+    <title>XA Transaction</title>
+
+    <para>
+        Compass provides support for JTA transactions by enlisting an <classname>XAResource</classname> with a currently active <classname>Transaction</classname>. This allows for Compass to participate in a two phase commit process. A JTA transaction will be joined if already started (by CMT for example) or will be started if non was initiated.
     </para>
 
     <para>
-        If you wish to unit test your application without a container, you might consider using <ulink url="http://jotm.objectweb.org">JOTM</ulink> as your JTA transaction manager.
+        The support for JTA also includes support for suspend and resume provided by the JTA transaction manager (or REQUIRES_NEW in CMT when there is already a transaction running).
+    </para>
+
+    <para>
+      The XA support provided allows for proper two phase commit transaction operations, but do not provide a full implementation such as a JCA implementation (mostly for recovery).
+    </para>
+
+    <para>
+        In order to configure Compass to work with the JTA XA Transaction, you must set the <literal>compass.transaction.factory</literal> to <literal>org.compass.core.transaction.XATransactionFactory</literal>. You can also set the transaction manager lookup based on the environment your application will be running at (Compass will try to automatically identify it).
     </para>
 
   </sect1>

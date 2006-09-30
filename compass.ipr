@@ -23,6 +23,7 @@
             <package name="" withSubpackages="true" />
           </value>
         </option>
+        <option name="JD_P_AT_EMPTY_LINES" value="false" />
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />

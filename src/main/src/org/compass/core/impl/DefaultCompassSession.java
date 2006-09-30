@@ -67,6 +67,8 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     private FirstLevelCache firstLevelCache;
 
+    private boolean closed = false;
+
     public DefaultCompassSession(InternalCompass compass, SearchEngine searchEngine, FirstLevelCache firstLevelCache) {
         this.compass = compass;
         this.mapping = compass.getMapping();
@@ -319,6 +321,10 @@ public class DefaultCompassSession implements InternalCompassSession {
     }
 
     public void close() throws CompassException {
+        if (closed) {
+            return;
+        }
+        closed = true;
         CompassSession transactionBoundSession = transactionFactory.getTransactionBoundSession();
         if (transactionBoundSession == null || transactionBoundSession != this) {
             firstLevelCache.evictAll();

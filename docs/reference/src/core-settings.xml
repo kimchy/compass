@@ -200,6 +200,10 @@
                 <entry>org.compass.core. transaction.JTASyncTransactionFactory</entry>
                 <entry>Uses the JTA synchronization support to synchronize with the JTA transaction (not the same as two phase commit, meaning that if the transaction fails, the other resources that participate in the transaction will not roll back). If there is no existing JTA transaction, a new one will be started.</entry>
               </row>
+              <row>
+                <entry>org.compass.core. transaction.XATransactionFactory</entry>
+                <entry>Uses the JTA Transaction to enlist a Compass implemented <classname>XAResource</classname> This allows for Compass to participate in a two phase commit operation. Note, the JTA implementation should automatically delist the resource when the transaction commit/rollback. If there is no existing JTA transaction, a new one will be started.</entry>
+              </row>
             </tbody>
           </tgroup>
         </table>

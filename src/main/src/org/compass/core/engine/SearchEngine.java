@@ -141,6 +141,12 @@ public interface SearchEngine {
     void rollback() throws SearchEngineException;
 
     /**
+     * Returns <code>true</code> if the search engine was used (up until now)
+     * for read only operations.
+     */
+    boolean isReadOnly();
+
+    /**
      * Flushed the current transaction. Currently only works with batch insert transaction.
      */
     void flush() throws SearchEngineException;

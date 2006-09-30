@@ -74,7 +74,10 @@ public class LuceneSearchEngine implements SearchEngine {
 
     private SearchEngineEventManager eventManager = new SearchEngineEventManager();
 
+    private boolean readOnly;
+
     public LuceneSearchEngine(LuceneSearchEngineFactory searchEngineFactory) {
+        this.readOnly = true;
         this.searchEngineFactory = searchEngineFactory;
         this.transactionState = UNKNOWN;
         eventManager.registerLifecycleListener(searchEngineFactory.getEventManager());
@@ -160,6 +163,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void begin() throws SearchEngineException {
+        this.readOnly = true;
         if (transactionState == STARTED) {
             throw new SearchEngineException("Transaction already started, why start it again?");
         }
@@ -184,6 +188,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void begin(TransactionIsolation transactionIsolation) throws SearchEngineException {
+        this.readOnly = true;
         if (transactionIsolation == null) {
             transactionIsolation = searchEngineFactory.getLuceneSettings().getTransactionIsolation();
         }
@@ -273,6 +278,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void delete(Resource resource) throws SearchEngineException {
         checkTransactionStarted();
+        readOnly = false;
         if (resource instanceof MultiResource) {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
@@ -284,7 +290,6 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     private void delete(ResourceKey resourceKey) throws SearchEngineException {
-        checkTransactionStarted();
         if (resourceKey.getIds().length == 0) {
             throw new SearchEngineException("Cannot delete a resource with no ids");
         }
@@ -296,6 +301,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void create(final Resource resource) throws SearchEngineException {
         checkTransactionStarted();
+        readOnly = false;
         String alias = resource.getAlias();
         ResourceMapping resourceMapping = searchEngineFactory.getMapping().getRootMappingByAlias(alias);
         if (resourceMapping == null) {
@@ -321,6 +327,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void save(Resource resource) throws SearchEngineException {
+        readOnly = true;
         delete(resource);
         create(resource);
     }
@@ -367,5 +374,10 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public LuceneSearchEngineFactory getSearchEngineFactory() {
         return searchEngineFactory;
+    }
+
+
+    public boolean isReadOnly() {
+        return this.readOnly;
     }
 }

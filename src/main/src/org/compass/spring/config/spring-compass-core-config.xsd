@@ -1117,6 +1117,16 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:enumeration>
+                    <xsd:enumeration value="org.compass.core.transaction.XATransactionFactory">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Uses the JTA Transaction to enlist a Compass implemented XAResource. This allows for
+                                Compass to participate in a two phase commit operation. Note, the JTA implementation
+                                should automatically delist the resource when the transaction commit/rollback. If there
+                                is no existing JTA transaction, a new one will be started.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
                     <xsd:enumeration value="org.compass.spring.transaction.SpringSyncTransactionFactory">
                         <xsd:annotation>
                             <xsd:documentation>
