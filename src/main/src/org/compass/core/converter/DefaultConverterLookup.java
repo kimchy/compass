@@ -64,7 +64,16 @@ import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlIdMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlObjectMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.osem.ArrayMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
+import org.compass.core.mapping.osem.CollectionMapping;
+import org.compass.core.mapping.osem.ComponentMapping;
+import org.compass.core.mapping.osem.ConstantMetaDataMapping;
+import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.mapping.xsem.XmlIdMapping;
@@ -320,15 +329,15 @@ public class DefaultConverterLookup implements ConverterLookup {
     }
 
     public void registerConverter(String converterName, Converter converter) {
-        if (log.isInfoEnabled()) {
-            log.info("Converter [" + converterName + "] registered");
+        if (log.isDebugEnabled()) {
+            log.debug("Converter [" + converterName + "] registered");
         }
         convertersByName.put(converterName, converter);
     }
 
     public void registerConverter(String converterName, Converter converter, Class registerType) {
-        if (log.isInfoEnabled()) {
-            log.info("Converter [" + converterName + "] registered with type [" + registerType + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Converter [" + converterName + "] registered with type [" + registerType + "]");
         }
         convertersByName.put(converterName, converter);
         convertersByClass.put(registerType.getName(), converter);
