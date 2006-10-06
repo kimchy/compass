@@ -353,7 +353,8 @@ public class LuceneSearchEngine implements SearchEngine {
         String alias = idResource.getAlias();
         Resource resource = get(idResource);
         if (resource == null) {
-            throw new SearchEngineException("Failed to find resource with alias [" + alias + "] and ids " + idResource);
+            throw new SearchEngineException("Failed to find resource with alias [" + alias + "] and ids ["
+                    + StringUtils.arrayToCommaDelimitedString(idResource.getIds()) + "]");
         }
         return resource;
     }
