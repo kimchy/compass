@@ -27,7 +27,6 @@ import org.compass.core.accessor.Setter;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
-import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -96,7 +95,6 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             if (!classMapping.isSupportUnmarshall()) {
                 throw new ConversionException("Class Mapping [" + classMapping.getAlias() + "] is configured not to support un-marshalling");
             }
-            Property[] ids = ResourceHelper.toIds(resource, context.getCompassMapping());
             resourceKey = ((InternalResource) resource).resourceKey();
             Object cached = context.getUnmarshalled(resourceKey);
             if (cached != null) {

@@ -24,7 +24,6 @@ import org.apache.lucene.search.Hits;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHighlighter;
-import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.lucene.LuceneResource;
 
 /**

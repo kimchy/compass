@@ -37,12 +37,9 @@ public class LuceneQueryParserManager implements CompassConfigurable {
 
     private static final Log log = LogFactory.getLog(LuceneQueryParserManager.class);
 
-    private LuceneSearchEngineFactory searchEngineFactory;
-
     private HashMap queryParsers = new HashMap();
 
     public LuceneQueryParserManager(LuceneSearchEngineFactory searchEngineFactory) {
-        this.searchEngineFactory = searchEngineFactory;
     }
 
     public void configure(CompassSettings settings) throws CompassException {

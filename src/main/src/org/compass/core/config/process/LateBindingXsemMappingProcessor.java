@@ -35,20 +35,14 @@ import org.compass.core.mapping.xsem.XmlPropertyMapping;
  */
 public class LateBindingXsemMappingProcessor implements MappingProcessor {
 
-    private CompassMapping compassMapping;
-
     private PropertyNamingStrategy namingStrategy;
 
     private ConverterLookup converterLookup;
 
-    private CompassSettings settings;
-
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
-                                  ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
-        this.compassMapping = compassMapping;
+            ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
         this.namingStrategy = namingStrategy;
         this.converterLookup = converterLookup;
-        this.settings = settings;
 
         compassMapping.setPath(namingStrategy.getRootPath());
         for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
@@ -78,8 +72,8 @@ public class LateBindingXsemMappingProcessor implements MappingProcessor {
                     String converterName = xmlPropertyMapping.getValueConverterName();
                     xmlPropertyMapping.setValueConverter(converterLookup.lookupConverter(converterName));
                     if (xmlPropertyMapping.getValueConverter() == null) {
-                        throw new ConfigurationException("Failed to find converter [" + converterName + "] for mapping " +
-                                "[" + xmlPropertyMapping.getName() + "]");
+                        throw new ConfigurationException("Failed to find converter [" + converterName
+                                + "] for mapping " + "[" + xmlPropertyMapping.getName() + "]");
                     }
                 } else {
                     // this should probably be handled in the actual converteres
