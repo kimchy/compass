@@ -1,5 +1,6 @@
-#Sun Feb 19 11:06:20 GMT 2006
+#Fri Oct 06 02:54:17 IST 2006
 eclipse.preferences.version=1
-formatter_settings_version=8
+formatter_profile=_Compass
+formatter_settings_version=10
 internal.default.compliance=default
 org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8"?><templates/>

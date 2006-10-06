@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry output="target/classes" kind="src" path="src/main/src"/>
-	<classpathentry output="target/test-classes" kind="src" path="src/main/test"/>
-	<classpathentry output="target/classes" kind="src" path="src/tiger/src"/>
-	<classpathentry output="target/tiger-test-classes" kind="src" path="src/tiger/test"/>
-	<classpathentry output="target/sandbox/classes" kind="src" path="src/sandbox/src"/>
-	<classpathentry output="target/sandbox/test-classes" kind="src" path="src/sandbox/test"/>
-	<classpathentry output="samples/library/target/classes" kind="src" path="samples/library/src/java"/>
-	<classpathentry output="samples/library/target/classes" kind="src" path="samples/library/src/test"/>
-	<classpathentry output="samples/petclinic/target/classes" kind="src" path="samples/petclinic/src/java"/>
-	<classpathentry output="samples/petclinic/target/testclasses" kind="src" path="samples/petclinic/src/test"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/src"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/main/test"/>
+	<classpathentry kind="src" output="target/classes" path="src/tiger/src"/>
+	<classpathentry kind="src" output="target/tiger-test-classes" path="src/tiger/test"/>
+	<classpathentry kind="src" output="target/sandbox/classes" path="src/sandbox/src"/>
+	<classpathentry kind="src" output="target/sandbox/test-classes" path="src/sandbox/test"/>
+	<classpathentry kind="src" output="samples/library/target/classes" path="samples/library/src/java"/>
+	<classpathentry kind="src" output="samples/library/target/classes" path="samples/library/src/test"/>
+	<classpathentry kind="src" output="samples/petclinic/target/classes" path="samples/petclinic/src/java"/>
+	<classpathentry kind="src" output="samples/petclinic/target/testclasses" path="samples/petclinic/src/test"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate2.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb/hsqldb.jar"/>
@@ -72,10 +72,15 @@
 	<classpathentry kind="lib" path="lib/spring/spring-jpa.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-ojb.jar"/>
 	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials-agent.jar"/>
 	<classpathentry kind="lib" path="lib/xpp/pull-parser-2.1.10.jar"/>
 	<classpathentry kind="lib" path="lib/xpp/xpp3-1.1.3_8.jar"/>
+	<classpathentry kind="lib" path="lib/ognl/ognl-2.6.5.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/groovy/groovy-all-1.0-JSR-06.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-el.jar"/>
+	<classpathentry kind="lib" path="lib/velocity/velocity-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-jexl-1.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
