@@ -186,7 +186,7 @@
             </para>
 
             <para>
-                The integration uses the OSEM definitions, working with Compass object level API to interact with the underlying search engine. The spring application context bean definitions for the <literal>compass</literal> (required by the Hibernate Gps device) instance is defined with OSEM definitions and spring based transaction support. The <literal>applicationContext-hiberante.xml</literal> in the test package, and the <literal>applicationContext-hiberante.xml</literal> in the WEB-INF directory define all the required definitions to work with hibernate and compass. Note, that only the mentioned configuration has to be created in order to integrate compass to the data access layer.
+                The integration uses the OSEM definitions, working with Compass object level API to interact with the underlying search engine. The spring application context bean definitions for the <literal>compass</literal> (required by the Hibernate Gps device) instance is defined with OSEM definitions and spring based transaction support. The <literal>applicationContext-hibernate.xml</literal> in the test package, and the <literal>applicationContext-hibernate.xml</literal> in the WEB-INF directory define all the required definitions to work with hibernate and compass. Note, that only the mentioned configuration has to be created in order to integrate compass to the data access layer.
             </para>
 
         </sect2>

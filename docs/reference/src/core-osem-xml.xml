@@ -473,8 +473,9 @@ public class Author {
       boost="boost value for the property"
       class="explicit declaration of the property class"
       analyzer="name of the analyzer"
+      override="true|false"
       managed-id="auto|true|false"
-      managed-id="[compass.managedId.index setting]|no|un_tokenized"
+      managed-id-index="[compass.managedId.index setting]|no|un_tokenized"
       exclude-from-all="false|true"
       converter="converter lookup name"
 >

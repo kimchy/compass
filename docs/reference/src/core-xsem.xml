@@ -7,16 +7,16 @@
       <para>
         Compass::Core provides the ability to map XML structure to the underlying Search Engine through simple XML mapping files, we call this technology XSEM (XML to Search Engine Mapping). XSEM provides a rich syntax for describing XML mappings using Xpath expressions. The XSEM files are used by Compass to extract the required xml elements from the xml structure at run-time and inserting the required meta-data into the Search Engine index.
       </para>
-      
+
    </sect1>
-      
+
    <sect1 id="xsem-xmlobject-def">
       <title>Xml Object</title>
-      
+
       <para>
          At the core of XSEM supports is <literal>XmlObject</literal> abstraction on top of the actual XML library implementation. The <literal>XmlObject</literal> represents an XML element (document, node, attribute, ...) which is usually the result of an Xpath expression. It allows to get the name and value of the given element, and execute Xpath expressions against it (for more information please see the <literal>XmlObject</literal> javadoc).
       </para>
-      
+
       <para>
          Here is an example of how <literal>XmlObject</literal> is used with Compass:
 <programlisting><![CDATA[CompassSession session = compass.openSession();
@@ -25,7 +25,7 @@ XmlObject xmlObject = // create the actual XmlObject implementation (we will see
 session.save("alias", xmlObject);
 ]]></programlisting>
       </para>
-      
+
       <para>
          An extension to the <literal>XmlObject</literal> interface is the <literal>AliasedXmlObject</literal> interface. It represents an xml object that is also associated with an alias. This means, that saving the object does not require to explicitly specify the alias that it will be saved under.
 <programlisting><![CDATA[CompassSession session = compass.openSession();
@@ -56,21 +56,21 @@ session.save(xmlObject);
       </para>
 
     </sect1>
-    
+
     <sect1 id="xsem-xmlcontent-def">
        <title>Xml Content Handling</title>
 
        <para>
           Up until now, Compass has no knowledge of how to parse and create an actual <literal>XmlObject</literal> implementation, or how to convert an <literal>XmlObject</literal> into its xml representation. This is perfectly fine, but it also means that systems will not be able to work with <literal>XmlObject</literal> for read/search operations. Again, this is perfectly ok for some application, since they can always work with the underlying <literal>Resource</literal> representation, but some applications would still like to store the actual xml content in the search engine, and work with the <literal>XmlObject</literal> for read/search operations.
        </para>
-       
+
        <para>
           Compass XSEM support allows to define the <literal>xml-content</literal> mapping (defined below), which will cause Compass to store the xml representation in the search engine as well. It will also mean that for read/search operations, the application will be able to get an <literal>XmlObject</literal> back (for example, using <literal>CompassSession#get</literal> operation).
        </para>
-       
+
        <para>
           In order to support this, Compass must be configured with how to parse the xml content into an <literal>XmlObject</literal>, and how to convert an <literal>XmlObject</literal> into an xml string. Compass comes with built in converters that do exactly that:
-          
+
           <table>
             <title>Compass XmlContentConverters</title>
             <tgroup cols="2">
@@ -81,31 +81,31 @@ session.save(xmlObject);
               </thead>
               <tbody>
                 <row>
-                  <entry>org.compass.core.xml.javax.converter.NodeXmlContentConverter</entry>
+                  <entry>org.compass.core.xml.javax.converter. NodeXmlContentConverter</entry>
                   <entry>Support for JSE 5 xml libraries. Not recommended on account of performance.</entry>
                 </row>
                 <row>
-                  <entry>org.compass.core.xml.dom4j.converter.SAXReaderXmlContentConverter</entry>
+                  <entry>org.compass.core.xml.dom4j.converter. SAXReaderXmlContentConverter</entry>
                   <entry>Support dom4j <literal>SAXReader</literal> for parsing, and <literal>XMLWriter</literal> to write the raw xml data.</entry>
                 </row>
                 <row>
-                  <entry>org.compass.core.xml.dom4j.converter.XPPReaderXmlContentConverter</entry>
+                  <entry>org.compass.core.xml.dom4j.converter. XPPReaderXmlContentConverter</entry>
                   <entry>Support dom4j <literal>XPPReader</literal> for parsing, and <literal>XMLWriter</literal> to write the raw xml data.</entry>
                 </row>
                 <row>
-                  <entry>org.compass.core.xml.dom4j.converter.XPP3ReaderXmlContentConverter</entry>
+                  <entry>org.compass.core.xml.dom4j.converter. XPP3ReaderXmlContentConverter</entry>
                   <entry>Support dom4j <literal>XPP3Reader</literal> for parsing, and <literal>XMLWriter</literal> to write the raw xml data.</entry>
                 </row>
               </tbody>
             </tgroup>
           </table>
-          
+
        </para>
-       
+
        <para>
           Most of the time, better performance can be achieved by pooling <literal>XmlContentConverter</literal>s implementations. Compass handling of <literal>XmlContentConverter</literal> allows for three different instantiation models: prototype, pool, and singleton. prototype will create a new <literal>XmlContentConverter</literal> each time, a singleton will use a shared <literal>XmlContentConverter</literal> for all operations, and pooled will pool <literal>XmlContentConverter</literal> instances. The default is prototype.
        </para>
-       
+
        <para>
           Here is an example of a Compass schema based configuration that registers a global Xml Content converter:
 <programlisting><![CDATA[<compass-core-config ...
@@ -116,9 +116,10 @@ session.save(xmlObject);
        </connection>
 
        <converters>
-           <converter name="compass.converter.xmlContentMapping" 
+           <converter name="compass.converter.xmlContentMapping"
               type="org.compass.core.converter.mapping.xsem.XmlContentMappingConverter">
-              <setting name="xmlContentConverter.type" value="[fully qualified class name of XmlContentConverter]" />
+              <setting name="xmlContentConverter.type"
+                       value="[fully qualified class name of XmlContentConverter]" />
               <setting name="xmlContentConverter.wrapper" value="prototype" />
            </converter>
        </converters>
@@ -126,7 +127,7 @@ session.save(xmlObject);
    </compass>
 </compass-core-config>
 ]]></programlisting>
-       </para>    
+       </para>
        <para>
           And here is an example of a DTD (settings) based configuration file:
 <programlisting><![CDATA[<!DOCTYPE compass-core-configuration PUBLIC ...
@@ -142,7 +143,7 @@ session.save(xmlObject);
          prototype
       </setting>
    </compass>
-</<compass-core-configuration>   
+</<compass-core-configuration>
 ]]></programlisting>
        </para>
        <para>
@@ -153,12 +154,12 @@ session.save(xmlObject);
    new String[]{XmlContentMappingConverter.class.getName(), XPP3ReaderXmlContentConverter.class.getName()});
 ]]></programlisting>
        </para>
-       
+
        <para>
           Note, that specific converters can be associated with a specific <literal>xml-object</literal> mapping, in order to do it, simply register the converter under a different name (compass.converter.xmlContentMapping is the default name that Compass will use when nothing is configured), and use that name in the converter attribute of the <literal>xml-content</literal> mapping.
        </para>
     </sect1>
-    
+
     <sect1 id="xsem-rawxmlobject-def">
        <title>Raw Xml Object</title>
 
@@ -166,17 +167,17 @@ session.save(xmlObject);
           If Compass is configured with an Xml Content converter, it now knows how to parse an xml content into an <literal>XmlObject</literal>. This allows us to simplify more the creation of <literal>XmlObject</literal>s from a raw xml data. Compass comes with a wrapper <literal>XmlObject</literal> implementation, which handles raw xml data (non parsed one). Here is how it can be used:
 <programlisting><![CDATA[Reader xmlData = // construct an xml reader over raw xml content
 AliasedXmlObject xmlObject = RawAliasedXmlObject(alias, xmlData);
-session.save(xmlObject);                         
+session.save(xmlObject);
 ]]></programlisting>
        </para>
        <para>
           Here, Compass will identify that it is a <literal>RawAliasedXmlObject</literal>, and will used the registered converter (or the one configured against the <literal>xml-content</literal> mapping for the given alias) to convert it to the appropriate <literal>XmlObject</literal> implementation. Note, that when performing any read/search operation, the actual <literal>XmlObject</literal> that will be returned is the onc the the registered converter creates, and not the raw xml object.
        </para>
     </sect1>
-    
+
     <sect1 id="xsem-mappingdefinition">
        <title>Mapping Definition</title>
-       
+
        <para>
           XML/Search Engine mappings are defined in an XML document, and maps XML data structures. The mappings are xml centric, meaning that mappings are constructed around XML data structures themselves and not internal <literal>Resources</literal>. If we take the following as a sample XML data structure:
 <programlisting><![CDATA[<xml-fragment>
@@ -224,23 +225,23 @@ session.save(xmlObject);
 </compass-core-mapping>
 ]]></programlisting>
        </para>
-       
+
        <para>
           The mapping definition here shows three different mappings (that will work with the sample xml). The different mappings are registered under different aliases, where the alias acts as the connection between the actual XML saved and the mappings definition.
        </para>
-       
+
        <para>
           An <literal>xml-object</literal> mapping can have an associated xpath expression with it, which will narrow down the actual xml elements that will represent the top level xml object which will be mapped to the search engine. A nice benefit here, is that the xpath can return multiple xml objects, which in turn will result in multiple <literal>Resources</literal> saved to the search engine.
        </para>
-       
+
        <para>
           Each xml object mapping must have at least one <literal>xml-id</literal> mapping definition associated with it. It is used in order to update/delete existing xml objects.
        </para>
-       
+
        <para>
           In the mapping definition associated with data3 alias, the <literal>xml-content</literal> mapping is used, which stores the actual xml content in the search engine as well. This will allow to unmarshall the xml back into an <literal>XmlObject</literal> representation. For the first two mappings (data1 and data2), search/read operations will only be able to work on the <literal>Resource</literal> level.
        </para>
-       
+
        <sect2 id="xsem-xmlobject">
           <title>xml-object</title>
 
@@ -306,10 +307,10 @@ session.save(xmlObject);
             </table>
          </para>
       </sect2>
-      
+
       <sect2 id="xsem-xmlid">
          <title>xml-id</title>
-         
+
          <para>
             Mapped <literal>XmlObject's</literal> must declare at least one <literal>xml-id</literal>. The <literal>xml-id</literal> element defines the <literal>XmlObject</literal> (element, attribute, ...) that identifies the root <literal>XmlObject</literal> for the specified alias.
 
@@ -355,7 +356,7 @@ session.save(xmlObject);
          <para>
             An important note regarding the <literal>xml-id</literal> mapping, is that it will always at as an internal Compass <literal>Property</literal>. This means that if one wish to have it as part of the searchable content, it will have to be mapped with <literal>xml-property</literal> as well.
          </para>
-      </sect2> 
+      </sect2>
 
       <sect2 id="xsem-xmlproperty">
          <title>xml-property</title>
@@ -437,7 +438,7 @@ session.save(xmlObject);
                </tgroup>
               </table>
          </para>
-      </sect2> 
+      </sect2>
 
        <sect2 id="xml-analyzer">
          <title>xml-analyzer</title>
@@ -532,7 +533,7 @@ session.save(xmlObject);
            </tgroup>
          </table>
        </para>
-       
+
        <para>
            The <literal>xml-content</literal> mapping causes Compass to store the actual xml content in the search engine as well. This will allow to unmarshall the xml back into an <literal>XmlObject</literal> representation. For <literal>xml-object</literal> mapping without an <literal>xml-content</literal> mapping, search/read operations will only be able to work on the <literal>Resource</literal> level.
        </para>

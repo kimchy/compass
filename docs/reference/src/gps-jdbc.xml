@@ -121,14 +121,14 @@ childMapping.addDataMapping(new DataColumnToPropertyMapping("first_name", "first
       <title>Mapping - MirrorDataChanges</title>
 
       <para>
-        The <literal>RestulSetJdbcGpsDevice</literal> supports mirroring data changes to the database. In order to enable it, the <literal>ResultSet</literal> that will be mapped must have at least one version column. The version column must be incremented whenever a change occurs to the corresponding row in the database (Note that some databases have the feature built in, like ORACLE).
+        The <literal>ResultSetJdbcGpsDevice</literal> supports mirroring data changes to the database. In order to enable it, the <literal>ResultSet</literal> that will be mapped must have at least one version column. The version column must be incremented whenever a change occurs to the corresponding row in the database (Note that some databases have the feature built in, like ORACLE).
       </para>
 
       <sect2 id="jdbc-rs-mapping-mirrordatachanges">
         <title>ResultSet Mapping</title>
 
         <para>
-          The following code sample shows how to configure a mirroring enabled RestultSet mapping:
+          The following code sample shows how to configure a mirroring enabled ResultSet mapping:
 
 <programlisting><![CDATA[ResultSetToResourceMapping mapping = new ResultSetToResourceMapping();
 mapping.setAlias("result-set");

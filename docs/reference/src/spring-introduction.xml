@@ -86,7 +86,7 @@
     </para>
 
     <para>
-      When using Compass code within an already managed code (within a transaction), it is enough to just use <literal>Compass#openSession()</literal>, without worrying about Compass transaction management code, or even closing the session. Since even opening the session should not be really required, a <literal>LocalCompassSessionBean</literal> can be used to directly inject <literal>CompassSession</literal> to be used. It can be initialized with a <literal>Compass</literal> instance, but if there is only one within Spring application context, it will automatically identify and used it (this feature is similar to @CompassContext annotation explained later).
+      When using Compass code within an already managed code (within a transaction), it is enough to just use <literal>Compass#openSession()</literal>, without worrying about Compass transaction management code, or even closing the session. Since even opening the session should not be really required, a <literal>LocalCompassSessionBean</literal> can be used to directly inject <literal>CompassSession</literal> to be used. It can be initialized with a <literal>Compass</literal> instance, but if there is only one within Spring application context, it will automatically identify and use it (this feature is similar to @CompassContext annotation explained later).
     </para>
 
     <para>
