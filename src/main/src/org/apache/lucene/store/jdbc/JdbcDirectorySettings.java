@@ -220,9 +220,9 @@ public class JdbcDirectorySettings {
     }
 
     /**
-     * Returns the file entries map.
+     * Returns the file entries map. Please don't change it during runtime.
      */
-    Map getFileEntrySettings() {
+    public Map getFileEntrySettings() {
         return this.fileEntrySettings;
     }
 

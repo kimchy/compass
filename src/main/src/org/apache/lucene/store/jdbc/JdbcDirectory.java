@@ -21,11 +21,20 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.*;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.DirectoryTemplate;
+import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.IndexOutput;
+import org.apache.lucene.store.Lock;
+import org.apache.lucene.store.MultiDeleteDirectory;
 import org.apache.lucene.store.jdbc.dialect.Dialect;
 import org.apache.lucene.store.jdbc.dialect.DialectResolver;
 import org.apache.lucene.store.jdbc.handler.FileEntryHandler;
@@ -156,6 +165,7 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
         this.dialect = table.getDialect();
         this.table = table;
         this.settings = table.getSettings();
+        dialect.processSettings(settings);
         Map fileEntrySettings = settings.getFileEntrySettings();
         // go over all the file entry settings and configure them
         for (Iterator it = fileEntrySettings.keySet().iterator(); it.hasNext();) {

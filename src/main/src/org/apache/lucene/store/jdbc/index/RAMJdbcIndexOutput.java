@@ -16,16 +16,13 @@
 
 package org.apache.lucene.store.jdbc.index;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcFileEntrySettings;
-import org.apache.lucene.store.jdbc.support.InputStreamBlob;
-import org.apache.lucene.store.jdbc.support.JdbcTemplate;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
 
 /**
  * An <code>IndexOutput</code> implemenation that stores all the data written to it in memory, and flushes it
@@ -35,7 +32,7 @@ import java.util.ArrayList;
  *
  * @author kimchy
  */
-public class RAMJdbcIndexOutput extends JdbcBufferedIndexOutput {
+public class RAMJdbcIndexOutput extends AbstractJdbcIndexOutput {
 
     private class RAMFile {
         ArrayList buffers = new ArrayList();
@@ -105,10 +102,6 @@ public class RAMJdbcIndexOutput extends JdbcBufferedIndexOutput {
 
     private int pointer = 0;
 
-    private String name;
-
-    private JdbcDirectory jdbcDirectory;
-
     public void configure(String name, JdbcDirectory jdbcDirectory, JdbcFileEntrySettings settings) throws IOException {
         super.configure(name, jdbcDirectory, settings);
         this.file = new RAMFile();
@@ -142,22 +135,11 @@ public class RAMJdbcIndexOutput extends JdbcBufferedIndexOutput {
             file.length = pointer;
     }
 
-    public void close() throws IOException {
-        super.close();
-        jdbcDirectory.getJdbcTemplate().executeUpdate(jdbcDirectory.getTable().sqlInsert(),
-                new JdbcTemplate.PrepateStatementAwareCallback() {
-                    public void fillPrepareStatement(PreparedStatement ps) throws Exception {
-                        ps.setFetchSize(1);
-                        ps.setString(1, name);
-                        if (jdbcDirectory.getDialect().useInputStreamToInsertBlob()) {
-                            ps.setBinaryStream(2, new RAMInputStream(), (int) length());
-                        } else {
-                            ps.setBlob(2, new InputStreamBlob(new RAMInputStream(), length()));
-                        }
-                        ps.setLong(3, length());
-                        ps.setBoolean(4, false);
-                    }
-                });
+    protected InputStream openInputStream() throws IOException {
+        return new RAMInputStream();
+    }
+
+    protected void doAfterClose() throws IOException {
         file = null;
     }
 

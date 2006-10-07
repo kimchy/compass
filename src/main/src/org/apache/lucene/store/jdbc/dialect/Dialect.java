@@ -16,12 +16,22 @@
 
 package org.apache.lucene.store.jdbc.dialect;
 
+import org.apache.lucene.store.jdbc.JdbcDirectorySettings;
+
 /**
  * A database specific abstraction. All other dialects must extend this Dialect.
  *
  * @author kimchy
  */
 public abstract class Dialect {
+
+    /**
+     * Process settings and apply any dialect related changes. Defaults to
+     * do nothing.
+     */
+    public void processSettings(JdbcDirectorySettings settings) {
+        
+    }
 
     /**
      * Does the database (or the jdbc driver) supports transactional blob. Is so,

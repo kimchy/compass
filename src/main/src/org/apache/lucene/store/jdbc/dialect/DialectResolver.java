@@ -112,6 +112,7 @@ public class DialectResolver {
         mappers.add(new DatabaseNameStartsWithToDialectMapper("Microsoft SQL Server", SQLServerDialect.class));
         mappers.add(new DatabaseNameToDialectMapper("Sybase SQL Server", SybaseDialect.class));
         mappers.add(new DatabaseNameAndVersionToDialectMapper("Oracle", 8, Oracle8Dialect.class));
+        mappers.add(new DatabaseNameAndVersionToDialectMapper("Oracle", 9, Oracle9Dialect.class));
         mappers.add(new DatabaseNameToDialectMapper("Oracle", OracleDialect.class));
     }
 

@@ -6,7 +6,7 @@ package org.apache.lucene.store.jdbc.dialect;
  * @author kimchy
  * @author jbloggs
  */
-public class Oracle8Dialect extends OracleDialect {
+public class Oracle8Dialect extends Oracle9Dialect {
 
     public String getCurrentTimestampSelectString() {
         return "select sysdate from dual";

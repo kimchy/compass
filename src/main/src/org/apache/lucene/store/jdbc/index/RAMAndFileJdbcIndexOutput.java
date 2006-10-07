@@ -61,7 +61,7 @@ public class RAMAndFileJdbcIndexOutput extends IndexOutput implements JdbcIndexC
         this.name = name;
         this.settings = settings;
         this.threshold = settings.getSettingAsLong(INDEX_OUTPUT_THRESHOLD_SETTING, DEFAULT_THRESHOLD);
-        ramIndexOutput = new RAMJdbcIndexOutput();
+        ramIndexOutput = createRamJdbcIndexOutput();
         ramIndexOutput.configure(name, jdbcDirectory, settings);
     }
 
@@ -109,12 +109,20 @@ public class RAMAndFileJdbcIndexOutput extends IndexOutput implements JdbcIndexC
         if (position < threshold) {
             return ramIndexOutput;
         }
-        fileIndexOutput = new FileJdbcIndexOutput();
+        fileIndexOutput = createFileJdbcIndexOutput();
         fileIndexOutput.configure(name, jdbcDirectory, settings);
         ramIndexOutput.flushToIndexOutput(fileIndexOutput);
         // let it be garbage collected
         ramIndexOutput = null;
 
         return fileIndexOutput;
+    }
+
+    protected FileJdbcIndexOutput createFileJdbcIndexOutput() {
+        return new FileJdbcIndexOutput();
+    }
+
+    protected RAMJdbcIndexOutput createRamJdbcIndexOutput() {
+        return new RAMJdbcIndexOutput();
     }
 }

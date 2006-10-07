@@ -1985,6 +1985,7 @@
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLInnoDBDialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLMyISAMDialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.Oracle8Dialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.Oracle9Dialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.OracleDialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.PostgresDialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.SQLServerDialect"/>
