@@ -21,6 +21,9 @@ import org.apache.lucene.store.jdbc.index.RAMAndFileJdbcIndexOutput;
 import org.apache.lucene.store.jdbc.index.RAMJdbcIndexOutput;
 
 /**
+ * A specialized Oracle version that works (through reflection) with
+ * Oracle 9i/8i specific blob API for blobs bigger than 4k.
+ *
  * @author kimchy
  */
 public class OracleRAMAndFileJdbcIndexOutput extends RAMAndFileJdbcIndexOutput {
