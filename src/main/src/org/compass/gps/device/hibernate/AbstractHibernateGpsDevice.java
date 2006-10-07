@@ -58,7 +58,7 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
     }
 
     protected void doStart() throws CompassGpsException {
-        entetiesInfo = doGetHibernateEntetiesInfo();
+        entetiesInfo = doGetHibernateEntitiesInfo();
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
      * @return Hibernate class informtion
      * @throws HibernateGpsDeviceException
      */
-    protected abstract HibernateEntityInfo[] doGetHibernateEntetiesInfo() throws HibernateGpsDeviceException;
+    protected abstract HibernateEntityInfo[] doGetHibernateEntitiesInfo() throws HibernateGpsDeviceException;
 
     /**
      * Returns the data that maps to the given class info, paginated with from

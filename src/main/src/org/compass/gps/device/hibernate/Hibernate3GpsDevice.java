@@ -391,7 +391,7 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
         return new Hibernate3SessionWrapper(sessionFactory);
     }
 
-    protected HibernateEntityInfo[] doGetHibernateEntetiesInfo() throws HibernateGpsDeviceException {
+    protected HibernateEntityInfo[] doGetHibernateEntitiesInfo() throws HibernateGpsDeviceException {
         ArrayList classesToIndex = new ArrayList();
         try {
             Map allClassMetaData = sessionFactory.getAllClassMetadata();

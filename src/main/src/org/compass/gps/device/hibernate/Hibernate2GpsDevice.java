@@ -27,7 +27,6 @@ import net.sf.hibernate.Session;
 import net.sf.hibernate.SessionFactory;
 import net.sf.hibernate.Transaction;
 import net.sf.hibernate.cfg.Configuration;
-
 import org.compass.gps.CompassGpsException;
 
 /**
@@ -153,7 +152,7 @@ public class Hibernate2GpsDevice extends AbstractHibernateGpsDevice {
         return new Hibernate2SessionWrapper(sessionFactory);
     }
 
-    protected HibernateEntityInfo[] doGetHibernateEntetiesInfo() throws HibernateGpsDeviceException {
+    protected HibernateEntityInfo[] doGetHibernateEntitiesInfo() throws HibernateGpsDeviceException {
         ArrayList classesToIndex = new ArrayList();
         try {
             Map allClassMetaData = sessionFactory.getAllClassMetadata();
