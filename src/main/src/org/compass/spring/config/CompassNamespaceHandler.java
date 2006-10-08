@@ -66,6 +66,11 @@ public class CompassNamespaceHandler extends NamespaceHandlerSupport {
                 if (dataSourceRef != null) {
                     beanDefinitionBuilder.addPropertyReference("dataSource", dataSourceRef);
                 }
+
+                String postProcessRef = DomUtils.getElementAttribute(element, "postProcessor");
+                if (postProcessRef != null) {
+                    beanDefinitionBuilder.addPropertyReference("postProcessor", postProcessRef);
+                }
             } else if (element.getLocalName().equals("context")) {
                 element.setAttribute(ID_ATTRIBUTE, "" + System.currentTimeMillis());
             } else if (element.getLocalName().equals("session")) {

@@ -45,7 +45,17 @@ import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.ComponentMapping;
+import org.compass.core.mapping.osem.ConstantMetaDataMapping;
+import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.ObjectMapping;
+import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
@@ -425,8 +435,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             classMapping.addMapping(parentMapping);
         } else if ((annotation instanceof SearchableMetaData) ||
                 (annotation instanceof SearchableMetaDatas)) {
-            if (!annotatedElement.isAnnotationPresent(SearchableProperty.class)) {
-                throw new MappingException("SearchableMetaData/s annotation exists without a SearchableProperty, it will be ignored");
+            if (!annotatedElement.isAnnotationPresent(SearchableProperty.class) &&
+                    !annotatedElement.isAnnotationPresent(SearchableId.class)) {
+                throw new MappingException("SearchableMetaData/s annotation exists without a SearchableProperty/Id, it will be ignored");
             }
         }
     }
