@@ -16,6 +16,9 @@
 
 package org.compass.gps.device.jpa.entities;
 
+import org.compass.gps.device.jpa.DefaultJpaQueryProvider;
+import org.compass.gps.device.jpa.JpaQueryProvider;
+
 /**
  * A general Entity information to be used by the {@link org.compass.gps.device.jpa.JpaGpsDevice}
  * during the indexing process.
@@ -29,31 +32,59 @@ public class EntityInformation {
 
     private String name;
 
-    private String selectQuery;
+    private JpaQueryProvider queryProvider;
 
     public EntityInformation(Class<?> clazz, String name) {
-        this(clazz, name, "select x from " + name + " x");
+        this(clazz, name, new DefaultJpaQueryProvider(clazz, name));
     }
 
     public EntityInformation(Class<?> clazz, String name, String selectQuery) {
-        this.clazz = clazz;
-        this.name = name;
-        this.selectQuery = selectQuery;
+        this(clazz, name, new DefaultJpaQueryProvider(selectQuery));
     }
 
+    public EntityInformation(Class<?> clazz, String name, JpaQueryProvider queryProvider) {
+        this.clazz = clazz;
+        this.name = name;
+        this.queryProvider = queryProvider;
+    }
+
+    /**
+     * Returns the entity class associated with the entity
+     */
     public Class<?> getEntityClass() {
         return clazz;
     }
 
+    /**
+     * Returns the entity name
+     */
     public String getEntityName() {
         return name;
     }
 
-    public String getSelectQuery() {
-        return selectQuery;
+    /**
+     * Sets a string based select query. Uses {@link org.compass.gps.device.jpa.DefaultJpaQueryProvider}
+     * based on the string query.
+     */
+    public void setSelectQuery(String selectQuery) {
+        this.queryProvider = new DefaultJpaQueryProvider(selectQuery);
     }
 
-    public void setSelectQuery(String selectQuery) {
-        this.selectQuery = selectQuery;
+    /**
+     * Sets a query provider. Responsible during indexing time to create
+     * a query for the given entity that will be used to query the database
+     * for indexing.
+     */
+    public void setQueryProvider(JpaQueryProvider queryProvider) {
+        this.queryProvider = queryProvider;
+    }
+
+    /**
+     * Gets a query provider. Responsible during indexing time to create
+     * a query for the given entity that will be used to query the database
+     * for indexing.
+     */
+    public JpaQueryProvider getQueryProvider() {
+        return this.queryProvider;
     }
 }

@@ -91,9 +91,6 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
 
     /**
      * Creates a new device with a specific name and an entity manager factory.
-     *
-     * @param name
-     * @param entityManagerFactory
      */
     public JpaGpsDevice(String name, EntityManagerFactory entityManagerFactory) {
         setName(name);
@@ -118,9 +115,9 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
 
     private EntityInformation[] entetiesInformation;
 
-    private Map<Class<?>, String> selectQueryByClass = new HashMap<Class<?>, String>();
+    private Map<Class<?>, JpaQueryProvider> queryProviderByClass = new HashMap<Class<?>, JpaQueryProvider>();
 
-    private Map<String, String> selectQueryByName = new HashMap<String, String>();
+    private Map<String, JpaQueryProvider> queryProviderByName = new HashMap<String, JpaQueryProvider>();
 
     protected void doStart() throws CompassGpsException {
         Assert.notNull(entityManagerFactory, buildMessage("Must set JPA EntityManagerFactory"));
@@ -151,11 +148,11 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
         entetiesInformation = entitiesLocator.locate(nativeEntityManagerFactory, this);
         // apply specific select statements
         for (EntityInformation entityInformation : entetiesInformation) {
-            if (selectQueryByClass.get(entityInformation.getEntityClass()) != null) {
-                entityInformation.setSelectQuery(selectQueryByClass.get(entityInformation.getEntityClass()));
+            if (queryProviderByClass.get(entityInformation.getEntityClass()) != null) {
+                entityInformation.setQueryProvider(queryProviderByClass.get(entityInformation.getEntityClass()));
             }
-            if (selectQueryByName.get(entityInformation.getEntityName()) != null) {
-                entityInformation.setSelectQuery(selectQueryByName.get(entityInformation.getEntityName()));
+            if (queryProviderByName.get(entityInformation.getEntityName()) != null) {
+                entityInformation.setQueryProvider(queryProviderByName.get(entityInformation.getEntityName()));
             }
         }
 
@@ -189,9 +186,9 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                     if (log.isDebugEnabled()) {
                         log.debug(buildMessage("Indexing entities [" + entityInformation.getEntityName() + "] range ["
                                 + current + "-" + (current + fetchCount) + "] using query ["
-                                + entityInformation.getSelectQuery() + "]"));
+                                + entityInformation.getQueryProvider() + "]"));
                     }
-                    Query query = entityManager.createQuery(entityInformation.getSelectQuery());
+                    Query query = entityInformation.getQueryProvider().createQuery(entityManager, entityInformation);
                     query.setFirstResult(current);
                     query.setMaxResults(fetchCount);
                     List results = query.getResultList();
@@ -212,7 +209,7 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 if (!(e instanceof JpaGpsDeviceException)) {
                     throw new JpaGpsDeviceException(buildMessage("Failed to index the database"), e);
                 }
-                throw (JpaGpsDeviceException) e;
+                throw(JpaGpsDeviceException) e;
             }
         }
     }
@@ -301,24 +298,50 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
     }
 
     /**
-     * Sets a specific select statement for the index process of the given
-     * entity class.
+     * <p>Sets a specific select statement for the index process of the given
+     * entity class. The same as {@link #setIndexQueryProvider(Class,JpaQueryProvider)}
+     * using {@link org.compass.gps.device.jpa.DefaultJpaQueryProvider}.
+     * <p>Note, this information is used when the device starts.
      *
      * @param entityClass The Entity class to associate the select query with
      * @param selectQuery The select query to execute when indexing the given entity
      */
     public void setIndexSelectQuery(Class<?> entityClass, String selectQuery) {
-        selectQueryByClass.put(entityClass, selectQuery);
+        setIndexQueryProvider(entityClass, new DefaultJpaQueryProvider(selectQuery));
     }
 
     /**
      * Sets a specific select statement for the index process of the given
-     * entity name.
+     * entity name. The same as {@link #setIndexQueryProvider(String,JpaQueryProvider)}
+     * using {@link org.compass.gps.device.jpa.DefaultJpaQueryProvider}.
+     * <p>Note, this information is used when the device starts.
      *
      * @param entityName  The entity name to associate the select query with
      * @param selectQuery The select query to execute when indexing the given entity
      */
     public void setIndexSelectQuery(String entityName, String selectQuery) {
-        selectQueryByName.put(entityName, selectQuery);
+        setIndexQueryProvider(entityName, new DefaultJpaQueryProvider(selectQuery));
+    }
+
+    /**
+     * <p>Sets a specific query provider for the index process of the given entity class.
+     * <p>Note, this information is used when the device starts.
+     *
+     * @param entityClass   The Entity class to associate the query provider with
+     * @param queryProvider The query provider to execute when indexing the given entity
+     */
+    public void setIndexQueryProvider(Class<?> entityClass, JpaQueryProvider queryProvider) {
+        queryProviderByClass.put(entityClass, queryProvider);
+    }
+
+    /**
+     * <p>Sets a specific query provider for the index process of the given entity name.
+     * <p>Note, this information is used when the device starts.
+     *
+     * @param entityName    The Entity name to associate the query provider with
+     * @param queryProvider The query provider to execute when indexing the given entity
+     */
+    public void setIndexQueryProvider(String entityName, JpaQueryProvider queryProvider) {
+        queryProviderByName.put(entityName, queryProvider);
     }
 }
