@@ -56,7 +56,7 @@ public class CompassSettings {
 
     public CompassSettings copy() {
         CompassSettings copySettings = new CompassSettings((Properties) settings.clone());
-        copySettings.registry = registry;
+        copySettings.registry = new ConcurrentHashMap(registry);
         return copySettings;
     }
 
@@ -228,6 +228,13 @@ public class CompassSettings {
      */
     public void setRegistry(Object key, Object value) {
         registry.put(key, value);
+    }
+
+    /**
+     * ADVANCE: An internal compass global registry
+     */
+    public Object removeRegistry(Object key) {
+        return registry.remove(key);
     }
 
     public String toString() {

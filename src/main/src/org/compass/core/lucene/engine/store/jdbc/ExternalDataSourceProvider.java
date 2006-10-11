@@ -98,6 +98,6 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
 
     public void closeDataSource() {
         dataSourceHolder.set(null);
-        settings.setRegistry(dataSourceKey, null);
+        settings.removeRegistry(dataSourceKey);
     }
 }
