@@ -18,8 +18,6 @@ package org.compass.core.converter.mapping.osem;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.util.StringUtils;
-import org.compass.core.util.ClassUtils;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.CollectionResourceWrapper;
@@ -28,6 +26,8 @@ import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.HasRefAliasMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
+import org.compass.core.util.ClassUtils;
+import org.compass.core.util.StringUtils;
 
 /**
  * @author kimchy
@@ -62,7 +62,7 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
         if (classMappings.length == 1) {
             classMapping = classMappings[0];
         } else {
-            // this for loop is really not requires, since all of them
+            // this for loop is really not required, since all of them
             // will have the same class path
             for (int i = 0; i < classMappings.length; i++) {
                 if (classMappings[i].isPoly()) {
@@ -89,7 +89,7 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
                 }
             }
             if (classMapping == null) {
-                // we did not find anything stored in the index, it most have poly-class set
+                // we did not find anything stored in the index, it must have poly-class set
                 for (int i = 0; i < classMappings.length; i++) {
                     if (classMappings[i].getPolyClass() != null) {
                         classMapping = classMappings[i];
