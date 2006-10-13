@@ -17,7 +17,6 @@
 package org.compass.core.accessor;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 
 import org.compass.core.CompassException;
 
@@ -33,25 +32,15 @@ public interface Getter extends Serializable {
     /**
      * Get the property value from the given instance
      */
-    public Object get(Object target) throws CompassException;
+    Object get(Object target) throws CompassException;
 
     /**
      * Get the declared Java type
      */
-    public Class getReturnType();
+    Class getReturnType();
 
     /**
      * Get the property name
      */
-    public String getName();
-
-    /**
-     * Optional operation (return null)
-     */
-    public String getMethodName();
-
-    /**
-     * Optional operation (return null)
-     */
-    public Method getMethod();
+    String getName();
 }

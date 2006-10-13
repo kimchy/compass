@@ -149,11 +149,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
         }
 
         public Method getMethod() {
-            return method;
-        }
-
-        public String getMethodName() {
-            return method.getName();
+            return this.method;
         }
 
         public String toString() {

@@ -18,6 +18,8 @@ package org.compass.core.config.process;
 
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
@@ -75,6 +77,11 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
             throw new MappingException("This should not happen");
         }
         ClassMapping refClassMapping = compassMapping.getDirectClassMappingByClass(clazz);
+        if (refClassMapping == null) {
+            // check if it is a collection
+            Class collectionTypeClass = AccessorUtils.getGenericCollectionParameter(mapping.getGetter());
+            refClassMapping = compassMapping.getDirectClassMappingByClass(collectionTypeClass);
+        }
         if (refClassMapping == null) {
             if (Collection.class.isAssignableFrom(mapping.getGetter().getReturnType())) {
                 throw new MappingException("Failed to resolve ref-alias for collection property [" + mapping.getName() + "] in alias [" +
