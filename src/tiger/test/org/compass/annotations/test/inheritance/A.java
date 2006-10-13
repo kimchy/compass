@@ -17,6 +17,7 @@
 package org.compass.annotations.test.inheritance;
 
 import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableConstant;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 
@@ -24,6 +25,7 @@ import org.compass.annotations.SearchableProperty;
  * @author kimchy
  */
 @Searchable
+@SearchableConstant(name = "abase", values = {"abasevalue"})
 public class A {
 
     @SearchableId

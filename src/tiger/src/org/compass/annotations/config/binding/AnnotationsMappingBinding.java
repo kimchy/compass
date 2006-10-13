@@ -296,31 +296,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         bindConverter(classMapping, searchable.converter());
 
-        SearchableConstant searchableConstant =
-                annotationClass.getAnnotation(SearchableConstant.class);
-        if (searchableConstant != null) {
-            bindConstantMetaData(searchableConstant);
-        }
-
-        SearchableConstants searchableConstants =
-                annotationClass.getAnnotation(SearchableConstants.class);
-        if (searchableConstants != null) {
-            for (SearchableConstant metaData : searchableConstants.value()) {
-                bindConstantMetaData(metaData);
-            }
-        }
-
-        SearchableDynamicMetaData searchableDynamicMetaData = annotationClass.getAnnotation(SearchableDynamicMetaData.class);
-        if (searchableDynamicMetaData != null) {
-            bindDynamicMetaData(searchableDynamicMetaData);
-        }
-        SearchableDynamicMetaDatas searchableDynamicMetaDatas = annotationClass.getAnnotation(SearchableDynamicMetaDatas.class);
-        if (searchableDynamicMetaDatas != null) {
-            for (SearchableDynamicMetaData metaData : searchableDynamicMetaDatas.value()) {
-                bindDynamicMetaData(metaData);
-            }
-        }
-
         processAnnotatedClass(annotationClass);
 
         if (newClassMapping) {
@@ -347,6 +322,31 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         Class<?>[] interfaces = clazz.getInterfaces();
         for (Class<?> anInterface : interfaces) {
             processAnnotatedClass(anInterface);
+        }
+
+        SearchableConstant searchableConstant =
+                clazz.getAnnotation(SearchableConstant.class);
+        if (searchableConstant != null) {
+            bindConstantMetaData(searchableConstant);
+        }
+
+        SearchableConstants searchableConstants =
+                clazz.getAnnotation(SearchableConstants.class);
+        if (searchableConstants != null) {
+            for (SearchableConstant metaData : searchableConstants.value()) {
+                bindConstantMetaData(metaData);
+            }
+        }
+
+        SearchableDynamicMetaData searchableDynamicMetaData = clazz.getAnnotation(SearchableDynamicMetaData.class);
+        if (searchableDynamicMetaData != null) {
+            bindDynamicMetaData(searchableDynamicMetaData);
+        }
+        SearchableDynamicMetaDatas searchableDynamicMetaDatas = clazz.getAnnotation(SearchableDynamicMetaDatas.class);
+        if (searchableDynamicMetaDatas != null) {
+            for (SearchableDynamicMetaData metaData : searchableDynamicMetaDatas.value()) {
+                bindDynamicMetaData(metaData);
+            }
         }
 
         // handles recursive extends and the original extend

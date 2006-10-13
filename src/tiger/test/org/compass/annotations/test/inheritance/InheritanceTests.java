@@ -51,6 +51,7 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         assertNotNull(resource.get("value1e"));
         assertNotNull(resource.get("value2"));
         assertNotNull(resource.get("value2e"));
+        assertEquals(resource.get("abase"), "abasevalue");
 
         tr.commit();
         session.close();
