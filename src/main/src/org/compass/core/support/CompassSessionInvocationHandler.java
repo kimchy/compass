@@ -16,6 +16,7 @@
 
 package org.compass.core.support;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,7 +30,7 @@ import org.compass.core.spi.InternalCompassSession;
  *
  * @author kimchy
  */
-public class CompassSessionInvocationHandler implements InvocationHandler {
+public class CompassSessionInvocationHandler implements InvocationHandler, Serializable {
 
     private Compass compass;
 

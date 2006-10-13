@@ -16,15 +16,12 @@
 
 package org.compass.gps.device.jpa.hibernate;
 
+import java.util.HashMap;
+import javax.persistence.EntityManagerFactory;
+
 import org.compass.gps.device.jpa.AbstractSimpleJpaGpsDeviceTests;
 import org.compass.gps.device.jpa.JpaGpsDevice;
-import org.compass.gps.device.jpa.model.Simple;
-import org.compass.gps.device.jpa.model.SimpleBase;
-import org.compass.gps.device.jpa.model.SimpleExtend;
-import org.hibernate.cfg.Environment;
-import org.hibernate.ejb.Ejb3Configuration;
-
-import javax.persistence.EntityManagerFactory;
+import org.hibernate.ejb.HibernatePersistence;
 
 /**
  * @author kimchy
@@ -37,12 +34,6 @@ public class HibernateSimpleJpaGpsDeviceTests extends AbstractSimpleJpaGpsDevice
     }
 
     protected EntityManagerFactory doSetUpEntityManagerFactory() {
-        Ejb3Configuration cfg = new Ejb3Configuration()
-                .configure("/org/compass/gps/device/jpa/hibernate/hibernate3.cfg.xml")
-                .setProperty(Environment.HBM2DDL_AUTO, "create")
-                .addAnnotatedClass(Simple.class)
-                .addAnnotatedClass(SimpleBase.class)
-                .addAnnotatedClass(SimpleExtend.class);
-        return cfg.createEntityManagerFactory();
+        return new HibernatePersistence().createEntityManagerFactory("hibernate", new HashMap());
     }
 }

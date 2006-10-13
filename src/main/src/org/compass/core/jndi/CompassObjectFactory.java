@@ -16,17 +16,26 @@
 
 package org.compass.core.jndi;
 
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import javax.naming.Context;
+import javax.naming.InvalidNameException;
+import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.naming.event.EventContext;
+import javax.naming.event.NamespaceChangeListener;
+import javax.naming.event.NamingEvent;
+import javax.naming.event.NamingExceptionEvent;
+import javax.naming.event.NamingListener;
+import javax.naming.spi.ObjectFactory;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.util.FastHashMap;
-
-import javax.naming.*;
-import javax.naming.event.*;
-import javax.naming.spi.ObjectFactory;
-import java.util.Hashtable;
-import java.util.Iterator;
+import org.compass.core.util.backport.java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Resolves <code>Compass</code> JNDI lookups and deserialization
@@ -44,9 +53,9 @@ public class CompassObjectFactory implements ObjectFactory {
         log.debug("Initializing class CompassObjectFactory. Using static instance [" + INSTANCE + "]");
     }
 
-    private static final FastHashMap INSTANCES = new FastHashMap();
+    private static final Map INSTANCES = new ConcurrentHashMap();
 
-    private static final FastHashMap NAMED_INSTANCES = new FastHashMap();
+    private static final Map NAMED_INSTANCES = new ConcurrentHashMap();
 
     private static final NamingListener LISTENER = new NamespaceChangeListener() {
         public void objectAdded(NamingEvent evt) {
