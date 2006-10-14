@@ -20,13 +20,18 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 import org.compass.core.Compass;
+import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
  * InvocationHandler for {@link org.compass.core.CompassSession}. Used
- * within already transactional context.
+ * <b>within already transactional context</b> in order to simplify the usage
+ * of CompassSession. With this wrapper, there is no need to call <code>openSession</code>,
+ * or <code>close()</code> on the session. There is no need to use Compass transaction
+ * API as well.
  *
  * @author kimchy
  */
@@ -36,6 +41,13 @@ public class CompassSessionInvocationHandler implements InvocationHandler, Seria
 
     public CompassSessionInvocationHandler(Compass compass) {
         this.compass = compass;
+    }
+
+    public static CompassSession newProxy(Compass compass) {
+        return (CompassSession) Proxy.newProxyInstance(
+                InternalCompassSession.class.getClassLoader(),
+                new Class[]{InternalCompassSession.class},
+                new CompassSessionInvocationHandler(compass));
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
