@@ -437,7 +437,7 @@ public class CompassEnvironment {
          * a managed environemnt won't take affect. The settings allows to disable
          * the auto joining of a session to a transaction.
          */
-        public static final String DISABLE_AUTO_JOIN_SESSION = "disableAutoJoinSession";
+        public static final String DISABLE_AUTO_JOIN_SESSION = "compass.transaction.disableAutoJoinSession";
     }
 
     /**
