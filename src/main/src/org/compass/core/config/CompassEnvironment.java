@@ -431,6 +431,13 @@ public class CompassEnvironment {
          */
         public static final String ISOLATION_BATCH_INSERT = "batch_insert";
 
+        /**
+         * When opening a session, Compass tries to automatically start a transaction
+         * and join it. This might mean that transaction settings when running within
+         * a managed environemnt won't take affect. The settings allows to disable
+         * the auto joining of a session to a transaction.
+         */
+        public static final String DISABLE_AUTO_JOIN_SESSION = "disableAutoJoinSession";
     }
 
     /**

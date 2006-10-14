@@ -88,6 +88,7 @@ public class SingleCompassGps extends AbstractCompassGps {
         if (indexCompassSettings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT) == null) {
             indexCompassSettings.setSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "gpsindex");
         }
+        indexCompassSettings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, true);
         this.compassTemplate = new CompassTemplate(compass);
     }
 

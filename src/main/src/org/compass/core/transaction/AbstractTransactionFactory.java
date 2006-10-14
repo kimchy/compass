@@ -38,10 +38,13 @@ public abstract class AbstractTransactionFactory implements TransactionFactory {
 
     protected boolean commitBeforeCompletion;
 
+    private boolean disableAutoJoinSession = false;
+
     public void configure(Compass compass, CompassSettings settings) throws CompassException {
         this.compass = compass;
         this.commitBeforeCompletion = settings.getSettingAsBoolean(
                 CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, false);
+        disableAutoJoinSession = settings.getSettingAsBoolean(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, false);
         doConfigure(settings);
     }
 
@@ -50,6 +53,9 @@ public abstract class AbstractTransactionFactory implements TransactionFactory {
     }
 
     public boolean tryJoinExistingTransaction(InternalCompassSession session) throws CompassException {
+        if (disableAutoJoinSession) {
+            return false;
+        }
         if (!isWithinExistingTransaction(session)) {
             return false;
         }

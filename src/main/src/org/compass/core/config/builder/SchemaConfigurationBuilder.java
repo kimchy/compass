@@ -337,6 +337,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         settings.setSetting(LuceneEnvironment.Transaction.COMMIT_TIMEOUT, DomUtils.getElementAttribute(ele, "commitTimeout"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, DomUtils.getElementAttribute(ele, "lockTimeout"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, DomUtils.getElementAttribute(ele, "lockPollInterval"));
+        settings.setSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, DomUtils.getElementAttribute(ele, "disableAutoJoinSession"));
         List child = DomUtils.getChildElementsByTagName(ele, "batchInsertSettings", true);
         if (child.size() == 1) {
             Element batchInsertEle = (Element) child.get(0);

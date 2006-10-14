@@ -1230,6 +1230,15 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="disableAutoJoinSession" type="booleanType" use="optional" default="false">
+            <xsd:annotation>
+                <xsd:documentation>
+                    When opening a session, Compass tries to automatically start a transaction and join it. This might
+                    mean that transaction settings when running within a managed environemnt won't take affect. The
+                    settings allows to disable the auto joining of a session to a transaction.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
     <!-- Connection -->
     <xsd:complexType name="connectionType">
