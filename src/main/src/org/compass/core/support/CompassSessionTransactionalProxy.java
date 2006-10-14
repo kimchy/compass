@@ -35,11 +35,11 @@ import org.compass.core.spi.InternalCompassSession;
  *
  * @author kimchy
  */
-public class CompassSessionInvocationHandler implements InvocationHandler, Serializable {
+public class CompassSessionTransactionalProxy implements InvocationHandler, Serializable {
 
     private Compass compass;
 
-    public CompassSessionInvocationHandler(Compass compass) {
+    public CompassSessionTransactionalProxy(Compass compass) {
         this.compass = compass;
     }
 
@@ -47,7 +47,7 @@ public class CompassSessionInvocationHandler implements InvocationHandler, Seria
         return (CompassSession) Proxy.newProxyInstance(
                 InternalCompassSession.class.getClassLoader(),
                 new Class[]{InternalCompassSession.class},
-                new CompassSessionInvocationHandler(compass));
+                new CompassSessionTransactionalProxy(compass));
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

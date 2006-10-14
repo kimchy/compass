@@ -19,7 +19,7 @@ package org.compass.spring;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.support.CompassSessionInvocationHandler;
+import org.compass.core.support.CompassSessionTransactionalProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -68,7 +68,7 @@ public class LocalCompassSessionBean implements FactoryBean, InitializingBean, A
                 throw new IllegalArgumentException("compass instance not set and application context has more than one compass instance");
             }
         }
-        compassSession = CompassSessionInvocationHandler.newProxy(compass);
+        compassSession = CompassSessionTransactionalProxy.newProxy(compass);
     }
 
     /**
