@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.dynamic;
+package org.compass.core.test.map;
 
 import java.util.HashMap;
 
-import org.compass.core.test.AbstractTestCase;
-import org.compass.core.config.CompassConfiguration;
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.CompassHits;
+import org.compass.core.config.CompassConfiguration;
+import org.compass.core.test.AbstractTestCase;
 
 /**
  * @author kimchy
  */
-public class DynamicTests extends AbstractTestCase {
+public class MapTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[]{"dynamic/Dynamic.cpm.xml"};
+        return new String[]{"map/Map.cpm.xml"};
     }
 
     protected void addExtraConf(CompassConfiguration conf) {

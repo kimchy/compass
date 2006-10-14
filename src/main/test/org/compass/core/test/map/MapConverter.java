@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.dynamic;
+package org.compass.core.test.map;
 
-import java.util.Map;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.compass.core.converter.Converter;
-import org.compass.core.converter.ConversionException;
-import org.compass.core.Resource;
 import org.compass.core.CompassException;
 import org.compass.core.Property;
-import org.compass.core.util.StringUtils;
-import org.compass.core.engine.SearchEngine;
-import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.Resource;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.Converter;
+import org.compass.core.engine.SearchEngine;
+import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.util.StringUtils;
 
 /**
  * This is a sample converter that can handle {@link Map} and save dynamic properties into the index.

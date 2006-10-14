@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.dynamic;
+package org.compass.core.test.map;
 
 import java.util.Map;
 
