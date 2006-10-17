@@ -200,6 +200,10 @@ public class SpringSyncTransaction extends AbstractTransaction {
         public void beforeCommit(boolean readOnly) {
         }
 
+        public void afterCommit() {
+
+        }
+        
         public void beforeCompletion() {
             if (!commitBeforeCompletion) {
                 return;
