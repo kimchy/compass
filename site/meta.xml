@@ -110,6 +110,21 @@
             </downloads>
         </release>
         <release>
+            <version>1.0.1</version>
+            <date>Tuesday, October 17, 2006</date>
+            <jiraId>10061</jiraId>
+            <downloads>
+                <download>
+                    <url>https://compass.dev.java.net/files/documents/4669/42393/compass-1.0.1.zip</url>
+                    <name>Compass</name>
+                </download>
+                <download>
+                    <url>https://compass.dev.java.net/files/documents/4669/42395/compass-1.0.1-with-dependencies.zip</url>
+                    <name>With Dependencies</name>
+                </download>
+            </downloads>
+        </release>
+        <release>
             <version>1.0.0</version>
             <date>Sunday, July 23, 2006</date>
             <jiraId>10050</jiraId>
