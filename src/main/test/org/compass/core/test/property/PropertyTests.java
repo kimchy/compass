@@ -632,7 +632,7 @@ public class PropertyTests extends AbstractTestCase {
 
         session.save("a11", a);
 
-        testTermVectorYesWithPostionsAndOffsets(session);
+        verifyTermVectorYesWithPostionsAndOffsets(session);
 
         tr.commit();
         session.close();
@@ -640,12 +640,12 @@ public class PropertyTests extends AbstractTestCase {
         // now test with non transactional data
         session = openSession();
         tr = session.beginTransaction();
-        testTermVectorYesWithPostionsAndOffsets(session);
+        verifyTermVectorYesWithPostionsAndOffsets(session);
         tr.commit();
         session.close();
     }
 
-    private void testTermVectorYesWithPostionsAndOffsets(CompassSession session) {
+    private void verifyTermVectorYesWithPostionsAndOffsets(CompassSession session) {
         Long id = new Long(1);
         A a = (A) session.load("a11", id);
         assertEquals("first test string", a.getValue());

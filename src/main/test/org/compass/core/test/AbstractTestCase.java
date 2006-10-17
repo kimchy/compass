@@ -18,11 +18,9 @@ package org.compass.core.test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.cache.first.NullFirstLevelCache;
@@ -33,41 +31,56 @@ import org.compass.core.config.CompassSettings;
 /**
  * @author kimchy
  */
-public abstract class AbstractTestCase extends TestCase {
+public abstract class AbstractTestCase extends ExtendedTestCase {
 
-	private Compass compass;
+    private static Compass compass;
 
-	protected abstract String[] getMappings();
+    protected abstract String[] getMappings();
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		compass = buildCompass();
-		try {
-			compass.getSearchEngineIndexManager().deleteIndex();
-		} catch (Exception e) {
-			// do nothing
-		}
-		compass.getSearchEngineIndexManager().verifyIndex();
-	}
+    protected void beforeTestCase() throws Exception {
+        compass = buildCompass();
+    }
 
-	protected Compass buildCompass() throws FileNotFoundException, IOException {
-		CompassConfiguration conf = createConfiguration()
-				.configure("/org/compass/core/test/compass.cfg.xml");
-		File testPropsFile = new File("compass.test.properties");
-		if (testPropsFile.exists()) {
-			Properties testProps = new Properties();
-			testProps.load(new FileInputStream(testPropsFile));
-			conf.getSettings().addSettings(testProps);
-		}
-		String[] mappings = getMappings();
-		for (int i = 0; i < mappings.length; i++) {
-			conf.addResource(getPackagePrefix() + mappings[i], AbstractTestCase.class.getClassLoader());
-		}
-		conf.getSettings().setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, NullFirstLevelCache.class.getName());
-		addSettings(conf.getSettings());
-		addExtraConf(conf);
-		return conf.buildCompass();
-	}
+    protected void setUp() throws Exception {
+        try {
+            compass.getSearchEngineIndexManager().deleteIndex();
+        } catch (Exception e) {
+            // do nothing
+        }
+        compass.getSearchEngineIndexManager().verifyIndex();
+    }
+
+    protected void tearDown() throws Exception {
+        try {
+            compass.getSearchEngineIndexManager().deleteIndex();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    protected void afterTestCase() throws Exception {
+        compass.close();
+    }
+
+    protected Compass buildCompass() throws IOException {
+        CompassConfiguration conf = createConfiguration()
+                .configure("/org/compass/core/test/compass.cfg.xml");
+        File testPropsFile = new File("compass.test.properties");
+        if (testPropsFile.exists()) {
+            Properties testProps = new Properties();
+            testProps.load(new FileInputStream(testPropsFile));
+            conf.getSettings().addSettings(testProps);
+        }
+        String[] mappings = getMappings();
+        for (int i = 0; i < mappings.length; i++) {
+            conf.addResource(getPackagePrefix() + mappings[i], AbstractTestCase.class.getClassLoader());
+        }
+        conf.getSettings().setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, NullFirstLevelCache.class.getName());
+        addSettings(conf.getSettings());
+        addExtraConf(conf);
+        return conf.buildCompass();
+    }
 
     protected String getPackagePrefix() {
         return "org/compass/core/test/";
@@ -78,29 +91,19 @@ public abstract class AbstractTestCase extends TestCase {
     }
 
     protected void addExtraConf(CompassConfiguration conf) {
-		// do nothing
-	}
+        // do nothing
+    }
 
-	protected void tearDown() throws Exception {
-		compass.close();
-        try {
-            compass.getSearchEngineIndexManager().deleteIndex();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        super.tearDown();
-	}
+    protected void addSettings(CompassSettings settings) {
 
-	protected void addSettings(CompassSettings settings) {
+    }
 
-	}
+    protected CompassSession openSession() {
+        return compass.openSession();
+    }
 
-	protected CompassSession openSession() {
-		return compass.openSession();
-	}
-
-	public Compass getCompass() {
-		return compass;
-	}
+    public Compass getCompass() {
+        return compass;
+    }
 
 }
