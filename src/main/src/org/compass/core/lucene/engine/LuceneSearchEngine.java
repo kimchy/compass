@@ -170,6 +170,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
         Class transactionIsolationClass = searchEngineFactory.getLuceneSettings().getTransactionIsolationClass();
         if (transactionIsolationClass != null) {
+            transactionState = UNKNOWN;
             try {
                 transaction = (LuceneSearchEngineTransaction) transactionIsolationClass.newInstance();
             } catch (Exception e) {
@@ -188,6 +189,10 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void begin(TransactionIsolation transactionIsolation) throws SearchEngineException {
+        if (transactionState == STARTED) {
+            throw new SearchEngineException("Transaction already started, why start it again?");
+        }
+        transactionState = UNKNOWN;
         this.readOnly = true;
         if (transactionIsolation == null) {
             transactionIsolation = searchEngineFactory.getLuceneSettings().getTransactionIsolation();
@@ -209,9 +214,10 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     private void checkTransactionStarted() throws SearchEngineException {
-        if (transactionState == UNKNOWN)
+        if (transactionState != STARTED) {
             throw new SearchEngineException(
-                    "Search engine transaction not successfully started");
+                    "Search engine transaction not successfully started or already committed/rolledback");
+        }
     }
 
     public void prepare() throws SearchEngineException {
