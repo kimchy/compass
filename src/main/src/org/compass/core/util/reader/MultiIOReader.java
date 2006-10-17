@@ -20,15 +20,19 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 
+import org.compass.core.util.StringUtils;
+
 /**
  * A <code>Reader</code> implementation which wraps several
  * <code>Reader</code>s and reads them sequentially.
- * 
+ *
  * @author kimchy
  */
 public class MultiIOReader extends Reader {
 
     private ArrayList readers = new ArrayList();
+
+    private ArrayList names = new ArrayList();
 
     private Reader currentReader;
 
@@ -41,15 +45,32 @@ public class MultiIOReader extends Reader {
         add(reader);
     }
 
+    public MultiIOReader(String name, Reader reader) {
+        add(name, reader);
+    }
+
     public MultiIOReader(Reader[] readers) {
         for (int i = 0; i < readers.length; i++) {
-            add(readers[i]);
+            add(null, readers[i]);
+        }
+    }
+
+    public MultiIOReader(String[] names, Reader[] readers) {
+        for (int i = 0; i < readers.length; i++) {
+            add(names[i], readers[i]);
         }
     }
 
     public void add(Reader reader) {
+        add(null, reader);
+    }
+
+    public void add(String name, Reader reader) {
         if (reader == null) {
             return;
+        }
+        if (name != null) {
+            names.add(name);
         }
         readers.add(reader);
         if (currentReader == null) {
@@ -57,7 +78,9 @@ public class MultiIOReader extends Reader {
         }
     }
 
-    /** Check to make sure that the stream has not been closed */
+    /**
+     * Check to make sure that the stream has not been closed
+     */
     private void ensureOpen() throws IOException {
         if (readers == null)
             throw new IOException("Stream closed");
@@ -114,5 +137,10 @@ public class MultiIOReader extends Reader {
         if (ioe != null) {
             throw ioe;
         }
+    }
+
+
+    public String toString() {
+        return StringUtils.collectionToCommaDelimitedString(names);
     }
 }

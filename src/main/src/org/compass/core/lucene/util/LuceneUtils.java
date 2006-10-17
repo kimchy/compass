@@ -111,13 +111,13 @@ public abstract class LuceneUtils {
     private static boolean tryAddPropertyToAll(Property property, MultiIOReader reader, boolean atleastOneAddedToAll) {
         String value = property.getStringValue();
         if (value != null) {
-            reader.add(new StringWithSeparatorReader(value, ' '));
+            reader.add(property.getName(), new StringWithSeparatorReader(value, ' '));
             return true;
         }
         // if it is a repeatable reader, we can add it to all, since we read it several times
         RepeatableReader repeatableReader = ((LuceneProperty) property).getRepeatableReader();
         if (repeatableReader != null) {
-            reader.add((Reader) repeatableReader);
+            reader.add(property.getName(), (Reader) repeatableReader);
             reader.add(new StringReader(" "));
             return true;
         }

@@ -76,13 +76,11 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
         this.docNum = docNum;
         if (alias != null) {
             removeProperties(aliasProperty);
-            LuceneProperty aliasProp = new LuceneProperty(new Field(aliasProperty, alias, Field.Store.YES, Field.Index.UN_TOKENIZED));
-            properties.add(aliasProp);
-            document.add(aliasProp.getField());
+            document.add(new Field(aliasProperty, alias, Field.Store.YES, Field.Index.UN_TOKENIZED));
         }
 
         verifyResourceMapping();
-        
+
         Enumeration fields = document.fields();
         while (fields.hasMoreElements()) {
             Field field = (Field) fields.nextElement();
@@ -90,7 +88,6 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
             lProperty.setPropertyMapping(resourceMapping.getResourcePropertyMapping(field.name()));
             properties.add(lProperty);
         }
-
     }
 
     public void copy(Resource resource) {

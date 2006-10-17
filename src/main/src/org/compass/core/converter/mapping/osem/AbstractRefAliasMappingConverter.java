@@ -72,7 +72,7 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
                     // since ClassMappingConverter will also read the path, we need
                     // to take special care when working with a collection resource wrapper
                     // and rollback the fact that we read the path
-                    if (resource instanceof CollectionResourceWrapper) {
+                    if ((resource instanceof CollectionResourceWrapper) && rollbackClassNameOnPoly()) {
                         ((CollectionResourceWrapper) resource).rollbackGetProperty(classPath);
                     }
                     if (pClassName != null && pClassName.getStringValue() != null) {
@@ -135,4 +135,8 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
 
     protected abstract Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping,
                                            ClassMapping refMapping, MarshallingContext context) throws ConversionException;
+
+    protected boolean rollbackClassNameOnPoly() {
+        return true;
+    }
 }

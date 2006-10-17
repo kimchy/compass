@@ -31,7 +31,7 @@
     <class name="B" alias="bReference">
         <id name="id" accessor="field" />
 
-        <component name="a" accessor="field" ref-alias="polybase, polyextends" />
+        <reference name="a" accessor="field" ref-alias="polybase, polyextends" />
     </class>
 
     <class name="C" alias="cComponent">

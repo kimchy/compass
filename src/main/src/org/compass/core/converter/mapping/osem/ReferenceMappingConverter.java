@@ -16,8 +16,10 @@
 
 package org.compass.core.converter.mapping.osem;
 
+import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
+import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.HasRefAliasMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
@@ -34,6 +36,17 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
 
         ReferenceMapping referenceMapping = (ReferenceMapping) hasRefAliasMapping;
+        // only add specilized properties for un-marshalling when it is supported
+        if (refMapping.isSupportUnmarshall()) {
+            SearchEngine searchEngine = context.getSearchEngine();
+            if (refMapping.isPoly() && refMapping.getPolyClass() == null) {
+                // if the class is defined as poly, persist the class name as well
+                String className = root.getClass().getName();
+                Property p = searchEngine.createProperty(refMapping.getClassPath().getPath(), className, Property.Store.YES,
+                        Property.Index.UN_TOKENIZED);
+                resource.addProperty(p);
+            }
+        }
         boolean stored = context.getMarshallingStrategy().marshallIds(resource, refMapping, root, context);
 
         if (referenceMapping.getRefCompMapping() != null) {
@@ -51,5 +64,10 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
             return null;
         }
         return context.getSession().get(refMapping.getAlias(), ids, context);
+    }
+
+
+    protected boolean rollbackClassNameOnPoly() {
+        return false;
     }
 }

@@ -1,13 +1,12 @@
 package org.compass.core.test.inheritance;
 
-import org.compass.core.test.AbstractTestCase;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.Resource;
-import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.test.AbstractTestCase;
 
 public class PolyCollectionTests extends AbstractTestCase {
 
@@ -82,12 +81,14 @@ public class PolyCollectionTests extends AbstractTestCase {
         extendsA.setValue("value");
         extendsA.setExtendsValue("evalue");
         b.a.add(extendsA);
+        session.save("polyextends", extendsA);
 
         id = new Long(2);
         BaseA base = new BaseA();
         base.setId(id);
         base.setValue("baseValue");
         b.a.add(base);
+        session.save("polybase", base);
 
         session.save("bReference", b);
 
