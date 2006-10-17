@@ -17,7 +17,6 @@
 package org.compass.spring.web.mvc;
 
 import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -61,7 +60,7 @@ public class CompassIndexController extends AbstractCompassGpsCommandController 
             throw new IllegalArgumentException("Must set the indexView property");
         }
         if (indexResultsView == null) {
-            throw new IllegalArgumentException("Must set hte indexResultsView property");
+            throw new IllegalArgumentException("Must set the indexResultsView property");
         }
     }
 

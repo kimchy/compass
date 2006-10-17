@@ -15,7 +15,7 @@ public interface LocalCompassBeanPostProcessor {
      * Process the {@link org.compass.core.config.CompassConfiguration} allowing
      * to add additional configuration settings / mappings before the
      * {@link org.compass.spring.LocalCompassBean} creates the {@link org.compass.core.Compass}
-     * instnace.
+     * instance.
      *
      * @param config The Compass configuration that will be used to creat the Compass instance
      * @throws ConfigurationException

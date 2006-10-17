@@ -17,7 +17,6 @@
 package org.compass.spring.web.mvc;
 
 import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -74,7 +73,7 @@ public class CompassSearchController extends AbstractCompassCommandController {
             throw new IllegalArgumentException("Must set the searchView property");
         }
         if (searchResultsView == null) {
-            throw new IllegalArgumentException("Must set hte serachResultsView property");
+            throw new IllegalArgumentException("Must set the serachResultsView property");
         }
     }
 
@@ -175,7 +174,7 @@ public class CompassSearchController extends AbstractCompassCommandController {
     }
 
     /**
-     * An option to perform any type of processing before the hits are detached.
+     * An option to perform any type of processing after the hits are detached.
      */
     protected void doProcessAfterDetach(CompassSearchCommand searchCommand, CompassSession session,
                                         CompassDetachedHits hits) {

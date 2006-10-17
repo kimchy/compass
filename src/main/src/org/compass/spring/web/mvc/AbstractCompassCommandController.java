@@ -38,7 +38,7 @@ public abstract class AbstractCompassCommandController extends AbstractCommandCo
 
     public void afterPropertiesSet() throws Exception {
         if (compass == null) {
-            throw new IllegalArgumentException("Must set compass proerty");
+            throw new IllegalArgumentException("Must set compass property");
         }
         this.compassTemplate = new CompassTemplate(compass);
     }
@@ -46,14 +46,14 @@ public abstract class AbstractCompassCommandController extends AbstractCommandCo
     /**
      * Returns <code>Compass</code> instance.
      * 
-     * @return The compass isntance.
+     * @return The compass instance.
      */
     public Compass getCompass() {
         return compass;
     }
 
     /**
-     * Sets the <code>Compass</code> instnace.
+     * Sets the <code>Compass</code> instance.
      * 
      * @param compass
      */

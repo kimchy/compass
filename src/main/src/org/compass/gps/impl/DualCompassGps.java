@@ -138,7 +138,7 @@ public class DualCompassGps extends AbstractCompassGps {
     }
 
     /**
-     * Sets the index compass instnace, used for the indexing operations.
+     * Sets the index compass instance, used for the indexing operations.
      */
     public void setIndexCompass(Compass indexCompass) {
         this.indexCompass = indexCompass;
