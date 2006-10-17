@@ -2,8 +2,8 @@ package org.compass.gps.device.jpa.toplink;
 
 import java.util.HashMap;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
+import oracle.toplink.essentials.PersistenceProvider;
 import org.compass.gps.device.jpa.AbstractSimpleJpaGpsDeviceTests;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 
@@ -18,6 +18,6 @@ public class TopLinkEssentialsSimpleJpaGpsDeviceTests extends AbstractSimpleJpaG
     }
 
     protected EntityManagerFactory doSetUpEntityManagerFactory() {
-        return Persistence.createEntityManagerFactory("toplink", new HashMap());
+        return new PersistenceProvider().createEntityManagerFactory("toplink", new HashMap());
     }
 }

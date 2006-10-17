@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,25 +16,35 @@
 
 package org.compass.gps.device.hibernate;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.FieldInvoker;
+import org.compass.core.util.MethodInvoker;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.PassiveMirrorGpsDevice;
-import org.hibernate.*;
+import org.hibernate.EntityMode;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.event.*;
+import org.hibernate.event.PostDeleteEvent;
+import org.hibernate.event.PostDeleteEventListener;
+import org.hibernate.event.PostInsertEvent;
+import org.hibernate.event.PostInsertEventListener;
+import org.hibernate.event.PostUpdateEvent;
+import org.hibernate.event.PostUpdateEventListener;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.tuple.EntityMetamodel;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A {@link HibernateGpsDevice} which works with hibernate 3.
@@ -465,7 +475,8 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                     new Hibernate3GpsDevicePostDelete((PostDeleteEventListener) eventListener.get(sessionEventListenerConfig), mirrorFilter));
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(
-                    buildMessage("Failed to inject compass gps device events into hibernate 3.0 session factory"), e);
+                    buildMessage("Failed to inject compass gps device events into hibernate 3.0 session factory [" +
+                            sessionFactory.getClass().getName() + "]"), e);
         }
     }
 
@@ -499,11 +510,18 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
 
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(
-                    buildMessage("Failed to inject compass gps device events into hibernate 3.1 session factory"), e);
+                    buildMessage("Failed to inject compass gps device events into hibernate 3.1 session factory [" +
+                            sessionFactory.getClass().getName() + "]"), e);
         }
     }
 
     protected boolean isInherited(ClassMetadata classMetadata) throws HibernateGpsDeviceException {
+        try {
+            // just try and invoke the Hibernate 3.2 support for this one
+            return classMetadata.isInherited();
+        } catch (Throwable t) {
+            // do nothing
+        }
         try {
             ClassUtils.forName("org.hibernate.event.SessionEventListenerConfig");
             return isInherited30(classMetadata);
@@ -515,9 +533,13 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
     private boolean isInherited30(ClassMetadata classMetadata) throws HibernateGpsDeviceException {
         try {
             Class basicEntityPersisterClass = ClassUtils.forName("org.hibernate.persister.entity.BasicEntityPersister");
-            EntityMetamodel entityMetamodel =
-                    (EntityMetamodel) new FieldInvoker(basicEntityPersisterClass, "entityMetamodel").prepare().get(classMetadata);
-            return entityMetamodel.isInherited();
+            Object entityMetamodel =
+                    new FieldInvoker(basicEntityPersisterClass, "entityMetamodel").prepare().get(classMetadata);
+            MethodInvoker isInheritedMethodInvoker = new MethodInvoker();
+            isInheritedMethodInvoker.setTargetObject(entityMetamodel);
+            isInheritedMethodInvoker.setTargetMethod("isInherited");
+            Boolean isInherited = (Boolean) isInheritedMethodInvoker.prepare().invoke();
+            return isInherited.booleanValue();
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(
                     buildMessage("Failed to check for inheritence for 3.0"), e);
@@ -527,9 +549,13 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
     private boolean isInherited31(ClassMetadata classMetadata) throws HibernateGpsDeviceException {
         try {
             Class abstractEntityPersisterClass = ClassUtils.forName("org.hibernate.persister.entity.AbstractEntityPersister");
-            EntityMetamodel entityMetamodel =
-                    (EntityMetamodel) new FieldInvoker(abstractEntityPersisterClass, "entityMetamodel").prepare().get(classMetadata);
-            return entityMetamodel.isInherited();
+            Object entityMetamodel =
+                    new FieldInvoker(abstractEntityPersisterClass, "entityMetamodel").prepare().get(classMetadata);
+            MethodInvoker isInheritedMethodInvoker = new MethodInvoker();
+            isInheritedMethodInvoker.setTargetObject(entityMetamodel);
+            isInheritedMethodInvoker.setTargetMethod("isInherited");
+            Boolean isInherited = (Boolean) isInheritedMethodInvoker.prepare().invoke();
+            return isInherited.booleanValue();
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(
                     buildMessage("Failed to check for inheritence for 3.1"), e);
