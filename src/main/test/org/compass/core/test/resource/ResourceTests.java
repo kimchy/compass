@@ -240,4 +240,28 @@ public class ResourceTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testResourceExcludeFromAll() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Resource r = session.createResource("f");
+        r.addProperty("id1", "1");
+        r.addProperty("id2", "2");
+        r.addProperty("value1", "test1");
+        r.addProperty("value2", "test2");
+        session.save(r);
+
+        CompassHits hits = session.find("1");
+        assertEquals(0, hits.length());
+        hits = session.find("2");
+        assertEquals(1, hits.length());
+        hits = session.find("test1");
+        assertEquals(0, hits.length());
+        hits = session.find("test2");
+        assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
 }

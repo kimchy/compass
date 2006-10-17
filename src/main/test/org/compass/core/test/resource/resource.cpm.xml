@@ -55,5 +55,11 @@
         <resource-property name="value1" store="no" />
     </resource>
 
+    <resource alias="f">
+        <resource-id name="id1" exclude-from-all="true"/>
+        <resource-id name="id2" exclude-from-all="false"/>
+        <resource-property name="value1" exclude-from-all="true" />
+        <resource-property name="value2" exclude-from-all="false" />
+    </resource>
 </compass-core-mapping>
     

@@ -92,6 +92,8 @@
     <!ATTLIST resource-id name CDATA #REQUIRED>
     <!ATTLIST resource-id analyzer CDATA #IMPLIED>
     <!ATTLIST resource-id converter CDATA #IMPLIED>
+    <!ATTLIST resource-id exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST resource-id boost CDATA #IMPLIED>
 
 <!ELEMENT resource-property EMPTY
 >
