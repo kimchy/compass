@@ -63,7 +63,8 @@ public class LocalTransaction extends AbstractTransaction {
     public void begin() throws CompassException {
         if (log.isDebugEnabled()) {
             log.debug("Starting a new local transcation on thread [" + Thread.currentThread().getName() +
-                    "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
+                    "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) +
+                    "]  with isolation [" + transactionIsolation + "]");
         }
         session.getSearchEngine().begin(transactionIsolation);
         state = STARTED;

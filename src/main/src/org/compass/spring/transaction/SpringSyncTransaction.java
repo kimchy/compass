@@ -72,10 +72,10 @@ public class SpringSyncTransaction extends AbstractTransaction {
             if (log.isDebugEnabled()) {
                 if (status.isNewTransaction()) {
                     log.debug("Beginning new Spring transaction, and a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "]");
+                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
                 } else {
                     log.debug("Joining Spring transaction, and starting a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "]");
+                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
                 }
             }
             sync = new SpringTransactionSynchronization(session, status.isNewTransaction(), commitBeforeCompletion);

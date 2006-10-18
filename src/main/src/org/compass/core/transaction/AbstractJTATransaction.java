@@ -60,7 +60,7 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
             if (newTransaction) {
                 if (log.isDebugEnabled()) {
                     log.debug("Beginning new JTA transaction, and a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "]");
+                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
                 }
                 session.getSearchEngine().begin(transactionIsolation);
                 ut.begin();
@@ -69,7 +69,7 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
                 session.getSearchEngine().begin(transactionIsolation);
                 if (log.isDebugEnabled()) {
                     log.debug("Joining an existing JTA transaction, starting a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "]");
+                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
                 }
             }
             javax.transaction.Transaction tx = transactionManager.getTransaction();
