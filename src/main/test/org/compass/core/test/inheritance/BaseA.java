@@ -22,6 +22,8 @@ public class BaseA {
 
     private String value;
 
+    private D d;
+
     public Long getId() {
         return id;
     }
@@ -36,5 +38,13 @@ public class BaseA {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public D getD() {
+        return d;
+    }
+
+    public void setD(D d) {
+        this.d = d;
     }
 }

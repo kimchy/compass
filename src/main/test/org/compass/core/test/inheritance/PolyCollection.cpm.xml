@@ -4,6 +4,12 @@
 
 <compass-core-mapping package="org.compass.core.test.inheritance">
 
+    <class name="D" alias="d" root="false">
+        <property name="value" accessor="field">
+            <meta-data>dvalue</meta-data>
+        </property>
+    </class>
+
     <class name="BaseA" alias="polybase" poly="true">
 
         <id name="id" />
@@ -12,6 +18,7 @@
             <meta-data>mvalue</meta-data>
         </property>
 
+        <component name="d" />
     </class>
 
     <class name="ExtendsA" alias="polyextends" poly="true" extends="polybase">

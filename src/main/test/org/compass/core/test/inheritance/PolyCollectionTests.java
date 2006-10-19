@@ -22,8 +22,10 @@ public class PolyCollectionTests extends AbstractTestCase {
         ClassMapping bComponent = (ClassMapping) mapping.getRootMappingByAlias("bComponent");
         ResourcePropertyMapping rpMapping = bComponent.getResourcePropertyMappingByDotPath("a.value");
         assertNotNull(rpMapping);
-        assertEquals("value", rpMapping.getName());
-        assertEquals("$/bComponent/a/value", rpMapping.getPath().getPath());
+        // this mvalue is shared between polybase and polyextends, so there should not be
+        // an internal id
+        assertEquals("mvalue", rpMapping.getName());
+        assertEquals("mvalue", rpMapping.getPath().getPath());
         rpMapping = bComponent.getResourcePropertyMappingByDotPath("a.value.mvalue");
         assertNotNull(rpMapping);
         assertEquals("mvalue", rpMapping.getName());
@@ -46,12 +48,14 @@ public class PolyCollectionTests extends AbstractTestCase {
         extendsA.setId(id);
         extendsA.setValue("value");
         extendsA.setExtendsValue("evalue");
+        extendsA.setD(new D("edvalue"));
         b.a.add(extendsA);
 
         id = new Long(2);
         BaseA base = new BaseA();
         base.setId(id);
         base.setValue("baseValue");
+        base.setD(new D("bdvalue"));
         b.a.add(base);
 
         session.save("bComponent", b);
@@ -61,8 +65,10 @@ public class PolyCollectionTests extends AbstractTestCase {
         extendsA = (ExtendsA) b.a.get(0);
         assertEquals("value", extendsA.getValue());
         assertEquals("evalue", extendsA.getExtendsValue());
+        assertEquals("edvalue", extendsA.getD().value);
         base = (BaseA) b.a.get(1);
         assertEquals("baseValue", base.getValue());
+        assertEquals("bdvalue", base.getD().value);
 
         tr.commit();
         session.close();

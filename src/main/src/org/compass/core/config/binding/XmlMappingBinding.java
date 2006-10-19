@@ -611,6 +611,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String sClass = classPropertyConf.getAttribute("class", null);
         classPropertyMapping.setClassName(sClass);
 
+        classPropertyMapping.setDefinedInAlias(aliasMapping.getAlias());
+
         classPropertyMapping.setBoost(getBoost(classPropertyConf));
 
         classPropertyMapping.setColClassName(classPropertyConf.getAttribute("col-class", null));

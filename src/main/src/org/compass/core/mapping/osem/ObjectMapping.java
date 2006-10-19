@@ -38,6 +38,10 @@ public interface ObjectMapping extends OsemMapping {
 
     void setPropertyName(String propertyName);
 
+    String getDefinedInAlias();
+    
+    void setDefinedInAlias(String alias);
+
     Getter getGetter();
 
     void setGetter(Getter getter);

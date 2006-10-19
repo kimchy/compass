@@ -90,12 +90,11 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
      * @throws MappingException
      */
     protected void doPostProcess() throws MappingException {
-        OsemMappingUtils.ClassPropertyAndResourcePropertyGathererAndPathBuilder callback =
-                new OsemMappingUtils.ClassPropertyAndResourcePropertyGathererAndPathBuilder();
+        PostProcessMappingCallback callback = new PostProcessMappingCallback();
         // since we do not perform static bindings when no unmarshalling, we will get OOME
         // (we do not copy the mappings or use max-depth)
         boolean recursive = isSupportUnmarshall();
-        OsemMappingUtils.iterateMappings(callback, mappingsIt(), recursive);
+        OsemMappingUtils.iterateMappings(callback, this, recursive);
         List findList = callback.getResourcePropertyMappings();
         resourcePropertyMappings = (ResourcePropertyMapping[])
                 findList.toArray(new ResourcePropertyMapping[findList.size()]);
@@ -208,4 +207,76 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
     public void setPolyConstructor(Constructor polyConstructor) {
         this.polyConstructor = polyConstructor;
     }
+
+    public static class PostProcessMappingCallback extends OsemMappingUtils.ClassPropertyAndResourcePropertyGatherer {
+
+        private HashMap pathMappings = new HashMap();
+
+        private ArrayList pathSteps = new ArrayList();
+
+        private StringBuffer sb = new StringBuffer();
+
+
+        /**
+         * Since we did not process duplicate mappings, we need to replace them with the original mappings that
+         * were processed (for example, we added intenral ids to it where needed).
+         */
+        protected void onDuplicateMapping(ClassMapping classMapping, ObjectMapping actualMapping, ObjectMapping duplicateMapping) {
+            classMapping.replaceMapping(duplicateMapping, actualMapping);
+        }
+
+        private void addToPath(Mapping mapping) {
+            pathSteps.add(mapping.getName());
+        }
+
+        private void removeFromPath(Mapping mapping) {
+            if (pathSteps.size() > 0) {
+                pathSteps.remove(pathSteps.size() - 1);
+            }
+        }
+
+        public boolean onBeginMultipleMapping(ClassMapping classMapping, Mapping mapping) {
+            boolean retVal = super.onBeginMultipleMapping(classMapping, mapping);
+            addToPath(mapping);
+            return retVal;
+        }
+
+        public void onEndMultiplMapping(ClassMapping classMapping, Mapping mapping) {
+            super.onEndMultiplMapping(classMapping, mapping);
+            removeFromPath(mapping);
+        }
+
+        public void onClassPropertyMapping(ClassMapping classMapping, ClassPropertyMapping mapping) {
+            super.onClassPropertyMapping(classMapping, mapping);
+            ResourcePropertyMapping resourcePropertyMapping = mapping.getIdMapping();
+            pathMappings.put(currentPath(), resourcePropertyMapping);
+        }
+
+        public void onResourcePropertyMapping(ResourcePropertyMapping mapping) {
+            super.onResourcePropertyMapping(mapping);
+            if (!mapping.isInternal()) {
+                addToPath(mapping);
+            }
+            pathMappings.put(currentPath(), mapping);
+            if (!mapping.isInternal()) {
+                removeFromPath(mapping);
+            }
+        }
+
+        public HashMap getPathMappings() {
+            return pathMappings;
+        }
+
+        private String currentPath() {
+            sb.setLength(0);
+            for (int i = 0; i < pathSteps.size(); i++) {
+                if (i > 0) {
+                    sb.append('.');
+                }
+                sb.append(pathSteps.get(i));
+            }
+            return sb.toString();
+        }
+    }
+
 }

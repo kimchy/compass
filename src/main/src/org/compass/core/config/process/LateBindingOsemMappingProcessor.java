@@ -28,7 +28,17 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.osem.AbstractCollectionMapping;
+import org.compass.core.mapping.osem.ClassIdPropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.ComponentMapping;
+import org.compass.core.mapping.osem.ConstantMetaDataMapping;
+import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.OsemMappingUtils;
+import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.marshall.MarshallingEnvironment;
 
 /**
@@ -81,7 +91,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private void secondPassNoUnmarshalling(ClassMapping classMapping) {
         classMapping.setPath(namingStrategy.buildPath(compassMapping.getPath(), classMapping.getAlias()));
-        OsemMappingUtils.iterateMappings(new NoUnmarshallingCallback(classMapping), classMapping.mappingsIt(), false);
+        OsemMappingUtils.iterateMappings(new NoUnmarshallingCallback(classMapping), classMapping, false);
     }
 
     private void secondPass(ClassMapping classMapping, CompassMapping fatherMapping) {
@@ -280,10 +290,17 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             this.classMapping = classMapping;
         }
 
-        public void onBeginMultipleMapping(Mapping mapping) {
+        public void onBeginClassMapping(ClassMapping classMapping) {
         }
 
-        public void onEndMultiplMapping(Mapping mapping) {
+        public void onEndClassMapping(ClassMapping classMapping) {
+        }
+
+        public boolean onBeginMultipleMapping(ClassMapping classMapping, Mapping mapping) {
+            return true;
+        }
+
+        public void onEndMultiplMapping(ClassMapping classMapping, Mapping mapping) {
         }
 
         public void onBeginCollectionMapping(AbstractCollectionMapping collectionMapping) {
@@ -292,15 +309,15 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         public void onEndCollectionMapping(AbstractCollectionMapping collectionMapping) {
         }
 
-        public void onClassPropertyMapping(ClassPropertyMapping classPropertyMapping) {
+        public void onClassPropertyMapping(ClassMapping classMapping, ClassPropertyMapping classPropertyMapping) {
             this.classPropertyMapping = classPropertyMapping;
             classPropertyMapping.setPath(namingStrategy.buildPath(classMapping.getPath(), classPropertyMapping.getName()));
         }
 
-        public void onParentMapping(ParentMapping parentMapping) {
+        public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {
         }
 
-        public void onComponentMapping(ComponentMapping componentMapping) {
+        public void onComponentMapping(ClassMapping classMapping, ComponentMapping componentMapping) {
             ClassMapping[] refClassMappings = componentMapping.getRefClassMappings();
             ClassMapping[] copyRefClassMappings = new ClassMapping[refClassMappings.length];
             for (int i = 0; i < refClassMappings.length; i++) {
@@ -316,16 +333,16 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             componentMapping.setRefClassMappings(copyRefClassMappings);
         }
 
-        public void onReferenceMapping(ReferenceMapping referenceMapping) {
+        public void onReferenceMapping(ClassMapping classMapping, ReferenceMapping referenceMapping) {
             secondPassJustReference(referenceMapping, classMapping);
         }
 
-        public void onConstantMetaDataMappaing(ConstantMetaDataMapping constantMetaDataMapping) {
+        public void onConstantMetaDataMappaing(ClassMapping classMapping, ConstantMetaDataMapping constantMetaDataMapping) {
             constantMetaDataMapping.setPath(new StaticPropertyPath(constantMetaDataMapping.getName()));
         }
 
 
-        public void onDynamicMetaDataMapping(DynamicMetaDataMapping dynamicMetaDataMapping) {
+        public void onDynamicMetaDataMapping(ClassMapping classMapping, DynamicMetaDataMapping dynamicMetaDataMapping) {
         }
 
         public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {

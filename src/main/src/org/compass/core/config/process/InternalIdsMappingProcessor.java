@@ -75,7 +75,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
     }
 
     /**
-     * Go over all the attributes in the class (note that it takes all the
+     * <p>Go over all the attributes in the class (note that it takes all the
      * component attributes and so on) and does the following:
      * <li>If the attributed is marked with <code>managedId="true"</code>,
      * or it has no meta data associated with it, compass will create a new
@@ -86,12 +86,19 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
      * <li>If the attributed is marked with <code>managedId="false"</code>,
      * the id will be the first meta data</li>
      *
+     * <p>When ref alias has more than one alias, duplicate mappings might exists.
+     * Duplicate mappings are mappings that are shared by several mappings.
+     * {@link org.compass.core.mapping.osem.OsemMappingUtils.ClassPropertyAndResourcePropertyGatherer}
+     * ignores this duplicates, and only process the first one. Later, in the post process
+     * stage ({@link org.compass.core.config.process.PostProcessorMappingProcessor}, the ones
+     * that got skipped will be replced with the ones that were (they are the same).
+     *
      * @param classMapping
      */
     private void buildClassMetaDataIds(ClassMapping classMapping) {
         OsemMappingUtils.ClassPropertyAndResourcePropertyGatherer callback =
                 new OsemMappingUtils.ClassPropertyAndResourcePropertyGatherer();
-        OsemMappingUtils.iterateMappings(callback, classMapping.mappingsIt());
+        OsemMappingUtils.iterateMappings(callback, classMapping);
 
         HashMap propertyMappingsMap = new HashMap();
         List pMappings = callback.getResourcePropertyMappings();
@@ -124,7 +131,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
                 boolean foundPropertyId = false;
                 for (int i = 0; i < classPropertyMapping.mappingsSize(); i++) {
                     ClassPropertyMetaDataMapping pMapping = (ClassPropertyMetaDataMapping) classPropertyMapping.getMapping(i);
-                    if (!pMapping.canActAsPRopertyId()) {
+                    if (!pMapping.canActAsPropertyId()) {
                         continue;
                     }
                     // if there is only one mapping, and it is stored, use it as

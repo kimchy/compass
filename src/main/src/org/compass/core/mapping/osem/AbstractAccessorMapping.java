@@ -33,6 +33,8 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
 
     private String propertyName;
 
+    private String definedInAlias;
+
     private Getter getter;
 
     private Setter setter;
@@ -89,5 +91,13 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
 
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    public String getDefinedInAlias() {
+        return definedInAlias;
+    }
+
+    public void setDefinedInAlias(String definedInAlias) {
+        this.definedInAlias = definedInAlias;
     }
 }

@@ -28,7 +28,16 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.osem.AbstractCollectionMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.ComponentMapping;
+import org.compass.core.mapping.osem.ConstantMetaDataMapping;
+import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.OsemMappingUtils;
+import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 
@@ -74,17 +83,24 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
 
     private void lookupConverter(ClassMapping classMapping) throws MappingException {
         MappingProcessorUtils.lookupConverter(converterLookup, classMapping);
-        OsemMappingUtils.iterateMappings(new OsemConverterLookup(), classMapping.mappingsIt(), false);
+        OsemMappingUtils.iterateMappings(new OsemConverterLookup(), classMapping, false);
     }
 
     private class OsemConverterLookup implements OsemMappingUtils.ClassMappingCallback {
 
         private ClassPropertyMapping classPropertyMapping;
 
-        public void onBeginMultipleMapping(Mapping mapping) {
+        public void onBeginClassMapping(ClassMapping classMapping) {
         }
 
-        public void onEndMultiplMapping(Mapping mapping) {
+        public void onEndClassMapping(ClassMapping classMapping) {
+        }
+
+        public boolean onBeginMultipleMapping(ClassMapping classMapping, Mapping mapping) {
+            return true;
+        }
+
+        public void onEndMultiplMapping(ClassMapping classMapping, Mapping mapping) {
         }
 
         public void onBeginCollectionMapping(AbstractCollectionMapping collectionMapping) {
@@ -94,24 +110,24 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
         public void onEndCollectionMapping(AbstractCollectionMapping collectionMapping) {
         }
 
-        public void onClassPropertyMapping(ClassPropertyMapping classPropertyMapping) {
+        public void onClassPropertyMapping(ClassMapping classMapping, ClassPropertyMapping classPropertyMapping) {
             this.classPropertyMapping = classPropertyMapping;
             MappingProcessorUtils.lookupConverter(converterLookup, classPropertyMapping);
         }
 
-        public void onComponentMapping(ComponentMapping componentMapping) {
+        public void onComponentMapping(ClassMapping classMapping, ComponentMapping componentMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, componentMapping);
         }
 
-        public void onReferenceMapping(ReferenceMapping referenceMapping) {
+        public void onReferenceMapping(ClassMapping classMapping, ReferenceMapping referenceMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, referenceMapping);
         }
 
-        public void onParentMapping(ParentMapping parentMapping) {
+        public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, parentMapping);
         }
 
-        public void onConstantMetaDataMappaing(ConstantMetaDataMapping constantMetaDataMapping) {
+        public void onConstantMetaDataMappaing(ClassMapping classMapping, ConstantMetaDataMapping constantMetaDataMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, constantMetaDataMapping);
         }
 
@@ -120,7 +136,7 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
             MappingProcessorUtils.lookupConverter(converterLookup, classPropertyMetaDataMapping, classPropertyMapping);
         }
 
-        public void onDynamicMetaDataMapping(DynamicMetaDataMapping dynamicMetaDataMapping) {
+        public void onDynamicMetaDataMapping(ClassMapping classMapping, DynamicMetaDataMapping dynamicMetaDataMapping) {
             Converter converter = converterLookup.lookupConverter(dynamicMetaDataMapping.getConverterName());
             if (!(converter instanceof DynamicConverter)) {
                 throw new MappingException("Dynamic meta-data [" + dynamicMetaDataMapping + "] converter name [" +

@@ -29,6 +29,14 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private static final int ID_NOT_SET_VALUE = -1;
 
+    public String getDefinedInAlias() {
+        return definedInAlias;
+    }
+
+    public void setDefinedInAlias(String definedInAlias) {
+        this.definedInAlias = definedInAlias;
+    }
+
     public static final class ManagedId extends Parameter {
 
         private static final long serialVersionUID = -7849904473959816389L;
@@ -107,6 +115,8 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private String propertyName;
 
+    private String definedInAlias;
+
     protected void copy(ClassPropertyMapping mapping) {
         super.copy(mapping);
         mapping.setClassName(getClassName());
@@ -123,6 +133,7 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         mapping.setPropertyName(getPropertyName());
         mapping.setManagedIdConverter(getManagedIdConverter());
         mapping.setManagedIdConverterName(getManagedIdConverterName());
+        mapping.setDefinedInAlias(getDefinedInAlias());
     }
 
     public Mapping copy() {
