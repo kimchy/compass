@@ -374,7 +374,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         for (Field field : clazz.getDeclaredFields()) {
             for (Annotation annotation : field.getAnnotations()) {
-                processsAnnotatedElement(ClassUtils.getShortNameForField(field), "field", field.getType(),
+                processsAnnotatedElement(clazz, ClassUtils.getShortNameForField(field), "field", field.getType(),
                         field.getGenericType(), annotation, field);
             }
         }
@@ -387,50 +387,50 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                     (method.getName().startsWith("get") || method.getName().startsWith("is"))) {
 
                 for (Annotation annotation : method.getAnnotations()) {
-                    processsAnnotatedElement(ClassUtils.getShortNameForMethod(method), "property", method.getReturnType(),
+                    processsAnnotatedElement(clazz, ClassUtils.getShortNameForMethod(method), "property", method.getReturnType(),
                             method.getGenericReturnType(), annotation, method);
                 }
             }
         }
     }
 
-    private void processsAnnotatedElement(String name, String accessor, Class<?> clazz, Type type, Annotation annotation,
-                                          AnnotatedElement annotatedElement) {
+    private void processsAnnotatedElement(Class<?> searchableClass, String name, String accessor, Class<?> clazz,
+                                          Type type, Annotation annotation, AnnotatedElement annotatedElement) {
 
         if (annotation instanceof SearchableId) {
             ClassIdPropertyMapping classPropertyMapping = new ClassIdPropertyMapping();
             SearchableId searchableId = (SearchableId) annotation;
-            bindObjectMapping(classPropertyMapping, accessor, name, searchableId.accessor());
+            bindObjectMapping(classPropertyMapping, accessor, name, searchableId.accessor(), searchableClass);
             bindClassPropertyIdMapping(searchableId, classPropertyMapping, clazz, type, annotatedElement);
             classMapping.addMapping(classPropertyMapping);
         } else if (annotation instanceof SearchableProperty) {
             ClassPropertyMapping classPropertyMapping = new ClassPropertyMapping();
             SearchableProperty searchableProperty = (SearchableProperty) annotation;
-            bindObjectMapping(classPropertyMapping, accessor, name, searchableProperty.accessor());
+            bindObjectMapping(classPropertyMapping, accessor, name, searchableProperty.accessor(), searchableClass);
             bindClassPropertyMapping(searchableProperty, classPropertyMapping, annotatedElement, clazz, type);
             classMapping.addMapping(classPropertyMapping);
         } else if (annotation instanceof SearchableComponent) {
             ComponentMapping componentMapping = new ComponentMapping();
             SearchableComponent searchableComponent = (SearchableComponent) annotation;
-            bindObjectMapping(componentMapping, accessor, name, searchableComponent.accessor());
+            bindObjectMapping(componentMapping, accessor, name, searchableComponent.accessor(), searchableClass);
             bindComponent(searchableComponent, componentMapping, clazz, type);
             classMapping.addMapping(componentMapping);
         } else if (annotation instanceof SearchableReference) {
             ReferenceMapping referenceMapping = new ReferenceMapping();
             SearchableReference searchableReference = (SearchableReference) annotation;
-            bindObjectMapping(referenceMapping, accessor, name, searchableReference.accessor());
+            bindObjectMapping(referenceMapping, accessor, name, searchableReference.accessor(), searchableClass);
             bindReference(searchableReference, referenceMapping, clazz, type);
             classMapping.addMapping(referenceMapping);
         } else if (annotation instanceof SearchableAnalyzerProperty) {
             ClassPropertyAnalyzerController analyzerMapping = new ClassPropertyAnalyzerController();
             SearchableAnalyzerProperty searchableAnalyzerProperty = (SearchableAnalyzerProperty) annotation;
-            bindObjectMapping(analyzerMapping, accessor, name, searchableAnalyzerProperty.accessor());
+            bindObjectMapping(analyzerMapping, accessor, name, searchableAnalyzerProperty.accessor(), searchableClass);
             bindAnalyzer(searchableAnalyzerProperty, analyzerMapping, clazz, type);
             classMapping.addMapping(analyzerMapping);
         } else if (annotation instanceof SearchableParent) {
             ParentMapping parentMapping = new ParentMapping();
             SearchableParent searchableParent = (SearchableParent) annotation;
-            bindObjectMapping(parentMapping, accessor, name, searchableParent.accessor());
+            bindObjectMapping(parentMapping, accessor, name, searchableParent.accessor(), searchableClass);
             bindParent(searchableParent, parentMapping, clazz, type);
             classMapping.addMapping(parentMapping);
         } else if ((annotation instanceof SearchableMetaData) ||
@@ -765,7 +765,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         return converter;
     }
 
-    private void bindObjectMapping(ObjectMapping objectMapping, String actualAccessor, String name, String annotationAccessor) {
+    private void bindObjectMapping(ObjectMapping objectMapping, String actualAccessor, String name,
+                                   String annotationAccessor, Class<?> searchableClass) {
         if (!StringUtils.hasLength(annotationAccessor)) {
             objectMapping.setAccessor(actualAccessor);
         } else {
@@ -774,6 +775,19 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         objectMapping.setName(name);
         objectMapping.setObjClass(classMapping.getClazz());
         objectMapping.setPropertyName(name);
+        // set the defined in alias for multiple ref aliases
+        // note, with annotation, we might not have @Searchable defined on
+        // the class, so we are using the FQN class name instead
+        if (searchableClass.isAnnotationPresent(Searchable.class)) {
+            Searchable searchable = searchableClass.getAnnotation(Searchable.class);
+            if (StringUtils.hasLength(searchable.alias())) {
+                objectMapping.setDefinedInAlias(searchable.alias());
+            } else {
+                objectMapping.setDefinedInAlias(searchableClass.getName());
+            }
+        } else {
+            objectMapping.setDefinedInAlias(searchableClass.getName());
+        }
     }
 
     /**

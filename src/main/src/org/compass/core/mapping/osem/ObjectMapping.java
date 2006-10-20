@@ -38,6 +38,10 @@ public interface ObjectMapping extends OsemMapping {
 
     void setPropertyName(String propertyName);
 
+    /**
+     * Returns which alias (or if not present, the FQN of the class name)
+     * this object property is defined.
+     */
     String getDefinedInAlias();
     
     void setDefinedInAlias(String alias);

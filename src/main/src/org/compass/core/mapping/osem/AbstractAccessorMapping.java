@@ -46,6 +46,7 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
         copy.setAccessor(getAccessor());
         copy.setObjClass(getObjClass());
         copy.setPropertyName(getPropertyName());
+        copy.setDefinedInAlias(getDefinedInAlias());
     }
 
 

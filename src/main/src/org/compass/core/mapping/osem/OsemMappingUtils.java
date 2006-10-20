@@ -22,6 +22,7 @@ import java.util.Iterator;
 
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.util.Assert;
 
 /**
  * @author kimchy
@@ -90,7 +91,7 @@ public abstract class OsemMappingUtils {
             // to be considered for ignoring inherited duplicates
             if (mapping instanceof HasRefAliasMapping) {
                 ClassMapping[] classMappings = ((HasRefAliasMapping) mapping).getRefClassMappings();
-                if (classMappings.length > 0) {
+                if (classMappings.length > 1) {
                     HashMap byAlias = new HashMap();
                     for (int i = 0; i < classMappings.length; i++) {
                         ignoreInheritedDuplicatesClassMappings.put(new Integer(System.identityHashCode(classMappings[i])), byAlias);
@@ -103,6 +104,8 @@ public abstract class OsemMappingUtils {
             HashMap byAlias = (HashMap) ignoreInheritedDuplicatesClassMappings.get(new Integer(System.identityHashCode(classMapping)));
             if (byAlias != null && (mapping instanceof ObjectMapping)) {
                 ObjectMapping objectMapping = (ObjectMapping) mapping;
+                Assert.notNull(objectMapping.getDefinedInAlias(), "Internal Compass Error, Defined in Alias not found for [" +
+                        objectMapping.getPropertyName() + "] in alias [" + classMapping.getAlias() + "]");
                 HashMap propByAlias = (HashMap) byAlias.get(objectMapping.getDefinedInAlias());
                 if (propByAlias == null) {
                     propByAlias = new HashMap();

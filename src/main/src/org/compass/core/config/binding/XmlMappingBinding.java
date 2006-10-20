@@ -550,10 +550,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         referenceMapping.setName(name);
 
         String refAlias = referenceConf.getAttribute("ref-alias", null);
-        if (refAlias != null) {
-
-            referenceMapping.setRefAliases(getAliases(refAlias));
-        }
+        referenceMapping.setRefAliases(getAliases(refAlias));
+        referenceMapping.setDefinedInAlias(aliasMapping.getAlias());
 
         String refCompAlias = referenceConf.getAttribute("ref-comp-alias", null);
         if (refCompAlias != null) {
@@ -575,6 +573,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         compMapping.setName(name);
         String refAlias = componentConf.getAttribute("ref-alias", null);
         compMapping.setRefAliases(getAliases(refAlias));
+        compMapping.setDefinedInAlias(aliasMapping.getAlias());
 
         int maxDepth = componentConf.getAttributeAsInteger("max-depth", 5);
         compMapping.setMaxDepth(maxDepth);
@@ -601,6 +600,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             parentMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
         }
         parentMapping.setPropertyName(name);
+        parentMapping.setDefinedInAlias(aliasMapping.getAlias());
     }
 
     private void bindClassProperty(ConfigurationHelper classPropertyConf, AliasMapping aliasMapping,
@@ -610,7 +610,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         String sClass = classPropertyConf.getAttribute("class", null);
         classPropertyMapping.setClassName(sClass);
-
         classPropertyMapping.setDefinedInAlias(aliasMapping.getAlias());
 
         classPropertyMapping.setBoost(getBoost(classPropertyConf));
