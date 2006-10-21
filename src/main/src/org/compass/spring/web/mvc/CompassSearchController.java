@@ -105,6 +105,7 @@ public class CompassSearchController extends AbstractCompassCommandController {
         if (pageSize == null) {
             doProcessBeforeDetach(searchCommand, session, hits, -1, -1);
             detachedHits = hits.detach();
+            doProcessAfterDetach(searchCommand, session, detachedHits);
         } else {
             int iPageSize = pageSize.intValue();
             int page = 0;
