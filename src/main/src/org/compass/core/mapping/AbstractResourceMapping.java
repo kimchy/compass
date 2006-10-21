@@ -35,7 +35,9 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private SubIndexHash subIndexHash;
 
-    private String[] extendedMappings;
+    private String[] extendedAliases;
+
+    private String[] extendingAliases;
 
     private String analyzer;
 
@@ -76,7 +78,8 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         super.shallowCopy(resourceMapping);
         resourceMapping.setAlias(getAlias());
         resourceMapping.setSubIndexHash(getSubIndexHash());
-        resourceMapping.setExtendedMappings(getExtendedMappings());
+        resourceMapping.setExtendedAliases(getExtendedAliases());
+        resourceMapping.setExtendingAliases(getExtendingAliases());
         resourceMapping.setAllProperty(getAllProperty());
         resourceMapping.setAllSupported(isAllSupported());
         resourceMapping.setRoot(isRoot());
@@ -187,12 +190,12 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         this.alias = alias;
     }
 
-    public String[] getExtendedMappings() {
-        return extendedMappings;
+    public String[] getExtendedAliases() {
+        return extendedAliases;
     }
 
-    public void setExtendedMappings(String[] extendedMappings) {
-        this.extendedMappings = extendedMappings;
+    public void setExtendedAliases(String[] extendedMappings) {
+        this.extendedAliases = extendedMappings;
     }
 
     public float getBoost() {
@@ -275,4 +278,11 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         return resourcePropertyNames;
     }
 
+    public String[] getExtendingAliases() {
+        return extendingAliases;
+    }
+
+    public void setExtendingAliases(String[] extendingAliases) {
+        this.extendingAliases = extendingAliases;
+    }
 }

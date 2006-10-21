@@ -17,6 +17,8 @@
 package org.compass.core.mapping;
 
 /**
+ * An alias mapping is a mapping that is associated with an alias.
+ *
  * @author kimchy
  */
 public interface AliasMapping extends MultipleMapping {
@@ -27,11 +29,37 @@ public interface AliasMapping extends MultipleMapping {
      */
     AliasMapping shallowCopy();
 
+    /**
+     * Returns the alias this mapping is associated with.
+     */
     String getAlias();
 
+    /**
+     * Sets the alias this mapping is associated with.
+     */
     void setAlias(String alias);
 
-    String[] getExtendedMappings();
+    /**
+     * Returns a list of aliases that this alias extends.
+     */
+    String[] getExtendedAliases();
 
-    void setExtendedMappings(String[] extendedMappings);
+    /**
+     * Sets a list of aliases that this alias extends.
+     */
+    void setExtendedAliases(String[] extendedMappings);
+
+    /**
+     * Returns a list of all the aliases that extend this mapping. Note,
+     * this is a list of all the aliases down the food chain, not just the
+     * first ones.
+     */
+    String[] getExtendingAliases();
+
+    /**
+     * Sets a list of all the aliases that extend this mapping. Note,
+     * this is a list of all the aliases down the food chain, not just the
+     * first ones.
+     */
+    void setExtendingAliases(String[] extendingAliases);
 }

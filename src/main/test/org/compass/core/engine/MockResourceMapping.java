@@ -33,6 +33,13 @@ import org.compass.core.util.config.ConfigurationHelper;
  * @author kimchy
  */
 public class MockResourceMapping extends AbstractMultipleMapping implements ResourceMapping, AliasMapping {
+    public String[] getExtendingAliases() {
+        return extendingAliases;
+    }
+
+    public void setExtendingAliases(String[] extendingAliases) {
+        this.extendingAliases = extendingAliases;
+    }
 
     private class MockResourceIdMapping implements ResourceIdMappingProvider {
         private ResourcePropertyMapping[] ids = new ResourcePropertyMapping[0];
@@ -53,7 +60,9 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
 
     private String alias;
 
-    private String[] extendedMappings;
+    private String[] extendedAliases;
+
+    private String[] extendingAliases;
 
     private float boost = 1.0f;
 
@@ -120,12 +129,12 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
         return true;
     }
 
-    public String[] getExtendedMappings() {
-        return extendedMappings;
+    public String[] getExtendedAliases() {
+        return extendedAliases;
     }
 
-    public void setExtendedMappings(String[] extendedMappings) {
-        this.extendedMappings = extendedMappings;
+    public void setExtendedAliases(String[] extendedMappings) {
+        this.extendedAliases = extendedMappings;
     }
 
     public void setSubIndexHash(SubIndexHash subIndexHash) {

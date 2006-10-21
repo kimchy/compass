@@ -221,7 +221,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         int numberOfComponentsWithTheSameAlias = 0;
         for (Iterator it = chainedComponents.iterator(); it.hasNext();) {
             ComponentMapping tempComponentMapping = (ComponentMapping) it.next();
-            if (compMapping.hasAtLeastOnRefAlias(tempComponentMapping.getRefAliases())) {
+            if (compMapping.hasAtLeastOneRefAlias(tempComponentMapping.getRefAliases())) {
                 numberOfComponentsWithTheSameAlias++;
             }
         }

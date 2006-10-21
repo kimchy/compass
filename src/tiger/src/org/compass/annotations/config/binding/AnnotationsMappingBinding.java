@@ -355,8 +355,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             String[] extend = searchable.extend();
             if (extend.length != 0) {
                 ArrayList<String> extendedMappings = new ArrayList<String>();
-                if (classMapping.getExtendedMappings() != null) {
-                    for (String extendedAlias : classMapping.getExtendedMappings()) {
+                if (classMapping.getExtendedAliases() != null) {
+                    for (String extendedAlias : classMapping.getExtendedAliases()) {
                         extendedMappings.add(extendedAlias);
                     }
                 }
@@ -368,7 +368,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                         extendedMappings.add(extendedAliasLookup.getName());
                     }
                 }
-                classMapping.setExtendedMappings(extendedMappings.toArray(new String[extendedMappings.size()]));
+                classMapping.setExtendedAliases(extendedMappings.toArray(new String[extendedMappings.size()]));
             }
         }
 

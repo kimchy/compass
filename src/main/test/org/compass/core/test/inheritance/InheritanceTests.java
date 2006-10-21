@@ -16,15 +16,33 @@
 
 package org.compass.core.test.inheritance;
 
+import java.util.HashSet;
+
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.CompassMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.test.AbstractTestCase;
 
 public class InheritanceTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[] { "inheritance/Inheritance.cpm.xml" };
+    }
+
+    public void testExtendingAliases() {
+        CompassMapping compassMapping = ((InternalCompass)getCompass()).getMapping();
+        AliasMapping aliasMapping = compassMapping.getAliasMapping("base");
+        assertEquals(3, aliasMapping.getExtendingAliases().length);
+        HashSet aliases = new HashSet();
+        aliases.add("override");
+        aliases.add("override1");
+        aliases.add("extends");
+        for (int i = 0; i < aliasMapping.getExtendingAliases().length; i++) {
+            assertTrue(aliases.contains(aliasMapping.getExtendingAliases()[i]));
+        }
     }
 
     public void testSimpleExtends() throws Exception {

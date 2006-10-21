@@ -16,13 +16,16 @@
 
 package org.compass.core.config.process;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
@@ -57,16 +60,41 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
     void processMapping(ClassMapping classMapping, HasRefAliasMapping mapping) throws MappingException {
         if (mapping.getRefAliases() != null) {
             String[] aliases = mapping.getRefAliases();
-            ClassMapping[] refMappings = new ClassMapping[aliases.length];
-            for (int i = 0; i< aliases.length; i++) {
-                ClassMapping refClassMapping = (ClassMapping) compassMapping.getResourceMappingByAlias(aliases[i]);
-                if (refClassMapping == null) {
+            LinkedHashSet aliasesSet = new LinkedHashSet();
+            ArrayList refMappings = new ArrayList();
+            for (int i = 0; i < aliases.length; i++) {
+                AliasMapping refAliasMapping = compassMapping.getAliasMapping(aliases[i]);
+                if (refAliasMapping == null) {
                     throw new MappingException("Failed to resolve ref-alias [" + aliases[i] + "] for ["
                             + mapping.getName() + "] in alias [" + classMapping.getAlias() + "]");
                 }
-                refMappings[i] = refClassMapping;
+                if (aliasesSet.contains(aliases[i])) {
+                    continue;
+                }
+                // it might be a contract mapping, so we will not add it here
+                // but add all the class mappings that extend it
+                if (refAliasMapping instanceof ClassMapping) {
+                    aliasesSet.add(aliases[i]);
+                    refMappings.add(refAliasMapping);
+                }
+                // now add all the ones that extend the ref mapping
+                String[] extendingAliases = refAliasMapping.getExtendingAliases();
+                if (extendingAliases != null) {
+                    for (int j = 0; j < extendingAliases.length; j++) {
+                        AliasMapping aliasMapping = compassMapping.getAliasMapping(extendingAliases[j]);
+                        if (aliasesSet.contains(aliasMapping.getAlias())) {
+                            continue;
+                        }
+                        // check that it is ClassMapping (it might be ContractMapping for example)
+                        if (aliasMapping instanceof ClassMapping) {
+                            aliasesSet.add(aliasMapping.getAlias());
+                            refMappings.add(aliasMapping);
+                        }
+                    }
+                }
             }
-            mapping.setRefClassMappings(refMappings);
+            mapping.setRefAliases((String[]) aliasesSet.toArray(new String[aliasesSet.size()]));
+            mapping.setRefClassMappings((ClassMapping[]) refMappings.toArray(new ClassMapping[refMappings.size()]));
             return;
         }
         Class clazz = mapping.getRefClass();
@@ -97,7 +125,7 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
                     classMapping.getAlias() + "], but there are multiple class mappings for [" + clazz.getName()
                     + "]. Please set the ref-alias explicitly.");
         }
-        mapping.setRefAliases(new String[] {refClassMapping.getAlias()});
-        mapping.setRefClassMappings(new ClassMapping[] {refClassMapping});
+        mapping.setRefAliases(new String[]{refClassMapping.getAlias()});
+        mapping.setRefClassMappings(new ClassMapping[]{refClassMapping});
     }
 }

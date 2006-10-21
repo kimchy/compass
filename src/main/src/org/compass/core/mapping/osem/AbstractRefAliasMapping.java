@@ -51,7 +51,7 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
         return refAliasesMap.get(refAlias) != null;
     }
 
-    public boolean hasAtLeastOnRefAlias(String[] refAliases) {
+    public boolean hasAtLeastOneRefAlias(String[] refAliases) {
         if (refAliases == null) {
             return false;
         }

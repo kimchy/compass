@@ -16,6 +16,10 @@
 
 package org.compass.core.config.process;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
@@ -23,9 +27,6 @@ import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * @author kimchy
@@ -47,20 +48,54 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
             compassMapping.addMapping((AliasMapping) it.next());
         }
 
+        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
+            AliasMapping aliasMapping = (AliasMapping) it.next();
+            resolveExtending(compassMapping, aliasMapping, new HashSet());
+        }
+
         return compassMapping;
     }
 
+    /**
+     * Resolves (recursivly) and sets the extending mapping section of {@link org.compass.core.mapping.AliasMapping}.
+     */
+    private void resolveExtending(CompassMapping compassMapping, AliasMapping aliasMapping, HashSet extendingAliases) {
+
+        if (aliasMapping.getExtendedAliases() != null) {
+            for (int i = 0; i < aliasMapping.getExtendedAliases().length; i++) {
+                String extendedAlias = aliasMapping.getExtendedAliases()[i];
+                AliasMapping extendedAliasMapping = compassMapping.getAliasMapping(extendedAlias);
+
+                if (extendedAliasMapping.getExtendingAliases() != null) {
+                    for (int j = 0; j < extendedAliasMapping.getExtendingAliases().length; j++) {
+                        extendingAliases.add(extendedAliasMapping.getExtendingAliases()[j]);
+                    }
+                }
+                extendingAliases.add(aliasMapping.getAlias());
+                extendedAliasMapping.setExtendingAliases((String[]) extendingAliases.toArray(new String[extendingAliases.size()]));
+
+                resolveExtending(compassMapping, extendedAliasMapping, extendingAliases);
+            }
+        }
+    }
+
+    /**
+     * Resolves (recursivly) all the extended aliases and addes their mappings (copy) into the alias mapping.
+     */
     private void resolveExtends(CompassMapping compassMapping, AliasMapping aliasMapping, AliasMapping copyFromAliasMapping)
             throws MappingException {
 
-        if (copyFromAliasMapping.getExtendedMappings() != null) {
-            for (int i = 0; i < copyFromAliasMapping.getExtendedMappings().length; i++) {
-                String extendedAlias = copyFromAliasMapping.getExtendedMappings()[i];
+        if (copyFromAliasMapping.getExtendedAliases() != null) {
+            for (int i = 0; i < copyFromAliasMapping.getExtendedAliases().length; i++) {
+                String extendedAlias = copyFromAliasMapping.getExtendedAliases()[i];
                 AliasMapping extendedAliasMapping = compassMapping.getAliasMapping(extendedAlias);
                 if (extendedAliasMapping == null) {
                     throw new MappingException("Failed to find alias [" + extendedAlias + "] in alias ["
                             + aliasMapping.getAlias() + "] extends section");
                 }
+
+                // recursivly call in order to resolve extends. Note, we copy the extended alias mapping
+                // since we do not share mappings
                 resolveExtends(compassMapping, aliasMapping, (AliasMapping) extendedAliasMapping.copy());
             }
         }

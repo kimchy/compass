@@ -23,7 +23,9 @@ public class ContractMapping extends AbstractMultipleMapping implements AliasMap
 
     private String alias;
 
-    private String[] extendedMappings;
+    private String[] extendedAliases;
+
+    private String[] extendingAliases;
 
     public Mapping copy() {
         AliasMapping contractMapping = shallowCopy();
@@ -34,7 +36,8 @@ public class ContractMapping extends AbstractMultipleMapping implements AliasMap
     public AliasMapping shallowCopy() {
         ContractMapping contractMapping = new ContractMapping();
         contractMapping.setAlias(getAlias());
-        contractMapping.setExtendedMappings(getExtendedMappings());
+        contractMapping.setExtendedAliases(getExtendedAliases());
+        contractMapping.setExtendingAliases(getExtendingAliases());
         return contractMapping;
     }
 
@@ -46,11 +49,19 @@ public class ContractMapping extends AbstractMultipleMapping implements AliasMap
         this.alias = alias;
     }
 
-    public String[] getExtendedMappings() {
-        return extendedMappings;
+    public String[] getExtendedAliases() {
+        return extendedAliases;
     }
 
-    public void setExtendedMappings(String[] extendedMappings) {
-        this.extendedMappings = extendedMappings;
+    public void setExtendedAliases(String[] extendedMappings) {
+        this.extendedAliases = extendedMappings;
+    }
+
+    public String[] getExtendingAliases() {
+        return extendingAliases;
+    }
+
+    public void setExtendingAliases(String[] extendingAliases) {
+        this.extendingAliases = extendingAliases;
     }
 }

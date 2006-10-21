@@ -2,9 +2,11 @@ package org.compass.core.test.inheritance;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.test.AbstractTestCase;
 
@@ -15,6 +17,12 @@ public class PolyCollectionTests extends AbstractTestCase {
     }
 
     public void testPolyComponentCollection() throws Exception {
+        CompassMapping compassMapping = ((InternalCompass)getCompass()).getMapping();
+        AliasMapping aliasMapping = compassMapping.getAliasMapping("polybase");
+        assertEquals(1, aliasMapping.getExtendingAliases().length);
+        aliasMapping = compassMapping.getAliasMapping("contract");
+        assertEquals(2, aliasMapping.getExtendingAliases().length);
+
         InternalCompassSession session = (InternalCompassSession) openSession();
         CompassTransaction tr = session.beginTransaction();
 

@@ -730,7 +730,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     private void bindExtends(ConfigurationHelper conf, AliasMapping mapping) throws ConfigurationException {
         String extendsAliases = conf.getAttribute("extends", null);
         if (extendsAliases != null) {
-            mapping.setExtendedMappings(getAliases(extendsAliases));
+            mapping.setExtendedAliases(getAliases(extendsAliases));
         }
     }
 

@@ -23,7 +23,7 @@ public interface HasRefAliasMapping extends ObjectMapping {
 
     boolean hasRefAlias(String refAlias);
     
-    boolean hasAtLeastOnRefAlias(String[] refAliases);
+    boolean hasAtLeastOneRefAlias(String[] refAliases);
     
     ClassMapping getRefClassMapping(String alias);
     

@@ -4,13 +4,17 @@
 
 <compass-core-mapping package="org.compass.core.test.inheritance">
 
+    <contract alias="contract">
+        
+    </contract>
+
     <class name="D" alias="d" root="false">
         <property name="value" accessor="field">
             <meta-data>dvalue</meta-data>
         </property>
     </class>
 
-    <class name="BaseA" alias="polybase" poly="true">
+    <class name="BaseA" alias="polybase" poly="true" extends="contract">
 
         <id name="id" />
 
@@ -32,7 +36,7 @@
     <class name="B" alias="bComponent">
         <id name="id" accessor="field" />
 
-        <component name="a" accessor="field" ref-alias="polybase, polyextends" />
+        <component name="a" accessor="field" ref-alias="polybase" />
     </class>
 
     <class name="B" alias="bReference">
@@ -44,7 +48,7 @@
     <class name="C" alias="cComponent">
         <id name="id" accessor="field" />
 
-        <component name="a" accessor="field" ref-alias="polybase, polyextends" />
+        <component name="a" accessor="field" ref-alias="contract" />
     </class>
 
 </compass-core-mapping>
