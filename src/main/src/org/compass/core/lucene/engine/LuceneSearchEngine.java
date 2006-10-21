@@ -89,10 +89,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public boolean isNullValue(String value) {
-        if (value == null) {
-            return true;
-        }
-        return value.length() == 0;
+        return value == null || value.length() == 0;
     }
 
     public Resource createResource(String alias) throws SearchEngineException {
@@ -104,13 +101,15 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public Property createProperty(String name, String value, ResourcePropertyMapping mapping) throws SearchEngineException {
-        Property property = null;
+        Property property;
         if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.NO) {
             property = createProperty(name, value, mapping.getStore(), mapping.getIndex(), mapping.getTermVector());
         } else if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.READER) {
             property = createProperty(name, new ReverseStringReader(value), mapping.getTermVector());
         } else if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.STRING) {
             property = createProperty(name, StringUtils.reverse(value), mapping.getStore(), mapping.getIndex(), mapping.getTermVector());
+        } else {
+            throw new SearchEngineException("Unsupported Reverse type [" + mapping.getReverse() + "]");
         }
         property.setBoost(mapping.getBoost());
         ((LuceneProperty) property).setPropertyMapping(mapping);
