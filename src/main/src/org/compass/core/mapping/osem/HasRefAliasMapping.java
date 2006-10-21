@@ -37,5 +37,9 @@ public interface HasRefAliasMapping extends ObjectMapping {
 
     Class getRefClass();
 
+    /**
+     * Sets a reference class which will be used if no ref aliases are explicitly
+     * defined using {@link #setRefAliases(String[])} to identify the alias.
+     */
     void setRefClass(Class refClass);
 }

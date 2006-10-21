@@ -84,7 +84,9 @@ public class DefaultCompassHighlighter implements CompassHighlighter {
 
     public String fragment(String propertyName) throws CompassException {
         CompassMapping.ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
-        return highlighter.fragment(resource, lookup.getPath());
+        String fragment = highlighter.fragment(resource, lookup.getPath());
+        hits.setHighlightedText(hitNumber, propertyName, fragment);
+        return fragment;
     }
 
     public String fragment(String propertyName, String text) throws CompassException {
