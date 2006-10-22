@@ -6,6 +6,7 @@ import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.HasRefAliasMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.test.AbstractTestCase;
@@ -16,8 +17,14 @@ public class PolyCollectionTests extends AbstractTestCase {
         return new String[]{"inheritance/PolyCollection.cpm.xml"};
     }
 
+    public void testClassBasedRefAliasIdentification() {
+        CompassMapping compassMapping = ((InternalCompass) getCompass()).getMapping();
+        ClassMapping classMapping = (ClassMapping) compassMapping.getResourceMappingByAlias("cComponentNoRefAlias");
+        assertEquals(2, ((HasRefAliasMapping) classMapping.getMapping("a")).getRefAliases().length);
+    }
+
     public void testPolyComponentCollection() throws Exception {
-        CompassMapping compassMapping = ((InternalCompass)getCompass()).getMapping();
+        CompassMapping compassMapping = ((InternalCompass) getCompass()).getMapping();
         AliasMapping aliasMapping = compassMapping.getAliasMapping("polybase");
         assertEquals(1, aliasMapping.getExtendingAliases().length);
         aliasMapping = compassMapping.getAliasMapping("contract");

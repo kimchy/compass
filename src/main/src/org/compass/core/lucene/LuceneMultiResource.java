@@ -18,6 +18,9 @@ package org.compass.core.lucene;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -31,9 +34,9 @@ import org.compass.core.util.StringUtils;
 /**
  * @author kimchy
  */
-public class LuceneMultiResource implements MultiResource {
+public class LuceneMultiResource implements MultiResource, Map {
 
-    private Resource currentResource;
+    private LuceneResource currentResource;
 
     private ArrayList resources = new ArrayList();
 
@@ -165,7 +168,7 @@ public class LuceneMultiResource implements MultiResource {
                 currentResource.copy(multiResource.resource(i));
             }
         } else {
-            currentResource = resource;
+            currentResource = (LuceneResource) resource;
             resources.add(resource);
         }
     }
@@ -175,5 +178,47 @@ public class LuceneMultiResource implements MultiResource {
             return resource(0).toString();
         }
         return StringUtils.collectionToCommaDelimitedString(resources);
+    }
+
+    // methods from the map interface
+
+    public boolean isEmpty() {
+        return currentResource.isEmpty();
+    }
+
+    public boolean containsKey(Object key) {
+        return currentResource.containsKey(key);
+    }
+
+    public boolean containsValue(Object value) {
+        return currentResource.containsValue(value);
+    }
+
+    public Collection values() {
+        return currentResource.values();
+    }
+
+    public void putAll(Map t) {
+        currentResource.putAll(t);
+    }
+
+    public Set entrySet() {
+        return currentResource.entrySet();
+    }
+
+    public Set keySet() {
+        return currentResource.keySet();
+    }
+
+    public Object get(Object key) {
+        return currentResource.get(key);
+    }
+
+    public Object remove(Object key) {
+        return currentResource.remove(key);
+    }
+
+    public Object put(Object key, Object value) {
+        return currentResource.put(key, value);
     }
 }

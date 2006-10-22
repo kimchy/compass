@@ -30,6 +30,7 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
     protected void addExtraConf(CompassConfiguration conf) {
         conf.addClass(A.class);
         conf.addClass(B.class);
+        conf.addClass(C.class);
     }
 
     public void testOverride() throws Exception {
@@ -37,14 +38,14 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         B b = new B();
-        b.id = 1;
-        b.value1 = "value1";
-        b.value2 = "value2";
+        b.setId(1);
+        b.setValue1("value1");
+        b.setValue2("value2");
         session.save(b);
 
         b = (B) session.load(B.class, 1);
-        assertEquals("value1", b.value1);
-        assertEquals("value2", b.value2);
+        assertEquals("value1", b.getValue1());
+        assertEquals("value2", b.getValue2());
 
         Resource resource = session.loadResource(B.class, 1);
         assertNull(resource.get("value1"));
@@ -57,4 +58,34 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         session.close();
     }
 
+    public void testComponentRefAliasInheritance() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        B b = new B();
+        b.setId(1);
+        b.setValue1("value1");
+        b.setValue2("value2");
+        b.setValue3("value3");
+
+        C c = new C();
+        c.id = 1;
+        c.a = b;
+        session.save(c);
+        c = (C) session.load(C.class, 1);
+        assertTrue(c.a instanceof B);
+        assertEquals("value1", c.a.getValue1());
+        assertEquals("value2", c.a.getValue2());
+        assertEquals("value3", ((B)c.a).getValue3());
+
+        Resource resource = session.loadResource(C.class, 1);
+        assertNull(resource.get("value1"));
+        assertNotNull(resource.get("value1e"));
+        assertNotNull(resource.get("value2"));
+        assertNotNull(resource.get("value2e"));
+        assertEquals(resource.get("abase"), "abasevalue");
+
+        tr.commit();
+        session.close();
+    }
 }

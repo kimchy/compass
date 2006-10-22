@@ -74,4 +74,5 @@ public abstract class AbstractMapping implements Mapping {
     public void setConverterName(String converterName) {
         this.converterName = converterName;
     }
+
 }

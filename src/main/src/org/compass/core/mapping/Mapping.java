@@ -91,4 +91,5 @@ public interface Mapping {
      * Copies over the mapping definition into a newly instanciated Mapping object.
      */
     Mapping copy();
+
 }

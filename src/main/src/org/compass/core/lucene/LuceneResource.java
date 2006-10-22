@@ -19,7 +19,9 @@ package org.compass.core.lucene;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -310,24 +312,64 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
         throw new UnsupportedOperationException("Map operations are supported for read operations only");
     }
 
-    public Set entrySet() {
-        throw new UnsupportedOperationException("Map operations are supported for read operations only");
-    }
-
     public void putAll(Map t) {
-        throw new UnsupportedOperationException("Map operations are supported for read operations only");
-    }
-
-    public Set keySet() {
-        throw new UnsupportedOperationException("Map operations are supported for read operations only");
+        for (Iterator it = t.entrySet().iterator(); it.hasNext();) {
+            Map.Entry entry = (Entry) it.next();
+            put(entry.getKey(), entry.getValue());
+        }
     }
 
     public Object remove(Object key) {
-        throw new UnsupportedOperationException("Map operations are supported for read operations only");
+        removeProperties(key.toString());
+        // TODO should return the old value
+        return null;
     }
 
     public Object put(Object key, Object value) {
-        throw new UnsupportedOperationException("Map operations are supported for read operations only");
+        removeProperties(key.toString());
+        if (value instanceof Property) {
+            addProperty((Property) value);
+        } else if (value instanceof Property[]) {
+            Property[] valueProps = (Property[]) value;
+            for (int i = 0; i < valueProps.length; i++) {
+                addProperty(valueProps[i]);
+            }
+        }
+        // TODO should return the old value
+        return null;
+    }
+
+    public Set entrySet() {
+        Set keySey = keySet();
+        Set entrySet = Collections.unmodifiableSet(new HashSet());
+        for (Iterator it = keySey.iterator(); it.hasNext();) {
+            final String name = it.next().toString();
+            final Property[] props = getProperties(name);
+            entrySet.add(new Map.Entry() {
+                public Object getKey() {
+                    return name;
+                }
+
+                public Object getValue() {
+                    return props;
+                }
+
+                public Object setValue(Object value) {
+                    put(name, value);
+                    // TODO should return the old value
+                    return null;
+                }
+            });
+        }
+        return entrySet;
+    }
+
+    public Set keySet() {
+        Set keySet = Collections.unmodifiableSet(new HashSet());
+        for (Iterator it = properties.iterator(); it.hasNext();) {
+            keySet.add(((Property) it.next()).getName());
+        }
+        return keySet;
     }
 
     public boolean containsKey(Object key) {
@@ -343,7 +385,12 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
     }
 
     public Collection values() {
-        return this.properties;
+        Set keySey = keySet();
+        List values = Collections.unmodifiableList(new ArrayList());
+        for (Iterator it = keySey.iterator(); it.hasNext();) {
+            values.add(get(it.next()));
+        }
+        return values;
     }
 
     public Object get(Object key) {

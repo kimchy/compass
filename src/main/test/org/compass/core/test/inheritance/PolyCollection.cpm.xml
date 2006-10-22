@@ -51,4 +51,10 @@
         <component name="a" accessor="field" ref-alias="contract" />
     </class>
 
+    <class name="C" alias="cComponentNoRefAlias">
+        <id name="id" accessor="field" />
+
+        <component name="a" accessor="field" />
+    </class>
+
 </compass-core-mapping>

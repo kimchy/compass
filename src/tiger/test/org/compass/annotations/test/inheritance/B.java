@@ -22,12 +22,35 @@ import org.compass.annotations.SearchableProperty;
 /**
  * @author kimchy
  */
-@Searchable
+@Searchable(poly = true)
 public class B extends A {
 
+    private String value3;
+
     @SearchableProperty(name = "value1e")
-    String value1;
+    public String getValue1() {
+        return super.getValue1();
+    }
+
+    public void setValue1(String value1) {
+        super.setValue1(value1);
+    }
 
     @SearchableProperty(name = "value2e", override = false)
-    String value2;
+    public String getValue2() {
+        return super.getValue2();
+    }
+
+    public void setValue2(String value2) {
+        super.setValue2(value2);
+    }
+
+    @SearchableProperty(name = "value3e")
+    public String getValue3() {
+        return value3;
+    }
+
+    public void setValue3(String value3) {
+        this.value3 = value3;
+    }
 }
