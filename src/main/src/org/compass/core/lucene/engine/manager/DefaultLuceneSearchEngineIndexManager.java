@@ -238,6 +238,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
+    // TODO we don't really need to sync on all the method, just on the sub index level
     public synchronized void clearCache(String subIndex) throws SearchEngineException {
         LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.remove(subIndex);
         if (indexHolder != null) {
@@ -245,6 +246,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
+    // TODO we don't really need to sync on all the method, just on the sub index level
     public synchronized LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
         try {
             Directory dir = getDirectory(subIndex);
