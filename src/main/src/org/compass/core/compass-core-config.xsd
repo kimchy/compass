@@ -1926,6 +1926,7 @@
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.DerbyDialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.FirebirdDialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.HSQLDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.H2Dialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.InterbaseDialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLDialect"/>
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLInnoDBDialect"/>
