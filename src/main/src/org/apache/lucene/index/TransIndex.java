@@ -344,6 +344,9 @@ public class TransIndex {
                     if (luceneSettings.isUseCompoundFile()) {
                         directory.renameFile(newSegmentName + ".tmp", newSegmentName + ".cfs");
                     }
+                    indexSearcher.close();
+                    indexReader.close();
+                    
                     segmentInfos.write(directory); // commit before deleting
                     return null;
                 }
@@ -397,20 +400,6 @@ public class TransIndex {
         }
         transReaders.clear();
 
-        try {
-            indexSearcher.close();
-        } catch (IOException ex) {
-            // swallow this one
-            log.warn("Failed to close index searcher, ignoring", ex);
-        }
-        indexSearcher = null;
-        try {
-            indexReader.close();
-        } catch (IOException ex) {
-            // swallow this one
-            log.warn("Failed to close index reader, ignoring", ex);
-        }
-        indexReader = null;
         try {
             transDir.close();
             transDir = null;
