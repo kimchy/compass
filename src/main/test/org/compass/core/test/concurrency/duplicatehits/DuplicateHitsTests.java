@@ -60,6 +60,7 @@ public class DuplicateHitsTests extends TestCase {
 
     protected void tearDown() throws Exception {
         compass.getSearchEngineIndexManager().deleteIndex();
+        compass.close();
     }
 
     public void testSearchingObjectsAtTheSameTimeAsChangingThemWontCauseTheSameObjectToBeReturnedTwiceInCompassHits() throws Exception {
@@ -97,6 +98,7 @@ public class DuplicateHitsTests extends TestCase {
             Future future = (Future) it.next();
             future.get();
         }
+        executorService.shutdown();
     }
 
     private void mutate(String description, long delay) {
@@ -112,8 +114,6 @@ public class DuplicateHitsTests extends TestCase {
     }
 
     private void search(long delay) {
-
-
         CompassDetachedHits hitsAfter = compassTemplate.findWithDetach(ALIAS_A_NAME_UNIQUE_NAME + UNIQUE_NAME);
         if (hitsAfter.length() > 1) {
             Set cps = new HashSet();
