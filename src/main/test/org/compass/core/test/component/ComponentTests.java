@@ -258,7 +258,7 @@ public class ComponentTests extends AbstractTestCase {
         tr.commit();
     }
 
-    public void testCyclic() throws Exception {
+    public void testCyclicWithParent() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
@@ -273,9 +273,9 @@ public class ComponentTests extends AbstractTestCase {
         cyclic1.setCyclic2(cyclic2);
         cyclic2.setCyclic1(cyclic1);
 
-        session.save(cyclic1);
+        session.save("cyclic1", cyclic1);
 
-        cyclic1 = (Cyclic1) session.load(Cyclic1.class, id);
+        cyclic1 = (Cyclic1) session.load("cyclic1", id);
         assertNotNull(cyclic1.getCyclic2());
         assertEquals("cyclic2", cyclic1.getCyclic2().getValue());
         cyclic2 = cyclic1.getCyclic2();
@@ -286,7 +286,7 @@ public class ComponentTests extends AbstractTestCase {
         session.close();
     }
 
-    public void testCyclicNull() throws Exception {
+    public void testCyclicNullWithParent() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
@@ -295,10 +295,47 @@ public class ComponentTests extends AbstractTestCase {
         cyclic1.setId(id);
         cyclic1.setValue("cyclic1");
 
-        session.save(cyclic1);
+        session.save("cyclic1", cyclic1);
 
-        cyclic1 = (Cyclic1) session.load(Cyclic1.class, id);
+        cyclic1 = (Cyclic1) session.load("cyclic1", id);
         assertNull(cyclic1.getCyclic2());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testCyclicWithComponent() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = new Long(1);
+        Cyclic1 cyclic1 = new Cyclic1();
+        cyclic1.setId(id);
+        cyclic1.setValue("cyclic1");
+
+        Cyclic2 cyclic2 = new Cyclic2();
+        cyclic2.setId(id);
+        cyclic2.setValue("cyclic2");
+
+        cyclic1.setCyclic2(cyclic2);
+        cyclic2.setCyclic1(cyclic1);
+
+        session.save("cyclic1c", cyclic1);
+        session.save("cyclic2c", cyclic2);
+
+        cyclic1 = (Cyclic1) session.load("cyclic1c", id);
+        assertNotNull(cyclic1.getCyclic2());
+        assertEquals("cyclic2", cyclic1.getCyclic2().getValue());
+        cyclic2 = cyclic1.getCyclic2();
+        assertNotNull(cyclic2);
+        assertEquals("cyclic1", cyclic2.getCyclic1().getValue());
+
+        cyclic2 = (Cyclic2) session.load("cyclic2c", id);
+        assertNotNull(cyclic2.getCyclic1());
+        assertEquals("cyclic1", cyclic2.getCyclic1().getValue());
+        cyclic1 = cyclic2.getCyclic1();
+        assertNotNull(cyclic1);
+        assertEquals("cyclic2", cyclic1.getCyclic2().getValue());
 
         tr.commit();
         session.close();

@@ -21,6 +21,8 @@ package org.compass.core.test.component;
  */
 public class Cyclic2 {
 
+    private Long id;
+
     private String value;
 
     private Cyclic1 cyclic1;
@@ -39,5 +41,13 @@ public class Cyclic2 {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
