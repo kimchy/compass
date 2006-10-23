@@ -89,7 +89,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             String[] tempSubIndexes = resourceMapping.getSubIndexHash().getSubIndexes();
             for (int j = 0; j < tempSubIndexes.length; j++) {
                 String subIndex = tempSubIndexes[j];
-                subIndexesSet.add(subIndex);
+                subIndexesSet.add(subIndex.intern());
 
                 ArrayList list = (ArrayList) subIndexesByAlias.get(alias);
                 if (list == null) {

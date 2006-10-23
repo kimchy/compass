@@ -49,6 +49,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     // holds the index cache per sub index
     private HashMap indexHolders = new HashMap();
 
+    private HashMap indexHoldersLocks = new HashMap();
+
     private long[] lastModifiled;
 
     private long waitForCacheInvalidationBeforeSecondStep = 0;
@@ -60,6 +62,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         this.searchEngineFactory = searchEngineFactory;
         this.searchEngineStore = searchEngineStore;
         this.luceneSettings = searchEngineFactory.getLuceneSettings();
+        String[] subIndexes = searchEngineStore.getSubIndexes();
+        for (int i = 0; i < subIndexes.length; i++) {
+            indexHoldersLocks.put(subIndexes[i], new Object());
+        }
     }
 
     public void createIndex() throws SearchEngineException {
@@ -148,8 +154,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             clearCache();
             notifyAllToClearCache();
 
-            if (waitForCacheInvalidationBeforeSecondStep != 0 && luceneSettings.isWaitForCacheInvalidationOnIndexOperation())
-            {
+            if (waitForCacheInvalidationBeforeSecondStep != 0 && luceneSettings.isWaitForCacheInvalidationOnIndexOperation()) {
                 // now wait for the cache invalidation
                 try {
                     if (log.isDebugEnabled()) {
@@ -217,8 +222,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
-    public synchronized boolean isCached(String subIndex) throws SearchEngineException {
-        return indexHolders.get(subIndex) != null;
+    public boolean isCached(String subIndex) throws SearchEngineException {
+        synchronized (indexHoldersLocks.get(subIndex)) {
+            return indexHolders.containsKey(subIndex);
+        }
     }
 
     public boolean isCached() throws SearchEngineException {
@@ -231,38 +238,40 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return false;
     }
 
-    public synchronized void clearCache() throws SearchEngineException {
+    public void clearCache() throws SearchEngineException {
         String[] subIndexes = searchEngineStore.getSubIndexes();
         for (int i = 0; i < subIndexes.length; i++) {
             clearCache(subIndexes[i]);
         }
     }
 
-    // TODO we don't really need to sync on all the method, just on the sub index level
-    public synchronized void clearCache(String subIndex) throws SearchEngineException {
-        LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.remove(subIndex);
-        if (indexHolder != null) {
-            indexHolder.markForClose();
+    public void clearCache(String subIndex) throws SearchEngineException {
+        synchronized (indexHoldersLocks.get(subIndex)) {
+            LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.remove(subIndex);
+            if (indexHolder != null) {
+                indexHolder.markForClose();
+            }
         }
     }
 
-    // TODO we don't really need to sync on all the method, just on the sub index level
-    public synchronized LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
-        try {
-            Directory dir = getDirectory(subIndex);
-            LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.get(subIndex);
-            if (shouldInvalidateCache(dir, indexHolder)) {
-                clearCache(subIndex);
-                // get a new directory and put it in the cache
-                dir = getDirectory(subIndex);
-                // do the same with index holder
-                indexHolder = new LuceneIndexHolder(subIndex, dir);
-                indexHolders.put(subIndex, indexHolder);
+    public LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
+        synchronized (indexHoldersLocks.get(subIndex)) {
+            try {
+                Directory dir = getDirectory(subIndex);
+                LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.get(subIndex);
+                if (shouldInvalidateCache(dir, indexHolder)) {
+                    clearCache(subIndex);
+                    // get a new directory and put it in the cache
+                    dir = getDirectory(subIndex);
+                    // do the same with index holder
+                    indexHolder = new LuceneIndexHolder(subIndex, dir);
+                    indexHolders.put(subIndex, indexHolder);
+                }
+                indexHolder.acquire();
+                return indexHolder;
+            } catch (Exception e) {
+                throw new SearchEngineException("Failed to open index searcher for sub-index [" + subIndex + "]", e);
             }
-            indexHolder.acquire();
-            return indexHolder;
-        } catch (Exception e) {
-            throw new SearchEngineException("Failed to open index searcher for sub-index [" + subIndex + "]", e);
         }
     }
 
@@ -320,7 +329,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
         if (ex != null) {
             if (ex instanceof SearchEngineException) {
-                throw (SearchEngineException) ex;
+                throw(SearchEngineException) ex;
             }
             throw new SearchEngineException("Failed while executing a lucene directory based operation", ex);
         }
@@ -410,8 +419,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                if (!org.apache.lucene.index.LuceneUtils.isCompound(dir, luceneSettings.getTransactionCommitTimeout()))
-                {
+                if (!org.apache.lucene.index.LuceneUtils.isCompound(dir, luceneSettings.getTransactionCommitTimeout())) {
                     return false;
                 }
             } catch (IOException e) {
@@ -426,8 +434,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                if (!org.apache.lucene.index.LuceneUtils.isUnCompound(dir, luceneSettings.getTransactionCommitTimeout()))
-                {
+                if (!org.apache.lucene.index.LuceneUtils.isUnCompound(dir, luceneSettings.getTransactionCommitTimeout())) {
                     return false;
                 }
             } catch (IOException e) {
