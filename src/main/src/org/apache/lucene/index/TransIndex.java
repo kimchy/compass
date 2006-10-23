@@ -338,7 +338,15 @@ public class TransIndex {
                     if (luceneSettings.isUseCompoundFile()) {
                         directory.renameFile(newSegmentName + ".tmp", newSegmentName + ".cfs");
                     }
-                    segmentInfos.write(directory); // commit before deleting
+                    // COMPASS - Close the index reader within this commit lock
+                    // so we commit the deleted documents
+                    indexSearcher.close();
+                    indexSearcher = null;
+                    indexReader.close();
+                    indexReader = null;
+
+                    // now commit the segments
+                    segmentInfos.write(directory);
                     return null;
                 }
             }.run();
@@ -391,20 +399,6 @@ public class TransIndex {
         }
         transReaders.clear();
 
-        try {
-            indexSearcher.close();
-        } catch (IOException ex) {
-            // swallow this one
-            log.warn("Failed to close index searcher, ignoring", ex);
-        }
-        indexSearcher = null;
-        try {
-            indexReader.close();
-        } catch (IOException ex) {
-            // swallow this one
-            log.warn("Failed to close index reader, ignoring", ex);
-        }
-        indexReader = null;
         try {
             transDir.close();
             transDir = null;

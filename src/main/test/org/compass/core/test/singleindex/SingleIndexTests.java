@@ -55,13 +55,13 @@ public class SingleIndexTests extends AbstractTestCase {
         LuceneSubIndexInfo.getIndexInfo("index", session);
         try {
             LuceneSubIndexInfo.getIndexInfo("a", session);
-            fail();
+            fail("a subindex should not exists");
         } catch (Exception e) {
             // all is well
         }
         try {
             LuceneSubIndexInfo.getIndexInfo("b", session);
-            fail();
+            fail("b subindex should not exists");
         } catch (Exception e) {
             // all is well
         }
