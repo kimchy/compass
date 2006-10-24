@@ -65,5 +65,6 @@ public class SingleIndexTests extends AbstractTestCase {
         } catch (Exception e) {
             // all is well
         }
+        session.close();
     }
 }
