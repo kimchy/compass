@@ -1,6 +1,5 @@
 package org.compass.core.test.inheritance;
 
-import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.mapping.AliasMapping;
@@ -161,42 +160,6 @@ public class PolyCollectionTests extends AbstractTestCase {
         assertEquals("baseValue", c.a.getValue());
 
         tr.commit();
-        session.close();
-    }
-
-    public void testComponentRefExtendsNonRoot() throws Exception {
-        CompassSession session = openSession();
-        CompassTransaction tr = session.beginTransaction();
-
-        C c = new C();
-        c.id = 1;
-
-        Long id = new Long(1);
-        ExtendsA extendsA = new ExtendsA();
-        extendsA.setId(id);
-        extendsA.setValue("value");
-        extendsA.setExtendsValue("evalue");
-        c.a = extendsA;
-
-        session.save("cExtendsBaseNotRoot", c);
-        session.save("extendsBaseNotRoot", extendsA);
-
-        c = (C) session.load("cExtendsBaseNotRoot", new Long(1));
-        extendsA = (ExtendsA) c.a;
-        assertEquals("value", extendsA.getValue());
-        assertEquals("evalue", extendsA.getExtendsValue());
-
-        tr.commit();
-
-        LuceneSubIndexInfo.getIndexInfo("extendsbasenotroot", session);
-        // now test that there is no baseNotRoot index
-        try {
-            LuceneSubIndexInfo.getIndexInfo("basenotroot", session);
-            fail("a subindex should not exists");
-        } catch (Exception e) {
-            // all is well
-        }
-
         session.close();
     }
 }

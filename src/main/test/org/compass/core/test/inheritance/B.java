@@ -16,15 +16,15 @@
 
 package org.compass.core.test.inheritance;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author kimchy
  */
 public class B {
 
-    long id;
+    public long id;
 
-    List a = new ArrayList();
+    public List a = new ArrayList();
 }

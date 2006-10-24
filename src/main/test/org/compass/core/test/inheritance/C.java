@@ -16,15 +16,12 @@
 
 package org.compass.core.test.inheritance;
 
-import java.util.List;
-import java.util.ArrayList;
-
 /**
  * @author kimchy
  */
 public class C {
 
-    long id;
+    public long id;
 
-    BaseA a;
+    public BaseA a;
 }
