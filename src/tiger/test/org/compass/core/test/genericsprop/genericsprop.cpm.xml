@@ -1,0 +1,12 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.genericsprop">
+
+    <class name="A" alias="a">
+        <id name="id" accessor="field" />
+        <property name="values" accessor="field" />
+    </class>
+
+</compass-core-mapping>

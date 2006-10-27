@@ -17,6 +17,7 @@
 package org.compass.core.config.process;
 
 import org.compass.core.Property;
+import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
@@ -127,6 +128,10 @@ public abstract class MappingProcessorUtils {
             }
         } catch (ClassNotFoundException e) {
             throw new MappingException("Failed to find class [" + className + "]", e);
+        }
+
+        if (clazz == null) {
+            clazz = AccessorUtils.getGenericCollectionParameter(classPropertyMapping.getGetter());
         }
 
         Converter converter;
