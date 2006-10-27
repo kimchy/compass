@@ -1,4 +1,4 @@
-package org.compass.core.test.component;
+package org.compass.core.test.component.cyclic1;
 
 /**
  * @author kimchy

@@ -575,7 +575,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         compMapping.setRefAliases(getAliases(refAlias));
         compMapping.setDefinedInAlias(aliasMapping.getAlias());
 
-        int maxDepth = componentConf.getAttributeAsInteger("max-depth", 5);
+        int maxDepth = componentConf.getAttributeAsInteger("max-depth", 1);
         compMapping.setMaxDepth(maxDepth);
 
         bindConverter(componentConf, compMapping);

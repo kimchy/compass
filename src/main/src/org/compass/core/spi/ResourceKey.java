@@ -55,7 +55,7 @@ public final class ResourceKey {
 //            return false;
 
         final ResourceKey key = (ResourceKey) other;
-        if (!key.getAlias().equals(alias)) {
+        if (!key.alias.equals(alias)) {
             return false;
         }
 

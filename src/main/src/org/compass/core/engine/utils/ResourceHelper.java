@@ -49,14 +49,31 @@ public abstract class ResourceHelper {
         return toIds(resource, resourceMapping);
     }
 
+    /**
+     * Same as {@link #toIds(org.compass.core.Resource, org.compass.core.mapping.ResourceMapping, boolean)}
+     * with idsMustExist set the <code>true</code>.
+     */
     public static Property[] toIds(Resource resource, ResourceMapping resourceMapping)
+            throws SearchEngineException {
+        return toIds(resource, resourceMapping, true);
+    }
+
+    /**
+     * Gets the id properties based on the resource mapping from the give resource. If
+     * must the flag idsMustExists is set, will throw an exception if id value not found,
+     * otherise will return null.
+     */
+    public static Property[] toIds(Resource resource, ResourceMapping resourceMapping, boolean idsMustExist)
             throws SearchEngineException {
         ResourcePropertyMapping[] pMappings = resourceMapping.getIdMappings();
         Property[] ids = new Property[pMappings.length];
         for (int i = 0; i < pMappings.length; i++) {
             ids[i] = resource.getProperty(pMappings[i].getPath().getPath());
             if (ids[i] == null) {
-                throw new SearchEngineException("Id with path [" + pMappings[i].getPath() + "] for alias ["
+                if (!idsMustExist) {
+                    return null;
+                }
+                throw new SearchEngineException("Id with path [" + pMappings[i].getPath().getPath() + "] for alias ["
                         + resource.getAlias() + "] not found");
             }
             if (!ids[i].isIndexed() || ids[i].isTokenized() || !ids[i].isStored()) {

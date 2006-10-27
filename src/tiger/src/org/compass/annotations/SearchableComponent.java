@@ -70,7 +70,7 @@ public @interface SearchableComponent {
     /**
      * The depth of cyclic component references allowed.
      */
-    int maxDepth() default 5;
+    int maxDepth() default 1;
 
     /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ComponentMapping}.

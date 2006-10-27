@@ -4,6 +4,11 @@ COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log
 VERSION 1.1 M3 ()
 =================
 
+1. Component max-depth default changed to 1 (from 5). Most cyclic component mappings are used
+   for bi-directional relationship, where max-depth of 1 is fine. For tree based cyclic relationships
+   max-depth should be set to an appropiate value. This change will result in much less memory consumption
+   by compass.
+
 VERSION 1.1 M2 (September 27, 2006)
 ===================================
 

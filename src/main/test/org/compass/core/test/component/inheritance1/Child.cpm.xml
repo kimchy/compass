@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC "-//Compass/Compass Core Mapping DTD 1.0//EN" "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.inheritance1">
+
+    <class name="ChildImpl" alias="child" root="true" all="true" poly="true">
+        <id name="id" accessor="field"/>
+        <!--<parent name="father"/>-->
+        <constant>
+            <meta-data>childalias</meta-data>
+            <meta-data-value>child</meta-data-value>
+        </constant>
+        <property name="name" accessor="field">
+            <meta-data>name</meta-data>
+        </property>
+        <component name="father" ref-alias="father" accessor="field"/>
+    </class>
+
+    <class name="SonImpl" alias="son" root="true" all="true" poly="true" extends="child">
+    </class>
+
+    <class name="DaughterImpl" alias="daughter" root="true" all="true" poly="true" extends="child">
+    </class>
+
+    <class name="FavouriteSonImpl" alias="favouriteson" root="true" all="true" poly="true" extends="son">
+    </class>
+
+    <class name="NonFavouriteSonImpl" alias="nonfavouriteson" root="true" all="true" poly="true" extends="son">
+    </class>
+
+
+</compass-core-mapping>

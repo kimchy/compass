@@ -1,25 +1,15 @@
-package org.compass.core.test.component;
+package org.compass.core.test.component.cyclic2;
 
 import java.util.List;
 
 /**
  * @author kimchy
  */
-public class ParentCycle {
-
-    private Long id;
-
-    private String value;
+public class ChildCycle {
 
     private List children;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String value;
 
     public List getChildren() {
         return children;

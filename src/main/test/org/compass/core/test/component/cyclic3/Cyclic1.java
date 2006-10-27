@@ -14,40 +14,16 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.component;
+package org.compass.core.test.component.cyclic3;
 
 /**
  * @author kimchy
  */
 public class Cyclic1 {
 
-    private Long id;
+    Long id;
 
-    private String value;
+    String value;
 
-    private Cyclic2 cyclic2;
-
-    public Cyclic2 getCyclic2() {
-        return cyclic2;
-    }
-
-    public void setCyclic2(Cyclic2 cyclic2) {
-        this.cyclic2 = cyclic2;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    Cyclic2 cyclic2;
 }

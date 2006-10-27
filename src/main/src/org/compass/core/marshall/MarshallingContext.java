@@ -44,9 +44,21 @@ public interface MarshallingContext {
 
     Object removeAttribute(Object key);
 
+    /**
+     * Sets an unmarshalled cache of objects already loaded during
+     * unmarshalling. Allows for handling cyclic references.
+     */
     void setUnmarshalled(ResourceKey key, Object obj);
 
+    /**
+     * Gets an unmarshalled cache of objects already loaded during
+     * unmarshalling. Allows for handling cyclic references.
+     */
     Object getUnmarshalled(ResourceKey key);
+
+    void setMarshalled(Object key, Object value);
+
+    Object getMarshalled(Object key);
 
     void clearContext();
 

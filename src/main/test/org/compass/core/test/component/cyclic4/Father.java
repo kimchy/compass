@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,40 +14,34 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.component;
+package org.compass.core.test.component.cyclic4;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author kimchy
  */
-public class Cyclic2 {
+public class Father {
 
-    private Long id;
+    Long id;
 
-    private String value;
+    Child child1;
 
-    private Cyclic1 cyclic1;
+    Child child2;
 
-    public Cyclic1 getCyclic1() {
-        return cyclic1;
+    List children = new ArrayList();
+
+    protected Father() {
     }
 
-    public void setCyclic1(Cyclic1 cyclic1) {
-        this.cyclic1 = cyclic1;
+    public Father(long id) {
+        this(id, null, null);
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public Father(long id, Child child1, Child child2) {
+        this.id = new Long(id);
+        this.child1 = child1;
+        this.child2 = child2;
     }
 }

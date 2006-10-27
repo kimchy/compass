@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.component;
+package org.compass.core.test.component.cyclic2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.test.AbstractTestCase;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author kimchy
@@ -29,7 +29,7 @@ import java.util.List;
 public class ParentChildCycleComponentTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[]{"component/ParentChildCycle.cpm.xml"};
+        return new String[]{"component/cyclic2/ParentChildCycle.cpm.xml"};
     }
 
 

@@ -48,6 +48,8 @@ public class DefaultMarshallingContext implements MarshallingContext {
 
     private HashMap unmarshalled = new HashMap();
 
+    private HashMap marshalled = new HashMap();
+
     public DefaultMarshallingContext(CompassMapping mapping, SearchEngine searchEngine,
                                      ConverterLookup converterLookup, InternalCompassSession session,
                                      MarshallingStrategy marshallingStrategy) {
@@ -62,6 +64,7 @@ public class DefaultMarshallingContext implements MarshallingContext {
         this.attributes.clear();
         this.nullValuesPath.clear();
         this.unmarshalled.clear();
+        this.marshalled.clear();
     }
 
     public void setUnmarshalled(ResourceKey key, Object obj) {
@@ -75,6 +78,14 @@ public class DefaultMarshallingContext implements MarshallingContext {
             return obj;
         }
         return unmarshalled.get(key);
+    }
+
+    public void setMarshalled(Object key, Object value) {
+        marshalled.put(key, value);
+    }
+
+    public Object getMarshalled(Object key) {
+        return marshalled.get(key);
     }
 
     public void setHandleNulls(PropertyPath path) {

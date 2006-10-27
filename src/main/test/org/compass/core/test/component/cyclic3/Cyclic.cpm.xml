@@ -2,25 +2,25 @@
     "-//Compass/Compass Core Mapping DTD 1.0//EN"
     "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
 
-<compass-core-mapping package="org.compass.core.test.component">
+<compass-core-mapping package="org.compass.core.test.component.cyclic3">
 
     <class name="Cyclic1" alias="cyclic1">
     
-        <id name="id" />
+        <id name="id" accessor="field" />
         
-        <property name="value">
+        <property name="value" accessor="field">
             <meta-data>value</meta-data>
         </property>
         
-        <component name="cyclic2" ref-alias="cyclic2" />
+        <component name="cyclic2" accessor="field" ref-alias="cyclic2" />
         
     </class>
 
     <class name="Cyclic2" alias="cyclic2" root="false">
     
-        <parent name="cyclic1" />
+        <parent name="cyclic1" accessor="field" />
         
-        <property name="value">
+        <property name="value" accessor="field">
             <meta-data>value</meta-data>
         </property>
         
@@ -28,24 +28,23 @@
 
     <class name="Cyclic1" alias="cyclic1c">
 
-        <id name="id" />
+        <id name="id" accessor="field" />
 
-        <property name="value">
+        <property name="value" accessor="field">
             <meta-data>value</meta-data>
         </property>
 
-        <component name="cyclic2" ref-alias="cyclic2c" />
+        <component name="cyclic2" accessor="field" ref-alias="cyclic2c" />
 
     </class>
 
-    <!-- Just check tha this one is working in terms of mappings -->
     <class name="Cyclic2" alias="cyclic2c">
 
-        <id name="id" />
+        <id name="id" accessor="field" />
         
-        <component name="cyclic1" ref-alias="cyclic1c" />
+        <component name="cyclic1" ref-alias="cyclic1c" accessor="field" />
 
-        <property name="value">
+        <property name="value" accessor="field">
             <meta-data>value</meta-data>
         </property>
 

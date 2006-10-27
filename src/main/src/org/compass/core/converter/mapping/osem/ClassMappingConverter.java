@@ -25,8 +25,10 @@ import org.compass.core.Resource;
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
 import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.mapping.CollectionResourceWrapper;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
+import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -59,8 +61,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             context.setAttribute(ROOT_CLASS_MAPPING_KEY, classMapping);
         }
 
-        // only add specilized properties for un-marshalling when it is supported
         if (classMapping.isSupportUnmarshall()) {
+            // only add specilized properties for un-marshalling when it is supported
             if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
                 // if the class is defined as poly, persist the class name as well
                 String className = root.getClass().getName();
@@ -70,6 +72,33 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             }
         }
 
+        // check if we already marshalled this objecy under this alias
+        // if we did, there is no need to completly marhsall it again
+        // Note, this is only applicable for class with ids
+        if (classMapping.getIdMappings().length > 0) {
+            IdsAliasesObjectKey idObjKey = new IdsAliasesObjectKey(classMapping, root);
+            if (!idObjKey.hasNullId) {
+                Object marshalled = context.getMarshalled(idObjKey);
+                if (marshalled != null) {
+                    // we already marshalled this object, if we don't support unmarhsall, just return
+                    // otherwise only marshall its ids and return
+                    if (!classMapping.isSupportUnmarshall()) {
+                        return true;
+                    }
+                    ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+                    boolean store = false;
+                    for (int i = 0; i < ids.length; i++) {
+                        store |= ids[i].getConverter().marshall(resource, idObjKey.idsValues[i], ids[i], context);
+                    }
+                    return store;
+                } else {
+                    // we did not marshall this object, cache it for later checks
+                    context.setMarshalled(idObjKey, root);
+                }
+            }
+        }
+
+        // perform full marshalling of the object into the resource
         boolean store = false;
         for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, root);
@@ -90,12 +119,30 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         ClassMapping classMapping = (ClassMapping) mapping;
         ResourceKey resourceKey = null;
         // handle a cache of all the unmarshalled objects already, used for
-        // cyclic references
+        // cyclic references when using reference mappings or component mappings
+        // with ids
         if (classMapping.isRoot()) {
             if (!classMapping.isSupportUnmarshall()) {
                 throw new ConversionException("Class Mapping [" + classMapping.getAlias() + "] is configured not to support un-marshalling");
             }
             resourceKey = ((InternalResource) resource).resourceKey();
+        } else if (classMapping.getIdMappings().length > 0) {
+            // if the class mapping has ids, try and get it from the resource.
+            Property[] propIds = ResourceHelper.toIds(resource, classMapping, false);
+            if (propIds != null) {
+                resourceKey = new ResourceKey(classMapping, propIds);
+                if (resource instanceof CollectionResourceWrapper) {
+                    CollectionResourceWrapper colWrapper = (CollectionResourceWrapper) resource;
+                    ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+                    for (int i = 0; i < ids.length; i++) {
+                        colWrapper.rollbackGetProperty(ids[i].getPath().getPath());
+                    }
+                }
+            }
+        }
+
+        // if we have a resource key, try and find a cached object
+        if (resourceKey != null) {
             Object cached = context.getUnmarshalled(resourceKey);
             if (cached != null) {
                 return cached;
@@ -141,8 +188,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         // we will set here the object, even though no ids have been set,
         // since the ids are the first mappings that will be unmarshalled,
         // and it's all we need to handle cyclic refernces in case of
-        // references
-        if (classMapping.isRoot()) {
+        // references or components with ids
+        if (resourceKey != null) {
             context.setUnmarshalled(resourceKey, obj);
         }
 
@@ -267,4 +314,113 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         resource.setBoost(classMapping.getBoost());
     }
 
+    /**
+     * An object key based on the alias and the object identity hash code
+     */
+    protected static final class IdentityAliasedObjectKey {
+
+        private String alias;
+
+        private Integer objHashCode;
+
+        private int hashCode = Integer.MIN_VALUE;
+
+        public IdentityAliasedObjectKey(String alias, Object value) {
+            this.alias = alias;
+            this.objHashCode = new Integer(System.identityHashCode(value));
+        }
+
+
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            final IdentityAliasedObjectKey idObjKey = (IdentityAliasedObjectKey) other;
+            return idObjKey.objHashCode.equals(this.objHashCode) && idObjKey.alias.equals(this.alias);
+        }
+
+
+        public int hashCode() {
+            if (hashCode == Integer.MIN_VALUE) {
+                hashCode = 13 * objHashCode.hashCode() + alias.hashCode();
+            }
+            return hashCode;
+        }
+    }
+
+    /**
+     * An object key based on the alias and its ids values
+     */
+    protected static final class IdsAliasesObjectKey {
+
+        private String alias;
+
+        private Object[] idsValues;
+
+        private boolean hasNullId;
+
+        private int hashCode = Integer.MIN_VALUE;
+
+        public IdsAliasesObjectKey(ClassMapping classMapping, Object value) {
+            this.alias = classMapping.getAlias();
+            ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+            idsValues = new Object[ids.length];
+            for (int i = 0; i < ids.length; i++) {
+                OsemMapping m = (OsemMapping) ids[i];
+                if (m.hasAccessors()) {
+                    idsValues[i] = ((ObjectMapping) m).getGetter().get(value);
+                } else {
+                    idsValues[i] = value;
+                }
+                if (idsValues[i] == null) {
+                    hasNullId = true;
+                }
+            }
+        }
+
+        public Object[] getIdsValues() {
+            return this.idsValues;
+        }
+
+        public boolean equals(Object other) {
+            if (this == other)
+                return true;
+
+//      We will make sure that it never happens
+//        if (!(other instanceof IdsAliasesObjectKey))
+//            return false;
+
+            final IdsAliasesObjectKey key = (IdsAliasesObjectKey) other;
+            if (!key.alias.equals(alias)) {
+                return false;
+            }
+
+            for (int i = 0; i < idsValues.length; i++) {
+                if (!key.idsValues[i].equals(idsValues[i])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public int hashCode() {
+            if (hashCode == Integer.MIN_VALUE) {
+                hashCode = getHashCode();
+            }
+            return hashCode;
+        }
+
+        private int getHashCode() {
+            int result = alias.hashCode();
+            for (int i = 0; i < idsValues.length; i++) {
+                result = 29 * result + idsValues[i].hashCode();
+            }
+            return result;
+        }
+
+        public boolean isHasNullId() {
+            return hasNullId;
+        }
+    }
 }

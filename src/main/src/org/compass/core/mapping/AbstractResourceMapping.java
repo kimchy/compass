@@ -53,7 +53,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private String allAnalyzer;
 
-    private ResourcePropertyMapping[] ids = new ResourcePropertyMapping[0];
+    private ResourcePropertyMapping[] ids;
 
     private Map resourcePropertyMappingsByNameMap;
 
@@ -65,7 +65,13 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private ResourceAnalyzerController analyzerController;
 
+    /**
+     * Gets the ids of the resource.
+     */
     public ResourcePropertyMapping[] getIdMappings() {
+        if (ids == null) {
+            buildResourceIds();
+        }
         return ids;
     }
 
@@ -97,7 +103,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     }
 
     protected abstract void doPostProcess() throws MappingException;
-    
+
     private void buildResourceIds() {
         ArrayList resourceIds = new ArrayList();
         for (Iterator it = mappingsIt(); it.hasNext();) {

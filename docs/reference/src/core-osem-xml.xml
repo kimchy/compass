@@ -795,7 +795,7 @@ public class Author {
                 <entry>The class mapping alias that defines the component. This is an optional attribute since under some conditions, compass can infer the correct reference alias.</entry>
               </row>
               <row>
-                <entry>max-depth (optional, defaults to 5)</entry>
+                <entry>max-depth (optional, defaults to 1)</entry>
                 <entry>The depth of cyclic component mappings allowed.</entry>
               </row>
               <row>
