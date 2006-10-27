@@ -26,6 +26,7 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.util.LuceneHelper;
 import org.compass.core.test.AbstractTestCase;
 
@@ -149,6 +150,20 @@ public class FindTests extends AbstractTestCase {
         assertEquals("product of:", explanation.getDescription());
 
         tr.commit();
+        session.close();
+    }
+
+    public void testExceptionOutsideOfATransaction() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+        CompassHits hits = session.find("alias:a1 or alias:b1");
+        tr.commit();
+        try {
+            hits = session.find("alias:a1 or alias:b1");
+            fail();
+        } catch (SearchEngineException e) {
+            // all is well
+        }
         session.close();
     }
 

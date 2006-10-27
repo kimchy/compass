@@ -43,7 +43,7 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
     private Hits hits;
 
     public DefaultLuceneSearchEngineHits(Hits hits, LuceneSearchEngine searchEngine,
-                                  LuceneSearchEngineQuery query, LuceneSearchEngineInternalSearch internalSearch) {
+                                         LuceneSearchEngineQuery query, LuceneSearchEngineInternalSearch internalSearch) {
         this.hits = hits;
         this.searchEngine = searchEngine;
         this.query = query;
@@ -51,6 +51,7 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
     }
 
     public Resource getResource(int i) throws SearchEngineException {
+        verifyWithinTransaction();
         try {
             Document doc = hits.doc(i);
             return new LuceneResource(doc, hits.id(i), searchEngine);
@@ -64,6 +65,7 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
     }
 
     public float score(int i) throws SearchEngineException {
+        verifyWithinTransaction();
         try {
             return hits.score(i);
         } catch (IOException ioe) {
@@ -76,6 +78,7 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
     }
 
     public SearchEngineHighlighter getHighlighter() throws SearchEngineException {
+        verifyWithinTransaction();
         if (highlighter == null) {
             highlighter = new LuceneSearchEngineHighlighter(query, internalSearch.getReader(), searchEngine);
         }
@@ -83,6 +86,7 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
     }
 
     public Explanation explain(int i) throws SearchEngineException {
+        verifyWithinTransaction();
         try {
             return internalSearch.getSearcher().explain(query.getQuery(), hits.id(i));
         } catch (IOException e) {
@@ -95,6 +99,13 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
         if (internalSearch != null) {
             internalSearch.close();
             internalSearch = null;
+        }
+    }
+
+    private void verifyWithinTransaction() throws SearchEngineException {
+        if (!searchEngine.isWithinTransaction()) {
+            throw new SearchEngineException("Accessing hits outside of a running transaction, either expand the " +
+                    "transaction scope or detach the hits");
         }
     }
 }

@@ -212,15 +212,19 @@ public class LuceneSearchEngine implements SearchEngine {
         transactionState = STARTED;
     }
 
-    private void checkTransactionStarted() throws SearchEngineException {
+    public void verifyWithinTransaction() throws SearchEngineException {
         if (transactionState != STARTED) {
             throw new SearchEngineException(
                     "Search engine transaction not successfully started or already committed/rolledback");
         }
     }
 
+    public boolean isWithinTransaction() throws SearchEngineException {
+        return transactionState == STARTED;
+    }
+
     public void prepare() throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         if (transaction != null) {
             transaction.prepare();
         }
@@ -228,7 +232,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void commit(boolean onePhase) throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         try {
             if (transaction != null) {
                 transaction.commit(onePhase);
@@ -241,7 +245,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void rollback() throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         try {
             if (transaction != null) {
                 transaction.rollback();
@@ -254,7 +258,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void flush() throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         if (transaction != null) {
             transaction.flush();
         }
@@ -282,7 +286,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void delete(Resource resource) throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         readOnly = false;
         if (resource instanceof MultiResource) {
             MultiResource multiResource = (MultiResource) resource;
@@ -305,7 +309,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void create(final Resource resource) throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         readOnly = false;
         String alias = resource.getAlias();
         ResourceMapping resourceMapping = searchEngineFactory.getMapping().getRootMappingByAlias(alias);
@@ -338,7 +342,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public Resource get(Resource idResource) throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         ResourceKey resourceKey = ((InternalResource) idResource).resourceKey();
         if (resourceKey.getIds().length == 0) {
             throw new SearchEngineException("Cannot load a resource with no ids");
@@ -365,7 +369,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         SearchEngineHits hits = transaction.find(query);
         if (log.isDebugEnabled()) {
             log.debug("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
@@ -374,7 +378,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
-        checkTransactionStarted();
+        verifyWithinTransaction();
         return transaction.internalSearch(subIndexes, aliases);
     }
 

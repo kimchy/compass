@@ -134,6 +134,11 @@ public interface SearchEngine {
     void commit(boolean onePhase) throws SearchEngineException;
 
     /**
+     * Returns <code>true</code> if Compass is within a running transaction.
+     */
+    boolean isWithinTransaction() throws SearchEngineException;
+
+    /**
      * Rolls back the current transaction. Can be called before any phase of the
      * commit operation was executed, and after the first phase of the two phase
      * commit operation (the <code>prepare</code> operation).
