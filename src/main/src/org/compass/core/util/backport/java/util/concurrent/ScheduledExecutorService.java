@@ -27,7 +27,7 @@ package org.compass.core.util.backport.java.util.concurrent;
  * matter to transform an absolute time represented as a {@link
  * java.util.Date} to the required form. For example, to schedule at
  * a certain future <tt>date</tt>, you can use: <tt>schedule(task,
- * date.getTime() - System.currentTimeMillis(),
+ * date.getTimeVal() - System.currentTimeMillis(),
  * TimeUnit.MILLISECONDS)</tt>. Beware however that expiration of a
  * relative delay need not coincide with the current <tt>Date</tt> at
  * which the task is enabled due to network time synchronization

@@ -18,6 +18,8 @@ package org.compass.core.test.formatter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -132,6 +134,8 @@ public class FormatterTests extends AbstractTestCase {
         a.setFloatVal(12.56789f);
         Date date = new Date();
         a.setDateVal(date);
+        a.setTimeVal(new Time(date.getTime()));
+        a.setTimestampVal(new Timestamp(date.getTime()));
         a.setBigIntegerVal(new BigInteger("12"));
         BigDecimal bigDecimal = new BigDecimal(12.56789d);
         a.setBigDecimalVal(bigDecimal);
@@ -162,6 +166,8 @@ public class FormatterTests extends AbstractTestCase {
         a.setFloatVal(12.56789f);
         Date date = new Date();
         a.setDateVal(date);
+        a.setTimeVal(new Time(date.getTime()));
+        a.setTimestampVal(new Timestamp(date.getTime()));
         a.setBigIntegerVal(new BigInteger("12"));
         BigDecimal bigDecimal = new BigDecimal(12.56789d);
         a.setBigDecimalVal(bigDecimal);
@@ -187,6 +193,8 @@ public class FormatterTests extends AbstractTestCase {
         assertEquals(sdf.format(date), r.get("dateSimple"));
         sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
         assertEquals(sdf.format(date), r.get("dateFormatted"));
+        assertEquals(sdf.format(date), r.get("timeFormatted"));
+        assertEquals(sdf.format(date), r.get("timestampFormatted"));
 
         tr.commit();
     }

@@ -18,6 +18,8 @@ package org.compass.core.test.formatter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -42,6 +44,10 @@ public class A {
     private BigInteger bigIntegerVal;
 
     private BigDecimal bigDecimalVal;
+
+    private Time timeVal;
+
+    private Timestamp timestampVal;
 
     public float getFloatVal() {
         return floatVal;
@@ -115,4 +121,19 @@ public class A {
         this.bigDecimalVal = bigDecimalVal;
     }
 
+    public Time getTimeVal() {
+        return timeVal;
+    }
+
+    public void setTimeVal(Time timeVal) {
+        this.timeVal = timeVal;
+    }
+
+    public Timestamp getTimestampVal() {
+        return timestampVal;
+    }
+
+    public void setTimestampVal(Timestamp timestampVal) {
+        this.timestampVal = timestampVal;
+    }
 }

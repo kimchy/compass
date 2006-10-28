@@ -18,15 +18,35 @@ package org.compass.core.converter.extended;
 
 import java.sql.Date;
 
-import org.compass.core.converter.basic.AbstractBasicConverter;
+import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.basic.DateConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
-public class SqlDateConverter extends AbstractBasicConverter {
+public class SqlDateConverter extends DateConverter {
+
+    /**
+     * Sql Timestamp has no default format, it uses the {@link java.sql.Time#toString()}.
+     */
+    protected String doGetDefaultFormat() {
+        return null;
+    }
+
+    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+        if (hasFormatter) {
+            return super.toString(o, resourcePropertyMapping);
+        }
+        return o.toString();
+    }
+
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+        if (hasFormatter) {
+            java.util.Date date = (java.util.Date) super.fromString(str, resourcePropertyMapping);
+            return new Date(date.getTime());
+        }
         return Date.valueOf(str);
     }
 }

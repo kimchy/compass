@@ -131,6 +131,16 @@
             <meta-data format="yyyy-MM-dd-HH">dateFormatted</meta-data>
         </property>
 
+        <property name="timeVal">
+            <meta-data>timeSimple</meta-data>
+            <meta-data format="yyyy-MM-dd-HH">timeFormatted</meta-data>
+        </property>
+
+        <property name="timestampVal">
+            <meta-data>timestampSimple</meta-data>
+            <meta-data format="yyyy-MM-dd-HH">timestampFormatted</meta-data>
+        </property>
+
     </class>
 
 
