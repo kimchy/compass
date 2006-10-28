@@ -120,7 +120,7 @@
       <title>... Domain Model</title>
 
       <para>
-        One of Compass main features is OSEM (Object/Search Engine Mapping). Using either annotations or xml definitions (or a combination), mapping definitions from a rich domain model into a search engine can be defined. For more information, please read <xref linkend="core-oseml"/>.
+        One of Compass main features is OSEM (Object/Search Engine Mapping). Using either annotations or xml definitions (or a combination), mapping definitions from a rich domain model into a search engine can be defined. For more information, please read <xref linkend="core-osem"/>.
       </para>
 
     </sect2>

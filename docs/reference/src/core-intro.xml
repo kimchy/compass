@@ -7,7 +7,7 @@
 </para>
 
 <para>
-  The following chapters dive into details of Compass different mapping technologies. <xref linkend="core-osem-xml"/> and <xref linkend="core-osem-annotations"/> explain how to use Compass OSEM (Object/Search Engine Mapping), <xref linkend="core-xsem"/> goes into details of how to use Compass XSEM (Xml/Search Engine Mapping), and <xref linkend="core-rsem"/> dives into Compass RSEM (Resource/Search Engine Mapping), which is a low level, Lucene like, mapping support.
+  The following chapters dive into details of Compass different mapping technologies. <xref linkend="core-osem"/> explain how to use Compass OSEM (Object/Search Engine Mapping), <xref linkend="core-xsem"/> goes into details of how to use Compass XSEM (Xml/Search Engine Mapping), and <xref linkend="core-rsem"/> dives into Compass RSEM (Resource/Search Engine Mapping), which is a low level, Lucene like, mapping support.
 </para>
 
 <para> 
