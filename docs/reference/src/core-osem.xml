@@ -671,11 +671,11 @@ public class Daughter extends Child {
       <title>Support Unmarshall</title>
       
       <para>
-        Compass adds an overhead both in terms of memory consumption, processing speed and index size (managed ids) when it works in a mode that needs to support un-marshalling. Compass allows to to work in an un-marshall mode, where it will not support un-marshalling. This setting can be a global setting (set within Compass configuration), or per searchable class definitions.
+        Compass adds an overhead both in terms of memory consumption, processing speed and index size (managed ids) when it works in a mode that needs to support un-marshalling (i.e. getting objects back from the search engine). Compass can be configured not to support un-marshalling. In such a mode it will not add any internal Compass information to the index, and will use less memory. This setting can be a global setting (set within Compass configuration), or per searchable class definitions.
       </para>
       
       <para>
-        Though initially this mode may sounds unusable, it is important to remmember that when working with support unmarshall set to false, the application can still use Compass Resource level access to the search engine. An application that works against the database using an ORM tool for example, might only need Compass to index its domain model into the search engine, and display search results (which can be done using Resources, many times even when using the support for unmarshalling). Create/Delete/Update operations will be done based on ORM based fetched objects, and mirrored to the search engine.
+        Though initially this mode may sounds unusable, it is important to remember that when working with support unmarshall set to false, the application can still use Compass Resource level access to the search engine. An application that works against the database using an ORM tool for example, might only need Compass to index its domain model into the search engine, and display search results. Displaying search results can be done using Resources (many times this is done even when using support for unmarshalling). Create/Delete/Update operations will be done based on ORM based fetched objects, and mirrored (either explicitly or implicitly) to the search engine.
       </para>
     </sect2>
 
