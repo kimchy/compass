@@ -54,7 +54,7 @@ public class BitSetByAliasFilter extends Filter {
         }
 
         public int size() {
-            return super.size();    //To change body of overridden methods use File | Settings | File Templates.
+            throw new UnsupportedOperationException();
         }
 
         public void clear() {
