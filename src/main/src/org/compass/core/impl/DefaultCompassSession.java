@@ -159,6 +159,11 @@ public class DefaultCompassSession implements InternalCompassSession {
         delete(idResource);
     }
 
+    public void delete(Class clazz, Object obj) throws CompassException {
+        Resource idResource = marshallingStrategy.marshallIds(clazz, obj);
+        delete(idResource);
+    }
+
     public void delete(Object obj) throws CompassException {
         Resource idResource = marshallingStrategy.marshallIds(obj);
         delete(idResource);

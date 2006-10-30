@@ -30,7 +30,7 @@ public class SimpleTests extends AbstractTestCase {
         return new String[] {"simple/A.cpm.xml"};
     }
 
-    public void testSimpleAnnotations() throws Exception {
+    public void testSimple() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
@@ -51,6 +51,28 @@ public class SimpleTests extends AbstractTestCase {
         assertEquals("1", resource.getIdProperties()[0].getStringValue());
         assertEquals("1", resource.getIdProperty().getStringValue());
 
+        tr.commit();
+        session.close();
+    }
+
+    public void testSimpleDelete() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+        for (int i = 0; i < 30; i++) {
+            A a = new A();
+            a.setId(new Long(i));
+            a.setValue("value");
+            session.save(a);
+        }
+        tr.commit();
+        session.close();
+
+        session = openSession();
+        tr = session.beginTransaction();
+        for (int i = 0; i < 30; i=i+2) {
+            session.delete(A.class, new Long(i));
+        }
+        assertEquals(15, session.queryBuilder().matchAll().hits().length());
         tr.commit();
         session.close();
     }

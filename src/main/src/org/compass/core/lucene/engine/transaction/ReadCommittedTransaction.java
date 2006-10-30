@@ -228,7 +228,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     protected void doPrepare() throws SearchEngineException {
         for (Iterator it = filter.subIndexDeletesIt(); it.hasNext();) {
             String subIndex = (String) it.next();
-            ArrayList deletes = filter.getDeletesBySubIndex(subIndex);
+            BitSetByAliasFilter.IntArray deletes = filter.getDeletesBySubIndex(subIndex);
             if (deletes != null) {
                 IndexReader indexReader;
                 try {
@@ -236,9 +236,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                     // a hack so the index reader won't acquire a writer lock,
                     // since we already hold it when we locked the writer
                     indexReaderDirectoryOwner.set(indexReader, Boolean.FALSE);
-                    for (int j = 0; j < deletes.size(); j++) {
-                        int docNum = ((Integer) deletes.get(j)).intValue();
-                        indexReader.deleteDocument(docNum);
+                    for (int j = 0; j < deletes.length; j++) {
+                        indexReader.deleteDocument(deletes.array[j]);
                     }
                 } catch (Exception ex) {
                     throw new SearchEngineException("Failed to persist deletes for sub-index [" + subIndex + "]");
@@ -271,7 +270,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     protected void doRollback() throws SearchEngineException {
         for (Iterator it = filter.subIndexDeletesIt(); it.hasNext();) {
             String subIndex = (String) it.next();
-            ArrayList deletes = filter.getDeletesBySubIndex(subIndex);
+            BitSetByAliasFilter.IntArray deletes = filter.getDeletesBySubIndex(subIndex);
             if (deletes != null) {
                 IndexReader indexReader;
                 try {

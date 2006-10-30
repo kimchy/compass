@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 /**
  * A interface describing all the available operations allowed by compass.
- * 
+ *
  * @author kimchy
  */
 public interface CompassOperations {
@@ -29,7 +29,7 @@ public interface CompassOperations {
     /**
      * Creates a resource, that is used with the actual Search Engine
      * implementation.
-     * 
+     *
      * @return a new resource
      * @throws CompassException
      */
@@ -40,7 +40,7 @@ public interface CompassOperations {
      * available values for the store and index parameters are provided in the
      * Property interface (Property.Store and Property.Index). It stores no term
      * vector information (Property.TermVector.NO).
-     * 
+     *
      * @param name
      * @param value
      * @param store
@@ -55,7 +55,7 @@ public interface CompassOperations {
      * Creates a Property that is used with the actual Search Engine. The
      * available values for the store and index parameters are provided in the
      * Property interface (Property.Store, Property.Index, Property.TermVector).
-     * 
+     *
      * @param name
      * @param value
      * @param store
@@ -64,12 +64,12 @@ public interface CompassOperations {
      * @throws CompassException
      */
     Property createProperty(String name, String value, Property.Store store, Property.Index index,
-            Property.TermVector termVector) throws CompassException;
+                            Property.TermVector termVector) throws CompassException;
 
     /**
      * Creates a property (indexed, and not stored) for the specified reader. It
      * stores no term vector information (Property.TermVector.NO).
-     * 
+     *
      * @param name
      * @param value
      * @return a new property
@@ -79,7 +79,7 @@ public interface CompassOperations {
 
     /**
      * Creates a property (indexed, and not stored) for the specified reader.
-     * 
+     *
      * @param name
      * @param value
      * @return a new property
@@ -89,7 +89,7 @@ public interface CompassOperations {
 
     /**
      * Creates a binary property only stored (can be compressed).
-     * 
+     *
      * @param name
      * @param value
      * @return a new property
@@ -100,9 +100,8 @@ public interface CompassOperations {
     /**
      * Deletes a resource with the specified alias. Note that the resource must
      * have the defined ids in the mapping files set and an alias set.
-     * 
-     * @param resource
-     *            The resource to be deleted.
+     *
+     * @param resource The resource to be deleted.
      * @throws CompassException
      */
     void delete(Resource resource) throws CompassException;
@@ -112,11 +111,9 @@ public interface CompassOperations {
      * type, and specified id. The id can be an object of the class (with the id
      * attributes set), an array of id objects, or the actual id object. Returns
      * <code>null</code> if the object is not found.
-     * 
-     * @param clazz
-     *            The class that represents the required mapping
-     * @param id
-     *            The id that identifies the resource
+     *
+     * @param clazz The class that represents the required mapping
+     * @param id    The id that identifies the resource
      * @return The resource, returns <code>null</code> if not found
      * @throws CompassException
      */
@@ -128,11 +125,9 @@ public interface CompassOperations {
      * can be an object of the class (with the id attributes set), an array of
      * id objects, or the actual id object. Returns <code>null</code> if the
      * object is not found.
-     * 
-     * @param alias
-     *            The alias that represents the required mapping
-     * @param id
-     *            The id that identifies the resource
+     *
+     * @param alias The alias that represents the required mapping
+     * @param id    The id that identifies the resource
      * @return The resource
      * @throws CompassException
      */
@@ -143,11 +138,9 @@ public interface CompassOperations {
      * defined class, and matches the specified id. The id can be an object of
      * the class (with the id attributes set), an array of id objects, or the
      * actual id object. Throws an exception if the resource is not found.
-     * 
-     * @param clazz
-     *            The class that represents the required mapping
-     * @param id
-     *            The id that identifies the resource
+     *
+     * @param clazz The class that represents the required mapping
+     * @param id    The id that identifies the resource
      * @return The resource
      * @throws CompassException
      */
@@ -158,11 +151,9 @@ public interface CompassOperations {
      * defined alias, and matches the specified id. The id can be an object of
      * the class (with the id attributes set), an array of id objects, or the
      * actual id object. Throws an exception if the resource is not found.
-     * 
-     * @param alias
-     *            The alias that represents the required mapping
-     * @param id
-     *            The id that identifies the resource
+     *
+     * @param alias The alias that represents the required mapping
+     * @param id    The id that identifies the resource
      * @return The resource
      * @throws CompassException
      */
@@ -171,9 +162,8 @@ public interface CompassOperations {
     /**
      * Deletes an object from Compass. The object must have been either loaded
      * by Compass or it's ids must be set if already known.
-     * 
-     * @param obj
-     *            The object to delete
+     *
+     * @param obj The object to delete
      * @throws CompassException
      */
     void delete(Object obj) throws CompassException;
@@ -182,25 +172,32 @@ public interface CompassOperations {
      * Deletes an object from Compass with multiple alias's. The object can
      * either be the id (or an array of ids), or the actual data object with
      * it's property ids set.
-     * 
-     * @param alias
-     *            The alias that the objects maps under
-     * @param obj
-     *            The object to delete
+     *
+     * @param alias The alias that the objects maps under
+     * @param obj   The object to delete
      * @throws CompassException
      */
     void delete(String alias, Object obj) throws CompassException;
+
+    /**
+     * Deletes an object from Compass that match the mapping specified for the defined class.
+     * The object can either be the id (or an array of ids), or the actual data object with
+     * it's property ids set.
+     *
+     * @param clazz The class that represtents the required mapping
+     * @param obj   The object to delete
+     * @throws CompassException
+     */
+    void delete(Class clazz, Object obj) throws CompassException;
 
     /**
      * Returns an object that match the mapping specified for the defined class,
      * and matches the specified id. The id can be an object of the class (with
      * the id attributes set), an array of id objects, or the actual id object.
      * Returns <code>null</code> if the object is not found.
-     * 
-     * @param clazz
-     *            The class that represents the required mapping
-     * @param id
-     *            The id that identifies the resource
+     *
+     * @param clazz The class that represents the required mapping
+     * @param id    The id that identifies the resource
      * @return The object, returns <code>null</code> if not found
      * @throws CompassException
      */
@@ -211,11 +208,9 @@ public interface CompassOperations {
      * and matches the specified id. The id can be an object of the class (with
      * the id attributes set), an array of id objects, or the actual id object.
      * Returns <code>null</code> if the object is not found.
-     * 
-     * @param alias
-     *            The alias that represents the required mapping
-     * @param id
-     *            The id that identifies the resource
+     *
+     * @param alias The alias that represents the required mapping
+     * @param id    The id that identifies the resource
      * @return The object, returns <code>null</code> if not found
      * @throws CompassException
      */
@@ -226,11 +221,9 @@ public interface CompassOperations {
      * defined class, and matches the specified id. The id can be an object of
      * the class (with the id attributes set), an array of id objects, or the
      * actual id object. Throws an exception if the resource is not found.
-     * 
-     * @param clazz
-     *            The class that represents the required mapping
-     * @param id
-     *            The id that identifies the resource
+     *
+     * @param clazz The class that represents the required mapping
+     * @param id    The id that identifies the resource
      * @return The object
      * @throws CompassException
      */
@@ -241,11 +234,9 @@ public interface CompassOperations {
      * defined class, and matches the specified id. The id can be an object of
      * the class (with the id attributes set), an array of id objects, or the
      * actual id object. Throws an exception if the resource is not found.
-     * 
-     * @param alias
-     *            The alias that represents the required mapping
-     * @param id
-     *            The id that identifies the resource
+     *
+     * @param alias The alias that represents the required mapping
+     * @param id    The id that identifies the resource
      * @return The object
      * @throws CompassException
      */
@@ -280,9 +271,8 @@ public interface CompassOperations {
      * Note that the list may contains several object types (classes) with no
      * relation between them (except for the semantic relation).
      * </p>
-     * 
-     * @param query
-     *            The query string to search by
+     *
+     * @param query The query string to search by
      * @return A hits of objects that matches the query string
      * @throws CompassException
      */
@@ -293,9 +283,8 @@ public interface CompassOperations {
      * mapping files will be indexed and saved for later searching. Note that if
      * the same object (same alias and same id's already exists in the index, it
      * won't be deleted).
-     * 
-     * @param obj
-     *            The object to save.
+     *
+     * @param obj The object to save.
      * @throws CompassException
      */
     void create(Object obj) throws CompassException;
@@ -304,11 +293,9 @@ public interface CompassOperations {
      * Creates a NEW object in Compass that shares mapping alais with multiple
      * objects. All the meta data defined in Compass mapping files will be
      * indexed and saved for later searching.
-     * 
-     * @param alias
-     *            The alias that match the object mappings
-     * @param obj
-     *            The object to save
+     *
+     * @param alias The alias that match the object mappings
+     * @param obj   The object to save
      * @throws CompassException
      */
     void create(String alias, Object obj) throws CompassException;
@@ -316,9 +303,8 @@ public interface CompassOperations {
     /**
      * Saves an object in Compass. All the meta data defined in the Compass
      * mapping files will be indexed and saved for later searching.
-     * 
-     * @param obj
-     *            The object to save.
+     *
+     * @param obj The object to save.
      * @throws CompassException
      */
     void save(Object obj) throws CompassException;
@@ -327,11 +313,9 @@ public interface CompassOperations {
      * Saves an object in Compass that shares mapping alais with multiple
      * objects. All the meta data defined in Compass mapping files will be
      * indexed and saved for later searching.
-     * 
-     * @param alias
-     *            The alias that match the object mappings
-     * @param obj
-     *            The object to save
+     *
+     * @param alias The alias that match the object mappings
+     * @param obj   The object to save
      * @throws CompassException
      */
     void save(String alias, Object obj) throws CompassException;
@@ -339,9 +323,8 @@ public interface CompassOperations {
     /**
      * Evicts the given object from the first level cache (transaction scoped
      * cache).
-     * 
-     * @param obj
-     *            The objects to evict.
+     *
+     * @param obj The objects to evict.
      */
     void evict(Object obj);
 
@@ -349,25 +332,22 @@ public interface CompassOperations {
      * Evicts the given object from the first level cache (transaction scoped
      * cache). The object can either be the id (or an array of ids), or the
      * actual data object with it's property ids set.
-     * 
-     * @param alias
-     *            The alias of the object/entry to evict.
-     * @param id
-     *            The id of the object/entry to evict.
+     *
+     * @param alias The alias of the object/entry to evict.
+     * @param id    The id of the object/entry to evict.
      */
     void evict(String alias, Object id);
 
     /**
      * Evicts the given resource from the first level cache (transaction scoped
      * cache).
-     * 
+     *
      * @param resource The resource to evict.
      */
     void evict(Resource resource);
 
     /**
      * Evicts all the objects and the resources from the first level cache.
-     * 
      */
     void evictAll();
 }

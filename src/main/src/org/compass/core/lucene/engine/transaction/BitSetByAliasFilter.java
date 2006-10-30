@@ -17,7 +17,6 @@
 package org.compass.core.lucene.engine.transaction;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -142,6 +141,29 @@ public class BitSetByAliasFilter extends Filter {
         }
     }
 
+    public static class IntArray {
+
+        private static final int DEFAULT_SIZE = 10;
+
+        public int[] array;
+
+        public int length;
+
+        public IntArray() {
+            array = new int[DEFAULT_SIZE];
+            length = 0;
+        }
+
+        public void add(int val) {
+            if (length == array.length) {
+                int[] tempArray = new int[array.length + DEFAULT_SIZE];
+                System.arraycopy(array, 0, tempArray, 0, array.length);
+                array = tempArray;
+            }
+            array[length++] = val;
+        }
+    }
+
     private static final long serialVersionUID = 3618980083415921974L;
 
     private static final AllSetBitSet allSetBitSet = new AllSetBitSet();
@@ -165,8 +187,8 @@ public class BitSetByAliasFilter extends Filter {
         return hasDeletes;
     }
 
-    public ArrayList getDeletesBySubIndex(String subIndex) {
-        return (ArrayList) deleteBySubIndex.get(subIndex);
+    public IntArray getDeletesBySubIndex(String subIndex) {
+        return (IntArray) deleteBySubIndex.get(subIndex);
     }
 
     public Iterator subIndexDeletesIt() {
@@ -181,12 +203,12 @@ public class BitSetByAliasFilter extends Filter {
             bitSets.put(subIndex, bitSet);
         }
         bitSet.set(docNum, false);
-        ArrayList aliasDeletions = (ArrayList) deleteBySubIndex.get(subIndex);
+        IntArray aliasDeletions = (IntArray) deleteBySubIndex.get(subIndex);
         if (aliasDeletions == null) {
-            aliasDeletions = new ArrayList();
+            aliasDeletions = new IntArray();
             deleteBySubIndex.put(subIndex, aliasDeletions);
         }
-        aliasDeletions.add(new Integer(docNum));
+        aliasDeletions.add(docNum);
         hasDeletes = true;
     }
 
