@@ -896,6 +896,7 @@ public class Daughter extends Child {
       boost="boost value for the class property"
       class="explicit declaration of the property class"
       managed-id="auto|true|false"
+      managed-id-converter="managed id converter lookup name"
       exclude-from-all="false|true"
       converter="converter lookup name"
   >
@@ -933,6 +934,10 @@ public class Daughter extends Child {
               <entry>The strategy for creating or using a class property meta-data id (which maps to a <literal>Resource</literal> <literal>Property</literal>).</entry>
             </row>
             <row>
+              <entry>managed-id-converter (optional)</entry>
+              <entry>The global converter lookup name applied to the generated managed id (if generated).</entry>
+            </row>
+            <row>
               <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
               <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level.</entry>
             </row>
@@ -964,6 +969,7 @@ public class Daughter extends Child {
       override="true|false"
       managed-id="auto|true|false"
       managed-id-index="[compass.managedId.index setting]|no|un_tokenized"
+      managed-id-converter="managed id converter lookup name"
       exclude-from-all="false|true"
       converter="converter lookup name"
 >
@@ -1011,6 +1017,10 @@ public class Daughter extends Child {
                 <entry>managed-id-index (optional, defaults to <literal>compass.managedId.index</literal> setting, which defaults to <literal>no</literal>)</entry>
                 <entry>Can be either <literal>un_tokenized</literal> or <literal>no</literal>. It is the index setting that will be used when creating an internal managed id for a class property mapping (if it is not a property id, if it is, it will always be <literal>un_tokenized</literal>).</entry>
               </row>
+            <row>
+              <entry>managed-id-converter (optional)</entry>
+              <entry>The global converter lookup name applied to the generated managed id (if generated).</entry>
+            </row>
               <row>
                 <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
                 <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level.</entry>

@@ -634,6 +634,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         if (managedIdIndex != null) {
             classPropertyMapping.setManagedIdIndex(Property.Index.fromString(managedIdIndex));
         }
+        classPropertyMapping.setManagedIdConverterName(classPropertyConf.getAttribute("managed-id-converter", null));
 
         boolean override = classPropertyConf.getAttributeAsBoolean("override", true);
         classPropertyMapping.setOverrideByName(override);

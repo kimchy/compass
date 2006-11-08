@@ -248,6 +248,7 @@
     <!ATTLIST id analyzer CDATA #IMPLIED>
     <!ATTLIST id accessor CDATA "property">
     <!ATTLIST id managed-id (auto|true|false) "auto">
+    <!ATTLIST id managed-id-converter CDATA #IMPLIED>
     <!ATTLIST id exclude-from-all (true|false) "false">
     <!ATTLIST id converter CDATA #IMPLIED>
     <!ATTLIST id boost CDATA #IMPLIED>
@@ -262,6 +263,7 @@
     <!ATTLIST property accessor CDATA "property">
     <!ATTLIST property managed-id (auto|true|false) "auto">
     <!ATTLIST property managed-id-index (no|un_tokenized) #IMPLIED>
+    <!ATTLIST property managed-id-converter CDATA #IMPLIED>
     <!ATTLIST property exclude-from-all (true|false) "false">
     <!ATTLIST property converter CDATA #IMPLIED>
     <!ATTLIST property boost CDATA #IMPLIED>
