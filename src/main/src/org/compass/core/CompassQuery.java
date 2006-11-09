@@ -26,16 +26,15 @@ import org.compass.core.util.Parameter;
  * The query be sorted as well using one of the <code>addSort</code>
  * operations. Note that adding sorting is only applicable for the query that
  * will execute the {@link #hits()} operation.
- * 
+ *
  * @author kimchy
- * 
  */
 public interface CompassQuery {
 
     /**
      * An extension to the {@link CompassQuery} interface. Handles special span
      * queries.
-     * 
+     *
      * @author kimchy
      */
     public static interface CompassSpanQuery extends CompassQuery {
@@ -44,7 +43,7 @@ public interface CompassQuery {
 
     /**
      * Used to set the sort direction for the query.
-     * 
+     *
      * @author kimchy
      */
     public static final class SortDirection extends Parameter {
@@ -72,7 +71,7 @@ public interface CompassQuery {
      * Used to define the type of the property that will be sorted. Note that
      * <code>INT</code> has the lowest memorty requirements and
      * <code>STRING</code> the most.
-     * 
+     *
      * @author kimchy
      */
     public static final class SortPropertyType extends Parameter {
@@ -112,7 +111,7 @@ public interface CompassQuery {
 
     /**
      * Implicit types that the hits can be sorted by.
-     * 
+     *
      * @author kimchy
      */
     public static final class SortImplicitType extends Parameter {
@@ -147,32 +146,29 @@ public interface CompassQuery {
     /**
      * Adds sorting on the given property name. The type of sorting will be
      * identified automatically (though it is preferable to specify it in
-     * advance using the {@link #addSort(String, SortPropertyType)}.
+     * advance using the {@link #addSort(String,SortPropertyType)}.
      * <p>
      * Note that the property must be <code>UN_TOKENIZED</code>, and stored.
      * <p>
      * Note, that the sort option will only work on the outer most query (i.e.
      * the one that the <code>hits</code> is called on).
-     * 
-     * @param propertyName
-     *            The property name that will be sorted.
+     *
+     * @param propertyName The property name that will be sorted.
      */
     CompassQuery addSort(String propertyName);
 
     /**
      * Adds sorting on the given property name. The type of sorting will be
      * identified automatically (though it is preferable to specify it in
-     * advance using the {@link #addSort(String, SortPropertyType)}.
+     * advance using the {@link #addSort(String,SortPropertyType)}.
      * <p>
      * Note that the property must be <code>UN_TOKENIZED</code>, and stored.
      * <p>
      * Note, that the sort option will only work on the outer most query (i.e.
      * the one that the <code>hits</code> is called on).
-     * 
-     * @param propertyName
-     *            The property name that will be sorted.
-     * @param direction
-     *            The direction for the sorting.
+     *
+     * @param propertyName The property name that will be sorted.
+     * @param direction    The direction for the sorting.
      * @return the query
      */
     CompassQuery addSort(String propertyName, SortDirection direction);
@@ -186,11 +182,9 @@ public interface CompassQuery {
      * <p>
      * Note, that the sort option will only work on the outer most query (i.e.
      * the one that the <code>hits</code> is called on).
-     * 
-     * @param propertyName
-     *            The property name that will be sorted.
-     * @param type
-     *            The type of the propert.
+     *
+     * @param propertyName The property name that will be sorted.
+     * @param type         The type of the propert.
      * @return the query
      */
     CompassQuery addSort(String propertyName, SortPropertyType type);
@@ -204,13 +198,10 @@ public interface CompassQuery {
      * <p>
      * Note, that the sort option will only work on the outer most query (i.e.
      * the one that the <code>hits</code> is called on).
-     * 
-     * @param propertyName
-     *            The property name that will be sorted.
-     * @param type
-     *            The type of the propert.
-     * @param direction
-     *            The direction of the sorting.
+     *
+     * @param propertyName The property name that will be sorted.
+     * @param type         The type of the propert.
+     * @param direction    The direction of the sorting.
      * @return the query
      */
     CompassQuery addSort(String propertyName, SortPropertyType type, SortDirection direction);
@@ -220,9 +211,8 @@ public interface CompassQuery {
      * <p>
      * Note, that the sort option will only work on the outer most query (i.e.
      * the one that the <code>hits</code> is called on).
-     * 
-     * @param implicitType
-     *            The implicit type to add sorting on.
+     *
+     * @param implicitType The implicit type to add sorting on.
      */
     CompassQuery addSort(SortImplicitType implicitType);
 
@@ -231,11 +221,9 @@ public interface CompassQuery {
      * <p>
      * Note, that the sort option will only work on the outer most query (i.e.
      * the one that the <code>hits</code> is called on).
-     * 
-     * @param implicitType
-     *            The implicit type to add sorting on.
-     * @param direction
-     *            The direction of the sorting.
+     *
+     * @param implicitType The implicit type to add sorting on.
+     * @param direction    The direction of the sorting.
      */
     CompassQuery addSort(SortImplicitType implicitType, SortDirection direction);
 
@@ -264,6 +252,14 @@ public interface CompassQuery {
      * @return the query
      */
     CompassQuery setFilter(CompassQueryFilter filter);
+
+    /**
+     * Returns the filter set using {@link #setFilter(CompassQueryFilter)}. <code>null</code>
+     * if none is set.
+     *
+     * @return The filter set using {@link #setFilter(CompassQueryFilter)}
+     */
+    CompassQueryFilter getFilter();
 
     /**
      * Performs the search and returns the hits that match the qeury.

@@ -20,11 +20,11 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryFilter;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 import org.compass.core.mapping.CompassMapping.ResourcePropertyLookup;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * @author kimchy
@@ -48,6 +48,8 @@ public class DefaultCompassQuery implements CompassQuery {
     private SearchEngineQuery searchEngineQuery;
 
     private InternalCompassSession session;
+
+    private CompassQueryFilter filter;
 
     public DefaultCompassQuery(SearchEngineQuery searchEngineQuery, InternalCompassSession session) {
         this.searchEngineQuery = searchEngineQuery;
@@ -104,8 +106,13 @@ public class DefaultCompassQuery implements CompassQuery {
     }
 
     public CompassQuery setFilter(CompassQueryFilter filter) {
+        this.filter = filter;
         searchEngineQuery.setFilter(((DefaultCompassQueryFilter) filter).getFilter());
         return this;
+    }
+
+    public CompassQueryFilter getFilter() {
+        return this.filter;
     }
 
     public CompassHits hits() throws CompassException {
