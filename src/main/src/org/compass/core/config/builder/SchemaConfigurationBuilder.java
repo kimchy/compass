@@ -99,7 +99,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
 
     public void bindConverters(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        List convertersEle = DomUtils.getChildElementsByTagName(ele, "converter");
+        List convertersEle = DomUtils.getChildElementsByTagName(ele, "converter", true);
         for (Iterator it = convertersEle.iterator(); it.hasNext();) {
             Element converterEle = (Element) it.next();
             SettingsHolder settingsHolder = processSettings(converterEle);
