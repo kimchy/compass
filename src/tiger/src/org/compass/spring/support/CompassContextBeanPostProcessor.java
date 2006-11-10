@@ -33,7 +33,7 @@ import org.compass.core.CompassContext;
 import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.support.CompassSessionTransactionalProxy;
+import org.compass.core.support.session.CompassSessionTransactionalProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;

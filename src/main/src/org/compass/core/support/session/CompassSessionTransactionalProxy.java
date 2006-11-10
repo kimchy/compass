@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.support;
+package org.compass.core.support.session;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;

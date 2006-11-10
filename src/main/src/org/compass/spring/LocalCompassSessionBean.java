@@ -19,7 +19,7 @@ package org.compass.spring;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.support.CompassSessionTransactionalProxy;
+import org.compass.core.support.session.CompassSessionTransactionalProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
