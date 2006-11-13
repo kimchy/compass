@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.component.nullvalue;
+package org.compass.core.test.component.deephierarchy;
+
+import java.util.List;
 
 /**
  * @author kimchy
  */
 public class B {
 
-    String value;
+    int id;
 
-    C c1;
-
-    C c2;
-
-    B() {
-        
-    }
-
-    B(String value) {
-        this.value = value;
-    }
+    List cs;
 }

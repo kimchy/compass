@@ -50,7 +50,7 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
 
                 // resolve the class mapping constructor
                 classMapping.setConstructor(ClassUtils.getDefaultConstructor(classMapping.getClazz()));
-                if (classMapping.getConstructor() == null) {
+                if (!classMapping.getClazz().isInterface() && classMapping.getConstructor() == null) {
                     throw new MappingException("No default constructor defined for class [" + classMapping.getName() + "]");
                 }
                 if (classMapping.getPolyClass() != null) {

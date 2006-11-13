@@ -28,6 +28,8 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TransIndex;
+import org.apache.lucene.index.trans.RAMTransLog;
+import org.apache.lucene.index.trans.TransLog;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
@@ -44,6 +46,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.utils.ResourceHelper;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
@@ -125,7 +128,15 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 wrapper.subIndex = subIndex;
                 try {
                     wrapper.dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
-                    wrapper.transIndex = new TransIndex(subIndex, wrapper.dir, luceneSettings);
+                    TransLog transLog;
+                    try {
+                        Class transLogClass = searchEngine.getSettings().getSettingAsClass(LuceneEnvironment.Transaction.TransLog.TYPE, RAMTransLog.class);
+                        transLog = (TransLog) transLogClass.newInstance();
+                    } catch (Exception e) {
+                        throw new SearchEngineException("Failed to create transLog", e);
+                    }
+                    transLog.configure(searchEngine.getSettings());
+                    wrapper.transIndex = new TransIndex(subIndex, wrapper.dir, transLog, luceneSettings);
                 } catch (IOException e) {
                     throw new SearchEngineException("Failed to open index for sub-index [" + subIndex + "]", e);
                 }

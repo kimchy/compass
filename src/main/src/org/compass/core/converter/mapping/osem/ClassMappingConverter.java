@@ -126,11 +126,23 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 throw new ConversionException("Class Mapping [" + classMapping.getAlias() + "] is configured not to support un-marshalling");
             }
             resourceKey = ((InternalResource) resource).resourceKey();
+            // if it is cached, return the cached object
+            Object cached = context.getUnmarshalled(resourceKey);
+            if (cached != null) {
+                return cached;
+            }
         } else if (classMapping.getIdMappings().length > 0) {
             // if the class mapping has ids, try and get it from the resource.
             Property[] propIds = ResourceHelper.toIds(resource, classMapping, false);
             if (propIds != null) {
                 resourceKey = new ResourceKey(classMapping, propIds);
+                // if it is cached, return the cached object
+                Object cached = context.getUnmarshalled(resourceKey);
+                if (cached != null) {
+                    return cached;
+                }
+                // if it is not cached, we need to rollback the fact that we read
+                // the ids, so the rest of the unmarshalling process will work
                 if (resource instanceof CollectionResourceWrapper) {
                     CollectionResourceWrapper colWrapper = (CollectionResourceWrapper) resource;
                     ResourcePropertyMapping[] ids = classMapping.getIdMappings();
@@ -138,14 +150,6 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                         colWrapper.rollbackGetProperty(ids[i].getPath().getPath());
                     }
                 }
-            }
-        }
-
-        // if we have a resource key, try and find a cached object
-        if (resourceKey != null) {
-            Object cached = context.getUnmarshalled(resourceKey);
-            if (cached != null) {
-                return cached;
             }
         }
 

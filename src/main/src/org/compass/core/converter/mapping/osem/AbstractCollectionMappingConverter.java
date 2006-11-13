@@ -37,12 +37,23 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
-        if (root == null) {
-            return false;
-        }
-        AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
+        AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
         ClassMapping rootClassMapping = (ClassMapping) context.getAttribute(ClassMappingConverter.ROOT_CLASS_MAPPING_KEY);
+
+
+        // if we have a null value, we check if we need to handle null values
+        // if so, we will note the fact that it is null under the size attribute
+        if (root == null) {
+            if (context.handleNulls() && rootClassMapping.isSupportUnmarshall()) {
+                Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), searchEngine.getNullValue(),
+                        Property.Store.YES, Property.Index.UN_TOKENIZED);
+                resource.addProperty(p);
+                return true;
+            } else {
+                return false;
+            }
+        }
 
         if (rootClassMapping.isSupportUnmarshall()) {
             if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
@@ -81,6 +92,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
+        SearchEngine searchEngine = context.getSearchEngine();
 
         Property pColSize = resource.getProperty(colMapping.getColSizePath().getPath());
         if (pColSize == null) {
@@ -88,6 +100,10 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
             return null;
         }
         String sColSize = pColSize.getStringValue();
+        // if we marshalled it and marked it as null, return the null value
+        if (searchEngine.isNullValue(sColSize)) {
+            return null;
+        }
 
         AbstractCollectionMapping.CollectionType collectionType = colMapping.getCollectionType();
         if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
