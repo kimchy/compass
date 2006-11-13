@@ -26,6 +26,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.lucene.index.FSTransLog;
+import org.apache.lucene.index.RAMTransLog;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
@@ -352,6 +354,20 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.Transaction.CACHE_USER_TRANSACTION, DomUtils.getElementAttribute(jtaSettingsEle, "cacheUserTransaction"));
             settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, DomUtils.getElementAttribute(jtaSettingsEle, "managerLookup"));
             settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, DomUtils.getElementAttribute(jtaSettingsEle, "managerLookupClass"));
+        }
+        child = DomUtils.getChildElementsByTagName(ele, "readCommittedSettings", true);
+        if (child.size() == 1) {
+            Element readCommittedSettingsEle = (Element) child.get(0);
+            child = DomUtils.getChildElementsByTagName(readCommittedSettingsEle, "ramTransLog", true);
+            if (child.size() == 1) {
+                settings.setSetting(LuceneEnvironment.Transaction.TransLog.TYPE, RAMTransLog.class.getName());
+            }
+            child = DomUtils.getChildElementsByTagName(readCommittedSettingsEle, "fsTransLog", true);
+            if (child.size() == 1) {
+                Element fsTranLogSettingsEle = (Element) child.get(0);
+                settings.setSetting(LuceneEnvironment.Transaction.TransLog.TYPE, FSTransLog.class.getName());
+                settings.setSetting(LuceneEnvironment.Transaction.TransLog.PATH, DomUtils.getElementAttribute(fsTranLogSettingsEle, "path"));
+            }
         }
     }
 

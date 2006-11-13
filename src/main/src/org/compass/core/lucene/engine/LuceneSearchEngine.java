@@ -24,6 +24,7 @@ import org.apache.lucene.document.Field;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
@@ -386,6 +387,9 @@ public class LuceneSearchEngine implements SearchEngine {
         return searchEngineFactory;
     }
 
+    public CompassSettings getSettings() {
+        return searchEngineFactory.getSettings();
+    }
 
     public boolean isReadOnly() {
         return this.readOnly;

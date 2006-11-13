@@ -3,6 +3,8 @@ package org.compass.core.test.schema;
 import java.util.Map;
 
 import junit.framework.TestCase;
+import org.apache.lucene.index.FSTransLog;
+import org.apache.lucene.index.RAMTransLog;
 import org.compass.core.accessor.DirectPropertyAccessor;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
@@ -31,6 +33,25 @@ public class SchemaSimpleTests extends TestCase {
 
         assertEquals("default", settings.getSetting(CompassEnvironment.NAME));
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+
+    public void testRamTransLog() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/ramtranslog.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals(RAMTransLog.class.getName(), settings.getSetting(LuceneEnvironment.Transaction.TransLog.TYPE));
+    }
+
+    public void testFsTransLog() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/fstranslog.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals(FSTransLog.class.getName(), settings.getSetting(LuceneEnvironment.Transaction.TransLog.TYPE));
+        assertEquals("/tmp", settings.getSetting(LuceneEnvironment.Transaction.TransLog.PATH));
     }
 
     public void testQueryParser() throws Exception {

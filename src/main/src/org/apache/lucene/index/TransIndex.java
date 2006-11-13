@@ -30,7 +30,6 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
-import org.apache.lucene.store.RAMDirectory;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.spi.InternalResource;
@@ -83,6 +82,8 @@ public class TransIndex {
 
     private IndexSearcher indexSearcher;
 
+    private TransLog transLog;
+
     private Directory transDir;
 
     private SegmentInfos transSegmentInfos;
@@ -103,12 +104,14 @@ public class TransIndex {
      * transactional support, with a transactional RAM directory. Also
      * initializes a transactional segment infos.
      */
-    public TransIndex(String subIndex, Directory dir, LuceneSettings luceneSettings) throws IOException {
+    public TransIndex(String subIndex, Directory dir, TransLog transLog, LuceneSettings luceneSettings) throws IOException {
         this(dir, false, false, luceneSettings);
-        transDir = new RAMDirectory();
+        this.transLog = transLog;
+        transDir = transLog.getDirectory();
+        transCreates = new ArrayList();
+        transReaders = new ArrayList();
         transSegmentInfos = new SegmentInfos();
         transSegmentInfos.write(transDir);
-        transCreates = new ArrayList();
         // initialize the index reader
         if (segmentInfos.size() == 1) { // index is optimized
             indexReader = SegmentReader.get(segmentInfos, segmentInfos.info(0), false);
@@ -121,7 +124,6 @@ public class TransIndex {
             indexReader = new CompassMultiReader(subIndex, directory, segmentInfos, false, readers);
         }
         indexSearcher = new IndexSearcher(indexReader);
-        transReaders = new ArrayList();
     }
 
     // Taken from IndexWriter private constructor
@@ -167,18 +169,26 @@ public class TransIndex {
         dw.setInfoStream(infoStream);
         String segmentName = newTransSegmentName();
         dw.addDocument(segmentName, ((LuceneResource) resource).getDocument());
-        transCreates.add(resource.resourceKey());
+
         SegmentInfo segmentInfo = new SegmentInfo(segmentName, 1, transDir);
         transSegmentInfos.addElement(segmentInfo);
+
+        transReaders.add(SegmentReader.get(segmentInfo));
+        transCreates.add(resource.resourceKey());
+
+        if (transLog.shouldUpdateTransSegments()) {
+            transSegmentInfos.write(transDir);
+        }
+
         ((LuceneResource) resource).setDocNum(indexReader.maxDoc() + transCreates.size() - 1);
     }
 
     // logic taken from lucene, need to monitor
-    private final synchronized String newTransSegmentName() {
+    private final String newTransSegmentName() {
         return "_" + Integer.toString(transSegmentInfos.counter++, Character.MAX_RADIX);
     }
 
-    private final synchronized String newSegmentName() {
+    private final String newSegmentName() {
         return "_" + Integer.toString(segmentInfos.counter++, Character.MAX_RADIX);
     }
 
@@ -187,14 +197,13 @@ public class TransIndex {
      * transactional index as well as the transactional reader (if created).
      */
     public void deleteTransResource(ResourceKey resourceKey) throws IOException {
-        // TODO: Maybe can be implemented to have better performance
         int i = transCreates.indexOf(resourceKey);
         if (i != -1) {
-            transCreates.remove(i);
             transSegmentInfos.removeElementAt(i);
-            // if we already created trans readers, we need to remove it as well
-            if (i < transReaders.size()) {
-                transReaders.remove(i);
+            transCreates.remove(i);
+            transReaders.remove(i);
+            if (transLog.shouldUpdateTransSegments()) {
+                transSegmentInfos.write(transDir);
             }
         }
     }
@@ -224,11 +233,6 @@ public class TransIndex {
     public IndexReader[] getFullIndexReaderAsArray() throws IOException {
         if (transSegmentInfos.size() == 0) {
             return new IndexReader[]{indexReader};
-        }
-        if (transSegmentInfos.size() != transReaders.size()) {
-            for (int i = transReaders.size(); i < transSegmentInfos.size(); i++) {
-                transReaders.add(SegmentReader.get(transSegmentInfos.info(i)));
-            }
         }
         IndexReader[] readers = new IndexReader[1 + transReaders.size()];
         readers[0] = indexReader;
@@ -278,11 +282,6 @@ public class TransIndex {
         if (transSegmentInfos.size() == 0) {
             return new Searcher[]{indexSearcher};
         }
-        if (transSegmentInfos.size() != transReaders.size()) {
-            for (int i = transReaders.size(); i < transSegmentInfos.size(); i++) {
-                transReaders.add(SegmentReader.get(transSegmentInfos.info(i)));
-            }
-        }
         // TODO can cache this stuff if no changes were made from the last call
         IndexReader[] transReadersArr = (IndexReader[]) transReaders.toArray(new IndexReader[transReaders.size()]);
         IndexReader transReader = new MultiReader(transDir, transSegmentInfos, false, transReadersArr);
@@ -304,12 +303,8 @@ public class TransIndex {
 
         // TODO do we need to merge if we only have one segment?
         // TODO maybe we need an option to somehow flush the trans directory content into the direcotry without performing merge (it might be faster)
-        for (int i = 0; i < transSegmentInfos.size(); i++) {
-            SegmentInfo si = transSegmentInfos.info(i);
-            if (infoStream != null)
-                infoStream.print(" " + si.name + " (" + si.docCount + " docs)");
-            IndexReader reader = SegmentReader.get(si);
-            merger.add(reader);
+        for (int i = 0; i < transReaders.size(); i++) {
+            merger.add((IndexReader) transReaders.get(i));
         }
         int mergedDocCount = merger.merge();
         if (infoStream != null) {

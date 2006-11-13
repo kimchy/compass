@@ -59,6 +59,10 @@
         <searchEngine useCompoundFile="true">
             <optimizer type="org.compass.core.lucene.engine.optimizer.NullOptimizer" />
         </searchEngine>
+
+        <settings>
+            <setting name="compass.transaction.translog.type" value="org.apache.lucene.index.FSTransLog" />
+        </settings>
     </compass>
 
 </compass-core-config>

@@ -521,6 +521,23 @@ public class LuceneEnvironment {
          * reflected in the index). Defaults to <code>true</code>.
          */
         public static final String CLEAR_CACHE_ON_COMMIT = "compass.transaction.clearCacheOnCommit";
+
+        /**
+         * Transaction log settings
+         */
+        public static final class TransLog {
+
+            /**
+             * The fully qualified type of the {@link org.apache.lucene.index.TransLog}
+             * implementation.
+             */
+            public static final String TYPE = "compass.transaction.translog.type";
+
+            /**
+             * Applies to tran logs that require a location like {@link org.apache.lucene.index.FSTransLog}.
+             */
+            public static final String PATH = "compass.transaction.translog.path";
+        }
     }
 
     /* Optimizer Settings */
