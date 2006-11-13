@@ -16,6 +16,7 @@
 
 package org.compass.core.config.process;
 
+import java.lang.reflect.Modifier;
 import java.util.Iterator;
 
 import org.compass.core.accessor.PropertyAccessor;
@@ -50,8 +51,12 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
 
                 // resolve the class mapping constructor
                 classMapping.setConstructor(ClassUtils.getDefaultConstructor(classMapping.getClazz()));
-                if (!classMapping.getClazz().isInterface() && classMapping.getConstructor() == null) {
-                    throw new MappingException("No default constructor defined for class [" + classMapping.getName() + "]");
+                // if it is not abstract and not an interface, it must have a default constructor
+                if (!Modifier.isAbstract(classMapping.getClazz().getModifiers()) && !Modifier.isInterface(classMapping.getClazz().getModifiers())) {
+                    if (classMapping.getConstructor() == null) {
+                        throw new MappingException("No default constructor defined for class [" + classMapping.getName() + "]");
+                    }
+
                 }
                 if (classMapping.getPolyClass() != null) {
                     classMapping.setPolyConstructor(ClassUtils.getDefaultConstructor(classMapping.getPolyClass()));
