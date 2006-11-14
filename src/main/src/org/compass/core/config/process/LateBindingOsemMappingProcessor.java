@@ -36,7 +36,7 @@ import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
-import org.compass.core.mapping.osem.OsemMappingUtils;
+import org.compass.core.mapping.osem.OsemMappingIterator;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.marshall.MarshallingEnvironment;
@@ -91,7 +91,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private void secondPassNoUnmarshalling(ClassMapping classMapping) {
         classMapping.setPath(namingStrategy.buildPath(compassMapping.getPath(), classMapping.getAlias()));
-        OsemMappingUtils.iterateMappings(new NoUnmarshallingCallback(classMapping), classMapping, false);
+        OsemMappingIterator.iterateMappings(new NoUnmarshallingCallback(classMapping), classMapping, false);
     }
 
     private void secondPass(ClassMapping classMapping, CompassMapping fatherMapping) {
@@ -280,7 +280,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         chainedComponents.clear();
     }
 
-    private class NoUnmarshallingCallback implements OsemMappingUtils.ClassMappingCallback {
+    private class NoUnmarshallingCallback implements OsemMappingIterator.ClassMappingCallback {
 
         private ClassPropertyMapping classPropertyMapping;
 

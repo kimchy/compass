@@ -27,7 +27,7 @@ import org.compass.core.util.Assert;
 /**
  * @author kimchy
  */
-public abstract class OsemMappingUtils {
+public abstract class OsemMappingIterator {
 
     public static interface ClassMappingCallback {
 
@@ -60,6 +60,17 @@ public abstract class OsemMappingUtils {
         void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping);
     }
 
+    /**
+     * <p>Gathers both {@link org.compass.core.mapping.osem.ClassPropertyMapping}s
+     * and {@link org.compass.core.mapping.ResourcePropertyMapping}s.
+     *
+     * <p>Also performs duplicate detection for referenced aliases. Duplicate mappings might occur
+     * when the referenced alias is referencing several mappings (in case of the referenced class
+     * actually contructing an object tree). Mappings that exist in the base class will be travesrsed
+     * twice without the duplicate detection. The {@link #onBeginMultipleMapping(ClassMapping, org.compass.core.mapping.Mapping)}
+     * detects such mappings, processes only the first one, and returns <code>false</code> for the rest
+     * (denoting not to continue the investigation of this referenced mapping).
+     */
     public static class ClassPropertyAndResourcePropertyGatherer implements ClassMappingCallback {
 
         private ArrayList classPropertyMappings = new ArrayList();
@@ -196,7 +207,7 @@ public abstract class OsemMappingUtils {
                 if (recursive) {
                     ClassMapping[] refMappings = componentMapping.getRefClassMappings();
                     for (int i = 0; i < refMappings.length; i++) {
-                        OsemMappingUtils.iterateMappings(callback, refMappings[i]);
+                        iterateMappings(callback, refMappings[i]);
                     }
                 }
 
@@ -210,11 +221,11 @@ public abstract class OsemMappingUtils {
                 if (recursive) {
                     ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
                     for (int i = 0; i < refMappings.length; i++) {
-                        OsemMappingUtils.iterateMappings(callback, refMappings[i]);
+                        iterateMappings(callback, refMappings[i]);
                     }
 
                     if (referenceMapping.getRefCompMapping() != null) {
-                        OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefCompMapping());
+                        iterateMappings(callback, referenceMapping.getRefCompMapping());
                     }
                 }
 
@@ -253,7 +264,7 @@ public abstract class OsemMappingUtils {
                     if (recursive) {
                         ClassMapping[] refMappings = componentMapping.getRefClassMappings();
                         for (int i = 0; i < refMappings.length; i++) {
-                            OsemMappingUtils.iterateMappings(callback, refMappings[i]);
+                            iterateMappings(callback, refMappings[i]);
                         }
                     }
 
@@ -267,11 +278,11 @@ public abstract class OsemMappingUtils {
                     if (recursive) {
                         ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
                         for (int i = 0; i < refMappings.length; i++) {
-                            OsemMappingUtils.iterateMappings(callback, refMappings[i]);
+                            iterateMappings(callback, refMappings[i]);
                         }
 
                         if (referenceMapping.getRefCompMapping() != null) {
-                            OsemMappingUtils.iterateMappings(callback, referenceMapping.getRefCompMapping());
+                            iterateMappings(callback, referenceMapping.getRefCompMapping());
                         }
                     }
 

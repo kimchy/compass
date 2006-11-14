@@ -32,7 +32,7 @@ import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
-import org.compass.core.mapping.osem.OsemMappingUtils;
+import org.compass.core.mapping.osem.OsemMappingIterator;
 
 /**
  * @author kimchy
@@ -88,7 +88,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
      *
      * <p>When ref alias has more than one alias, duplicate mappings might exists.
      * Duplicate mappings are mappings that are shared by several mappings.
-     * {@link org.compass.core.mapping.osem.OsemMappingUtils.ClassPropertyAndResourcePropertyGatherer}
+     * {@link org.compass.core.mapping.osem.OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer}
      * ignores this duplicates, and only process the first one. Later, in the post process
      * stage ({@link org.compass.core.config.process.PostProcessorMappingProcessor}, the ones
      * that got skipped will be replced with the ones that were (they are the same).
@@ -96,9 +96,9 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
      * @param classMapping
      */
     private void buildClassMetaDataIds(ClassMapping classMapping) {
-        OsemMappingUtils.ClassPropertyAndResourcePropertyGatherer callback =
-                new OsemMappingUtils.ClassPropertyAndResourcePropertyGatherer();
-        OsemMappingUtils.iterateMappings(callback, classMapping);
+        OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer callback =
+                new OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer();
+        OsemMappingIterator.iterateMappings(callback, classMapping);
 
         HashMap propertyMappingsMap = new HashMap();
         List pMappings = callback.getResourcePropertyMappings();

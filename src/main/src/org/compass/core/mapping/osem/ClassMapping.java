@@ -94,7 +94,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         // since we do not perform static bindings when no unmarshalling, we will get OOME
         // (we do not copy the mappings or use max-depth)
         boolean recursive = isSupportUnmarshall();
-        OsemMappingUtils.iterateMappings(callback, this, recursive);
+        OsemMappingIterator.iterateMappings(callback, this, recursive);
         List findList = callback.getResourcePropertyMappings();
         resourcePropertyMappings = (ResourcePropertyMapping[])
                 findList.toArray(new ResourcePropertyMapping[findList.size()]);
@@ -208,7 +208,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         this.polyConstructor = polyConstructor;
     }
 
-    public static class PostProcessMappingCallback extends OsemMappingUtils.ClassPropertyAndResourcePropertyGatherer {
+    public static class PostProcessMappingCallback extends OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer {
 
         private HashMap pathMappings = new HashMap();
 

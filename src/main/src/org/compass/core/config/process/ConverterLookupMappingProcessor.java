@@ -35,7 +35,7 @@ import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
-import org.compass.core.mapping.osem.OsemMappingUtils;
+import org.compass.core.mapping.osem.OsemMappingIterator;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
@@ -83,10 +83,10 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
 
     private void lookupConverter(ClassMapping classMapping) throws MappingException {
         MappingProcessorUtils.lookupConverter(converterLookup, classMapping);
-        OsemMappingUtils.iterateMappings(new OsemConverterLookup(), classMapping, false);
+        OsemMappingIterator.iterateMappings(new OsemConverterLookup(), classMapping, false);
     }
 
-    private class OsemConverterLookup implements OsemMappingUtils.ClassMappingCallback {
+    private class OsemConverterLookup implements OsemMappingIterator.ClassMappingCallback {
 
         private ClassPropertyMapping classPropertyMapping;
 
