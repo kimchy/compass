@@ -9,8 +9,6 @@
             <meta-data>name</meta-data>
         </property>
         <component name="favouriteSon" ref-alias="favouriteson" accessor="field"/>
-        <!--swap (comment/uncomment) these two lines to get an OOME-->
-        <!--<component name="children" ref-alias="daughter,favouriteson,nonfavouriteson" accessor="field"/>-->
         <component name="children" ref-alias="child,son,daughter,favouriteson,nonfavouriteson" accessor="field"/>
     </class>
 
