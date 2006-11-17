@@ -64,7 +64,7 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
         mappingsByNameMap.put(originalMapping.getName(), mapping.getName());
         int index = mappings.indexOf(originalMapping);
         if (index < 0) {
-            throw new IllegalStateException("Internal Error in Compass, origianl mapping [" + originalMapping.getName() +
+            throw new IllegalStateException("Internal Error in Compass, original mapping [" + originalMapping.getName() +
                     "] not found");
         }
         mappings.set(index, mapping);
