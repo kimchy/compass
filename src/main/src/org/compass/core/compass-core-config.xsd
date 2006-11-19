@@ -55,7 +55,8 @@
             <xsd:annotation>
                 <xsd:documentation>
                     A setting for managed id index feature. When an internal managed id is created, it's index setting
-                    will be created using this global setting (if not defined locally in the mapping file).
+                    will be created using this global setting (if not defined locally in the mapping file). Possible
+                    values are no and un_tokenized, with default value set to no.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

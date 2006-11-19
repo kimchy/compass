@@ -514,7 +514,9 @@ public class CompassEnvironment {
         /**
          * A setting for managed id index feature. When an internal managed id is
          * created, it's index setting will be created using this global setting (if
-         * not defined locally in the mapping file).
+         * not defined locally in the mapping file). Possible values can be taken from
+         * {@link org.compass.core.Property.Index}, with the default value of <code>no</code>.
+         * (Note, the other possible value is <code>un_tokenized</code>).
          */
         public static final String MANAGED_ID_INDEX = "compass.osem.managedId.index";
 
