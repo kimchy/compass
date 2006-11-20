@@ -31,11 +31,11 @@ public class Comp1Tests extends AbstractTestCase {
         return new String[]{"component/comp1/mapping.cpm.xml"};
     }
 
-    public void testB1WithC1AndC2AsNulls() throws Exception {
+    public void testPersons() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Person person = new Person();
+        Person person = new SpecialPerson();
         person.id = 1;
         person.description = "test";
         person.names = new ArrayList();
@@ -46,7 +46,7 @@ public class Comp1Tests extends AbstractTestCase {
         person.names.add(personName);
         session.save(person);
 
-        person = (Person) session.load(Person.class, new Integer(1));
+        person = (Person) session.load(SpecialPerson.class, new Integer(1));
         assertEquals("test", person.description);
         assertEquals(1, person.names.size());
 

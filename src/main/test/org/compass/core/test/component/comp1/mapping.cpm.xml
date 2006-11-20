@@ -21,4 +21,7 @@
         <component name="names" accessor="field" ref-alias="personName"/>
     </class>
 
+    <class name="SpecialPerson" alias="specialPerson" extends="person" poly="true">
+    </class>
+
 </compass-core-mapping>
