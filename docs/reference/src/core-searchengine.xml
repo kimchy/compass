@@ -425,7 +425,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
     <sect2 id="core-searchengine-optimizers-scheduledOptimizers">
       <title>Scheduled Optimizers</title>
       <para>
-        Each optimizer in Compass can be wrapped to b executed in a scheduled manner. The default behavior within Compass is to schedule the configured optimizer (unless it is the null optimizer). Here is a sample configuration file that controls the scheduling of an optimizer:
+        Each optimizer in Compass can be wrapped to be executed in a scheduled manner. The default behavior within Compass is to schedule the configured optimizer (unless it is the null optimizer). Here is a sample configuration file that controls the scheduling of an optimizer:
 <programlisting><![CDATA[<compass name="default">
 
   <connection>
@@ -457,7 +457,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       <title>Adaptive Optimizer</title>
 
       <para>
-        The <classname>AdaptiveOptimizer</classname> optimizes the segments while trying to keep the optimization time at bay. As an example, when we have a large segment in our index (for example, after we batched indexed the data), and we perform several interactive transactions, the aggressive optimizer will than merge all the segments together, while the adaptive optimizer will only merge the new small segments. You can set the limit of the number of segments, after which the index is considered to need optimization (the adaptive optimizer merge factor).
+        The <classname>AdaptiveOptimizer</classname> optimizes the segments while trying to keep the optimization time at bay. As an example, when we have a large segment in our index (for example, after we batched indexed the data), and we perform several interactive transactions, the aggressive optimizer will then merge all the segments together, while the adaptive optimizer will only merge the new small segments. You can set the limit of the number of segments, after which the index is considered to need optimization (the adaptive optimizer merge factor).
       </para>
 
     </sect2>

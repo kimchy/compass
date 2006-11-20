@@ -300,7 +300,7 @@ session.save(r);]]></programlisting>
             </row>
             <row>
               <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
-              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more perform ant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
+              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more performant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
             </row>
             <row>
                 <entry>converter (optional)</entry>

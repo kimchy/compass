@@ -46,7 +46,7 @@
       <mmap path="/shared/index-data"/>
   </connection>
   
-  <transaction lockDir="/shared/index-lock"
+  <transaction lockDir="/shared/index-lock" />
 </compass>
 ]]></programlisting>
     </para>

@@ -1144,7 +1144,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
-              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more perform ant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
+              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more performant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
             </row>
             <row>
               <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
@@ -1177,7 +1177,7 @@ public class Daughter extends Child {
       <para>
         Declaring and using the <literal>dynamic-meta-data</literal> element.
 
-<programlisting><![CDATA[<dynamci-meta-data
+<programlisting><![CDATA[<dynamic-meta-data
       name="The name the meta data will be saved under"
       store="yes|no|compress"
       index="tokenized|un_tokenized|no"
@@ -1222,7 +1222,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
-              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more perform ant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
+              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more performant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
             </row>
             <row>
               <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
