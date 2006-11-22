@@ -20,6 +20,7 @@ import org.compass.core.Compass;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngineFactory;
+import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.transaction.TransactionFactory;
@@ -31,12 +32,14 @@ public interface InternalCompass extends Compass {
     CompassSettings getSettings();
 
     CompassMapping getMapping();
-    
+
     CompassMetaData getMetaData();
-    
+
     SearchEngineFactory getSearchEngineFactory();
-    
+
     TransactionFactory getTransactionFactory();
-    
+
     ConverterLookup getConverterLookup();
+
+    PropertyNamingStrategy getPropertyNamingStrategy();
 }

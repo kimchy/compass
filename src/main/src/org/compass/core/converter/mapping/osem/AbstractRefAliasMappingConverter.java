@@ -102,7 +102,8 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
                 throw new ConversionException("Mapping for root alias [" + resource.getAlias() +
                         "] with one of its mappings with multiple ref-alias ["
                         + StringUtils.arrayToCommaDelimitedString(hasRefAliasMapping.getRefAliases())
-                        + "] could not find a matching class (either stored in the index or configured)");
+                        + "] could not find a matching class (either stored in the index or configured). " +
+                        "Have you defined the hierarchy of ref aliased with poly set to true?");
             }
         }
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);

@@ -18,6 +18,7 @@ package org.compass.core.marshall;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
+import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.spi.InternalCompassSession;
@@ -37,6 +38,8 @@ public interface MarshallingContext {
     InternalCompassSession getSession();
 
     MarshallingStrategy getMarshallingStrategy();
+
+    PropertyNamingStrategy getPropertyNamingStrategy();
 
     void setAttribute(Object key, Object value);
 

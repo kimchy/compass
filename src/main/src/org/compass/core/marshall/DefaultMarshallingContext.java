@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
+import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.spi.InternalCompassSession;
@@ -42,6 +43,8 @@ public class DefaultMarshallingContext implements MarshallingContext {
 
     private MarshallingStrategy marshallingStrategy;
 
+    private PropertyNamingStrategy propertyNamingStrategy;
+
     private HashMap attributes = new HashMap();
 
     private HashMap nullValuesPath = new HashMap();
@@ -58,6 +61,7 @@ public class DefaultMarshallingContext implements MarshallingContext {
         this.converterLookup = converterLookup;
         this.session = session;
         this.marshallingStrategy = marshallingStrategy;
+        this.propertyNamingStrategy = session.getCompass().getPropertyNamingStrategy();
     }
 
     public void clearContext() {
@@ -130,5 +134,9 @@ public class DefaultMarshallingContext implements MarshallingContext {
 
     public Object removeAttribute(Object key) {
         return attributes.remove(key);
+    }
+
+    public PropertyNamingStrategy getPropertyNamingStrategy() {
+        return propertyNamingStrategy;
     }
 }

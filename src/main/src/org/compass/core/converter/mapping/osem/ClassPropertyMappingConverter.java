@@ -39,8 +39,17 @@ public class ClassPropertyMappingConverter implements Converter {
         }
         ClassPropertyMapping aMapping = (ClassPropertyMapping) mapping;
         boolean store = false;
+        boolean disableInternalMappings = false;
+        if (context.getAttribute(ClassMappingConverter.DISABLE_INTERNAL_MAPPINGS) != null) {
+            disableInternalMappings = true;
+        }
         for (Iterator it = aMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
+            if (disableInternalMappings) {
+                if (context.getPropertyNamingStrategy().isInternal(m.getPath().getPath())) {
+                    continue;
+                }
+            }
             store |= m.getConverter().marshall(resource, root, m, context);
         }
         return store;

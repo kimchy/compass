@@ -232,6 +232,10 @@ public class DefaultCompass implements InternalCompass {
         return converterLookup;
     }
 
+    public PropertyNamingStrategy getPropertyNamingStrategy() {
+        return propertyNamingStrategy;
+    }
+
     private void registerJndi() throws CompassException {
         if (!settings.getSettingAsBoolean(CompassEnvironment.Jndi.ENABLE, false)) {
             return;

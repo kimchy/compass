@@ -49,12 +49,12 @@ public class CyclicTests extends AbstractTestCase {
         session.save(rootCyclic);
 
         Resource resource = session.loadResource(Cyclic.class, new Long(1));
-        assertEquals(5, resource.getProperties().length);
+        assertEquals(4, resource.getProperties().length);
         assertEquals(2, resource.getProperties("value").length);
         // this is our actual id
         assertEquals("1", resource.get("$/cyclic/id"));
-        // the id saved because of the component, but has not effect
-        assertEquals(2, resource.getProperties("$/cyclic/id").length);
+        // note, only the root class mappings ids are saved
+        assertEquals(1, resource.getProperties("$/cyclic/id").length);
 
         tr.commit();
         session.close();
@@ -83,12 +83,12 @@ public class CyclicTests extends AbstractTestCase {
         session.save(rootCyclic);
 
         Resource resource = session.loadResource(Cyclic.class, new Long(1));
-        assertEquals(7, resource.getProperties().length);
+        assertEquals(5, resource.getProperties().length);
         assertEquals(3, resource.getProperties("value").length);
         // this is our actual id
         assertEquals("1", resource.get("$/cyclic/id"));
-        // the id saved because of the component, but has not effect
-        assertEquals(3, resource.getProperties("$/cyclic/id").length);
+        // note, only the root class mappings ids are saved
+        assertEquals(1, resource.getProperties("$/cyclic/id").length);
 
         tr.commit();
         session.close();

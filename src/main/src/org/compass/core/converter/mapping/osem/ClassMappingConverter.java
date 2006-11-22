@@ -49,6 +49,10 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
     public static final String ROOT_CLASS_MAPPING_KEY = "$rcmk";
 
+    public static final String DISABLE_INTERNAL_MAPPINGS = "$dim";
+
+    private static final Object DISABLE_INTERNAL_MAPPINGS_MARK = new Object();
+
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         SearchEngine searchEngine = context.getSearchEngine();
@@ -59,6 +63,11 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         if (classMapping.isRoot()) {
             doSetBoost(resource, root, classMapping, context);
             context.setAttribute(ROOT_CLASS_MAPPING_KEY, classMapping);
+            context.setAttribute(DISABLE_INTERNAL_MAPPINGS, null);
+        } else {
+            if (!classMapping.isSupportUnmarshall()) {
+                context.setAttribute(DISABLE_INTERNAL_MAPPINGS, DISABLE_INTERNAL_MAPPINGS_MARK);
+            }
         }
 
         if (classMapping.isSupportUnmarshall()) {
