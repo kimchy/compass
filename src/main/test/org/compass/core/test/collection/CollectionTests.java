@@ -5,7 +5,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.compass.core.*;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
+import org.compass.core.Property;
+import org.compass.core.Resource;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -112,9 +116,9 @@ public class CollectionTests extends AbstractTestCase {
 
         o = (SimpleTypeCollection) session.load("no-metadata-stored", id);
         assertEquals("test", o.getValue());
-        assertNull(o.getStrings());
+        assertEquals(0, o.getStrings().size());
         Resource r = session.loadResource("no-metadata-stored", id);
-        assertNull(r.get("$/no-metadata-stored/strings/colSize"));
+        assertEquals("0", r.get("$/no-metadata-stored/strings/colSize"));
 
         transaction.commit();
         session.close();
