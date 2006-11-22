@@ -29,14 +29,6 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private static final int ID_NOT_SET_VALUE = -1;
 
-    public String getDefinedInAlias() {
-        return definedInAlias;
-    }
-
-    public void setDefinedInAlias(String definedInAlias) {
-        this.definedInAlias = definedInAlias;
-    }
-
     public static final class ManagedId extends Parameter {
 
         private static final long serialVersionUID = -7849904473959816389L;
@@ -269,4 +261,11 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         this.managedIdConverterName = managedIdConverterName;
     }
 
+    public String getDefinedInAlias() {
+        return definedInAlias;
+    }
+
+    public void setDefinedInAlias(String definedInAlias) {
+        this.definedInAlias = definedInAlias;
+    }
 }

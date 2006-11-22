@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.compass.core.util.Assert;
-
 /**
  * @author kimchy
  */
@@ -53,21 +51,6 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
         mappingsByNameMap.put(mapping.getName(), mapping);
         mappings.add(mapping);
         return mappings.size() - 1;
-    }
-
-    /**
-     * Replaces the instance of originalMapping with mapping
-     */
-    public void replaceMapping(Mapping originalMapping, Mapping mapping) {
-        Assert.isTrue(originalMapping.getName().equals(mapping.getName()), "Internal Error in Compass, Original[" +
-                originalMapping + "] does not equal [" + mapping.getName() + "]");
-        mappingsByNameMap.put(originalMapping.getName(), mapping.getName());
-        int index = mappings.indexOf(originalMapping);
-        if (index < 0) {
-            throw new IllegalStateException("Internal Error in Compass, original mapping [" + originalMapping.getName() +
-                    "] not found");
-        }
-        mappings.set(index, mapping);
     }
 
     public void addMappings(MultipleMapping mapping) {

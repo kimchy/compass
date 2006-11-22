@@ -67,7 +67,7 @@ public abstract class OsemMappingIterator {
      * <p>Also performs duplicate detection for referenced aliases. Duplicate mappings might occur
      * when the referenced alias is referencing several mappings (in case of the referenced class
      * actually contructing an object tree). Mappings that exist in the base class will be travesrsed
-     * twice without the duplicate detection. The {@link #onBeginMultipleMapping(ClassMapping, org.compass.core.mapping.Mapping)}
+     * twice without the duplicate detection. The {@link #onBeginMultipleMapping(ClassMapping,org.compass.core.mapping.Mapping)}
      * detects such mappings, processes only the first one, and returns <code>false</code> for the rest
      * (denoting not to continue the investigation of this referenced mapping).
      */
@@ -183,16 +183,7 @@ public abstract class OsemMappingIterator {
             Mapping m = (Mapping) mappingsIt.next();
             if (m instanceof ClassPropertyMapping) {
                 ClassPropertyMapping classPropertyMapping = (ClassPropertyMapping) m;
-                boolean drillDown = callback.onBeginMultipleMapping(classMapping, classPropertyMapping);
-                if (drillDown) {
-                    callback.onClassPropertyMapping(classMapping, classPropertyMapping);
-                    for (Iterator resIt = classPropertyMapping.mappingsIt(); resIt.hasNext();) {
-                        ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) resIt.next();
-                        callback.onClassPropertyMetaDataMapping(classPropertyMetaDataMapping);
-                        callback.onResourcePropertyMapping(classPropertyMetaDataMapping);
-                    }
-                }
-                callback.onEndMultiplMapping(classMapping, classPropertyMapping);
+                iteratePropertyMapping(callback, classMapping, classPropertyMapping);
             } else if (m instanceof ParentMapping) {
                 callback.onParentMapping(classMapping, (ParentMapping) m);
             } else if (m instanceof DynamicMetaDataMapping) {
@@ -201,41 +192,18 @@ public abstract class OsemMappingIterator {
                 callback.onResourcePropertyMapping(dynamicMetaDataMapping);
             } else if (m instanceof ComponentMapping) {
                 ComponentMapping componentMapping = (ComponentMapping) m;
-                callback.onBeginMultipleMapping(classMapping, componentMapping);
-
-                callback.onComponentMapping(classMapping, componentMapping);
-                if (recursive) {
-                    ClassMapping[] refMappings = componentMapping.getRefClassMappings();
-                    for (int i = 0; i < refMappings.length; i++) {
-                        iterateMappings(callback, refMappings[i]);
-                    }
-                }
-
-                callback.onEndMultiplMapping(classMapping, componentMapping);
+                iterateComponentMapping(callback, classMapping, componentMapping, recursive);
             } else if (m instanceof ReferenceMapping) {
                 ReferenceMapping referenceMapping = (ReferenceMapping) m;
-                callback.onBeginMultipleMapping(classMapping, referenceMapping);
-
-                callback.onReferenceMapping(classMapping, referenceMapping);
-
-                if (recursive) {
-                    ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
-                    for (int i = 0; i < refMappings.length; i++) {
-                        iterateMappings(callback, refMappings[i]);
-                    }
-
-                    if (referenceMapping.getRefCompMapping() != null) {
-                        iterateMappings(callback, referenceMapping.getRefCompMapping());
-                    }
-                }
-
-                callback.onEndMultiplMapping(classMapping, referenceMapping);
+                iterateReferenceMapping(callback, classMapping, referenceMapping, recursive);
             } else if (m instanceof ConstantMetaDataMapping) {
                 ConstantMetaDataMapping constantMetaDataMapping = (ConstantMetaDataMapping) m;
-                callback.onBeginMultipleMapping(classMapping, constantMetaDataMapping);
+                boolean drillDown = callback.onBeginMultipleMapping(classMapping, constantMetaDataMapping);
 
-                callback.onConstantMetaDataMappaing(classMapping, constantMetaDataMapping);
-                callback.onResourcePropertyMapping(constantMetaDataMapping);
+                if (drillDown) {
+                    callback.onConstantMetaDataMappaing(classMapping, constantMetaDataMapping);
+                    callback.onResourcePropertyMapping(constantMetaDataMapping);
+                }
 
                 callback.onEndMultiplMapping(classMapping, constantMetaDataMapping);
             } else if (m instanceof AbstractCollectionMapping) {
@@ -245,53 +213,67 @@ public abstract class OsemMappingIterator {
                 Mapping elementMapping = colMapping.getElementMapping();
                 if (elementMapping instanceof ClassPropertyMapping) {
                     ClassPropertyMapping classPropertyMapping = (ClassPropertyMapping) elementMapping;
-                    boolean drillDown = callback.onBeginMultipleMapping(classMapping, classPropertyMapping);
-                    if (drillDown) {
-                        callback.onClassPropertyMapping(classMapping, classPropertyMapping);
-                        for (Iterator resIt = classPropertyMapping.mappingsIt(); resIt.hasNext();) {
-                            ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) resIt.next();
-                            callback.onClassPropertyMetaDataMapping(classPropertyMetaDataMapping);
-                            callback.onResourcePropertyMapping(classPropertyMetaDataMapping);
-                        }
-                    }
-                    callback.onEndMultiplMapping(classMapping, classPropertyMapping);
+                    iteratePropertyMapping(callback, classMapping, classPropertyMapping);
                 } else if (elementMapping instanceof ComponentMapping) {
                     ComponentMapping componentMapping = (ComponentMapping) elementMapping;
-                    callback.onBeginMultipleMapping(classMapping, componentMapping);
-
-                    callback.onComponentMapping(classMapping, componentMapping);
-
-                    if (recursive) {
-                        ClassMapping[] refMappings = componentMapping.getRefClassMappings();
-                        for (int i = 0; i < refMappings.length; i++) {
-                            iterateMappings(callback, refMappings[i]);
-                        }
-                    }
-
-                    callback.onEndMultiplMapping(classMapping, componentMapping);
+                    iterateComponentMapping(callback, classMapping, componentMapping, recursive);
                 } else if (elementMapping instanceof ReferenceMapping) {
                     ReferenceMapping referenceMapping = (ReferenceMapping) elementMapping;
-                    callback.onBeginMultipleMapping(classMapping, referenceMapping);
-
-                    callback.onReferenceMapping(classMapping, referenceMapping);
-
-                    if (recursive) {
-                        ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
-                        for (int i = 0; i < refMappings.length; i++) {
-                            iterateMappings(callback, refMappings[i]);
-                        }
-
-                        if (referenceMapping.getRefCompMapping() != null) {
-                            iterateMappings(callback, referenceMapping.getRefCompMapping());
-                        }
-                    }
-
-                    callback.onEndMultiplMapping(classMapping, referenceMapping);
+                    iterateReferenceMapping(callback, classMapping, referenceMapping, recursive);
                 }
                 callback.onEndCollectionMapping(colMapping);
             }
         }
         callback.onEndClassMapping(classMapping);
+    }
+
+    private static void iterateReferenceMapping(ClassMappingCallback callback, ClassMapping classMapping,
+                                                ReferenceMapping referenceMapping, boolean recursive) {
+        boolean drillDown = callback.onBeginMultipleMapping(classMapping, referenceMapping);
+        if (drillDown) {
+            callback.onReferenceMapping(classMapping, referenceMapping);
+
+            if (recursive) {
+                ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
+                for (int i = 0; i < refMappings.length; i++) {
+                    iterateMappings(callback, refMappings[i]);
+                }
+
+                if (referenceMapping.getRefCompMapping() != null) {
+                    iterateMappings(callback, referenceMapping.getRefCompMapping());
+                }
+            }
+        }
+        callback.onEndMultiplMapping(classMapping, referenceMapping);
+    }
+
+    private static void iterateComponentMapping(ClassMappingCallback callback, ClassMapping classMapping,
+                                                ComponentMapping componentMapping, boolean recursive) {
+        boolean drillDown = callback.onBeginMultipleMapping(classMapping, componentMapping);
+        if (drillDown) {
+            callback.onComponentMapping(classMapping, componentMapping);
+            if (recursive) {
+                ClassMapping[] refMappings = componentMapping.getRefClassMappings();
+                for (int i = 0; i < refMappings.length; i++) {
+                    iterateMappings(callback, refMappings[i]);
+                }
+            }
+        }
+        callback.onEndMultiplMapping(classMapping, componentMapping);
+    }
+
+    private static void iteratePropertyMapping(ClassMappingCallback callback, ClassMapping classMapping,
+                                               ClassPropertyMapping classPropertyMapping) {
+        boolean drillDown = callback.onBeginMultipleMapping(classMapping, classPropertyMapping);
+        if (drillDown) {
+            callback.onClassPropertyMapping(classMapping, classPropertyMapping);
+            for (Iterator resIt = classPropertyMapping.mappingsIt(); resIt.hasNext();) {
+                ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) resIt.next();
+                callback.onClassPropertyMetaDataMapping(classPropertyMetaDataMapping);
+                callback.onResourcePropertyMapping(classPropertyMetaDataMapping);
+            }
+        }
+        callback.onEndMultiplMapping(classMapping, classPropertyMapping);
     }
 
 }

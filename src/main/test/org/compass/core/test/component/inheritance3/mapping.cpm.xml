@@ -1,0 +1,22 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.inheritance3">
+
+    <class name="Father" alias="father">
+        <id name="id" accessor="field"  />
+        <component name="child" accessor="field" />
+    </class>
+
+    <class name="Child" alias="child" root="false" poly="true">
+        <property name="names" accessor="field">
+            <meta-data>name</meta-data>
+        </property>
+    </class>
+
+    <class name="Child1" alias="gc2" root="false" extends="child" poly="true">
+        
+    </class>
+
+</compass-core-mapping>

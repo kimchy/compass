@@ -24,4 +24,9 @@
     <class name="SpecialPerson" alias="specialPerson" extends="person" poly="true">
     </class>
 
+    <class name="User" alias="user" extends="common" poly="true">
+        <id name="id" accessor="field"/>
+        <component name="identity" ref-alias="person" accessor="field"/>
+    </class>
+
 </compass-core-mapping>

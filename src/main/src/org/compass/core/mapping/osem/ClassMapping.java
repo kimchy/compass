@@ -30,6 +30,7 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.PostProcessingMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.util.Assert;
 
 /**
  * @author kimchy
@@ -222,7 +223,30 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
          * were processed (for example, we added intenral ids to it where needed).
          */
         protected void onDuplicateMapping(ClassMapping classMapping, ObjectMapping actualMapping, ObjectMapping duplicateMapping) {
-            classMapping.replaceMapping(duplicateMapping, actualMapping);
+            Assert.isTrue(actualMapping.getName().equals(duplicateMapping.getName()), "Internal Error in Compass, Original[" +
+                    duplicateMapping + "] does not equal [" + actualMapping.getName() + "]");
+            classMapping.mappingsByNameMap.put(duplicateMapping.getName(), actualMapping);
+            int index = classMapping.mappings.indexOf(duplicateMapping);
+            if (index < 0) {
+                // let's look in the collection before we give up
+                for (int i = 0; i < classMapping.mappings.size(); i++) {
+                    Object o = classMapping.mappings.get(i);
+                    if (o instanceof AbstractCollectionMapping) {
+                        AbstractCollectionMapping temp = (AbstractCollectionMapping) o;
+                        if (temp.getElementMapping() == duplicateMapping) {
+                            temp.setElementMapping(actualMapping);
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (index < 0) {
+                throw new IllegalStateException("Internal Error in Compass, original mapping [" +
+                        duplicateMapping.getName() + "] not found");
+            } else {
+                classMapping.mappings.set(index, actualMapping);
+            }
         }
 
         private void addToPath(Mapping mapping) {

@@ -30,6 +30,10 @@ public class FatherImpl implements Father {
         return String.valueOf(currentId++);
     }
 
+    public static synchronized void resetId() {
+        currentId = 0;
+    }
+
     private String id;
     private String name;
     private FavouriteSon favouriteSon;
