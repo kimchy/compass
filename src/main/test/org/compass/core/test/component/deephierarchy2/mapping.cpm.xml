@@ -1,0 +1,30 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.deephierarchy2">
+
+    <class name="A" alias="a">
+        <id name="id"/>
+        <property name="name">
+            <meta-data>name</meta-data>
+        </property>
+        <component name="bs" ref-alias="b"/>
+    </class>
+
+    <class name="B" alias="b" root="false">
+        <id name="id"/>
+        <property name="name">
+            <meta-data>name</meta-data>
+        </property>
+        <component name="cs" ref-alias="c"/>
+    </class>
+
+    <class name="C" alias="c" root="false">
+        <id name="id" accessor="field"/>
+        <property name="name">
+            <meta-data>name</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

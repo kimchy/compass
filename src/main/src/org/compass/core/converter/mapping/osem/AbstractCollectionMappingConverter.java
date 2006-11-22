@@ -71,14 +71,12 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
 
         if (rootClassMapping.isSupportUnmarshall()) {
             context.removeHandleNulls(colMapping.getPath());
-            if (size > 0) {
-                Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
-                        Property.Store.YES, Property.Index.UN_TOKENIZED);
-                resource.addProperty(p);
-            }
+            Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
+                    Property.Store.YES, Property.Index.UN_TOKENIZED);
+            resource.addProperty(p);
         }
 
-        return size > 0;
+        return true;
     }
 
     protected abstract AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root);
