@@ -33,6 +33,12 @@ import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.util.ClassUtils;
 
 /**
+ * <p>Goes through each {@link org.compass.core.mapping.osem.ClassMapping} and resolves
+ * its reflection settings (constructor, getter, setter, and object class).
+ *
+ * <p>Since this processor happens before the flattening of the mappings, it is not
+ * required to follow the ref aliases for component and reference mappings.
+ *
  * @author kimchy
  */
 public class PropertyAccessorMappingProcessor implements MappingProcessor {
@@ -70,21 +76,13 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
         return compassMapping;
     }
 
-    private void processMapping(Mapping mapping, Object fatherObject, PropertyAccessorFactory propertyAccessorFactory)
+    private void processMapping(Mapping mapping, Class clazz, PropertyAccessorFactory propertyAccessorFactory)
             throws MappingException {
         if (!(mapping instanceof ObjectMapping)) {
             return;
         }
         ObjectMapping objectMapping = (ObjectMapping) mapping;
-        Class clazz = objectMapping.getObjClass();
-        if (clazz == null) {
-            if (fatherObject instanceof ObjectMapping) {
-                clazz = ((ObjectMapping) fatherObject).getObjClass();
-            } else {
-                clazz = (Class) fatherObject;
-            }
-            objectMapping.setObjClass(clazz);
-        }
+        objectMapping.setObjClass(clazz);
         PropertyAccessor pAccessor = propertyAccessorFactory.getPropertyAccessor(objectMapping.getAccessor());
         objectMapping.setGetter(pAccessor.getGetter(clazz, objectMapping.getPropertyName()));
         objectMapping.setSetter(pAccessor.getSetter(clazz, objectMapping.getPropertyName()));
@@ -92,7 +90,7 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
         if (mapping instanceof MultipleMapping) {
             MultipleMapping multipleMapping = (MultipleMapping) mapping;
             for (Iterator it = multipleMapping.mappingsIt(); it.hasNext();) {
-                processMapping((Mapping) it.next(), objectMapping, propertyAccessorFactory);
+                processMapping((Mapping) it.next(), clazz, propertyAccessorFactory);
             }
         }
     }

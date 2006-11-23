@@ -561,9 +561,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         bindConverter(referenceConf, referenceMapping);
 
         referenceMapping.setAccessor(referenceConf.getAttribute("accessor", null));
-        if (aliasMapping instanceof ClassMapping) {
-            referenceMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
-        }
         referenceMapping.setPropertyName(name);
     }
 
@@ -581,9 +578,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         bindConverter(componentConf, compMapping);
 
         compMapping.setAccessor(componentConf.getAttribute("accessor", null));
-        if (aliasMapping instanceof ClassMapping) {
-            compMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
-        }
         compMapping.setPropertyName(name);
 
         boolean override = componentConf.getAttributeAsBoolean("override", true);
@@ -596,9 +590,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         bindConverter(parentConf, parentMapping);
 
         parentMapping.setAccessor(parentConf.getAttribute("accessor", null));
-        if (aliasMapping instanceof ClassMapping) {
-            parentMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
-        }
         parentMapping.setPropertyName(name);
         parentMapping.setDefinedInAlias(aliasMapping.getAlias());
     }
@@ -617,9 +608,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         classPropertyMapping.setColClassName(classPropertyConf.getAttribute("col-class", null));
 
         classPropertyMapping.setAccessor(classPropertyConf.getAttribute("accessor", null));
-        if (aliasMapping instanceof ClassMapping) {
-            classPropertyMapping.setObjClass(((ClassMapping) aliasMapping).getClazz());
-        }
         classPropertyMapping.setPropertyName(name);
 
         classPropertyMapping.setAnalyzer(classPropertyConf.getAttribute("analyzer", null));
@@ -692,7 +680,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         mdMapping.setPath(new StaticPropertyPath(name));
 
         mdMapping.setAccessor(classPropertyMapping.getAccessor());
-        mdMapping.setObjClass(classPropertyMapping.getObjClass());
         mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
         bindConverter(metadataConf, mdMapping);

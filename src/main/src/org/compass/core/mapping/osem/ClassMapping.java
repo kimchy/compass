@@ -219,16 +219,18 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
 
         /**
-         * Since we did not process duplicate mappings, we need to replace them with the original mappings that
+         * <p>Since we did not process duplicate mappings, we need to replace them with the original mappings that
          * were processed (for example, we added intenral ids to it where needed).
          */
         protected void onDuplicateMapping(ClassMapping classMapping, ObjectMapping actualMapping, ObjectMapping duplicateMapping) {
             Assert.isTrue(actualMapping.getName().equals(duplicateMapping.getName()), "Internal Error in Compass, Original[" +
-                    duplicateMapping + "] does not equal [" + actualMapping.getName() + "]");
-            classMapping.mappingsByNameMap.put(duplicateMapping.getName(), actualMapping);
+                    duplicateMapping.getName() + "] does not equal [" + actualMapping.getName() + "]");
+
             int index = classMapping.mappings.indexOf(duplicateMapping);
             if (index < 0) {
-                // let's look in the collection before we give up
+                // let's look in the collection, if we find it as an element
+                // then we just replace it (the duplicate mapping might raise
+                // a duplicate for a collection, but with the collection element)
                 for (int i = 0; i < classMapping.mappings.size(); i++) {
                     Object o = classMapping.mappings.get(i);
                     if (o instanceof AbstractCollectionMapping) {
@@ -240,12 +242,13 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
                         }
                     }
                 }
+            } else {
+                classMapping.mappingsByNameMap.put(duplicateMapping.getName(), actualMapping);
+                classMapping.mappings.set(index, actualMapping);
             }
             if (index < 0) {
                 throw new IllegalStateException("Internal Error in Compass, original mapping [" +
                         duplicateMapping.getName() + "] not found");
-            } else {
-                classMapping.mappings.set(index, actualMapping);
             }
         }
 

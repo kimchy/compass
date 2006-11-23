@@ -1,0 +1,28 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.comp2">
+
+    <contract alias="common">
+        <property name="description" accessor="field">
+            <meta-data>description</meta-data>
+        </property>
+    </contract>
+
+    <class name="Person" alias="person" extends="common" poly="true">
+        <id name="id" accessor="field"/>
+        <property name="names" accessor="field" class="java.lang.String">
+            <meta-data>person</meta-data>
+        </property>
+    </class>
+
+    <class name="SpecialPerson" alias="specialPerson" extends="person" poly="true">
+    </class>
+
+    <class name="User" alias="user" extends="common" poly="true">
+        <id name="id" accessor="field"/>
+        <component name="identity" ref-alias="person" accessor="field"/>
+    </class>
+
+</compass-core-mapping>
