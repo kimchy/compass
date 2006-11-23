@@ -28,8 +28,6 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
 
     private String accessor;
 
-    private Class objClass;
-
     private String propertyName;
 
     private String definedInAlias;
@@ -44,7 +42,6 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
         copy.setSetter(getSetter());
         copy.setGetter(getGetter());
         copy.setAccessor(getAccessor());
-        copy.setObjClass(getObjClass());
         copy.setPropertyName(getPropertyName());
         return copy;
     }
@@ -87,14 +84,6 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
 
     public void setAccessor(String accessor) {
         this.accessor = accessor;
-    }
-
-    public Class getObjClass() {
-        return objClass;
-    }
-
-    public void setObjClass(Class objClass) {
-        this.objClass = objClass;
     }
 
     public String getPropertyName() {

@@ -43,11 +43,13 @@ import org.compass.core.util.ClassUtils;
  */
 public class PropertyAccessorMappingProcessor implements MappingProcessor {
 
+    private PropertyAccessorFactory propertyAccessorFactory;
+
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
 
         // initalize the property accessor registry
-        PropertyAccessorFactory propertyAccessorFactory = new PropertyAccessorFactory();
+        propertyAccessorFactory = new PropertyAccessorFactory();
         propertyAccessorFactory.configure(settings);
 
         for (Iterator rIt = compassMapping.mappingsIt(); rIt.hasNext();) {
@@ -67,22 +69,25 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
                 if (classMapping.getPolyClass() != null) {
                     classMapping.setPolyConstructor(ClassUtils.getDefaultConstructor(classMapping.getPolyClass()));
                 }
+                Class clazz = classMapping.getClazz();
+                if (classMapping.isPoly() && classMapping.getPolyClass() != null) {
+                    clazz = classMapping.getPolyClass();
+                }
 
                 for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
-                    processMapping((Mapping) it.next(), classMapping.getClazz(), propertyAccessorFactory);
+                    processMapping((Mapping) it.next(), clazz);
                 }
             }
         }
         return compassMapping;
     }
 
-    private void processMapping(Mapping mapping, Class clazz, PropertyAccessorFactory propertyAccessorFactory)
+    private void processMapping(Mapping mapping, Class clazz)
             throws MappingException {
         if (!(mapping instanceof ObjectMapping)) {
             return;
         }
         ObjectMapping objectMapping = (ObjectMapping) mapping;
-        objectMapping.setObjClass(clazz);
         PropertyAccessor pAccessor = propertyAccessorFactory.getPropertyAccessor(objectMapping.getAccessor());
         objectMapping.setGetter(pAccessor.getGetter(clazz, objectMapping.getPropertyName()));
         objectMapping.setSetter(pAccessor.getSetter(clazz, objectMapping.getPropertyName()));
@@ -90,7 +95,7 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
         if (mapping instanceof MultipleMapping) {
             MultipleMapping multipleMapping = (MultipleMapping) mapping;
             for (Iterator it = multipleMapping.mappingsIt(); it.hasNext();) {
-                processMapping((Mapping) it.next(), clazz, propertyAccessorFactory);
+                processMapping((Mapping) it.next(), clazz);
             }
         }
     }

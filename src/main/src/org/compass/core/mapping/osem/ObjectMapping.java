@@ -27,16 +27,6 @@ import org.compass.core.accessor.Setter;
 public interface ObjectMapping extends OsemMapping {
 
     /**
-     * Returns the class of the class mapping this object belongs to.
-     */
-    Class getObjClass();
-
-    /**
-     * Sets the class of the class mapping this object belongs to.
-     */
-    void setObjClass(Class objClass);
-
-    /**
      * Returns the accessor type for this mapping. The accessor type can be
      * field, property or a custom implementation of {@link org.compass.core.accessor.PropertyAccessor}
      * (this can be either the FQN of the class name or a regsitered type in the configuration, see

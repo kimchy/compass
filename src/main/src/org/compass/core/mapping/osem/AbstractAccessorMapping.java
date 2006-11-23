@@ -29,8 +29,6 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
 
     private String accessor;
 
-    private Class objClass;
-
     private String propertyName;
 
     private String definedInAlias;
@@ -44,11 +42,9 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
         copy.setGetter(getGetter());
         copy.setSetter(getSetter());
         copy.setAccessor(getAccessor());
-        copy.setObjClass(getObjClass());
         copy.setPropertyName(getPropertyName());
         copy.setDefinedInAlias(getDefinedInAlias());
     }
-
 
     public boolean hasAccessors() {
         return true;
@@ -76,14 +72,6 @@ public abstract class AbstractAccessorMapping extends AbstractMapping implements
 
     public void setAccessor(String accessor) {
         this.accessor = accessor;
-    }
-
-    public Class getObjClass() {
-        return objClass;
-    }
-
-    public void setObjClass(Class objClass) {
-        this.objClass = objClass;
     }
 
     public String getPropertyName() {

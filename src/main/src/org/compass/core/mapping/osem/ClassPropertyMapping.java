@@ -103,8 +103,6 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private String accessor;
 
-    private Class objClass;
-
     private String propertyName;
 
     private String definedInAlias;
@@ -121,7 +119,6 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         mapping.setManagedIdIndex(getManagedIdIndex());
         mapping.setColClassName(getColClassName());
         mapping.setAccessor(getAccessor());
-        mapping.setObjClass(getObjClass());
         mapping.setPropertyName(getPropertyName());
         mapping.setManagedIdConverter(getManagedIdConverter());
         mapping.setManagedIdConverterName(getManagedIdConverterName());
@@ -227,14 +224,6 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     public void setAccessor(String accessor) {
         this.accessor = accessor;
-    }
-
-    public Class getObjClass() {
-        return objClass;
-    }
-
-    public void setObjClass(Class objClass) {
-        this.objClass = objClass;
     }
 
     public String getPropertyName() {
