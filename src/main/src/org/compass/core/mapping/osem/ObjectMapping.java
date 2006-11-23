@@ -26,24 +26,52 @@ import org.compass.core.accessor.Setter;
  */
 public interface ObjectMapping extends OsemMapping {
 
+    /**
+     * Returns the class of the class mapping this object belongs to.
+     */
     Class getObjClass();
 
+    /**
+     * Sets the class of the class mapping this object belongs to.
+     */
     void setObjClass(Class objClass);
 
+    /**
+     * Returns the accessor type for this mapping. The accessor type can be
+     * field, property or a custom implementation of {@link org.compass.core.accessor.PropertyAccessor}
+     * (this can be either the FQN of the class name or a regsitered type in the configuration, see
+     * {@link org.compass.core.accessor.PropertyAccessorFactory}.
+     */
     String getAccessor();
 
+    /**
+     * Sets the accessor type for this mapping. The accessor type can be
+     * field, property or a custom implementation of {@link org.compass.core.accessor.PropertyAccessor}
+     * (this can be either the FQN of the class name or a regsitered type in the configuration, see
+     * {@link org.compass.core.accessor.PropertyAccessorFactory}.
+     */
     void setAccessor(String accessor);
 
+    /**
+     * Returns the class property name of the object mapping.
+     */
     String getPropertyName();
 
+    /**
+     * Sets the class property name of the object mapping.
+     */
     void setPropertyName(String propertyName);
 
     /**
      * Returns which alias (or if not present, the FQN of the class name)
-     * this object property is defined.
+     * this object property is defined at.
      */
     String getDefinedInAlias();
     
+    /**
+     * Sets which alias (or if not present, the FQN of the class name)
+     * this object property is defined at.
+     */
     void setDefinedInAlias(String alias);
 
     Getter getGetter();
@@ -54,5 +82,9 @@ public interface ObjectMapping extends OsemMapping {
 
     void setSetter(Setter setter);
 
+    /**
+     * Returns <code>true</code> if this object mapping can be wrapped
+     * with a Collection or an Array.
+     */
     boolean canBeCollectionWrapped();
 }

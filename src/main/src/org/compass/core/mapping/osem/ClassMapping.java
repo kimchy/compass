@@ -223,9 +223,10 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
          * were processed (for example, we added intenral ids to it where needed).
          */
         protected void onDuplicateMapping(ClassMapping classMapping, ObjectMapping actualMapping, ObjectMapping duplicateMapping) {
-            Assert.isTrue(actualMapping.getName().equals(duplicateMapping.getName()), "Internal Error in Compass, Original[" +
+            Assert.isTrue(actualMapping.getPropertyName().equals(duplicateMapping.getPropertyName()), "Internal Error in Compass, Original[" +
                     duplicateMapping.getName() + "] does not equal [" + actualMapping.getName() + "]");
 
+            // TODO since we replace the mappings here, some attributes will be inacurate (like objClass) for the replaced class mapping
             int index = classMapping.mappings.indexOf(duplicateMapping);
             if (index < 0) {
                 // let's look in the collection, if we find it as an element

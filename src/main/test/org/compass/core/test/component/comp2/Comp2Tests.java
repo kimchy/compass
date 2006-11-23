@@ -31,7 +31,7 @@ public class Comp2Tests extends AbstractTestCase {
         return new String[]{"component/comp2/mapping.cpm.xml"};
     }
 
-    public void testPersons() throws Exception {
+    public void testWithSpecialPerson() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
@@ -58,14 +58,22 @@ public class Comp2Tests extends AbstractTestCase {
         assertEquals("test person", person.description);
         assertEquals(1, person.names.size());
 
-        person = new Person();
+        tr.commit();
+        session.close();
+    }
+
+    public void testWithPerson() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Person person = new Person();
         person.id = 1;
         person.description = "test person";
         person.names = new ArrayList();
         person.names.add("name1");
         session.save(person);
 
-        user = new User();
+        User user = new User();
         user.id = 1;
         user.description = "test user";
         user.identity = person;
