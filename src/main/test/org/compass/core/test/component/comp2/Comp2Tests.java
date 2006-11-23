@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.Resource;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -58,6 +59,18 @@ public class Comp2Tests extends AbstractTestCase {
         assertEquals("test person", person.description);
         assertEquals(1, person.names.size());
 
+        Resource resource = session.loadResource(User.class, new Integer(1));
+        assertEquals(9, resource.getProperties().length);
+        assertEquals("user", resource.get("alias"));
+        assertEquals(User.class.getName(), resource.get("$/user/class"));
+        assertEquals("test user", resource.get("description2"));
+        assertEquals("1", resource.get("$/user/id"));
+        assertEquals(SpecialPerson.class.getName(), resource.get("$/user/identity/class"));
+        assertEquals("test person", resource.get("description1"));
+        assertEquals("1", resource.get("$/user/identity/id"));
+        assertEquals("name1", resource.get("person"));
+        assertEquals("1", resource.get("$/user/identity/names/colSize"));
+
         tr.commit();
         session.close();
     }
@@ -88,6 +101,18 @@ public class Comp2Tests extends AbstractTestCase {
         person = user.identity;
         assertEquals("test person", person.description);
         assertEquals(1, person.names.size());
+
+        Resource resource = session.loadResource(User.class, new Integer(1));
+        assertEquals(9, resource.getProperties().length);
+        assertEquals("user", resource.get("alias"));
+        assertEquals(User.class.getName(), resource.get("$/user/class"));
+        assertEquals("test user", resource.get("description2"));
+        assertEquals("1", resource.get("$/user/id"));
+        assertEquals(Person.class.getName(), resource.get("$/user/identity/class"));
+        assertEquals("test person", resource.get("description1"));
+        assertEquals("1", resource.get("$/user/identity/id"));
+        assertEquals("name1", resource.get("person"));
+        assertEquals("1", resource.get("$/user/identity/names/colSize"));
 
         tr.commit();
         session.close();

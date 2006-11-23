@@ -4,13 +4,19 @@
 
 <compass-core-mapping package="org.compass.core.test.component.comp2">
 
-    <contract alias="common">
+    <contract alias="common1">
         <property name="description" accessor="field">
-            <meta-data>description</meta-data>
+            <meta-data>description1</meta-data>
         </property>
     </contract>
 
-    <class name="Person" alias="person" extends="common" poly="true">
+    <contract alias="common2">
+        <property name="description" accessor="field">
+            <meta-data>description2</meta-data>
+        </property>
+    </contract>
+
+    <class name="Person" alias="person" extends="common1" poly="true">
         <id name="id" accessor="field"/>
         <property name="names" accessor="field" class="java.lang.String">
             <meta-data>person</meta-data>
@@ -20,7 +26,7 @@
     <class name="SpecialPerson" alias="specialPerson" extends="person" poly="true">
     </class>
 
-    <class name="User" alias="user" extends="common" poly="true">
+    <class name="User" alias="user" extends="common2" poly="true">
         <id name="id" accessor="field"/>
         <component name="identity" ref-alias="specialPerson, person" accessor="field"/>
     </class>
