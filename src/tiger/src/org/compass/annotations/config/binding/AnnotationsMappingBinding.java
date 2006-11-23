@@ -526,7 +526,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setBoost(classPropertyMapping.getBoost());
 
             mdMapping.setAccessor(classPropertyMapping.getAccessor());
-            mdMapping.setObjClass(classPropertyMapping.getObjClass());
             mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
             bindConverter(mdMapping, searchableProp.converter(), clazz, type);
@@ -602,7 +601,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindConverter(mdMapping, searchableProp.converter(), clazz, type);
 
             mdMapping.setAccessor(classPropertyMapping.getAccessor());
-            mdMapping.setObjClass(classPropertyMapping.getObjClass());
             mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
             mdMapping.setStore(AnnotationsBindingUtils.convert(searchableProp.store()));
@@ -648,7 +646,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         bindConverter(mdMapping, searchableMetaData.converter(), clazz, type);
 
         mdMapping.setAccessor(classPropertyMapping.getAccessor());
-        mdMapping.setObjClass(classPropertyMapping.getObjClass());
         mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
         mdMapping.setStore(AnnotationsBindingUtils.convert(searchableMetaData.store()));
@@ -773,7 +770,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             objectMapping.setAccessor(annotationAccessor);
         }
         objectMapping.setName(name);
-        objectMapping.setObjClass(classMapping.getClazz());
         objectMapping.setPropertyName(name);
         // set the defined in alias for multiple ref aliases
         // note, with annotation, we might not have @Searchable defined on
