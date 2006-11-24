@@ -331,6 +331,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/compass.iml" filepath="$PROJECT_DIR$/compass.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/sandbox/sandbox.iml" filepath="$PROJECT_DIR$/src/sandbox/sandbox.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/tiger/tiger.iml" filepath="$PROJECT_DIR$/src/tiger/tiger.iml" />
     </modules>
   </component>
