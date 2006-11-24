@@ -14,61 +14,33 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.property;
+package org.compass.core.test.property.reader;
+
+import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * @author kimchy
  */
-public class MultipleMetaData {
+public class ReaderType {
 
     private Long id;
 
-    private String value1;
+    private Reader reader = new StringReader("this is a test for string reader");
 
-    private String value2;
-
-    /**
-     * @return Returns the value2.
-     */
-    public String getValue2() {
-        return value2;
-    }
-
-    /**
-     * @param value2
-     *            The value2 to set.
-     */
-    public void setValue2(String value2) {
-        this.value2 = value2;
-    }
-
-    /**
-     * @return Returns the value.
-     */
-    public String getValue1() {
-        return value1;
-    }
-
-    /**
-     * @param value
-     *            The value to set.
-     */
-    public void setValue1(String value1) {
-        this.value1 = value1;
-    }
-
-    /**
-     * @return Returns the id.
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * @param id
-     *            The id to set.
-     */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Reader getReader() {
+        return reader;
+    }
+
+    public void setReader(Reader reader) {
+        // do nothing, just a stub method
     }
 }

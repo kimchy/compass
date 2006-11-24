@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.property;
-
-import java.io.Reader;
-import java.io.StringReader;
+package org.compass.core.test.property.storeindex;
 
 /**
  * @author kimchy
  */
-public class ReaderType {
+public class A {
 
     private Long id;
 
-    private Reader reader = new StringReader("this is a test for string reader");
+    private String value;
 
     public Long getId() {
         return id;
@@ -36,11 +33,12 @@ public class ReaderType {
         this.id = id;
     }
 
-    public Reader getReader() {
-        return reader;
+    public String getValue() {
+        return value;
     }
 
-    public void setReader(Reader reader) {
-        // do nothing, just a stub method
+    public void setValue(String value) {
+        this.value = value;
     }
+
 }

@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.property;
+package org.compass.core.test.property.override;
 
-import java.io.InputStream;
-
-public class InputStreamType {
+/**
+ * @author kimchy
+ */
+public class PropertyOverride {
 
     private Long id;
 
-    private InputStream inputStream;
-
-    public InputStream getInputStream() {
-        return inputStream;
-    }
-
-    public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
-    }
+    private String value;
 
     public Long getId() {
         return id;
@@ -39,4 +32,13 @@ public class InputStreamType {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
 }

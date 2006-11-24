@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.property;
+package org.compass.core.test.property.inputstream;
 
-/**
- * @author kimchy
- */
-public class NoInternalId {
+import java.io.InputStream;
+
+public class InputStreamType {
 
     private Long id;
 
-    private String value;
+    private InputStream inputStream;
+
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
 
     public Long getId() {
         return id;
@@ -31,13 +38,5 @@ public class NoInternalId {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 }

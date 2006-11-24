@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.property;
+package org.compass.core.test.property.inputstream;
 
-/**
- * @author kimchy
- */
-public class A {
+public class BinaryArrayType {
 
     private Long id;
 
-    private String value;
+    private byte[] bytes;
+
+    private Byte[] oBytes;
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
 
     public Long getId() {
         return id;
@@ -33,12 +40,11 @@ public class A {
         this.id = id;
     }
 
-    public String getValue() {
-        return value;
+    public Byte[] getOBytes() {
+        return oBytes;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setOBytes(Byte[] bytes) {
+        oBytes = bytes;
     }
-
 }

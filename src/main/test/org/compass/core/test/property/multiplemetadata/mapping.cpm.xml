@@ -4,7 +4,7 @@
 
 <compass-core-mapping>
 
-    <class name="org.compass.core.test.property.MultipleMetaData" alias="multiple-meta-data">
+    <class name="org.compass.core.test.property.multiplemetadata.MultipleMetaData" alias="multiple-meta-data">
     
         <id name="id" />
     

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.property;
+package org.compass.core.test.property.simple;
 
 import java.io.File;
 import java.math.BigDecimal;

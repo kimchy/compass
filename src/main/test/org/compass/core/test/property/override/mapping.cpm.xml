@@ -2,7 +2,7 @@
     "-//Compass/Compass Core Mapping DTD 1.0//EN"
     "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
 
-<compass-core-mapping package="org.compass.core.test.property">
+<compass-core-mapping package="org.compass.core.test.property.override">
 
     <class name="PropertyOverride" alias="po">
     

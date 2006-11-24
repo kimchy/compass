@@ -2,14 +2,14 @@
     "-//Compass/Compass Core Mapping DTD 1.0//EN"
     "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
 
-<compass-core-mapping package="org.compass.core.test.property">
+<compass-core-mapping package="org.compass.core.test.property.nointernalid">
 
-    <class name="ReaderType" alias="reader-type">
+    <class name="NoInternalId" alias="no-internal-id">
     
         <id name="id" />
         
-        <property name="reader" managed-id="false">
-            <meta-data>mreader</meta-data>
+        <property name="value" managed-id="false">
+            <meta-data>mvalue</meta-data>
         </property>
     
     </class>

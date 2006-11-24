@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.property;
+package org.compass.core.test.property.nointernalid;
 
 /**
  * @author kimchy
  */
-public class PropertyOverride {
+public class NoInternalId {
 
     private Long id;
 
@@ -40,5 +40,4 @@ public class PropertyOverride {
     public void setValue(String value) {
         this.value = value;
     }
-
 }
