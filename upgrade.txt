@@ -8,6 +8,7 @@ VERSION 1.1 M3 ()
    for bi-directional relationship, where max-depth of 1 is fine. For tree based cyclic relationships
    max-depth should be set to an appropiate value. This change will result in much less memory consumption
    by compass.
+2. Empty Collections/Arrays (size = 0) are returned as empty arrays / collections now, and not as nulls.
 
 VERSION 1.1 M2 (September 27, 2006)
 ===================================
