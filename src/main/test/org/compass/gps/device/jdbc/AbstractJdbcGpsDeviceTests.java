@@ -22,7 +22,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import junit.framework.TestCase;
-
 import org.compass.gps.device.jdbc.datasource.SingleConnectionDataSource;
 
 public abstract class AbstractJdbcGpsDeviceTests extends TestCase {
@@ -59,6 +58,11 @@ public abstract class AbstractJdbcGpsDeviceTests extends TestCase {
     }
 
     protected void setUpDB() throws SQLException {
+        try {
+            tearDownDB();
+        } catch (Exception e) {
+            // do nothing
+        }
         Connection con = dataSource.getConnection();
         PreparedStatement ps = con.prepareStatement(DB_SETUP);
         ps.execute();
@@ -69,9 +73,12 @@ public abstract class AbstractJdbcGpsDeviceTests extends TestCase {
     protected void tearDownDB() throws SQLException {
         Connection con = dataSource.getConnection();
         PreparedStatement ps = con.prepareStatement(DB_TEARDOWN);
-        ps.execute();
-        ps.close();
-        con.close();
+        try {
+            ps.execute();
+            ps.close();
+        } finally {
+            con.close();
+        }
     }
 
     protected void setUpDBData() throws SQLException {

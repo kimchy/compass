@@ -175,9 +175,7 @@ public class LuceneSubIndexInfo {
                 LuceneSegmentInfo luceneSegmentInfo = new LuceneSegmentInfo(segmentInfo.name, segmentInfo.docCount);
                 segmentInfosList.add(luceneSegmentInfo);
             }
-            LuceneSubIndexInfo luceneSegmentInfos = new LuceneSubIndexInfo(subIndex, segmentInfos.getVersion(),
-                    segmentInfosList);
-            return luceneSegmentInfos;
+            return new LuceneSubIndexInfo(subIndex, segmentInfos.getVersion(), segmentInfosList);
         } catch (FileNotFoundException e) {
             // the segments file was not found, return null.
             return null;
