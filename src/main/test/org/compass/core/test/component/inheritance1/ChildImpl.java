@@ -27,6 +27,10 @@ public class ChildImpl implements Child {
         return String.valueOf(currentId++);
     }
 
+    public static synchronized void resetId() {
+        currentId = 0;
+    }
+
     protected String id;
     protected String name;
     protected Father father;

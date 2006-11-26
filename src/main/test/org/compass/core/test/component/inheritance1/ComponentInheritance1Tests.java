@@ -24,6 +24,7 @@ public class ComponentInheritance1Tests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         FatherImpl.resetId();
+        ChildImpl.resetId();
         
         FatherImpl father = new FatherImpl("Sir Ivan");
         FavouriteSonImpl favouriteSon = new FavouriteSonImpl("Ivan Jr", father);

@@ -24,7 +24,7 @@ import org.compass.core.test.AbstractTestCase;
 public class SingleIndexTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "singleindex/singleindex.cpm.xml" };
+        return new String[]{"singleindex/singleindex.cpm.xml"};
     }
 
     public void testValidLoad() throws Exception {
@@ -52,16 +52,21 @@ public class SingleIndexTests extends AbstractTestCase {
         session.load(A.class, id);
         transaction.commit();
 
-        LuceneSubIndexInfo.getIndexInfo("index", session);
+        LuceneSubIndexInfo indexInfo = LuceneSubIndexInfo.getIndexInfo("index", session);
+        assertNotNull(indexInfo);
         try {
-            LuceneSubIndexInfo.getIndexInfo("a", session);
-            fail("a subindex should not exists");
+            indexInfo = LuceneSubIndexInfo.getIndexInfo("a", session);
+            if (indexInfo != null) {
+                fail("a subindex should not exists");
+            }
         } catch (Exception e) {
             // all is well
         }
         try {
-            LuceneSubIndexInfo.getIndexInfo("b", session);
-            fail("b subindex should not exists");
+            indexInfo = LuceneSubIndexInfo.getIndexInfo("b", session);
+            if (indexInfo != null) {
+                fail("b subindex should not exists");
+            }
         } catch (Exception e) {
             // all is well
         }

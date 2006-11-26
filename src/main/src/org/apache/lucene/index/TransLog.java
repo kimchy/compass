@@ -16,6 +16,8 @@
 
 package org.apache.lucene.index;
 
+import java.io.IOException;
+
 import org.apache.lucene.store.Directory;
 import org.compass.core.config.CompassConfigurable;
 
@@ -28,5 +30,7 @@ public interface TransLog extends CompassConfigurable {
 
     boolean shouldUpdateTransSegments();
 
-    void close();
+    void close() throws IOException;
+
+    void onDocumentAdded() throws IOException;
 }

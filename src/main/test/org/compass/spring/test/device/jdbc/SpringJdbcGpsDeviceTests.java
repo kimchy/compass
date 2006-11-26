@@ -20,11 +20,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import javax.sql.DataSource;
 
 import junit.framework.TestCase;
-
 import org.compass.core.Compass;
 import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassTemplate;
@@ -42,7 +40,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
             + "CREATE TABLE child (id INTEGER NOT NULL IDENTITY PRIMARY KEY, parent_id INTEGER NOT NULL, first_name VARCHAR(30), last_name VARCHAR(30), version BIGINT NOT NULL );"
             + "alter table child add constraint fk_child_parent foreign key (parent_id) references parent(id);";
 
-    private static final String[] DB_DATA = { "INSERT INTO parent VALUES (1, 'parent first 1', 'last 1', 1);",
+    private static final String[] DB_DATA = {"INSERT INTO parent VALUES (1, 'parent first 1', 'last 1', 1);",
             "INSERT INTO parent VALUES (2, 'parent first 2', 'last 2', 1);",
             "INSERT INTO parent VALUES (3, 'parent first 3', 'last 3', 1);",
             "INSERT INTO parent VALUES (4, 'parent first 4', 'last 4', 1);",
@@ -51,7 +49,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
             "INSERT INTO child VALUES (3, 1, 'child first 1 3', 'last 1 3', 1);",
             "INSERT INTO child VALUES (4, 2, 'child first 2 1', 'last 2 1', 1);",
             "INSERT INTO child VALUES (5, 3, 'child first 3 1', 'last 3 1', 1);",
-            "INSERT INTO child VALUES (6, 4, 'child first 3 2', 'last 3 2', 1);" };
+            "INSERT INTO child VALUES (6, 4, 'child first 3 2', 'last 3 2', 1);"};
 
     private static final String DB_TEARDOWN = "DROP TABLE child; DROP TABLE parent;";
 
@@ -72,6 +70,11 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
     }
 
     protected void setUpDB() throws SQLException {
+        try {
+            tearDownDB();
+        } catch (SQLException e) {
+            // do nothing
+        }
         Connection con = dataSource.getConnection();
         PreparedStatement ps = con.prepareStatement(DB_SETUP);
         ps.execute();
@@ -82,9 +85,12 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
     protected void tearDownDB() throws SQLException {
         Connection con = dataSource.getConnection();
         PreparedStatement ps = con.prepareStatement(DB_TEARDOWN);
-        ps.execute();
-        ps.close();
-        con.close();
+        try {
+            ps.execute();
+            ps.close();
+        } finally {
+            con.close();
+        }
     }
 
     protected void setUpDBData() throws SQLException {
@@ -100,7 +106,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
 
     public void testResultSetJdbcDevice() throws Exception {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                new String[] { "org/compass/spring/test/device/jdbc/resultset-applicationContext.xml" },
+                new String[]{"org/compass/spring/test/device/jdbc/resultset-applicationContext.xml"},
                 dataSourceApplicationContext);
 
         CompassGps gps = (CompassGps) applicationContext.getBean("gps");
@@ -109,8 +115,8 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         ActiveMirrorGpsDevice gpsDevice = (ActiveMirrorGpsDevice) applicationContext.getBean("jdbcGpsDevice");
 
         gps.index();
-        Resource r = compassTemplate.loadResource("result-set", new String[] { "1", "1" });
-        r = compassTemplate.getResource("result-set", new String[] { "4", "6" });
+        Resource r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
+        r = compassTemplate.getResource("result-set", new String[]{"4", "6"});
         assertNotNull(r);
         CompassDetachedHits hits = compassTemplate.findWithDetach("parent");
         assertEquals(6, hits.getLength());
@@ -124,10 +130,10 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         con.commit();
         con.close();
 
-        r = compassTemplate.getResource("result-set", new String[] { "999", "0" });
+        r = compassTemplate.getResource("result-set", new String[]{"999", "0"});
         assertNull(r);
         gpsDevice.performMirroring();
-        r = compassTemplate.loadResource("result-set", new String[] { "999", "0" });
+        r = compassTemplate.loadResource("result-set", new String[]{"999", "0"});
 
         // test that update works
         con = JdbcUtils.getConnection(dataSource);
@@ -138,7 +144,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         con.close();
 
         gpsDevice.performMirroring();
-        r = compassTemplate.loadResource("result-set", new String[] { "1", "1" });
+        r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
         assertEquals("new first name", r.get("parent_first_name"));
 
         // test that delete works
@@ -150,22 +156,22 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         con.close();
 
         gpsDevice.performMirroring();
-        r = compassTemplate.getResource("result-set", new String[] { "999", "0" });
+        r = compassTemplate.getResource("result-set", new String[]{"999", "0"});
         assertNull(r);
-        
+
         applicationContext.close();
     }
 
     public void testTableJdbcDevice() throws Exception {
         ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                new String[] { "org/compass/spring/test/device/jdbc/table-applicationContext.xml" },
+                new String[]{"org/compass/spring/test/device/jdbc/table-applicationContext.xml"},
                 dataSourceApplicationContext);
-        
+
         CompassGps gps = (CompassGps) applicationContext.getBean("gps");
         Compass compass = (Compass) applicationContext.getBean("compass");
         CompassTemplate compassTemplate = new CompassTemplate(compass);
         ActiveMirrorGpsDevice gpsDevice = (ActiveMirrorGpsDevice) applicationContext.getBean("jdbcGpsDevice");
-        
+
         gps.index();
         Resource r = compassTemplate.getResource("parent", "1");
         assertNotNull(r);
@@ -216,7 +222,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         gpsDevice.performMirroring();
         r = compassTemplate.getResource("parent", "999");
         assertNull(r);
-        
+
         applicationContext.close();
     }
 }

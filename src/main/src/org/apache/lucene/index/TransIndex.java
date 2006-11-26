@@ -173,12 +173,14 @@ public class TransIndex {
         SegmentInfo segmentInfo = new SegmentInfo(segmentName, 1, transDir);
         transSegmentInfos.addElement(segmentInfo);
 
-        transReaders.add(SegmentReader.get(segmentInfo));
-        transCreates.add(resource.resourceKey());
-
         if (transLog.shouldUpdateTransSegments()) {
             transSegmentInfos.write(transDir);
         }
+
+        transLog.onDocumentAdded();
+        
+        transReaders.add(SegmentReader.get(segmentInfo));
+        transCreates.add(resource.resourceKey());
 
         ((LuceneResource) resource).setDocNum(indexReader.maxDoc() + transCreates.size() - 1);
     }
@@ -201,7 +203,12 @@ public class TransIndex {
         if (i != -1) {
             transSegmentInfos.removeElementAt(i);
             transCreates.remove(i);
-            transReaders.remove(i);
+            IndexReader indexReader = (IndexReader) transReaders.remove(i);
+            try {
+                indexReader.close();
+            } catch (IOException e) {
+                // ignore this error
+            }
             if (transLog.shouldUpdateTransSegments()) {
                 transSegmentInfos.write(transDir);
             }
@@ -395,7 +402,7 @@ public class TransIndex {
         transReaders.clear();
 
         try {
-            transDir.close();
+            transLog.close();
             transDir = null;
         } catch (IOException ex) {
             // swallow this one

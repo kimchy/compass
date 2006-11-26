@@ -44,6 +44,10 @@ public class RAMTransLog implements TransLog {
         return this.dir;
     }
 
+    public void onDocumentAdded() {
+        
+    }
+
     public void close() {
         dir.close();
         dir = null;

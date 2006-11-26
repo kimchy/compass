@@ -39,14 +39,18 @@ public class SubIndexHashTests extends AbstractAnnotationsTestCase {
         subIndexInfo = LuceneSubIndexInfo.getIndexInfo("index_1", session);
         assertEquals(0, subIndexInfo.size());
         try {
-            LuceneSubIndexInfo.getIndexInfo("index_2", session);
-            fail();
+            subIndexInfo = LuceneSubIndexInfo.getIndexInfo("index_2", session);
+            if (subIndexInfo != null) {
+                fail();
+            }
         } catch (Exception e) {
             // all is well
         }
         try {
-            LuceneSubIndexInfo.getIndexInfo("a", session);
-            fail();
+            subIndexInfo = LuceneSubIndexInfo.getIndexInfo("a", session);
+            if (subIndexInfo != null) {
+                fail();
+            }
         } catch (Exception e) {
             // all is well
         }
