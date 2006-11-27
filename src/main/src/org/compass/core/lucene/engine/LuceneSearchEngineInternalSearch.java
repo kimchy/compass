@@ -69,7 +69,7 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
         try {
             reader = new MultiReader(readers);
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to open readers for highlighting", e);
+            throw new SearchEngineException("Failed to open readers", e);
         }
         return this.reader;
     }
