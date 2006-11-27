@@ -22,15 +22,31 @@ import org.apache.lucene.store.Directory;
 import org.compass.core.config.CompassConfigurable;
 
 /**
+ * Controls the {@link org.apache.lucene.index.TransIndex} transaction log.
+ *
  * @author kimchy
  */
 public interface TransLog extends CompassConfigurable {
 
+    /**
+     * Returns the Lucene directory the transaction log will be written to
+     */
     Directory getDirectory();
 
+    /**
+     * Returns true if the transaction segments should be written for each
+     * change made to it.
+     */
     boolean shouldUpdateTransSegments();
 
+    /**
+     * Closes the transaction log.
+     */
     void close() throws IOException;
 
+    /**
+     * A callback notifiying the trasaction log that a document was added
+     * (can be used for flushing for example).
+     */
     void onDocumentAdded() throws IOException;
 }

@@ -22,6 +22,9 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassSettings;
 
 /**
+ * A memory based transaction log. Fast, but long running transaciton or large
+ * transactions might not fit into memory.
+ *
  * @author kimchy
  */
 public class RAMTransLog implements TransLog {

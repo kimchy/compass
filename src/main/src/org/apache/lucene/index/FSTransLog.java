@@ -39,6 +39,19 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.util.LuceneUtils;
 
 /**
+ * <p>A transaction log that saves most of the transactional data log into disk.
+ *
+ * <p>Can be provided with a transaction log path (using
+ * {@link org.compass.core.lucene.LuceneEnvironment.Transaction.TransLog#PATH} setting), where
+ * different directories will be created in (in the form of PATH/compass/translog/[tran id]). All
+ * the trans data is stored into a single file called <code>transdata</code>.
+ *
+ * <p>Two parameters can be set on this transaction log as well, the first is read buffer size,
+ * which controls the size of the buffer for read operations. This can affect the memory consumption
+ * of this transaction log, and defaults to 64 (bytes). The write buffer is the memory buffer used
+ * to write data into the file system, and defaults to 2048 (bytes). It is pooled so does not affect
+ * memory consumption that much.
+ *
  * @author kimchy
  */
 public class FSTransLog implements TransLog {
@@ -83,6 +96,13 @@ public class FSTransLog implements TransLog {
         dir.flush();
     }
 
+    /**
+     * Transactional log directory implementation, writes all the data into memory until
+     * {@link #flush()} is called (it is called in the {@link FSTransLog#onDocumentAdded()} callback).
+     * Whe flush is called, flushes all the data into a single file, and performs all reads from this
+     * single file. Stores in memory the meta data information regarding the file contents (file names
+     * and positions).
+     */
     class TransDirectory extends Directory {
 
         private RandomAccessFile raf;
@@ -204,6 +224,10 @@ public class FSTransLog implements TransLog {
             raf.close();
         }
 
+        /**
+         * A file entry representation of a single file entry within the compound data
+         * file.
+         */
         class FileEntry {
             String name;
             long lastModified;
@@ -213,6 +237,11 @@ public class FSTransLog implements TransLog {
             ArrayList buffers;
         }
 
+        /**
+         * A very simple pool of write buffers used for write operations. If no buffer
+         * is allocated int the pool, a new one is returned. If one is found, it is
+         * removed from the pool and returned to the caller.
+         */
         class WriteByteBufferPool {
 
             private LinkedList pool = new LinkedList();
@@ -233,6 +262,10 @@ public class FSTransLog implements TransLog {
             }
         }
 
+        /**
+         * A memory based index output that writes all the data into memory.
+         * Can later be flushed by {@link org.apache.lucene.index.FSTransLog.TransDirectory#flush()}.
+         */
         class RamTransIndexOutput extends ConfigurableBufferedIndexOutput {
 
             private long pointer = 0;
@@ -287,6 +320,11 @@ public class FSTransLog implements TransLog {
             }
         }
 
+        /**
+         * An index input implementation that can read a
+         * {@link org.apache.lucene.index.FSTransLog.TransDirectory.FileEntry} information
+         * from the compound transactional data file.
+         */
         class TransIndexInput extends ConfigurableBufferedIndexInput {
 
             private RandomAccessFile raf;
