@@ -199,6 +199,7 @@ public class TransIndex {
      * transactional index as well as the transactional reader (if created).
      */
     public void deleteTransResource(ResourceKey resourceKey) throws IOException {
+        // TODO need to improve performance here
         int i = transCreates.indexOf(resourceKey);
         if (i != -1) {
             transSegmentInfos.removeElementAt(i);
