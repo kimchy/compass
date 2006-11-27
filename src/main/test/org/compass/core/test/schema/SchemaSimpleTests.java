@@ -52,6 +52,8 @@ public class SchemaSimpleTests extends TestCase {
 
         assertEquals(FSTransLog.class.getName(), settings.getSetting(LuceneEnvironment.Transaction.TransLog.TYPE));
         assertEquals("/tmp", settings.getSetting(LuceneEnvironment.Transaction.TransLog.PATH));
+        assertEquals("12", settings.getSetting(LuceneEnvironment.Transaction.TransLog.READ_BUFFER_SIZE));
+        assertEquals("14", settings.getSetting(LuceneEnvironment.Transaction.TransLog.WRITE_BUFFER_SIZE));
     }
 
     public void testQueryParser() throws Exception {

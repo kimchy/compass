@@ -10,7 +10,7 @@
 
         <transaction isolation="batch_insert">
             <readCommittedSettings>
-                <fsTransLog path="/tmp"/>
+                <fsTransLog path="/tmp" readBufferSize="12" writeBufferSize="14" />
             </readCommittedSettings>
         </transaction>
     </compass>

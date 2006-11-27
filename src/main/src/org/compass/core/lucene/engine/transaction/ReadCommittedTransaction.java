@@ -131,6 +131,9 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                     TransLog transLog;
                     try {
                         Class transLogClass = searchEngine.getSettings().getSettingAsClass(LuceneEnvironment.Transaction.TransLog.TYPE, RAMTransLog.class);
+                        if (log.isTraceEnabled()) {
+                            log.trace("Using Trans Log [" + transLogClass.getName() + "]");
+                        }
                         transLog = (TransLog) transLogClass.newInstance();
                     } catch (Exception e) {
                         throw new SearchEngineException("Failed to create transLog", e);
@@ -467,7 +470,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 hits = indexSearcher.search(query, filter, sort);
             }
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to search with query [" + query + "].");
+            throw new SearchEngineException("Failed to search with query [" + query + "]", e);
         }
         return hits;
     }

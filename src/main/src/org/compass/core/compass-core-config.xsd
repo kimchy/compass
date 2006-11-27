@@ -1002,6 +1002,24 @@
                                                 </xsd:documentation>
                                             </xsd:annotation>
                                         </xsd:attribute>
+                                        <xsd:attribute name="readBufferSize" type="xsd:positiveInteger" use="optional">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    Controlls the buffer size when reading data from the disk. Higher
+                                                    buffer size will affect the memory consumption and the size of the
+                                                    transaction (in terms of data). Defaults to 64 bytes.
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="writeBufferSize" type="xsd:positiveInteger" use="optional">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    Controlls the buffer size when writing data to disk. Higher values
+                                                    will consume more memory, though since they are cached, won't affect
+                                                    transaction size as readBufferSize would. Defaults to 2048 bytes.
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                        </xsd:attribute>
                                     </xsd:complexType>
                                 </xsd:element>
                             </xsd:choice>

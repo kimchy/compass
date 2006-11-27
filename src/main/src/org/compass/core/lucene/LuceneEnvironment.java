@@ -537,6 +537,23 @@ public class LuceneEnvironment {
              * Applies to tran logs that require a location like {@link org.apache.lucene.index.FSTransLog}.
              */
             public static final String PATH = "compass.transaction.translog.path";
+
+            /**
+             * <p>Applies to tran logs that require a write buffer size like {@link org.apache.lucene.index.FSTransLog}.
+             * Defaults to 2048 (size is in bytes).
+             *
+             * <p>The bigger the value, the faster indexing will be perfomed though in expense of memory (the write
+             * buffers are pooled, so the memory overhead will not be noitceable as is the case with read buffer.
+             */
+            public static final String WRITE_BUFFER_SIZE = "compass.transaction.translog.writeBufferSize";
+
+            /**
+             * <p>Applies to tran logs that require a read buffer size like {@link org.apache.lucene.index.FSTransLog}.
+             * Defaults to 64 (size is in bytes).
+             *
+             * <p>The smaller the value, bigger transactions can be performed, though performance might suffer.
+             */
+            public static final String READ_BUFFER_SIZE = "compass.transaction.translog.readBufferSize";
         }
     }
 

@@ -367,6 +367,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 Element fsTranLogSettingsEle = (Element) child.get(0);
                 settings.setSetting(LuceneEnvironment.Transaction.TransLog.TYPE, FSTransLog.class.getName());
                 settings.setSetting(LuceneEnvironment.Transaction.TransLog.PATH, DomUtils.getElementAttribute(fsTranLogSettingsEle, "path"));
+                settings.setSetting(LuceneEnvironment.Transaction.TransLog.READ_BUFFER_SIZE, DomUtils.getElementAttribute(fsTranLogSettingsEle, "readBufferSize"));
+                settings.setSetting(LuceneEnvironment.Transaction.TransLog.WRITE_BUFFER_SIZE, DomUtils.getElementAttribute(fsTranLogSettingsEle, "writeBufferSize"));
             }
         }
     }

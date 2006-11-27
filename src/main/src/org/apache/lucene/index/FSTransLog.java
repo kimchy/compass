@@ -26,8 +26,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.lucene.store.BufferedIndexInput;
-import org.apache.lucene.store.BufferedIndexOutput;
+import org.apache.lucene.store.ConfigurableBufferedIndexInput;
+import org.apache.lucene.store.ConfigurableBufferedIndexOutput;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
@@ -55,9 +55,11 @@ public class FSTransLog implements TransLog {
 
     public void configure(CompassSettings settings) throws CompassException {
         String location = settings.getSetting(LuceneEnvironment.Transaction.TransLog.PATH, DEFAULT_LOCATION);
+        int readBufferSize = settings.getSettingAsInt(LuceneEnvironment.Transaction.TransLog.READ_BUFFER_SIZE, 64);
+        int writeBufferSize = settings.getSettingAsInt(LuceneEnvironment.Transaction.TransLog.WRITE_BUFFER_SIZE, 2048);
         try {
             location = location + "/" + transId.nextLong();
-            dir = new TransDirectory(location);
+            dir = new TransDirectory(location, writeBufferSize, readBufferSize);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to create tran log location [" + location + "]");
         }
@@ -83,8 +85,6 @@ public class FSTransLog implements TransLog {
 
     class TransDirectory extends Directory {
 
-        public static final int DEFAULT_BUFFER_SIZE = 1024;
-
         private RandomAccessFile raf;
 
         private HashMap files;
@@ -93,10 +93,16 @@ public class FSTransLog implements TransLog {
 
         private ArrayList ramBasedFiles = new ArrayList();
 
-        private ByteBufferPool bufferPool = new ByteBufferPool();
+        private WriteByteBufferPool bufferPool = new WriteByteBufferPool();
 
-        public TransDirectory(String path) throws IOException {
+        private int writeBufferSize;
+
+        private int readBufferSize;
+
+        public TransDirectory(String path, int writeBufferSize, int readBufferSize) throws IOException {
             dir = new File(path);
+            this.writeBufferSize = writeBufferSize;
+            this.readBufferSize = readBufferSize;
             if (!dir.exists()) {
                 if (!dir.mkdirs()) {
                     throw new IOException("Cannot create trans directory [" + dir.getAbsolutePath() + "]");
@@ -171,19 +177,18 @@ public class FSTransLog implements TransLog {
                 }
                 if (fileEntry.buffers.size() == 1) {
                     raf.write((byte[]) fileEntry.buffers.get(0), 0, (int) fileEntry.length);
-                    bufferPool.put(fileEntry.buffers);
-                    continue;
-                }
-                int tempSize = fileEntry.buffers.size() - 1;
-                int i;
-                for (i = 0; i < tempSize; i++) {
-                    raf.write((byte[]) fileEntry.buffers.get(i), 0, DEFAULT_BUFFER_SIZE);
-                }
-                int leftOver = (int) (fileEntry.length % DEFAULT_BUFFER_SIZE);
-                if (leftOver == 0) {
-                    raf.write((byte[]) fileEntry.buffers.get(i), 0, DEFAULT_BUFFER_SIZE);
                 } else {
-                    raf.write((byte[]) fileEntry.buffers.get(i), 0, leftOver);
+                    int tempSize = fileEntry.buffers.size() - 1;
+                    int i;
+                    for (i = 0; i < tempSize; i++) {
+                        raf.write((byte[]) fileEntry.buffers.get(i), 0, writeBufferSize);
+                    }
+                    int leftOver = (int) (fileEntry.length % writeBufferSize);
+                    if (leftOver == 0) {
+                        raf.write((byte[]) fileEntry.buffers.get(i), 0, writeBufferSize);
+                    } else {
+                        raf.write((byte[]) fileEntry.buffers.get(i), 0, leftOver);
+                    }
                 }
                 bufferPool.put(fileEntry.buffers);
                 fileEntry.buffers = null;
@@ -208,13 +213,13 @@ public class FSTransLog implements TransLog {
             ArrayList buffers;
         }
 
-        class ByteBufferPool {
+        class WriteByteBufferPool {
 
             private LinkedList pool = new LinkedList();
 
             public byte[] get() {
                 if (pool.size() == 0) {
-                    return new byte[DEFAULT_BUFFER_SIZE];
+                    return new byte[writeBufferSize];
                 }
                 return (byte[]) pool.removeFirst();
             }
@@ -228,7 +233,7 @@ public class FSTransLog implements TransLog {
             }
         }
 
-        class RamTransIndexOutput extends BufferedIndexOutput {
+        class RamTransIndexOutput extends ConfigurableBufferedIndexOutput {
 
             private long pointer = 0;
 
@@ -237,15 +242,16 @@ public class FSTransLog implements TransLog {
             public RamTransIndexOutput(FileEntry fileEntry) {
                 this.fileEntry = fileEntry;
                 this.fileEntry.buffers = new ArrayList();
+                initBuffer(writeBufferSize);
             }
 
             public void flushBuffer(byte[] src, int len) {
                 byte[] buffer;
                 int bufferPos = 0;
                 while (bufferPos != len) {
-                    int bufferNumber = (int) (pointer / DEFAULT_BUFFER_SIZE);
-                    int bufferOffset = (int) (pointer % DEFAULT_BUFFER_SIZE);
-                    int bytesInBuffer = DEFAULT_BUFFER_SIZE - bufferOffset;
+                    int bufferNumber = (int) (pointer / writeBufferSize);
+                    int bufferOffset = (int) (pointer % writeBufferSize);
+                    int bytesInBuffer = writeBufferSize - bufferOffset;
                     int remainInSrcBuffer = len - bufferPos;
                     int bytesToCopy = bytesInBuffer >= remainInSrcBuffer ? remainInSrcBuffer : bytesInBuffer;
 
@@ -281,31 +287,25 @@ public class FSTransLog implements TransLog {
             }
         }
 
-        class TransIndexInput extends BufferedIndexInput {
+        class TransIndexInput extends ConfigurableBufferedIndexInput {
 
             private RandomAccessFile raf;
 
             private FileEntry fileEntry;
 
-            private long position = -1;
-
             public TransIndexInput(RandomAccessFile raf, FileEntry fileEntry) throws IOException {
                 this.raf = raf;
                 this.fileEntry = fileEntry;
+                initBuffer(readBufferSize);
             }
 
             protected void readInternal(byte[] b, int offset, int length) throws IOException {
-                long curPos = getFilePointer();
-                if (curPos != position) {
-                    raf.seek(fileEntry.startPosition + curPos);
-                    position = curPos;
-                }
+                raf.seek(fileEntry.startPosition + getFilePointer());
                 int total = 0;
                 do {
                     int i = raf.read(b, offset + total, length - total);
                     if (i == -1)
-                        throw new IOException("read past EOF");
-                    position += i;
+                        throw new IOException("Read past EOF [" + fileEntry.name + "] SIZE [" + fileEntry.length + "]");
                     total += i;
                 } while (total < length);
             }
