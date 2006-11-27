@@ -17,11 +17,13 @@
 package org.compass.core.engine;
 
 import org.compass.core.Compass;
+import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.converter.DefaultConverterLookup;
 import org.compass.core.engine.naming.StaticPropertyNamingStrategy;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
+import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
@@ -33,7 +35,7 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
     private SearchEngineFactory searchEngineFactory;
 
     // we have it here for transactional settings
-    private Compass compass;
+    protected Compass compass;
 
     public SearchEngine getSearchEngine() {
         return this.searchEngine;
@@ -48,7 +50,7 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
         this.searchEngineFactory = createSearchEngineFactory();
         this.compass = new DefaultCompass(getMapping(), new DefaultConverterLookup(), new DefaultCompassMetaData(), new StaticPropertyNamingStrategy(),
                 getSettings(), false, (LuceneSearchEngineFactory) searchEngineFactory);
-        this.searchEngine = searchEngineFactory.openSearchEngine();
+        this.searchEngine = searchEngineFactory.openSearchEngine(new RuntimeCompassSettings(((InternalCompass) compass).getSettings()));
     }
 
     protected void tearDown() throws Exception {

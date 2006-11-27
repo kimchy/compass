@@ -22,6 +22,7 @@ import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassTransaction.TransactionIsolation;
+import org.compass.core.config.CompassSettings;
 
 /**
  * Helper class that simplifies the Compass access code using the template
@@ -159,6 +160,14 @@ public class CompassTemplate implements CompassOperations {
     }
 
     // Compass Operations
+
+    public CompassSettings getSettings() {
+        return (CompassSettings) execute(new CompassCallback() {
+            public Object doInCompass(CompassSession session) throws CompassException {
+                return session.getSettings();
+            }
+        });
+    }
 
     public void create(final Object obj) throws CompassException {
         execute(new CompassCallback() {

@@ -25,6 +25,7 @@ import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
@@ -77,7 +78,10 @@ public class LuceneSearchEngine implements SearchEngine {
 
     private boolean readOnly;
 
-    public LuceneSearchEngine(LuceneSearchEngineFactory searchEngineFactory) {
+    private RuntimeCompassSettings runtimeSettings;
+
+    public LuceneSearchEngine(RuntimeCompassSettings runtimeSettings, LuceneSearchEngineFactory searchEngineFactory) {
+        this.runtimeSettings = runtimeSettings;
         this.readOnly = true;
         this.searchEngineFactory = searchEngineFactory;
         this.transactionState = UNKNOWN;
@@ -388,7 +392,7 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public CompassSettings getSettings() {
-        return searchEngineFactory.getSettings();
+        return runtimeSettings;
     }
 
     public boolean isReadOnly() {

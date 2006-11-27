@@ -340,6 +340,13 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 ]]></programlisting>
         </para>
       </sect3>
+      
+      <para>
+        Transactional log settings are one of the session level settings that can be set. This allows to change how Compass would save the transaction log per session, and not globally on the Compass instance level configuration. Note, this only applies on the session that is responsible for creating the transaction. The following is an example of how it can be done:
+<programlisting><![CDATA[CompassSession session = compass.openSession();
+session.getSettings().setClassSetting(RuntimeLuceneEnvironment.Transaction.TransLog.TYPE, FSTransLog.class);
+]]></programlisting>
+      </para>
     </sect2>
   </sect1>
 

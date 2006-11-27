@@ -19,12 +19,14 @@ package org.compass.core.test.engine.lucene;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.AbstractLuceneEngineTests;
 import org.compass.core.lucene.engine.transaction.BatchInsertTransaction;
 import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
+import org.compass.core.spi.InternalCompass;
 
 public class BatchInsertTransactionEngineTests extends AbstractLuceneEngineTests {
 
@@ -54,7 +56,7 @@ public class BatchInsertTransactionEngineTests extends AbstractLuceneEngineTests
         getSettings().setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS,
                 ReadCommittedTransaction.class.getName());
         SearchEngineFactory searchEngineFactory = createSearchEngineFactory();
-        SearchEngine searchEngine = searchEngineFactory.openSearchEngine();
+        SearchEngine searchEngine = searchEngineFactory.openSearchEngine(new RuntimeCompassSettings(((InternalCompass) compass).getSettings()));
         searchEngine.begin();
         assertSingleIdResourceExists(searchEngine);
         assertMulitIdResourceExists(searchEngine);

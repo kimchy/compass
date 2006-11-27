@@ -22,10 +22,12 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
+import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
@@ -80,7 +82,7 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
 
         // start a new index engine, and verify that the special resource exists
         // there, keep the engine transaction open, and keep the hits
-        SearchEngine searchEngine = getSearchEngineFactory().openSearchEngine();
+        SearchEngine searchEngine = getSearchEngineFactory().openSearchEngine(new RuntimeCompassSettings(((InternalCompass) compass).getSettings()));
         searchEngine.begin();
         SearchEngineQuery query = searchEngine.queryBuilder().queryString("special").toQuery();
         SearchEngineHits hits = query.hits();
@@ -173,7 +175,7 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
 
         // start another index engine, and perform reads (checks that is is not
         // locked - conccurrent)
-        SearchEngine searchEngine = getSearchEngineFactory().openSearchEngine();
+        SearchEngine searchEngine = getSearchEngineFactory().openSearchEngine(new RuntimeCompassSettings(((InternalCompass) compass).getSettings()));
         searchEngine.begin();
         assertSingleIdResourceExists(searchEngine);
         assertMulitIdResourceExists(searchEngine);
@@ -197,7 +199,7 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
 
         // start another index engine and check that we can read (as well not
         // read the other transaction data)
-        SearchEngine searchEngine = getSearchEngineFactory().openSearchEngine();
+        SearchEngine searchEngine = getSearchEngineFactory().openSearchEngine(new RuntimeCompassSettings(((InternalCompass) compass).getSettings()));
         searchEngine.begin();
 
         assertSingleIdResourceNotExists(searchEngine);
@@ -213,7 +215,7 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         assertMulitIdResourceNotExists(getSearchEngine());
 
         // start an index engine, with an index that has no data
-        SearchEngine searchEngine = getSearchEngineFactory().openSearchEngine();
+        SearchEngine searchEngine = getSearchEngineFactory().openSearchEngine(new RuntimeCompassSettings(((InternalCompass) compass).getSettings()));
         searchEngine.begin();
         assertSingleIdResourceNotExists(searchEngine);
         assertMulitIdResourceNotExists(searchEngine);

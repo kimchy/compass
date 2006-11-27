@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
@@ -87,8 +88,8 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
         indexManager.close();
     }
 
-    public SearchEngine openSearchEngine() {
-        return new LuceneSearchEngine(this);
+    public SearchEngine openSearchEngine(RuntimeCompassSettings runtimeSettings) {
+        return new LuceneSearchEngine(runtimeSettings, this);
     }
 
     private void configure(CompassSettings settings, CompassMapping mapping) {

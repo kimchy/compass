@@ -40,7 +40,7 @@ public class RsemModuloTests extends AbstractTestCase {
         assertEquals(0, subIndexInfo.size());
         try {
             subIndexInfo = LuceneSubIndexInfo.getIndexInfo("index_2", session);
-            if (subIndexInfo == null) {
+            if (subIndexInfo != null) {
                 fail();
             }
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class RsemModuloTests extends AbstractTestCase {
         }
         try {
             subIndexInfo = LuceneSubIndexInfo.getIndexInfo("a", session);
-            if (subIndexInfo == null) {
+            if (subIndexInfo != null) {
                 fail();
             }
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class RsemModuloTests extends AbstractTestCase {
         assertEquals(0, subIndexInfo.size());
         try {
             subIndexInfo = LuceneSubIndexInfo.getIndexInfo("index_2", session);
-            if (subIndexInfo == null) {
+            if (subIndexInfo != null) {
                 fail();
             }
         } catch (Exception e) {
@@ -107,7 +107,7 @@ public class RsemModuloTests extends AbstractTestCase {
         }
         try {
             subIndexInfo = LuceneSubIndexInfo.getIndexInfo("a", session);
-            if (subIndexInfo == null) {
+            if (subIndexInfo != null) {
                 fail();
             }
         } catch (Exception e) {

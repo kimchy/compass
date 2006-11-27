@@ -35,6 +35,7 @@ import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.FirstLevelCacheFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
@@ -181,7 +182,8 @@ public class DefaultCompass implements InternalCompass {
         }
 
         FirstLevelCache firstLevelCache = firstLevelCacheFactory.createFirstLevelCache();
-        return new DefaultCompassSession(this, searchEngineFactory.openSearchEngine(), firstLevelCache);
+        RuntimeCompassSettings runtimeSettings = new RuntimeCompassSettings(getSettings());
+        return new DefaultCompassSession(runtimeSettings, this, searchEngineFactory.openSearchEngine(runtimeSettings), firstLevelCache);
     }
 
     public void close() {

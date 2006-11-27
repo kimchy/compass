@@ -51,6 +51,7 @@ public class TransLogTester {
         compass.getSearchEngineIndexManager().verifyIndex();
 
         CompassSession session = compass.openSession();
+//        session.getSettings().setClassSetting(RuntimeLuceneEnvironment.Transaction.TransLog.TYPE, FSTransLog.class);
         CompassTransaction tr = session.beginTransaction();
         for (int i = 0; i < numberOfInstances; i++) {
             if (i % 1000 == 0) {

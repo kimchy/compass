@@ -16,6 +16,7 @@
 
 package org.compass.core.engine;
 
+import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 
@@ -32,7 +33,7 @@ public interface SearchEngineFactory {
      * 
      * @return A new search engine session.
      */
-    SearchEngine openSearchEngine();
+    SearchEngine openSearchEngine(RuntimeCompassSettings runtimeSettings);
 
     /**
      * Returns the index manager.

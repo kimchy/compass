@@ -9,7 +9,7 @@
         </connection>
         <transaction>
             <readCommittedSettings>
-                <fsTransLog />
+                <ramTransLog />
             </readCommittedSettings>
         </transaction>
         <searchEngine useCompoundFile="true">

@@ -19,12 +19,23 @@ package org.compass.core;
 import java.io.Reader;
 import java.io.Serializable;
 
+import org.compass.core.config.CompassSettings;
+
 /**
  * A interface describing all the available operations allowed by compass.
  *
  * @author kimchy
  */
 public interface CompassOperations {
+
+    /**
+     * Runtimes settings that apply on the session level.
+     *
+     * @return Runtime settings applies on the session level
+     * @see org.compass.core.config.RuntimeCompassEnvironment
+     * @see org.compass.core.lucene.RuntimeLuceneEnvironment
+     */
+    CompassSettings getSettings();
 
     /**
      * Creates a resource, that is used with the actual Search Engine

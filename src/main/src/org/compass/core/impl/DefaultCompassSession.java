@@ -32,6 +32,8 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.NullFirstLevelCache;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
 import org.compass.core.engine.SearchEngineQueryBuilder;
@@ -69,17 +71,25 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     private boolean closed = false;
 
-    public DefaultCompassSession(InternalCompass compass, SearchEngine searchEngine, FirstLevelCache firstLevelCache) {
+    private RuntimeCompassSettings runtimeSettings;
+
+    public DefaultCompassSession(RuntimeCompassSettings runtimeSettings, InternalCompass compass, SearchEngine searchEngine,
+                                 FirstLevelCache firstLevelCache) {
         this.compass = compass;
         this.mapping = compass.getMapping();
         this.compassMetaData = compass.getMetaData();
         this.transactionFactory = compass.getTransactionFactory();
+        this.runtimeSettings = runtimeSettings;
         this.searchEngine = searchEngine;
         this.firstLevelCache = firstLevelCache;
         this.marshallingStrategy = new DefaultMarshallingStrategy(mapping, searchEngine, compass.getConverterLookup(),
                 this);
 
         transactionFactory.tryJoinExistingTransaction(this);
+    }
+
+    public CompassSettings getSettings() {
+        return runtimeSettings;
     }
 
     public Resource createResource(String alias) throws CompassException {
