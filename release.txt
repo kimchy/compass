@@ -5,7 +5,7 @@ Release Process:
    (for example from x.y-SNAPSHOT to x.y)
 * Change docs/reference/src/compass.xml releaseInfo to the actual version number
 * Change readme.txt to the version number
-* update update.txt
+* update upgrade.txt
 * Run ant clean
 * Run ant release
 * Extract compass-x.y-with-dependencies
