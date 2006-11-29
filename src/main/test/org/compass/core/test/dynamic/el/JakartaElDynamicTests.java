@@ -2,6 +2,7 @@ package org.compass.core.test.dynamic.el;
 
 import java.util.Calendar;
 
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
@@ -28,6 +29,9 @@ public class JakartaElDynamicTests extends AbstractTestCase {
 
         Resource resource = session.loadResource("a1", new Long(1));
         assertEquals("valuevalue2", resource.get("test"));
+
+        CompassHits hits = session.find("valuevalue2");
+        assertEquals(1, hits.length());
 
         tr.commit();
         session.close();
