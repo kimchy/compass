@@ -111,9 +111,12 @@ public class CompassSearchResults {
 
     private long searchTime;
 
-    public CompassSearchResults(CompassHit[] hits, long searchTime) {
+    private int totalHits;
+
+    public CompassSearchResults(CompassHit[] hits, long searchTime, int totalHits) {
         this.hits = hits;
         this.searchTime = searchTime;
+        this.totalHits = totalHits;
     }
 
     /**
@@ -135,6 +138,15 @@ public class CompassSearchResults {
      */
     public long getSearchTime() {
         return searchTime;
+    }
+
+    /**
+     * Returns the total number of hits resulted from this search query.
+     *
+     * @return The total number of hits
+     */
+    public int getTotalHits() {
+        return this.totalHits;
     }
 
     /**

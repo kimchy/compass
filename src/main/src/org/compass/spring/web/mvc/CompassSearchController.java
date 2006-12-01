@@ -148,7 +148,7 @@ public class CompassSearchController extends AbstractCompassCommandController {
             }
         }
         time = System.currentTimeMillis() - time;
-        CompassSearchResults searchResults = new CompassSearchResults(detachedHits.getHits(), time);
+        CompassSearchResults searchResults = new CompassSearchResults(detachedHits.getHits(), time, hits.length());
         searchResults.setPages(pages);
         return searchResults;
     }
