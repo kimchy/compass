@@ -126,7 +126,7 @@ public class JdbcTable {
         sb.setLength(0);
         sqlDeletaMarkDeleteByDelta = sb.append("delete from ").append(getQualifiedName())
                 .append(" where ").append(deletedColumn.getQuotedName()).append(" = ?")
-                .append("and ").append(lastModifiedColumn.getQuotedName()).append(" < ?").toString();
+                .append(" and ").append(lastModifiedColumn.getQuotedName()).append(" < ?").toString();
 
         sb.setLength(0);
         sqlUpdateNameByName = sb.append("update ").append(getQualifiedName())
