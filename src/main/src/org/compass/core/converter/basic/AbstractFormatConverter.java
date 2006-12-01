@@ -42,6 +42,8 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
 
     protected boolean hasFormatter = true;
 
+    protected Locale locale;
+
     public void configure(CompassSettings settings) throws CompassException {
         String format = settings.getSetting(CompassEnvironment.Converter.Format.FORMAT);
         if (format == null) {
@@ -52,7 +54,6 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
             return;
         }
         String localeSetting = settings.getSetting(CompassEnvironment.Converter.Format.LOCALE);
-        Locale locale;
         if (localeSetting != null) {
             locale = new Locale(localeSetting);
         } else {
@@ -70,14 +71,16 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
 
     public void setFormat(String format) {
         ThreadSafeFormat.FormatterFactory formatterFactory = doCreateFormatterFactory();
-        formatterFactory.configure(format, Locale.getDefault());
+        formatterFactory.configure(format, locale);
 
         formatter = new ThreadSafeFormat(4, 20, formatterFactory);
     }
 
     public FormatConverter copy() {
         try {
-            return (FormatConverter) getClass().newInstance();
+            AbstractFormatConverter copy = (AbstractFormatConverter) getClass().newInstance();
+            copy.locale = locale;
+            return copy;
         } catch (Exception e) {
             throw new CompassException("Should not happen", e);
         }

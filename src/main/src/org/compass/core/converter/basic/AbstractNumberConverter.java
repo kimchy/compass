@@ -17,6 +17,7 @@
 package org.compass.core.converter.basic;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
@@ -44,10 +45,14 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
         }
 
         public java.text.Format create() {
+            NumberFormat numberFormat;
             if (locale != null) {
-                return new DecimalFormat(format);
+                numberFormat = NumberFormat.getInstance(locale);
+            } else {
+                numberFormat = NumberFormat.getInstance();
             }
-            return new DecimalFormat(format);
+            ((DecimalFormat) numberFormat).applyPattern(format);
+            return numberFormat;
         }
 
     }
