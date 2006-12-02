@@ -1,6 +1,13 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
+VERSION 1.1 RC1 ()
+==================
+
+1. CompassSearchController Spring MVC search callbacks removed. The search operation refactored to a
+   utility class called CompassSearchHelper (with the same callbacks) which can be injected into the
+   search controller.
+
 VERSION 1.1 M3 (November 28, 2006)
 ==================================
 

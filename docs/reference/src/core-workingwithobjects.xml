@@ -263,6 +263,30 @@ CompassHits hits =  queryBuilder.bool()
         </para>
 
       </sect2>
+      
+      <sect2 id="CompassSearchHelper">
+        <title>CompassSearchHelper</title>
+        
+        <para>
+          Compass provides a simple search helper providing support for pagination and automatic hits detach. The search helper can be used mainly to simplify search results display and can be easily integrated with different MVC frameworks. CompassSearchHelper is thread safe. Here is an example of how it can be used:
+
+<programlisting><![CDATA[// constructs a new search helper with page size 10.
+CompassSearchHelper searchHelper = new CompasssSearchHelper(compass, 10);
+// ...
+CompassSearchResults results = searchHelper.search(new CompassSearchCommand("test", new Integer(0)));
+for (int i = 0; i < results.getHits().length; i++) {
+  CompassHit hit = results.getHits()[i];
+  // display the results
+}
+// iterate through the search results pages
+for (int i = 0; i < results.getPages().length; i++) {
+  Page page = results.getPages()[i];
+  // display a page, for example 1-10, 11-20, 21-30
+}
+]]></programlisting>
+        </para>
+        
+      </sect2>
 
       <sect2 id="CompassHighlighter">
         <title>CompassHighlighter</title>

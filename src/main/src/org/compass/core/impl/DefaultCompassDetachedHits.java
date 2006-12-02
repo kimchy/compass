@@ -22,6 +22,8 @@ import org.compass.core.CompassHighlightedText;
 import org.compass.core.CompassHit;
 import org.compass.core.CompassHitIterator;
 import org.compass.core.Resource;
+import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.spi.InternalCompassHits;
 import org.compass.core.spi.InternalCompassSession;
 
@@ -65,8 +67,11 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
             scores[i] = hits.score(location);
             this.hits[i] = new DefaultCompassHit(this, i);
             highlightedText[i] = hits.highlightedText(location);
-            if (session.getMapping().hasClassMapping(resources[i].getAlias())) {
-                datas[i] = session.getByResource(resources[i]);
+            AliasMapping aliasMapping = session.getMapping().getAliasMapping(resources[i].getAlias());
+            if (aliasMapping instanceof ClassMapping) {
+                if (((ClassMapping) aliasMapping).isSupportUnmarshall()) {
+                    datas[i] = session.getByResource(resources[i]);
+                }
             }
         }
     }
