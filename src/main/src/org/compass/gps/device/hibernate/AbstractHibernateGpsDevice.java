@@ -51,14 +51,14 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
 
     protected int fetchCount = 200;
 
-    private HibernateEntityInfo[] entetiesInfo;
+    private HibernateEntityInfo[] entitiesInfo;
 
     public void setFetchCount(int fetchCount) {
         this.fetchCount = fetchCount;
     }
 
     protected void doStart() throws CompassGpsException {
-        entetiesInfo = doGetHibernateEntitiesInfo();
+        entitiesInfo = doGetHibernateEntitiesInfo();
     }
 
     /**
@@ -70,15 +70,15 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
             log.info(buildMessage("Indexing the database with fetch count [" + fetchCount + "]"));
         }
 
-        for (int i = 0; i < entetiesInfo.length; i++) {
+        for (int i = 0; i < entitiesInfo.length; i++) {
             int current = 0;
             while (true) {
                 HibernateSessionWrapper sessionWrapper = doGetHibernateSessionWrapper();
                 try {
                     sessionWrapper.open();
-                    final List values = doGetObjects(entetiesInfo[i], current, fetchCount, sessionWrapper);
+                    final List values = doGetObjects(entitiesInfo[i], current, fetchCount, sessionWrapper);
                     if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("Indexing entity [" + entetiesInfo[i].entityname + "] range ["
+                        log.debug(buildMessage("Indexing entity [" + entitiesInfo[i].entityname + "] range ["
                                 + current + "-" + (current + fetchCount) + "]"));
                     }
                     current += fetchCount;
