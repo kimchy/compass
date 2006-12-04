@@ -33,6 +33,7 @@ import org.compass.gps.device.jpa.entities.JpaEntitiesLocator;
 import org.compass.gps.device.jpa.entities.JpaEntitiesLocatorDetector;
 import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjector;
 import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjectorDetector;
+import org.compass.gps.device.jpa.support.NativeJpaHelper;
 
 /**
  * A Java Persistence API Gps Device (EJB3 Persistence).
@@ -137,6 +138,12 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                         + nativeEntityManagerFactory.getClass().getName() + "] extracted by ["
                         + nativeEntityManagerFactoryExtractor.getClass().getName() + "]"));
             }
+        } else {
+            nativeEntityManagerFactory = NativeJpaHelper.extractNativeJpa(entityManagerFactory);
+            if (log.isDebugEnabled()) {
+                log.debug(buildMessage("Using native EntityManagerFactory ["
+                        + nativeEntityManagerFactory.getClass().getName() + "] using default extractor"));
+            }
         }
 
         if (entitiesLocator == null) {
@@ -209,7 +216,7 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 if (!(e instanceof JpaGpsDeviceException)) {
                     throw new JpaGpsDeviceException(buildMessage("Failed to index the database"), e);
                 }
-                throw(JpaGpsDeviceException) e;
+                throw (JpaGpsDeviceException) e;
             }
         }
     }
