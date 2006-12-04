@@ -27,6 +27,7 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.marshall.MarshallingEnvironment;
 
 /**
  * @author kimchy
@@ -131,8 +132,10 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
             context.setAttribute(COLLECTION_RESOURCE_WRAPPER_KEY, crw);
         }
 
+        Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         Mapping elementMapping = colMapping.getElementMapping();
         for (int i = 0; i < size; i++) {
+            context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, current);
             Object value = elementMapping.getConverter().unmarshall(crw, elementMapping, context);
             if (value != null) {
                 addValue(col, i, value);

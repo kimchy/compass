@@ -23,6 +23,7 @@ import org.compass.core.accessor.Getter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.marshall.MarshallingEnvironment;
 
 /**
  * @author kimchy
@@ -31,6 +32,7 @@ public class ArrayMappingConverter extends AbstractCollectionMappingConverter {
 
     protected int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
             MarshallingContext context) {
+        Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         int count = 0;
         int size = Array.getLength(root);
         Mapping elementMapping = colMapping.getElementMapping();
@@ -39,6 +41,7 @@ public class ArrayMappingConverter extends AbstractCollectionMappingConverter {
             if (value == null) {
                 continue;
             }
+            context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, current);
             boolean stored = elementMapping.getConverter().marshall(resource, value, elementMapping, context);
             if (stored) {
                 count++;
