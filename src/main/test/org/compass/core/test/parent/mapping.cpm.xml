@@ -22,7 +22,7 @@
 
         <id name="id" accessor="field" />
 
-        <component name="b" accessor="field" ref-alias="b2" />
+        <component name="b" accessor="field" />
     </class>
 
     <class name="B2" alias="b2" root="false">

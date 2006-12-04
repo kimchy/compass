@@ -32,7 +32,7 @@ public class AccessorUtils {
      * Returns the Java 5 generics collection parameter. Returns null
      * if working with Java 1.4 or the collection has no generics parameter.
      */
-    public static Class getGenericCollectionParameter(Getter getter) {
+    public static Class getCollectionParameter(Getter getter) {
         if (JdkVersion.getMajorJavaVersion() <= JdkVersion.JAVA_14) {
             return null;
         }

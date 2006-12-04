@@ -63,9 +63,13 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
         if (mapping.getRefAliases() == null) {
             Class clazz = mapping.getRefClass();
             if (clazz == null) {
-                clazz = AccessorUtils.getGenericCollectionParameter(mapping.getGetter());
-                if (clazz == null) {
-                    clazz = mapping.getGetter().getReturnType();
+                if (mapping.getGetter().getReturnType().isArray()) {
+                    clazz = mapping.getGetter().getReturnType().getComponentType();
+                } else {
+                    clazz = AccessorUtils.getCollectionParameter(mapping.getGetter());
+                    if (clazz == null) {
+                        clazz = mapping.getGetter().getReturnType();
+                    }
                 }
             }
             if (clazz == null) {
@@ -90,6 +94,10 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
                 if (Collection.class.isAssignableFrom(mapping.getGetter().getReturnType())) {
                     throw new MappingException("Failed to resolve ref-alias for collection property [" + mapping.getName() + "] in alias [" +
                             classMapping.getAlias() + "]. You must set the ref-alias for it, or use Java 5 generics for the collection type." +
+                            " Have you added the class mapping to Compass?");
+                } else if (mapping.getGetter().getReturnType().isArray()) {
+                    throw new MappingException("Failed to resolve ref-alias for array property [" + mapping.getName() + "] in alias [" +
+                            classMapping.getAlias() + "]. You must set the ref-alias for it." +
                             " Have you added the class mapping to Compass?");
                 } else {
                     throw new MappingException("Tried to resolve ref-alias for property [" + mapping.getName() + "] in alias [" +

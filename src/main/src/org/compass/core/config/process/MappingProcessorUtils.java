@@ -131,7 +131,7 @@ public abstract class MappingProcessorUtils {
         }
 
         if (clazz == null) {
-            clazz = AccessorUtils.getGenericCollectionParameter(classPropertyMapping.getGetter());
+            clazz = AccessorUtils.getCollectionParameter(classPropertyMapping.getGetter());
         }
 
         Converter converter;
