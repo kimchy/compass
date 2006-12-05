@@ -554,7 +554,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(dbcpEle, "password"));
             settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, DomUtils.getElementAttribute(dbcpEle, "driverClass"));
             settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(dbcpEle, "autoCommit", "false"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.DEFAULT_TRANSACTION_ISOLATION, DomUtils.getElementAttribute(dbcpEle, "defaultTransactionIsolation"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.DEFAULT_TRANSACTION_ISOLATION, DomUtils.getElementAttribute(dbcpEle, "defaultTransacitonIsolation"));
             settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.INITIAL_SIZE, DomUtils.getElementAttribute(dbcpEle, "initialSize"));
             settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_ACTIVE, DomUtils.getElementAttribute(dbcpEle, "maxActive"));
             settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_IDLE, DomUtils.getElementAttribute(dbcpEle, "maxIdle"));

@@ -211,6 +211,7 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("3", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.INITIAL_SIZE));
         assertEquals("4", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MIN_IDLE));
         assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.POOL_PREPARED_STATEMENTS));
+        assertEquals("2", settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.DEFAULT_TRANSACTION_ISOLATION));
     }
 
     public void testJdbcC3p0() throws Exception {

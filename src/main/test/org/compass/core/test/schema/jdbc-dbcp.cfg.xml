@@ -8,7 +8,7 @@
             <jdbc dialect="org.apache.lucene.store.jdbc.dialect.HSQLDialect" managed="true" disableSchemaOperations="true">
                 <dataSourceProvider>
                     <dbcp url="testurl" username="testusername" password="testpassword" driverClass="testDriverClass"
-                        maxActive="10" maxWait="5" maxIdle="2" initialSize="3" minIdle="4" poolPreparedStatements="true" />
+                        maxActive="10" maxWait="5" maxIdle="2" initialSize="3" minIdle="4" poolPreparedStatements="true" defaultTransacitonIsolation="2" />
                 </dataSourceProvider>
             </jdbc>
         </connection>
