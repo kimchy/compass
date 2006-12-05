@@ -86,8 +86,6 @@ public class AsyncMemoryMirrorDirectoryWrapper extends Directory {
                     logAsyncErrorMessage("delete [" + name + "]");
                 }
             }
-
-            ;
         });
     }
 
@@ -117,8 +115,6 @@ public class AsyncMemoryMirrorDirectoryWrapper extends Directory {
                     logAsyncErrorMessage("rename from[" + from + "] to[" + to + "]");
                 }
             }
-
-            ;
         });
     }
 
@@ -132,8 +128,6 @@ public class AsyncMemoryMirrorDirectoryWrapper extends Directory {
                     logAsyncErrorMessage("touch [" + name + "]");
                 }
             }
-
-            ;
         });
     }
 
@@ -219,8 +213,6 @@ public class AsyncMemoryMirrorDirectoryWrapper extends Directory {
                         logAsyncErrorMessage("write [" + name + "]");
                     }
                 }
-
-                ;
             });
         }
     }
