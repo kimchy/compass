@@ -19,21 +19,25 @@ package org.apache.lucene.store.jdbc.lock;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.support.JdbcTemplate;
 
 /**
- * A lock based on phantom reads and table level locking. For most database and most transaction
+ * <p>A lock based on phantom reads and table level locking. For most database and most transaction
  * isolation levels this lock is suffecient.
- * <p/>
- * The existance of the lock in the database, marks it as being locked.
- * <p/>
- * The benefits of using this lock is the ability to release it.
+ *
+ * <p>The existance of the lock in the database, marks it as being locked.
+ *
+ * <p>The benefits of using this lock is the ability to release it.
  *
  * @author kimchy
  */
 public class PhantomReadLock extends Lock implements JdbcLock {
+
+    private static final Log log = LogFactory.getLog(PhantomReadLock.class);
 
     private JdbcDirectory jdbcDirectory;
 
@@ -69,6 +73,9 @@ public class PhantomReadLock extends Lock implements JdbcLock {
                         }
                     });
         } catch (Exception e) {
+            if (log.isTraceEnabled()) {
+                log.trace("Obtain Lock exception (might be valid) [" + e.getMessage() + "]");
+            }
             return false;
         }
         return true;
