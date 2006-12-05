@@ -28,7 +28,7 @@ import org.compass.core.jndi.NamingHelper;
 
 /**
  * A JNDI based data source provider. Uses any additional jndi settings to get the JNDI
- * initial context. The data source jndi name is the url set (without the jdbc:// prefix). 
+ * initial context. The data source jndi name is the url set (without the jdbc:// prefix).
  *
  * @author kimchy
  */
@@ -44,11 +44,15 @@ public class JndiDataSourceProvider extends AbstractDataSourceProvider {
 
         private boolean autoCommit;
 
-        public UsernamePasswordDataSourceWrapper(DataSource dataSource, String username, String password, boolean autoCommit) {
+        private boolean externalAutoCommit;
+
+        public UsernamePasswordDataSourceWrapper(DataSource dataSource, String username, String password,
+                                                 boolean autoCommit, boolean externalAutoCommit) {
             this.dataSource = dataSource;
             this.username = username;
             this.password = password;
             this.autoCommit = autoCommit;
+            this.externalAutoCommit = externalAutoCommit;
         }
 
         public Connection getConnection() throws SQLException {
@@ -62,8 +66,10 @@ public class JndiDataSourceProvider extends AbstractDataSourceProvider {
             } else {
                 conn = dataSource.getConnection(username, password);
             }
-            if (conn.getAutoCommit() != autoCommit) {
-                conn.setAutoCommit(autoCommit);
+            if (!externalAutoCommit) {
+                if (conn.getAutoCommit() != autoCommit) {
+                    conn.setAutoCommit(autoCommit);
+                }
             }
             return conn;
         }
@@ -72,7 +78,7 @@ public class JndiDataSourceProvider extends AbstractDataSourceProvider {
     protected DataSource doCreateDataSource(String url, CompassSettings settings) throws CompassException {
         try {
             DataSource dataSource = (DataSource) NamingHelper.getInitialContext(settings).lookup(url);
-            return new UsernamePasswordDataSourceWrapper(dataSource, username, password, autoCommit);
+            return new UsernamePasswordDataSourceWrapper(dataSource, username, password, autoCommit, externalAutoCommit);
         } catch (NamingException e) {
             throw new CompassException("Failed to lookup data source from jndi under [" + url + "]", e);
         }

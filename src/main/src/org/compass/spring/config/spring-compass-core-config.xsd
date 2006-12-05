@@ -118,7 +118,8 @@
             <xsd:annotation>
                 <xsd:documentation>
                     A setting for managed id index feature. When an internal managed id is created, it's index setting
-                    will be created using this global setting (if not defined locally in the mapping file).
+                    will be created using this global setting (if not defined locally in the mapping file). Possible
+                    values are no and un_tokenized, with default value set to no.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
@@ -1435,10 +1436,11 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false">
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            Sets the auto commit mode for the Jdbc connection.
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
@@ -1481,10 +1483,11 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false">
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            Sets the auto commit mode for the Jdbc connection.
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
@@ -1525,10 +1528,11 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false">
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            Sets the auto commit mode for the Jdbc connection.
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
@@ -1632,10 +1636,11 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false">
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            Sets the auto commit mode for the Jdbc connection.
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
@@ -1667,10 +1672,11 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="autoCommit" type="booleanType" use="optional" default="false">
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
                                     <xsd:annotation>
                                         <xsd:documentation>
-                                            Sets the auto commit mode for the Jdbc connection.
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>

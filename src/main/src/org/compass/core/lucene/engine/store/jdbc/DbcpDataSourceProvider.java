@@ -17,7 +17,6 @@
 package org.compass.core.lucene.engine.store.jdbc;
 
 import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -34,7 +33,9 @@ public class DbcpDataSourceProvider extends AbstractDataSourceProvider {
 
     protected DataSource doCreateDataSource(String url, CompassSettings settings) throws CompassException {
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDefaultAutoCommit(autoCommit);
+        if (!externalAutoCommit) {
+            dataSource.setDefaultAutoCommit(autoCommit);
+        }
         dataSource.setDriverClassName(driverClass);
         dataSource.setUrl(url);
         dataSource.setUsername(username);

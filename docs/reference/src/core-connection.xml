@@ -129,6 +129,10 @@
         Compass allows for different Jdbc <classname>DataSource</classname> providers. A <classname>DataSourceProvider</classname> implementation is responsible for configuring and providing a Jdbc <classname>DataSource</classname> instance. A data source implementation is very important when it comes to performance, especially in terms of pooling features.
       </para>
       
+      <para>
+        All different data source supported by Compass allow to configure the autoCommit flag. There are three values allowed for autoCommit: <literal>false</literal>, <literal>true</literal> and <literal>external</literal> (don't set the autoCommit explicitly, assume it is configured elsewhere). The autoCommit mode defaults to <literal>false</literal> and it is the recommended value (external can also be used, but make sure to set the actual data source to false).
+      </para>
+      
       <sect3 id="core-connection-jdbc-dsp-driverManager">
         <title>Driver Manager</title>
         

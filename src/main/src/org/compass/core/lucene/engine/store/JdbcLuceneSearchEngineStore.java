@@ -154,7 +154,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         }
 
         if (dialect.supportTransactionalScopedBlobs() &&
-                !settings.getSettingAsBoolean(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, false)) {
+                !"true".equalsIgnoreCase(settings.getSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, "false"))) {
             // Use FetchPerTransaction is dialect supports it
             jdbcSettings.getDefaultFileEntrySettings().setClassSetting(JdbcFileEntrySettings.INDEX_INPUT_TYPE_SETTING,
                     FetchPerTransactionJdbcIndexInput.class);

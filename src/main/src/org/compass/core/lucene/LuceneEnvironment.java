@@ -760,7 +760,8 @@ public class LuceneEnvironment {
 
             /**
              * Sets the auto commit for the <code>Connection</code> created by the <code>DataSource</code>.
-             * Defaults to <code>false</code>.
+             * Defaults to <code>false</code>. Can be either <code>false</code>, <code>true</code> or
+             * <code>external</code> (let outer configuration management to set it).
              */
             public static final String AUTO_COMMIT = "compass.engine.store.jdbc.connection.autoCommit";
         }

@@ -43,11 +43,15 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
 
         private boolean autoCommit;
 
-        public UsernamePasswordDataSourceWrapper(DataSource dataSource, String username, String password, boolean autoCommit) {
+        private boolean externalAutoCommit;
+
+        public UsernamePasswordDataSourceWrapper(DataSource dataSource, String username, String password,
+                                                 boolean autoCommit, boolean externalAutoCommit) {
             this.dataSource = dataSource;
             this.username = username;
             this.password = password;
             this.autoCommit = autoCommit;
+            this.externalAutoCommit = externalAutoCommit;
         }
 
         public Connection getConnection() throws SQLException {
@@ -61,8 +65,10 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
             } else {
                 conn = dataSource.getConnection(username, password);
             }
-            if (conn.getAutoCommit() != autoCommit) {
-                conn.setAutoCommit(autoCommit);
+            if (!externalAutoCommit) {
+                if (conn.getAutoCommit() != autoCommit) {
+                    conn.setAutoCommit(autoCommit);
+                }
             }
             return conn;
         }
@@ -83,7 +89,7 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
 
     protected DataSource doCreateDataSource(String url, CompassSettings settings) throws CompassException {
         this.settings = settings;
-        DataSource dataSource =  (DataSource) dataSourceHolder.get();
+        DataSource dataSource = (DataSource) dataSourceHolder.get();
         if (dataSource == null) {
             dataSource = (DataSource) settings.getRegistry(dataSourceKey);
         }
@@ -93,7 +99,7 @@ public class ExternalDataSourceProvider extends AbstractDataSourceProvider {
             settings.setRegistry(dataSourceKey, dataSource);
             dataSourceHolder.set(null);
         }
-        return new UsernamePasswordDataSourceWrapper(dataSource, username, password, autoCommit);
+        return new UsernamePasswordDataSourceWrapper(dataSource, username, password, autoCommit, externalAutoCommit);
     }
 
     public void closeDataSource() {

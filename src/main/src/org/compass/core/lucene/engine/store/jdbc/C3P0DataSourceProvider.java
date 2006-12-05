@@ -44,7 +44,9 @@ public class C3P0DataSourceProvider extends AbstractDataSourceProvider {
         dataSource.setJdbcUrl(url);
         dataSource.setUser(username);
         dataSource.setPassword(password);
-        dataSource.setAutoCommitOnClose(autoCommit);
+        if (!externalAutoCommit) {
+            dataSource.setAutoCommitOnClose(autoCommit);
+        }
         return dataSource;
     }
 }
