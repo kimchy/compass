@@ -35,7 +35,8 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
     /**
      * A data holder used to index a specific Hibernate entity.
      */
-    protected static class HibernateEntityInfo {
+    public static class HibernateEntityInfo {
+
         public String entityname;
 
         public String selectQuery;
