@@ -49,15 +49,15 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
         if (format == null) {
             format = doGetDefaultFormat();
         }
-        if (format == null) {
-            hasFormatter = false;
-            return;
-        }
         String localeSetting = settings.getSetting(CompassEnvironment.Converter.Format.LOCALE);
         if (localeSetting != null) {
             locale = new Locale(localeSetting);
         } else {
             locale = Locale.getDefault();
+        }
+        if (format == null) {
+            hasFormatter = false;
+            return;
         }
 
         ThreadSafeFormat.FormatterFactory formatterFactory = doCreateFormatterFactory();
