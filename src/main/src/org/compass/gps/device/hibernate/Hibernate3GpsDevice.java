@@ -31,6 +31,7 @@ import org.compass.core.util.MethodInvoker;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.PassiveMirrorGpsDevice;
 import org.hibernate.EntityMode;
+import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -82,6 +83,7 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
         public void open() throws HibernateGpsDeviceException {
             try {
                 session = sessionFactory.openSession();
+                session.setFlushMode(FlushMode.NEVER);
             } catch (HibernateException e) {
                 throw new HibernateGpsDeviceException(buildMessage("Failed to open session to fetch data"), e);
             }
