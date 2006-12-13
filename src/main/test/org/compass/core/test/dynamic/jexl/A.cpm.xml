@@ -21,4 +21,22 @@
             data.date
         </dynamic-meta-data>
     </class>
+
+    <class name="A" alias="a3">
+
+        <id name="id"/>
+
+        <dynamic-meta-data name="test" converter="jexl">
+            data.valuesArr
+        </dynamic-meta-data>
+    </class>
+
+    <class name="A" alias="a4">
+
+        <id name="id"/>
+
+        <dynamic-meta-data name="test" converter="jexl">
+            data.valuesCol
+        </dynamic-meta-data>
+    </class>
 </compass-core-mapping>

@@ -16,6 +16,7 @@
 
 package org.compass.core.test.dynamic.jexl;
 
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -31,6 +32,9 @@ public class A {
 
     private Date date;
 
+    private String[] valuesArr;
+
+    private Collection valuesCol;
 
     public Long getId() {
         return id;
@@ -62,5 +66,21 @@ public class A {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String[] getValuesArr() {
+        return valuesArr;
+    }
+
+    public void setValuesArr(String[] valuesArr) {
+        this.valuesArr = valuesArr;
+    }
+
+    public Collection getValuesCol() {
+        return valuesCol;
+    }
+
+    public void setValuesCol(Collection valuesCol) {
+        this.valuesCol = valuesCol;
     }
 }

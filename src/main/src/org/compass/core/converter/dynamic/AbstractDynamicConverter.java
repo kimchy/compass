@@ -1,5 +1,9 @@
 package org.compass.core.converter.dynamic;
 
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
@@ -47,27 +51,41 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
         SearchEngine searchEngine = context.getSearchEngine();
 
         // don't save a null value if the context does not states so
-        if (root == null && !handleNulls(context)) {
+        if (root == null) {
             return false;
         }
-        String sValue = getNullValue(context);
-        if (root != null) {
-            Object value = evaluate(root, resourcePropertyMapping);
-            if (value == null) {
-                return false;
-            } else {
-                if (formatConverter == null) {
-                    sValue = value.toString();
-                } else {
-                    sValue = formatConverter.toString(value, resourcePropertyMapping);
-                }
+        Object value = evaluate(root, resourcePropertyMapping);
+        if (value == null) {
+            return false;
+        }
+        // save the value in the search engine. Handle array/collection and single values
+        if (value.getClass().isArray()) {
+            int length = Array.getLength(value);
+            for (int i = 0; i < length; i++) {
+                addProperty(Array.get(value, i), resourcePropertyMapping, searchEngine, root, context, resource);
             }
+        } else if (value instanceof Collection) {
+            Collection colValues = (Collection) value;
+            for (Iterator it = colValues.iterator(); it.hasNext();) {
+                addProperty(it.next(), resourcePropertyMapping, searchEngine, root, context, resource);
+            }
+        } else {
+            addProperty(value, resourcePropertyMapping, searchEngine, root, context, resource);
+        }
+        return resourcePropertyMapping.getStore() != Property.Store.NO;
+    }
+
+    protected void addProperty(Object value, ResourcePropertyMapping resourcePropertyMapping, SearchEngine searchEngine,
+                             Object root, MarshallingContext context, Resource resource) {
+        String sValue;
+        if (formatConverter == null) {
+            sValue = value.toString();
+        } else {
+            sValue = formatConverter.toString(value, resourcePropertyMapping);
         }
         Property p = searchEngine.createProperty(sValue, resourcePropertyMapping);
         doSetBoost(p, root, resourcePropertyMapping, context);
         resource.addProperty(p);
-
-        return resourcePropertyMapping.getStore() != Property.Store.NO;
     }
 
     /**
