@@ -54,11 +54,7 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
         if (root != null) {
             Object value = evaluate(root, resourcePropertyMapping);
             if (value == null) {
-                if (handleNulls(context)) {
-                    sValue = getNullValue(context);
-                } else {
-                    return false;
-                }
+                return false;
             } else {
                 if (formatConverter == null) {
                     sValue = value.toString();
