@@ -67,6 +67,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="lazy-init" type="booleanType" default="false">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Spring beans lazy-init flag.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
