@@ -74,6 +74,11 @@ public class CompassNamespaceHandler extends NamespaceHandlerSupport {
                     beanDefinitionBuilder.setLazyInit(true);
                 }
 
+                String scope = DomUtils.getElementAttribute(element, "scope");
+                if (scope != null) {
+                    beanDefinitionBuilder.setScope(scope);
+                }
+
                 String postProcessRef = DomUtils.getElementAttribute(element, "postProcessor");
                 if (postProcessRef != null) {
                     beanDefinitionBuilder.addPropertyReference("postProcessor", postProcessRef);
