@@ -235,7 +235,7 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         searchEngine.commit(true);
     }
 
-    public void testTwoPhasePrepareRollback() {
+    public void testTwoPhaseCreatePrepareRollback() {
         // create an index with data and commit it
         getSearchEngine().begin();
         Resource singleId = createSingleIdResource(getSearchEngine());
@@ -252,6 +252,38 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceNotExists(getSearchEngine());
+        getSearchEngine().rollback();
+    }
+
+    public void testTwoPhaseDeletePrepareRollback() {
+        // create an index with data and commit it
+        getSearchEngine().begin();
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+
+        getSearchEngine().prepare();
+        getSearchEngine().commit(false);
+
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().rollback();
+
+        
+        getSearchEngine().begin();
+        getSearchEngine().delete(singleId);
+        assertSingleIdResourceNotExists(getSearchEngine());
+        getSearchEngine().prepare();
+        getSearchEngine().rollback();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
         getSearchEngine().rollback();
     }
 
