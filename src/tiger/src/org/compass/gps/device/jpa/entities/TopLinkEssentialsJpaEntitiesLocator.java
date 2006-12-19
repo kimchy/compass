@@ -10,9 +10,10 @@ import oracle.toplink.essentials.internal.ejb.cmp3.base.EntityManagerFactoryImpl
 import oracle.toplink.essentials.sessions.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.compass.gps.spi.CompassGpsInterfaceDevice;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * A specilized version that works with TopLink Essentials (Glassfish persistence). This class should be used instead of
@@ -49,7 +50,8 @@ public class TopLinkEssentialsJpaEntitiesLocator implements JpaEntitiesLocator {
                 continue;
             }
             Class<?> clazz = classDescriptor.getJavaClass();
-            EntityInformation entityInformation = new EntityInformation(clazz, classDescriptor.getAlias());
+            ResourceMapping resourceMapping = gps.getMappingForEntityForIndex(entityname);
+            EntityInformation entityInformation = new EntityInformation(clazz, classDescriptor.getAlias(), resourceMapping.getSubIndexHash().getSubIndexes());
             entitiesList.add(entityInformation);
             if (log.isDebugEnabled()) {
                 log.debug("Entity [" + entityname + "] will be indexed");

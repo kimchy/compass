@@ -1,11 +1,11 @@
 package org.compass.gps.device.jpa;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A simple base class for {@link EntityManagerWrapper} implementations. Calls the subclasses
@@ -70,6 +70,16 @@ public abstract class AbstractEntityManagerWrapper implements EntityManagerWrapp
             } finally {
                 entityManager = null;
             }
+        }
+    }
+
+    public EntityManagerWrapper newInstance() {
+        try {
+            AbstractEntityManagerWrapper copy = getClass().newInstance();
+            copy.entityManagerFactory = entityManagerFactory;
+            return copy;
+        } catch (Exception e) {
+           throw new JpaGpsDeviceException("Failed to create new wrapper", e);
         }
     }
 

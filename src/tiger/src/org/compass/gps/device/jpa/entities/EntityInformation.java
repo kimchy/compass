@@ -18,6 +18,7 @@ package org.compass.gps.device.jpa.entities;
 
 import org.compass.gps.device.jpa.DefaultJpaQueryProvider;
 import org.compass.gps.device.jpa.JpaQueryProvider;
+import org.compass.gps.device.support.parallel.IndexEntity;
 
 /**
  * A general Entity information to be used by the {@link org.compass.gps.device.jpa.JpaGpsDevice}
@@ -26,7 +27,7 @@ import org.compass.gps.device.jpa.JpaQueryProvider;
  * @author kimchy
  * @see JpaEntitiesLocator
  */
-public class EntityInformation {
+public class EntityInformation implements IndexEntity {
 
     private Class<?> clazz;
 
@@ -34,18 +35,21 @@ public class EntityInformation {
 
     private JpaQueryProvider queryProvider;
 
-    public EntityInformation(Class<?> clazz, String name) {
-        this(clazz, name, new DefaultJpaQueryProvider(clazz, name));
+    private String[] subIndexes;
+
+    public EntityInformation(Class<?> clazz, String name, String[] subIndexes) {
+        this(clazz, name, new DefaultJpaQueryProvider(clazz, name), subIndexes);
     }
 
-    public EntityInformation(Class<?> clazz, String name, String selectQuery) {
-        this(clazz, name, new DefaultJpaQueryProvider(selectQuery));
+    public EntityInformation(Class<?> clazz, String name, String selectQuery, String[] subIndexes) {
+        this(clazz, name, new DefaultJpaQueryProvider(selectQuery), subIndexes);
     }
 
-    public EntityInformation(Class<?> clazz, String name, JpaQueryProvider queryProvider) {
+    public EntityInformation(Class<?> clazz, String name, JpaQueryProvider queryProvider, String[] subIndexes) {
         this.clazz = clazz;
         this.name = name;
         this.queryProvider = queryProvider;
+        this.subIndexes = subIndexes;
     }
 
     /**
@@ -58,7 +62,7 @@ public class EntityInformation {
     /**
      * Returns the entity name
      */
-    public String getEntityName() {
+    public String getName() {
         return name;
     }
 
@@ -86,5 +90,9 @@ public class EntityInformation {
      */
     public JpaQueryProvider getQueryProvider() {
         return this.queryProvider;
+    }
+
+    public String[] getSubIndexes() {
+        return subIndexes;
     }
 }

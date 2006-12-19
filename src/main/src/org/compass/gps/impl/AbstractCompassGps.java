@@ -19,14 +19,15 @@ package org.compass.gps.impl;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A simple base class for {@link org.compass.gps.CompassGps}
@@ -70,22 +71,29 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
     }
 
     protected boolean hasMappingForEntity(Class clazz, Compass checkedCompass) {
-        return ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz) != null;
+        return getMappingForEntity(clazz, checkedCompass) != null;
     }
 
+    protected ResourceMapping getMappingForEntity(Class clazz, Compass checkedCompass) {
+        return ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz);
+    }
+    
     protected boolean hasMappingForEntity(String name, Compass checkedCompass) {
-        if (((InternalCompass) checkedCompass).getMapping().getRootMappingByAlias(name) != null) {
-            return true;
+        return getMappingForEntity(name, checkedCompass) != null;
+    }
+
+    protected ResourceMapping getMappingForEntity(String name, Compass checkedCompass) {
+        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getRootMappingByAlias(name);
+        if (resourceMapping != null) {
+            return resourceMapping;
         }
         try {
             Class clazz = ClassUtils.forName(name);
-            if (((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz) != null) {
-                return true;
-            }
+            return ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz);
         } catch (Exception e) {
             // do nothing
         }
-        return false;
+        return null;
     }
 
     public synchronized void index() throws CompassGpsException, IllegalStateException {

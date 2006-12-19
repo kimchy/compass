@@ -27,6 +27,7 @@ import net.sf.hibernate.Session;
 import net.sf.hibernate.SessionFactory;
 import net.sf.hibernate.Transaction;
 import net.sf.hibernate.cfg.Configuration;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.CompassGpsException;
 
 /**
@@ -153,7 +154,7 @@ public class Hibernate2GpsDevice extends AbstractHibernateGpsDevice {
     }
 
     protected HibernateEntityInfo[] doGetHibernateEntitiesInfo() throws HibernateGpsDeviceException {
-        ArrayList classesToIndex = new ArrayList();
+        ArrayList infos = new ArrayList();
         try {
             Map allClassMetaData = sessionFactory.getAllClassMetadata();
             for (Iterator it = allClassMetaData.keySet().iterator(); it.hasNext();) {
@@ -162,21 +163,17 @@ public class Hibernate2GpsDevice extends AbstractHibernateGpsDevice {
                     continue;
                 }
                 if (compassGps.hasMappingForEntityForIndex(clazz)) {
-                    classesToIndex.add(clazz);
+                    ResourceMapping resourceMapping = compassGps.getMappingForEntityForIndex(clazz);
+                    HibernateEntityInfo info = new HibernateEntityInfo(clazz.getName(), "from " + clazz.getName(),
+                            resourceMapping.getSubIndexHash().getSubIndexes());
+                    infos.add(info);
                 }
             }
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(buildMessage("Failed to fetch all class meta data"), e);
         }
 
-        HibernateEntityInfo[] infos = new HibernateEntityInfo[classesToIndex.size()];
-        for (int i = 0; i < infos.length; i++) {
-            infos[i] = new HibernateEntityInfo();
-            infos[i].entityname = ((Class) classesToIndex.get(i)).getName();
-            infos[i].selectQuery = "from " + infos[i].entityname;
-        }
-
-        return infos;
+        return (HibernateEntityInfo[]) infos.toArray(new HibernateEntityInfo[infos.size()]);
     }
 
     protected List doGetObjects(HibernateEntityInfo info, int from, int count, HibernateSessionWrapper sessionWrapper)
@@ -184,11 +181,11 @@ public class Hibernate2GpsDevice extends AbstractHibernateGpsDevice {
         List values;
         Session session = ((Hibernate2SessionWrapper) sessionWrapper).getSession();
         try {
-            Query query = session.createQuery(info.selectQuery).setFirstResult(from).setMaxResults(count);
+            Query query = session.createQuery(info.getSelectQuery()).setFirstResult(from).setMaxResults(count);
             values = query.list();
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(buildMessage("Failed to open session to fetch data for class ["
-                    + info.entityname + "]"), e);
+                    + info.getName() + "]"), e);
         }
         return values;
     }

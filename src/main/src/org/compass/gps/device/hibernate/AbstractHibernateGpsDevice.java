@@ -19,28 +19,22 @@ package org.compass.gps.device.hibernate;
 import java.util.Iterator;
 import java.util.List;
 
-import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.gps.CompassGpsException;
-import org.compass.gps.device.AbstractGpsDevice;
+import org.compass.gps.device.support.parallel.AbstractParallelGpsDevice;
+import org.compass.gps.device.support.parallel.IndexEntitiesIndexer;
+import org.compass.gps.device.support.parallel.IndexEntity;
 
 /**
- * An abstract hibernate device support. Aimed to provide the base operations
- * required by both Hiberante 2 and Hibernate 3.
+ * <p>An abstract hibernate device support. Aimed to provide the base operations
+ * required by both Hiberante 2 and Hibernate 3 - the index operation.
+ *
+ * <p>Extends the abstract parallel gps device providing parallel index execution
+ * support.
  *
  * @author kimchy
  */
-public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice implements HibernateGpsDevice {
-
-    /**
-     * A data holder used to index a specific Hibernate entity.
-     */
-    public static class HibernateEntityInfo {
-
-        public String entityname;
-
-        public String selectQuery;
-    }
+public abstract class AbstractHibernateGpsDevice extends AbstractParallelGpsDevice implements HibernateGpsDevice {
 
     protected static interface HibernateSessionWrapper {
         void open() throws HibernateGpsDeviceException;
@@ -52,59 +46,17 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
 
     protected int fetchCount = 200;
 
-    private HibernateEntityInfo[] entitiesInfo;
-
     public void setFetchCount(int fetchCount) {
         this.fetchCount = fetchCount;
     }
 
-    protected void doStart() throws CompassGpsException {
-        entitiesInfo = doGetHibernateEntitiesInfo();
+
+    protected IndexEntity[] doGetIndexEntities() throws CompassGpsException {
+        return doGetHibernateEntitiesInfo();
     }
 
-    /**
-     * Indexes all the data that has hibernate mapping and compass mapping
-     * associated with it.
-     */
-    protected void doIndex(CompassSession session) throws CompassException {
-        if (log.isInfoEnabled()) {
-            log.info(buildMessage("Indexing the database with fetch count [" + fetchCount + "]"));
-        }
-
-        for (int i = 0; i < entitiesInfo.length; i++) {
-            int current = 0;
-            while (true) {
-                HibernateSessionWrapper sessionWrapper = doGetHibernateSessionWrapper();
-                try {
-                    sessionWrapper.open();
-                    final List values = doGetObjects(entitiesInfo[i], current, fetchCount, sessionWrapper);
-                    if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("Indexing entity [" + entitiesInfo[i].entityname + "] range ["
-                                + current + "-" + (current + fetchCount) + "]"));
-                    }
-                    current += fetchCount;
-                    for (Iterator it = values.iterator(); it.hasNext();) {
-                        session.create(it.next());
-                    }
-                    session.evictAll();
-                    sessionWrapper.close();
-                    if (values.size() < fetchCount) {
-                        break;
-                    }
-                } catch (Exception e) {
-                    log.error(buildMessage("Failed to index the database"), e);
-                    sessionWrapper.closeOnError();
-                    if (!(e instanceof HibernateGpsDeviceException)) {
-                        throw new HibernateGpsDeviceException(buildMessage("Failed to index the database"), e);
-                    }
-                    throw (HibernateGpsDeviceException) e;
-                }
-            }
-        }
-
-        if (log.isInfoEnabled()) {
-            log.info(buildMessage("Finished indexing the database"));
-        }
+    protected IndexEntitiesIndexer doGetIndexEntitiesIndexer() {
+        return new HibernateIndexEntitiesIndexer();
     }
 
     /**
@@ -123,4 +75,43 @@ public abstract class AbstractHibernateGpsDevice extends AbstractGpsDevice imple
                                          HibernateSessionWrapper sessionWrapper) throws HibernateGpsDeviceException;
 
     protected abstract HibernateSessionWrapper doGetHibernateSessionWrapper();
+
+    private class HibernateIndexEntitiesIndexer implements IndexEntitiesIndexer {
+
+        public void performIndex(CompassSession session, IndexEntity[] entities) {
+
+            for (int i = 0; i < entities.length; i++) {
+                HibernateEntityInfo entityInfo = (HibernateEntityInfo) entities[i];
+                int current = 0;
+                while (true) {
+                    HibernateSessionWrapper sessionWrapper = doGetHibernateSessionWrapper();
+                    try {
+                        sessionWrapper.open();
+                        final List values = doGetObjects(entityInfo, current, fetchCount, sessionWrapper);
+                        if (log.isDebugEnabled()) {
+                            log.debug(buildMessage("Indexing entity [" + entityInfo.getName() + "] range ["
+                                    + current + "-" + (current + fetchCount) + "]"));
+                        }
+                        current += fetchCount;
+                        for (Iterator it = values.iterator(); it.hasNext();) {
+                            session.create(it.next());
+                        }
+                        session.evictAll();
+                        sessionWrapper.close();
+                        if (values.size() < fetchCount) {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        log.error(buildMessage("Failed to index the database"), e);
+                        sessionWrapper.closeOnError();
+                        if (!(e instanceof HibernateGpsDeviceException)) {
+                            throw new HibernateGpsDeviceException(buildMessage("Failed to index the database"), e);
+                        }
+                        throw (HibernateGpsDeviceException) e;
+                    }
+                }
+            }
+
+        }
+    }
 }

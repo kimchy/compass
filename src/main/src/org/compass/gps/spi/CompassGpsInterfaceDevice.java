@@ -19,6 +19,7 @@ package org.compass.gps.spi;
 import org.compass.core.Compass;
 import org.compass.core.CompassCallback;
 import org.compass.core.CompassException;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.CompassGps;
 
 /**
@@ -53,6 +54,17 @@ public interface CompassGpsInterfaceDevice extends CompassGps {
      * or class name) when performing the index operation.
      */
     boolean hasMappingForEntityForIndex(String name) throws CompassException;
+
+    /**
+     * Returns the mapping of the given name (alias or class name) when performing
+     * the index operation.
+     */
+    ResourceMapping getMappingForEntityForIndex(String name) throws CompassException;
+
+    /**
+     * Returns the mapping for the given class name when performing the index operation.
+     */
+    ResourceMapping getMappingForEntityForIndex(Class clazz) throws CompassException;
 
     /**
      * Executes the given callback for index operations.

@@ -16,8 +16,8 @@
 
 package org.compass.gps.device;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,7 +25,10 @@ import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
-import org.compass.gps.*;
+import org.compass.gps.CompassGps;
+import org.compass.gps.CompassGpsDevice;
+import org.compass.gps.CompassGpsException;
+import org.compass.gps.MirrorDataChangesGpsDevice;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
@@ -50,7 +53,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
 
     private String[] filteredEntitiesForIndex;
 
-    private Map filteredEntitiesLookupForIndex;
+    private Set filteredEntitiesLookupForIndex;
 
     public String getName() {
         return name;
@@ -77,7 +80,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
     }
 
     protected boolean isFilteredForIndex(String entity) {
-        return (filteredEntitiesLookupForIndex != null && filteredEntitiesLookupForIndex.get(entity) != null);
+        return (filteredEntitiesLookupForIndex != null && filteredEntitiesLookupForIndex.contains(entity));
     }
 
     public synchronized void index() throws CompassGpsException {
@@ -113,10 +116,9 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
             }
             // build the filtered enteties map
             if (filteredEntitiesForIndex != null) {
-                filteredEntitiesLookupForIndex = new HashMap();
-                Object mark = new Object();
+                filteredEntitiesLookupForIndex = new HashSet();
                 for (int i = 0; i < filteredEntitiesForIndex.length; i++) {
-                    filteredEntitiesLookupForIndex.put(filteredEntitiesForIndex[i], mark);
+                    filteredEntitiesLookupForIndex.add(filteredEntitiesForIndex[i]);
                 }
             }
             doStart();

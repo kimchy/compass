@@ -60,7 +60,7 @@ public class DefaultJpaQueryProvider implements JpaQueryProvider {
         if (selectQuery != null) {
             return entityManager.createQuery(selectQuery);
         }
-        return entityManager.createQuery("select x from " + entityInformation.getEntityName() + " x");
+        return entityManager.createQuery("select x from " + entityInformation.getName() + " x");
     }
 
     public String toString() {

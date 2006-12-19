@@ -24,6 +24,7 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassTemplate;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
 
@@ -32,7 +33,7 @@ import org.compass.gps.CompassGpsException;
  * <code>Compass</code> instances. One, called <code>indexCompass</code> is
  * responsible for index operation. The other, called <code>mirrorCompass</code>
  * is responsible for mirror operations.
- * 
+ *
  * @author kimchy
  */
 public class DualCompassGps extends AbstractCompassGps {
@@ -87,7 +88,7 @@ public class DualCompassGps extends AbstractCompassGps {
         indexCompass.getSearchEngineIndexManager().clearCache();
         indexCompass.getSearchEngineIndexManager().deleteIndex();
         indexCompass.getSearchEngineIndexManager().createIndex();
-        
+
         mirrorCompass.getSearchEngineIndexManager().replaceIndex(
                 indexCompass.getSearchEngineIndexManager(), new SearchEngineIndexManager.ReplaceIndexCallback() {
             public void buildIndexIfNeeded() throws SearchEngineException {
@@ -131,6 +132,14 @@ public class DualCompassGps extends AbstractCompassGps {
 
     public boolean hasMappingForEntityForMirror(String name) throws CompassException {
         return hasMappingForEntity(name, mirrorCompass);
+    }
+
+    public ResourceMapping getMappingForEntityForIndex(String name) throws CompassException {
+        return getMappingForEntity(name, indexCompass);
+    }
+
+    public ResourceMapping getMappingForEntityForIndex(Class clazz) throws CompassException {
+        return getMappingForEntity(clazz, indexCompass);
     }
 
     public Compass getIndexCompass() {

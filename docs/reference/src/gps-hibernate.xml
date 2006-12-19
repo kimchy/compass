@@ -11,6 +11,10 @@
       <para>
         Hibernate Gps Device utilizes Compass::Core OSEM feature (Object to Search Engine Mappings) and Hibernate ORM feature (Object to Relational Mappings) to provide simple database indexing. As well as Hibernate 3 new event based system to provide real time mirroring of data changes done through Hibernate. The path data travels through the system is:  Database -- Hibernate -- Objects -- Compass::Gps -- Compass::Core (Search Engine).
       </para>
+      
+      <para>
+        Hibernate Gps Device extends Compass Gps <classname>AbstractParallelGpsDevice</classname> and supports parallel index operations. It is discussed in more detail here: <xref linkend="gps-paralleldevice"/>.
+      </para>
 
     </sect1>
 

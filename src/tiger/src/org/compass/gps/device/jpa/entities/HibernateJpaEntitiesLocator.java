@@ -16,21 +16,20 @@
 
 package org.compass.gps.device.jpa.entities;
 
-import org.compass.gps.spi.CompassGpsInterfaceDevice;
+import java.util.ArrayList;
+import java.util.Map;
+import javax.persistence.EntityManagerFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.device.jpa.entities.EntityInformation;
-import org.compass.gps.device.jpa.entities.JpaEntitiesLocator;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.hibernate.metadata.ClassMetadata;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.persistence.EntityManagerFactory;
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * A specilized version that works with Hibernate. This class should be used instead of
@@ -68,7 +67,8 @@ public class HibernateJpaEntitiesLocator implements JpaEntitiesLocator {
                 continue;
             }
             Class<?> clazz = classMetadata.getMappedClass(EntityMode.POJO);
-            EntityInformation entityInformation = new EntityInformation(clazz, entityname);
+            ResourceMapping resourceMapping = gps.getMappingForEntityForIndex(entityname);
+            EntityInformation entityInformation = new EntityInformation(clazz, entityname, resourceMapping.getSubIndexHash().getSubIndexes());
             entitiesList.add(entityInformation);
             if (log.isDebugEnabled()) {
                 log.debug("Entity [" + entityname + "] will be indexed");

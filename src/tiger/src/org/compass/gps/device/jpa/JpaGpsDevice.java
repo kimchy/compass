@@ -27,33 +27,35 @@ import org.compass.core.CompassSession;
 import org.compass.core.util.Assert;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.PassiveMirrorGpsDevice;
-import org.compass.gps.device.AbstractGpsDevice;
 import org.compass.gps.device.jpa.entities.EntityInformation;
 import org.compass.gps.device.jpa.entities.JpaEntitiesLocator;
 import org.compass.gps.device.jpa.entities.JpaEntitiesLocatorDetector;
 import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjector;
 import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjectorDetector;
 import org.compass.gps.device.jpa.support.NativeJpaHelper;
+import org.compass.gps.device.support.parallel.AbstractParallelGpsDevice;
+import org.compass.gps.device.support.parallel.IndexEntitiesIndexer;
+import org.compass.gps.device.support.parallel.IndexEntity;
 
 /**
- * A Java Persistence API Gps Device (EJB3 Persistence).
- * <p/>
- * The jpa device provides support for using jpa to index a database. The path can
+ * <p>A Java Persistence API Gps Device (EJB3 Persistence).
+ *
+ * <p>The jpa device provides support for using jpa to index a database. The path can
  * be viewed as: Database <-> EntityManager(JPA) <-> Objects <-> Compass::Gps
  * <-> Compass::Core (Search Engine). What it means is that for every object that has both
  * jpa and compass mappings, you will be able to index it's data, as well as real time mirroring of
  * data changes.
- * <p/>
- * When creating the object, an <code>EntityManagerFactory</code> must be provided to the Device.
- * <p/>
- * Indexing uses {@link JpaEntitiesLocator} to locate all the entities that can be
+ *
+ * <p>When creating the object, an <code>EntityManagerFactory</code> must be provided to the Device.
+ *
+ * <p>Indexing uses {@link JpaEntitiesLocator} to locate all the entities that can be
  * indexed (i.e. entities that have both Compass and JPA mappings). Most of the time
  * the {@link org.compass.gps.device.jpa.entities.DefaultJpaEntitiesLocator} is enough, but
  * special JPA implementation one can be provided. If none is provided, the device will use the {@link
  * JpaEntitiesLocatorDetector} to auto detect the correct locator (which defaults to the ({@link
  * org.compass.gps.device.jpa.entities.DefaultJpaEntitiesLocator}).
- * <p/>
- * Mirroring can be done in two ways. The first one is using JPA official API, implemeting
+ *
+ * <p>Mirroring can be done in two ways. The first one is using JPA official API, implemeting
  * an Entity Lifecycle listener and specifing it for each entity class via annotations. Compass
  * comes with helper base clases for it, {@link AbstractCompassJpaEntityListener} and
  * {@link AbstractDeviceJpaEntityListener}. As far as integrating Compass with JPA for mirroring,
@@ -66,20 +68,22 @@ import org.compass.gps.device.jpa.support.NativeJpaHelper;
  * try to autodetect the injector based on the current support for specific JPA implementations using
  * the {@link JpaEntityLifecycleInjectorDetector}. See its javadoc for a list of the current JPA
  * implementations supported.
- * <p/>
- * Mirroring can be turned off using the {@link #setMirrorDataChanges(boolean)} to <code>false</code>.
+ *
+ * <p>Mirroring can be turned off using the {@link #setMirrorDataChanges(boolean)} to <code>false</code>.
  * It defaults to <code>true<code>.
- * <p/>
- * The device allows for {@link NativeEntityManagerFactoryExtractor} to be set, for applications
+ *
+ * <p>The device allows for {@link NativeEntityManagerFactoryExtractor} to be set, for applications
  * that use a framework or by themself wrap the actual <code>EntityManagerFactory</code> implementation.
- * <p/>
- * For advance usage, the device allows for {@link EntityManagerWrapper} to be set,
+ *
+ * <p>For advance usage, the device allows for {@link EntityManagerWrapper} to be set,
  * allowing to control the creation of <code>EntityManager</code>s, and transactions.
  * The {@link DefaultEntityManagerWrapper} should suffice for most cases.
  *
+ * <p>The device extends the parallel device provinding supprot for parallel indexing.
+ *
  * @author kimchy
  */
-public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsDevice {
+public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMirrorGpsDevice {
 
     /**
      * Creates a new JpaGpsDevice. Note that its name ({@link #setName(String)}  and
@@ -114,7 +118,7 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
 
     private JpaEntitiesLocator entitiesLocator;
 
-    private EntityInformation[] entetiesInformation;
+    private EntityInformation[] entitiesInformation;
 
     private Map<Class<?>, JpaQueryProvider> queryProviderByClass = new HashMap<Class<?>, JpaQueryProvider>();
 
@@ -152,14 +156,14 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 log.debug(buildMessage("Using index entityLocator [" + entitiesLocator.getClass().getName() + "]"));
             }
         }
-        entetiesInformation = entitiesLocator.locate(nativeEntityManagerFactory, this);
+        entitiesInformation = entitiesLocator.locate(nativeEntityManagerFactory, this);
         // apply specific select statements
-        for (EntityInformation entityInformation : entetiesInformation) {
+        for (EntityInformation entityInformation : entitiesInformation) {
             if (queryProviderByClass.get(entityInformation.getEntityClass()) != null) {
                 entityInformation.setQueryProvider(queryProviderByClass.get(entityInformation.getEntityClass()));
             }
-            if (queryProviderByName.get(entityInformation.getEntityName()) != null) {
-                entityInformation.setQueryProvider(queryProviderByName.get(entityInformation.getEntityName()));
+            if (queryProviderByName.get(entityInformation.getName()) != null) {
+                entityInformation.setQueryProvider(queryProviderByName.get(entityInformation.getName()));
             }
         }
 
@@ -177,48 +181,12 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
         }
     }
 
-    protected void doIndex(CompassSession session) throws CompassGpsException {
-        if (log.isInfoEnabled()) {
-            log.info(buildMessage("Indexing the database with fetch count [" + fetchCount + "]"));
-        }
-        for (EntityInformation entityInformation : entetiesInformation) {
-            if (isFilteredForIndex(entityInformation.getEntityName())) {
-                continue;
-            }
-            try {
-                int current = 0;
-                entityManagerWrapper.open();
-                EntityManager entityManager = entityManagerWrapper.getEntityManager();
-                while (true) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("Indexing entities [" + entityInformation.getEntityName() + "] range ["
-                                + current + "-" + (current + fetchCount) + "] using query ["
-                                + entityInformation.getQueryProvider() + "]"));
-                    }
-                    Query query = entityInformation.getQueryProvider().createQuery(entityManager, entityInformation);
-                    query.setFirstResult(current);
-                    query.setMaxResults(fetchCount);
-                    List results = query.getResultList();
-                    for (Object result : results) {
-                        session.create(result);
-                    }
-                    session.evictAll();
-                    entityManager.clear();
-                    if (results.size() < fetchCount) {
-                        break;
-                    }
-                    current += fetchCount;
-                }
-                entityManagerWrapper.close();
-            } catch (Exception e) {
-                log.error(buildMessage("Failed to index the database"), e);
-                entityManagerWrapper.closeOnError();
-                if (!(e instanceof JpaGpsDeviceException)) {
-                    throw new JpaGpsDeviceException(buildMessage("Failed to index the database"), e);
-                }
-                throw (JpaGpsDeviceException) e;
-            }
-        }
+    protected IndexEntity[] doGetIndexEntities() throws CompassGpsException {
+        return entitiesInformation;
+    }
+
+    protected IndexEntitiesIndexer doGetIndexEntitiesIndexer() {
+        return new JpaIndexEntitiesIndexer();
     }
 
     /**
@@ -350,5 +318,51 @@ public class JpaGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
      */
     public void setIndexQueryProvider(String entityName, JpaQueryProvider queryProvider) {
         queryProviderByName.put(entityName, queryProvider);
+    }
+
+    private class JpaIndexEntitiesIndexer implements IndexEntitiesIndexer {
+
+        public void performIndex(CompassSession session, IndexEntity[] entities) {
+            for (IndexEntity indexEntity : entities) {
+                EntityInformation entityInformation = (EntityInformation) indexEntity;
+                if (isFilteredForIndex(entityInformation.getName())) {
+                    continue;
+                }
+                EntityManagerWrapper wrapper = entityManagerWrapper.newInstance();
+                try {
+                    int current = 0;
+                    wrapper.open();
+                    EntityManager entityManager = wrapper.getEntityManager();
+                    while (true) {
+                        if (log.isDebugEnabled()) {
+                            log.debug(buildMessage("Indexing entities [" + entityInformation.getName() + "] range ["
+                                    + current + "-" + (current + fetchCount) + "] using query ["
+                                    + entityInformation.getQueryProvider() + "]"));
+                        }
+                        Query query = entityInformation.getQueryProvider().createQuery(entityManager, entityInformation);
+                        query.setFirstResult(current);
+                        query.setMaxResults(fetchCount);
+                        List results = query.getResultList();
+                        for (Object result : results) {
+                            session.create(result);
+                        }
+                        session.evictAll();
+                        entityManager.clear();
+                        if (results.size() < fetchCount) {
+                            break;
+                        }
+                        current += fetchCount;
+                    }
+                    wrapper.close();
+                } catch (Exception e) {
+                    log.error(buildMessage("Failed to index the database"), e);
+                    wrapper.closeOnError();
+                    if (!(e instanceof JpaGpsDeviceException)) {
+                        throw new JpaGpsDeviceException(buildMessage("Failed to index the database"), e);
+                    }
+                    throw (JpaGpsDeviceException) e;
+                }
+            }
+        }
     }
 }

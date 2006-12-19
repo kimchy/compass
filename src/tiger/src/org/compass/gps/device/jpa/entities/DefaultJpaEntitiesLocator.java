@@ -16,21 +16,21 @@
 
 package org.compass.gps.device.jpa.entities;
 
-import org.compass.core.spi.InternalCompass;
-import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.util.ClassUtils;
-import org.compass.core.util.StringUtils;
-import org.compass.gps.spi.CompassGpsInterfaceDevice;
-import org.compass.gps.device.jpa.JpaGpsDevice;
-import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import java.util.ArrayList;
 import javax.persistence.Entity;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Inheritance;
-import java.util.ArrayList;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.spi.InternalCompass;
+import org.compass.core.util.ClassUtils;
+import org.compass.core.util.StringUtils;
+import org.compass.gps.device.jpa.JpaGpsDevice;
+import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * The default {@link JpaEntitiesLocator} implementations. Should work with all different
@@ -61,7 +61,7 @@ public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
             if (!classMapping.isRoot()) {
                 continue;
             }
-            EntityInformation entityInformation = createEntityInformation(classMapping.getClazz());
+            EntityInformation entityInformation = createEntityInformation(classMapping.getClazz(), resourceMapping);
             if (entityInformation == null) {
                 continue;
             }
@@ -80,11 +80,13 @@ public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
      * Implementation filters out classes that do not have the {@link Entity} annotation (i.e.
      * return <code>null</code> for such a case).
      *
-     * @param clazz The class to create the {@link EntityInformation} for
+     * @param clazz           The class to create the {@link EntityInformation} for
+     * @param resourceMapping The Compass resource mapping (used for sub indexes extraction)
      * @return The entity information, or <code>null</code> to filter it out
      * @throws JpaGpsDeviceException
      */
-    protected EntityInformation createEntityInformation(Class<?> clazz) throws JpaGpsDeviceException {
+    protected EntityInformation createEntityInformation(Class<?> clazz, ResourceMapping resourceMapping)
+            throws JpaGpsDeviceException {
         Entity entity = clazz.getAnnotation(Entity.class);
         if (entity == null) {
             return null;
@@ -95,7 +97,7 @@ public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
         } else {
             name = ClassUtils.getShortName(clazz);
         }
-        return new EntityInformation(clazz, name);
+        return new EntityInformation(clazz, name, resourceMapping.getSubIndexHash().getSubIndexes());
     }
 
     /**
@@ -117,7 +119,7 @@ public class DefaultJpaEntitiesLocator implements JpaEntitiesLocator {
             if (clazz.isAnnotationPresent(Inheritance.class)
                     && ((CompassGpsInterfaceDevice) device.getGps()).hasMappingForEntityForIndex(clazz)) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Entity [" + entityInformation.getEntityName()
+                    log.debug("Entity [" + entityInformation.getName()
                             + "] is inherited and super class [" + clazz + "] has compass mapping, filtering it out");
                 }
                 return true;

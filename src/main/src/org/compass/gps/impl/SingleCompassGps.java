@@ -30,6 +30,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
@@ -167,6 +168,14 @@ public class SingleCompassGps extends AbstractCompassGps {
 
     public boolean hasMappingForEntityForMirror(String name) throws CompassException {
         return hasMappingForEntity(name, compass);
+    }
+
+    public ResourceMapping getMappingForEntityForIndex(String name) throws CompassException {
+        return getMappingForEntity(name, getIndexCompass());
+    }
+
+    public ResourceMapping getMappingForEntityForIndex(Class clazz) throws CompassException {
+        return getMappingForEntity(clazz, getIndexCompass());
     }
 
     public Compass getIndexCompass() {

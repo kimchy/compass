@@ -64,4 +64,9 @@ public interface EntityManagerWrapper {
      * @throws JpaGpsDeviceException
      */
     void closeOnError() throws JpaGpsDeviceException, PersistenceException;
+
+    /**
+     * Creates a new instance of this entity manager wrapper for multi threaded usage.
+     */
+    EntityManagerWrapper newInstance();
 }
