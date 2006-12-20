@@ -135,7 +135,7 @@ public class LuceneSubIndexInfo {
             LuceneSubIndexInfo info = getIndexInfo(subIndex, indexManager);
             tx.commit();
             return info;
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             if (tx != null) {
                 try {
                     tx.rollback();
@@ -143,7 +143,13 @@ public class LuceneSubIndexInfo {
                     // do nothing
                 }
             }
-            throw e;
+            if (e instanceof IOException) {
+                throw (IOException) e;
+            }
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new IOException(e.getMessage());
         }
     }
 
