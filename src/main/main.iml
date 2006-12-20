@@ -44,9 +44,7 @@
           <root url="jar://$MODULE_DIR$/../../lib/hibernate/hibernate3.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../../../libs/hibernate/core/3.2rc2/src" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
@@ -487,15 +485,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/spring/spring-hibernate2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/mysql/mysql-connector-java-3.1.12-bin.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
