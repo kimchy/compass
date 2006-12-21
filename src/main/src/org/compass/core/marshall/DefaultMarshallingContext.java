@@ -73,7 +73,6 @@ public class DefaultMarshallingContext implements MarshallingContext {
 
     public void setUnmarshalled(ResourceKey key, Object obj) {
         unmarshalled.put(key, obj);
-        session.getFirstLevelCache().set(key, obj);
     }
 
     public Object getUnmarshalled(ResourceKey key) {

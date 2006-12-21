@@ -204,6 +204,9 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         // references or components with ids
         if (resourceKey != null) {
             context.setUnmarshalled(resourceKey, obj);
+            if (classMapping.isRoot()) {
+                context.getSession().getFirstLevelCache().set(resourceKey, obj);
+            }
         }
 
         boolean isNullClass = true;
