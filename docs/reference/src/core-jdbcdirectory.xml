@@ -168,7 +168,7 @@
                 <row>
                     <entry><literal>org.apache.lucene.store.jdbc.dialect.MySQLDialect</literal></entry>
                     <entry>MySQL</entry>
-                    <entry>MySQL Connector J 3.1 - Yes with <literal>emulateLocators=true</literal> in connection string.</entry>
+                    <entry>MySQL Connector J 3.1/5 - Yes with <literal>emulateLocators=true</literal> in connection string.</entry>
                 </row>
                 <row>
                     <entry><literal>org.apache.lucene.store.jdbc.dialect.MySQLInnoDBDialect</literal></entry>
