@@ -22,6 +22,7 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AbstractMultipleMapping;
 import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceAnalyzerController;
 import org.compass.core.mapping.ResourceIdMappingProvider;
@@ -190,5 +191,10 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
     }
 
     public void setConfiguration(ConfigurationHelper configuration) {
+    }
+
+
+    public CascadeMapping[] getCascadeMappings() {
+        return null;
     }
 }

@@ -19,7 +19,19 @@ package org.compass.core.config;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.compass.core.config.process.*;
+import org.compass.core.config.process.CascadingMappingProcessor;
+import org.compass.core.config.process.CollectionMappingProcessor;
+import org.compass.core.config.process.ConverterLookupMappingProcessor;
+import org.compass.core.config.process.InternalIdsMappingProcessor;
+import org.compass.core.config.process.LateBindingOsemMappingProcessor;
+import org.compass.core.config.process.LateBindingXsemMappingProcessor;
+import org.compass.core.config.process.MappingProcessor;
+import org.compass.core.config.process.PostProcessorMappingProcessor;
+import org.compass.core.config.process.PropertyAccessorMappingProcessor;
+import org.compass.core.config.process.ResolveExtendsMappingProcessor;
+import org.compass.core.config.process.ResolveLateAttributesMappingProcessor;
+import org.compass.core.config.process.ResolveRefAliasProcessor;
+import org.compass.core.config.process.ValidatorMappingProcessor;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
@@ -42,6 +54,7 @@ public class CompassMappingProcessor implements MappingProcessor {
         mappingProcessors.add(new LateBindingOsemMappingProcessor());
         mappingProcessors.add(new LateBindingXsemMappingProcessor());
         // end late binding
+        mappingProcessors.add(new CascadingMappingProcessor());
         mappingProcessors.add(new InternalIdsMappingProcessor());
         mappingProcessors.add(new PostProcessorMappingProcessor());
         mappingProcessors.add(new ValidatorMappingProcessor());

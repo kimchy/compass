@@ -106,6 +106,11 @@ public interface ResourceMapping extends Mapping {
     ResourcePropertyMapping[] getIdMappings();
 
     /**
+     * Returns a list of all the cascade mappings. Will return null if no cascading is defined.
+     */
+    CascadeMapping[] getCascadeMappings();
+
+    /**
      * Returns all the mapped property names for the resoruce.
      */
     String[] getResourcePropertyNames();

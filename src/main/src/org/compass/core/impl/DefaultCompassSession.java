@@ -38,9 +38,11 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.marshall.DefaultMarshallingStrategy;
 import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.marshall.MarshallingException;
 import org.compass.core.marshall.MarshallingStrategy;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
@@ -73,6 +75,8 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     private RuntimeCompassSettings runtimeSettings;
 
+    private CascadingManager cascadingManager;
+
     public DefaultCompassSession(RuntimeCompassSettings runtimeSettings, InternalCompass compass, SearchEngine searchEngine,
                                  FirstLevelCache firstLevelCache) {
         this.compass = compass;
@@ -84,6 +88,7 @@ public class DefaultCompassSession implements InternalCompassSession {
         this.firstLevelCache = firstLevelCache;
         this.marshallingStrategy = new DefaultMarshallingStrategy(mapping, searchEngine, compass.getConverterLookup(),
                 this);
+        this.cascadingManager = new CascadingManager(this);
 
         transactionFactory.tryJoinExistingTransaction(this);
     }
@@ -157,26 +162,6 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void flush() throws CompassException {
         searchEngine.flush();
-    }
-
-    public void delete(Resource resource) throws CompassException {
-        firstLevelCache.evict(((InternalResource) resource).resourceKey());
-        searchEngine.delete(resource);
-    }
-
-    public void delete(String alias, Object obj) throws CompassException {
-        Resource idResource = marshallingStrategy.marshallIds(alias, obj);
-        delete(idResource);
-    }
-
-    public void delete(Class clazz, Object obj) throws CompassException {
-        Resource idResource = marshallingStrategy.marshallIds(clazz, obj);
-        delete(idResource);
-    }
-
-    public void delete(Object obj) throws CompassException {
-        Resource idResource = marshallingStrategy.marshallIds(obj);
-        delete(idResource);
     }
 
     public Resource getResource(Class clazz, Serializable id) throws CompassException {
@@ -281,33 +266,96 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void create(String alias, Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(alias, object);
-        searchEngine.create(resource);
-        ResourceKey key = ((InternalResource) resource).resourceKey();
-        firstLevelCache.set(key, object);
-    }
-
-    public void save(String alias, Object object) throws CompassException {
-        Resource resource = marshallingStrategy.marshall(alias, object);
-        searchEngine.save(resource);
-        ResourceKey key = ((InternalResource) resource).resourceKey();
-        firstLevelCache.set(key, object);
+        if (resource != null) {
+            searchEngine.create(resource);
+            ResourceKey key = ((InternalResource) resource).resourceKey();
+            firstLevelCache.set(key, object);
+        }
+        boolean performedCascading = cascadingManager.cascade(alias, object, CascadeMapping.Cascade.CREATE);
+        if (resource == null && !performedCascading) {
+            throw new MarshallingException("Alias [" + alias + "] has no root mappings and no cascading defined, no operation was perfomed");
+        }
     }
 
     public void create(Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(object);
-        searchEngine.create(resource);
-        ResourceKey key = ((InternalResource) resource).resourceKey();
-        firstLevelCache.set(key, object);
+        if (resource != null) {
+            searchEngine.create(resource);
+            ResourceKey key = ((InternalResource) resource).resourceKey();
+            firstLevelCache.set(key, object);
+        }
+        boolean performedCascading = cascadingManager.cascade(object, CascadeMapping.Cascade.CREATE);
+        if (resource == null && !performedCascading) {
+            throw new MarshallingException("Object [" + object.getClass().getName() + "] has no root mappings and no cascading defined, no operation was perfomed");
+        }
+    }
+
+    public void save(String alias, Object object) throws CompassException {
+        Resource resource = marshallingStrategy.marshall(alias, object);
+        if (resource != null) {
+            searchEngine.save(resource);
+            ResourceKey key = ((InternalResource) resource).resourceKey();
+            firstLevelCache.set(key, object);
+        }
+        boolean performedCascading = cascadingManager.cascade(alias, object, CascadeMapping.Cascade.SAVE);
+        if (resource == null && !performedCascading) {
+            throw new MarshallingException("Alias [" + alias + "] has no root mappings and no cascading defined, no operation was perfomed");
+        }
     }
 
     public void save(Object object) throws CompassException {
         Resource resource = marshallingStrategy.marshall(object);
-        searchEngine.save(resource);
-        ResourceKey key = ((InternalResource) resource).resourceKey();
-        firstLevelCache.set(key, object);
+        if (resource != null) {
+            searchEngine.save(resource);
+            ResourceKey key = ((InternalResource) resource).resourceKey();
+            firstLevelCache.set(key, object);
+        }
+        boolean performedCascading = cascadingManager.cascade(object, CascadeMapping.Cascade.SAVE);
+        if (resource == null && !performedCascading) {
+            throw new MarshallingException("Object [" + object.getClass().getName() + "] has no root mappings and no cascading defined, no operation was perfomed");
+        }
+    }
+
+    public void delete(String alias, Object obj) throws CompassException {
+        Resource idResource = marshallingStrategy.marshallIds(alias, obj);
+        if (idResource != null) {
+            delete(idResource);
+        }
+        boolean performedCascading = cascadingManager.cascade(alias, obj, CascadeMapping.Cascade.DELETE);
+        if (idResource == null && !performedCascading) {
+            throw new MarshallingException("Alias [" + alias + "] has no root mappings and no cascading defined, no operation was perfomed");
+        }
+    }
+
+    public void delete(Class clazz, Object obj) throws CompassException {
+        Resource idResource = marshallingStrategy.marshallIds(clazz, obj);
+        if (idResource != null) {
+            delete(idResource);
+        }
+        boolean performedCascading = cascadingManager.cascade(clazz, obj, CascadeMapping.Cascade.DELETE);
+        if (idResource == null && !performedCascading) {
+            throw new MarshallingException("Object [" + clazz + "] has no root mappings and no cascading defined, no operation was perfomed");
+        }
+    }
+
+    public void delete(Object obj) throws CompassException {
+        Resource idResource = marshallingStrategy.marshallIds(obj);
+        if (idResource != null) {
+            delete(idResource);
+        }
+        boolean performedCascading = cascadingManager.cascade(obj, CascadeMapping.Cascade.DELETE);
+        if (idResource == null && !performedCascading) {
+            throw new MarshallingException("Object [" + obj.getClass().getName() + "] has no root mappings and no cascading defined, no operation was perfomed");
+        }
+    }
+
+    public void delete(Resource resource) throws CompassException {
+        firstLevelCache.evict(((InternalResource) resource).resourceKey());
+        searchEngine.delete(resource);
     }
 
     public void delete(CompassQuery query) throws CompassException {
+        // TODO since we don't marshall to objects, we won't get cascading
         CompassHits hits = query.hits();
         for (int i = 0; i < hits.length(); i++) {
             delete(hits.resource(i));

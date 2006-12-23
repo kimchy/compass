@@ -48,11 +48,11 @@ public interface MarshallingStrategy {
 
     /**
      * Marshalls the given Object into a {@link Resource} based on the {@link ResourceMapping}
-     * associated with the provided alias.
+     * associated with the provided alias. Returns <code>null</code> if there are no mappings.
      *
      * @param alias The alias to look up the {@link ResourceMapping}
      * @param root  The object to marshall into the resource
-     * @return The resource result of marshalling the object
+     * @return The resource result of marshalling the object or <code>null</code> if has no mapping
      */
     Resource marshall(String alias, Object root);
 
@@ -67,25 +67,29 @@ public interface MarshallingStrategy {
     Resource marshall(Object root);
 
     /**
-     * Marshalls the give id object into a Resource (a resource having only its ids set).
+     * <p>Marshalls the given id object into a Resource (a resource having only its ids set).
      * Note, that the id can be several types, depending on the mapping. For example, for
      * class mapping, it can be the root Object itself (with its ids set), an array of ids,
      * or if a single id, the actual id object.
-     * <p/>
-     * The {@link ResourceMapping} are looked up based on the given object.
      *
-     * @param id    The id to marshall into a {@link Resource}
+     * <p>The {@link ResourceMapping} are looked up based on the given object.
+     *
+     * <p>Will return <code>null</code> if no mappins are found
+     *
+     * @param id The id to marshall into a {@link Resource}
      * @return A resource having its id properties set
      */
     Resource marshallIds(Object id);
 
     /**
-     * Marshalls the give id object into a Resource (a resource having only its ids set).
+     * <p>Marshalls the give id object into a Resource (a resource having only its ids set).
      * Note, that the id can be several types, depending on the mapping. For example, for
      * class mapping, it can be the root Object itself (with its ids set), an array of ids,
      * or if a single id, the actual id object.
-     * <p/>
-     * The {@link ResourceMapping} are looked up based on the given alias.
+     *
+     * <p>The {@link ResourceMapping} are looked up based on the given alias.
+     *
+     * <p>Will return <code>null</code> if no mappins are found
      *
      * @param alias The alias to look up the {@link ResourceMapping} based
      * @param id    The id to marshall into a {@link Resource}
@@ -94,12 +98,14 @@ public interface MarshallingStrategy {
     Resource marshallIds(String alias, Object id);
 
     /**
-     * Marshalls the give id object into a Resource (a resource having only its ids set).
+     * <p>Marshalls the give id object into a Resource (a resource having only its ids set).
      * Note, that the id can be several types, depending on the mapping. For example, for
      * class mapping, it can be the root Object itself (with its ids set), an array of ids,
      * or if a single id, the actual id object.
-     * <p/>
-     * The {@link ResourceMapping} are looked up based on the given class.
+     *
+     * <p>The {@link ResourceMapping} are looked up based on the given class.
+     *
+     * <p>Will return <code>null</code> if no mappins are found
      *
      * @param clazz The class to look up the {@link ResourceMapping} based
      * @param id    The id to marshall into a {@link Resource}

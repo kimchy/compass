@@ -18,11 +18,14 @@ package org.compass.core.mapping.osem;
 
 import java.util.HashMap;
 
+import org.compass.core.CompassException;
+import org.compass.core.mapping.CascadeMapping;
+
 
 /**
  * @author kimchy
  */
-public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping implements HasRefAliasMapping {
+public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping implements HasRefAliasMapping, CascadeMapping {
 
     private String[] refAliases;
 
@@ -32,8 +35,15 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
 
     private HashMap refAliasesMap = new HashMap();
 
+    private Cascade[] cascades;
+
+    private Boolean shouldCascadeDelete;
+    private Boolean shouldCascadeCreate;
+    private Boolean shouldCascadeSave;
+
     protected void copy(AbstractRefAliasMapping mapping) {
         super.copy(mapping);
+        mapping.setCascades(cascades);
         if (refAliases != null) {
             String[] copyRefAliases = new String[refAliases.length];
             System.arraycopy(refAliases, 0, copyRefAliases, 0, refAliases.length);
@@ -94,5 +104,88 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
 
     public void setRefClass(Class refClass) {
         this.refClass = refClass;
+    }
+
+    public Cascade[] getCascades() {
+        return cascades;
+    }
+
+    public void setCascades(Cascade[] cascades) {
+        this.cascades = cascades;
+    }
+
+    public Object getCascadeValue(Object root) throws CompassException {
+        return getGetter().get(root);
+    }
+
+    public boolean shouldCascadeDelete() {
+        if (cascades == null) {
+            return false;
+        }
+        if (shouldCascadeDelete != null) {
+            return shouldCascadeDelete.booleanValue();
+        }
+        for (int i = 0; i < cascades.length; i++) {
+            if (cascades[i] == Cascade.DELETE || cascades[i] == Cascade.ALL) {
+                shouldCascadeDelete = Boolean.TRUE;
+            }
+        }
+        if (shouldCascadeDelete == null) {
+            shouldCascadeDelete = Boolean.FALSE;
+        }
+        return shouldCascadeDelete.booleanValue();
+    }
+
+
+    public boolean shouldCascadeCreate() {
+        if (cascades == null) {
+            return false;
+        }
+        if (shouldCascadeCreate != null) {
+            return shouldCascadeCreate.booleanValue();
+        }
+        for (int i = 0; i < cascades.length; i++) {
+            if (cascades[i] == Cascade.CREATE || cascades[i] == Cascade.ALL) {
+                shouldCascadeCreate = Boolean.TRUE;
+            }
+        }
+        if (shouldCascadeCreate == null) {
+            shouldCascadeCreate = Boolean.FALSE;
+        }
+        return shouldCascadeCreate.booleanValue();
+    }
+
+    public boolean shouldCascadeSave() {
+        if (cascades == null) {
+            return false;
+        }
+        if (shouldCascadeSave != null) {
+            return shouldCascadeSave.booleanValue();
+        }
+        for (int i = 0; i < cascades.length; i++) {
+            if (cascades[i] == Cascade.SAVE || cascades[i] == Cascade.ALL) {
+                shouldCascadeSave = Boolean.TRUE;
+            }
+        }
+        if (shouldCascadeSave == null) {
+            shouldCascadeSave = Boolean.FALSE;
+        }
+        return shouldCascadeSave.booleanValue();
+    }
+
+
+    public boolean shouldCascade(Cascade cascade) {
+        if (cascades == null) {
+            return false;
+        }
+        if (cascade == Cascade.CREATE) {
+            return shouldCascadeCreate();
+        } else if (cascade == Cascade.SAVE) {
+            return shouldCascadeSave();
+        } else if (cascade == Cascade.DELETE) {
+            return shouldCascadeDelete();
+        } else {
+            throw new IllegalArgumentException("Should cascade can't handle [" + cascade + "]");
+        }
     }
 }

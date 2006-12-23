@@ -221,12 +221,12 @@ public class CompassMapping {
     }
 
     /**
-     * Finds the Class mapping that is the "nearest" to the provided class.
+     * Finds the Resource mapping that is the "nearest" to the provided class.
      * Similar way that {@link #findRootMappingByClass(Class)} except the search
      * is on all the ClassMappings (even ones that are not marked as root).
      */
-    public ClassMapping getClassMappingByClass(Class clazz) {
-        return (ClassMapping) doGetResourceMappingByClass(clazz, false, mappingsByClass, cachedMappingsByClass);
+    public ResourceMapping getResourceMappingByClass(Class clazz) {
+        return doGetResourceMappingByClass(clazz, false, mappingsByClass, cachedMappingsByClass);
     }
 
     /**

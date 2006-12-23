@@ -55,6 +55,8 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private ResourcePropertyMapping[] ids;
 
+    private CascadeMapping[] cascades;
+
     private Map resourcePropertyMappingsByNameMap;
 
     private Map resourcePropertyMappingsByPathMap;
@@ -188,6 +190,10 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         return (ResourcePropertyMapping) resourcePropertyMappingsByPathMap.get(path);
     }
 
+    public CascadeMapping[] getCascadeMappings() {
+        return cascades;
+    }
+
     public String getAlias() {
         return alias;
     }
@@ -290,5 +296,9 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     public void setExtendingAliases(String[] extendingAliases) {
         this.extendingAliases = extendingAliases;
+    }
+
+    public void setCascades(CascadeMapping[] cascades) {
+        this.cascades = cascades;
     }
 }

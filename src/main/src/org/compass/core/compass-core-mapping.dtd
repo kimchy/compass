@@ -284,6 +284,7 @@
     <!ATTLIST component max-depth CDATA #IMPLIED>
     <!ATTLIST component converter CDATA #IMPLIED>
     <!ATTLIST component accessor CDATA "property">
+    <!ATTLIST component cascade CDATA  #IMPLIED>
 
 <!ELEMENT reference EMPTY
 >
@@ -292,6 +293,7 @@
     <!ATTLIST reference ref-comp-alias CDATA #IMPLIED>
     <!ATTLIST reference converter CDATA #IMPLIED>
     <!ATTLIST reference accessor CDATA "property">
+    <!ATTLIST reference cascade CDATA  #IMPLIED>
 
 <!ELEMENT parent EMPTY
 >

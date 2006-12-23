@@ -32,11 +32,13 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AbstractResourceMapping;
 import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.AbstractRefAliasMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
@@ -562,6 +564,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         referenceMapping.setAccessor(referenceConf.getAttribute("accessor", null));
         referenceMapping.setPropertyName(name);
+
+        bindCascade(referenceConf, referenceMapping);
     }
 
     private void bindComponent(ConfigurationHelper componentConf, AliasMapping aliasMapping,
@@ -582,6 +586,24 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         boolean override = componentConf.getAttributeAsBoolean("override", true);
         compMapping.setOverrideByName(override);
+
+        bindCascade(componentConf, compMapping);
+    }
+
+    private void bindCascade(ConfigurationHelper refConf, AbstractRefAliasMapping refAliasMapping) {
+        String commaSeparatedCascades = refConf.getAttribute("cascade", null);
+        if (commaSeparatedCascades == null) {
+            return;
+        }
+        ArrayList cascades = new ArrayList();
+        StringTokenizer st = new StringTokenizer(commaSeparatedCascades, ",");
+        while (st.hasMoreTokens()) {
+            String cascade = st.nextToken().trim();
+            cascades.add(CascadeMapping.Cascade.fromString(cascade));
+        }
+        if (cascades.size() > 0) {
+            refAliasMapping.setCascades((CascadeMapping.Cascade[]) cascades.toArray(new CascadeMapping.Cascade[cascades.size()]));
+        }
     }
 
     private void bindParent(ConfigurationHelper parentConf, AliasMapping aliasMapping, ParentMapping parentMapping) {

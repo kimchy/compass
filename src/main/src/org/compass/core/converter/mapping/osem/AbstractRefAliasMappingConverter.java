@@ -119,7 +119,7 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
     private ClassMapping extractClassMapping(MarshallingContext context, Class clazz, Resource resource,
                                              HasRefAliasMapping hasRefAliasMapping) throws ConversionException {
         ClassMapping classMapping;
-        ClassMapping origClassMapping = context.getCompassMapping().getClassMappingByClass(clazz);
+        ClassMapping origClassMapping = (ClassMapping) context.getCompassMapping().getResourceMappingByClass(clazz);
         if (origClassMapping == null) {
             throw new ConversionException("No class mapping found when marshalling root alias ["
                     + resource.getAlias() + "] and class [" + clazz + "]");

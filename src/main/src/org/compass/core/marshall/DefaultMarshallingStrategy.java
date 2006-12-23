@@ -61,7 +61,7 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
     public Resource marshallIds(String alias, Object id) {
         ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
         if (resourceMapping == null) {
-            throw new MarshallingException("Failed to find mapping for alias [" + alias + "]");
+            return null;
         }
         return marshallIds(resourceMapping, id);
     }
@@ -69,7 +69,7 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
     public Resource marshallIds(Class clazz, Object id) {
         ResourceMapping resourceMapping = mapping.findRootMappingByClass(clazz);
         if (resourceMapping == null) {
-            throw new MarshallingException("Failed to find mapping for class [" + clazz.getName() + "]");
+            return null;
         }
         return marshallIds(resourceMapping, id);
     }
@@ -115,7 +115,7 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
     public Resource marshall(String alias, Object root) {
         ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
         if (resourceMapping == null) {
-            throw new MarshallingException("No mapping is defined for alias [" + alias + "]");
+            return null;
         }
         Resource resource = searchEngine.createResource(alias);
         resourceMapping.getConverter().marshall(resource, root, resourceMapping, createContext());
@@ -126,9 +126,9 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
         if (root instanceof AliasedObject) {
             return marshall(((AliasedObject) root).getAlias(), root);
         }
-        ResourceMapping resourceMapping = mapping.findRootMappingByClass(root.getClass());
+        ResourceMapping resourceMapping = mapping.getRootMappingByClass(root.getClass());
         if (resourceMapping == null) {
-            throw new MarshallingException("No mapping is defined for class [" + root.getClass().getName() + "]");
+            return null;
         }
         Resource resource = searchEngine.createResource(resourceMapping.getAlias());
         resourceMapping.getConverter().marshall(resource, root, resourceMapping, createContext());
