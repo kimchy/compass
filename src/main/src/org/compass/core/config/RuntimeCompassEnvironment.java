@@ -23,4 +23,15 @@ package org.compass.core.config;
  * @see org.compass.core.CompassOperations#getSettings()
  */
 public abstract class RuntimeCompassEnvironment {
+
+    /**
+     * Settings for cascading operations.
+     */
+    public abstract class Cascade {
+
+        /**
+         * Disable all cascading operations.
+         */
+        public static final String DISABLE = CompassEnvironment.Cascade.DISABLE;
+    }
 }

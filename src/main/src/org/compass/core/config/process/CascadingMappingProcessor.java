@@ -30,6 +30,10 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 
 /**
+ * Goes over all the {@link org.compass.core.mapping.ResourceMapping}s mappings and
+ * finds all the {@link org.compass.core.mapping.CascadeMapping} in order to set them
+ * at the resource mapping level.
+ *
  * @author kimchy
  */
 public class CascadingMappingProcessor implements MappingProcessor {

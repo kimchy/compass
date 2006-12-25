@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.compass.core.CompassException;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -42,6 +43,7 @@ public class CascadingManager {
     }
 
     public boolean cascade(Object root, CascadeMapping.Cascade cascade) throws CompassException {
+        if (cascadingDisabled()) return false;
         if (root instanceof AliasedObject) {
             return cascade(((AliasedObject) root).getAlias(), root, cascade);
         }
@@ -49,6 +51,7 @@ public class CascadingManager {
     }
 
     public boolean cascade(String alias, Object root, CascadeMapping.Cascade cascade) throws CompassException {
+        if (cascadingDisabled()) return false;
         ResourceMapping resourceMapping = mapping.getResourceMappingByAlias(alias);
         if (resourceMapping == null) {
             return false;
@@ -57,6 +60,7 @@ public class CascadingManager {
     }
 
     public boolean cascade(Class clazz, Object root, CascadeMapping.Cascade cascade) throws CompassException {
+        if (cascadingDisabled()) return false;
         ResourceMapping resourceMapping = mapping.getResourceMappingByClass(clazz);
         if (resourceMapping == null) {
             return false;
@@ -65,6 +69,7 @@ public class CascadingManager {
     }
 
     private boolean cascade(ResourceMapping resourceMapping, Object root, CascadeMapping.Cascade cascade) throws CompassException {
+        if (cascadingDisabled()) return false;
         CascadeMapping[] cascadeMappings = resourceMapping.getCascadeMappings();
         if (cascadeMappings == null) {
             return false;
@@ -111,4 +116,9 @@ public class CascadingManager {
             throw new IllegalArgumentException("Failed to perform cascading unknown type [" + cascade + "]");
         }
     }
+
+    private boolean cascadingDisabled() {
+        return session.getSettings().getSettingAsBoolean(CompassEnvironment.Cascade.DISABLE, false);
+    }
+
 }

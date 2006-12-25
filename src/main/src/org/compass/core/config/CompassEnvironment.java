@@ -528,4 +528,14 @@ public class CompassEnvironment {
         public static final String SUPPORT_UNMARSHALL = "compass.osem.supportUnmarshall";
     }
 
+    /**
+     * Settings for cascading operations.
+     */
+    public abstract class Cascade {
+
+        /**
+         * Disable all cascading operations.
+         */
+        public static final String DISABLE = "compass.cascade.disable";
+    }
 }

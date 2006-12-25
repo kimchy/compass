@@ -67,10 +67,10 @@ public interface CompassOperations {
      * available values for the store and index parameters are provided in the
      * Property interface (Property.Store, Property.Index, Property.TermVector).
      *
-     * @param name
-     * @param value
-     * @param store
-     * @param index
+     * @param name  The name of the property
+     * @param value The value of the property
+     * @param store The store setting for the property
+     * @param index The index setting for the property
      * @return a new property
      * @throws CompassException
      */
@@ -81,8 +81,8 @@ public interface CompassOperations {
      * Creates a property (indexed, and not stored) for the specified reader. It
      * stores no term vector information (Property.TermVector.NO).
      *
-     * @param name
-     * @param value
+     * @param name  The name of the property
+     * @param value The value of the property
      * @return a new property
      * @throws CompassException
      */
@@ -91,8 +91,9 @@ public interface CompassOperations {
     /**
      * Creates a property (indexed, and not stored) for the specified reader.
      *
-     * @param name
-     * @param value
+     * @param name       The name of the property
+     * @param value      The value of the property
+     * @param termVector The term vector setting for the property
      * @return a new property
      * @throws CompassException
      */
@@ -101,8 +102,9 @@ public interface CompassOperations {
     /**
      * Creates a binary property only stored (can be compressed).
      *
-     * @param name
-     * @param value
+     * @param name  The name of the property
+     * @param value The value of the property
+     * @param store The store setting for the property
      * @return a new property
      * @throws CompassException
      */

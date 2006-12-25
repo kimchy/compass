@@ -68,6 +68,13 @@ public interface CascadeMapping {
         }
     }
 
+    /**
+     * Returns the value that should be cascaded basde on the root object.
+     *
+     * @param root The root object to extract the cascaded value from
+     * @return The cascaded value to cascade
+     * @throws CompassException
+     */
     Object getCascadeValue(Object root) throws CompassException;
 
     void setCascades(Cascade[] cascades);

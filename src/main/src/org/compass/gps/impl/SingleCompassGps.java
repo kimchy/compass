@@ -36,13 +36,15 @@ import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
 
 /**
- * A {@link org.compass.gps.CompassGps} implementation that holds a
+ * <p>A {@link org.compass.gps.CompassGps} implementation that holds a
  * single <code>Compass</code> instance. The <code>Compass</code> instance
- * is used for both the index operation and the mirror operation. <p/> When
- * executing the mirror operation, the implementation will not use the
+ * is used for both the index operation and the mirror operation.
+ *
+ * <p>When executing the mirror operation, the implementation will not use the
  * configured transaction isolation, but will use the
  * {@link #setIndexTransactionIsolation(CompassTransaction.TransactionIsolation)}
- * transaction isolation, which defaults to <code>batch_insert</code>.
+ * transaction isolation, which defaults to <code>batch_insert</code>. Cascading
+ * will also be disabled.
  *
  * @author kimchy
  */
@@ -88,6 +90,9 @@ public class SingleCompassGps extends AbstractCompassGps {
         }
         if (indexCompassSettings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT) == null) {
             indexCompassSettings.setSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "gpsindex");
+        }
+        if (indexCompassSettings.getSetting(CompassEnvironment.Cascade.DISABLE) == null) {
+            indexCompassSettings.setBooleanSetting(CompassEnvironment.Cascade.DISABLE, true);
         }
         indexCompassSettings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, true);
         this.compassTemplate = new CompassTemplate(compass);

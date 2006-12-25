@@ -29,10 +29,13 @@ import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
 
 /**
- * A {@link org.compass.gps.CompassGps} implementation that holds two
+ * <p>A {@link org.compass.gps.CompassGps} implementation that holds two
  * <code>Compass</code> instances. One, called <code>indexCompass</code> is
  * responsible for index operation. The other, called <code>mirrorCompass</code>
  * is responsible for mirror operations.
+ *
+ * <p>The index compass settings should probably work in batch insert mode and
+ * disable cascading.
  *
  * @author kimchy
  */
