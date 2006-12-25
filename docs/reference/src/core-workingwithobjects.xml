@@ -1,16 +1,16 @@
 <chapter id="core-workingwithobjects">
   <title>Working with objects</title>
 
-  <sect1 id="workingwithobjects-introduction">
+  <sect1 id="core-workingwithobjects-introduction">
     <title>Introduction</title>
 
     <para>
-      Lets assume you have download and configured Compass within your application and create some OSEM mappings. This section provides the basics of how you will use Compass from within the application to load, search and delete Compass searchable objects. All operations within Compass::Core are accessed through the <literal>CompassSession</literal> interface. The interface provides <literal>Object</literal> and <literal>Resource</literal> method API's, giving the developer the choice to work directly with Compass::Core internal representation (<literal>Resource</literal>) or application domain Objects.
+      Lets assume you have download and configured Compass within your application and create some RSEM/OSEM/XSEM mappings. This section provides the basics of how you will use Compass from within the application to load, search and delete Compass searchable objects. All operations within Compass are accessed through the <literal>CompassSession</literal> interface. The interface provides <literal>Object</literal> and <literal>Resource</literal> method API's, giving the developer the choice to work directly with Compass internal representation (<literal>Resource</literal>) or application domain Objects.
     </para>
 
     </sect1>
 
-    <sect1 id="Making Object/Resource Searchable">
+    <sect1 id="core-workingwithobjects-save">
       <title>Making Object/Resource Searchable</title>
 
       <para>
@@ -21,12 +21,14 @@ author.setId(new Long(1));
 author.setName("Jack London");
 compassSession.save(author);
 ]]></programlisting>
-
       </para>
-
+      
+      <para>
+        When using OSEM and defining cascading on component/reference mappings, Compass will cascade save operations to the target referenced objects (if they are marked with save cascade). Non root objects are allowed to be saved in Compass if they have cascading save relationship defined.
+      </para>
     </sect1>
 
-    <sect1 id="Loading an Object/Resource">
+    <sect1 id="core-workingwithobjects-load">
       <title>Loading an Object/Resource</title>
       <para>
         The <literal>load()</literal> method allows you to load an object (or a Resource) if you already know it's identifier. If you have one mapping for the object (hence one alias), you can use the <literal> load(Class, Object id)</literal> method. If you created more than one mapping (alias) to the same object, use the <literal>load(String alias, Object id)</literal> method instead.
@@ -34,7 +36,6 @@ compassSession.save(author);
 <programlisting><![CDATA[Author author = (Author) session.load(Author.class,
      new Long(12));
 ]]></programlisting>
-
       </para>
 
       <para>
@@ -42,11 +43,22 @@ compassSession.save(author);
       </para>
     </sect1>
 
-    <sect1 id="Deleting an Object/Resource">
+    <sect1 id="core-workingwithobjects-delete">
       <title>Deleting an Object/Resource</title>
 
       <para>
         If you wish to delete an object (or a Resource), you can use the <literal> delete()</literal> method on the <literal>CompassSession</literal> interface (note that only the identifiers need to be set on the corresponding object or Resource).
+
+<programlisting><![CDATA[session.delete(Author.class, 12);
+// or :
+session.delete(Author.class, new Author(12));
+// or :
+session.delete(Author.class, "12"); // Everything in the search engine is a String at the end
+]]></programlisting>
+      </para>
+
+      <para>
+        When using OSEM and defining cascading on component/reference mappings, Compass will cascade delete operations to the target referenced objects (if they are marked with delete cascade). Non root objects are allowed to be deleted in Compass if they have cascading save relationship defined. Note, deleting objects by their id will not cause cascaded relationships to be deleted, only when the actual object is passed to be deleted, with the relationships initialized (the object can be loaded from the search engine).
       </para>
 
     </sect1>
