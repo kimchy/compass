@@ -335,11 +335,15 @@ public class A {
       </para>
       
       <para>
-        Currently, Compass does not perform any cascading operations on referenced objects (i.e. the operations have to be performed on the referenced object as well), and does not provide for lazy loading (i.e. when loading a searchable class, all its referenced mappings will be loaded as well).
+        Cascading is supported when using reference mappings. Cascading can be configured to cascade any combination of create/save/delete operations, or all of them. By default, no cascading will be performed on the referenced object.
       </para>
       
       <para>
         In order to identify the referenced class mapping, Compass needs access to its class mapping definition. In most cases there is no need to define the referenced alias that define the class mapping, as Compass can automatically detect it. If it is required, it can be explicitly set on the reference mappings (an example when Compass needs this mapping is when using Collection without generics or when a class has more than one class mapping).
+      </para>
+
+      <para>
+        Currently, Compass does not support lazy loading, this means that when loading a searchable class, all its referenced mappings will be loaded as well.
       </para>
       
       <para>
@@ -389,9 +393,9 @@ public class B {
       </para>
       
       <para>
-        Currently, Compass does perform any cascading for component referenced mappings. This means that if in the previous example of Customer and Account, the Account was changed, both the Customer and the Account would need to be explicitly saved in the index.
+        Cascading is supported when using component mappings. Cascading can be configured to cascade any combination of create/save/delete operations, or all of them. By default, no cascading will be performed on the referenced object. Cascading can be performed on non root objects as well, which means that a non root object can be "created/saved/deleted" in Compass (using save operation) and Compass will only cascade the operation on its referenced objects without actually performing the operation on the non root object.
       </para>
-
+      
       <para>
         In order to identify the referenced component class mapping, Compass needs access to its class mapping definition. In most cases there is no need to define the referenced alias that define the class mapping, as Compass can automatically detect it. If it is required, it can be explicitly set on the reference mappings (an example when Compass needs this mapping is when using Collection without generics or when a class has more than one class mapping).
       </para>
@@ -473,7 +477,7 @@ public class A {
       </para>
       
       <para>
-        When mapping a Collection with a Searchable Property, Compass will try to automatically identify the collection element type if using Java 5 Generics. If Generics is not used, the class attribute should be set with the FQN of the element class. The same applies for Searchable Component or Reference, but not using Generics, ref-alias should be explicitly set.
+        When mapping a Collection with a Searchable Property, Compass will try to automatically identify the collection element type if using Java 5 Generics. If Generics are not used, the class attribute should be set with the FQN of the element class. With Searchable Component or Reference Compass will try to automatically identify the referenced mapping if Generics are used. If generics are not used the ref-alias should be explicitly set.
       </para>
       
     </sect2>
@@ -1263,6 +1267,7 @@ public class Daughter extends Child {
       max-depth="the depth of cyclic component mappings allowed"
       accessor="property|field"
       converter="converter lookup name"
+      cascade="comma separated list of create,save,delete or all"
 >
 </component>]]></programlisting>
 
@@ -1299,6 +1304,10 @@ public class Daughter extends Child {
                 <entry>converter (optional)</entry>
                 <entry>The global converter lookup name registered with the configuration.</entry>
               </row>
+              <row>
+                <entry>cascade (optional, defaults to none)</entry>
+                <entry>A comma separated list of operations to cascade. The operations names are: create, save and delete. all can be used as well to mark cascading for all operations.</entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
@@ -1329,6 +1338,7 @@ public class Daughter extends Child {
         ref-comp-alias="name of an optional alias mapped as component"
         accessor="property|field"
         converter="converter lookup name"
+        cascade="comma separated list of create,save,delete or all"
   >
 </reference>
 ]]></programlisting>
@@ -1361,6 +1371,10 @@ public class Daughter extends Child {
               <row>
                 <entry>converter (optional)</entry>
                 <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+              <row>
+                <entry>cascade (optional, defaults to none)</entry>
+                <entry>A comma separated list of operations to cascade. The operations names are: create, save and delete. all can be used as well to mark cascading for all operations.</entry>
               </row>
             </tbody>
           </tgroup>
