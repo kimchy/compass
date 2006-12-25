@@ -42,9 +42,11 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.osem.AbstractRefAliasMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
@@ -469,6 +471,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchableReference.refComponentAlias())) {
             referenceMapping.setRefCompAlias(searchableReference.refComponentAlias());
         }
+        bindCascades(searchableReference.cascde(), referenceMapping);
     }
 
     private void bindComponent(SearchableComponent searchableComponent, ComponentMapping componentMapping,
@@ -485,6 +488,19 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         componentMapping.setMaxDepth(searchableComponent.maxDepth());
 
         componentMapping.setOverrideByName(searchableComponent.override());
+        
+        bindCascades(searchableComponent.cascde(), componentMapping);
+    }
+
+    private void bindCascades(Cascade[] cascades, AbstractRefAliasMapping refAliasMapping) {
+        if (cascades == null || cascades.length == 0) {
+            return;
+        }
+        CascadeMapping.Cascade[] mappingCascades = new CascadeMapping.Cascade[cascades.length];
+        for (int i = 0; i < cascades.length; i++) {
+            mappingCascades[i] = AnnotationsBindingUtils.convert(cascades[i]);
+        }
+        refAliasMapping.setCascades(mappingCascades);
     }
 
     /**

@@ -68,6 +68,12 @@ public @interface SearchableComponent {
     boolean override() default true;
 
     /**
+     * The operations that will cascade to the target association. Defaults to no operations
+     * being cascaded.
+     */
+    Cascade[] cascde() default {};
+
+    /**
      * The depth of cyclic component references allowed.
      */
     int maxDepth() default 1;

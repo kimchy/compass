@@ -20,8 +20,15 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-import org.compass.annotations.*;
+import org.compass.annotations.Cascade;
+import org.compass.annotations.Index;
+import org.compass.annotations.ManagedId;
+import org.compass.annotations.ManagedIdIndex;
+import org.compass.annotations.Reverse;
+import org.compass.annotations.Store;
+import org.compass.annotations.TermVector;
 import org.compass.core.Property;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 
@@ -121,4 +128,16 @@ public abstract class AnnotationsBindingUtils {
         throw new IllegalArgumentException("Failed to convert index [" + index + "]");
     }
 
+    public static CascadeMapping.Cascade convert(Cascade cascade) throws IllegalArgumentException {
+        if (cascade == Cascade.ALL) {
+            return CascadeMapping.Cascade.ALL;
+        } else if (cascade == Cascade.CREATE) {
+            return CascadeMapping.Cascade.CREATE;
+        } else if (cascade == Cascade.DELETE) {
+            return CascadeMapping.Cascade.DELETE;
+        } else if (cascade == Cascade.SAVE) {
+            return CascadeMapping.Cascade.SAVE;
+        }
+        throw new IllegalArgumentException("Failed to convert cascade [" + cascade + "]");
+    }
 }

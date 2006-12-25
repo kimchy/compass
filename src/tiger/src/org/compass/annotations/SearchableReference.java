@@ -63,6 +63,12 @@ public @interface SearchableReference {
     String refComponentAlias() default "";
 
     /**
+     * The operations that will cascade to the target association. Defaults to no operations
+     * being cascaded.
+     */
+    Cascade[] cascde() default {};
+
+    /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ReferenceMapping}.
      * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.ReferenceMappingConverter}.
      */
