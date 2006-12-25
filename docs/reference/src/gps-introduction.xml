@@ -41,7 +41,7 @@
           <title>SingleCompassGps</title>
 
           <para>
-            Holds a single <literal>Compass</literal> instance. The <literal>Compass</literal> instance is used for both the index operation and the mirror operation. When executing the index operation, the implementation will not use the configured transaction isolation, but will use the <literal>indexTransactionIsolation</literal> transaction isolation property, which defaults to <literal>batch_insert</literal>. You can also set additional settings to be used with the cloned index compass (a prime example is when using jdbc storage, but defining a file location for the indexing compass, thus gaining performance improvement).
+            Holds a single <literal>Compass</literal> instance. The <literal>Compass</literal> instance is used for both the index operation and the mirror operation. When executing the index operation Single Compass Gps will clone the provided <literal>Compass</literal> instance. Additional or overriding settings can be provided using indexSettings. By default, default overriding settings are: batch_insert as transaction isolation mode, and disabling of any cascading operations (as they usually do not make sense for index operations). A prime example for overriding setting of the index operation can be when using a database as the index storage, but define a file based storage for the index operation (the index will be built on the file system and then copied to the database).
           </para>
 
           <para>

@@ -431,6 +431,47 @@ public class B {
       </para>
     </sect2>
 
+    <sect2 id="core-osem-parent">
+      <title>Searchable Parent</title>
+      
+        <para>
+          Searchable Parent mapping provides support for cyclic mappings for components (though bi directional component mappings are also supported). If the component class mapping wish to map the enclosing class, the parent mapping can be used to map to it. The parent mapping will not marshal (persist the data to the search engine) the parent object, it will only initialize it when loading the parent object from the search engine.
+        </para>
+        
+        <para>
+          Here is an example of defining a Searchable Component and Searchable Parent using annotations (note, in this case, B is not a root searchable class, and need not define any ids):
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableComponent
+  private B b;  
+  // ...
+}
+
+@Searchable(root = false)
+public class B {
+  @SearchableParent
+  private A a;
+  // ...
+}]]></programlisting>          
+        </para>
+
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <component name="b" />
+  <!-- ... -->
+</class>
+<class name="B" alias="b" root="false">
+  <parent name="a" />
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+    </sect2>
+
     <sect2 id="core-osem-analyzer">
       <title>Searchable Analyzer</title>
       

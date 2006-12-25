@@ -1,11 +1,11 @@
 <chapter id="core-rsem">
-    <title>Resource Mapping</title>
+    <title>RSEM - Resource/Search Engine Mapping</title>
 
     <sect1 id="resourcemapping-introduction">
       <title>Introduction</title>
 
       <para>
-        Compass::Core provides OSEM technology for use with an applications Object domain model. Compass::Core also providesResource Mapping technology for resources other than Objects (that do not benefit from OSEM). The benefits of using Resources can be summarized as:
+        Compass provides OSEM technology for use with an applications Object domain model or XSEM when working with xml data structures. Compass also provides Resource Mapping technology for resources other than Objects/XML (that do not benefit from OSEM). The benefits of using Resources can be summarized as:
 
         <itemizedlist>
           <listitem>
@@ -15,7 +15,7 @@
           </listitem>
           <listitem>
             <para>
-                Your application already works with Lucene, but you want to add Compass::Core additional features (i.e. transactions, fast updates). Working with <literal>Resources</literal> makes your migration easy.
+                Your application already works with Lucene, but you want to add Compass additional features (i.e. transactions, fast updates). Working with <literal>Resources</literal> makes your migration easy (as it is similar to working with Lucene Document).
             </para>
           </listitem>
           <listitem>
@@ -29,11 +29,11 @@
 
     </sect1>
 
-    <sect1 id="Mapping Declaration">
+    <sect1 id="rsem-mappingdeclaration">
       <title>Mapping Declaration</title>
 
       <para>
-        In order to work directly with a <literal>Resource</literal>, Compass needs to know the alias and the primary properties (i.e. primary keys in data-base systems) associated with the <literal>Resource</literal>. The primary properties are also known as id properties. This information is declared in Resource Mapping XML documents, so that Compass knows how to manage the <literal>Resource</literal> internally.
+        In order to work directly with a <literal>Resource</literal>, Compass needs to know the alias and the primary properties (i.e. primary keys in data-base systems) associated with the <literal>Resource</literal>. The primary properties are also known as id properties. This information is declared in Resource Mapping XML documents, so that Compass knows how to manage the <literal>Resource</literal> internally (this is needs especially for update/delete operations).
       </para>
 
       <para>
@@ -61,7 +61,7 @@
     <resource-property name="value2" store="yes" index="tokenized" />
     <resource-property name="value3" store="compress" index="tokenized" />
     <resource-property name="value4" store="yes" index="un_tokenized" />
-    <resource-property name="value5" store="yes" index="no" />
+    <resource-property name="value5" store="yes" index="no" converter="my-date" />
   </resource>
 </compass-core-mapping>
 ]]></programlisting>
@@ -84,11 +84,20 @@ session.save(r);]]></programlisting>
       </para>
 
       <para>
-          The Resource Mapping file example above defines mappings for two resources (each identified with a different alias). Each resource has a set of resource ids that are associated with it. The value for the <literal>resource-id</literal> tag is the name of the <literal>Property</literal> that is associated with the primary property for the <literal>Resource</literal>.
+          The Resource Mapping file example above defines mappings for three resource types (each identified with a different alias). Each resource has a set of resource ids that are associated with it. The value for the <literal>resource-id</literal> tag is the name of the <literal>Property</literal> that is associated with the primary property for the <literal>Resource</literal>.
       </para>
 
       <para>
         The third mapping (alias "c"), defines <literal>resource-property</literal> mappings as well as <literal>resource-id</literal> mappings. The <literal>resource-property</literal> mapping works with the <literal>Resource#addProperty(String name, Object value)</literal> operation. It provides definitions for the resource properties that are added (<literal>index</literal>, <literal>store</literal>, and so on), and they are then looked up when using the mentioned add method. Using the <literal>resource-property</literal> mapping, helps clean up the code when constructing a <literal>Resource</literal>, since all the <literal>Property</literal> characteristics are defined in the mapping definition, as well as auto conversion from different objects, and the ability to define new ones. Note that the <literal>resource-property</literal> definition will only work with the mentioned addProperty method, and no other addProperty method.
+      </para>
+      
+      <para>
+        Here is an example of how <literal>resource-property</literal> mappings can simplify Resource construction code:
+<programlisting><![CDATA[Resource r = session.createResource("c");
+r.addProperty("id", 1);
+r.addProperty("value1", "this is a sample value");
+r.addProperty("value5", new Date()); // will use the my-date converter (using the format defined there)
+session.save(r);]]></programlisting>
       </para>
 
       <para>
