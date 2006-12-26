@@ -248,7 +248,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (searchableSubIndexHash == null) {
             classMapping.setSubIndexHash(new ConstantSubIndexHash(subIndex));
         } else {
-            SubIndexHash subIndexHash = null;
+            SubIndexHash subIndexHash;
             try {
                 subIndexHash = searchableSubIndexHash.value().newInstance();
             } catch (Exception e) {
@@ -806,7 +806,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
      * Returns a string array of aliases from a comma separated string
      */
     private String[] getAliases(String commaSeparatedAliases) {
-        ArrayList aliases = new ArrayList();
+        ArrayList<String> aliases = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(commaSeparatedAliases, ",");
         while (st.hasMoreTokens()) {
             String extendedAlias = st.nextToken().trim();
@@ -817,7 +817,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 aliases.add(alias.getName());
             }
         }
-        return (String[]) aliases.toArray(new String[aliases.size()]);
+        return aliases.toArray(new String[aliases.size()]);
     }
 
     private void handleFormat(ClassPropertyMetaDataMapping mdMapping, String name, String format) {
