@@ -21,12 +21,16 @@ import org.compass.core.util.Parameter;
 
 /**
  * Cascade mappings responsible for getting objects for cascading
- * operations.
+ * operations as well as marking which operations are allowed to
+ * be cascaded.
  *
  * @author kimchy
  */
 public interface CascadeMapping {
 
+    /**
+     * A cascade enumeration of operations allowed for cascading.
+     */
     public static final class Cascade extends Parameter {
 
         private Cascade(String name) {
@@ -81,11 +85,27 @@ public interface CascadeMapping {
 
     Cascade[] getCascades();
 
+    /**
+     * Returns <code>true</code> if cascading should be performed for delete
+     * operations.
+     */
     boolean shouldCascadeDelete();
 
+    /**
+     * Returns <code>true</code> if cascading should be performed for create
+     * operations.
+     */
     boolean shouldCascadeCreate();
 
+    /**
+     * Returns <code>true</code> if cascading should be performed for save
+     * operations.
+     */
     boolean shouldCascadeSave();
 
+    /**
+     * Returns <code>true</code> if cascading should be performed for the
+     * cascade parameter.
+     */
     boolean shouldCascade(Cascade cascade);
 }
