@@ -16,6 +16,10 @@
 
 package org.compass.gps.device.jpa;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
+
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -23,10 +27,6 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.gps.device.jpa.model.Simple;
 import org.compass.gps.device.jpa.model.SimpleBase;
 import org.compass.gps.device.jpa.model.SimpleExtend;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
 
 /**
  * @author kimchy
@@ -80,6 +80,9 @@ public abstract class AbstractSimpleJpaGpsDeviceTests extends AbstractJpaGpsDevi
         assertEquals("value1", simple.getValue());
         simple = (Simple) sess.load(Simple.class, 2);
         assertEquals("value2", simple.getValue());
+
+        CompassHits hits = sess.find("value1");
+        assertEquals(1, hits.length());
 
         tr.commit();
         sess.close();
