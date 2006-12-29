@@ -19,18 +19,13 @@ package org.compass.core;
 import org.compass.core.CompassQuery.CompassSpanQuery;
 
 /**
- * The query builder is used to construct
- * {@link CompassQuery} programmatically. Simple
- * queries, like {@link #le(String, Object)}, will generate a
- * {@link CompassQuery}. More complex ones, will
- * return their repective builder to continue and bulid them (like
- * {@link #multiPhrase(String)}).
- * <p/>
- * Combinig {@link CompassQuery}s can be done using
+ * <p>The query builder is used to construct {@link CompassQuery} programmatically.
+ * Simple queries, like {@link #le(String,Object)}, will generate a {@link CompassQuery}.
+ * More complex ones, will return their respective builder to continue and bulid them (like
+ * {@link #multiPhrase(String)}). Combining {@link CompassQuery}s can be done using
  * the {@link #bool()} operation.
- * <p/>
- * An example of building a query using the query builder:
- * <p/>
+ *
+ * <p>An example of building a query using the query builder:
  * <pre>
  * CompassQueryBuilder queryBuilder = session.createQueryBuilder();
  * queryBuilder.bool().addMust(queryBuilder.eq(&quot;name&quot;, &quot;jack&quot;)).addMust(queryBuilder.lt(&quot;birthdate&quot;, &quot;19500101&quot;))
@@ -144,8 +139,7 @@ public interface CompassQueryBuilder {
         /**
          * Sets the analyzer that will be used to analyze the query string. Can
          * be <code>null</code>. It is used when parsing a query string and
-         * has no efects when using a bulit in query (using the
-         * {@link CompassQuery}).
+         * has no effect when using a bulit in query (using the {@link CompassQuery}).
          */
         CompassQueryStringBuilder setAnalyzer(String analyzer) throws CompassException;
 
@@ -156,7 +150,7 @@ public interface CompassQueryBuilder {
 
         /**
          * Sets the analyzer that will be used to analyzer the query string. The
-         * analyzer will be build based on analyzer settings for the mapping definitions
+         * analyzer will be built based on analyzer settings for the mapping definitions
          * the define the alias. It means that if a certain property is associated with
          * a specific analyzer, a per property analyzer will be built.
          */
@@ -165,7 +159,7 @@ public interface CompassQueryBuilder {
         /**
          * Sets the default search property for non prefixed terms in the query
          * string. Can be <code>null</code>. It is used when parsing a query
-         * string and has no efects when using a bulit in query (using the
+         * string and has no effect when using a bulit in query (using the
          * {@link CompassQuery}).
          */
         CompassQueryStringBuilder setDefaultSearchProperty(String defaultSearchProperty);
@@ -192,8 +186,7 @@ public interface CompassQueryBuilder {
         /**
          * Sets the analyzer that will be used to analyze the query string. Can
          * be <code>null</code>. It is used when parsing a query string and
-         * has no efects when using a bulit in query (using the
-         * {@link CompassQuery}).
+         * has no effect when using a bulit in query (using the {@link CompassQuery}).
          */
         CompassMultiPropertyQueryStringBuilder setAnalyzer(String analyzer);
 
@@ -336,12 +329,12 @@ public interface CompassQueryBuilder {
     CompassQuery alias(String aliasValue);
 
     /**
-     * Creates a query where the resource proeprty must have the given value.
+     * <p>Creates a query where the resource property must have the given value.
      * Note, that the value itself will not be analyzed, but the text that was
      * indexed might have been (if <code>indexed</code>). The search is case
      * sensative.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -360,9 +353,9 @@ public interface CompassQueryBuilder {
     CompassQuery matchAll();
 
     /**
-     * Creates a query where the resource proeprty is between the given values.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     * <p>Creates a query where the resource property is between the given values.
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -378,9 +371,9 @@ public interface CompassQueryBuilder {
     CompassQuery between(String name, Object low, Object high, boolean inclusive, boolean constantScore);
 
     /**
-     * Creates a query where the resource proeprty is between the given values.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     * <p>Creates a query where the resource property is between the given values.
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -394,10 +387,10 @@ public interface CompassQueryBuilder {
     CompassQuery between(String name, Object low, Object high, boolean inclusive);
 
     /**
-     * Creates a query where the resource proeprty is less than (<) the given
+     * <p>Creates a query where the resource property is less than (<) the given
      * value.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -409,10 +402,10 @@ public interface CompassQueryBuilder {
     CompassQuery lt(String name, Object value);
 
     /**
-     * Creates a query where the resource proeprty is less or equal (<=) to the
+     * <p>Creates a query where the resource property is less or equal (<=) to the
      * given value.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -424,10 +417,10 @@ public interface CompassQueryBuilder {
     CompassQuery le(String name, Object value);
 
     /**
-     * Creates a query where the resource proeprty is greater than (>) to the
+     * <p>Creates a query where the resource property is greater than (>) to the
      * given value.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -439,10 +432,10 @@ public interface CompassQueryBuilder {
     CompassQuery gt(String name, Object value);
 
     /**
-     * Creates a query where the resource proeprty is greater or equal (>=) to
+     * <p>Creates a query where the resource property is greater or equal (>=) to
      * the given value.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -454,10 +447,10 @@ public interface CompassQueryBuilder {
     CompassQuery ge(String name, Object value);
 
     /**
-     * Creates a query where the resource property values starts with the given
+     * <p>Creates a query where the resource property values starts with the given
      * prefix.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -484,12 +477,12 @@ public interface CompassQueryBuilder {
     CompassQuery wildcard(String name, String wildcard);
 
     /**
-     * Creates a fuzzy query for the given resource property and the value. The
+     * <p>Creates a fuzzy query for the given resource property and the value. The
      * similiarity measurement is based on the Levenshtein (edit distance)
      * algorithm. The minimumSimilarity defaults to 0.5 and prefixLength
      * defaults to 0.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -501,11 +494,11 @@ public interface CompassQueryBuilder {
     CompassQuery fuzzy(String name, String value);
 
     /**
-     * Creates a fuzzy query for the given resource property and the value. The
+     * <p>Creates a fuzzy query for the given resource property and the value. The
      * similiarity measurement is based on the Levenshtein (edit distance)
      * algorithm. The prefixLength defaults to 0.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -518,11 +511,11 @@ public interface CompassQueryBuilder {
     CompassQuery fuzzy(String name, String value, float minimumSimilarity);
 
     /**
-     * Creates a fuzzy query for the given resource property and the value. The
+     * <p>Creates a fuzzy query for the given resource property and the value. The
      * similiarity measurement is based on the Levenshtein (edit distance)
      * algorithm.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -536,10 +529,10 @@ public interface CompassQueryBuilder {
     CompassQuery fuzzy(String name, String value, float minimumSimilarity, int prefixLength);
 
     /**
-     * Creates a span query where the resource proeprty must match the given
+     * <p>Creates a span query where the resource property must match the given
      * value.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -551,10 +544,10 @@ public interface CompassQueryBuilder {
     CompassSpanQuery spanEq(String name, Object value);
 
     /**
-     * Creates a span query where the span occur within the first
+     * <p>Creates a span query where the span occur within the first
      * <code>end</code> positions.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -567,9 +560,9 @@ public interface CompassQueryBuilder {
     CompassSpanQuery spanFirst(String name, Object value, int end);
 
     /**
-     * Constructs a span near query builder.
-     * <p/>
-     * The name can either be the actual resource property or meta-data value,
+     * <p>Constructs a span near query builder.
+     *
+     * <p>The name can either be the actual resource property or meta-data value,
      * or the path to the given resource property (alias.rProperty), or the
      * class property (alias.cProperty) or the path to the meta-data
      * (alias.cProperty.metaData)
@@ -580,11 +573,11 @@ public interface CompassQueryBuilder {
     CompassQuerySpanNearBuilder spanNear(String name);
 
     /**
-     * Creates a span query that excludes matches where one
+     * <p>Creates a span query that excludes matches where one
      * {@link org.compass.core.CompassQuery.CompassSpanQuery} overlaps
      * with another.
-     * <p/>
-     * Construct a span query matching spans from <code>include</code> which
+     *
+     * <p>Construct a span query matching spans from <code>include</code> which
      * have no overlap with spans from <code>exclude</code>.
      *
      * @param include The span query to include.
