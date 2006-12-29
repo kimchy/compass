@@ -24,6 +24,7 @@ import javax.jdo.listener.StoreLifecycleListener;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.PassiveMirrorGpsDevice;
 
@@ -100,7 +101,7 @@ public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevic
             }
 
             final Object entity = event.getSource();
-            if (!compassGps.hasMappingForEntityForMirror((entity.getClass()))) {
+            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
                 return;
             }
 
@@ -128,7 +129,7 @@ public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevic
             }
 
             final Object entity = event.getSource();
-            if (!compassGps.hasMappingForEntityForMirror((entity.getClass()))) {
+            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
                 return;
             }
 

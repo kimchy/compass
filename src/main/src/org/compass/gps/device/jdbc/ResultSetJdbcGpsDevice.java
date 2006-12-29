@@ -16,7 +16,11 @@
 
 package org.compass.gps.device.jdbc;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,11 +28,21 @@ import java.util.List;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
-import org.compass.core.spi.InternalCompass;
 import org.compass.core.config.CommonMetaDataLookup;
+import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsException;
-import org.compass.gps.device.jdbc.mapping.*;
-import org.compass.gps.device.jdbc.snapshot.*;
+import org.compass.gps.device.jdbc.mapping.AutoGenerateMapping;
+import org.compass.gps.device.jdbc.mapping.ColumnMapping;
+import org.compass.gps.device.jdbc.mapping.ColumnToPropertyMapping;
+import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
+import org.compass.gps.device.jdbc.mapping.VersionColumnMapping;
+import org.compass.gps.device.jdbc.snapshot.ConfigureSnapshotEvent;
+import org.compass.gps.device.jdbc.snapshot.CreateAndUpdateSnapshotEvent;
+import org.compass.gps.device.jdbc.snapshot.DeleteSnapshotEvent;
+import org.compass.gps.device.jdbc.snapshot.JdbcAliasRowSnapshot;
+import org.compass.gps.device.jdbc.snapshot.JdbcAliasSnapshot;
+import org.compass.gps.device.jdbc.snapshot.JdbcSnapshot;
 
 /**
  * A gps device that index a jdbc <code>ResultSet</code> to a set of Compass
@@ -104,7 +118,7 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
         // resource mapping
         for (Iterator it = mappings.iterator(); it.hasNext();) {
             ResultSetToResourceMapping rsMapping = (ResultSetToResourceMapping) it.next();
-            if (!compassGps.hasMappingForEntityForMirror(rsMapping.getAlias())) {
+            if (!compassGps.hasMappingForEntityForMirror(rsMapping.getAlias(), CascadeMapping.Cascade.ALL)) {
                 throw new IllegalStateException(
                         buildMessage("No resource mapping defined in gps mirror compass for alias ["
                                 + rsMapping.getAlias() + "]. Did you defined a jdbc mapping builder?"));

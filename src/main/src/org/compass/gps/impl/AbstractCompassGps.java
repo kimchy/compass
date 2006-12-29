@@ -22,6 +22,7 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
@@ -70,19 +71,55 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         }
     }
 
-    protected boolean hasMappingForEntity(Class clazz, Compass checkedCompass) {
-        return getMappingForEntity(clazz, checkedCompass) != null;
+    protected boolean hasRootMappingForEntity(Class clazz, Compass checkedCompass) {
+        return getRootMappingForEntity(clazz, checkedCompass) != null;
     }
 
-    protected ResourceMapping getMappingForEntity(Class clazz, Compass checkedCompass) {
+    protected boolean hasMappingForEntity(Class clazz, Compass checkedCompass, CascadeMapping.Cascade cascade) {
+        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByClass(clazz);
+        if (resourceMapping == null) {
+            return false;
+        }
+        if (resourceMapping.isRoot()) {
+            return true;
+        }
+        return resourceMapping.operationAllowed(cascade);
+    }
+
+    protected boolean hasMappingForEntity(String name, Compass checkedCompass, CascadeMapping.Cascade cascade) {
+        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByAlias(name);
+        if (resourceMapping == null) {
+            return false;
+        }
+        if (resourceMapping.isRoot()) {
+            return true;
+        }
+        return resourceMapping.operationAllowed(cascade);
+    }
+
+    protected ResourceMapping getRootMappingForEntity(Class clazz, Compass checkedCompass) {
         return ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz);
     }
     
-    protected boolean hasMappingForEntity(String name, Compass checkedCompass) {
-        return getMappingForEntity(name, checkedCompass) != null;
+    protected boolean hasRootMappingForEntity(String name, Compass checkedCompass) {
+        return getRootMappingForEntity(name, checkedCompass) != null;
     }
 
     protected ResourceMapping getMappingForEntity(String name, Compass checkedCompass) {
+        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByAlias(name);
+        if (resourceMapping != null) {
+            return resourceMapping;
+        }
+        try {
+            Class clazz = ClassUtils.forName(name);
+            return ((InternalCompass) checkedCompass).getMapping().getResourceMappingByClass(clazz);
+        } catch (Exception e) {
+            // do nothing
+        }
+        return null;
+    }
+
+    protected ResourceMapping getRootMappingForEntity(String name, Compass checkedCompass) {
         ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getRootMappingByAlias(name);
         if (resourceMapping != null) {
             return resourceMapping;

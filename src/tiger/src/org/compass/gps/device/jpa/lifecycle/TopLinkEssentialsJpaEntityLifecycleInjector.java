@@ -9,10 +9,11 @@ import oracle.toplink.essentials.descriptors.DescriptorEvent;
 import oracle.toplink.essentials.descriptors.DescriptorEventListener;
 import oracle.toplink.essentials.internal.ejb.cmp3.base.EntityManagerFactoryImpl;
 import oracle.toplink.essentials.sessions.Session;
-import org.compass.gps.spi.CompassGpsInterfaceDevice;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * Injects lifecycle listeners directly into TopLink Essentials for mirroring operations.
@@ -110,7 +111,7 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
             Class mappedClass = classDescriptor.getJavaClass();
-            if (gps.hasMappingForEntityForMirror(mappedClass)) {
+            if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
                 classDescriptor.getDescriptorEventManager().addListener(eventListener);
             }
         }

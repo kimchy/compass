@@ -19,6 +19,7 @@ package org.compass.gps.spi;
 import org.compass.core.Compass;
 import org.compass.core.CompassCallback;
 import org.compass.core.CompassException;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.CompassGps;
 
@@ -35,13 +36,13 @@ public interface CompassGpsInterfaceDevice extends CompassGps {
      * Returns <code>true</code> if there is mapping for the given class when
      * performing the mirror operation.
      */
-    boolean hasMappingForEntityForMirror(Class clazz) throws CompassException;
+    boolean hasMappingForEntityForMirror(Class clazz, CascadeMapping.Cascade cascade) throws CompassException;
 
     /**
      * Returns <code>true</code> if there is mapping for the given name (alias
      * or class name) when performing the mirror operation.
      */
-    boolean hasMappingForEntityForMirror(String name) throws CompassException;
+    boolean hasMappingForEntityForMirror(String name, CascadeMapping.Cascade cascade) throws CompassException;
 
     /**
      * Returns <code>true</code> if there is mapping for the given class when

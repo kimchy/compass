@@ -25,6 +25,7 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
 import org.compass.core.config.CommonMetaDataLookup;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.gps.ActiveMirrorGpsDevice;
 import org.compass.gps.CompassGpsException;
@@ -137,7 +138,7 @@ public class Hibernate3ScrollableResultsGpsDevice extends AbstractGpsDevice
         for (Iterator it = mappings.iterator(); it.hasNext();) {
             ResultSetToResourceMapping rsMapping = (ResultSetToResourceMapping) it
                     .next();
-            if (!compassGps.hasMappingForEntityForMirror(rsMapping.getAlias())) {
+            if (!compassGps.hasMappingForEntityForMirror(rsMapping.getAlias(), CascadeMapping.Cascade.ALL)) {
                 throw new IllegalStateException(
                         buildMessage("No resource mapping defined in gps mirror compass for alias ["
                                 + rsMapping.getAlias()

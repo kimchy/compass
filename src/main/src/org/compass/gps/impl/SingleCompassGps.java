@@ -30,6 +30,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsDevice;
@@ -160,27 +161,27 @@ public class SingleCompassGps extends AbstractCompassGps {
     }
 
     public boolean hasMappingForEntityForIndex(Class clazz) throws CompassException {
-        return hasMappingForEntity(clazz, getIndexCompass());
+        return hasRootMappingForEntity(clazz, getIndexCompass());
     }
 
     public boolean hasMappingForEntityForIndex(String name) throws CompassException {
-        return hasMappingForEntity(name, getIndexCompass());
+        return hasRootMappingForEntity(name, getIndexCompass());
     }
 
-    public boolean hasMappingForEntityForMirror(Class clazz) throws CompassException {
-        return hasMappingForEntity(clazz, compass);
+    public boolean hasMappingForEntityForMirror(Class clazz, CascadeMapping.Cascade cascade) throws CompassException {
+        return hasMappingForEntity(clazz, compass, cascade);
     }
 
-    public boolean hasMappingForEntityForMirror(String name) throws CompassException {
-        return hasMappingForEntity(name, compass);
+    public boolean hasMappingForEntityForMirror(String name, CascadeMapping.Cascade cascade) throws CompassException {
+        return hasMappingForEntity(name, compass, cascade);
     }
 
     public ResourceMapping getMappingForEntityForIndex(String name) throws CompassException {
-        return getMappingForEntity(name, getIndexCompass());
+        return getRootMappingForEntity(name, getIndexCompass());
     }
 
     public ResourceMapping getMappingForEntityForIndex(Class clazz) throws CompassException {
-        return getMappingForEntity(clazz, getIndexCompass());
+        return getRootMappingForEntity(clazz, getIndexCompass());
     }
 
     public Compass getIndexCompass() {

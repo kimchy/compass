@@ -16,15 +16,21 @@
 
 package org.compass.gps.device.jpa;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.compass.core.*;
-import org.compass.core.spi.InternalCompass;
-import org.compass.core.util.ClassUtils;
-
 import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.compass.core.Compass;
+import org.compass.core.CompassCallbackWithoutResult;
+import org.compass.core.CompassException;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTemplate;
+import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.spi.InternalCompass;
+import org.compass.core.util.ClassUtils;
 
 /**
  * An abstract support class for event lifecycle JPA spec support. Requires the <code>Compass<code>
@@ -52,19 +58,32 @@ public abstract class AbstractCompassJpaEntityListener {
         return false;
     }
 
-    protected boolean hasMappingForEntity(Class clazz) {
-        return ((InternalCompass) getCompass()).getMapping().getRootMappingByClass(clazz) != null;
+    protected boolean hasMappingForEntity(Class clazz, CascadeMapping.Cascade cascade) {
+        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getResourceMappingByClass(clazz);
+        if (resourceMapping == null) {
+            return false;
+        }
+        if (resourceMapping.isRoot()) {
+            return true;
+        }
+        return resourceMapping.operationAllowed(cascade);
     }
 
-    protected boolean hasMappingForEntity(String name) {
-        if (((InternalCompass) getCompass()).getMapping().getRootMappingByAlias(name) != null) {
-            return true;
+    protected boolean hasMappingForEntity(String name, CascadeMapping.Cascade cascade) {
+        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getResourceMappingByAlias(name);
+        if (resourceMapping != null) {
+            if (resourceMapping.isRoot()) {
+                return true;
+            }
+            return resourceMapping.operationAllowed(cascade);
         }
         try {
             Class clazz = ClassUtils.forName(name);
-            if (((InternalCompass) getCompass()).getMapping().getRootMappingByClass(clazz) != null) {
+            resourceMapping = ((InternalCompass) getCompass()).getMapping().getResourceMappingByClass(clazz);
+            if (resourceMapping.isRoot()) {
                 return true;
             }
+            return resourceMapping.operationAllowed(cascade);
         } catch (Exception e) {
             // do nothing
         }
@@ -76,7 +95,7 @@ public abstract class AbstractCompassJpaEntityListener {
         if (disable()) {
             return;
         }
-        if (!hasMappingForEntity(entity.getClass())) {
+        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
             return;
         }
 
@@ -102,7 +121,7 @@ public abstract class AbstractCompassJpaEntityListener {
         if (disable()) {
             return;
         }
-        if (!hasMappingForEntity(entity.getClass())) {
+        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
             return;
         }
 
@@ -128,7 +147,7 @@ public abstract class AbstractCompassJpaEntityListener {
         if (disable()) {
             return;
         }
-        if (!hasMappingForEntity(entity.getClass())) {
+        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
             return;
         }
 

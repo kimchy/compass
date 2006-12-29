@@ -194,6 +194,21 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         return cascades;
     }
 
+    public boolean operationAllowed(CascadeMapping.Cascade cascade) {
+        if (isRoot()) {
+            return true;
+        }
+        if (cascades == null || cascades.length == 0) {
+            return false;
+        }
+        for (int i = 0; i < cascades.length; i++) {
+            if (cascades[i].shouldCascade(cascade)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getAlias() {
         return alias;
     }

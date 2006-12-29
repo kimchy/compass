@@ -111,6 +111,14 @@ public interface ResourceMapping extends Mapping {
     CascadeMapping[] getCascadeMappings();
 
     /**
+     * Returns is an operation is allowed to be performed on this resoruce mappings.
+     * Root mappings ({@link #isRoot()} always return <code>true</code>, while if
+     * it is non root mappings, it should return true if it has cascade mappings
+     * that map one of the cascade operations.
+     */
+    boolean operationAllowed(CascadeMapping.Cascade cascade);
+
+    /**
      * Returns all the mapped property names for the resoruce.
      */
     String[] getResourcePropertyNames();

@@ -29,13 +29,14 @@ import org.apache.ojb.broker.query.QueryByCriteria;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompass;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsException;
-import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.PassiveMirrorGpsDevice;
 import org.compass.gps.device.AbstractGpsDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * An ObJectRelationalBridge (OJB) device, provides support for using ojb and
@@ -156,7 +157,7 @@ public class OjbGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
      * Attached the OjbGpsDevice lifecycle listener to the instance of the
      * persistence broker.
      *
-     * @param pb
+     * @param pb The persistence broker
      */
     public void attachLifecycleListeners(PersistenceBroker pb) {
         pb.addListener(lifecycleListener);
@@ -166,7 +167,7 @@ public class OjbGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
      * Removed the OjbGpsDevice lifecycle listener from the instance of the
      * persistence broker.
      *
-     * @param pb
+     * @param pb The persistence broker
      */
     public void removeLifecycleListeners(PersistenceBroker pb) {
         pb.removeListener(lifecycleListener);
@@ -213,7 +214,7 @@ public class OjbGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 return;
             }
             final Object entity = lifeCycleEvent.getTarget();
-            if (!compassGps.hasMappingForEntityForMirror((entity.getClass()))) {
+            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
                 return;
             }
             try {
@@ -238,7 +239,7 @@ public class OjbGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 return;
             }
             final Object entity = lifeCycleEvent.getTarget();
-            if (!compassGps.hasMappingForEntityForMirror((entity.getClass()))) {
+            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
                 return;
             }
             try {
@@ -263,7 +264,7 @@ public class OjbGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
                 return;
             }
             final Object entity = lifeCycleEvent.getTarget();
-            if (!compassGps.hasMappingForEntityForMirror((entity.getClass()))) {
+            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
                 return;
             }
             try {

@@ -24,6 +24,7 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassTemplate;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
@@ -122,27 +123,27 @@ public class DualCompassGps extends AbstractCompassGps {
     }
 
     public boolean hasMappingForEntityForIndex(Class clazz) throws CompassException {
-        return hasMappingForEntity(clazz, indexCompass);
+        return hasRootMappingForEntity(clazz, indexCompass);
     }
 
     public boolean hasMappingForEntityForIndex(String name) throws CompassException {
-        return hasMappingForEntity(name, indexCompass);
+        return hasRootMappingForEntity(name, indexCompass);
     }
 
-    public boolean hasMappingForEntityForMirror(Class clazz) throws CompassException {
-        return hasMappingForEntity(clazz, mirrorCompass);
+    public boolean hasMappingForEntityForMirror(Class clazz, CascadeMapping.Cascade cascade) throws CompassException {
+        return hasMappingForEntity(clazz, mirrorCompass, cascade);
     }
 
-    public boolean hasMappingForEntityForMirror(String name) throws CompassException {
-        return hasMappingForEntity(name, mirrorCompass);
+    public boolean hasMappingForEntityForMirror(String name, CascadeMapping.Cascade cascade) throws CompassException {
+        return hasMappingForEntity(name, mirrorCompass, cascade);
     }
 
     public ResourceMapping getMappingForEntityForIndex(String name) throws CompassException {
-        return getMappingForEntity(name, indexCompass);
+        return getRootMappingForEntity(name, indexCompass);
     }
 
     public ResourceMapping getMappingForEntityForIndex(Class clazz) throws CompassException {
-        return getMappingForEntity(clazz, indexCompass);
+        return getRootMappingForEntity(clazz, indexCompass);
     }
 
     public Compass getIndexCompass() {
