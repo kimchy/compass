@@ -17,6 +17,7 @@
 package org.compass.core.converter.basic;
 
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
@@ -43,6 +44,9 @@ public class EnumTests extends AbstractAnnotationsTestCase {
         a = (A) session.load(A.class, 1);
         assertEquals(AType.TEST1, a.value1);
         assertEquals(AType.TEST2, a.value2);
+
+        CompassHits hits = session.find("value1:test1");
+        assertEquals(1, hits.length());
 
         tr.commit();
         session.close();
