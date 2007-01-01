@@ -35,6 +35,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.DomUtils;
+import org.compass.core.util.SystemPropertyUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -93,10 +94,26 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         }
     }
 
+    private String getElementAttribute(Element ele, String name) {
+        return SystemPropertyUtils.resolvePlaceholders(DomUtils.getElementAttribute(ele, name));
+    }
+
+    private String getElementAttribute(Element ele, String name, String defaultValue) {
+        return SystemPropertyUtils.resolvePlaceholders(DomUtils.getElementAttribute(ele, name, defaultValue));
+    }
+
+    private boolean getElementAttributeAsBoolean(Element ele, String name, boolean defaultValue) {
+        String sValue = getElementAttribute(ele, name);
+        if (sValue == null) {
+            return defaultValue;
+        }
+        return Boolean.valueOf(sValue).booleanValue();
+    }
+
     public void bindOsem(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        settings.setSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, DomUtils.getElementAttribute(ele, "managedIdIndex"));
-        settings.setSetting(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, DomUtils.getElementAttribute(ele, "supportUnmarshall"));
+        settings.setSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, getElementAttribute(ele, "managedIdIndex"));
+        settings.setSetting(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, getElementAttribute(ele, "supportUnmarshall"));
     }
 
     public void bindConverters(Element ele, CompassConfiguration config) {
@@ -106,8 +123,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             Element converterEle = (Element) it.next();
             SettingsHolder settingsHolder = processSettings(converterEle);
             settingsHolder.names.add(CompassEnvironment.Converter.TYPE);
-            settingsHolder.values.add(DomUtils.getElementAttribute(converterEle, "type"));
-            settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, DomUtils.getElementAttribute(converterEle, "name"),
+            settingsHolder.values.add(getElementAttribute(converterEle, "type"));
+            settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, getElementAttribute(converterEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }
     }
@@ -119,93 +136,93 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             Element propertyAccessorEle = (Element) it.next();
             SettingsHolder settingsHolder = processSettings(propertyAccessorEle);
             settingsHolder.names.add(CompassEnvironment.PropertyAccessor.TYPE);
-            settingsHolder.values.add(DomUtils.getElementAttribute(propertyAccessorEle, "type"));
-            settings.setGroupSettings(CompassEnvironment.PropertyAccessor.PREFIX, DomUtils.getElementAttribute(propertyAccessorEle, "name"),
+            settingsHolder.values.add(getElementAttribute(propertyAccessorEle, "type"));
+            settings.setGroupSettings(CompassEnvironment.PropertyAccessor.PREFIX, getElementAttribute(propertyAccessorEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }
     }
 
     public void bindPropertyNamingStrategy(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        String type = DomUtils.getElementAttribute(ele, "type");
+        String type = getElementAttribute(ele, "type");
         if (type == null) {
-            type = DomUtils.getElementAttribute(ele, "typeClass");
+            type = getElementAttribute(ele, "typeClass");
         }
         settings.setSetting(CompassEnvironment.NamingStrategy.TYPE, type);
     }
 
     public void bindSearchEngine(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        settings.setSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, DomUtils.getElementAttribute(ele, "useCompoundFile"));
-        settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_FIELD_LENGTH, DomUtils.getElementAttribute(ele, "maxFieldLength"));
-        settings.setSetting(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, DomUtils.getElementAttribute(ele, "cacheInvalidationInterval"));
-        settings.setSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, DomUtils.getElementAttribute(ele, "indexManagerScheduleInterval"));
-        settings.setSetting(LuceneEnvironment.SearchEngineIndex.WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION, DomUtils.getElementAttribute(ele, "waitForCacheInvalidationOnIndexOperation"));
-        settings.setSetting(LuceneEnvironment.DEFAULT_SEARCH, DomUtils.getElementAttribute(ele, "defaultSearch"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, getElementAttribute(ele, "useCompoundFile"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_FIELD_LENGTH, getElementAttribute(ele, "maxFieldLength"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, getElementAttribute(ele, "cacheInvalidationInterval"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, getElementAttribute(ele, "indexManagerScheduleInterval"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION, getElementAttribute(ele, "waitForCacheInvalidationOnIndexOperation"));
+        settings.setSetting(LuceneEnvironment.DEFAULT_SEARCH, getElementAttribute(ele, "defaultSearch"));
         List child = DomUtils.getChildElementsByTagName(ele, "aliasProperty", true);
         if (child.size() == 1) {
             Element aliasPropertyEle = (Element) child.get(0);
-            settings.setSetting(CompassEnvironment.Alias.NAME, DomUtils.getElementAttribute(aliasPropertyEle, "name"));
+            settings.setSetting(CompassEnvironment.Alias.NAME, getElementAttribute(aliasPropertyEle, "name"));
         }
         child = DomUtils.getChildElementsByTagName(ele, "allProperty", true);
         if (child.size() == 1) {
             Element allPropertyEle = (Element) child.get(0);
-            settings.setSetting(CompassEnvironment.All.NAME, DomUtils.getElementAttribute(allPropertyEle, "name"));
-            settings.setSetting(CompassEnvironment.All.TERM_VECTOR, DomUtils.getElementAttribute(allPropertyEle, "termVector"));
-            settings.setSetting(LuceneEnvironment.ALL_ANALYZER, DomUtils.getElementAttribute(allPropertyEle, "analyzer"));
+            settings.setSetting(CompassEnvironment.All.NAME, getElementAttribute(allPropertyEle, "name"));
+            settings.setSetting(CompassEnvironment.All.TERM_VECTOR, getElementAttribute(allPropertyEle, "termVector"));
+            settings.setSetting(LuceneEnvironment.ALL_ANALYZER, getElementAttribute(allPropertyEle, "analyzer"));
         }
         child = DomUtils.getChildElementsByTagName(ele, "optimizer", true);
         if (child.size() == 1) {
             Element optimizerEle = (Element) child.get(0);
-            settings.setSetting(LuceneEnvironment.Optimizer.TYPE, DomUtils.getElementAttribute(optimizerEle, "type"));
-            settings.setSetting(LuceneEnvironment.Optimizer.SCHEDULE, DomUtils.getElementAttribute(optimizerEle, "schedule"));
-            settings.setSetting(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD, DomUtils.getElementAttribute(optimizerEle, "scheduleInterval"));
-            settings.setSetting(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, DomUtils.getElementAttribute(optimizerEle, "mergeFactor"));
-            settings.setSetting(LuceneEnvironment.Optimizer.Aggressive.MERGE_FACTOR, DomUtils.getElementAttribute(optimizerEle, "mergeFactor"));
+            settings.setSetting(LuceneEnvironment.Optimizer.TYPE, getElementAttribute(optimizerEle, "type"));
+            settings.setSetting(LuceneEnvironment.Optimizer.SCHEDULE, getElementAttribute(optimizerEle, "schedule"));
+            settings.setSetting(LuceneEnvironment.Optimizer.SCHEDULE_PERIOD, getElementAttribute(optimizerEle, "scheduleInterval"));
+            settings.setSetting(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, getElementAttribute(optimizerEle, "mergeFactor"));
+            settings.setSetting(LuceneEnvironment.Optimizer.Aggressive.MERGE_FACTOR, getElementAttribute(optimizerEle, "mergeFactor"));
         }
         child = DomUtils.getChildElementsByTagName(ele, "highlighter", true);
         for (Iterator it = child.iterator(); it.hasNext();) {
             Element highlighterEle = (Element) it.next();
-            String highlighterName = DomUtils.getElementAttribute(highlighterEle, "name");
+            String highlighterName = getElementAttribute(highlighterEle, "name");
             SettingsHolder settingsHolder = processSettings(highlighterEle);
 
             settingsHolder.names.add(LuceneEnvironment.Highlighter.TEXT_TOKENIZER);
-            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "textTokenizer"));
+            settingsHolder.values.add(getElementAttribute(highlighterEle, "textTokenizer"));
 
             settingsHolder.names.add(LuceneEnvironment.Highlighter.REWRITE_QUERY);
-            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "rewriteQuery"));
+            settingsHolder.values.add(getElementAttribute(highlighterEle, "rewriteQuery"));
 
             settingsHolder.names.add(LuceneEnvironment.Highlighter.COMPUTE_IDF);
-            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "computeIdf"));
+            settingsHolder.values.add(getElementAttribute(highlighterEle, "computeIdf"));
 
             settingsHolder.names.add(LuceneEnvironment.Highlighter.MAX_NUM_FRAGMENTS);
-            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "maxNumFragments"));
+            settingsHolder.values.add(getElementAttribute(highlighterEle, "maxNumFragments"));
 
             settingsHolder.names.add(LuceneEnvironment.Highlighter.SEPARATOR);
-            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "separator"));
+            settingsHolder.values.add(getElementAttribute(highlighterEle, "separator"));
 
             settingsHolder.names.add(LuceneEnvironment.Highlighter.MAX_BYTES_TO_ANALYZE);
-            settingsHolder.values.add(DomUtils.getElementAttribute(highlighterEle, "maxBytesToAnalyze"));
+            settingsHolder.values.add(getElementAttribute(highlighterEle, "maxBytesToAnalyze"));
 
             List fragmenterList = DomUtils.getChildElementsByTagName(highlighterEle, "fragmenter", true);
             if (fragmenterList.size() == 1) {
                 Element fragmenterEle = (Element) fragmenterList.get(0);
-                String type = DomUtils.getElementAttribute(fragmenterEle, "type");
+                String type = getElementAttribute(fragmenterEle, "type");
                 if ("custom".equals(type)) {
-                    type = DomUtils.getElementAttribute(fragmenterEle, "class");
+                    type = getElementAttribute(fragmenterEle, "class");
                 }
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Fragmenter.TYPE);
                 settingsHolder.values.add(type);
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Fragmenter.SIMPLE_SIZE);
-                settingsHolder.values.add(DomUtils.getElementAttribute(fragmenterEle, "size"));
+                settingsHolder.values.add(getElementAttribute(fragmenterEle, "size"));
             }
 
             List encoderList = DomUtils.getChildElementsByTagName(highlighterEle, "encoder", true);
             if (encoderList.size() == 1) {
                 Element encoderEle = (Element) encoderList.get(0);
-                String type = DomUtils.getElementAttribute(encoderEle, "type");
+                String type = getElementAttribute(encoderEle, "type");
                 if ("custom".equals(type)) {
-                    type = DomUtils.getElementAttribute(encoderEle, "class");
+                    type = getElementAttribute(encoderEle, "class");
                 }
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Encoder.TYPE);
                 settingsHolder.values.add(type);
@@ -218,10 +235,10 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 settingsHolder.values.add(LuceneEnvironment.Highlighter.Formatter.SIMPLE);
 
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.SIMPLE_PRE_HIGHLIGHT);
-                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "pre"));
+                settingsHolder.values.add(getElementAttribute(formatterEle, "pre"));
 
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.SIMPLE_POST_HIGHLIGHT);
-                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "post"));
+                settingsHolder.values.add(getElementAttribute(formatterEle, "post"));
             }
 
             formatterList = DomUtils.getChildElementsByTagName(highlighterEle, "htmlSpanGradientFormatter", true);
@@ -231,26 +248,26 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 settingsHolder.values.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT);
 
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_SCORE);
-                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "maxScore"));
+                settingsHolder.values.add(getElementAttribute(formatterEle, "maxScore"));
 
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MIN_FOREGROUND_COLOR);
-                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "minForegroundColor"));
+                settingsHolder.values.add(getElementAttribute(formatterEle, "minForegroundColor"));
 
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_FOREGROUND_COLOR);
-                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "maxForegroundColor"));
+                settingsHolder.values.add(getElementAttribute(formatterEle, "maxForegroundColor"));
 
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MIN_BACKGROUND_COLOR);
-                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "minBackgroundColor"));
+                settingsHolder.values.add(getElementAttribute(formatterEle, "minBackgroundColor"));
 
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_BACKGROUND_COLOR);
-                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "maxBackgroundColor"));
+                settingsHolder.values.add(getElementAttribute(formatterEle, "maxBackgroundColor"));
             }
 
             formatterList = DomUtils.getChildElementsByTagName(highlighterEle, "customFormatter", true);
             if (formatterList.size() == 1) {
                 Element formatterEle = (Element) formatterList.get(0);
                 settingsHolder.names.add(LuceneEnvironment.Highlighter.Formatter.TYPE);
-                settingsHolder.values.add(DomUtils.getElementAttribute(formatterEle, "class"));
+                settingsHolder.values.add(getElementAttribute(formatterEle, "class"));
             }
 
             settings.setGroupSettings(LuceneEnvironment.Highlighter.PREFIX, highlighterName,
@@ -259,12 +276,12 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "analyzer", true);
         for (Iterator it = child.iterator(); it.hasNext();) {
             Element analyzerEle = (Element) it.next();
-            String analyzerName = DomUtils.getElementAttribute(analyzerEle, "name");
+            String analyzerName = getElementAttribute(analyzerEle, "name");
             SettingsHolder settingsHolder = processSettings(analyzerEle);
-            String analyzerType = DomUtils.getElementAttribute(analyzerEle, "type");
+            String analyzerType = getElementAttribute(analyzerEle, "type");
             if (analyzerType != null) {
                 if (analyzerType.equals("CustomAnalyzer")) {
-                    analyzerType = DomUtils.getElementAttribute(analyzerEle, "analyzerClass");
+                    analyzerType = getElementAttribute(analyzerEle, "analyzerClass");
                     if (analyzerType == null) {
                         throw new ConfigurationException("Analyzer [" + analyzerName + "] has " +
                                 "type of [CustomAnalyzer] but does not set analyzerClass");
@@ -275,24 +292,24 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
 
                 if (analyzerType.equals("Snowball")) {
                     settingsHolder.names.add(LuceneEnvironment.Analyzer.Snowball.NAME_TYPE);
-                    settingsHolder.values.add(DomUtils.getElementAttribute(analyzerEle, "snowballType"));
+                    settingsHolder.values.add(getElementAttribute(analyzerEle, "snowballType"));
                 }
             }
             settingsHolder.names.add(LuceneEnvironment.Analyzer.FILTERS);
-            settingsHolder.values.add(DomUtils.getElementAttribute(analyzerEle, "filters"));
+            settingsHolder.values.add(getElementAttribute(analyzerEle, "filters"));
 
             List stopWordsList = DomUtils.getChildElementsByTagName(analyzerEle, "stopWords", true);
             if (stopWordsList.size() == 1) {
                 Element stopWordsEle = (Element) stopWordsList.get(0);
                 StringBuffer sb = new StringBuffer();
-                boolean replace = DomUtils.getElementAttributeAsBoolean(stopWordsEle, "replace", true);
+                boolean replace = getElementAttributeAsBoolean(stopWordsEle, "replace", true);
                 if (!replace) {
                     sb.append("+");
                 }
                 List stopWords = DomUtils.getChildElementsByTagName(stopWordsEle, "stopWord", true);
                 for (Iterator swIt = stopWords.iterator(); swIt.hasNext();) {
                     Element stopWordEle = (Element) swIt.next();
-                    sb.append(DomUtils.getElementAttribute(stopWordEle, "value")).append(",");
+                    sb.append(getElementAttribute(stopWordEle, "value")).append(",");
                 }
                 settingsHolder.names.add(LuceneEnvironment.Analyzer.STOPWORDS);
                 settingsHolder.values.add(sb.toString());
@@ -305,8 +322,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             Element analyzerFilterEle = (Element) it.next();
             SettingsHolder settingsHolder = processSettings(analyzerFilterEle);
             settingsHolder.names.add(LuceneEnvironment.AnalyzerFilter.TYPE);
-            settingsHolder.values.add(DomUtils.getElementAttribute(analyzerFilterEle, "type"));
-            settings.setGroupSettings(LuceneEnvironment.AnalyzerFilter.PREFIX, DomUtils.getElementAttribute(analyzerFilterEle, "name"),
+            settingsHolder.values.add(getElementAttribute(analyzerFilterEle, "type"));
+            settings.setGroupSettings(LuceneEnvironment.AnalyzerFilter.PREFIX, getElementAttribute(analyzerFilterEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }
         child = DomUtils.getChildElementsByTagName(ele, "queryParser", true);
@@ -314,8 +331,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             Element queryParserEle = (Element) it.next();
             SettingsHolder settingsHolder = processSettings(queryParserEle);
             settingsHolder.names.add(LuceneEnvironment.QueryParser.TYPE);
-            settingsHolder.values.add(DomUtils.getElementAttribute(queryParserEle, "type"));
-            settings.setGroupSettings(LuceneEnvironment.QueryParser.PREFIX, DomUtils.getElementAttribute(queryParserEle, "name"),
+            settingsHolder.values.add(getElementAttribute(queryParserEle, "type"));
+            settings.setGroupSettings(LuceneEnvironment.QueryParser.PREFIX, getElementAttribute(queryParserEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }
     }
@@ -325,35 +342,35 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         List child = DomUtils.getChildElementsByTagName(ele, "firstLevel", true);
         if (child.size() == 1) {
             Element firstLevelCacheEle = (Element) child.get(0);
-            settings.setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, DomUtils.getElementAttribute(firstLevelCacheEle, "type"));
+            settings.setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, getElementAttribute(firstLevelCacheEle, "type"));
         }
     }
 
     public void bindTransaction(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        settings.setSetting(CompassEnvironment.Transaction.ISOLATION, DomUtils.getElementAttribute(ele, "isolation"));
-        settings.setSetting(CompassEnvironment.Transaction.FACTORY, DomUtils.getElementAttribute(ele, "factory"));
-        settings.setSetting(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, DomUtils.getElementAttribute(ele, "commitBeforeCompletion"));
-        settings.setSetting(LuceneEnvironment.Transaction.LOCK_DIR, DomUtils.getElementAttribute(ele, "lockDir"));
-        settings.setSetting(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, DomUtils.getElementAttribute(ele, "clearCacheOnCommit"));
-        settings.setSetting(LuceneEnvironment.Transaction.COMMIT_TIMEOUT, DomUtils.getElementAttribute(ele, "commitTimeout"));
-        settings.setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, DomUtils.getElementAttribute(ele, "lockTimeout"));
-        settings.setSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, DomUtils.getElementAttribute(ele, "lockPollInterval"));
-        settings.setSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, DomUtils.getElementAttribute(ele, "disableAutoJoinSession"));
+        settings.setSetting(CompassEnvironment.Transaction.ISOLATION, getElementAttribute(ele, "isolation"));
+        settings.setSetting(CompassEnvironment.Transaction.FACTORY, getElementAttribute(ele, "factory"));
+        settings.setSetting(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, getElementAttribute(ele, "commitBeforeCompletion"));
+        settings.setSetting(LuceneEnvironment.Transaction.LOCK_DIR, getElementAttribute(ele, "lockDir"));
+        settings.setSetting(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, getElementAttribute(ele, "clearCacheOnCommit"));
+        settings.setSetting(LuceneEnvironment.Transaction.COMMIT_TIMEOUT, getElementAttribute(ele, "commitTimeout"));
+        settings.setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, getElementAttribute(ele, "lockTimeout"));
+        settings.setSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, getElementAttribute(ele, "lockPollInterval"));
+        settings.setSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, getElementAttribute(ele, "disableAutoJoinSession"));
         List child = DomUtils.getChildElementsByTagName(ele, "batchInsertSettings", true);
         if (child.size() == 1) {
             Element batchInsertEle = (Element) child.get(0);
-            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, DomUtils.getElementAttribute(batchInsertEle, "maxMergeDocs"));
-            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, DomUtils.getElementAttribute(batchInsertEle, "mergeFactor"));
-            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, DomUtils.getElementAttribute(batchInsertEle, "maxBufferedDocs"));
+            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, getElementAttribute(batchInsertEle, "maxMergeDocs"));
+            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, getElementAttribute(batchInsertEle, "mergeFactor"));
+            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, getElementAttribute(batchInsertEle, "maxBufferedDocs"));
         }
         child = DomUtils.getChildElementsByTagName(ele, "jtaSettings", true);
         if (child.size() == 1) {
             Element jtaSettingsEle = (Element) child.get(0);
-            settings.setSetting(CompassEnvironment.Transaction.USER_TRANSACTION, DomUtils.getElementAttribute(jtaSettingsEle, "userTransactionName"));
-            settings.setSetting(CompassEnvironment.Transaction.CACHE_USER_TRANSACTION, DomUtils.getElementAttribute(jtaSettingsEle, "cacheUserTransaction"));
-            settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, DomUtils.getElementAttribute(jtaSettingsEle, "managerLookup"));
-            settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, DomUtils.getElementAttribute(jtaSettingsEle, "managerLookupClass"));
+            settings.setSetting(CompassEnvironment.Transaction.USER_TRANSACTION, getElementAttribute(jtaSettingsEle, "userTransactionName"));
+            settings.setSetting(CompassEnvironment.Transaction.CACHE_USER_TRANSACTION, getElementAttribute(jtaSettingsEle, "cacheUserTransaction"));
+            settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, getElementAttribute(jtaSettingsEle, "managerLookup"));
+            settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, getElementAttribute(jtaSettingsEle, "managerLookupClass"));
         }
         child = DomUtils.getChildElementsByTagName(ele, "readCommittedSettings", true);
         if (child.size() == 1) {
@@ -366,9 +383,9 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             if (child.size() == 1) {
                 Element fsTranLogSettingsEle = (Element) child.get(0);
                 settings.setSetting(LuceneEnvironment.Transaction.TransLog.TYPE, FSTransLog.class.getName());
-                settings.setSetting(LuceneEnvironment.Transaction.TransLog.PATH, DomUtils.getElementAttribute(fsTranLogSettingsEle, "path"));
-                settings.setSetting(LuceneEnvironment.Transaction.TransLog.READ_BUFFER_SIZE, DomUtils.getElementAttribute(fsTranLogSettingsEle, "readBufferSize"));
-                settings.setSetting(LuceneEnvironment.Transaction.TransLog.WRITE_BUFFER_SIZE, DomUtils.getElementAttribute(fsTranLogSettingsEle, "writeBufferSize"));
+                settings.setSetting(LuceneEnvironment.Transaction.TransLog.PATH, getElementAttribute(fsTranLogSettingsEle, "path"));
+                settings.setSetting(LuceneEnvironment.Transaction.TransLog.READ_BUFFER_SIZE, getElementAttribute(fsTranLogSettingsEle, "readBufferSize"));
+                settings.setSetting(LuceneEnvironment.Transaction.TransLog.WRITE_BUFFER_SIZE, getElementAttribute(fsTranLogSettingsEle, "writeBufferSize"));
             }
         }
     }
@@ -382,16 +399,16 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             Element dwEle = (Element) it.next();
             SettingsHolder settingsHolder = processSettings(dwEle);
             settingsHolder.names.add(LuceneEnvironment.DirectoryWrapper.TYPE);
-            settingsHolder.values.add(DomUtils.getElementAttribute(dwEle, "type"));
+            settingsHolder.values.add(getElementAttribute(dwEle, "type"));
             settings.setGroupSettings(LuceneEnvironment.DirectoryWrapper.PREFIX,
-                    DomUtils.getElementAttribute(dwEle, "name"),
+                    getElementAttribute(dwEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }
 
         child = DomUtils.getChildElementsByTagName(ele, "file", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
-            String path = DomUtils.getElementAttribute(connEle, "path");
+            String path = getElementAttribute(connEle, "path");
             if (!path.startsWith("file://")) {
                 path = "file://" + path;
             }
@@ -401,7 +418,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "mmap", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
-            String path = DomUtils.getElementAttribute(connEle, "path");
+            String path = getElementAttribute(connEle, "path");
             if (!path.startsWith("mmap://")) {
                 path = "mmap://" + path;
             }
@@ -412,7 +429,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "ram", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
-            String path = DomUtils.getElementAttribute(connEle, "path");
+            String path = getElementAttribute(connEle, "path");
             if (!path.startsWith("ram://")) {
                 path = "ram://" + path;
             }
@@ -423,19 +440,19 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "jdbc", true);
         Element connEle = (Element) child.get(0);
         // managed
-        settings.setSetting(LuceneEnvironment.JdbcStore.MANAGED, DomUtils.getElementAttribute(connEle, "managed", "false"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.MANAGED, getElementAttribute(connEle, "managed", "false"));
         // disable schema operations
-        settings.setSetting(LuceneEnvironment.JdbcStore.DISABLE_SCHEMA_OPERATIONS, DomUtils.getElementAttribute(connEle, "disableSchemaOperations", "false"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.DISABLE_SCHEMA_OPERATIONS, getElementAttribute(connEle, "disableSchemaOperations", "false"));
         // dialect
-        settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, DomUtils.getElementAttribute(connEle, "dialect"));
-        settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, DomUtils.getElementAttribute(connEle, "dialectClass"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, getElementAttribute(connEle, "dialect"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, getElementAttribute(connEle, "dialectClass"));
         // use commit locks
-        settings.setSetting(LuceneEnvironment.JdbcStore.USE_COMMIT_LOCKS, DomUtils.getElementAttribute(connEle, "useCommitLocks", "false"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.USE_COMMIT_LOCKS, getElementAttribute(connEle, "useCommitLocks", "false"));
         // delete mark deleted
-        settings.setSetting(LuceneEnvironment.JdbcStore.DELETE_MARK_DELETED_DELTA, DomUtils.getElementAttribute(connEle, "deleteMarkDeletedDelta"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.DELETE_MARK_DELETED_DELTA, getElementAttribute(connEle, "deleteMarkDeletedDelta"));
         // lock
-        settings.setSetting(LuceneEnvironment.JdbcStore.LOCK_TYPE, DomUtils.getElementAttribute(connEle, "lock"));
-        settings.setSetting(LuceneEnvironment.JdbcStore.LOCK_TYPE, DomUtils.getElementAttribute(connEle, "lockClass"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.LOCK_TYPE, getElementAttribute(connEle, "lock"));
+        settings.setSetting(LuceneEnvironment.JdbcStore.LOCK_TYPE, getElementAttribute(connEle, "lockClass"));
 
         // configure file entries
         child = DomUtils.getChildElementsByTagName(connEle, "fileEntries", true);
@@ -450,26 +467,26 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 if (child.size() == 1) {
                     Element indexInputEle = (Element) child.get(0);
                     settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_INPUT_TYPE);
-                    settingsHolder.values.add(DomUtils.getElementAttribute(indexInputEle, "type"));
+                    settingsHolder.values.add(getElementAttribute(indexInputEle, "type"));
                     settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_INPUT_TYPE);
-                    settingsHolder.values.add(DomUtils.getElementAttribute(indexInputEle, "typeClass"));
+                    settingsHolder.values.add(getElementAttribute(indexInputEle, "typeClass"));
                     settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_INPUT_BUFFER_SIZE);
-                    settingsHolder.values.add(DomUtils.getElementAttribute(indexInputEle, "bufferSize"));
+                    settingsHolder.values.add(getElementAttribute(indexInputEle, "bufferSize"));
                 }
                 // --- File Entry Index Input ---
                 child = DomUtils.getChildElementsByTagName(fileEntryEle, "indexOutput", true);
                 if (child.size() == 1) {
                     Element indexOutputEle = (Element) child.get(0);
                     settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_TYPE);
-                    settingsHolder.values.add(DomUtils.getElementAttribute(indexOutputEle, "type"));
+                    settingsHolder.values.add(getElementAttribute(indexOutputEle, "type"));
                     settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_TYPE);
-                    settingsHolder.values.add(DomUtils.getElementAttribute(indexOutputEle, "typeClass"));
+                    settingsHolder.values.add(getElementAttribute(indexOutputEle, "typeClass"));
                     settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_BUFFER_SIZE);
-                    settingsHolder.values.add(DomUtils.getElementAttribute(indexOutputEle, "bufferSize"));
+                    settingsHolder.values.add(getElementAttribute(indexOutputEle, "bufferSize"));
                     settingsHolder.names.add(LuceneEnvironment.JdbcStore.FileEntry.INDEX_OUTPUT_THRESHOLD);
-                    settingsHolder.values.add(DomUtils.getElementAttribute(indexOutputEle, "threshold"));
+                    settingsHolder.values.add(getElementAttribute(indexOutputEle, "threshold"));
                 }
-                settings.setGroupSettings(LuceneEnvironment.JdbcStore.FileEntry.PREFIX, DomUtils.getElementAttribute(fileEntryEle, "name"),
+                settings.setGroupSettings(LuceneEnvironment.JdbcStore.FileEntry.PREFIX, getElementAttribute(fileEntryEle, "name"),
                         settingsHolder.names(), settingsHolder.values());
             }
         }
@@ -481,29 +498,29 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             child = DomUtils.getChildElementsByTagName(ddlEle, "nameColumn", true);
             if (child.size() == 1) {
                 Element nameColumnEle = (Element) child.get(0);
-                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.NAME_NAME, DomUtils.getElementAttribute(nameColumnEle, "name"));
-                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.NAME_LENGTH, DomUtils.getElementAttribute(nameColumnEle, "length"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.NAME_NAME, getElementAttribute(nameColumnEle, "name"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.NAME_LENGTH, getElementAttribute(nameColumnEle, "length"));
             }
             child = DomUtils.getChildElementsByTagName(ddlEle, "valueColumn", true);
             if (child.size() == 1) {
                 Element valueColumnEle = (Element) child.get(0);
-                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.VALUE_NAME, DomUtils.getElementAttribute(valueColumnEle, "name"));
-                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.VALUE_LENGTH, DomUtils.getElementAttribute(valueColumnEle, "length"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.VALUE_NAME, getElementAttribute(valueColumnEle, "name"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.VALUE_LENGTH, getElementAttribute(valueColumnEle, "length"));
             }
             child = DomUtils.getChildElementsByTagName(ddlEle, "sizeColumn", true);
             if (child.size() == 1) {
                 Element sizeColumnEle = (Element) child.get(0);
-                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.SIZE_NAME, DomUtils.getElementAttribute(sizeColumnEle, "name"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.SIZE_NAME, getElementAttribute(sizeColumnEle, "name"));
             }
             child = DomUtils.getChildElementsByTagName(ddlEle, "lastModifiedColumn", true);
             if (child.size() == 1) {
                 Element lastModifiedEle = (Element) child.get(0);
-                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.LAST_MODIFIED_NAME, DomUtils.getElementAttribute(lastModifiedEle, "name"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.LAST_MODIFIED_NAME, getElementAttribute(lastModifiedEle, "name"));
             }
             child = DomUtils.getChildElementsByTagName(ddlEle, "deletedColumn", true);
             if (child.size() == 1) {
                 Element deletedEle = (Element) child.get(0);
-                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.DELETED_NAME, DomUtils.getElementAttribute(deletedEle, "name"));
+                settings.setSetting(LuceneEnvironment.JdbcStore.DDL.DELETED_NAME, getElementAttribute(deletedEle, "name"));
             }
         }
 
@@ -517,51 +534,51 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
                     "org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider");
             settings.setSetting(CompassEnvironment.CONNECTION,
-                    "jdbc://" + DomUtils.getElementAttribute(driverManagerEle, "url"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(driverManagerEle, "username"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(driverManagerEle, "password"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, DomUtils.getElementAttribute(driverManagerEle, "driverClass"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(driverManagerEle, "autoCommit", "false"));
+                    "jdbc://" + getElementAttribute(driverManagerEle, "url"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, getElementAttribute(driverManagerEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, getElementAttribute(driverManagerEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, getElementAttribute(driverManagerEle, "driverClass"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, getElementAttribute(driverManagerEle, "autoCommit", "false"));
         }
         child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "c3p0", true);
         if (child.size() == 1) {
             Element driverManagerEle = (Element) child.get(0);
             settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
                     "org.compass.core.lucene.engine.store.jdbc.C3P0DataSourceProvider");
-            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + DomUtils.getElementAttribute(driverManagerEle, "url"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(driverManagerEle, "username"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(driverManagerEle, "password"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, DomUtils.getElementAttribute(driverManagerEle, "driverClass"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(driverManagerEle, "autoCommit", "false"));
+            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + getElementAttribute(driverManagerEle, "url"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, getElementAttribute(driverManagerEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, getElementAttribute(driverManagerEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, getElementAttribute(driverManagerEle, "driverClass"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, getElementAttribute(driverManagerEle, "autoCommit", "false"));
         }
         child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "jndi", true);
         if (child.size() == 1) {
             Element jndiEle = (Element) child.get(0);
             settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
                     "org.compass.core.lucene.engine.store.jdbc.JndiDataSourceProvider");
-            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + DomUtils.getElementAttribute(jndiEle, "lookup"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(jndiEle, "username"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(jndiEle, "password"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(jndiEle, "autoCommit", "false"));
+            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + getElementAttribute(jndiEle, "lookup"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, getElementAttribute(jndiEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, getElementAttribute(jndiEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, getElementAttribute(jndiEle, "autoCommit", "false"));
         }
         child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "dbcp", true);
         if (child.size() == 1) {
             Element dbcpEle = (Element) child.get(0);
             settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
                     "org.compass.core.lucene.engine.store.jdbc.DbcpDataSourceProvider");
-            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + DomUtils.getElementAttribute(dbcpEle, "url"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(dbcpEle, "username"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(dbcpEle, "password"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, DomUtils.getElementAttribute(dbcpEle, "driverClass"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(dbcpEle, "autoCommit", "false"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.DEFAULT_TRANSACTION_ISOLATION, DomUtils.getElementAttribute(dbcpEle, "defaultTransacitonIsolation"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.INITIAL_SIZE, DomUtils.getElementAttribute(dbcpEle, "initialSize"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_ACTIVE, DomUtils.getElementAttribute(dbcpEle, "maxActive"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_IDLE, DomUtils.getElementAttribute(dbcpEle, "maxIdle"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MIN_IDLE, DomUtils.getElementAttribute(dbcpEle, "minIdle"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_WAIT, DomUtils.getElementAttribute(dbcpEle, "maxWait"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_OPEN_PREPARED_STATEMENTS, DomUtils.getElementAttribute(dbcpEle, "maxOpenPreparedStatements"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.POOL_PREPARED_STATEMENTS, DomUtils.getElementAttribute(dbcpEle, "poolPreparedStatements"));
+            settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://" + getElementAttribute(dbcpEle, "url"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, getElementAttribute(dbcpEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, getElementAttribute(dbcpEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, getElementAttribute(dbcpEle, "driverClass"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, getElementAttribute(dbcpEle, "autoCommit", "false"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.DEFAULT_TRANSACTION_ISOLATION, getElementAttribute(dbcpEle, "defaultTransacitonIsolation"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.INITIAL_SIZE, getElementAttribute(dbcpEle, "initialSize"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_ACTIVE, getElementAttribute(dbcpEle, "maxActive"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_IDLE, getElementAttribute(dbcpEle, "maxIdle"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MIN_IDLE, getElementAttribute(dbcpEle, "minIdle"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_WAIT, getElementAttribute(dbcpEle, "maxWait"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.MAX_OPEN_PREPARED_STATEMENTS, getElementAttribute(dbcpEle, "maxOpenPreparedStatements"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.Dbcp.POOL_PREPARED_STATEMENTS, getElementAttribute(dbcpEle, "poolPreparedStatements"));
         }
         child = DomUtils.getChildElementsByTagName(dataSourceProviderEle, "external", true);
         if (child.size() == 1) {
@@ -569,25 +586,25 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
                     "org.compass.core.lucene.engine.store.jdbc.ExternalDataSourceProvider");
             settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://");
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, DomUtils.getElementAttribute(externalEle, "username"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, DomUtils.getElementAttribute(externalEle, "password"));
-            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, DomUtils.getElementAttribute(externalEle, "autoCommit", "false"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, getElementAttribute(externalEle, "username"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, getElementAttribute(externalEle, "password"));
+            settings.setSetting(LuceneEnvironment.JdbcStore.Connection.AUTO_COMMIT, getElementAttribute(externalEle, "autoCommit", "false"));
         }
     }
 
     public void bindJndi(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        settings.setSetting(CompassEnvironment.Jndi.ENABLE, DomUtils.getElementAttribute(ele, "register", "false"));
-        settings.setSetting(CompassEnvironment.Jndi.CLASS, DomUtils.getElementAttribute(ele, "class"));
-        settings.setSetting(CompassEnvironment.Jndi.URL, DomUtils.getElementAttribute(ele, "url"));
+        settings.setSetting(CompassEnvironment.Jndi.ENABLE, getElementAttribute(ele, "register", "false"));
+        settings.setSetting(CompassEnvironment.Jndi.CLASS, getElementAttribute(ele, "class"));
+        settings.setSetting(CompassEnvironment.Jndi.URL, getElementAttribute(ele, "url"));
         List environments = DomUtils.getChildElementsByTagName(ele, "environment", true);
         if (environments.size() == 1) {
             Element environment = (Element) environments.get(0);
             List properties = DomUtils.getChildElementsByTagName(environment, "property", true);
             for (Iterator it = properties.iterator(); it.hasNext();) {
                 Element property = (Element) it.next();
-                String propertyName = CompassEnvironment.Jndi.PREFIX + "." + DomUtils.getElementAttribute(property, "name");
-                String propertyValue = DomUtils.getElementAttribute(property, "value");
+                String propertyName = CompassEnvironment.Jndi.PREFIX + "." + getElementAttribute(property, "name");
+                String propertyValue = getElementAttribute(property, "value");
                 settings.setSetting(propertyName, propertyValue);
             }
         }
@@ -598,8 +615,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         List domSettings = DomUtils.getChildElementsByTagName(ele, "setting", true);
         for (Iterator it = domSettings.iterator(); it.hasNext();) {
             Element eleSetting = (Element) it.next();
-            settings.setSetting(DomUtils.getElementAttribute(eleSetting, "name"),
-                    DomUtils.getElementAttribute(eleSetting, "value"));
+            settings.setSetting(getElementAttribute(eleSetting, "name"),
+                    getElementAttribute(eleSetting, "value"));
         }
     }
 
@@ -611,17 +628,17 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 Element mappingEle = (Element) node;
                 String nodeName = mappingEle.getLocalName();
                 if ("resource".equals(nodeName)) {
-                    config.addResource(DomUtils.getElementAttribute(mappingEle, "location"));
+                    config.addResource(getElementAttribute(mappingEle, "location"));
                 } else if ("class".equals(nodeName)) {
-                    config.addClass(ClassUtils.forName(DomUtils.getElementAttribute(mappingEle, "name")));
+                    config.addClass(ClassUtils.forName(getElementAttribute(mappingEle, "name")));
                 } else if ("jar".equals(nodeName)) {
-                    config.addJar(new File(DomUtils.getElementAttribute(mappingEle, "path")));
+                    config.addJar(new File(getElementAttribute(mappingEle, "path")));
                 } else if ("file".equals(nodeName)) {
-                    config.addFile(new File(DomUtils.getElementAttribute(mappingEle, "path")));
+                    config.addFile(new File(getElementAttribute(mappingEle, "path")));
                 } else if ("dir".equals(nodeName)) {
-                    config.addDirectory(new File(DomUtils.getElementAttribute(mappingEle, "path")));
+                    config.addDirectory(new File(getElementAttribute(mappingEle, "path")));
                 } else if ("package".equals(nodeName)) {
-                    config.addPackage(DomUtils.getElementAttribute(mappingEle, "name"));
+                    config.addPackage(getElementAttribute(mappingEle, "name"));
                 }
             }
         }
@@ -632,8 +649,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         List settings = DomUtils.getChildElementsByTagName(ele, "setting", true);
         for (Iterator it = settings.iterator(); it.hasNext();) {
             Element settingEle = (Element) it.next();
-            settingsHolder.names.add(DomUtils.getElementAttribute(settingEle, "name"));
-            settingsHolder.values.add(DomUtils.getElementAttribute(settingEle, "value"));
+            settingsHolder.names.add(getElementAttribute(settingEle, "name"));
+            settingsHolder.values.add(getElementAttribute(settingEle, "value"));
         }
         return settingsHolder;
     }
