@@ -30,7 +30,7 @@ import org.compass.gps.device.jpa.support.NativeJpaHelper;
  * If no implementation is found for the native <code>EntityManagerFactory</code> implementation,
  * uses the {@link DefaultJpaEntitiesLocator}.
  * <p/>
- * Currently support the following JPA implementations: Hibernate, TopLink Essentials (Glassfish Persistence).
+ * Currently support the following JPA implementations: Hibernate, TopLink Essentials (Glassfish Persistence), OpenJPA.
  * <p/>
  * Assumes that the <code>EntityManagerFactory</code> is the native one, since the
  * {@link org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor} of the
@@ -45,18 +45,25 @@ public abstract class JpaEntitiesLocatorDetector {
         String locatorClassName =
                 NativeJpaHelper.detectNativeJpa(entityManagerFactory, new NativeJpaHelper.NativeJpaCallback<String>() {
 
-            public String onHibernate() {
-                return "org.compass.gps.device.jpa.entities.HibernateJpaEntitiesLocator";
-            }
+                    public String onHibernate() {
+                        return "org.compass.gps.device.jpa.entities.HibernateJpaEntitiesLocator";
+                    }
 
-            public String onTopLinkEssentials() {
-                return "org.compass.gps.device.jpa.entities.TopLinkEssentialsJpaEntitiesLocator";
-            }
+                    public String onTopLinkEssentials() {
+                        return "org.compass.gps.device.jpa.entities.TopLinkEssentialsJpaEntitiesLocator";
+                    }
 
-            public String onUnknown() {
-                return DefaultJpaEntitiesLocator.class.getName();
-            }
-        });
+
+                    public String onOpenJPA() {
+                        // TODO once the OpenJPA locator works, replace the default one
+//                        return "org.compass.gps.device.jpa.entities.OpenJPAJpaEntitiesLocator";
+                        return DefaultJpaEntitiesLocator.class.getName();
+                    }
+
+                    public String onUnknown() {
+                        return DefaultJpaEntitiesLocator.class.getName();
+                    }
+                });
 
         try {
             Class locatorClass = ClassUtils.forName(locatorClassName);

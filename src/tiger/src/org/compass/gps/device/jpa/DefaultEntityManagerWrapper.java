@@ -18,11 +18,12 @@ public class DefaultEntityManagerWrapper extends AbstractEntityManagerWrapper {
     @Override
     protected void beginTransaction() throws PersistenceException {
         try {
+            // getTransaction will throw IllegalStateException if it is witin JTA
             transaction = entityManager.getTransaction();
             isJta = false;
             try {
                 transaction.begin();
-            } finally {
+            } catch (Exception e) {
                 transaction = null;
             }
         } catch (IllegalStateException e) {

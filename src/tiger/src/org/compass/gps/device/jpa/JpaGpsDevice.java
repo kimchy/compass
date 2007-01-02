@@ -116,9 +116,9 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
 
     private NativeEntityManagerFactoryExtractor nativeEntityManagerFactoryExtractor;
 
-    private JpaEntitiesLocator entitiesLocator;
+    private EntityManagerFactory nativeEntityManagerFactory;
 
-    private EntityInformation[] entitiesInformation;
+    private JpaEntitiesLocator entitiesLocator;
 
     private Map<Class<?>, JpaQueryProvider> queryProviderByClass = new HashMap<Class<?>, JpaQueryProvider>();
 
@@ -131,7 +131,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
         }
         entityManagerWrapper.setUp(entityManagerFactory);
 
-        EntityManagerFactory nativeEntityManagerFactory = entityManagerFactory;
+        nativeEntityManagerFactory = entityManagerFactory;
         if (nativeEntityManagerFactoryExtractor != null) {
             nativeEntityManagerFactory = nativeEntityManagerFactoryExtractor.extractNative(nativeEntityManagerFactory);
             if (nativeEntityManagerFactory == null) {
@@ -156,16 +156,6 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
                 log.debug(buildMessage("Using index entityLocator [" + entitiesLocator.getClass().getName() + "]"));
             }
         }
-        entitiesInformation = entitiesLocator.locate(nativeEntityManagerFactory, this);
-        // apply specific select statements
-        for (EntityInformation entityInformation : entitiesInformation) {
-            if (queryProviderByClass.get(entityInformation.getEntityClass()) != null) {
-                entityInformation.setQueryProvider(queryProviderByClass.get(entityInformation.getEntityClass()));
-            }
-            if (queryProviderByName.get(entityInformation.getName()) != null) {
-                entityInformation.setQueryProvider(queryProviderByName.get(entityInformation.getName()));
-            }
-        }
 
         if (injectEntityLifecycleListener && mirrorDataChanges) {
             if (lifecycleInjector == null) {
@@ -182,6 +172,16 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     }
 
     protected IndexEntity[] doGetIndexEntities() throws CompassGpsException {
+        EntityInformation[] entitiesInformation = entitiesLocator.locate(nativeEntityManagerFactory, this);
+        // apply specific select statements
+        for (EntityInformation entityInformation : entitiesInformation) {
+            if (queryProviderByClass.get(entityInformation.getEntityClass()) != null) {
+                entityInformation.setQueryProvider(queryProviderByClass.get(entityInformation.getEntityClass()));
+            }
+            if (queryProviderByName.get(entityInformation.getName()) != null) {
+                entityInformation.setQueryProvider(queryProviderByName.get(entityInformation.getName()));
+            }
+        }
         return entitiesInformation;
     }
 

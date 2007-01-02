@@ -19,6 +19,8 @@ public abstract class NativeJpaHelper {
 
         T onTopLinkEssentials();
 
+        T onOpenJPA();
+
         T onUnknown();
     }
 
@@ -30,13 +32,15 @@ public abstract class NativeJpaHelper {
         for (Object anInterface : interfaces) {
             interfacesAsStrings.add(((Class) anInterface).getName());
         }
+        interfacesAsStrings.add(nativeEmf.getClass().getName());
 
         T retVal;
         if (interfacesAsStrings.contains("org.hibernate.ejb.HibernateEntityManagerFactory")) {
             retVal = callback.onHibernate();
-        } else
-        if (nativeEmf.getClass().getName().equals("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
+        } else if (interfacesAsStrings.contains("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
             retVal = callback.onTopLinkEssentials();
+        } else if (interfacesAsStrings.contains("org.apache.openjpa.persistence.OpenJPAEntityManagerFactory")) {
+            retVal = callback.onOpenJPA();
         } else {
             retVal = callback.onUnknown();
         }
