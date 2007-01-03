@@ -12,7 +12,7 @@
             value + value2
         </dynamic-meta-data>
         <dynamic-meta-data name="test1" converter="ognl">
-            data.value + data.value2
+            value
         </dynamic-meta-data>
     </class>
 

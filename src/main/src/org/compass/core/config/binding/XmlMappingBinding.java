@@ -504,10 +504,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             classMapping.addMapping(analyzerController);
         }
 
-        ConfigurationHelper dynamicConf = classConf.getChild("dynamic-meta-data", false);
-        if (dynamicConf != null) {
+        ConfigurationHelper[] dynamicConfs = classConf.getChildren("dynamic-meta-data");
+        for (int i = 0; i < dynamicConfs.length; i++) {
             DynamicMetaDataMapping dynamicMetaDataMapping = new DynamicMetaDataMapping();
-            bindDynamicMetaData(dynamicConf, classMapping, dynamicMetaDataMapping);
+            bindDynamicMetaData(dynamicConfs[i], classMapping, dynamicMetaDataMapping);
             classMapping.addMapping(dynamicMetaDataMapping);
         }
     }
