@@ -34,7 +34,7 @@ public class A {
     @SearchableProperty
     String value;
 
-    @SearchableReference(cascde = {Cascade.CREATE, Cascade.SAVE, Cascade.DELETE})
+    @SearchableReference(cascade = {Cascade.CREATE, Cascade.SAVE, Cascade.DELETE})
     B b;
 
     A() {

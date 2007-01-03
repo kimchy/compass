@@ -66,7 +66,7 @@ public @interface SearchableReference {
      * The operations that will cascade to the target association. Defaults to no operations
      * being cascaded.
      */
-    Cascade[] cascde() default {};
+    Cascade[] cascade() default {};
 
     /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ReferenceMapping}.

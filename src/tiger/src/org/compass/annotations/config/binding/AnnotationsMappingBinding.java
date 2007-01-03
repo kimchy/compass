@@ -290,9 +290,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             classMapping.setAnalyzer(searchable.analyzer());
         }
 
-        if (searchable.supportUnmsarshll() == SupportUnmarshall.TRUE) {
+        if (searchable.supportUnmarshall() == SupportUnmarshall.TRUE) {
             classMapping.setSupportUnmarshall(true);
-        } else if (searchable.supportUnmsarshll() == SupportUnmarshall.FALSE) {
+        } else if (searchable.supportUnmarshall() == SupportUnmarshall.FALSE) {
             classMapping.setSupportUnmarshall(false);
         }
 
@@ -471,7 +471,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchableReference.refComponentAlias())) {
             referenceMapping.setRefCompAlias(searchableReference.refComponentAlias());
         }
-        bindCascades(searchableReference.cascde(), referenceMapping);
+        bindCascades(searchableReference.cascade(), referenceMapping);
     }
 
     private void bindComponent(SearchableComponent searchableComponent, ComponentMapping componentMapping,
@@ -489,7 +489,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         componentMapping.setOverrideByName(searchableComponent.override());
         
-        bindCascades(searchableComponent.cascde(), componentMapping);
+        bindCascades(searchableComponent.cascade(), componentMapping);
     }
 
     private void bindCascades(Cascade[] cascades, AbstractRefAliasMapping refAliasMapping) {

@@ -11,7 +11,7 @@ import org.compass.annotations.SupportUnmarshall;
 /**
  * @author kimchy
  */
-@Searchable(supportUnmsarshll = SupportUnmarshall.FALSE)
+@Searchable(supportUnmarshall = SupportUnmarshall.FALSE)
 public class A {
 
     @SearchableId

@@ -71,7 +71,7 @@ public @interface SearchableComponent {
      * The operations that will cascade to the target association. Defaults to no operations
      * being cascaded.
      */
-    Cascade[] cascde() default {};
+    Cascade[] cascade() default {};
 
     /**
      * The depth of cyclic component references allowed.

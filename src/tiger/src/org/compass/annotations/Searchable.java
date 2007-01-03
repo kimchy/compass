@@ -181,8 +181,8 @@ public @interface Searchable {
      * By default Compass global osem setting supportUnmarshall controls it unless exlicitly
      * set here.
      */
-    SupportUnmarshall supportUnmsarshll() default SupportUnmarshall.NA;
-
+    SupportUnmarshall supportUnmarshall() default SupportUnmarshall.NA;
+                      
     /**
      * A list of aliases to extend. Extending the aliases allows to include other
      * mapping definitions, defined via annotations or xml.
