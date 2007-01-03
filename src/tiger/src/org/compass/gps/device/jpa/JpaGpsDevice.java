@@ -171,6 +171,12 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
         }
     }
 
+    protected void doStop() throws CompassGpsException {
+        if (injectEntityLifecycleListener && mirrorDataChanges) {
+            lifecycleInjector.removeLifecycle(nativeEntityManagerFactory, this);
+        }
+    }
+
     protected IndexEntity[] doGetIndexEntities() throws CompassGpsException {
         EntityInformation[] entitiesInformation = entitiesLocator.locate(nativeEntityManagerFactory, this);
         // apply specific select statements

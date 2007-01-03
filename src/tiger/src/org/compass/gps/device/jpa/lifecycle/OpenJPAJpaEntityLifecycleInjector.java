@@ -55,13 +55,16 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
         }
     }
 
+    private OpenJPAEventListener eventListener;
+
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
         OpenJPAEntityManagerFactory emf = OpenJPAPersistence.cast(entityManagerFactory);
 
-        OpenJPAEventListener eventListener = new OpenJPAEventListener(device);
+        eventListener = new OpenJPAEventListener(device);
+        
         emf.addLifecycleListener(eventListener, null);
         // TODO once we manage to understand how to get the class meta data properly
 //        ClassMetaData[] classMetaDatas = emf.getConfiguration().getMetaDataRepositoryInstance().getMetaDatas();
@@ -71,5 +74,11 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
 //                emf.addLifecycleListener(eventListener, mappedClass);
 //            }
 //        }
+    }
+
+    public void removeLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
+        OpenJPAEntityManagerFactory emf = OpenJPAPersistence.cast(entityManagerFactory);
+        eventListener = new OpenJPAEventListener(device);
+        emf.removeLifecycleListener(eventListener);
     }
 }

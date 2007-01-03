@@ -16,15 +16,21 @@
 
 package org.compass.gps.device.jpa.lifecycle;
 
+import java.util.ArrayList;
+import javax.persistence.EntityManagerFactory;
+
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjector;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
-import org.hibernate.event.*;
+import org.hibernate.event.EventListeners;
+import org.hibernate.event.PostDeleteEvent;
+import org.hibernate.event.PostDeleteEventListener;
+import org.hibernate.event.PostInsertEvent;
+import org.hibernate.event.PostInsertEventListener;
+import org.hibernate.event.PostUpdateEvent;
+import org.hibernate.event.PostUpdateEventListener;
 import org.hibernate.impl.SessionFactoryImpl;
-
-import javax.persistence.EntityManagerFactory;
 
 /**
  * Injects lifecycle listeners directly into Hibernate for mirroring operations.
@@ -87,5 +93,40 @@ public class HibernateJpaEntityLifecycleInjector implements JpaEntityLifecycleIn
         System.arraycopy(postDeleteEventListeners, 0, tempPostDeleteEventListeners, 0, postDeleteEventListeners.length);
         tempPostDeleteEventListeners[postDeleteEventListeners.length] = hibernateEventListener;
         eventListeners.setPostDeleteEventListeners(tempPostDeleteEventListeners);
+    }
+
+
+    public void removeLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
+        HibernateEntityManagerFactory hibernateEntityManagerFactory =
+                (HibernateEntityManagerFactory) entityManagerFactory;
+        SessionFactoryImpl sessionFactory = (SessionFactoryImpl) hibernateEntityManagerFactory.getSessionFactory();
+        EventListeners eventListeners = sessionFactory.getEventListeners();
+
+        PostInsertEventListener[] postInsertEventListeners = eventListeners.getPostInsertEventListeners();
+        ArrayList<PostInsertEventListener> tempPostInsertEventListeners = new ArrayList<PostInsertEventListener>();
+        for (PostInsertEventListener postInsertEventListener : postInsertEventListeners) {
+            if (!(postInsertEventListener instanceof HibernateEventListener)) {
+                tempPostInsertEventListeners.add(postInsertEventListener);
+            }
+        }
+        eventListeners.setPostInsertEventListeners(tempPostInsertEventListeners.toArray(new PostInsertEventListener[tempPostInsertEventListeners.size()]));
+
+        PostUpdateEventListener[] postUpdateEventListeners = eventListeners.getPostUpdateEventListeners();
+        ArrayList<PostUpdateEventListener> tempPostUpdateEventListeners = new ArrayList<PostUpdateEventListener>();
+        for (PostUpdateEventListener postUpdateEventListener : postUpdateEventListeners) {
+            if (!(postUpdateEventListener instanceof HibernateEventListener)) {
+                tempPostUpdateEventListeners.add(postUpdateEventListener);
+            }
+        }
+        eventListeners.setPostUpdateEventListeners(tempPostUpdateEventListeners.toArray(new PostUpdateEventListener[tempPostUpdateEventListeners.size()]));
+
+        PostDeleteEventListener[] postDeleteEventListeners = eventListeners.getPostDeleteEventListeners();
+        ArrayList<PostDeleteEventListener> tempPostDeleteEventListeners = new ArrayList<PostDeleteEventListener>();
+        for (PostDeleteEventListener postDeleteEventListener : postDeleteEventListeners) {
+            if (!(postDeleteEventListener instanceof HibernateEventListener)) {
+                tempPostDeleteEventListeners.add(postDeleteEventListener);
+            }
+        }
+        eventListeners.setPostDeleteEventListeners(tempPostDeleteEventListeners.toArray(new PostDeleteEventListener[tempPostDeleteEventListeners.size()]));
     }
 }

@@ -16,17 +16,17 @@
 
 package org.compass.gps.device.jpa.lifecycle;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 
-import javax.persistence.EntityManagerFactory;
-
 /**
- * A global lifecycle event listener injector. Since the <code>EntityManagerFactory</code> does not
+ * <p>A global lifecycle event listener injector. Since the <code>EntityManagerFactory</code> does not
  * allow for setting global lifecycle event listeners, actual implementations of the JPA spec can be
  * used directly to inject global lifecycle event listeners usign propriety APIs.
- * <p/>
- * Assume that the <code>EntityManagerFactory</code> is the native one, since the
+ *
+ * <p>Assume that the <code>EntityManagerFactory</code> is the native one, since the
  * {@link org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor} of the
  * {@link JpaGpsDevice} was used to extract it.
  *
@@ -41,8 +41,17 @@ public interface JpaEntityLifecycleInjector {
      * implementation.
      *
      * @param entityManagerFactory The <code>EntityManagerFactory</code> to inject the global lifecycle to.
-     * @param device The Jpa device calling this injector
+     * @param device               The Jpa device calling this injector
      * @throws JpaGpsDeviceException
      */
     void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException;
+
+    /**
+     * Removes (if possible) lifecycle listeners injected using the inject method.
+     *
+     * @param entityManagerFactory The EMF to remove lifecycle from
+     * @param device               The Jpa device calling
+     * @throws JpaGpsDeviceException
+     */
+    void removeLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException;
 }

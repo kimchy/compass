@@ -140,6 +140,10 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             this.mirrorFilter = mirrorFilter;
         }
 
+        public PostInsertEventListener getPostInsertEventListener() {
+            return postInsertEventListener;
+        }
+
         public void onPostInsert(final PostInsertEvent postInsertEvent) {
 
             if (this.postInsertEventListener != null) {
@@ -195,6 +199,10 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             this.mirrorFilter = mirrorFilter;
         }
 
+        public PostUpdateEventListener getPostUpdateEventListener() {
+            return postUpdateEventListener;
+        }
+
         public void onPostUpdate(final PostUpdateEvent postUpdateEvent) {
 
             if (this.postUpdateEventListener != null) {
@@ -247,6 +255,10 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                                              HibernateMirrorFilter mirrorFilter) {
             this.postDeleteEventListener = postDeleteEventListener;
             this.mirrorFilter = mirrorFilter;
+        }
+
+        public PostDeleteEventListener getPostDeleteEventListener() {
+            return postDeleteEventListener;
         }
 
         public void onPostDelete(final PostDeleteEvent postDeleteEvent) {
@@ -356,6 +368,16 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
     }
 
     protected void doStop() throws CompassGpsException {
+        if (isMirrorDataChanges()) {
+            SessionFactory actualSessionFactory = doGetActualSessionFactory();
+
+            try {
+                ClassUtils.forName("org.hibernate.event.SessionEventListenerConfig");
+                unregisterEventsForHibernate30(actualSessionFactory);
+            } catch (ClassNotFoundException e) {
+                unregisterEventsForHibernate31(actualSessionFactory);
+            }
+        }
     }
 
     /**
@@ -481,6 +503,38 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
         }
     }
 
+    private void unregisterEventsForHibernate30(SessionFactory sessionFactory) {
+        try {
+            Class sessionEventListenerConfigClass = ClassUtils.forName("org.hibernate.event.SessionEventListenerConfig");
+
+            FieldInvoker sessionFactorySessionEventListenerConfig =
+                    new FieldInvoker(SessionFactoryImpl.class, "sessionEventListenerConfig").prepare();
+            Object sessionEventListenerConfig = sessionFactorySessionEventListenerConfig.get(sessionFactory);
+
+            FieldInvoker eventListener = new FieldInvoker(sessionEventListenerConfigClass, "postInsertEventListener").prepare();
+            PostInsertEventListener postInsertEventListener = (PostInsertEventListener) eventListener.get(sessionEventListenerConfig);
+            if (postInsertEventListener instanceof Hibernate3GpsDevicePostInsert) {
+                eventListener.set(sessionEventListenerConfig, ((Hibernate3GpsDevicePostInsert) postInsertEventListener).getPostInsertEventListener());
+            }
+
+            eventListener = new FieldInvoker(sessionEventListenerConfigClass, "postUpdateEventListener").prepare();
+            PostUpdateEventListener postUpdateEventListener = (PostUpdateEventListener) eventListener.get(sessionEventListenerConfig);
+            if (postUpdateEventListener instanceof Hibernate3GpsDevicePostUpdate) {
+                eventListener.set(sessionEventListenerConfig, ((Hibernate3GpsDevicePostUpdate) postUpdateEventListener).getPostUpdateEventListener());
+            }
+
+            eventListener = new FieldInvoker(sessionEventListenerConfigClass, "postDeleteEventListener").prepare();
+            PostDeleteEventListener postDeleteEventListener = (PostDeleteEventListener) eventListener.get(sessionEventListenerConfig);
+            if (postDeleteEventListener instanceof Hibernate3GpsDevicePostDelete) {
+                eventListener.set(sessionEventListenerConfig, ((Hibernate3GpsDevicePostDelete) postDeleteEventListener).getPostDeleteEventListener());
+            }
+        } catch (Exception e) {
+            throw new HibernateGpsDeviceException(
+                    buildMessage("Failed to inject compass gps device events into hibernate 3.0 session factory [" +
+                            sessionFactory.getClass().getName() + "]"), e);
+        }
+    }
+
     private void registerEventsForHibernate31(SessionFactory sessionFactory) {
         try {
             Class eventListenersClass = ClassUtils.forName("org.hibernate.event.EventListeners");
@@ -508,6 +562,50 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             System.arraycopy(postDeleteEventListener, 0, tempPostDeleteEventListener, 0, postDeleteEventListener.length);
             tempPostDeleteEventListener[postDeleteEventListener.length] = new Hibernate3GpsDevicePostDelete(null, mirrorFilter);
             eventListener.set(eventListeners, tempPostDeleteEventListener);
+
+        } catch (Exception e) {
+            throw new HibernateGpsDeviceException(
+                    buildMessage("Failed to inject compass gps device events into hibernate 3.1 session factory [" +
+                            sessionFactory.getClass().getName() + "]"), e);
+        }
+    }
+
+    private void unregisterEventsForHibernate31(SessionFactory sessionFactory) {
+        try {
+            Class eventListenersClass = ClassUtils.forName("org.hibernate.event.EventListeners");
+
+            Object eventListeners =
+                    new FieldInvoker(SessionFactoryImpl.class, "eventListeners").prepare().get(sessionFactory);
+
+            FieldInvoker eventListener = new FieldInvoker(eventListenersClass, "postInsertEventListeners").prepare();
+            PostInsertEventListener[] postInsertEventListener = (PostInsertEventListener[]) eventListener.get(eventListeners);
+            ArrayList tempPostInsertEventListener = new ArrayList();
+            for (int i = 0; i < postInsertEventListener.length; i++) {
+                if (!(postInsertEventListener[i] instanceof Hibernate3GpsDevicePostInsert)) {
+                    tempPostInsertEventListener.add(postInsertEventListener[i]);
+                }
+            }
+            eventListener.set(eventListeners, tempPostInsertEventListener.toArray(new PostInsertEventListener[tempPostInsertEventListener.size()]));
+
+            eventListener = new FieldInvoker(eventListenersClass, "postUpdateEventListeners").prepare();
+            PostUpdateEventListener[] postUpdateEventListener = (PostUpdateEventListener[]) eventListener.get(eventListeners);
+            ArrayList tempPostUpdateEventListener = new ArrayList();
+            for (int i = 0; i < postUpdateEventListener.length; i++) {
+                if (!(postUpdateEventListener[i] instanceof Hibernate3GpsDevicePostUpdate)) {
+                    tempPostUpdateEventListener.add(postUpdateEventListener[i]);
+                }
+            }
+            eventListener.set(eventListeners, tempPostUpdateEventListener.toArray(new PostUpdateEventListener[tempPostUpdateEventListener.size()]));
+
+            eventListener = new FieldInvoker(eventListenersClass, "postDeleteEventListeners").prepare();
+            PostDeleteEventListener[] postDeleteEventListener = (PostDeleteEventListener[]) eventListener.get(eventListeners);
+            ArrayList tempPostDeleteEventListener = new ArrayList();
+            for (int i = 0; i < postDeleteEventListener.length; i++) {
+                if (!(postDeleteEventListener[i] instanceof Hibernate3GpsDevicePostDelete)) {
+                    tempPostDeleteEventListener.add(postDeleteEventListener[i]);
+                }
+            }
+            eventListener.set(eventListeners, tempPostDeleteEventListener.toArray(new PostDeleteEventListener[tempPostDeleteEventListener.size()]));
 
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(

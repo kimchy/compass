@@ -32,15 +32,16 @@ import org.compass.gps.PassiveMirrorGpsDevice;
  * Adds real time monitoring on top of JDO 1 support (see
  * {@link org.compass.gps.device.jdo.JdoGpsDevice}), using JDO 2
  * lifecycle events.
- * 
+ *
  * @author kimchy
- * 
  */
 public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevice {
 
     private boolean mirrorDataChanges = true;
 
     private boolean ignoreMirrorExceptions;
+
+    private JdoGpsInstanceLifecycleListener instanceLifecycleListener;
 
     public Jdo2GpsDevice() {
         super();
@@ -80,7 +81,14 @@ public class Jdo2GpsDevice extends JdoGpsDevice implements PassiveMirrorGpsDevic
             // TODO if there is a way to get the persistence classes, we can
             // narrow it down with the OSEM classes and provide them instead of
             // null
-            persistenceManagerFactory.addInstanceLifecycleListener(new JdoGpsInstanceLifecycleListener(), null);
+            instanceLifecycleListener = new JdoGpsInstanceLifecycleListener();
+            persistenceManagerFactory.addInstanceLifecycleListener(instanceLifecycleListener, null);
+        }
+    }
+
+    protected void doStop() throws CompassGpsException {
+        if (isMirrorDataChanges()) {
+            persistenceManagerFactory.removeInstanceLifecycleListener(instanceLifecycleListener);
         }
     }
 

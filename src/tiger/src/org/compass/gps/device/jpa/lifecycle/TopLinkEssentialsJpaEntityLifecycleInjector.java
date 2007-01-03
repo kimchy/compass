@@ -100,19 +100,37 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
 
     }
 
+    private TopLinkEssentialsEventListener eventListener;
+
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
+        eventListener = new TopLinkEssentialsEventListener(device);
+        
         EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) entityManagerFactory;
         Session session = emf.getServerSession();
         Map descriptors = session.getDescriptors();
-        TopLinkEssentialsEventListener eventListener = new TopLinkEssentialsEventListener(device);
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
             Class mappedClass = classDescriptor.getJavaClass();
             if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
                 classDescriptor.getDescriptorEventManager().addListener(eventListener);
+            }
+        }
+    }
+
+    public void removeLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
+        CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
+
+        EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) entityManagerFactory;
+        Session session = emf.getServerSession();
+        Map descriptors = session.getDescriptors();
+        for (Object o : descriptors.values()) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) o;
+            Class mappedClass = classDescriptor.getJavaClass();
+            if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
+                classDescriptor.getDescriptorEventManager().removeListener(eventListener);
             }
         }
     }
