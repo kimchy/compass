@@ -82,5 +82,7 @@
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-el.jar"/>
 	<classpathentry kind="lib" path="lib/velocity/velocity-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-jexl-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/openjpa/serp-1.11.0.jar"/>
+	<classpathentry kind="lib" path="lib/openjpa/openjpa-all-0.9.6-incubating.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
