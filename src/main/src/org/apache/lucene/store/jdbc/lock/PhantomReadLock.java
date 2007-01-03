@@ -18,6 +18,7 @@ package org.apache.lucene.store.jdbc.lock;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
+import java.sql.Types;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,7 +68,7 @@ public class PhantomReadLock extends Lock implements JdbcLock {
                         public void fillPrepareStatement(PreparedStatement ps) throws Exception {
                             ps.setFetchSize(1);
                             ps.setString(1, name);
-                            ps.setBlob(2, null);
+                            ps.setNull(2, Types.BLOB);
                             ps.setLong(3, 0);
                             ps.setBoolean(4, false);
                         }
