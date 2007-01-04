@@ -54,5 +54,5 @@ public enum TermVector {
      * @see #WITH_POSITIONS
      * @see #WITH_OFFSETS
      */
-    WITH_POSITIONS_OFFESTS
+    WITH_POSITIONS_OFFSETS
 }
