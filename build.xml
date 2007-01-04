@@ -761,6 +761,7 @@
                 <include name="lib/hibernate/**"/>
                 <include name="lib/hsqldb/**"/>
                 <include name="lib/ibatis/**"/>
+                <include name="lib/jboss/**"/>
                 <include name="lib/j2ee/**"/>
                 <include name="lib/jakarta-commons/**"/>
                 <include name="lib/jakarta-taglibs/**"/>
@@ -773,6 +774,7 @@
                 <include name="lib/lucene/**"/>
                 <include name="lib/odmg/**"/>
                 <include name="lib/ojb/**"/>
+                <include name="lib/openjpa/**"/>
                 <include name="lib/ognl/**"/>
                 <include name="lib/spring/**"/>
                 <include name="lib/sunfsjndi/**"/>

@@ -37,7 +37,8 @@ public abstract class NativeJpaHelper {
         T retVal;
         if (interfacesAsStrings.contains("org.hibernate.ejb.HibernateEntityManagerFactory")) {
             retVal = callback.onHibernate();
-        } else if (interfacesAsStrings.contains("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
+        } else
+        if (interfacesAsStrings.contains("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
             retVal = callback.onTopLinkEssentials();
         } else if (interfacesAsStrings.contains("org.apache.openjpa.persistence.OpenJPAEntityManagerFactory")) {
             retVal = callback.onOpenJPA();
@@ -53,6 +54,7 @@ public abstract class NativeJpaHelper {
         for (Object anInterface : interfaces) {
             interfacesAsStrings.add(((Class) anInterface).getName());
         }
+        interfacesAsStrings.add(emf.getClass().getName());
 
         NativeEntityManagerFactoryExtractor extractor = null;
         if (interfacesAsStrings.contains("org.springframework.orm.jpa.EntityManagerFactoryInfo")) {
@@ -61,6 +63,13 @@ public abstract class NativeJpaHelper {
                         ClassUtils.forName("org.compass.spring.device.jpa.SpringNativeEntityManagerFactoryExtractor").newInstance();
             } catch (Exception e) {
                 throw new JpaGpsDeviceException("Failed to load/create spring native extractor", e);
+            }
+        } else if (interfacesAsStrings.contains("org.jboss.ejb3.entity.InjectedEntityManagerFactory")) {
+            try {
+                extractor = (NativeEntityManagerFactoryExtractor)
+                        ClassUtils.forName("org.compass.jboss.device.jpa.JBossNativeHibernateEntityManagerFactoryExtractor").newInstance();
+            } catch (Exception e) {
+                throw new JpaGpsDeviceException("Failed to load/create JBoss native extractor", e);
             }
         }
         // possible else if ...
