@@ -37,12 +37,7 @@ import org.hibernate.SessionFactory;
  */
 public class SpringHibernate3GpsDevice extends org.compass.gps.device.hibernate.Hibernate3GpsDevice {
 
-    /**
-     * Returns the actual <code>SessionFactory</code> in case it is proxied by
-     * spring.
-     */
-    protected SessionFactory doGetActualSessionFactory() {
-        SessionFactory sessionFactory = super.doGetActualSessionFactory();
+    public static SessionFactory getNativeSessionFactory(SessionFactory sessionFactory) {
         if (Proxy.isProxyClass(sessionFactory.getClass())) {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(sessionFactory);
             try {
@@ -56,5 +51,13 @@ public class SpringHibernate3GpsDevice extends org.compass.gps.device.hibernate.
             }
         }
         return sessionFactory;
+    }
+
+    /**
+     * Returns the actual <code>SessionFactory</code> in case it is proxied by
+     * spring.
+     */
+    protected SessionFactory doGetActualSessionFactory() {
+        return getNativeSessionFactory(super.doGetActualSessionFactory());
     }
 }

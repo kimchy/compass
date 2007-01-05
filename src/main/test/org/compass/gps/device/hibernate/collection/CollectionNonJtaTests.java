@@ -21,6 +21,7 @@ import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.gps.CompassGps;
+import org.compass.gps.device.hibernate.CompassTransactionInterceptor;
 import org.compass.gps.device.hibernate.Hibernate3GpsDevice;
 import org.compass.gps.impl.SingleCompassGps;
 import org.hibernate.Session;
@@ -58,6 +59,8 @@ public class CollectionNonJtaTests extends TestCase {
         Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/collection/hibernate-nonjta.cfg.xml")
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         sessionFactory = conf.buildSessionFactory();
+
+        CompassTransactionInterceptor.injectInterceptor(sessionFactory, new CompassTransactionInterceptor(compass));
 
         Hibernate3GpsDevice device = new Hibernate3GpsDevice();
         device.setSessionFactory(sessionFactory);
