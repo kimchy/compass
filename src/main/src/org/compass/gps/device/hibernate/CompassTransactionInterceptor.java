@@ -98,7 +98,7 @@ public class CompassTransactionInterceptor implements Interceptor {
         if (!commitBeforeTransactionCompletion) {
             return;
         }
-        CompassTransaction tr = (CompassTransaction) activeTransactions.get(transaction);
+        CompassTransaction tr = (CompassTransaction) activeTransactions.remove(transaction);
         if (tr == null) {
             return;
         }
@@ -115,7 +115,7 @@ public class CompassTransactionInterceptor implements Interceptor {
         if (commitBeforeTransactionCompletion) {
             return;
         }
-        CompassTransaction tr = (CompassTransaction) activeTransactions.get(transaction);
+        CompassTransaction tr = (CompassTransaction) activeTransactions.remove(transaction);
         if (tr == null) {
             return;
         }
