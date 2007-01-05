@@ -19,12 +19,13 @@ package org.compass.jboss.device.jpa;
 import javax.persistence.EntityManagerFactory;
 
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor;
 import org.jboss.ejb3.entity.InjectedEntityManagerFactory;
 
 /**
  * @author kimchy
  */
-public class JBossNativeHibernateEntityManagerFactoryExtractor {
+public class JBossNativeHibernateEntityManagerFactoryExtractor implements NativeEntityManagerFactoryExtractor {
 
     /**
      * Extracts the native entity manager factory from a managed JBoss one. If JBoss
