@@ -78,7 +78,7 @@ public abstract class AnnotationsBindingUtils {
             return Property.TermVector.WITH_POSITIONS;
         } else if (termVector == TermVector.WITH_OFFSETS) {
             return Property.TermVector.WITH_OFFSETS;
-        } else if (termVector == TermVector.WITH_POSITIONS_OFFESTS) {
+        } else if (termVector == TermVector.WITH_POSITIONS_OFFSETS) {
             return Property.TermVector.WITH_POSITIONS_OFFSETS;
         }
         throw new IllegalArgumentException("Failed to convert termVectory [" + termVector + "]");
