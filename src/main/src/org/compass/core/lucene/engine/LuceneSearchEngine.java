@@ -35,6 +35,7 @@ import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
+import org.compass.core.engine.SearchEngineTermFrequencies;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.LuceneMultiResource;
 import org.compass.core.lucene.LuceneProperty;
@@ -380,6 +381,10 @@ public class LuceneSearchEngine implements SearchEngine {
             log.debug("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
         }
         return hits;
+    }
+
+    public SearchEngineTermFrequencies termFreq(String[] propertyNames, int size, SearchEngineInternalSearch internalSearch) {
+        return new LuceneSearchEngineTermFrequencies(propertyNames, size, (LuceneSearchEngineInternalSearch) internalSearch);
     }
 
     public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {

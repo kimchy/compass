@@ -26,6 +26,7 @@ import org.compass.core.CompassQuery;
 import org.compass.core.CompassQueryBuilder;
 import org.compass.core.CompassQueryFilterBuilder;
 import org.compass.core.CompassSession;
+import org.compass.core.CompassTermFreqsBuilder;
 import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
@@ -142,6 +143,10 @@ public class DefaultCompassSession implements InternalCompassSession {
     public CompassQueryFilterBuilder queryFilterBuilder() throws CompassException {
         SearchEngineQueryFilterBuilder searchEngineQueryFilterBuilder = searchEngine.queryFilterBuilder();
         return new DefaultCompassQueryFilterBuilder(searchEngineQueryFilterBuilder, this);
+    }
+
+    public CompassTermFreqsBuilder termFreqsBuilder(String[] names) throws CompassException {
+        return new DefaultCompassTermFreqsBuilder(this, names);
     }
 
     public CompassAnalyzerHelper analyzerHelper() throws CompassException {

@@ -219,6 +219,11 @@ public interface SearchEngine {
     Resource get(Resource idResource) throws SearchEngineException;
 
     /**
+     * Returns term frequencies.
+     */
+    SearchEngineTermFrequencies termFreq(String[] propertyNames, int size, SearchEngineInternalSearch internalSearch);
+
+    /**
      * Returns a search engine internal implementation.
      */
     SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
