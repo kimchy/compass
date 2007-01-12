@@ -275,6 +275,24 @@ CompassHits hits =  queryBuilder.bool()
         </para>
 
       </sect2>
+
+	<sect2 id="core-workingwithobjects-terms">
+		<title>Terms and Frequencies</title>
+		
+		<para>
+			Compass allows to easily get all the terms (possible values) for a property / meta-data name and their respective frequencies. This can be used to build a frequency based list of terms showing how popular are different tags (as different blogging sites do for example). Here is a simple example of how it can be used:
+		</para>
+		
+		<para>
+<programlisting><![CDATA[CompassTermFreq[] termFreqs = session.termFreqsBuilder(new String[]{"tag"}).toTermFreqs();
+// iterate over the term freqs and display them
+
+// a more complex example:
+termFreqs = session.termFreqsBuilder(new String[]{"tag"}).setSize(10).
+	.setSort(CompassTermFreqsBuilder.Sort.TERM).normalize(0, 1).toTermFreqs();
+]]></programlisting>
+		</para>
+	</sect2>
       
       <sect2 id="CompassSearchHelper">
         <title>CompassSearchHelper</title>
