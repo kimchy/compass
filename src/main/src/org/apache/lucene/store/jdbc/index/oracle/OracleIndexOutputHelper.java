@@ -64,7 +64,7 @@ public abstract class OracleIndexOutputHelper {
         } catch (Exception e) {
             throw new RuntimeException("Failed to getBinaryOutputStream on [" + BLOB + "]", e);
         }
-        }
-
-
     }
+
+
+}
