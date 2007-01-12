@@ -83,7 +83,7 @@ public interface CompassTermFreqsBuilder {
     /**
      * Normalizes the result frequencies based on the provided min and max values. For
      * example, will normalize using 0 to 1 with the lowest frequency mapped to 0, the
-     * highest frequency mapped to 1, and the rest are districuted within.
+     * highest frequency mapped to 1, and the rest are distributed within.
      */
     CompassTermFreqsBuilder normalize(int min, int max);
 
