@@ -14,20 +14,37 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.nounmarshall.component;
+package org.compass.annotations.test.nounmarshall.id;
 
 import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
  */
-@Searchable(root = false)
-public class B {
+@Searchable
+public class ContactDetails {
 
-    @SearchableProperty(name = "value")
-    String value;
+    private Long id;
 
-    @SearchableProperty(name = "value")
-    String value2;
+    private String phone;
+
+    public ContactDetails() {
+    }
+
+    public ContactDetails(Long id, String phone) {
+        this.id = id;
+        this.phone = phone;
+    }
+
+    @SearchableProperty
+    public String getPhone() {
+        return phone;
+    }
+
+    @SearchableId
+    public Long getId() {
+        return id;
+    }
 }

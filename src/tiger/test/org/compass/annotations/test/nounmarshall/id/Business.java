@@ -14,31 +14,50 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.nounmarshall.component;
+package org.compass.annotations.test.nounmarshall.id;
 
-import java.util.List;
-
+import org.compass.annotations.Cascade;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableComponent;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
-import org.compass.annotations.SupportUnmarshall;
 
 /**
  * @author kimchy
  */
-@Searchable(supportUnmarshall = SupportUnmarshall.FALSE)
-public class A {
+@Searchable
+public class Business {
 
-    @SearchableId
-    Integer id;
+    private String code;
 
-    @SearchableProperty(name = "value")
-    String value;
+    private String name;
 
-    @SearchableComponent
-    B b;
+    private ContactDetails contactDetails;
 
-    @SearchableComponent
-    List<B> bs;
+    protected Business() {
+    }
+
+    public Business(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
+    @SearchableComponent(cascade = Cascade.ALL)
+    public ContactDetails getContactDetails() {
+        return contactDetails;
+    }
+
+    @SearchableProperty
+    public String getName() {
+        return name;
+    }
+
+    @SearchableId(name = "code")
+    public String getCode() {
+        return code;
+    }
+
+    public void setContactDetails(ContactDetails cd) {
+        this.contactDetails = cd;
+    }
 }

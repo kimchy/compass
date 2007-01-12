@@ -55,6 +55,21 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
+
+        // first store some important original context
+        Object disableInternalMappings = context.getAttribute(DISABLE_INTERNAL_MAPPINGS);
+
+        // perform the unmarshalling
+        boolean store = doMarshall(resource, root, mapping, context);
+
+        // restore the context
+        context.setAttribute(DISABLE_INTERNAL_MAPPINGS, disableInternalMappings);
+
+        return store;
+    }
+
+    protected boolean doMarshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+            throws ConversionException {
         SearchEngine searchEngine = context.getSearchEngine();
         ClassMapping classMapping = (ClassMapping) mapping;
         // Note that even if a component is root, it will not be root when
