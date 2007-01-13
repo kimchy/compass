@@ -111,11 +111,13 @@ public class FindTests extends AbstractTestCase {
     }
 
     public void testWithPrefix() {
-        addDataA(0, 1);
-
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
-        CompassHits hits = session.find("mvalue:value");
+        A a = new A();
+        a.setId(new Long(1));
+        a.setValue("20020101");
+        session.save(a);
+        CompassHits hits = session.find("mvalue:20020101");
         assertEquals(1, hits.getLength());
         tr.commit();
         session.close();
