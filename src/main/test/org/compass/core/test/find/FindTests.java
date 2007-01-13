@@ -36,7 +36,7 @@ import org.compass.core.test.AbstractTestCase;
 public class FindTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "find/find.cpm.xml" };
+        return new String[]{"find/find.cpm.xml"};
     }
 
     public void testIterator() {
@@ -108,7 +108,17 @@ public class FindTests extends AbstractTestCase {
         assertEquals(40, hits.getLength());
         tr.commit();
         session.close();
+    }
 
+    public void testWithPrefix() {
+        addDataA(0, 1);
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+        CompassHits hits = session.find("mvalue:value");
+        assertEquals(1, hits.getLength());
+        tr.commit();
+        session.close();
     }
 
     public void testSubIndexAliasNarrow() {
@@ -121,16 +131,16 @@ public class FindTests extends AbstractTestCase {
         assertEquals(20, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
-                .setAliases(new String[] {"a1"}).hits();
+                .setAliases(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
-                .setSubIndexes(new String[] {"a1"}).hits();
+                .setSubIndexes(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
-                .setSubIndexes(new String[] {"a1"})
-                .setAliases(new String[] {"a1"}).hits();
+                .setSubIndexes(new String[]{"a1"})
+                .setAliases(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());
 
         tr.commit();
