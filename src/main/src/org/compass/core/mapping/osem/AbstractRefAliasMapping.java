@@ -175,10 +175,13 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
 
 
     public boolean shouldCascade(Cascade cascade) {
-        if (cascades == null) {
+        if (cascades == null || cascades.length == 0) {
             return false;
         }
-        if (cascade == Cascade.CREATE) {
+        if (cascade == Cascade.ALL) {
+            // if we pass ALL, it means that any cascading is enough (since cascades is not null, there is at least one)
+            return true;
+        }else if (cascade == Cascade.CREATE) {
             return shouldCascadeCreate();
         } else if (cascade == Cascade.SAVE) {
             return shouldCascadeSave();
