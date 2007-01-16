@@ -16,6 +16,8 @@
 
 package org.compass.core.marshall;
 
+import java.util.Map;
+
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
@@ -46,6 +48,10 @@ public interface MarshallingContext {
     Object getAttribute(Object key);
 
     Object removeAttribute(Object key);
+
+    Map removeAttributes();
+
+    void restoreAttributes(Map attributes);
 
     /**
      * Sets an unmarshalled cache of objects already loaded during

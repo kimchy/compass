@@ -16,6 +16,8 @@
 
 package org.compass.core.converter.mapping.osem;
 
+import java.util.Map;
+
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
@@ -63,7 +65,10 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
             // the reference was not marshalled
             return null;
         }
-        return context.getSession().get(refMapping.getAlias(), ids, context);
+        Map attributes = context.removeAttributes();
+        Object retVal = context.getSession().get(refMapping.getAlias(), ids, context);
+        context.restoreAttributes(attributes);
+        return retVal;
     }
 
 
