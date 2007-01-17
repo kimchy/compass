@@ -170,7 +170,7 @@ public abstract class LuceneHelper {
      * @param resource The resource to get the document from
      * @return The Lucene document that resource wraps
      */
-    public Document getDocument(Resource resource) {
+    public static Document getDocument(Resource resource) {
         return ((LuceneResource) resource).getDocument();
     }
 
