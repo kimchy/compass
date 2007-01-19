@@ -21,6 +21,5 @@ Release Process:
 * Upload the two compass distributions to java.net
 * Release the actual version in Jira
 * Update site/meta.xml and documentation.html with both the new actual version, and the new SNAPSHOT
-* Update compass.version
 * Run svn commit
 * Build the project with open symphony ci (documentation will be created under the SNAPSHOT version number)
