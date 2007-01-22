@@ -1,0 +1,20 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.pathlookup">
+
+    <class name="A" alias="a">
+
+        <id name="id" accessor="field"/>
+
+        <component name="b" accessor="field"/>
+    </class>
+
+    <class name="B" alias="b" root="false">
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>
