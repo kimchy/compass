@@ -86,6 +86,9 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
 
     public void marshallIds(Object root, Object id) {
         ClassMapping classMapping = (ClassMapping) mapping.getRootMappingByClass(root.getClass());
+        if (classMapping == null) {
+            throw new MarshallingException("No class mapping is defined for class [" + root.getClass() + "]");
+        }
         ResourcePropertyMapping[] ids = classMapping.getIdMappings();
         Object[] idsValues = unmarshallIds(classMapping, id, createContext());
         for (int i = 0; i < idsValues.length; i++) {
