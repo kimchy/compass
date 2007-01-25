@@ -97,7 +97,7 @@ public class ModuloSubIndexHash implements SubIndexHash, CompassConfigurable {
         for (int i = 0; i < ids.length; i++) {
             hash = hash * 31 + ids[i].getStringValue().hashCode();
         }
-        return prefix + '_' + (hash % size);
+        return prefix + '_' + (Math.abs(hash) % size);
     }
 
 
