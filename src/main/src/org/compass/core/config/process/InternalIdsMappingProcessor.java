@@ -137,7 +137,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
                     // if there is only one mapping, and it is stored, use it as
                     // the id
                     if (((Integer) propertyMappingsMap.get(pMapping.getName())).intValue() == 1
-                            && pMapping.getStore() == Property.Store.YES) {
+                            && (pMapping.getStore() == Property.Store.YES || pMapping.getStore() == Property.Store.COMPRESS)) {
                         if (mustBeUnTokenized && pMapping.getIndex() != Property.Index.UN_TOKENIZED) {
                             continue;
                         }
