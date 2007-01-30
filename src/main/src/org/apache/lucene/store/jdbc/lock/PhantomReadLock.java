@@ -92,7 +92,9 @@ public class PhantomReadLock extends Lock implements JdbcLock {
                         }
                     });
         } catch (Exception e) {
-            // do nothing
+            if (log.isTraceEnabled()) {
+                log.trace("Release Lock exception (might be valid) [" + e.getMessage() + "]");
+            }
         }
     }
 
