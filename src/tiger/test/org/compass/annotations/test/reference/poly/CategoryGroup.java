@@ -2,7 +2,6 @@ package org.compass.annotations.test.reference.poly;
 
 import java.util.Set;
 
-import org.compass.annotations.Cascade;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableReference;
 
@@ -21,7 +20,7 @@ public class CategoryGroup extends Category {
         super(id, name);
     }
 
-    @SearchableReference(cascade = {Cascade.ALL})
+    @SearchableReference
     public Set<Category> getCategories() {
         return categories;
     }

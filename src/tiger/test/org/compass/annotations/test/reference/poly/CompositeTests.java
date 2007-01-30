@@ -34,6 +34,9 @@ public class CompositeTests extends AbstractAnnotationsTestCase {
         CompassTransaction compassTransaction = compassSession.beginTransaction();
 
         compassSession.save(sports);
+        for (Category category : sports.getCategories()) {
+            compassSession.save(category);
+        }
 
         compassTransaction.commit();
         compassSession.close();
@@ -41,11 +44,20 @@ public class CompositeTests extends AbstractAnnotationsTestCase {
         // Search
         compassSession = openSession();
         compassTransaction = compassSession.beginTransaction();
+
+        Category category = (Category) compassSession.get(Category.class, 100l);
+        assertNotNull(category);
+        assertEquals("Fishing", category.getName());
+        assertEquals("Golf", ((Category) compassSession.get(Category.class, 101l)).getName());
+        assertEquals("Extreme Ironing", ((Category) compassSession.get(Category.class, 102l)).getName());
+
+        // Load composite and check composed instances
         CategoryGroup sportsLoaded = (CategoryGroup) compassSession.get(CategoryGroup.class, 10l);
+        assertSportsCategoryGroup(sportsLoaded);
+
         compassTransaction.commit();
         compassSession.close();
 
-        assertSportsCategoryGroup(sportsLoaded);
     }
 
     private void assertSportsCategoryGroup(CategoryGroup sports) {
