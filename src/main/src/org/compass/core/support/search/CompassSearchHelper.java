@@ -73,7 +73,7 @@ public class CompassSearchHelper {
     }
 
     public CompassSearchResults search(final CompassSearchCommand command) throws CompassException {
-        if (!StringUtils.hasText(command.getQuery())) {
+        if (!StringUtils.hasText(command.getQuery()) && command.getCompassQuery() == null) {
             return new CompassSearchResults(new CompassHit[0], 0, 0);
         }
         return (CompassSearchResults) compassTemplate.execute(

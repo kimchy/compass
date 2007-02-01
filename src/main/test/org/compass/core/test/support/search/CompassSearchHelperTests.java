@@ -30,6 +30,20 @@ public class CompassSearchHelperTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testNoPaginationWithCompassQuery() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        addData(session, 10);
+        CompassSearchHelper searchHelper = new CompassSearchHelper(getCompass());
+        CompassSearchResults results = searchHelper.search(new CompassSearchCommand(session.queryBuilder().queryString("test").toQuery()));
+        assertEquals(10, results.getHits().length);
+        assertEquals(10, results.getTotalHits());
+
+        tr.commit();
+        session.close();
+    }
+
     public void testSinglePage() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
