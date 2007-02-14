@@ -39,10 +39,11 @@ public class FileJdbcIndexOutput extends AbstractJdbcIndexOutput {
 
     private RandomAccessFile file = null;
 
+    private File tempFile;
+
     public void configure(String name, JdbcDirectory jdbcDirectory, JdbcFileEntrySettings settings) throws IOException {
         super.configure(name, jdbcDirectory, settings);
-        File tempFile = File.createTempFile(jdbcDirectory.getTable().getName() + "_" + name + "_" + System.currentTimeMillis(), ".ljt");
-        tempFile.deleteOnExit();
+        tempFile = File.createTempFile(jdbcDirectory.getTable().getName() + "_" + name + "_" + System.currentTimeMillis(), ".ljt");
         this.file = new RandomAccessFile(tempFile, "rw");
         this.jdbcDirectory = jdbcDirectory;
         this.name = name;
@@ -79,6 +80,8 @@ public class FileJdbcIndexOutput extends AbstractJdbcIndexOutput {
 
     protected void doAfterClose() throws IOException {
         file.close();
+        tempFile.delete();
+        tempFile = null;
         file = null;
     }
 }
