@@ -66,8 +66,7 @@ public class CompassMapping {
             if (resourcePropertyMapping != null && resourcePropertyMapping.getConverter() != null) {
                 converter = (ResourcePropertyConverter) resourcePropertyMapping.getConverter();
             } else {
-                converter = (ResourcePropertyConverter) getConverterLookup().lookupConverter(
-                        value.getClass());
+                converter = (ResourcePropertyConverter) getConverterLookup().lookupConverter(value.getClass());
             }
             return converter.toString(value, resourcePropertyMapping);
         }

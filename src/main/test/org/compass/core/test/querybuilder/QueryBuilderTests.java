@@ -52,25 +52,51 @@ public class QueryBuilderTests extends AbstractTestCase {
         a.setValue2("test1");
         calendar.set(2000, 1, 1);
         a.setDate(calendar.getTime());
-        session.save(a);
+        session.save("a", a);
         a.setId(new Long(2));
         a.setValue1("0002");
         a.setValue2("test2");
         calendar.set(2000, 1, 2);
         a.setDate(calendar.getTime());
-        session.save(a);
+        session.save("a", a);
         a.setId(new Long(3));
         a.setValue1("0003");
         a.setValue2("test3");
         calendar.set(2000, 1, 3);
         a.setDate(calendar.getTime());
-        session.save(a);
+        session.save("a", a);
         a.setId(new Long(4));
         a.setValue1("0004");
         a.setValue2("the quick brown fox jumped over the lazy dog");
         calendar.set(2000, 1, 4);
         a.setDate(calendar.getTime());
-        session.save(a);
+        session.save("a", a);
+    }
+
+    public void testCustomFormatForDate() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2000, 1, 1);
+        A a = new A();
+        a.setId(new Long(1));
+        a.setValue1("0001");
+        a.setValue2("test1");
+        a.setDate(calendar.getTime());
+        session.save("a1", a);
+
+        CompassQueryBuilder queryBuilder = session.queryBuilder();
+        CompassHits hits = queryBuilder.term("a1.date", calendar.getTime()).hits();
+        assertEquals(1, hits.length());
+        hits = queryBuilder.term("a1.date.date", calendar.getTime()).hits();
+        assertEquals(1, hits.length());
+        calendar.set(2001, 1, 1);
+        hits = queryBuilder.term("a1.date", calendar.getTime()).hits();
+        assertEquals(0, hits.length());
+
+        tr.commit();
+        session.close();
     }
 
     public void testMultiPropertyQueryString() {
@@ -99,7 +125,7 @@ public class QueryBuilderTests extends AbstractTestCase {
         assertEquals(4, hits.length());
 
         try {
-            hits = queryBuilder.alias("b").hits();
+            queryBuilder.alias("b").hits();
             fail();
         } catch (CompassException e) {
             // this is ok

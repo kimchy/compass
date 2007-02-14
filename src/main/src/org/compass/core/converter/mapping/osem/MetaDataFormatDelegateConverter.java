@@ -20,8 +20,10 @@ import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.DelegateConverter;
+import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.converter.basic.FormatConverter;
 import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -30,7 +32,7 @@ import org.compass.core.marshall.MarshallingContext;
  *
  * @author kimchy
  */
-public class MetaDataFormatDelegateConverter implements DelegateConverter {
+public class MetaDataFormatDelegateConverter implements DelegateConverter, ResourcePropertyConverter {
 
     private FormatConverter delegatedConverter;
 
@@ -59,5 +61,14 @@ public class MetaDataFormatDelegateConverter implements DelegateConverter {
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         return delegatedConverter.unmarshall(resource, mapping, context);
+    }
+
+
+    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+        return delegatedConverter.fromString(str, resourcePropertyMapping);
+    }
+
+    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+        return delegatedConverter.toString(o, resourcePropertyMapping);
     }
 }
