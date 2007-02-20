@@ -85,6 +85,27 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             }
         }
 
+        // handle null values
+        if (root == null) {
+            if (!classMapping.isSupportUnmarshall()) {
+                return false;
+            }
+            if (!context.handleNulls()) {
+                return false;
+            }
+            if (classMapping.getIdMappings().length == 0) {
+                throw new ConversionException("Component mapping [" + classMapping.getAlias() +
+                        "] used within a collection/array and has null value, in such cases please define at least one id mapping on it");
+            }
+            // go over all the ids and put a null value in it (just so we keep the order)
+            ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+            boolean store = false;
+            for (int i = 0; i < ids.length; i++) {
+                store |= ids[i].getConverter().marshall(resource, context.getSearchEngine().getNullValue(), ids[i], context);
+            }
+            return store;
+        }
+
         if (classMapping.isSupportUnmarshall()) {
             // only add specilized properties for un-marshalling when it is supported
             if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
@@ -164,6 +185,17 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 Object cached = context.getUnmarshalled(resourceKey);
                 if (cached != null) {
                     return cached;
+                }
+                // if we do have values in the ids, but all of them are null, it means that we
+                // marked a null object
+                boolean nullClass = true;
+                for (int i = 0; i < propIds.length; i++) {
+                    if (!context.getSearchEngine().isNullValue(propIds[i].getStringValue())) {
+                        nullClass = false;
+                    }
+                }
+                if (nullClass) {
+                    return null;
                 }
                 // if it is not cached, we need to rollback the fact that we read
                 // the ids, so the rest of the unmarshalling process will work

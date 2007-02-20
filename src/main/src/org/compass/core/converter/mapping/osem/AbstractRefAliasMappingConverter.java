@@ -36,9 +36,6 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         // no need to marshall if it is null
-        if (root == null) {
-            return false;
-        }
         HasRefAliasMapping hasRefAliasMapping = (HasRefAliasMapping) mapping;
         ClassMapping[] classMappings = hasRefAliasMapping.getRefClassMappings();
         ClassMapping classMapping;
