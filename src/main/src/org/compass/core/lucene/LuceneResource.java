@@ -365,11 +365,11 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
     }
 
     public Set keySet() {
-        Set keySet = Collections.unmodifiableSet(new HashSet());
+        Set keySet = new HashSet();
         for (Iterator it = properties.iterator(); it.hasNext();) {
             keySet.add(((Property) it.next()).getName());
         }
-        return keySet;
+        return Collections.unmodifiableSet(keySet);
     }
 
     public boolean containsKey(Object key) {
