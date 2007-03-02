@@ -17,6 +17,7 @@
 package org.compass.core;
 
 import org.compass.core.CompassTransaction.TransactionIsolation;
+import org.compass.core.config.CompassSettings;
 
 /**
  * The main interface between a Java application and Compass.
@@ -50,6 +51,15 @@ import org.compass.core.CompassTransaction.TransactionIsolation;
 
 public interface CompassSession extends CompassOperations {
 
+    /**
+     * Runtimes settings that apply on the session level.
+     *
+     * @return Runtime settings applies on the session level
+     * @see org.compass.core.config.RuntimeCompassEnvironment
+     * @see org.compass.core.lucene.RuntimeLuceneEnvironment
+     */
+    CompassSettings getSettings();
+    
     /**
      * Begin a unit of work and return the associated CompassTranscation object.
      * If a new underlying transaction is required, begin the transaction.

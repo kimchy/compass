@@ -70,7 +70,7 @@ public class CompassTemplate implements CompassOperations {
 
     private Compass compass;
 
-    private CompassSettings globalSettings = new CompassSettings();
+    private CompassSettings globalSessionSettings = new CompassSettings();
 
     /**
      * Creates a new CompassTemplate instance (remember to set Compass using the
@@ -109,14 +109,6 @@ public class CompassTemplate implements CompassOperations {
     }
 
     /**
-     * Returns session level global settings that are applied each time
-     * a session is created.
-     */
-    public CompassSettings getGlobalSettings() {
-        return globalSettings;
-    }
-
-    /**
      * Executes the compass callback within a session and a transaction context.
      *
      * @param action The action to execute witin a compass transaction
@@ -138,7 +130,7 @@ public class CompassTemplate implements CompassOperations {
      */
     public Object execute(TransactionIsolation transactionIsolation, CompassCallback action) throws CompassException {
         CompassSession session = compass.openSession();
-        session.getSettings().addSettings(globalSettings);
+        session.getSettings().addSettings(globalSessionSettings);
         CompassTransaction tx = null;
         try {
             tx = session.beginTransaction(transactionIsolation);
