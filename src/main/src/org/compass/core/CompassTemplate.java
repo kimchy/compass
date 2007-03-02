@@ -70,6 +70,8 @@ public class CompassTemplate implements CompassOperations {
 
     private Compass compass;
 
+    private CompassSettings globalSettings = new CompassSettings();
+
     /**
      * Creates a new CompassTemplate instance (remember to set Compass using the
      * setCompass method).
@@ -107,6 +109,14 @@ public class CompassTemplate implements CompassOperations {
     }
 
     /**
+     * Returns session level global settings that are applied each time
+     * a session is created.
+     */
+    public CompassSettings getGlobalSettings() {
+        return globalSettings;
+    }
+
+    /**
      * Executes the compass callback within a session and a transaction context.
      *
      * @param action The action to execute witin a compass transaction
@@ -128,6 +138,7 @@ public class CompassTemplate implements CompassOperations {
      */
     public Object execute(TransactionIsolation transactionIsolation, CompassCallback action) throws CompassException {
         CompassSession session = compass.openSession();
+        session.getSettings().addSettings(globalSettings);
         CompassTransaction tx = null;
         try {
             tx = session.beginTransaction(transactionIsolation);
@@ -162,11 +173,7 @@ public class CompassTemplate implements CompassOperations {
     // Compass Operations
 
     public CompassSettings getSettings() {
-        return (CompassSettings) execute(new CompassCallback() {
-            public Object doInCompass(CompassSession session) throws CompassException {
-                return session.getSettings();
-            }
-        });
+        throw new CompassException("getSettings should not be used with CompassTemplate. Either use getGlobalSettings or execute");
     }
 
     public void create(final Object obj) throws CompassException {
@@ -418,8 +425,8 @@ public class CompassTemplate implements CompassOperations {
     public void evictAll() {
         execute(new CompassCallbackWithoutResult() {
             protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-				session.evictAll();
-			}
-		});
-	}
+                session.evictAll();
+            }
+        });
+    }
 }
