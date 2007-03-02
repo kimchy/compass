@@ -84,6 +84,9 @@ public abstract class AbstractHibernateGpsDevice extends AbstractParallelGpsDevi
                 HibernateEntityInfo entityInfo = (HibernateEntityInfo) entities[i];
                 int current = 0;
                 while (true) {
+                    if (!isRunning()) {
+                        return;
+                    }
                     HibernateSessionWrapper sessionWrapper = doGetHibernateSessionWrapper();
                     try {
                         sessionWrapper.open();

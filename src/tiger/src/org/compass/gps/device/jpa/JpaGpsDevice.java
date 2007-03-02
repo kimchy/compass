@@ -340,6 +340,9 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
                     wrapper.open();
                     EntityManager entityManager = wrapper.getEntityManager();
                     while (true) {
+                        if (!isRunning()) {
+                            return;
+                        }
                         if (log.isDebugEnabled()) {
                             log.debug(buildMessage("Indexing entities [" + entityInformation.getName() + "] range ["
                                     + current + "-" + (current + fetchCount) + "] using query ["
