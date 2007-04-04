@@ -137,6 +137,40 @@ public class CompassSearchHelperTests extends AbstractTestCase {
         session.close();
     }
 
+    /**
+     * The purpose of this test is to verify that the size of the second page is determined correctly.
+     */
+    public void testSecondSmallerPageSize() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        addData(session, 8);
+        CompassSearchHelper searchHelper = new CompassSearchHelper(getCompass(), new Integer(5));
+        CompassSearchResults results = searchHelper.search(new CompassSearchCommand("test", new Integer(0)));
+        assertEquals(5, results.getHits().length);
+        assertEquals(8, results.getTotalHits());
+        assertEquals(2, results.getPages().length);
+        assertEquals(1, results.getPages()[0].getFrom());
+        assertEquals(5, results.getPages()[0].getTo());
+        assertEquals(5, results.getPages()[0].getSize());
+        assertEquals(true, results.getPages()[0].isSelected());
+        assertEquals(6, results.getPages()[1].getFrom());
+        assertEquals(8, results.getPages()[1].getTo());
+        assertEquals(3, results.getPages()[1].getSize());
+        assertEquals(false, results.getPages()[1].isSelected());
+        
+        searchHelper = new AbstractSearchHelper(getCompass(), new Integer(5));
+        results = searchHelper.search(new CompassSearchCommand("test", new Integer(1)));
+        assertEquals(3, results.getHits().length);
+        assertEquals(8, results.getTotalHits());
+        assertEquals(2, results.getPages().length);
+        assertEquals(5,((AbstractSearchHelper)searchHelper).getExpectedFrom());
+        assertEquals(3,((AbstractSearchHelper)searchHelper).getExpectedSize());
+        
+        tr.commit();
+        session.close();
+    }
+
     private void addData(CompassSession session, int size) {
         for (int i = 0; i < size; i++) {
             session.save(new A(i, "test value" + i));

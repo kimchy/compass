@@ -115,11 +115,11 @@ public class CompassSearchHelper {
             int from = page * iPageSize;
             if (from > hits.getLength()) {
                 from = hits.getLength() - iPageSize;
-                doProcessBeforeDetach(searchCommand, session, hits, from, hitsLength);
-                detachedHits = hits.detach(from, hitsLength);
+                doProcessBeforeDetach(searchCommand, session, hits, from, (hitsLength-from));
+                detachedHits = hits.detach(from, (hitsLength-from));
             } else if ((from + iPageSize) > hitsLength) {
-                doProcessBeforeDetach(searchCommand, session, hits, from, hitsLength);
-                detachedHits = hits.detach(from, hitsLength);
+                doProcessBeforeDetach(searchCommand, session, hits, from, (hitsLength-from));
+                detachedHits = hits.detach(from, (hitsLength-from));
             } else {
                 doProcessBeforeDetach(searchCommand, session, hits, from, iPageSize);
                 detachedHits = hits.detach(from, iPageSize);
