@@ -81,6 +81,9 @@ public class ConcurrentParallelIndexExecutor implements ParallelIndexExecutor {
     public void performIndex(final IndexEntity[][] entities, final IndexEntitiesIndexer indexEntitiesIndexer,
                              final CompassGpsInterfaceDevice compassGps) {
 
+        if (entities.length <= 0) {
+            throw new IllegalArgumentException("No entities listed to be indexed, have you defined your entities correctly?");
+        }
         int maxThreads = this.maxThreads;
         if (maxThreads == -1) {
             maxThreads = entities.length;
