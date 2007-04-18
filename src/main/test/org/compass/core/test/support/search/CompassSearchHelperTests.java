@@ -171,6 +171,31 @@ public class CompassSearchHelperTests extends AbstractTestCase {
         session.close();
     }
 
+    /**
+     * The purpose is to test that if user asks for the second result page (even if
+     * results fits the first page completely) that it returns the first page again
+     * and no Exeption is thrown.
+     */
+    public void testSecondPageWhenFirstPageSmallerThenPageSize() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        addData(session, 5);
+        CompassSearchHelper searchHelper = new CompassSearchHelper(getCompass(), new Integer(10));
+        // Note that we are asking for the second result page even if results completely fits the first result page.
+        CompassSearchResults results = searchHelper.search(new CompassSearchCommand("test", new Integer(1)));
+        assertEquals(5, results.getHits().length);
+        assertEquals(5, results.getTotalHits());
+        assertEquals(1, results.getPages().length);
+        assertEquals(1, results.getPages()[0].getFrom());
+        assertEquals(5, results.getPages()[0].getTo());
+        assertEquals(5, results.getPages()[0].getSize());
+        assertEquals(true, results.getPages()[0].isSelected());
+
+        tr.commit();
+        session.close();
+    }
+    
     private void addData(CompassSession session, int size) {
         for (int i = 0; i < size; i++) {
             session.save(new A(i, "test value" + i));

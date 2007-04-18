@@ -114,7 +114,8 @@ public class CompassSearchHelper {
             }
             int from = page * iPageSize;
             if (from > hits.getLength()) {
-                from = hits.getLength() - iPageSize;
+	            // from can't be negative
+                from = Math.max(0, hits.getLength() - iPageSize);
                 doProcessBeforeDetach(searchCommand, session, hits, from, (hitsLength-from));
                 detachedHits = hits.detach(from, (hitsLength-from));
             } else if ((from + iPageSize) > hitsLength) {
