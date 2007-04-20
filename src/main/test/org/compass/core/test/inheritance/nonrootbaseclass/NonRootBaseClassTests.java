@@ -43,8 +43,10 @@ public class NonRootBaseClassTests extends AbstractTestCase {
         LuceneSubIndexInfo.getIndexInfo("extendsbasenotroot", session);
         // now test that there is no baseNotRoot index
         try {
-            LuceneSubIndexInfo.getIndexInfo("basenotroot", session);
-            fail("a subindex should not exists");
+            LuceneSubIndexInfo indexInfo = LuceneSubIndexInfo.getIndexInfo("basenotroot", session);
+            if (indexInfo != null) {
+                fail("a subindex should not exists");
+            }
         } catch (Exception e) {
             // all is well
         }

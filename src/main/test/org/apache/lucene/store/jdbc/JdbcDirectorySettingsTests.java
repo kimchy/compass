@@ -35,8 +35,6 @@ public class JdbcDirectorySettingsTests extends TestCase {
         assertEquals(50, settings.getNameColumnLength());
         assertEquals(500 * 1000, settings.getValueColumnLengthInK());
 
-        assertFalse(settings.isUseCommitLocks());
-
         assertEquals(10, settings.getQueryTimeout());
 
         assertEquals(60 * 60 * 1000, settings.getDeleteMarkDeletedDelta());

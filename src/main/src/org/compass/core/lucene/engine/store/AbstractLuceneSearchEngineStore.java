@@ -337,8 +337,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                         srcTemplate.executeForSubIndex(subIndex, false, new LuceneStoreCallback() {
                             public Object doWithStore(Directory src) throws IOException {
                                 LuceneUtils.copy(src, searchEngineStore.getLuceneSettings().isUseCompoundFile(),
-                                        dest, luceneSettings.isUseCompoundFile(), buffer,
-                                        luceneSettings.getTransactionCommitTimeout());
+                                        dest, luceneSettings.isUseCompoundFile(), buffer);
                                 return null;
                             }
                         });

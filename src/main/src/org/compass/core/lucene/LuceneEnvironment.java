@@ -488,24 +488,10 @@ public class LuceneEnvironment {
     public static abstract class Transaction {
 
         /**
-         * The directory where the search engine will maintain it's locking file
-         * mechanism for inter and outer process transaction synchronization.
-         * Defaults to the <code>java.io.tmpdir</code> Java system property.
-         * This is a JVM level property.
-         */
-        public static final String LOCK_DIR = "compass.transaction.lockDir";
-
-        /**
          * The amount of time a transaction will wait in order to obtain it's
          * specific lock (in seconds). Defaults to 10 seconds.
          */
         public static final String LOCK_TIMEOUT = "compass.transaction.lockTimeout";
-
-        /**
-         * The amount of time a transaction will wait in order to commit (in
-         * seconds) <p/> The default value is 10 seconds.
-         */
-        public static final String COMMIT_TIMEOUT = "compass.transaction.commitTimeout";
 
         /**
          * The interval that the transaction will check to see if it can obtain
@@ -707,11 +693,6 @@ public class LuceneEnvironment {
          * The dialect (database) that is used when storing the index in the database
          */
         public static final String DIALECT = "compass.engine.store.jdbc.dialect";
-
-        /**
-         * If the system will try to acquire commit lock as well. Defaults to <code>false</code>.
-         */
-        public static final String USE_COMMIT_LOCKS = "compass.engine.store.jdbc.useCommitLocks";
 
         /**
          * Some of the entries in the database are marked as deleted, and not actually gets to be

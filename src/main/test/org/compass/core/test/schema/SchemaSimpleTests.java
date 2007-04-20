@@ -90,15 +90,6 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("200", settings.getSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL));
     }
 
-    public void testLockDir() throws Exception {
-        CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/lock-dir.cfg.xml");
-
-        CompassSettings settings = conf.getSettings();
-
-        assertEquals("target/test", settings.getSetting(LuceneEnvironment.Transaction.LOCK_DIR));
-    }
-
     public void testOptimizer() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/optimizer.cfg.xml");

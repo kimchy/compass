@@ -1198,26 +1198,11 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="lockDir" type="xsd:string" use="optional">
-            <xsd:annotation>
-                <xsd:documentation>
-                    When using file based index storage, the location where lock files will be stored.
-                </xsd:documentation>
-            </xsd:annotation>
-        </xsd:attribute>
         <xsd:attribute name="lockTimeout" type="xsd:positiveInteger" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The amount of time a transaction will wait in order to obtain it's specific lock (in seconds) for
                     dirty operations. Defaults to 10 seconds.
-                </xsd:documentation>
-            </xsd:annotation>
-        </xsd:attribute>
-        <xsd:attribute name="commitTimeout" type="xsd:positiveInteger" use="optional">
-            <xsd:annotation>
-                <xsd:documentation>
-                    The amount of time a transaction will wait in order to commit (in seconds). The default value is 10
-                    seconds.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
@@ -2006,13 +1991,6 @@
                     <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.SybaseDialect"/>
                 </xsd:restriction>
             </xsd:simpleType>
-        </xsd:attribute>
-        <xsd:attribute name="useCommitLocks" type="booleanType" use="optional" default="false">
-            <xsd:annotation>
-                <xsd:documentation>
-                    If compass will try to acquire commit lock as well.
-                </xsd:documentation>
-            </xsd:annotation>
         </xsd:attribute>
         <xsd:attribute name="deleteMarkDeletedDelta" type="xsd:positiveInteger" use="optional">
             <xsd:annotation>

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.DirectoryTemplate;
 import org.apache.lucene.store.IndexInput;
@@ -39,7 +38,6 @@ import org.apache.lucene.store.jdbc.dialect.Dialect;
 import org.apache.lucene.store.jdbc.dialect.DialectResolver;
 import org.apache.lucene.store.jdbc.handler.FileEntryHandler;
 import org.apache.lucene.store.jdbc.lock.JdbcLock;
-import org.apache.lucene.store.jdbc.lock.NoOpLock;
 import org.apache.lucene.store.jdbc.support.JdbcTable;
 import org.apache.lucene.store.jdbc.support.JdbcTemplate;
 
@@ -375,10 +373,6 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
     }
 
     public Lock makeLock(final String name) {
-        final boolean disableLock = name.equals(IndexWriter.COMMIT_LOCK_NAME) && !settings.isUseCommitLocks();
-        if (disableLock) {
-            return new NoOpLock();
-        }
         try {
             Lock lock = createLock();
             ((JdbcLock) lock).configure(this, name);

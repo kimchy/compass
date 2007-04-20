@@ -74,6 +74,8 @@ public class TransIndex {
         return infoStream;
     }
 
+    private IndexFileDeleter deleter;
+
     // New Attributes
 
     private static final Log log = LogFactory.getLog(TransIndex.class);
@@ -92,7 +94,7 @@ public class TransIndex {
 
     private ArrayList transReaders;
 
-    private String newSegmentName;
+    private SegmentInfo newSegment;
 
     private Vector filesToDeleteCS;
 
@@ -112,14 +114,23 @@ public class TransIndex {
         transReaders = new ArrayList();
         transSegmentInfos = new SegmentInfos();
         transSegmentInfos.write(transDir);
+
         // initialize the index reader
         if (segmentInfos.size() == 1) { // index is optimized
             indexReader = SegmentReader.get(segmentInfos, segmentInfos.info(0), false);
             ((CompassSegmentReader) indexReader).setSubIndex(subIndex);
         } else {
             IndexReader[] readers = new IndexReader[segmentInfos.size()];
-            for (int i = 0; i < segmentInfos.size(); i++) {
-                readers[i] = SegmentReader.get(segmentInfos.info(i));
+            for (int i = segmentInfos.size() - 1; i >= 0; i--) {
+                try {
+                    readers[i] = SegmentReader.get(segmentInfos.info(i));
+                } catch (IOException e) {
+                    // Close all readers we had opened:
+                    for (i++; i < segmentInfos.size(); i++) {
+                        readers[i].close();
+                    }
+                    throw e;
+                }
             }
             indexReader = new CompassMultiReader(subIndex, directory, segmentInfos, false, readers);
         }
@@ -134,25 +145,40 @@ public class TransIndex {
         this.closeDir = closeDir;
         directory = d;
 
-        Lock writeLock = directory.makeLock(IndexWriter.WRITE_LOCK_NAME);
-        if (!writeLock.obtain(luceneSettings.getTransactionLockTimout())) { // obtain
-            // write
-            // lock
-            throw new IOException("Lock obtain failed: " + writeLock);
+        if (create) {
+            // Clear the write lock in case it's leftover:
+            directory.clearLock(IndexWriter.WRITE_LOCK_NAME);
         }
-        this.writeLock = writeLock; // save it
 
-        synchronized (directory) { // in- & inter-process sync
-            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), luceneSettings
-                    .getTransactionCommitTimeout()) {
-                public Object doBody() throws IOException {
-                    if (create)
-                        segmentInfos.write(directory);
-                    else
-                        segmentInfos.read(directory);
-                    return null;
+        Lock writeLock = directory.makeLock(IndexWriter.WRITE_LOCK_NAME);
+        if (!writeLock.obtain(luceneSettings.getTransactionLockTimout())) // obtain write lock
+            throw new IOException("Index locked for write: " + writeLock);
+        this.writeLock = writeLock;                   // save it
+
+        try {
+            if (create) {
+                // Try to read first.  This is to allow create
+                // against an index that's currently open for
+                // searching.  In this case we write the next
+                // segments_N file with no segments:
+                try {
+                    segmentInfos.read(directory);
+                    segmentInfos.clear();
+                } catch (IOException e) {
+                    // Likely this means it's a fresh directory
                 }
-            }.run();
+                segmentInfos.write(directory);
+            } else {
+                segmentInfos.read(directory);
+            }
+
+            deleter = new IndexFileDeleter(segmentInfos, directory);
+            deleter.setInfoStream(infoStream);
+
+        } catch (IOException e) {
+            this.writeLock.release();
+            this.writeLock = null;
+            throw e;
         }
     }
 
@@ -170,7 +196,7 @@ public class TransIndex {
         String segmentName = newTransSegmentName();
         dw.addDocument(segmentName, ((LuceneResource) resource).getDocument());
 
-        SegmentInfo segmentInfo = new SegmentInfo(segmentName, 1, transDir);
+        SegmentInfo segmentInfo = new SegmentInfo(segmentName, 1, transDir, false, false);
         transSegmentInfos.addElement(segmentInfo);
 
         if (transLog.shouldUpdateTransSegments()) {
@@ -178,7 +204,7 @@ public class TransIndex {
         }
 
         transLog.onDocumentAdded();
-        
+
         transReaders.add(SegmentReader.get(segmentInfo));
         transCreates.add(resource.resourceKey());
 
@@ -306,7 +332,8 @@ public class TransIndex {
      * @throws IOException
      */
     public void firstPhase() throws IOException {
-        newSegmentName = newSegmentName();
+        String newSegmentName = newSegmentName();
+
         SegmentMerger merger = new SegmentMerger(directory, newSegmentName);
 
         // TODO do we need to merge if we only have one segment?
@@ -319,9 +346,10 @@ public class TransIndex {
             infoStream.println(" into " + newSegmentName + " (" + mergedDocCount + " docs)");
         }
         merger.closeReaders();
-        segmentInfos.addElement(new SegmentInfo(newSegmentName, mergedDocCount, directory));
+        newSegment = new SegmentInfo(newSegmentName, mergedDocCount, directory, luceneSettings.isUseCompoundFile(), true);
+        segmentInfos.addElement(newSegment);
         if (luceneSettings.isUseCompoundFile()) {
-            filesToDeleteCS = merger.createCompoundFile(newSegmentName + ".tmp");
+            filesToDeleteCS = merger.createCompoundFile(newSegmentName + ".cfs");
         }
     }
 
@@ -332,30 +360,25 @@ public class TransIndex {
      * @throws IOException
      */
     public void secondPhase() throws IOException {
-        if (newSegmentName == null) {
+        if (newSegment == null) {
             throw new IOException("Transaction not called first phase");
         }
-        synchronized (directory) { // in- & inter-process sync
-            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), luceneSettings.getTransactionCommitTimeout()) {
-                public Object doBody() throws IOException {
-                    if (luceneSettings.isUseCompoundFile()) {
-                        directory.renameFile(newSegmentName + ".tmp", newSegmentName + ".cfs");
-                    }
-                    // COMPASS - Close the index reader within this commit lock
-                    // so we commit the deleted documents
-                    indexSearcher.close();
-                    indexSearcher = null;
-                    indexReader.close();
-                    indexReader = null;
 
-                    // now commit the segments
-                    segmentInfos.write(directory);
-                    return null;
-                }
-            }.run();
-        }
+        String segmentsInfosFileName = segmentInfos.getCurrentSegmentFileName();
+        
+        // COMPASS - Close the index reader so we commit the deleted documents
+        indexSearcher.close();
+        indexSearcher = null;
+        indexReader.close();
+        indexReader = null;
+
+        // now commit the segments
+        segmentInfos.write(directory);
+
+        deleter.deleteFile(segmentsInfosFileName);    // delete old segments_N file
+        
         if (luceneSettings.isUseCompoundFile()) {
-            LuceneUtils.deleteFiles(filesToDeleteCS, directory);
+            deleter.deleteFiles(filesToDeleteCS);
             filesToDeleteCS = null;
         }
     }
@@ -368,19 +391,13 @@ public class TransIndex {
      */
     public void rollback() throws IOException {
         // check if firstPhase was called at all
-        if (newSegmentName == null) {
+        if (newSegment == null) {
             return;
         }
-        String[] files = directory.list();
-        String segmentPrefix = newSegmentName + ".";
-        Vector vFilesToDelete = new Vector();
-        for (int i = 0; i < files.length; i++) {
-            String fileName = files[i];
-            if (fileName.startsWith(segmentPrefix)) {
-                vFilesToDelete.add(fileName);
-            }
-        }
-        LuceneUtils.deleteFiles(vFilesToDelete, directory);
+        // clear the segment we created during merge
+        Vector segmentsToDelete = new Vector();
+        segmentsToDelete.add(SegmentReader.get(newSegment));
+        deleter.deleteSegments(segmentsToDelete);
     }
 
     /**

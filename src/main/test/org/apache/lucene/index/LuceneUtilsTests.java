@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -48,35 +47,35 @@ public class LuceneUtilsTests extends TestCase {
     }
 
     public void testIsCompound() throws IOException {
-        assertTrue(LuceneUtils.isCompound(directory, 1000));
+        assertTrue(LuceneUtils.isCompound(directory));
         createIndex();
-        assertTrue(LuceneUtils.isCompound(directory, 1000));
+        assertTrue(LuceneUtils.isCompound(directory));
         addDocument(true);
-        assertTrue(LuceneUtils.isCompound(directory, 1000));
+        assertTrue(LuceneUtils.isCompound(directory));
     }
 
     public void testIsCompound2() throws IOException {
-        assertTrue(LuceneUtils.isCompound(directory, 1000));
+        assertTrue(LuceneUtils.isCompound(directory));
         createIndex();
-        assertTrue(LuceneUtils.isCompound(directory, 1000));
+        assertTrue(LuceneUtils.isCompound(directory));
         addDocument(false);
-        assertFalse(LuceneUtils.isCompound(directory, 1000));
+        assertFalse(LuceneUtils.isCompound(directory));
     }
 
     public void testIsUnCompound() throws IOException {
-        assertTrue(LuceneUtils.isUnCompound(directory, 1000));
+        assertTrue(LuceneUtils.isUnCompound(directory));
         createIndex();
-        assertTrue(LuceneUtils.isUnCompound(directory, 1000));
+        assertTrue(LuceneUtils.isUnCompound(directory));
         addDocument(false);
-        assertTrue(LuceneUtils.isUnCompound(directory, 1000));
+        assertTrue(LuceneUtils.isUnCompound(directory));
     }
 
     public void testIsUnCompound2() throws IOException {
-        assertTrue(LuceneUtils.isUnCompound(directory, 1000));
+        assertTrue(LuceneUtils.isUnCompound(directory));
         createIndex();
-        assertTrue(LuceneUtils.isUnCompound(directory, 1000));
+        assertTrue(LuceneUtils.isUnCompound(directory));
         addDocument(true);
-        assertFalse(LuceneUtils.isUnCompound(directory, 1000));
+        assertFalse(LuceneUtils.isUnCompound(directory));
     }
 
     public void testCompoundDirectory() throws IOException {
@@ -84,13 +83,13 @@ public class LuceneUtilsTests extends TestCase {
 
         addDocument(false);
         assertDocumentExists();
-        assertFalse(LuceneUtils.isCompound(directory, 1000));
-        assertTrue(LuceneUtils.isUnCompound(directory, 1000));
+        assertFalse(LuceneUtils.isCompound(directory));
+        assertTrue(LuceneUtils.isUnCompound(directory));
 
-        LuceneUtils.compoundDirectory(directory, 1000, 1000);
+        LuceneUtils.compoundDirectory(directory, 1000);
         assertDocumentExists();
-        assertTrue(LuceneUtils.isCompound(directory, 1000));
-        assertFalse(LuceneUtils.isUnCompound(directory, 1000));
+        assertTrue(LuceneUtils.isCompound(directory));
+        assertFalse(LuceneUtils.isUnCompound(directory));
     }
 
     public void testUnCompoundDirectory() throws IOException {
@@ -98,12 +97,12 @@ public class LuceneUtilsTests extends TestCase {
 
         addDocument(true);
         assertDocumentExists();
-        assertTrue(LuceneUtils.isCompound(directory, 1000));
-        assertFalse(LuceneUtils.isUnCompound(directory, 1000));
+        assertTrue(LuceneUtils.isCompound(directory));
+        assertFalse(LuceneUtils.isUnCompound(directory));
 
-        LuceneUtils.unCompoundDirectory(directory, 1000, 1000);
+        LuceneUtils.unCompoundDirectory(directory, 1000);
         assertDocumentExists();
-        assertTrue(LuceneUtils.isUnCompound(directory, 1000));
+        assertTrue(LuceneUtils.isUnCompound(directory));
     }
 
     private void createIndex() throws IOException {

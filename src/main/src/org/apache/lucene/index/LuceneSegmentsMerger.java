@@ -28,7 +28,7 @@ import org.compass.core.lucene.engine.LuceneSettings;
 /**
  * A helper class that can merge segments from a certain segment number till the
  * last.
- * 
+ *
  * @author kimchy
  */
 public class LuceneSegmentsMerger {
@@ -55,6 +55,8 @@ public class LuceneSegmentsMerger {
 
     private LuceneSettings luceneSettings;
 
+    private IndexFileDeleter deleter;
+
     public LuceneSegmentsMerger(Directory dir, boolean closeDir, LuceneSettings luceneSettings) throws IOException {
         this.closeDir = closeDir;
         this.directory = dir;
@@ -65,15 +67,8 @@ public class LuceneSegmentsMerger {
             throw new IOException("Lock obtain failed: " + writeLock);
         }
         this.writeLock = writeLock; // save it
-
-        synchronized (directory) { // in- & inter-process sync
-            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), luceneSettings.getTransactionCommitTimeout()) {
-                public Object doBody() throws IOException {
-                    segmentInfos.read(directory);
-                    return null;
-                }
-            }.run();
-        }
+        segmentInfos.read(directory);
+        this.deleter = new IndexFileDeleter(segmentInfos, directory);
     }
 
     public void mergeFromSegment(int fromSegment) throws IOException {
@@ -90,31 +85,21 @@ public class LuceneSegmentsMerger {
 
         merger.closeReaders();
         segmentInfos.setSize(fromSegment); // pop old infos & add new
-        segmentInfos.addElement(new SegmentInfo(newSegmentName, mergedDocCount, directory));
+        SegmentInfo newSegmentInfo = new SegmentInfo(newSegmentName, mergedDocCount, directory, luceneSettings.isUseCompoundFile(), true);
+        segmentInfos.addElement(newSegmentInfo);
         if (luceneSettings.isUseCompoundFile()) {
-            filesToDeleteCS = merger.createCompoundFile(newSegmentName + ".tmp");
+            filesToDeleteCS = merger.createCompoundFile(newSegmentName + ".cfs");
         }
 
     }
 
     public void commit() throws IOException {
-        synchronized (directory) { // in- & inter-process sync
-            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), luceneSettings.getTransactionCommitTimeout()) {
-                public Object doBody() throws IOException {
-                    if (luceneSettings.isUseCompoundFile()) {
-                        directory.renameFile(newSegmentName + ".tmp", newSegmentName + ".cfs");
-                    }
-                    segmentInfos.write(directory); // commit before deleting
-                    return null;
-                }
-            }.run();
-        }
+        segmentInfos.write(directory); // commit before deleting
         if (luceneSettings.isUseCompoundFile()) {
-            // delete now unused files of segment
-            LuceneUtils.deleteFiles(filesToDeleteCS, directory);
+            deleter.deleteFiles(filesToDeleteCS);
             filesToDeleteCS = null;
         }
-        LuceneUtils.deleteSegments(segmentsToDelete, directory);
+        deleter.deleteSegments(segmentsToDelete);
     }
 
     public void close() throws IOException {

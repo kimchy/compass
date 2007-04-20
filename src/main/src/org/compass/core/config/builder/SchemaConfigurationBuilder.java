@@ -351,9 +351,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         settings.setSetting(CompassEnvironment.Transaction.ISOLATION, getElementAttribute(ele, "isolation"));
         settings.setSetting(CompassEnvironment.Transaction.FACTORY, getElementAttribute(ele, "factory"));
         settings.setSetting(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, getElementAttribute(ele, "commitBeforeCompletion"));
-        settings.setSetting(LuceneEnvironment.Transaction.LOCK_DIR, getElementAttribute(ele, "lockDir"));
         settings.setSetting(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, getElementAttribute(ele, "clearCacheOnCommit"));
-        settings.setSetting(LuceneEnvironment.Transaction.COMMIT_TIMEOUT, getElementAttribute(ele, "commitTimeout"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, getElementAttribute(ele, "lockTimeout"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, getElementAttribute(ele, "lockPollInterval"));
         settings.setSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, getElementAttribute(ele, "disableAutoJoinSession"));
@@ -446,8 +444,6 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         // dialect
         settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, getElementAttribute(connEle, "dialect"));
         settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, getElementAttribute(connEle, "dialectClass"));
-        // use commit locks
-        settings.setSetting(LuceneEnvironment.JdbcStore.USE_COMMIT_LOCKS, getElementAttribute(connEle, "useCommitLocks", "false"));
         // delete mark deleted
         settings.setSetting(LuceneEnvironment.JdbcStore.DELETE_MARK_DELETED_DELTA, getElementAttribute(connEle, "deleteMarkDeletedDelta"));
         // lock

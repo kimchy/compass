@@ -1,6 +1,15 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
+VERSION 1.2 M1 ()
+=================
+
+1. Lucene version upgraded to 2.1 with Compass support for lockless commits. Make sure to update the Lucene jars
+   with the new version. A full reindex of the data is required.
+2. All references and settings for transaction commit locks have been removed thanks to lockless commits.
+3. compass.transaction.lockDir removed and no longer used. The lock by default is now stored in the index directory.
+
+
 VERSION 1.1 (February 15, 2007)
 ===============================
 

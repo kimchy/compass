@@ -66,17 +66,6 @@ public class SelectForUpdateLock extends Lock implements JdbcLock {
                         ps.setBoolean(4, false);
                     }
                 });
-        jdbcDirectory.getJdbcTemplate().executeUpdate(jdbcDirectory.getTable().sqlInsert(),
-                new JdbcTemplate.PrepateStatementAwareCallback() {
-                    public void fillPrepareStatement(PreparedStatement ps) throws Exception {
-                        ps.setFetchSize(1);
-                        ps.setString(1, IndexWriter.COMMIT_LOCK_NAME);
-                        ps.setNull(2, Types.BLOB);
-                        ps.setLong(3, 0);
-                        ps.setBoolean(4, false);
-                    }
-                });
-
     }
 
     public boolean obtain() {

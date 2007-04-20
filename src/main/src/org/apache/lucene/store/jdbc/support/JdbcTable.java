@@ -175,8 +175,8 @@ public class JdbcTable {
 
         sb.setLength(0);
         sqlDeletaAll = sb.append("delete from ").append(getQualifiedName())
-                .append(" where ").append(nameColumn.getQuotedName()).append(" <> '").append(IndexWriter.COMMIT_LOCK_NAME).append("'")
-                .append(" and ").append(nameColumn.getQuotedName()).append(" <> '").append(IndexWriter.WRITE_LOCK_NAME).append("'").toString();
+                .append(" where ").append(nameColumn.getQuotedName()).append(" <> '").append(IndexWriter.WRITE_LOCK_NAME).append("'")
+                .toString();
     }
 
     public void setName(String name) {

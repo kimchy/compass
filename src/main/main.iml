@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module version="4" relativePaths="true" type="JAVA_MODULE">
+<module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="ModuleRootManager" />
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_4" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../target/classes" />
@@ -288,7 +288,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../../../libs/lucene/java/2.0.0/src/java" />
+          <root url="file://$MODULE_DIR$/../../../../../../libs/lucene/java/2.1.0/src/java" />
         </SOURCES>
       </library>
     </orderEntry>

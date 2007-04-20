@@ -131,10 +131,6 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         jdbcSettings.setNameColumnLength(settings.getSettingAsInt(LuceneEnvironment.JdbcStore.DDL.NAME_LENGTH, jdbcSettings.getNameColumnLength()));
         jdbcSettings.setValueColumnLengthInK(settings.getSettingAsInt(LuceneEnvironment.JdbcStore.DDL.VALUE_LENGTH, jdbcSettings.getValueColumnLengthInK()));
 
-        jdbcSettings.setUseCommitLocks(settings.getSettingAsBoolean(LuceneEnvironment.JdbcStore.USE_COMMIT_LOCKS, jdbcSettings.isUseCommitLocks()));
-        if (log.isDebugEnabled()) {
-            log.debug("Using commit locks [" + jdbcSettings.isUseCommitLocks() + "]");
-        }
         jdbcSettings.setDeleteMarkDeletedDelta(settings.getSettingAsLong(LuceneEnvironment.JdbcStore.DELETE_MARK_DELETED_DELTA, jdbcSettings.getDeleteMarkDeletedDelta()));
         if (log.isDebugEnabled()) {
             log.debug("Using delete mark deleted older than [" + jdbcSettings.getDeleteMarkDeletedDelta() + "ms]");

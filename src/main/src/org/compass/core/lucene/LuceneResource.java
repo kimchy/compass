@@ -20,7 +20,6 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -83,9 +82,9 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
 
         verifyResourceMapping();
 
-        Enumeration fields = document.fields();
-        while (fields.hasMoreElements()) {
-            Field field = (Field) fields.nextElement();
+        List fields = document.getFields();
+        for (Iterator fieldsIt = fields.iterator(); fieldsIt.hasNext();) {
+            Field field = (Field) fieldsIt.next();
             LuceneProperty lProperty = new LuceneProperty(field);
             lProperty.setPropertyMapping(resourceMapping.getResourcePropertyMapping(field.name()));
             properties.add(lProperty);

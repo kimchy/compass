@@ -16,32 +16,45 @@
 
 package org.apache.lucene.index;
 
-import org.apache.lucene.store.*;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Vector;
+
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.IndexOutput;
+import org.apache.lucene.store.Lock;
 
 /**
  * @author kimchy
  */
 public abstract class LuceneUtils {
 
+
+    public static void deleteUnusedFiles(Directory directory) throws IOException {
+        SegmentInfos segmentInfos = new SegmentInfos();
+        segmentInfos.read(directory);
+        IndexFileDeleter deleter = new IndexFileDeleter(segmentInfos, directory);
+        deleter.findDeletableFiles();
+        deleter.deleteFiles();
+    }
+
     /**
      * Copies one directory contents to the other. Will automatically compound or uncompound the contents of the
      * src directory into the dest directory.
      *
-     * @param src               The src directory to copy from
-     * @param srcIsCompound     If the src is in compound format or not
-     * @param dest              The dest directory to copy to
-     * @param destIsCompound    If the dest will be in compound format or not
-     * @param buffer            The buffer to use when copying over
-     * @param commitLockTimeout
+     * @param src            The src directory to copy from
+     * @param srcIsCompound  If the src is in compound format or not
+     * @param dest           The dest directory to copy to
+     * @param destIsCompound If the dest will be in compound format or not
+     * @param buffer         The buffer to use when copying over
      * @throws IOException
      */
     public static void copy(final Directory src, boolean srcIsCompound,
                             final Directory dest, boolean destIsCompound,
-                            final byte[] buffer,
-                            long commitLockTimeout) throws IOException {
+                            final byte[] buffer) throws IOException {
         if (!IndexReader.indexExists(src)) {
             return;
         }
@@ -58,12 +71,7 @@ public abstract class LuceneUtils {
         }
 
         final SegmentInfos segmentInfos = new SegmentInfos();
-        new Lock.With(src.makeLock(IndexWriter.COMMIT_LOCK_NAME), commitLockTimeout) {
-            public Object doBody() throws IOException {
-                segmentInfos.read(src);
-                return null;
-            }
-        }.run();
+        segmentInfos.read(src);
 
         copy(src, dest, IndexFileNames.SEGMENTS, buffer);
 
@@ -90,6 +98,7 @@ public abstract class LuceneUtils {
             String cfsName = segment + ".cfs";
 
             if (srcIsCompound && !destIsCompound) {
+                segmentInfo.setUseCompoundFile(false);
                 CompoundFileReader cfsReader = new CompoundFileReader(src, cfsName);
                 try {
                     String[] cfsEntriesNames = cfsReader.list();
@@ -101,6 +110,7 @@ public abstract class LuceneUtils {
                     cfsReader.close();
                 }
             } else { //(!srcIsCompound && destIsCompound)
+                segmentInfo.setUseCompoundFile(true);
                 DualCompoundFileWriter cfsWriter = new DualCompoundFileWriter(src, dest, cfsName, buffer);
 
                 FieldInfos fieldInfos = new FieldInfos(src, segment + ".fnm");
@@ -113,10 +123,12 @@ public abstract class LuceneUtils {
                 }
 
                 // Field norm files
+                // Fieldable norm files
                 for (int i = 0; i < fieldInfos.size(); i++) {
                     FieldInfo fi = fieldInfos.fieldInfo(i);
                     if (fi.isIndexed && !fi.omitNorms) {
-                        files.add(segment + ".f" + i);
+                        files.add(segment + "." + IndexFileNames.NORMS_EXTENSION);
+                        break;
                     }
                 }
 
@@ -137,6 +149,8 @@ public abstract class LuceneUtils {
                 cfsWriter.close();
             }
         }
+        // write back the segments info so the new compound file will take affect
+        segmentInfos.write(dest);
     }
 
     /**
@@ -203,29 +217,18 @@ public abstract class LuceneUtils {
      * Returns <code>true</code> if all the segments of the directory are in compound format.
      * Will return <code>true</code> if the index does not exists or there are no segments.
      */
-    public static boolean isCompound(final Directory directory, long commitLockTimeout) throws IOException {
+    public static boolean isCompound(final Directory directory) throws IOException {
         if (!IndexReader.indexExists(directory)) {
             return true;
         }
         final SegmentInfos segmentInfos = new SegmentInfos();
-        new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), commitLockTimeout) {
-            public Object doBody() throws IOException {
-                segmentInfos.read(directory);
-                return null;
-            }
-        }.run();
+        segmentInfos.read(directory);
         if (segmentInfos.isEmpty()) {
             return true;
         }
         for (int i = 0; i < segmentInfos.size(); i++) {
             SegmentInfo segmentInfo = segmentInfos.info(i);
-            String cfsName = segmentInfo.name + ".cfs";
-            if (!directory.fileExists(cfsName)) {
-                return false;
-            }
-            String unCompoundFileName = segmentInfo.name + "." + IndexFileNames.COMPOUND_EXTENSIONS[0];
-            if (directory.fileExists(unCompoundFileName) &&
-                    directory.fileModified(cfsName) < directory.fileModified(unCompoundFileName)) {
+            if (!segmentInfo.getUseCompoundFile()) {
                 return false;
             }
         }
@@ -236,29 +239,18 @@ public abstract class LuceneUtils {
      * Returns <code>true</code> if all the segments of the directory are in un-compound format.
      * Will return <code>true</code> if the index does not exists or there are no segments.
      */
-    public static boolean isUnCompound(final Directory directory, long commitLockTimeout) throws IOException {
+    public static boolean isUnCompound(final Directory directory) throws IOException {
         if (!IndexReader.indexExists(directory)) {
             return true;
         }
         final SegmentInfos segmentInfos = new SegmentInfos();
-        new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), commitLockTimeout) {
-            public Object doBody() throws IOException {
-                segmentInfos.read(directory);
-                return null;
-            }
-        }.run();
+        segmentInfos.read(directory);
         if (segmentInfos.isEmpty()) {
             return true;
         }
         for (int i = 0; i < segmentInfos.size(); i++) {
             SegmentInfo segmentInfo = segmentInfos.info(i);
-            String unCompoundFileName = segmentInfo.name + "." + IndexFileNames.COMPOUND_EXTENSIONS[0];
-            if (!directory.fileExists(unCompoundFileName)) {
-                return false;
-            }
-            String cfsName = segmentInfo.name + ".cfs";
-            if (directory.fileExists(cfsName) &&
-                    directory.fileModified(cfsName) > directory.fileModified(unCompoundFileName)) {
+            if (segmentInfo.getUseCompoundFile()) {
                 return false;
             }
         }
@@ -268,21 +260,17 @@ public abstract class LuceneUtils {
     /**
      * Compunds the directory. Only works on segments that have no ".cfs" file that already exists.
      */
-    public static void compoundDirectory(final Directory directory, long writeLockTimeout, long commitLockTimeout) throws IOException {
+    public static void compoundDirectory(final Directory directory, long writeLockTimeout) throws IOException {
         Lock writeLock = directory.makeLock(IndexWriter.WRITE_LOCK_NAME);
         if (!writeLock.obtain(writeLockTimeout)) {
             throw new IOException("Index locked for write: " + writeLock);
         }
         try {
             final SegmentInfos segmentInfos = new SegmentInfos();
-            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), commitLockTimeout) {
-                public Object doBody() throws IOException {
-                    segmentInfos.read(directory);
-                    return null;
-                }
-            }.run();
+            segmentInfos.read(directory);
             for (int infoIndex = 0; infoIndex < segmentInfos.size(); infoIndex++) {
                 SegmentInfo segmentInfo = segmentInfos.info(infoIndex);
+                segmentInfo.setUseCompoundFile(true);
                 String fileName = segmentInfo.name + ".cfs";
                 String segment = segmentInfo.name;
                 if (directory.fileExists(fileName)) {
@@ -300,11 +288,12 @@ public abstract class LuceneUtils {
                     files.add(segment + "." + IndexFileNames.COMPOUND_EXTENSIONS[i]);
                 }
 
-                // Field norm files
+                // Fieldable norm files
                 for (int i = 0; i < fieldInfos.size(); i++) {
                     FieldInfo fi = fieldInfos.fieldInfo(i);
                     if (fi.isIndexed && !fi.omitNorms) {
-                        files.add(segment + ".f" + i);
+                        files.add(segment + "." + IndexFileNames.NORMS_EXTENSION);
+                        break;
                     }
                 }
 
@@ -325,8 +314,10 @@ public abstract class LuceneUtils {
                 cfsWriter.close();
 
                 // delete the files
-                deleteFiles(files, directory);
+                IndexFileDeleter deleter = new IndexFileDeleter(segmentInfos, directory);
+                deleter.deleteFiles(files);
             }
+            segmentInfos.write(directory);
         } finally {
             writeLock.release();
         }
@@ -335,21 +326,17 @@ public abstract class LuceneUtils {
     /**
      * Compunds the directory. Only works on segments that have ".cfs" file that already exists.
      */
-    public static void unCompoundDirectory(final Directory directory, long writeLockTimeout, long commitLockTimeout) throws IOException {
+    public static void unCompoundDirectory(final Directory directory, long writeLockTimeout) throws IOException {
         Lock writeLock = directory.makeLock(IndexWriter.WRITE_LOCK_NAME);
         if (!writeLock.obtain(writeLockTimeout)) {
             throw new IOException("Index locked for write: " + writeLock);
         }
         try {
             final SegmentInfos segmentInfos = new SegmentInfos();
-            new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), commitLockTimeout) {
-                public Object doBody() throws IOException {
-                    segmentInfos.read(directory);
-                    return null;
-                }
-            }.run();
+            segmentInfos.read(directory);
             for (int infoIndex = 0; infoIndex < segmentInfos.size(); infoIndex++) {
                 SegmentInfo segmentInfo = segmentInfos.info(infoIndex);
+                segmentInfo.setUseCompoundFile(false);
                 String fileName = segmentInfo.name + ".cfs";
                 if (!directory.fileExists(fileName)) {
                     // already un compound, do nothing
@@ -390,86 +377,12 @@ public abstract class LuceneUtils {
 
                 Vector deleteFiles = new Vector();
                 deleteFiles.add(fileName);
-                deleteFiles(deleteFiles, directory);
+                IndexFileDeleter deleter = new IndexFileDeleter(segmentInfos, directory);
+                deleter.deleteFiles(deleteFiles);
             }
+            segmentInfos.write(directory);
         } finally {
             writeLock.release();
         }
     }
-
-    /*
-     * Some operating systems (e.g. Windows) don't permit a file to be deleted
-     * while it is opened for read (e.g. by another process or thread). So we
-     * assume that when a delete fails it is because the file is open in another
-     * process, and queue the file for subsequent deletion.
-     */
-    public static void deleteSegments(Vector segments, Directory directory) throws IOException {
-        Vector deletable = new Vector();
-        deleteFiles(readDeleteableFiles(directory), deletable, directory);
-        for (int i = 0; i < segments.size(); i++) {
-            SegmentReader reader = (SegmentReader) segments.elementAt(i);
-            deleteFiles(reader.files(), deletable, directory);
-        }
-
-        writeDeleteableFiles(deletable, directory); // note files we can't
-        // delete
-    }
-
-    public static void deleteFiles(Vector files, Directory directory) throws IOException {
-        Vector deletable = new Vector();
-        deleteFiles(readDeleteableFiles(directory), deletable, directory);
-        deleteFiles(files, deletable, directory); // try to delete our files
-        writeDeleteableFiles(deletable, directory); // note files we can't delete
-    }
-
-    public static void deleteFiles(Vector files, Vector deletable, Directory directory) throws IOException {
-        if (directory instanceof MultiDeleteDirectory) {
-            List notDeleted = ((MultiDeleteDirectory) directory).deleteFiles(files);
-            if (notDeleted != null && notDeleted.size() > 0) {
-                deletable.addAll(notDeleted);
-            }
-            return;
-        }
-
-
-        for (int i = 0; i < files.size(); i++) {
-            String file = (String) files.elementAt(i);
-            try {
-                directory.deleteFile(file); // try to delete each file
-            } catch (IOException e) { // if delete fails
-                if (directory.fileExists(file)) {
-                    deletable.addElement(file); // add to deletable
-                }
-            }
-        }
-    }
-
-    public static Vector readDeleteableFiles(Directory directory) throws IOException {
-        Vector result = new Vector();
-        if (!directory.fileExists("deletable"))
-            return result;
-
-        IndexInput input = directory.openInput("deletable");
-        try {
-            for (int i = input.readInt(); i > 0; i--)
-                // read file names
-                result.addElement(input.readString());
-        } finally {
-            input.close();
-        }
-        return result;
-    }
-
-    public static void writeDeleteableFiles(Vector files, Directory directory) throws IOException {
-        IndexOutput output = directory.createOutput("deleteable.new");
-        try {
-            output.writeInt(files.size());
-            for (int i = 0; i < files.size(); i++)
-                output.writeString((String) files.elementAt(i));
-        } finally {
-            output.close();
-        }
-        directory.renameFile("deleteable.new", "deletable");
-    }
-
 }

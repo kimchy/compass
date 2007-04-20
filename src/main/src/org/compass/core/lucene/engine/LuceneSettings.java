@@ -16,8 +16,6 @@
 
 package org.compass.core.lucene.engine;
 
-import java.io.File;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Lock;
@@ -66,8 +64,6 @@ public class LuceneSettings {
     private int maxBufferedDocs;
 
     private long transactionLockTimout;
-
-    private long transactionCommitTimeout;
 
     private long cacheInvalidationInterval;
 
@@ -151,25 +147,15 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Using transaction lock timeout [" + transactionLockTimout + "ms]");
         }
-        transactionCommitTimeout = settings.getSettingAsLong(LuceneEnvironment.Transaction.COMMIT_TIMEOUT, 10) * 1000;
-        if (log.isDebugEnabled()) {
-            log.debug("Using transaction commit timeout [" + transactionCommitTimeout + "ms]");
-        }
         Lock.LOCK_POLL_INTERVAL = settings.getSettingAsLong(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, 100);
         if (log.isDebugEnabled()) {
             log.debug("Using lock poll interval [" + Lock.LOCK_POLL_INTERVAL + "ms]");
         }
 
-        lockDir = settings.getSetting(LuceneEnvironment.Transaction.LOCK_DIR, System.getProperty("java.io.tmpdir"));
-        File lockDirFile = new File(lockDir);
-        if (!lockDirFile.exists()) {
-            if (!lockDirFile.mkdirs()) {
-                throw new SearchEngineException("Cannot create lock directory [" + lockDir + "]");
-            }
-        }
-        System.setProperty("org.apache.lucene.lockDir", lockDir);
-        if (log.isDebugEnabled()) {
-            log.debug("Using lock directory [" + lockDir + "]");
+        lockDir = settings.getSetting("compass.transaction.lockDir");
+        if (lockDir != null) {
+            throw new IllegalArgumentException("compass.transaction.lockDir setting is no longer supported. " +
+                    "The lock by default is stored in the index directory now, and can be conrolled by using LockFactory");
         }
 
         clearCacheOnCommit = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, true);
@@ -307,14 +293,6 @@ public class LuceneSettings {
 
     public void setTransactionLockTimout(long transactionLockTimout) {
         this.transactionLockTimout = transactionLockTimout;
-    }
-
-    public long getTransactionCommitTimeout() {
-        return transactionCommitTimeout;
-    }
-
-    public void setTransactionCommitTimeout(long transactionCommitTimeout) {
-        this.transactionCommitTimeout = transactionCommitTimeout;
     }
 
     public long getCacheInvalidationInterval() {

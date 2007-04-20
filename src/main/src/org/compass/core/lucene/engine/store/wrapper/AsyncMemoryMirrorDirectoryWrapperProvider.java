@@ -38,30 +38,16 @@ public class AsyncMemoryMirrorDirectoryWrapperProvider implements DirectoryWrapp
 
     private long awaitTermination;
 
-    private boolean sharedThread;
-
-    private ExecutorService executorService;
-
     /**
      * Configures {@link AsyncMemoryMirrorDirectoryWrapper}.
-     * <p/>
      * <code>awaitTermination</code> is the first setting, and defaults to 5 seconds.
-     * <code>sharedThread</code> causes all the differnet async wrappers (wrapping
-     * the {@link Directory}) to share the same thread (default to <code>true</code>).
      */
     public void configure(CompassSettings settings) throws CompassException {
         awaitTermination = settings.getSettingAsLong("awaitTermination", 5);
-        sharedThread = settings.getSettingAsBoolean("sharedThread", true);
-        if (sharedThread) {
-            executorService = doCreateExecutorService();
-        }
     }
 
     public Directory wrap(String subIndex, Directory dir) throws SearchEngineException {
         try {
-            if (sharedThread) {
-                return new AsyncMemoryMirrorDirectoryWrapper(dir, awaitTermination, executorService);
-            }
             return new AsyncMemoryMirrorDirectoryWrapper(dir, awaitTermination, doCreateExecutorService());
         } catch (IOException e) {
             throw new SearchEngineException("Failed to wrap directory [" + dir + "] with async memory wrapper", e);

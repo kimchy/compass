@@ -70,8 +70,6 @@ public class JdbcDirectorySettings {
 
     private HashMap fileEntrySettings = new HashMap();
 
-    private boolean useCommitLocks = false;
-
     private long deleteMarkDeletedDelta = HOUR;
 
     private int queryTimeout = 10;
@@ -257,24 +255,6 @@ public class JdbcDirectorySettings {
      */
     public JdbcFileEntrySettings getDefaultFileEntrySettings() {
         return (JdbcFileEntrySettings) fileEntrySettings.get(DEFAULT_FILE_ENTRY);
-    }
-
-    /**
-     * Should the system use commit locks. Defaults to <code>false</code>. Only set it to <code>true</code>, if the
-     * jdbc driver uses autoCommit (where it is allowed by the database, and the performance
-     * implications are taken into account).
-     */
-    public boolean isUseCommitLocks() {
-        return useCommitLocks;
-    }
-
-    /**
-     * Sets the directory to use commit locks.  Defaults to <code>false</code>. Only set it to <code>true</code>, if the
-     * jdbc driver uses autoCommit (where it is allowed by the database, and the performance
-     * implications are taken into account).
-     */
-    public void setUseCommitLocks(boolean useCommitLocks) {
-        this.useCommitLocks = useCommitLocks;
     }
 
     /**

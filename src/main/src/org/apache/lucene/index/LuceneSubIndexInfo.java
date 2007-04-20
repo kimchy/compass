@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.Lock;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
@@ -167,14 +166,8 @@ public class LuceneSubIndexInfo {
         final Directory directory = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
         try {
             final SegmentInfos segmentInfos = new SegmentInfos();
-            synchronized (directory) { // in- & inter-process sync
-                new Lock.With(directory.makeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT) {
-                    public Object doBody() throws IOException {
-                        segmentInfos.read(directory);
-                        return null;
-                    }
-                }.run();
-            }
+            segmentInfos.read(directory);
+
             ArrayList segmentInfosList = new ArrayList();
             for (int i = 0; i < segmentInfos.size(); i++) {
                 SegmentInfo segmentInfo = segmentInfos.info(i);

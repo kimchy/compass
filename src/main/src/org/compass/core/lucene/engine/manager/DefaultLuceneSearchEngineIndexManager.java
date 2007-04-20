@@ -134,22 +134,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
             // perform the replace operation
 
-            // first get the commit locks so no read will happen now as well
-            try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Trying to obtain commit/read locks");
-                }
-                for (int i = 0; i < subIndexes.length; i++) {
-                    Directory dir = getDirectory(subIndexes[i]);
-                    commitLocks[i] = dir.makeLock(IndexWriter.COMMIT_LOCK_NAME);
-                    commitLocks[i].obtain(luceneSettings.getTransactionCommitTimeout());
-                }
-                if (log.isDebugEnabled()) {
-                    log.debug("Obtained commit/read locks");
-                }
-            } catch (Exception e) {
-                throw new SearchEngineException("Failed to retrieve commit transaction locks", e);
-            }
+            // TODO here we need to make sure that no read operations will happen as well
+
             // tell eveybody that are using the index, to clear the cache
             clearCache();
             notifyAllToClearCache();
@@ -419,7 +405,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                if (!org.apache.lucene.index.LuceneUtils.isCompound(dir, luceneSettings.getTransactionCommitTimeout())) {
+                if (!org.apache.lucene.index.LuceneUtils.isCompound(dir)) {
                     return false;
                 }
             } catch (IOException e) {
@@ -434,7 +420,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                if (!org.apache.lucene.index.LuceneUtils.isUnCompound(dir, luceneSettings.getTransactionCommitTimeout())) {
+                if (!org.apache.lucene.index.LuceneUtils.isUnCompound(dir)) {
                     return false;
                 }
             } catch (IOException e) {
@@ -452,8 +438,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                org.apache.lucene.index.LuceneUtils.compoundDirectory(dir,
-                        luceneSettings.getTransactionLockTimout(), luceneSettings.getTransactionCommitTimeout());
+                org.apache.lucene.index.LuceneUtils.compoundDirectory(dir, luceneSettings.getTransactionLockTimout());
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to compound index", e);
             }
@@ -468,8 +453,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         for (int i = 0; i < subIndexes.length; i++) {
             Directory dir = getDirectory(subIndexes[i]);
             try {
-                org.apache.lucene.index.LuceneUtils.unCompoundDirectory(dir,
-                        luceneSettings.getTransactionLockTimout(), luceneSettings.getTransactionCommitTimeout());
+                org.apache.lucene.index.LuceneUtils.unCompoundDirectory(dir, luceneSettings.getTransactionLockTimout());
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to unCompuond index", e);
             }
