@@ -86,6 +86,7 @@ public abstract class MappingProcessorUtils {
         internalIdMapping.setInternal(true);
         internalIdMapping.setName(classPropertyMapping.getName());
         internalIdMapping.setStore(Property.Store.YES);
+        internalIdMapping.setOmitNorms(true);
         Property.Index index = classPropertyMapping.getManagedIdIndex();
         if (index == null) {
             String indexSetting = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, "no");

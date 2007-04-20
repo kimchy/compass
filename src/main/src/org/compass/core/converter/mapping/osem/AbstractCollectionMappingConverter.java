@@ -49,6 +49,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
             if (context.handleNulls() && rootClassMapping.isSupportUnmarshall()) {
                 Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), searchEngine.getNullValue(),
                         Property.Store.YES, Property.Index.UN_TOKENIZED);
+                p.setOmitNorms(true);
                 resource.addProperty(p);
                 return true;
             } else {
@@ -61,6 +62,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
                 Property p = searchEngine.createProperty(colMapping.getCollectionTypePath().getPath(),
                         AbstractCollectionMapping.CollectionType.toString(getRuntimeCollectionType(root)),
                         Property.Store.YES, Property.Index.UN_TOKENIZED);
+                p.setOmitNorms(true);
                 resource.addProperty(p);
             }
             // for null values in entities within the collection, they must be saved
@@ -74,6 +76,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
             context.removeHandleNulls(colMapping.getPath());
             Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
                     Property.Store.YES, Property.Index.UN_TOKENIZED);
+            p.setOmitNorms(true);
             resource.addProperty(p);
         }
 

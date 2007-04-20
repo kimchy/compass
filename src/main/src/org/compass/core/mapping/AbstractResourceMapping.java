@@ -51,6 +51,8 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private Property.TermVector allTermVector = Property.TermVector.NO;
 
+    private boolean allOmitNorms = false;
+
     private String allAnalyzer;
 
     private ResourcePropertyMapping[] ids;
@@ -279,6 +281,14 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     public void setAllTermVector(Property.TermVector allTermVector) {
         this.allTermVector = allTermVector;
+    }
+
+    public boolean isAllOmitNorms() {
+        return allOmitNorms;
+    }
+
+    public void setAllOmitNorms(boolean allOmitNorms) {
+        this.allOmitNorms = allOmitNorms;
     }
 
     public boolean hasSpecificAnalyzerPerResourceProperty() {

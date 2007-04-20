@@ -69,6 +69,13 @@ public @interface SearchableConstant {
     TermVector termVector() default TermVector.NO;
 
     /**
+     * Expert:
+     * If set, omit normalization factors associated with this indexed field.
+     * This effectively disables indexing boosts and length normalization for this field.
+     */
+    boolean omitNorms() default false;
+    
+    /**
      * Specifies a specialized analyzer lookup name that will be used to analyze
      * the meta-data content.
      * <p/>

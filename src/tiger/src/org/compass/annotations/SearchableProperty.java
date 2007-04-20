@@ -147,12 +147,22 @@ public @interface SearchableProperty {
     /**
      * The termVector of the auto generated {@link SearchableMetaData}. Maps to
      * {@link org.compass.annotations.SearchableMetaData#termVector()}.
-     * <p/>
-     * The meta-data will NOT be auto generated if the field/property have
+     *
+     * <p>The meta-data will NOT be auto generated if the field/property have
      * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
      * {@link #name()} is not set.
      */
     TermVector termVector() default TermVector.NO;
+
+    /**
+     * The termVector of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link SearchableMetaData#omitNorms()}.
+     *
+     * <p>The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
+    boolean omitNorms() default false;
 
     /**
      * The reverse of the auto generated {@link SearchableMetaData}. Maps to

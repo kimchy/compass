@@ -64,6 +64,7 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
                 String className = root.getClass().getName();
                 Property p = searchEngine.createProperty(refMapping.getClassPath().getPath(), className, Property.Store.YES,
                         Property.Index.UN_TOKENIZED);
+                p.setOmitNorms(true);
                 resource.addProperty(p);
             }
         }

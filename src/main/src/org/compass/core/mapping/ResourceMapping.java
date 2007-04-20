@@ -100,6 +100,13 @@ public interface ResourceMapping extends Mapping {
     Property.TermVector getAllTermVector();
 
     /**
+     * Expert:
+     * If set, omit normalization factors associated with this indexed field.
+     * This effectively disables indexing boosts and length normalization for this field.
+     */
+    boolean isAllOmitNorms();
+
+    /**
      * Returns all the resource property mappings that acts as the id of the resource. Used to load
      * the resource or delete it.
      */

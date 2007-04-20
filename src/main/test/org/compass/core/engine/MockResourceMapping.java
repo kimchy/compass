@@ -202,4 +202,8 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
     public boolean operationAllowed(CascadeMapping.Cascade cascade) {
         return isRoot();
     }
+
+    public boolean isAllOmitNorms() {
+        return false;
+    }
 }

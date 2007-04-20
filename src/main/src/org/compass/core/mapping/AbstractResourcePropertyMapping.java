@@ -37,6 +37,8 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private boolean excludeFromAll = false;
 
+    private boolean omitNorms = false;
+
     private ReverseType reverse = ReverseType.NO;
 
     protected void copy(AbstractResourcePropertyMapping copy) {
@@ -51,6 +53,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         copy.setTermVector(getTermVector());
         copy.setAnalyzer(getAnalyzer());
         copy.setReverse(getReverse());
+        copy.setOmitNorms(isOmitNorms());
     }
 
     public float getBoost() {
@@ -115,5 +118,13 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     public void setReverse(ReverseType reverse) {
         this.reverse = reverse;
+    }
+
+    public boolean isOmitNorms() {
+        return omitNorms;
+    }
+
+    public void setOmitNorms(boolean omitNorms) {
+        this.omitNorms = omitNorms;
     }
 }

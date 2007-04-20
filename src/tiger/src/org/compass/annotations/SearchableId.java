@@ -126,10 +126,18 @@ public @interface SearchableId {
     /**
      * The termVector of the auto generated {@link SearchableMetaData}. Maps to
      * {@link org.compass.annotations.SearchableMetaData#termVector()}.
-     * <p/>
-     * The meta-data will be auto generated only if the name has a value.
+     *
+     * <p>The meta-data will be auto generated only if the name has a value.
      */
     TermVector termVector() default TermVector.NO;
+
+    /**
+     * The termVector of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link SearchableMetaData#omitNorms()}.
+     *
+     * <p>The meta-data will be auto generated only if the name has a value.
+     */
+    boolean omitNorms() default true;
 
     /**
      * The reverse of the auto generated {@link SearchableMetaData}. Maps to

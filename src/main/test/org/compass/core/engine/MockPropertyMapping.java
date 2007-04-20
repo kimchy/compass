@@ -151,4 +151,8 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
     public void setConverterName(String name) {
         
     }
+
+    public boolean isOmitNorms() {
+        return false;
+    }
 }

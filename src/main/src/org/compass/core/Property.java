@@ -299,4 +299,19 @@ public interface Property extends Serializable {
      */
     boolean isBinary();
 
+    /**
+     * Expert:
+     *
+     * If set, omit normalization factors associated with this indexed field.
+     * This effectively disables indexing boosts and length normalization for this field.
+     */
+    boolean isOmitNorms();
+
+    /**
+     * Expert:
+     *
+     * If set, omit normalization factors associated with this indexed field.
+     * This effectively disables indexing boosts and length normalization for this field.
+     */
+    void setOmitNorms(boolean omitNorms);
 }

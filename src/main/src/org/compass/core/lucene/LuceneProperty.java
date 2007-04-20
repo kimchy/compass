@@ -128,6 +128,14 @@ public class LuceneProperty implements Property {
         return field.isStorePositionWithTermVector();
     }
 
+    public boolean isOmitNorms() {
+        return field.getOmitNorms();
+    }
+
+    public void setOmitNorms(boolean omitNorms) {
+        field.setOmitNorms(omitNorms);
+    }
+
     public String toString() {
         return "[" + field + "]";
     }

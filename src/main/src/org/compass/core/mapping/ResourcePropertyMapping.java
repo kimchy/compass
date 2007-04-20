@@ -57,6 +57,8 @@ public interface ResourcePropertyMapping extends Mapping {
 
     float getBoost();
 
+    boolean isOmitNorms();
+    
     boolean isInternal();
 
     boolean isExcludeFromAll();

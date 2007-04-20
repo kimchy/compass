@@ -53,6 +53,13 @@ public @interface SearchableAllMetaData {
     TermVector termVector() default TermVector.NO;
 
     /**
+     * Expert:
+     * If set, omit normalization factors associated with this indexed field.
+     * This effectively disables indexing boosts and length normalization for this field.
+     */
+    boolean omitNorms() default false;
+
+    /**
      * The analyzer that will be used on the "all" meta-data.
      */
     String analyzer() default "";

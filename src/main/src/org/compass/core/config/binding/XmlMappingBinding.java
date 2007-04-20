@@ -177,6 +177,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             xmlObjectMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
         }
 
+        xmlObjectMapping.setAllOmitNorms(xmlObjectConf.getAttributeAsBoolean("all-omit-norms", false));
+
         String allAnalyzer = xmlObjectConf.getAttribute("all-analyzer", null);
         xmlObjectMapping.setAllAnalyzer(allAnalyzer);
 
@@ -254,6 +256,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         xmlPropertyMapping.setIndex(Property.Index.fromString(indexType));
         String termVectorType = xmlPropConf.getAttribute("term-vector", "no");
         xmlPropertyMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        boolean omitNorms = xmlPropConf.getAttributeAsBoolean("omit-norms", false);
+        xmlPropertyMapping.setOmitNorms(omitNorms);
         String reverseType = xmlPropConf.getAttribute("reverse", "no");
         xmlPropertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         xmlPropertyMapping.setInternal(false);
@@ -310,6 +314,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             rawResourceMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
         }
 
+        rawResourceMapping.setAllOmitNorms(resourceConf.getAttributeAsBoolean("all-omit-norms", false));
+
+
         String allAnalyzer = resourceConf.getAttribute("all-analyzer", null);
         rawResourceMapping.setAllAnalyzer(allAnalyzer);
 
@@ -359,6 +366,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         propertyMapping.setIndex(Property.Index.fromString(indexType));
         String termVectorType = resourcePropConf.getAttribute("term-vector", "no");
         propertyMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        boolean omitNorms = resourcePropConf.getAttributeAsBoolean("omit-norms", false);
+        propertyMapping.setOmitNorms(omitNorms);
         String reverseType = resourcePropConf.getAttribute("reverse", "no");
         propertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         propertyMapping.setInternal(false);
@@ -423,6 +432,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         } else {
             classMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
         }
+
+        classMapping.setAllOmitNorms(classConf.getAttributeAsBoolean("all-omit-norms", false));
+
 
         String allAnalyzer = classConf.getAttribute("all-analyzer", null);
         classMapping.setAllAnalyzer(allAnalyzer);
@@ -539,6 +551,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         dynamicMetaDataMapping.setIndex(Property.Index.fromString(indexType));
         String termVectorType = dynamicConf.getAttribute("term-vector", "no");
         dynamicMetaDataMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        boolean omitNorms = dynamicConf.getAttributeAsBoolean("omit-norms", false);
+        dynamicMetaDataMapping.setOmitNorms(omitNorms);
         String reverseType = dynamicConf.getAttribute("reverse", "no");
         dynamicMetaDataMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         dynamicMetaDataMapping.setInternal(false);
@@ -674,6 +688,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         constantMapping.setIndex(Property.Index.fromString(indexType));
         String termVectorType = metadataConf.getAttribute("term-vector", "no");
         constantMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        boolean omitNorms = metadataConf.getAttributeAsBoolean("omit-norms", false);
+        constantMapping.setOmitNorms(omitNorms);
 
         constantMapping.setAnalyzer(constantConf.getAttribute("analyzer", null));
 
@@ -728,6 +744,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         mdMapping.setIndex(Property.Index.fromString(indexType));
         String termVectorType = metadataConf.getAttribute("term-vector", "no");
         mdMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+        boolean omitNorms = metadataConf.getAttributeAsBoolean("omit-norms", false);
+        mdMapping.setOmitNorms(omitNorms);
         String reverseType = metadataConf.getAttribute("reverse", "no");
         mdMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         mdMapping.setInternal(false);

@@ -113,6 +113,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 String className = root.getClass().getName();
                 Property p = searchEngine.createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
                         Property.Index.UN_TOKENIZED);
+                p.setOmitNorms(true);
                 resource.addProperty(p);
             }
         }

@@ -39,10 +39,9 @@ public class ConstantMappingConverter implements Converter {
             throws ConversionException {
         ConstantMetaDataMapping cm = (ConstantMetaDataMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
-        String propertyName = cm.getPath().getPath();
         boolean stored = false;
         for (Iterator it = cm.metaDataValuesIt(); it.hasNext();) {
-            Property p = searchEngine.createProperty(propertyName, (String) it.next(), cm.getStore(), cm.getIndex());
+            Property p = searchEngine.createProperty((String) it.next(), cm);
             p.setBoost(cm.getBoost());
             resource.addProperty(p);
             stored |= cm.getStore() != Property.Store.NO;

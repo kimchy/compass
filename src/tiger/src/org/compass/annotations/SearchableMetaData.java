@@ -51,7 +51,6 @@ import java.lang.annotation.Target;
  * The searchable property can annotate an array as well, with the array element type used for
  * Converter lookups.
  *
- *
  * @author kimchy
  */
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
@@ -85,6 +84,13 @@ public @interface SearchableMetaData {
      * Specifies whether and how a meta-data property should have term vectors.
      */
     TermVector termVector() default TermVector.NO;
+
+    /**
+     * Expert:
+     * If set, omit normalization factors associated with this indexed field.
+     * This effectively disables indexing boosts and length normalization for this field.
+     */
+    boolean omitNorms() default false;
 
     /**
      * Specifies whether and how the meta-data proeprty should value will be revered.
