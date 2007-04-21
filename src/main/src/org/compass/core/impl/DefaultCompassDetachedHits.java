@@ -55,6 +55,9 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
         if ((from + size) > hits.getLength()) {
             this.length = hits.getLength() - from;
         }
+        if (this.length < 0) {
+            this.length = 0;
+        }
         this.totalLength = hits.getLength();
         resources = new Resource[this.length];
         scores = new float[this.length];
