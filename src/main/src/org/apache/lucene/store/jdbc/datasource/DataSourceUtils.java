@@ -16,16 +16,36 @@
 
 package org.apache.lucene.store.jdbc.datasource;
 
-import java.sql.*;
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.sql.DataSource;
+
 import org.apache.lucene.store.jdbc.JdbcStoreException;
 
 /**
  * A set of Jdbc <code>DataSource</code> utilities.
- * 
+ *
  * @author kimchy
  */
 public abstract class DataSourceUtils {
+
+    private static Class springConnectionProxyClass;
+
+    private static Method springConnectionProxy;
+
+    static {
+        try {
+            springConnectionProxyClass = Class.forName("org.springframework.jdbc.datasource.ConnectionProxy");
+            springConnectionProxy = springConnectionProxyClass.getMethod("getTargetConnection", null);
+        } catch (Exception e) {
+            springConnectionProxy = null;
+            springConnectionProxyClass = null;
+        }
+    }
 
     /**
      * Returns <code>true</code> if the connection was created by the {@link TransactionAwareDataSourceProxy} and it
@@ -130,9 +150,8 @@ public abstract class DataSourceUtils {
     /**
      * Close the given JDBC Statement and ignore any thrown exception. This is
      * useful for typical finally blocks in manual JDBC code.
-     * 
-     * @param stmt
-     *            the JDBC Statement to close
+     *
+     * @param stmt the JDBC Statement to close
      */
     public static void closeStatement(Statement stmt) {
         if (stmt != null) {
@@ -149,9 +168,8 @@ public abstract class DataSourceUtils {
     /**
      * Close the given JDBC ResultSet and ignore any thrown exception. This is
      * useful for typical finally blocks in manual JDBC code.
-     * 
-     * @param rs
-     *            the JDBC ResultSet to close
+     *
+     * @param rs the JDBC ResultSet to close
      */
     public static void closeResultSet(ResultSet rs) {
         if (rs != null) {
@@ -171,7 +189,7 @@ public abstract class DataSourceUtils {
      * returned.
      * <p>
      * <code>-1</code> is returned if none is found.
-     * 
+     *
      * @param metaData
      * @param columnName
      * @return Column index for the given column name
@@ -188,8 +206,18 @@ public abstract class DataSourceUtils {
     }
 
     public static Connection getTargetConnection(Connection conn) {
-        if (conn instanceof ConnectionProxy ) {
-            return ((ConnectionProxy) conn).getTargetConnection();
+        if (conn instanceof ConnectionProxy) {
+            return getTargetConnection(((ConnectionProxy) conn).getTargetConnection());
+        }
+        // currently a hack to suppport Spring wrapping of connections. Need to implement a nicer pluggable native extractor
+        if (springConnectionProxy != null && springConnectionProxyClass != null) {
+            if (springConnectionProxyClass.isAssignableFrom(conn.getClass())) {
+                try {
+                    return (Connection) springConnectionProxy.invoke(conn, null);
+                } catch (Exception e) {
+                    return conn;
+                }
+            }
         }
         return conn;
     }
