@@ -391,6 +391,14 @@ public class DefaultCompass implements InternalCompass {
             });
         }
 
+        public void performScheduledTasks() throws SearchEngineException {
+            template.execute(new CompassCallbackWithoutResult() {
+                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                    indexManager.performScheduledTasks();
+                }
+            });
+        }
+
         // lucene search engine Index manager
 
         public LuceneSettings getSettings() {
