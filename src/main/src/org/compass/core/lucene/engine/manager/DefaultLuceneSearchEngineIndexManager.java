@@ -460,6 +460,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
+    public void performScheduledTasks() throws SearchEngineException {
+        getStore().performScheduledTasks();
+    }
+
     public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
         this.waitForCacheInvalidationBeforeSecondStep = timeToWaitInMillis;
     }

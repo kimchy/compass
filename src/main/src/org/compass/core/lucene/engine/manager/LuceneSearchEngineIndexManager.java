@@ -156,4 +156,6 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
      * @throws SearchEngineException
      */
     void unCompoundIndex() throws SearchEngineException;
+
+    void performScheduledTasks() throws SearchEngineException;
 }

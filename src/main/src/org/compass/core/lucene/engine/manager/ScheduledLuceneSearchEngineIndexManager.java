@@ -185,6 +185,10 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
         indexManager.setWaitForCacheInvalidationBeforeSecondStep(timeToWaitInMillis);
     }
 
+    public void performScheduledTasks() throws SearchEngineException {
+        indexManager.performScheduledTasks();
+    }
+
     private static class ScheduledIndexManagerRunnable implements Runnable {
 
         private LuceneSearchEngineIndexManager indexManager;
@@ -205,7 +209,7 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
                 }
             }
             try {
-                indexManager.getStore().performScheduledTasks();
+                indexManager.performScheduledTasks();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Failed to perform schedule task", e);
