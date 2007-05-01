@@ -16,7 +16,11 @@
 
 package org.compass.core.config.binding;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
@@ -27,6 +31,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.InputStreamMappingResolver;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 
 /**
@@ -44,6 +49,11 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
         this.mapping = mapping;
         this.metaData = metaData;
         this.settings = settings;
+    }
+
+    public boolean addResoruceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
+        mapping.addMapping(resourceMapping);
+        return true;
     }
 
     public boolean addResource(String path) throws ConfigurationException, MappingException {

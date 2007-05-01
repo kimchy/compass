@@ -25,12 +25,7 @@ import org.compass.core.engine.subindex.SubIndexHash;
  *
  * @author kimchy
  */
-public interface ResourceMapping extends Mapping {
-
-    /**
-     * The alias of the {@link org.compass.core.Resource}.
-     */
-    String getAlias();
+public interface ResourceMapping extends AliasMapping {
 
     /**
      * The sub index that the {@link org.compass.core.Resource} will be saved to in the

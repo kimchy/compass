@@ -25,6 +25,7 @@ import java.util.Iterator;
 import org.compass.core.config.binding.MappingBinding;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 
 /**
@@ -34,14 +35,22 @@ public class CompassMappingBinding implements MappingBinding {
 
     private ArrayList mappingBindings = new ArrayList();
 
+    private CompassMapping mapping;
+
     public void addMappingBinding(MappingBinding mappingBinding) {
         this.mappingBindings.add(mappingBinding);
     }
 
     public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
+        this.mapping = mapping;
         for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
             ((MappingBinding) it.next()).setUpBinding(mapping, metaData, settings);
         }
+    }
+
+    public boolean addResoruceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
+        mapping.addMapping(resourceMapping);
+        return true;
     }
 
     public boolean addResource(String path) throws ConfigurationException, MappingException {

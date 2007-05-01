@@ -25,6 +25,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.InputStreamMappingResolver;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 
 /**
@@ -37,6 +38,10 @@ public class MappingBindingSupport implements MappingBinding {
 
     public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
 
+    }
+
+    public boolean addResoruceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
+        return false;
     }
 
     public boolean addResource(String path) throws ConfigurationException, MappingException {

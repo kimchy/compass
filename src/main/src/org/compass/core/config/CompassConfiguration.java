@@ -39,6 +39,7 @@ import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.PropertyNamingStrategyFactory;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
 import org.compass.core.util.JdkVersion;
@@ -244,6 +245,21 @@ public class CompassConfiguration {
     public CompassConfiguration configure(File configFile) throws ConfigurationException {
         log.info("Configuring from file [" + configFile.getAbsolutePath() + "]");
         configurationBuilder.configure(configFile, this);
+        return this;
+    }
+
+    /**
+     * Advance: Add mappings based on {@link org.compass.core.mapping.ResourceMapping}
+     * implementation which allows for adding pre built mapping constructs.
+     */
+    public CompassConfiguration addResourceMapping(ResourceMapping resourceMapping) {
+        boolean hasAddedResource = mappingBinding.addResoruceMapping(resourceMapping);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match resource mapping [" + resourceMapping.getAlias() + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Resource Mapping [" + resourceMapping.getAlias() + "]");
+        }
         return this;
     }
 
