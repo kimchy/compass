@@ -39,6 +39,7 @@ import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.PropertyNamingStrategyFactory;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
 import org.compass.core.util.JdkVersion;
@@ -261,6 +262,11 @@ public class CompassConfiguration {
         if (log.isInfoEnabled()) {
             log.info("Mapping resolver [" + mappingResolver + "]");
         }
+        return this;
+    }
+
+    public CompassConfiguration addResourceMapping(ResourceMapping resourceMapping) throws ConfigurationException {
+        mapping.addMapping(resourceMapping);
         return this;
     }
 
