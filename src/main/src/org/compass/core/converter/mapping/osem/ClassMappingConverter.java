@@ -110,11 +110,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             // only add specilized properties for un-marshalling when it is supported
             if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
                 // if the class is defined as poly, persist the class name as well
-                String className = root.getClass().getName();
-                Property p = searchEngine.createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
-                        Property.Index.UN_TOKENIZED);
-                p.setOmitNorms(true);
-                resource.addProperty(p);
+                storePolyClass(resource, root, searchEngine, classMapping);
             }
         }
 
@@ -376,6 +372,31 @@ public class ClassMappingConverter implements ResourceMappingConverter {
     protected void doSetBoost(Resource resource, Object root, ClassMapping classMapping,
                               MarshallingContext context) throws ConversionException {
         resource.setBoost(classMapping.getBoost());
+    }
+
+    /**
+     * Stores the poly class name callback. Uses {@link #getPolyClassName(Object)} in order to get
+     * the poly class and store it.
+     *
+     * @param resource     The resource to add the poly class to
+     * @param root         The root class to write its class name
+     * @param searchEngine The search engine to use
+     * @param classMapping The class mapping to use
+     */
+    protected void storePolyClass(Resource resource, Object root, SearchEngine searchEngine, ClassMapping classMapping) {
+        String className = getPolyClassName(root);
+        Property p = searchEngine.createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
+                Property.Index.UN_TOKENIZED);
+        p.setOmitNorms(true);
+        resource.addProperty(p);
+    }
+
+    /**
+     * An extension point allowing to get the poly class name if need to be stored.
+     * By defaults uses {@link Class#getName()}.
+     */
+    protected String getPolyClassName(Object root) {
+        return root.getClass().getName();
     }
 
     /**
