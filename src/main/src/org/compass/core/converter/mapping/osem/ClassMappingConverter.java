@@ -89,7 +89,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             // only add specilized properties for un-marshalling when it is supported
             if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
                 // if the class is defined as poly, persist the class name as well
-                String className = root.getClass().getName();
+                String className = getPolyClassName(root);
                 Property p = searchEngine.createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
                         Property.Index.UN_TOKENIZED);
                 resource.addProperty(p);
@@ -345,6 +345,14 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         resource.setBoost(classMapping.getBoost());
     }
 
+    /**
+     * An extension point allowing to get the poly class name if need to be stored.
+     * By defaults uses {@link Class#getName()}.
+     */
+    protected String getPolyClassName(Object root) {
+        return root.getClass().getName();
+    }
+    
     /**
      * An object key based on the alias and the object identity hash code
      */
