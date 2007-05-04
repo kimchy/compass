@@ -203,18 +203,33 @@ public class CompassMapping {
         return rootMappingsByAlias.get(alias) != null;
     }
 
+    /**
+     * Returns <code>true</code> if there is a <b>root</b> {@link org.compass.core.mapping.osem.ClassMapping}
+     * for the given alias.
+     */
     public boolean hasClassMapping(String alias) {
         return (rootMappingsByAlias.get(alias) instanceof ClassMapping);
     }
 
+    /**
+     * Returns <code>true</code> if there is a <b>root</b> {@link org.compass.core.mapping.rsem.RawResourceMapping}
+     * for the given alias.
+     */
     public boolean hasRawResourceMapping(String alias) {
         return (rootMappingsByAlias.get(alias) instanceof RawResourceMapping);
     }
 
+    /**
+     * Returns <code>true</code> if the given <b>className</b> has multiple class mappings.
+     */
     public boolean hasMultipleClassMapping(String className) {
         return hasMutipleClassMappingByClass.contains(className);
     }
 
+    /**
+     * Returns the direct class mapping for the given class (root or not). Will not try to
+     * navigate up the interface/superclass in order to find the "nearset" class mapping.
+     */
     public ClassMapping getDirectClassMappingByClass(Class clazz) {
         return (ClassMapping) mappingsByClass.get(clazz.getName());
     }
