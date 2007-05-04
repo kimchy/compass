@@ -216,13 +216,13 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             } else {
                 Property pClassName = resource.getProperty(classMapping.getClassPath().getPath());
                 if (pClassName == null) {
-                    throw new ConversionException("The class [" + classMapping.getAlias()
-                            + "] is configured as poly, but no class information is stored in the resource");
+                    // if not poly class is stored, this means that it is probably a null class stored.
+                    return null;
                 }
                 String className = pClassName.getStringValue();
                 if (className == null) {
-                    throw new ConversionException("The class [" + classMapping.getAlias()
-                            + "] is configured as poly, but no class information is stored in the resource");
+                    // if not poly class is stored, this means that it is probably a null class stored.
+                    return null;
                 }
                 try {
                     clazz = ClassUtils.forName(className);

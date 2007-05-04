@@ -35,11 +35,10 @@ import org.compass.core.util.StringUtils;
 public abstract class AbstractRefAliasMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
-        // no need to marshall if it is null
         HasRefAliasMapping hasRefAliasMapping = (HasRefAliasMapping) mapping;
         ClassMapping[] classMappings = hasRefAliasMapping.getRefClassMappings();
         ClassMapping classMapping;
-        if (classMappings.length == 1) {
+        if (root == null || classMappings.length == 1) {
             classMapping = classMappings[0];
         } else {
             classMapping = extractClassMapping(context, root.getClass(), resource, hasRefAliasMapping);
@@ -95,12 +94,8 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
                 }
             }
             if (classMapping == null) {
-                // this should noy happen because we should be validating the mappings
-                throw new ConversionException("Mapping for root alias [" + resource.getAlias() +
-                        "] with one of its mappings with multiple ref-alias ["
-                        + StringUtils.arrayToCommaDelimitedString(hasRefAliasMapping.getRefAliases())
-                        + "] could not find a matching class (either stored in the index or configured). " +
-                        "Have you defined the hierarchy of ref aliased with poly set to true?");
+                // just try and use the first one and hope it is what we need
+                classMapping = classMappings[0];
             }
         }
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
