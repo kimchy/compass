@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ import org.compass.gps.spi.CompassGpsInterfaceDevice;
 /**
  * A simple base class for {@link org.compass.gps.CompassGps}
  * implementations.
- * 
+ *
  * @author kimchy
  */
 public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
@@ -76,23 +76,25 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
     }
 
     protected boolean hasMappingForEntity(Class clazz, Compass checkedCompass, CascadeMapping.Cascade cascade) {
-        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByClass(clazz);
+        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz);
+        if (resourceMapping != null) {
+            return true;
+        }
+        resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByClass(clazz);
         if (resourceMapping == null) {
             return false;
-        }
-        if (resourceMapping.isRoot()) {
-            return true;
         }
         return resourceMapping.operationAllowed(cascade);
     }
 
     protected boolean hasMappingForEntity(String name, Compass checkedCompass, CascadeMapping.Cascade cascade) {
-        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByAlias(name);
+        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getRootMappingByAlias(name);
+        if (resourceMapping != null) {
+            return true;
+        }
+        resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByAlias(name);
         if (resourceMapping == null) {
             return false;
-        }
-        if (resourceMapping.isRoot()) {
-            return true;
         }
         return resourceMapping.operationAllowed(cascade);
     }
@@ -100,7 +102,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
     protected ResourceMapping getRootMappingForEntity(Class clazz, Compass checkedCompass) {
         return ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz);
     }
-    
+
     protected boolean hasRootMappingForEntity(String name, Compass checkedCompass) {
         return getRootMappingForEntity(name, checkedCompass) != null;
     }
