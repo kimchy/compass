@@ -295,6 +295,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         }
 
         String compassTransactionFactory = config.getSettings().getSetting(CompassEnvironment.Transaction.FACTORY);
+        if (compassTransactionFactory == null && transactionManager != null) {
+            // if the transaciton manager is set and a transcation factory is not set, default to the SpringSync one.
+            config.getSettings().setSetting(CompassEnvironment.Transaction.FACTORY, SpringSyncTransactionFactory.class.getName());
+        }
         if (compassTransactionFactory != null && compassTransactionFactory.equals(SpringSyncTransactionFactory.class.getName())) {
             if (transactionManager == null) {
                 throw new IllegalArgumentException("When using SpringSyncTransactionFactory the transactionManager property must be set");
