@@ -793,7 +793,7 @@ public class Daughter extends Child {
         support-unmarshall="true|false"
         boost="boost value for the class"
         all="true|false"
-        all-term-vector="no|yes|positions|offsets|positios_offsets"
+        all-term-vector="no|yes|positions|offsets|positions_offsets"
         all-metadata="all meta-data"
         all-analyzer="name of the analyzer used for the all property"
         converter="converter lookup name"
@@ -1157,6 +1157,7 @@ public class Daughter extends Child {
       reverse="no|reader|string"
       exclude-from-all="[parent's exclude-from-all]|false|true"
       converter="converter lookup name"
+      term-vector="no|yes|positions|offsets|positions_offsets"
       format="the format string (only applies to formatted elements)"
 >
 </meta-data>]]></programlisting>
@@ -1186,6 +1187,10 @@ public class Daughter extends Child {
             <row>
               <entry>analyzer (optional, defaults to the parent analyzer)</entry>
               <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+            </row>
+            <row>
+              <entry>term-vector (optional, defaults to <literla>no</literal>)</entry>
+              <entry>The term vector value of meta data.</entry>
             </row>
             <row>
               <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
