@@ -20,8 +20,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.transaction.manager.Glassfish;
+import org.compass.core.transaction.manager.JBoss;
+import org.compass.core.transaction.manager.JOTM;
+import org.compass.core.transaction.manager.JOnAS;
+import org.compass.core.transaction.manager.JRun4;
+import org.compass.core.transaction.manager.OC4J;
+import org.compass.core.transaction.manager.Orion;
+import org.compass.core.transaction.manager.Resin;
+import org.compass.core.transaction.manager.WebSphere;
+import org.compass.core.transaction.manager.Weblogic;
 import org.compass.core.util.ClassUtils;
-import org.compass.core.transaction.manager.*;
 
 /**
  * @author kimchy
@@ -31,7 +40,7 @@ public final class TransactionManagerLookupFactory {
     private static final Log log = LogFactory.getLog(TransactionManagerLookupFactory.class);
 
     private static Class[] autoDetectOrder = {WebSphere.class, Weblogic.class, JOnAS.class, JOTM.class, JBoss.class,
-            Orion.class, Resin.class, OC4J.class, JRun4.class};
+            Glassfish.class, Orion.class, Resin.class, OC4J.class, JRun4.class};
 
     private TransactionManagerLookupFactory() {
     }
