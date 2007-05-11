@@ -1189,7 +1189,7 @@ public class Daughter extends Child {
               <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
             </row>
             <row>
-              <entry>term-vector (optional, defaults to <literla>no</literal>)</entry>
+              <entry>term-vector (optional, defaults to <literal>no</literal>)</entry>
               <entry>The term vector value of meta data.</entry>
             </row>
             <row>
