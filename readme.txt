@@ -1,5 +1,5 @@
-COMPASS, Release 1.2M1-SNAPSHOT
--------------------------------
+COMPASS, Release 1.2M1
+----------------------
 http://www.opensymphony.com/compass
 
 
