@@ -95,11 +95,11 @@ session.delete(Author.class, "12"); // Everything in the search engine is a Stri
                 <entry>Contain the term <literal>jack</literal> in the default search field</entry>
               </row>
               <row>
-                <entry>jack london (jack or london)</entry>
+                <entry>jack london (jack OR london)</entry>
                 <entry>Contains the term <literal>jack</literal> or <literal>london</literal>, or both, in the default search field</entry>
               </row>
               <row>
-                <entry>+jack +london (jack and london)</entry>
+                <entry>+jack +london (jack AND london)</entry>
                 <entry>Contains both <literal>jack</literal> and <literal>london</literal> in the default search field</entry>
               </row>
               <row>
@@ -107,7 +107,7 @@ session.delete(Author.class, "12"); // Everything in the search engine is a Stri
                 <entry>Contains the term <literal>jack</literal> in the <literal>name</literal> property (meta-data)</entry>
               </row>
               <row>
-                <entry>name:jack -city:london (name:jack and not city:london)</entry>
+                <entry>name:jack -city:london (name:jack AND NOT city:london)</entry>
                 <entry>Have <literal>jack</literal> in the <literal>name</literal> property and don't have <literal>london</literal> in the <literal>city</literal> property</entry>
               </row>
               <row>
