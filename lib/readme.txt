@@ -36,24 +36,24 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using Compass's Hibernate 2.1 support
 
 * hibernate/hibernate3.jar
-- Hibernate 3.2 GA (http://www.hibernate.org)
+- Hibernate 3.2.4 GA (http://www.hibernate.org)
 - required for building compass
 - required at runtime when using Compass's Hibernate 3.x support
 
 * hibernate/hibernate-annotations.jar
-- Hibernate Annotations 3.2.0 GA (http://www.hibernate.org) (taken form EntityManager 3.2 RC1)
+- Hibernate Annotations 3.2.0 GA (http://www.hibernate.org) (taken form EntityManager 3.3.1 GA)
 - required for building compass
 
 * hibernate/javassist.jar
-- Java Assist 3.3 (Required by Hibernate EntityManager) (taken form EntityManager 3.2 CR2)
+- Java Assist 3.3 (Required by Hibernate EntityManager) (taken form Core 3.2.4)
 - required for building compass
 
 * hibernate/hibernate-entitymanager.jar
-- Hibernate EntityManager 3.2.0 GA (http://www.hibernate.org)
+- Hibernate EntityManager 3.3.1 GA (http://www.hibernate.org)
 - required for building compass
 
 * hibernate/jboss-archive-browsing.jar
-- JBoss Archive Browsing 5.0.0alpha build: CVSTag=HEAD date=200607201 119 (taken form EntityManager 3.2 CR2)
+- jboss-common-core 2.0.2.Alpha (taken form EntityManager 3.3.1 GA)
 - required for building compass
 
 * hsqldb/hsqldb.jar
