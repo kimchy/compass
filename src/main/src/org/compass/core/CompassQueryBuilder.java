@@ -560,6 +560,14 @@ public interface CompassQueryBuilder {
     CompassSpanQuery spanFirst(String name, Object value, int end);
 
     /**
+     * <p>Creates a span query.
+     *
+     * @param end The limit on the position from the start.
+     * @return The span query
+     */
+    CompassSpanQuery spanFirst(CompassSpanQuery spanQuery, int end);
+
+    /**
      * <p>Constructs a span near query builder.
      *
      * <p>The name can either be the actual resource property or meta-data value,

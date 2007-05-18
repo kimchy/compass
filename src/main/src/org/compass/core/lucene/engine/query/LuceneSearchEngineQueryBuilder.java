@@ -30,11 +30,11 @@ import org.apache.lucene.search.spans.SpanNotQuery;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
 import org.compass.core.engine.SearchEngineQuery;
-import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
-import org.compass.core.lucene.engine.LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery;
+import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
+import org.compass.core.lucene.engine.LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery;
 
 /**
  * @author kimchy
@@ -142,6 +142,11 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
 
     public SearchEngineSpanQuery spanEq(String resourcePropertyName, String value) {
         SpanQuery spanQuery = new SpanTermQuery(new Term(resourcePropertyName, value));
+        return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanQuery);
+    }
+
+    public SearchEngineSpanQuery spanFirst(SearchEngineSpanQuery searchEngineSpanQuery, int end) {
+        SpanQuery spanQuery = new SpanFirstQuery(((LuceneSearchEngineSpanQuery) searchEngineSpanQuery).toSpanQuery(), end);
         return new LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery(searchEngine, spanQuery);
     }
 

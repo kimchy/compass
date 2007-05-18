@@ -406,6 +406,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
     }
 
+    public CompassSpanQuery spanFirst(CompassSpanQuery spanQuery, int end) {
+        SearchEngineSpanQuery query = queryBuilder.spanFirst(((DefaultCompassQuery.DefaultCompassSpanQuey) spanQuery).getSearchEngineSpanQuery(), end);
+        return new DefaultCompassQuery.DefaultCompassSpanQuey(query, session);
+    }
+
     public CompassQuerySpanNearBuilder spanNear(String name) {
         ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
         return new DefaultCompassQuerySpanNearBuilder(queryBuilder.spanNear(lookup.getPath()), session, lookup);

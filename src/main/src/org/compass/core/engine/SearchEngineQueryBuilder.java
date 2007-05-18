@@ -19,14 +19,12 @@ package org.compass.core.engine;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public interface SearchEngineQueryBuilder {
 
     public static interface SearchEngineToQuery {
-        
+
         SearchEngineQuery toQuery();
     }
 
@@ -70,31 +68,31 @@ public interface SearchEngineQueryBuilder {
         SearchEngineMultiPropertyQueryStringBuilder setAnalyzer(String analyzer);
 
         SearchEngineMultiPropertyQueryStringBuilder setAnalyzerByAlias(String alias);
-        
+
         SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName);
 
         SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator();
 
         SearchEngineMultiPropertyQueryStringBuilder setQueryParser(String queryParser);
     }
-    
+
     public static interface SearchEngineQuerySpanNearBuilder {
-        
+
         SearchEngineQuerySpanNearBuilder setSlop(int slop);
 
         SearchEngineQuerySpanNearBuilder setInOrder(boolean inOrder);
 
         SearchEngineQuerySpanNearBuilder add(String value);
-        
+
         SearchEngineQuerySpanNearBuilder add(SearchEngineSpanQuery query);
 
         SearchEngineSpanQuery toQuery();
     }
-    
+
     public static interface SearchEngineQuerySpanOrBuilder {
-        
+
         SearchEngineQuerySpanOrBuilder add(SearchEngineSpanQuery query);
-        
+
         SearchEngineSpanQuery toQuery();
     }
 
@@ -115,7 +113,7 @@ public interface SearchEngineQueryBuilder {
     SearchEngineQuery matchAll();
 
     SearchEngineQuery between(String resourcePropertyName, String low, String high,
-                                     boolean inclusive, boolean constantScore);
+                              boolean inclusive, boolean constantScore);
 
     SearchEngineQuery between(String resourcePropertyName, String low, String high, boolean inclusive);
 
@@ -134,14 +132,16 @@ public interface SearchEngineQueryBuilder {
     SearchEngineQuery fuzzy(String resourcePropertyName, String value, float minimumSimilarity);
 
     SearchEngineQuery fuzzy(String resourcePropertyName, String value, float minimumSimilarity, int prefixLength);
-    
+
     SearchEngineSpanQuery spanEq(String resourcePropertyName, String value);
-    
+
+    SearchEngineSpanQuery spanFirst(SearchEngineSpanQuery searchEngineSpanQuery, int end);
+
     SearchEngineSpanQuery spanFirst(String resourcePropertyName, String value, int end);
-    
+
     SearchEngineQuerySpanNearBuilder spanNear(String resourcePropertyName);
-    
+
     SearchEngineSpanQuery spanNot(SearchEngineSpanQuery include, SearchEngineSpanQuery exclude);
-    
+
     SearchEngineQuerySpanOrBuilder spanOr();
 }
