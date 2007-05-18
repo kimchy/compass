@@ -227,6 +227,15 @@ public class SingleCompassGps extends AbstractCompassGps {
      * override existing settings used to create the Compass instance. Can be
      * used to define different connection string for example.
      */
+    public void setIndexProperties(Properties indexSettings) {
+        this.indexSettings = indexSettings;
+    }
+    
+    /**
+     * Sets the additional cloned compass index settings. The settings can
+     * override existing settings used to create the Compass instance. Can be
+     * used to define different connection string for example.
+     */
     public void setIndexSettings(CompassSettings indexSettings) {
         this.indexSettings = indexSettings.getProperties();
     }
