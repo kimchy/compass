@@ -20,6 +20,10 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -28,11 +32,17 @@ import org.compass.core.test.AbstractTestCase;
 public class IdTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "id/id.cpm.xml" };
+        return new String[]{"id/id.cpm.xml"};
     }
 
     public void testMultiSaveMultiId() {
         CompassSession session = openSession();
+
+        CompassMapping mapping = ((InternalCompassSession) session).getMapping();
+        ClassMapping firstMapping = (ClassMapping) mapping.getRootMappingByClass(MultipleId.class);
+        ResourcePropertyMapping[] mappings = firstMapping.getResourcePropertyMappings();
+        assertEquals(3, mappings.length);
+
         CompassTransaction tr = session.beginTransaction();
         MultipleId o = new MultipleId();
         o.setId(new Long(1));
@@ -48,7 +58,7 @@ public class IdTests extends AbstractTestCase {
         assertEquals(new Long(1), o.getId());
         assertEquals("2", o.getId2());
         assertEquals("test", o.getValue());
-        
+
         tr.commit();
         session.close();
     }
@@ -72,7 +82,7 @@ public class IdTests extends AbstractTestCase {
         assertEquals("2", o.getId2());
         assertEquals("test", o.getValue());
 
-        o = (MultipleId) session.load(MultipleId.class, new Object[] { new Long(1), "2" });
+        o = (MultipleId) session.load(MultipleId.class, new Object[]{new Long(1), "2"});
         assertEquals(new Long(1), o.getId());
         assertEquals("2", o.getId2());
         assertEquals("test", o.getValue());
@@ -103,14 +113,14 @@ public class IdTests extends AbstractTestCase {
         o.setValue("test");
         session.save(o);
 
-        o = (MultipleId) session.load(MultipleId.class, new Object[] { new Long(1), "2" });
+        o = (MultipleId) session.load(MultipleId.class, new Object[]{new Long(1), "2"});
         assertEquals(new Long(1), o.getId());
         assertEquals("2", o.getId2());
 
-        session.delete("multiple-id", new Object[] { new Long(1), "2" });
-        o = (MultipleId) session.get(MultipleId.class, new Object[] { new Long(1), "2" });
+        session.delete("multiple-id", new Object[]{new Long(1), "2"});
+        o = (MultipleId) session.get(MultipleId.class, new Object[]{new Long(1), "2"});
         assertNull(o);
-        
+
         tr.commit();
         session.close();
     }
@@ -174,7 +184,7 @@ public class IdTests extends AbstractTestCase {
         session.delete("single-id", new Long(1));
         o = (SingleId) session.get("single-id", new Long(1));
         assertNull(o);
-        
+
         tr.commit();
         session.close();
     }
