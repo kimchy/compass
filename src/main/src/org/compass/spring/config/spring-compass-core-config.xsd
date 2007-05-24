@@ -1153,6 +1153,7 @@
                                 <xsd:enumeration value="org.compass.core.transaction.manager.SunONE"/>
                                 <xsd:enumeration value="org.compass.core.transaction.manager.Weblogic"/>
                                 <xsd:enumeration value="org.compass.core.transaction.manager.WebSphere"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.Glassfish"/>
                             </xsd:restriction>
                         </xsd:simpleType>
                     </xsd:attribute>
