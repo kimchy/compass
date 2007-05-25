@@ -34,20 +34,33 @@ public class CompassMapping {
 
     /**
      * A simple lookup class, for a given path, will provide simple access to
-     * it's path and value converter. Also supports path escaping ('a.b' will
+     * it's path and value converter. Also supports path escaping ('a.b' or will
      * result in a.b and not alias a and resource property b).
      */
     public final class ResourcePropertyLookup {
 
         private ResourcePropertyMapping resourcePropertyMapping;
 
+        private ResourcePropertyMapping[] resourcePropertyMappings;
+
+        private String lookupName;
+
         private String path;
 
+        private String dotPathAlias;
+
+        private boolean convertOnlyWithDotPath = true;
+
         public ResourcePropertyLookup(String name) {
+            this.lookupName = name;
             // the path is escaped, so don't try to look it up
             if (name.charAt(0) == '\'' && name.charAt(name.length() - 1) == '\'') {
                 path = name.substring(1, name.length() - 1);
             } else {
+                int dotIndex = name.indexOf('.');
+                if (dotIndex != -1) {
+                    dotPathAlias = name.substring(0, dotIndex);
+                }
                 this.resourcePropertyMapping = getResourcePropertyMappingByPath(name);
                 if (resourcePropertyMapping == null) {
                     path = name;
@@ -55,20 +68,95 @@ public class CompassMapping {
                     path = resourcePropertyMapping.getPath().getPath();
                 }
             }
+            resourcePropertyMappings = (ResourcePropertyMapping[]) resourcePropertyMappingByPath.get(path);
+            // did not find the resource mapping using "dot path", try and see if we can find a global one
+            if (resourcePropertyMappings != null && resourcePropertyMapping == null) {
+                resourcePropertyMapping = resourcePropertyMappings[0];
+            }
         }
 
+        /**
+         * Perform specialized convert only when dot path is used. Defaults to <code>true</code>.
+         *
+         * <p>Sometimes, several meta-data names are used with different converteres. For example
+         * map to title both a pure String value and also a numeric value. If using dot path
+         * notation, Compass will narrow down to the specfic converter (for example a.title.title).
+         * When not using dot path notation, Compass now has two options for conversion. If this
+         * flag is set to true (and not using dot path notation), Compass will use a converter based
+         * on the object type. If this flag is set to false, the first mapping is used to convert.
+         */
+        public void setConvertOnlyWithDotPath(boolean convertOnlyWithDotPath) {
+            this.convertOnlyWithDotPath = convertOnlyWithDotPath;
+        }
+
+        /**
+         * Returns the lookup name used in order to find the meta-data/property name.
+         */
+        public String getLookupName() {
+            return lookupName;
+        }
+
+        /**
+         * Returns the alias used if using dot path notation. Returns <code>null</code> if dot path notation
+         * was not used.
+         */
+        public String getDotPathAlias() {
+            return dotPathAlias;
+        }
+
+        /**
+         * Returns the path matching the provided name. The path is the actual name used to store in
+         * the index.
+         */
         public String getPath() {
             return path;
         }
 
+        /**
+         * Returns the property mapping for the provided name. If not using dot path notation, will
+         * return the first one that match the "meta-data" name within all of Compass mappings.
+         */
+        public ResourcePropertyMapping getResourcePropertyMapping() {
+            return resourcePropertyMapping;
+        }
+
+        /**
+         * Returns a list of property mappings for the provided name. When not using "dot path" which
+         * allows to narrows down to a specific property mapping, and a general meta-data name is used
+         * (such as title), will return all the property mappings for it within Compass mappings.
+         */
+        public ResourcePropertyMapping[] getResourcePropertyMappings() {
+            if (resourcePropertyMappings == null && resourcePropertyMapping != null) {
+                resourcePropertyMappings = new ResourcePropertyMapping[]{resourcePropertyMapping};
+            }
+            return resourcePropertyMappings;
+        }
+
+        public boolean hasSpecificConverter() {
+            if (dotPathAlias == null && convertOnlyWithDotPath) {
+                return false;
+            }
+            return resourcePropertyMapping != null && resourcePropertyMapping.getConverter() != null;
+        }
+
         public String getValue(Object value) {
             ResourcePropertyConverter converter;
-            if (resourcePropertyMapping != null && resourcePropertyMapping.getConverter() != null) {
+            if (hasSpecificConverter()) {
                 converter = (ResourcePropertyConverter) resourcePropertyMapping.getConverter();
             } else {
                 converter = (ResourcePropertyConverter) getConverterLookup().lookupConverter(value.getClass());
             }
             return converter.toString(value, resourcePropertyMapping);
+        }
+
+        public Object fromString(String value) {
+            ResourcePropertyConverter converter;
+            if (hasSpecificConverter()) {
+                converter = (ResourcePropertyConverter) resourcePropertyMapping.getConverter();
+            } else {
+                converter = (ResourcePropertyConverter) getConverterLookup().lookupConverter(value.getClass());
+            }
+            return converter.fromString(value, resourcePropertyMapping);
         }
     }
 
@@ -92,6 +180,8 @@ public class CompassMapping {
 
     private HashSet hasMutipleClassMappingByClass = new HashSet();
 
+    private final HashMap resourcePropertyMappingByPath = new HashMap();
+
     private PropertyPath path;
 
     public CompassMapping() {
@@ -108,6 +198,29 @@ public class CompassMapping {
         return copy;
     }
 
+    public void postProcess() {
+        ResourceMapping[] rootMappings = getRootMappings();
+        for (int i = 0; i < rootMappings.length; i++) {
+            // update the resource property mapping
+            ResourcePropertyMapping[] resourcePropertyMappings = rootMappings[i].getResourcePropertyMappings();
+            for (int j = 0; j < resourcePropertyMappings.length; j++) {
+                ResourcePropertyMapping rpm = resourcePropertyMappings[j];
+                if (rpm.getPath() != null) {
+                    String path = rpm.getPath().getPath();
+                    ResourcePropertyMapping[] rpms = (ResourcePropertyMapping[]) resourcePropertyMappingByPath.get(path);
+                    if (rpms == null) {
+                        resourcePropertyMappingByPath.put(path, new ResourcePropertyMapping[]{rpm});
+                    } else {
+                        ResourcePropertyMapping[] tmpRpms = new ResourcePropertyMapping[rpms.length + 1];
+                        System.arraycopy(rpms, 0, tmpRpms, 0, rpms.length);
+                        tmpRpms[tmpRpms.length - 1] = rpm;
+                        resourcePropertyMappingByPath.put(path, tmpRpms);
+                    }
+                }
+            }
+        }
+    }
+
     public void clearMappings() {
         mappings.clear();
         rootMappingsByAlias.clear();
@@ -116,9 +229,14 @@ public class CompassMapping {
         cachedRootMappingsByClass.clear();
         hasMutipleClassMappingByClass.clear();
         mappingsByClass.clear();
+        resourcePropertyMappingByPath.clear();
     }
 
-    public ResourcePropertyLookup getResourcePropertyLookup(String name) {
+    /**
+     * Returns a resoruce lookup for a specific name. Supports dot path notation ([alias].[class property].).
+     * Allows to get the meta-data/resource property mapping through it (or a list of mappings).
+     */
+    public ResourcePropertyLookup getResourcePropertyLookup(String name) throws IllegalArgumentException {
         return new ResourcePropertyLookup(name);
     }
 

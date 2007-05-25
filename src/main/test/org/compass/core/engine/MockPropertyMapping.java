@@ -155,4 +155,8 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
     public boolean isOmitNorms() {
         return false;
     }
+
+    public String getRootAlias() {
+        return null;
+    }
 }

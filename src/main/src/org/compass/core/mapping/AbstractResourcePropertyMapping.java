@@ -23,6 +23,8 @@ import org.compass.core.Property;
  */
 public abstract class AbstractResourcePropertyMapping extends AbstractMapping implements ResourcePropertyMapping {
 
+    private String rootAlias;
+
     private String analyzer;
 
     private float boost = 1.0f;
@@ -54,6 +56,15 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         copy.setAnalyzer(getAnalyzer());
         copy.setReverse(getReverse());
         copy.setOmitNorms(isOmitNorms());
+        copy.setRootAlias(getRootAlias());
+    }
+
+    public String getRootAlias() {
+        return rootAlias;
+    }
+
+    public void setRootAlias(String rootAlias) {
+        this.rootAlias = rootAlias;
     }
 
     public float getBoost() {

@@ -55,6 +55,8 @@ public interface ResourcePropertyMapping extends Mapping {
      */
     String getAnalyzer();
 
+    String getRootAlias();
+
     float getBoost();
 
     boolean isOmitNorms();

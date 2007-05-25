@@ -49,6 +49,8 @@ public class ComponentTests extends AbstractTestCase {
         assertEquals(1, resourcePropertyMappings.length);
         assertEquals("$/first/id", resourcePropertyMappings[0].getPath().getPath());
         assertEquals("id", resourcePropertyMappings[0].getName());
+        CompassMapping.ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup("value");
+        assertEquals(7, lookup.getResourcePropertyMappings().length);
 
         ResourcePropertyMapping resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("id");
         assertNotNull(resourcePropertyMapping);
