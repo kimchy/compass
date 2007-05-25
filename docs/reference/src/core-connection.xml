@@ -315,7 +315,7 @@
     </para>
     
     <para>
-        The lock factory type can have the following values: <literal>simplefs</literal>, <literal>nativefs</literal> (both file system based locks), <literal>nolock</literal>, and <literal>singleinstnace</literal>. A fully qualified class name of <literal>LockFactory</literal> implementation can also be provided.
+        The lock factory type can have the following values: <literal>simplefs</literal>, <literal>nativefs</literal> (both file system based locks), <literal>nolock</literal>, and <literal>singleinstnace</literal>. A fully qualified class name of <literal>LockFactory</literal> implementation or <literal>LockFactoryProvider</literal> can also be provided.
     </para>
     
     <para>
