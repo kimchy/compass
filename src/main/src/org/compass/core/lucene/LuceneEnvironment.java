@@ -61,7 +61,7 @@ public class LuceneEnvironment {
          * ANALYZER_STANDARD, ANALYZER_SIMPLE, ANALYZER_STOP, or a fully
          * qualified class of the analyzer. <p/> It is part of the anaylzer
          * group, and should be constructed using the
-         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String, String, String[], String[])},
+         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
          * name, and the type as one of the values.
          */
@@ -72,7 +72,7 @@ public class LuceneEnvironment {
          * {@link org.compass.core.lucene.engine.analyzer.LuceneAnalyzerFactory}
          * inteface. <p/> It is part of the anaylzer group, and should be
          * constructed using the
-         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String, String, String[], String[])},
+         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
          * name, and the type as one of the values.
          */
@@ -85,7 +85,7 @@ public class LuceneEnvironment {
          * analyzer. Only supported for the default analyzers that compas with
          * Compass. <p/> It is part of the anaylzer group, and should be
          * constructed using the
-         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String, String, String[], String[])},
+         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
          * name, and the stopwords as one of the values.
          */
@@ -106,17 +106,17 @@ public class LuceneEnvironment {
             public static final String WHITESPACE = "whitespace";
 
             /**
-             * 
+             *
              */
             public static final String STANDARD = "standard";
 
             /**
-             * 
+             *
              */
             public static final String SIMPLE = "simple";
 
             /**
-             * 
+             *
              */
             public static final String STOP = "stop";
 
@@ -125,92 +125,92 @@ public class LuceneEnvironment {
         public abstract class Snowball {
 
             /**
-             * 
+             *
              */
             public static final String SNOWBALL = "snowball";
 
             /**
-             * 
+             *
              */
             public static final String NAME_TYPE = "name";
 
             /**
-             * 
+             *
              */
             public static final String NAME_DANISH = "Danish";
 
             /**
-             * 
+             *
              */
             public static final String NAME_DUTCH = "Dutch";
 
             /**
-             * 
+             *
              */
             public static final String NAME_ENGLISH = "English";
 
             /**
-             * 
+             *
              */
             public static final String NAME_FINNISH = "Finnish";
 
             /**
-             * 
+             *
              */
             public static final String NAME_FRENCH = "French";
 
             /**
-             * 
+             *
              */
             public static final String NAME_GERMAN = "German";
 
             /**
-             * 
+             *
              */
             public static final String NAME_GERMAN2 = "German2";
 
             /**
-             * 
+             *
              */
             public static final String NAME_ITALIAN = "Italian";
 
             /**
-             * 
+             *
              */
             public static final String NAME_KP = "Kp";
 
             /**
-             * 
+             *
              */
             public static final String NAME_LOVINS = "Lovins";
 
             /**
-             * 
+             *
              */
             public static final String NAME_NORWEGIAN = "Norwegian";
 
             /**
-             * 
+             *
              */
             public static final String NAME_PORTER = "Porter";
 
             /**
-             * 
+             *
              */
             public static final String NAME_PORTUGUESE = "Portuguese";
 
             /**
-             * 
+             *
              */
             public static final String NAME_RUSSIAN = "Russian";
 
             /**
-             * 
+             *
              */
             public static final String NAME_SPANISH = "Spanish";
 
             /**
-             * 
+             *
              */
             public static final String NAME_SWEDISH = "Swedish";
         }
@@ -218,47 +218,47 @@ public class LuceneEnvironment {
         public abstract class ExtendedTypes {
 
             /**
-             * 
+             *
              */
             public static final String BRAZILIAN = "brazilian";
 
             /**
-             * 
+             *
              */
             public static final String CJK = "cjk";
 
             /**
-             * 
+             *
              */
             public static final String CHINESE = "chinese";
 
             /**
-             * 
+             *
              */
             public static final String CZECH = "czech";
 
             /**
-             * 
+             *
              */
             public static final String GERMAN = "german";
 
             /**
-             * 
+             *
              */
             public static final String GREEK = "greek";
 
             /**
-             * 
+             *
              */
             public static final String FRENCH = "french";
 
             /**
-             * 
+             *
              */
             public static final String DUTCH = "dutch";
 
             /**
-             * 
+             *
              */
             public static final String RUSSIAN = "russian";
         }
@@ -353,7 +353,7 @@ public class LuceneEnvironment {
          * {@link org.compass.core.lucene.engine.highlighter.LuceneHighlighterFactory}
          * inteface. <p/> It is part of the highlighter group, and should be
          * constructed using the
-         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String, String, String[], String[])},
+         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
          * with the {@link #PREFIX} as the prefix, the highlighter
          * group name, and the factory as one of the values.
          */
@@ -719,7 +719,7 @@ public class LuceneEnvironment {
         /**
          * If set to <code>true</code>, no database schema level operations will be performed (drop and create
          * tables). When deleting the data in the index, the content will be deleted, but the table will not
-         * be dropped. Default to <code>false</code>. 
+         * be dropped. Default to <code>false</code>.
          */
         public static final String DISABLE_SCHEMA_OPERATIONS = "compass.engine.store.jdbc.disableSchemaOperations";
 
@@ -885,6 +885,26 @@ public class LuceneEnvironment {
         public static final String PREFIX = "compass.engine.store.wrapper";
 
         public static final String TYPE = "type";
+    }
+
+    public static abstract class LockFactory {
+
+        public static final String PREFIX = "compass.engine.store.lockFactory";
+
+        public static final String TYPE = PREFIX + ".type";
+
+        public static final String PATH = PREFIX + ".path";
+
+        public static abstract class Type {
+
+            public static final String NO_LOCKING = "nolock";
+
+            public static final String SIMPLE_FS = "simplefs";
+
+            public static final String NATIVE_FS = "nativefs";
+
+            public static final String SINGLE_INSTNACE = "singleinstnace";
+        }
     }
 
     /**

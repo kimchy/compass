@@ -403,6 +403,13 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                     settingsHolder.names(), settingsHolder.values());
         }
 
+        child = DomUtils.getChildElementsByTagName(ele, "lockFactory", true);
+        if (child.size() == 1) {
+            Element lockFactoryEle = (Element) child.get(0);
+            settings.setSetting(LuceneEnvironment.LockFactory.TYPE, getElementAttribute(lockFactoryEle, "type"));
+            settings.setSetting(LuceneEnvironment.LockFactory.PATH, getElementAttribute(lockFactoryEle, "path"));
+        }
+
         child = DomUtils.getChildElementsByTagName(ele, "file", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);

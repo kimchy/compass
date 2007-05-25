@@ -298,6 +298,30 @@
     </sect2>
     
   </sect1>
+
+  <sect1 id="core-connection-lockFactory">
+    <title>Lock Factory</title>
+    
+    <para>
+        Lucene allows to use different <literal>LockFactory</literal> implementation controlling how locks are performed. By default, each directory comes with its own default lock, but overriding the lock factory can be done within Compass configuration. Here is an example of how this can be done:
+    
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+      <lockFactory type="nativefs" path="test/#subindex#" />
+  </connection>
+</compass>
+]]></programlisting>
+    </para>
+    
+    <para>
+        The lock factory type can have the following values: <literal>simplefs</literal>, <literal>nativefs</literal> (both file system based locks), <literal>nolock</literal>, and <literal>singleinstnace</literal>. A fully qualified class name of <literal>LockFactory</literal> implementation can also be provided.
+    </para>
+    
+    <para>
+        The path allows to provide path parameter to the file system based locks. This is an optional parameter and defaults to the sub index location. The specialized keyword <literal>#subindex#</literal> can be used to be replaced with the actual sub index.
+    </para>
+  </sect1>
   
   <sect1 id="core-connection-directoryWrapper">
     <title>Lucene Directory Wrapper</title>

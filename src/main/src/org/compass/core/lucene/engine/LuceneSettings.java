@@ -37,6 +37,8 @@ public class LuceneSettings {
 
     private static final Log log = LogFactory.getLog(LuceneSettings.class);
 
+    private CompassSettings settings;
+
     private String connection;
 
     private String subContext;
@@ -76,6 +78,7 @@ public class LuceneSettings {
     private boolean clearCacheOnCommit;
 
     public void configure(CompassSettings settings) throws SearchEngineException {
+        this.settings = settings;
         connection = settings.getSetting(CompassEnvironment.CONNECTION);
         if (connection == null) {
             throw new SearchEngineException("Lucene connection must be set in the settings. Please set ["
@@ -189,6 +192,10 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Wait for cahce invalidation on index operatrion is set to [" + waitForCacheInvalidationOnIndexOperation + "]");
         }
+    }
+
+    public CompassSettings getSettings() {
+        return this.settings;
     }
 
     public String getAllProperty() {

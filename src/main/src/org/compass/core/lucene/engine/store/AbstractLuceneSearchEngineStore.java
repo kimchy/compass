@@ -30,6 +30,11 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.LuceneUtils;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.LockFactory;
+import org.apache.lucene.store.NativeFSLockFactory;
+import org.apache.lucene.store.NoLockFactory;
+import org.apache.lucene.store.SimpleFSLockFactory;
+import org.apache.lucene.store.SingleInstanceLockFactory;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
@@ -194,6 +199,65 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     private Directory openDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
         Directory dir = doOpenDirectoryBySubIndex(subIndex, create);
+        String lockFactoryType = luceneSettings.getSettings().getSetting(LuceneEnvironment.LockFactory.TYPE);
+        if (lockFactoryType != null) {
+            String path = luceneSettings.getSettings().getSetting(LuceneEnvironment.LockFactory.PATH);
+            if (path != null) {
+                path = StringUtils.replace(path, "#subindex#", subIndex);
+            }
+            LockFactory lockFactory;
+            if (LuceneEnvironment.LockFactory.Type.NATIVE_FS.equalsIgnoreCase(lockFactoryType)) {
+                String lockDir = path;
+                if (lockDir == null) {
+                    lockDir = connectionString + "/" + subIndex;
+                }
+                try {
+                    lockFactory = new NativeFSLockFactory(lockDir);
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to create native fs lock factory with lock dir [" + lockDir + "]", e);
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Using native fs lock for sub index [" + subIndex + "] and lock directory [" + lockDir + "]");
+                }
+            } else if (LuceneEnvironment.LockFactory.Type.NATIVE_FS.equalsIgnoreCase(lockFactoryType)) {
+                String lockDir = path;
+                if (lockDir == null) {
+                    lockDir = connectionString + "/" + subIndex;
+                }
+                try {
+                    lockFactory = new SimpleFSLockFactory(lockDir);
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to create simple fs lock factory with lock dir [" + lockDir + "]", e);
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("Using simple fs lock for sub index [" + subIndex + "] and lock directory [" + lockDir + "]");
+                }
+
+            } else if (LuceneEnvironment.LockFactory.Type.SINGLE_INSTNACE.equalsIgnoreCase(lockFactoryType)) {
+                lockFactory = new SingleInstanceLockFactory();
+            } else if (LuceneEnvironment.LockFactory.Type.NO_LOCKING.equalsIgnoreCase(lockFactoryType)) {
+                lockFactory = new NoLockFactory();
+            } else {
+                Object temp;
+                try {
+                    temp = ClassUtils.forName(lockFactoryType).newInstance();
+                } catch (Exception e) {
+                    throw new SearchEngineException("Failed to create lock type [" + lockFactoryType + "]", e);
+                }
+                if (temp instanceof LockFactory) {
+                    lockFactory = (LockFactory) temp;
+                } else if (temp instanceof LockFactoryProvider) {
+                    lockFactory = ((LockFactoryProvider) temp).createLockFactory(path, subIndex, luceneSettings.getSettings());
+                } else {
+                    throw new SearchEngineException("No specific type of lock factory");
+                }
+
+                if (lockFactory instanceof CompassConfigurable) {
+                    ((CompassConfigurable) lockFactory).configure(luceneSettings.getSettings());
+                }
+            }
+            dir.setLockFactory(lockFactory);
+        }
         if (directoryWrapperProviders != null) {
             for (int i = 0; i < directoryWrapperProviders.length; i++) {
                 dir = directoryWrapperProviders[i].wrap(subIndex, dir);
@@ -348,7 +412,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         } catch (Exception e) {
             doAfterFailedCopyFrom(holder);
             if (e instanceof SearchEngineException) {
-                throw(SearchEngineException) e;
+                throw (SearchEngineException) e;
             }
             throw new SearchEngineException("Failed to copy from " + searchEngineStore, e);
         }

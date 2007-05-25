@@ -35,6 +35,16 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testLockFactory() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/lockfactory.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals("nativefs", settings.getSetting(LuceneEnvironment.LockFactory.TYPE));
+        assertEquals("test/#subindex#", settings.getSetting(LuceneEnvironment.LockFactory.PATH));
+    }
+
     public void testRamTransLog() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/ramtranslog.cfg.xml");

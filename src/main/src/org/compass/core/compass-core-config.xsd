@@ -1239,6 +1239,17 @@
                 <xsd:element name="ram" type="ramConnType"/>
                 <xsd:element name="jdbc" type="jdbcConnType"/>
             </xsd:choice>
+            <xsd:element name="lockFactory" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Allows to set lock factory to be used
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="type" type="xsd:string" use="required" />
+                    <xsd:attribute name="path" type="xsd:string" use="optional" />
+                </xsd:complexType>
+            </xsd:element>
             <xsd:element name="directoryWrapperProvider" minOccurs="0" maxOccurs="unbounded">
                 <xsd:annotation>
                     <xsd:documentation>
