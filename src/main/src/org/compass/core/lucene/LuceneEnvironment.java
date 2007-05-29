@@ -903,7 +903,7 @@ public class LuceneEnvironment {
 
             public static final String NATIVE_FS = "nativefs";
 
-            public static final String SINGLE_INSTNACE = "singleinstnace";
+            public static final String SINGLE_INSTANCE = "singleinstance";
         }
     }
 
