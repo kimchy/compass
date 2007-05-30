@@ -233,7 +233,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                     log.debug("Using simple fs lock for sub index [" + subIndex + "] and lock directory [" + lockDir + "]");
                 }
 
-            } else if (LuceneEnvironment.LockFactory.Type.SINGLE_INSTNACE.equalsIgnoreCase(lockFactoryType)) {
+            } else if (LuceneEnvironment.LockFactory.Type.SINGLE_INSTANCE.equalsIgnoreCase(lockFactoryType)) {
                 lockFactory = new SingleInstanceLockFactory();
             } else if (LuceneEnvironment.LockFactory.Type.NO_LOCKING.equalsIgnoreCase(lockFactoryType)) {
                 lockFactory = new NoLockFactory();
