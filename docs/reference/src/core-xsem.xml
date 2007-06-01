@@ -116,7 +116,7 @@ session.save(xmlObject);
        </connection>
 
        <converters>
-           <converter name="compass.converter.xmlContentMapping"
+           <converter name="xmlContentMapping"
               type="org.compass.core.converter.mapping.xsem.XmlContentMappingConverter">
               <setting name="xmlContentConverter.type"
                        value="[fully qualified class name of XmlContentConverter]" />
