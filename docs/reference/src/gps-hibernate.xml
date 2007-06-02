@@ -79,5 +79,31 @@ gps.start();
       </para>
 
     </sect1>
+    
+    <sect1 id="hibernate-transaction">
+        <title>HibernateSyncTransaction</title>
+
+        <para>
+            Compass integrates with Hibernate transaction synchronization services. This  means that whichever Hibernate transaction management is used (Jta, JDBC, ...) you are using, the <literal>HibernateSyncTransaction</literal> will synchronize with the transaction upon transaction completion. The Hibernate transaction support uses Hibernate context session in order to obtain the current session and the current transaction. The application using this feature must also use Hibernate context session (which is the preferred Hibernate usage model starting from Hibernate 3.2).
+        </para>
+
+        <para>
+            If you are using the <literal>HibernateSyncTransaction</literal>, a Hibernate based transaction must already be started in order for HibernateSyncTransaction to join. If no transaction is started, Compass can start one (and will commit it eventually). Note, if you are using other transaction management abstraction (such as Spring), it is preferable to use it instead of this transaction factory.
+        </para>
+
+        <para>
+            In order to configure Compass to work with the <literal>HiberanteSyncTransaction</literal>, you must set the <literal>compass.transaction.factory</literal> to <literal>org.compass.gps.device.hiberante.transaction.HibernateSyncTransactionFactory</literal>. Additional initialization should be performed by calling <literal>HibernateSyncTransactionFactory.setSessionFactory</literal> with Hibernate <literal>SessionFactory</literal> instance before the <literal>Compass</literal> is created.
+        </para>
+
+    </sect1>
+    
+    <sect1 id="hibernate-transaction-interceptor">
+        <title>Hibernate Transaction Interceptor</title>
+        
+        <para>
+            When working with Hibernate transactions (and not utilizing Hibernate context session) and Compass local transactions, an Compass implementation of Hibernate <literal>Interceptor</literal> can be used to synchronize with a Hibernate session. <literal>CompassTransactionInterceptor</literal> can be used to inject an instance of itself into Hibernate <literal>SessionFactory</literal>. Please refer to its javadoc for more information.
+        </para>
+    </sect1>
+    
 
 </chapter>

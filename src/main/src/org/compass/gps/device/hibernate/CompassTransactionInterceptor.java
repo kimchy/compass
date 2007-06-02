@@ -34,9 +34,16 @@ import org.hibernate.Transaction;
 import org.hibernate.type.Type;
 
 /**
- * A Compass Hibernate interceptor to manage Compass transactions based on Hibernate
+ * <p>A Compass Hibernate interceptor to manage Compass transactions based on Hibernate
  * Interceptor transaction lifecycle callbacks. Useful when working with Compass Local
  * transactions and Hibernate JDBC transaction manager.
+ *
+ * <p>In order to use this interceptor call {@link #injectInterceptor(org.hibernate.SessionFactory, CompassTransactionInterceptor)}
+ * using the <code>SessionFactory</code> and an instance of this class.
+ *
+ * <p>For another option of integrating Compass transactions and Hibernate, please see
+ * {@link org.compass.core.transaction.JTASyncTransactionFactory}, {@link org.compass.core.transaction.XATransactionFactory}
+ * or {@link org.compass.gps.device.hibernate.HibernateSyncTransactionFactory}.
  *
  * @author kimchy
  */

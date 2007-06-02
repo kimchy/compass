@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.compass.gps.device.hibernate.transaction">
+
+    <class name="A" table="A_TRANSACTION">
+        <id name="id" access="field">
+            <generator class="native"/>
+        </id>
+        <property name="value1" access="field"/>
+        <property name="value2" access="field"/>
+    </class>
+
+</hibernate-mapping>

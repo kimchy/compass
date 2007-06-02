@@ -1211,6 +1211,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:enumeration>
+                    <xsd:enumeration value="org.compass.gps.device.hibernate.HibernateSyncTransactionFactory">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Uses Hibernate transaction abstraction to synchronize with its underlying transaciton.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
                 </xsd:restriction>
             </xsd:simpleType>
         </xsd:attribute>

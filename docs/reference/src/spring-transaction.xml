@@ -36,7 +36,7 @@
         </para>
 
         <para>
-            If you are using the <literal>SpringSyncTransaction</literal>, a Spring based transaction must already be started in order for SpringSyncTransaction to join. If no transaciton is started, Compass can start one (and will commit it eventually) if the <literal>PlatformTransactionManager</literal> is provided to the <literal>LocalCompassBean</literal>. The transaction must support the transaction synchronization feature (which by default all of them do).
+            If you are using the <literal>SpringSyncTransaction</literal>, a Spring based transaction must already be started in order for SpringSyncTransaction to join. If no transcation is started, Compass can start one (and will commit it eventually) if the <literal>PlatformTransactionManager</literal> is provided to the <literal>LocalCompassBean</literal>. The transaction must support the transaction synchronization feature (which by default all of them do).
         </para>
 
         <para>
