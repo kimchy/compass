@@ -17,13 +17,15 @@
 package org.compass.core.lucene.engine.queryparser;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
+import org.compass.core.lucene.search.ConstantScorePrefixQuery;
 
 /**
- * Extends Lucene {@link org.apache.lucene.queryParser.QueryParser} and overrides {@link #getRangeQuery(String, String, String, boolean)}
+ * Extends Lucene {@link org.apache.lucene.queryParser.QueryParser} and overrides {@link #getRangeQuery(String,String,String,boolean)}
  * since lucene performs data parsing which is a performance killer. Anyhow, handling dates in Compass
  * is different and simpler than Lucene.
  *
@@ -48,5 +50,14 @@ public class CompassQueryParser extends QueryParser {
                 "*".equals(part1) ? null : part1,
                 "*".equals(part2) ? null : part2,
                 inclusive, inclusive);
+    }
+
+    protected Query getPrefixQuery(String field, String termStr) throws ParseException {
+        if (getLowercaseExpandedTerms()) {
+            termStr = termStr.toLowerCase();
+        }
+
+        Term t = new Term(field, termStr);
+        return new ConstantScorePrefixQuery(t);
     }
 }

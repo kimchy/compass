@@ -20,7 +20,6 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.RangeQuery;
 import org.apache.lucene.search.TermQuery;
@@ -35,6 +34,7 @@ import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery.LuceneSearchEngineSpanQuery;
+import org.compass.core.lucene.search.ConstantScorePrefixQuery;
 
 /**
  * @author kimchy
@@ -104,7 +104,7 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
     }
 
     public SearchEngineQuery prefix(String resourcePropertyName, String prefix) {
-        Query query = new PrefixQuery(new Term(resourcePropertyName, prefix));
+        Query query = new ConstantScorePrefixQuery(new Term(resourcePropertyName, prefix));
         return new LuceneSearchEngineQuery(searchEngine, query);
     }
 
