@@ -69,6 +69,8 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private ResourceAnalyzerController analyzerController;
 
+    private BoostPropertyMapping boostPropertyMapping;
+
     /**
      * Gets the ids of the resource.
      */
@@ -172,6 +174,9 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     public int addMapping(Mapping mapping) {
         if (mapping instanceof ResourceAnalyzerController) {
             analyzerController = (ResourceAnalyzerController) mapping;
+        }
+        if (mapping instanceof BoostPropertyMapping) {
+            boostPropertyMapping = (BoostPropertyMapping) mapping;
         }
         return super.addMapping(mapping);
     }
@@ -309,6 +314,14 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     public void setAnalyzerController(ResourceAnalyzerController analyzerController) {
         this.analyzerController = analyzerController;
+    }
+
+    public BoostPropertyMapping getBoostPropertyMapping() {
+        return boostPropertyMapping;
+    }
+
+    public void setBoostPropertyMapping(BoostPropertyMapping boostPropertyMapping) {
+        this.boostPropertyMapping = boostPropertyMapping;
     }
 
     public String[] getResourcePropertyNames() {

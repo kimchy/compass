@@ -14,6 +14,7 @@
     sub-index-hash?,
     xml-id*,
     (xml-analyzer?),
+    (xml-boost?),
     (xml-property)*,
     (xml-content?)
 )>
@@ -26,6 +27,7 @@
     <!ATTLIST xml-object all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
     <!ATTLIST xml-object all-analyzer CDATA #IMPLIED>
     <!ATTLIST xml-object all-omit-norms (true|false) "false">
+    <!ATTLIST xml-object boost CDATA #IMPLIED>
 
 <!ELEMENT xml-id EMPTY
 >
@@ -66,9 +68,18 @@
     <!ATTLIST xml-analyzer null-analyzer CDATA #IMPLIED>
     <!ATTLIST xml-analyzer converter CDATA #IMPLIED>
 
+<!ELEMENT xml-boost (
+    #PCDATA
+)>
+    <!ATTLIST xml-boost name CDATA #REQUIRED>
+    <!ATTLIST xml-boost xpath CDATA #REQUIRED>
+    <!ATTLIST xml-boost default CDATA #IMPLIED>
+    <!ATTLIST xml-analyzer converter CDATA #IMPLIED>
+
 <!ELEMENT resource-contract (
     resource-id*,
     (resource-analyzer?),
+    (resource-boost?),
     (resource-property)*
 )>
     <!ATTLIST resource-contract alias CDATA #REQUIRED>
@@ -79,6 +90,7 @@
     sub-index-hash?,
     resource-id*,
     (resource-analyzer?),
+    (resource-boost?),
     (resource-property)*
 )>
     <!ATTLIST resource alias CDATA #REQUIRED>
@@ -90,6 +102,7 @@
     <!ATTLIST resource all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
     <!ATTLIST resource all-analyzer CDATA #IMPLIED>
     <!ATTLIST resource all-omit-norms (true|false) "false">
+    <!ATTLIST resource boost CDATA #IMPLIED>
 
 <!ELEMENT resource-id EMPTY
 >
@@ -121,11 +134,18 @@
     <!ATTLIST resource-analyzer null-analyzer CDATA #IMPLIED>
     <!ATTLIST resource-analyzer converter CDATA #IMPLIED>
 
+<!ELEMENT resource-boost (
+    #PCDATA
+)>
+    <!ATTLIST resource-boost name CDATA #REQUIRED>
+    <!ATTLIST resource-boost default CDATA #IMPLIED>
+    <!ATTLIST resource-boost converter CDATA #IMPLIED>
 
 <!ELEMENT contract ( 
     id*,
     parent?,
     (analyzer?),
+    (boost?),
     (property|dynamic-meta-data|component|reference|constant)*
 )>
     <!ATTLIST contract alias CDATA #REQUIRED>
@@ -143,6 +163,7 @@
     id*,
     parent?,
     (analyzer?),
+    (boost?),
     (property|dynamic-meta-data|component|reference|constant)*
 )>
     <!--
@@ -274,6 +295,14 @@
     <!ATTLIST property exclude-from-all (true|false) "false">
     <!ATTLIST property converter CDATA #IMPLIED>
     <!ATTLIST property boost CDATA #IMPLIED>
+
+<!ELEMENT boost (
+    #PCDATA
+)>
+    <!ATTLIST boost name CDATA #REQUIRED>
+    <!ATTLIST boost default CDATA #IMPLIED>
+    <!ATTLIST boost accessor (field|property) "property">
+    <!ATTLIST analyzer converter CDATA #IMPLIED>
 
 <!ELEMENT analyzer (
     #PCDATA

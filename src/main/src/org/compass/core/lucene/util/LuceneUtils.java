@@ -34,14 +34,17 @@ import org.apache.lucene.store.Lock;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.RepeatableReader;
+import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSettings;
+import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalResource;
 import org.compass.core.util.reader.MultiIOReader;
 import org.compass.core.util.reader.StringReader;
 import org.compass.core.util.reader.StringWithSeparatorReader;
@@ -62,6 +65,20 @@ public abstract class LuceneUtils {
             }
         }
         return result;
+    }
+
+    public static void applyBoostIfNeeded(InternalResource resource, SearchEngine searchEngine) {
+        BoostPropertyMapping boostPropertyMapping = resource.resourceKey().getResourceMapping().getBoostPropertyMapping();
+        if (boostPropertyMapping == null) {
+            return;
+        }
+        float boostValue = boostPropertyMapping.getDefaultBoost();
+        String boostPropertyName = boostPropertyMapping.getBoostResourcePropertyName();
+        String sBoostValue = resource.get(boostPropertyName);
+        if (!searchEngine.isNullValue(sBoostValue)) {
+            boostValue = Float.parseFloat(sBoostValue);
+        }
+        resource.setBoost(boostValue);
     }
 
     public static void createResource(IndexWriter indexWriter, Resource resource, Analyzer analyzer) throws SearchEngineException {

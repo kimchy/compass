@@ -204,6 +204,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
         // open the original index writer, so we lock it for changes
         String subIndex = ResourceHelper.computeSubIndex(resource.resourceKey());
         WriterManager.IndexWriterWrapper wrapper = writerManager.openWriterBySubIndex(subIndex);
+        LuceneUtils.applyBoostIfNeeded(resource, searchEngine);
         Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
         LuceneUtils.createResource(wrapper.indexWriter, resource, analyzer);
     }

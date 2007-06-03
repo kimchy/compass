@@ -39,6 +39,7 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.AbstractRefAliasMapping;
+import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
@@ -49,10 +50,12 @@ import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
+import org.compass.core.mapping.rsem.RawBoostPropertyMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
+import org.compass.core.mapping.xsem.XmlBoostPropertyMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.mapping.xsem.XmlIdMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
@@ -225,6 +228,17 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
             resourceMapping.addMapping(analyzerController);
         }
+
+        ConfigurationHelper boostConf = resourceConf.getChild("xml-boost", false);
+        if (boostConf != null) {
+            XmlBoostPropertyMapping boostPropertyMapping = new XmlBoostPropertyMapping();
+            bindXmlProperty(boostConf, boostPropertyMapping);
+            String defaultBoost = boostConf.getAttribute("default", null);
+            if (defaultBoost != null) {
+                boostPropertyMapping.setDefaultBoost(Float.parseFloat(defaultBoost));
+            }
+            resourceMapping.addMapping(boostPropertyMapping);
+        }
     }
 
     private void bindXmlContent(ConfigurationHelper xmlContentConf, XmlContentMapping xmlContentMapping) {
@@ -351,6 +365,17 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             bindResourceProperty(analyzerConf, analyzerController);
             analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
             resourceMapping.addMapping(analyzerController);
+        }
+
+        ConfigurationHelper boostConf = resourceConf.getChild("resource-boost", false);
+        if (boostConf != null) {
+            RawBoostPropertyMapping boostPropertyMapping = new RawBoostPropertyMapping();
+            bindResourceProperty(boostConf, boostPropertyMapping);
+            String defaultBoost = boostConf.getAttribute("default", null);
+            if (defaultBoost != null) {
+                boostPropertyMapping.setDefaultBoost(Float.parseFloat(defaultBoost));
+            }
+            resourceMapping.addMapping(boostPropertyMapping);
         }
     }
 
@@ -514,6 +539,17 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             bindClassProperty(analyzerConf, classMapping, analyzerController);
             analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
             classMapping.addMapping(analyzerController);
+        }
+
+        ConfigurationHelper boostConf = classConf.getChild("boost", false);
+        if (boostConf != null) {
+            ClassBoostPropertyMapping boostPropertyMapping = new ClassBoostPropertyMapping();
+            bindClassProperty(boostConf, classMapping, boostPropertyMapping);
+            String defaultBoost = boostConf.getAttribute("default", null);
+            if (defaultBoost != null) {
+                boostPropertyMapping.setDefaultBoost(Float.parseFloat(defaultBoost));
+            }
+            classMapping.addMapping(boostPropertyMapping);
         }
 
         ConfigurationHelper[] dynamicConfs = classConf.getChildren("dynamic-meta-data");

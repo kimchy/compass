@@ -22,6 +22,7 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AbstractMultipleMapping;
 import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceAnalyzerController;
@@ -179,6 +180,10 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
     }
 
     public ResourceAnalyzerController getAnalyzerController() {
+        return null;
+    }
+
+    public BoostPropertyMapping getBoostPropertyMapping() {
         return null;
     }
 

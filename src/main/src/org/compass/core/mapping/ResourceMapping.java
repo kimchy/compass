@@ -58,6 +58,12 @@ public interface ResourceMapping extends AliasMapping {
     ResourceAnalyzerController getAnalyzerController();
 
     /**
+     * Returns an optional boost property mapping associated with the {@link org.compass.core.Resource}
+     * in order to dynmaically set the resource boost value based on it. Can be <code>null</code>.
+     */
+    BoostPropertyMapping getBoostPropertyMapping();
+
+    /**
      * Returns the boost of the given resource.
      */
     float getBoost();

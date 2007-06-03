@@ -1,0 +1,23 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.boost.property">
+
+    <class name="A" alias="a1">
+
+        <id name="id" accessor="field" />
+
+        <boost name="value1" accessor="field" />
+
+        <property name="value1" accessor="field">
+            <meta-data>value1</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>

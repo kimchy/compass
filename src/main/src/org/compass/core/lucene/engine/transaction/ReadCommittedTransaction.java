@@ -314,6 +314,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         String subIndex = ResourceHelper.computeSubIndex(resource.resourceKey());
         TransIndexWrapper wrapper = transIndexManager.openTransIndexBySubIndex(subIndex);
         try {
+            LuceneUtils.applyBoostIfNeeded(resource, searchEngine);
             Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
             wrapper.transIndex.addResource(resource, analyzer);
         } catch (IOException e) {

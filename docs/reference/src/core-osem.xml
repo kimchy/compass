@@ -505,6 +505,36 @@ public class A {
 ]]></programlisting>
       </para>
     </sect2>
+
+        <sect2 id="core-osem-boost">
+          <title>Searchable Boost</title>
+
+            <para>
+              The searchable boost mapping dynamically controls the boost value associated with the Resource stored. If the mapping is defined, it will override the class mapping boost attribute setting. The value of the property should be convertable to float value.
+            </para>
+
+            <para>
+              Here is an example of a Searchable Analyzer mapping based on the class language:
+    <programlisting><![CDATA[@Searchable
+    public class A {
+      @SearchableId
+      private Long id;
+      @SearchableBoost(defaultValue = 2.0f)
+      private Float value;  
+      // ...
+    }]]></programlisting>
+          </para>
+
+          <para>
+            And here is the same mapping definition using xml:
+    <programlisting><![CDATA[<class name="A" alias="a">
+      <id name="id" />
+      <boost name="value" default="2.0" />
+      <!-- ... -->
+    </class>
+    ]]></programlisting>
+          </para>
+        </sect2>
   </sect1>
   
   <sect1 id="core-osem-speicifcs">
@@ -801,6 +831,7 @@ public class Daughter extends Child {
     (id)*,
     parent?,
     (analyzer?),
+    (boost?),
     (property|dynamic-meta-data|component|reference|constant)*
 </class>]]></programlisting>
 
@@ -900,6 +931,7 @@ public class Daughter extends Child {
 >
     (id)*,
     (analyzer?),
+    (boost?),
     (property|dynamic-meta-data|component|reference|constant)*
 </contract>]]></programlisting>
 
@@ -1142,6 +1174,57 @@ public class Daughter extends Child {
       </para>
 
     </sect2>
+
+        <sect2 id="boost">
+          <title>boost</title>
+
+          <para>
+            Declaring boost property (a.k.a JavaBean property) of a class using the <literal>boost</literal> element.
+
+<programlisting><![CDATA[<boost
+      name="property name"
+      default="the boost default value when no property value is present"
+      accessor="property|field"
+      converter="converter lookup name"
+>
+</boost>]]></programlisting>
+
+            <table>
+              <title>OSEM Xml Mapping - analyzer</title>
+              <tgroup cols="2">
+                <colspec colname="c1" colwidth="3*" />
+                <colspec colname="c2" colwidth="5*" />
+                <thead>
+                  <row><entry>Attribute</entry><entry>Description</entry></row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry>name</entry>
+                    <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+                  </row>
+                  <row>
+                    <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                    <entry>The strategy to access the class property value. <literal>property</literal> means accessing using the Java Bean accessor methods, while <literal>field</literal> directly accesses the class fields.</entry>
+                  </row>
+                  <row>
+                    <entry>default (optional, defaults <literal>1.0f</literal>)</entry>
+                    <entry>The default value if the property has a null value.</entry>
+                  </row>
+                  <row>
+                    <entry>converter (optional)</entry>
+                    <entry>The global converter lookup name registered with the configuration.</entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </table>
+
+            <para>
+                The boost class property mapping, controls the boost associated with the Resource created based on the mapped property. The value of the property should be allowed to be converted to float.
+            </para>
+
+          </para>
+
+        </sect2>
 
     <sect2 id="meta-data">
       <title>meta-data</title>

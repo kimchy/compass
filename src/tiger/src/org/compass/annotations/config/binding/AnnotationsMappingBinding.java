@@ -47,6 +47,7 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.osem.AbstractRefAliasMapping;
+import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
@@ -430,6 +431,12 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindObjectMapping(analyzerMapping, accessor, name, searchableAnalyzerProperty.accessor(), searchableClass);
             bindAnalyzer(searchableAnalyzerProperty, analyzerMapping, clazz, type);
             classMapping.addMapping(analyzerMapping);
+        } else if (annotation instanceof SearchableBoostProperty) {
+            ClassBoostPropertyMapping boostPropertyMapping = new ClassBoostPropertyMapping();
+            SearchableBoostProperty searchableBoostProperty = (SearchableBoostProperty) annotation;
+            bindObjectMapping(boostPropertyMapping, accessor, name, searchableBoostProperty.accessor(), searchableClass);
+            bindBoost(searchableBoostProperty, boostPropertyMapping, clazz, type);
+            classMapping.addMapping(boostPropertyMapping);
         } else if (annotation instanceof SearchableParent) {
             ParentMapping parentMapping = new ParentMapping();
             SearchableParent searchableParent = (SearchableParent) annotation;
@@ -447,6 +454,12 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
     private void bindParent(SearchableParent searchableParent, ParentMapping parentMapping, Class<?> clazz, Type type) {
         bindConverter(parentMapping, searchableParent.converter(), clazz, type);
+    }
+
+    private void bindBoost(SearchableBoostProperty searchableBoostProperty, ClassBoostPropertyMapping boostPropertyMapping,
+                           Class<?> clazz, Type type) {
+        bindConverter(boostPropertyMapping, searchableBoostProperty.converter(), clazz, type);
+        boostPropertyMapping.setDefaultBoost(searchableBoostProperty.defaultValue());
     }
 
     private void bindAnalyzer(SearchableAnalyzerProperty searchableAnalyzerProperty, ClassPropertyAnalyzerController analyzerMapping,
@@ -489,7 +502,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         componentMapping.setMaxDepth(searchableComponent.maxDepth());
 
         componentMapping.setOverrideByName(searchableComponent.override());
-        
+
         bindCascades(searchableComponent.cascade(), componentMapping);
     }
 
