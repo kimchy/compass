@@ -146,6 +146,15 @@ public class CompassTemplate implements CompassOperations {
                 }
             }
             throw e;
+        } catch (Error err) {
+            if (tx != null) {
+                try {
+                    tx.rollback();
+                } catch (Exception e1) {
+                    log.error("Failed to rollback transaction, ignoring", e1);
+                }
+            }
+            throw err;
         } finally {
             session.close();
         }
