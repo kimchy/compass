@@ -28,13 +28,13 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * An easy to use abstact class for Basic converters. Handles converters that usually deals with String
  * as a result of the conversion.
- * <p/>
- * This base class will create a simple {@link Property} when marshalling,
- * calling {@link #toString(Object, org.compass.core.mapping.ResourcePropertyMapping)} as the {@link Property}
- * value. And will use the {@link #fromString(String, org.compass.core.mapping.ResourcePropertyMapping)} when
+ *
+ * <p>This base class will create a simple {@link Property} when marshalling,
+ * calling {@link #toString(Object,org.compass.core.mapping.ResourcePropertyMapping)} as the {@link Property}
+ * value. And will use the {@link #fromString(String,org.compass.core.mapping.ResourcePropertyMapping)} when
  * unmarhslling.
- * <p/>
- * If special <code>null</code> values handling is required, the
+ *
+ * <p>If special <code>null</code> values handling is required, the
  * {@link #handleNulls(org.compass.core.marshall.MarshallingContext)}, and
  * {@link #getNullValue(org.compass.core.marshall.MarshallingContext)} can be overriden. Note, that it is best
  * to call base implementations and extend the base funtionallity, since the base class takes special care
@@ -81,18 +81,18 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
             return null;
         }
 
-        return fromString(p.getStringValue(), resourcePropertyMapping);
+        return fromString(p.getStringValue(), resourcePropertyMapping, context);
     }
 
     /**
-     * Should the converter handle nulls? Handling nulls means should the
+     * <p>Should the converter handle nulls? Handling nulls means should the
      * converter process nulls or not. Usually the converter will not
      * persist null values, but sometimes it might be needed
      * ({@link org.compass.core.marshall.MarshallingContext#handleNulls()}).
-     * <p/>
-     * Extracted to a method so special converters can control null handling.
      *
-     * @param context
+     * <p>Extracted to a method so special converters can control null handling.
+     *
+     * @param context The marshalling context
      * @return <code>true</code> if the converter should handle null values
      */
     protected boolean handleNulls(MarshallingContext context) {
@@ -103,7 +103,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
      * If the converter handle nulls, the value that will be stored in the
      * search engine for <code>null</code> values (during the marshall process).
      *
-     * @param context
+     * @param context The marshalling context
      * @return Null value that will be inserted for <code>null</code>s.
      */
     protected String getNullValue(MarshallingContext context) {
@@ -114,7 +114,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
      * Is the value read from the search engine is a <code>null</code> value
      * during the unmarshall process.
      *
-     * @param context
+     * @param context The marshalling context
      * @param value   The value to check for <code>null</code> value.
      * @return <code>true</code> if the value represents a null value.
      */
@@ -123,9 +123,9 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
     }
 
     /**
-     * A simple extension point that allows to set the boost value for the created {@link Property}.
-     * <p/>
-     * The default implemenation uses the statically defined boost value in the mapping definition
+     * <p>A simple extension point that allows to set the boost value for the created {@link Property}.
+     *
+     * <p>The default implemenation uses the statically defined boost value in the mapping definition
      * ({@link org.compass.core.mapping.ResourcePropertyMapping#getBoost()}) to set the boost level
      * using {@link Property#setBoost(float)}
      *
@@ -140,9 +140,26 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
     }
 
     /**
+     * Override option of toString, simply calls {@link #toString(Object,org.compass.core.mapping.ResourcePropertyMapping)}
+     * (without the marshalling context).
+     */
+    protected String toString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return toString(o, resourcePropertyMapping);
+    }
+
+    /**
      * Default implementation of toString, simply calls the Object toString.
      */
     public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
         return o.toString();
     }
+
+    /**
+     * An override option default to calling {@link #fromString(String,org.compass.core.mapping.ResourcePropertyMapping)}.
+     * Allows to use the marshalling context.
+     */
+    protected Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+        return fromString(str, resourcePropertyMapping);
+    }
+
 }
