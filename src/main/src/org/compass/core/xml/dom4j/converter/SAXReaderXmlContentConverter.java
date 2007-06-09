@@ -2,11 +2,14 @@ package org.compass.core.xml.dom4j.converter;
 
 import java.io.Reader;
 
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.SupportsXmlContentWrapper;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
-import org.compass.core.config.CompassEnvironment;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
@@ -17,9 +20,18 @@ import org.dom4j.io.SAXReader;
  *
  * @author kimchy
  */
-public class SAXReaderXmlContentConverter extends AbstractXmlWriterXmlContentConverter implements SupportsXmlContentWrapper {
+public class SAXReaderXmlContentConverter extends AbstractXmlWriterXmlContentConverter
+        implements SupportsXmlContentWrapper, CompassConfigurable {
 
-    private SAXReader saxReader = new SAXReader();
+    private SAXReader saxReader;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        saxReader = doCreateSAXReader(settings);
+    }
+
+    protected SAXReader doCreateSAXReader(CompassSettings settings) {
+        return new SAXReader();
+    }
 
     /**
      * This converter does not support a singleton wrapper strategy.
@@ -34,7 +46,8 @@ public class SAXReaderXmlContentConverter extends AbstractXmlWriterXmlContentCon
      * @param alias The alias that will be associated with the {@link org.compass.core.xml.AliasedXmlObject}
      * @param xml   The xml string to convert into an {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject}
      * @return A {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject} parsed from the given xml string and associated with the given alias
-     * @throws org.compass.core.converter.ConversionException In case the xml parsing failed
+     * @throws org.compass.core.converter.ConversionException
+     *          In case the xml parsing failed
      */
     public AliasedXmlObject fromXml(String alias, Reader xml) throws ConversionException {
         Document doc;

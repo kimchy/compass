@@ -61,7 +61,7 @@ public class NodeXmlContentConverter implements XmlContentConverter, CompassConf
 
     public void configure(CompassSettings settings) throws CompassException {
         try {
-            this.documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            this.documentBuilder = doCreateDocumentBuilder(settings);
         } catch (ParserConfigurationException e) {
             throw new ConfigurationException("Failed to create document builder", e);
         }
@@ -69,7 +69,7 @@ public class NodeXmlContentConverter implements XmlContentConverter, CompassConf
             log.debug("Using document builder [" + documentBuilder.getClass().getName() + "]");
         }
         try {
-            this.transformer = TransformerFactory.newInstance().newTransformer();
+            this.transformer = doCreateTransformer(settings);
         } catch (TransformerConfigurationException e) {
             throw new ConfigurationException("Failed to create transformer", e);
         }
@@ -79,12 +79,27 @@ public class NodeXmlContentConverter implements XmlContentConverter, CompassConf
     }
 
     /**
+     * An extension point allowing to control how a {@link javax.xml.parsers.DocumentBuilder} is
+     * created. By default uses <code>DocumentBuilderFactory.newInstance().newDocumentBuilder()</code>.
+     */
+    protected DocumentBuilder doCreateDocumentBuilder(CompassSettings settings) throws ParserConfigurationException {
+        return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+
+    /**
+     * An extension point allowing to control how a {@link javax.xml.transform.Transformer} is
+     * created. By default uses <code>TransformerFactory.newInstance().newTransformer()</code>.
+     */
+    protected Transformer doCreateTransformer(CompassSettings settings) throws TransformerConfigurationException {
+        return TransformerFactory.newInstance().newTransformer();
+    }
+
+    /**
      * This converter does not support a singleton wrapper strategy.
      */
     public boolean supports(String wrapper) {
         return !CompassEnvironment.Converter.XmlContent.WRAPPER_SINGLETON.equals(wrapper);
     }
-
 
     /**
      * Uses the already created {@link javax.xml.parsers.DocumentBuilder}

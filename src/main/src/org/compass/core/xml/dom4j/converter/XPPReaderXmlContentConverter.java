@@ -2,11 +2,14 @@ package org.compass.core.xml.dom4j.converter;
 
 import java.io.Reader;
 
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.SupportsXmlContentWrapper;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
-import org.compass.core.config.CompassEnvironment;
 import org.dom4j.Document;
 import org.dom4j.io.XPPReader;
 
@@ -16,9 +19,18 @@ import org.dom4j.io.XPPReader;
  *
  * @author kimchy
  */
-public class XPPReaderXmlContentConverter extends AbstractXmlWriterXmlContentConverter implements SupportsXmlContentWrapper {
+public class XPPReaderXmlContentConverter extends AbstractXmlWriterXmlContentConverter
+        implements SupportsXmlContentWrapper, CompassConfigurable {
 
-    private XPPReader xppReader = new XPPReader();
+    private XPPReader xppReader;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        xppReader = doCreateXPPReader(settings);
+    }
+
+    protected XPPReader doCreateXPPReader(CompassSettings settings) {
+        return new XPPReader();
+    }
 
     /**
      * This converter does not support a singleton wrapper strategy.
