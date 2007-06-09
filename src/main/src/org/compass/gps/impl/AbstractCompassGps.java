@@ -80,7 +80,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         if (resourceMapping != null) {
             return true;
         }
-        resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByClass(clazz);
+        resourceMapping = ((InternalCompass) checkedCompass).getMapping().getNonRootMappingByClass(clazz);
         if (resourceMapping == null) {
             return false;
         }
@@ -92,7 +92,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         if (resourceMapping != null) {
             return true;
         }
-        resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByAlias(name);
+        resourceMapping = ((InternalCompass) checkedCompass).getMapping().getNonRootMappingByAlias(name);
         if (resourceMapping == null) {
             return false;
         }
@@ -108,13 +108,13 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
     }
 
     protected ResourceMapping getMappingForEntity(String name, Compass checkedCompass) {
-        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getResourceMappingByAlias(name);
+        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getMappingByAlias(name);
         if (resourceMapping != null) {
             return resourceMapping;
         }
         try {
             Class clazz = ClassUtils.forName(name);
-            return ((InternalCompass) checkedCompass).getMapping().getResourceMappingByClass(clazz);
+            return ((InternalCompass) checkedCompass).getMapping().getMappingByClass(clazz);
         } catch (Exception e) {
             // do nothing
         }

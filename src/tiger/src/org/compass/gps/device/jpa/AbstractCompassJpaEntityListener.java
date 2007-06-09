@@ -59,7 +59,7 @@ public abstract class AbstractCompassJpaEntityListener {
     }
 
     protected boolean hasMappingForEntity(Class clazz, CascadeMapping.Cascade cascade) {
-        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getResourceMappingByClass(clazz);
+        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByClass(clazz);
         if (resourceMapping == null) {
             return false;
         }
@@ -70,7 +70,7 @@ public abstract class AbstractCompassJpaEntityListener {
     }
 
     protected boolean hasMappingForEntity(String name, CascadeMapping.Cascade cascade) {
-        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getResourceMappingByAlias(name);
+        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias(name);
         if (resourceMapping != null) {
             if (resourceMapping.isRoot()) {
                 return true;
@@ -79,7 +79,7 @@ public abstract class AbstractCompassJpaEntityListener {
         }
         try {
             Class clazz = ClassUtils.forName(name);
-            resourceMapping = ((InternalCompass) getCompass()).getMapping().getResourceMappingByClass(clazz);
+            resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByClass(clazz);
             if (resourceMapping.isRoot()) {
                 return true;
             }

@@ -75,7 +75,7 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
             if (clazz == null) {
                 throw new MappingException("This should not happen");
             }
-            if (compassMapping.hasMultipleClassMapping(clazz.getName())) {
+            if (compassMapping.hasMultipleRootClassMapping(clazz.getName())) {
                 throw new MappingException("Tried to resolve ref-alias for property [" + mapping.getName() + "] in alias [" +
                         classMapping.getAlias() + "], but there are multiple class mappings for [" + clazz.getName()
                         + "]. Please set the ref-alias explicitly.");

@@ -163,7 +163,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
         // now configure the component mapping if exists
         if (referenceMapping.getRefCompAlias() != null) {
-            ClassMapping pointerClass = (ClassMapping) compassMapping.getResourceMappingByAlias(referenceMapping
+            ClassMapping pointerClass = (ClassMapping) compassMapping.getMappingByAlias(referenceMapping
                     .getRefCompAlias());
             if (pointerClass == null) {
                 throw new MappingException("Failed to locate mapping for reference ref-comp-alias ["

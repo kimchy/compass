@@ -52,7 +52,7 @@ public class CascadingManager {
 
     public boolean cascade(String alias, Object root, CascadeMapping.Cascade cascade) throws CompassException {
         if (cascadingDisabled()) return false;
-        ResourceMapping resourceMapping = mapping.getResourceMappingByAlias(alias);
+        ResourceMapping resourceMapping = mapping.getMappingByAlias(alias);
         if (resourceMapping == null) {
             return false;
         }
@@ -61,7 +61,7 @@ public class CascadingManager {
 
     public boolean cascade(Class clazz, Object root, CascadeMapping.Cascade cascade) throws CompassException {
         if (cascadingDisabled()) return false;
-        ResourceMapping resourceMapping = mapping.getResourceMappingByClass(clazz);
+        ResourceMapping resourceMapping = mapping.getMappingByClass(clazz);
         if (resourceMapping == null) {
             return false;
         }

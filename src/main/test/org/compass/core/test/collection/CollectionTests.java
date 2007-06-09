@@ -35,7 +35,7 @@ public class CollectionTests extends AbstractTestCase {
         assertEquals("test", o.getValue());
         assertNull(o.getStrings());
 
-        session.delete(o);
+        session.delete("simple-type-col", o);
         o = (SimpleTypeCollection) session.get("simple-type-col", id);
         assertNull(o);
 
@@ -92,7 +92,7 @@ public class CollectionTests extends AbstractTestCase {
             fail("Failed to find stored collection class type");
         }
 
-        session.delete(o);
+        session.delete("simple-type-col", o);
         o = (SimpleTypeCollection) session.get("simple-type-col", id);
         assertNull(o);
 

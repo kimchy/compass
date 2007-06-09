@@ -53,13 +53,13 @@ public class ResourceTests extends AbstractTestCase {
         InternalCompassSession session = (InternalCompassSession) openSession();
 
         CompassMapping mapping = session.getMapping();
-        ResourceMapping resourceMapping = mapping.getResourceMappingByAlias("a");
+        ResourceMapping resourceMapping = mapping.getMappingByAlias("a");
         ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getResourcePropertyMappingByDotPath("id");
         assertNotNull(resourcePropertyMapping);
         assertEquals("id", resourcePropertyMapping.getName());
         assertEquals("id", resourcePropertyMapping.getPath().getPath());
 
-        resourceMapping = mapping.getResourceMappingByAlias("b");
+        resourceMapping = mapping.getMappingByAlias("b");
         resourcePropertyMapping = resourceMapping.getResourcePropertyMappingByDotPath("id1");
         assertNotNull(resourcePropertyMapping);
         assertEquals("id1", resourcePropertyMapping.getName());

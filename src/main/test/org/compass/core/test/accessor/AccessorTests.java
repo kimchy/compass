@@ -20,8 +20,8 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.accessor.DirectPropertyAccessor;
-import org.compass.core.config.CompassSettings;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -106,7 +106,7 @@ public class AccessorTests extends AbstractTestCase {
         tr = session.beginTransaction();
 
         o = (C) session.load("c", id);
-        Resource resource = session.loadResource(C.class, id);
+        Resource resource = session.loadResource("c", id);
         assertEquals("value special", resource.get("special"));
 
         tr.commit();

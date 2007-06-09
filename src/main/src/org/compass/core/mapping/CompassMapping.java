@@ -16,16 +16,17 @@
 
 package org.compass.core.mapping;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
-import org.compass.core.util.backport.java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author kimchy
@@ -164,21 +165,25 @@ public class CompassMapping {
 
     private final HashMap rootMappingsByAlias = new HashMap();
 
-    private final HashMap rootMappingsByClass = new HashMap();
+    private final HashMap nonRootMappingsByAlias = new HashMap();
 
-    private final HashMap mappingsByClass = new HashMap();
+    private final ResourceMappingsByNameHolder mappingsByClass = new ResourceMappingsByNameHolder();
+
+    private final ResourceMappingsByNameHolder cachedMappingsByClass = new ResourceMappingsByNameHolder();
+
+    private final ResourceMappingsByNameHolder rootMappingsByClass = new ResourceMappingsByNameHolder();
+
+    private final ResourceMappingsByNameHolder cachedRootMappingsByClass = new ResourceMappingsByNameHolder();
+
+    private final ResourceMappingsByNameHolder nonRootMappingsByClass = new ResourceMappingsByNameHolder();
+
+    private final ResourceMappingsByNameHolder cachedNonRootMappingsByClass = new ResourceMappingsByNameHolder();
 
     private ResourceMapping[] rootMappingsArr = new ResourceMapping[0];
 
     private ConverterLookup converterLookup;
 
-    private final ConcurrentHashMap cachedRootMappingsByClass = new ConcurrentHashMap();
-
-    private final ConcurrentHashMap cachedMappingsByClass = new ConcurrentHashMap();
-
     private final NullResourceMapping nullResourceMappingEntryInCache = new NullResourceMapping();
-
-    private HashSet hasMutipleClassMappingByClass = new HashSet();
 
     private final HashMap resourcePropertyMappingByPath = new HashMap();
 
@@ -227,7 +232,6 @@ public class CompassMapping {
         rootMappingsByClass.clear();
         rootMappingsArr = new ResourceMapping[0];
         cachedRootMappingsByClass.clear();
-        hasMutipleClassMappingByClass.clear();
         mappingsByClass.clear();
         resourcePropertyMappingByPath.clear();
     }
@@ -250,12 +254,9 @@ public class CompassMapping {
             if (resourceMapping.isRoot()) {
                 rootMappingsByAlias.put(mapping.getAlias(), mapping);
                 if (resourceMapping instanceof ClassMapping) {
-                    ClassMapping cMapping = (ClassMapping) mapping;
-                    if (rootMappingsByClass.get(cMapping.getName()) != null) {
-                        hasMutipleClassMappingByClass.add(cMapping.getName());
-                    }
-                    rootMappingsByClass.put(cMapping.getName(), mapping);
-                    mappingsByClass.put(cMapping.getName(), cMapping);
+                    rootMappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
+                    mappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
+
                 }
                 ResourceMapping[] result = new ResourceMapping[rootMappingsArr.length + 1];
                 int i;
@@ -265,9 +266,10 @@ public class CompassMapping {
                 result[i] = resourceMapping;
                 rootMappingsArr = result;
             } else {
+                nonRootMappingsByAlias.put(mapping.getAlias(), mapping);
                 if (resourceMapping instanceof ClassMapping) {
-                    ClassMapping cMapping = (ClassMapping) mapping;
-                    mappingsByClass.put(cMapping.getName(), cMapping);
+                    mappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
+                    nonRootMappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
                 }
             }
         }
@@ -305,18 +307,39 @@ public class CompassMapping {
         return mappings.values().iterator();
     }
 
+    /**
+     * Returns the alias mapping for the given alias (most if not all of the times, this will be a {@link org.compass.core.mapping.ResourceMapping}).
+     */
     public AliasMapping getAliasMapping(String alias) {
         return (AliasMapping) mappings.get(alias);
     }
 
-    public ResourceMapping getResourceMappingByAlias(String alias) {
+    /**
+     * Returns the resource mapping for the given alias.
+     */
+    public ResourceMapping getMappingByAlias(String alias) {
         return (ResourceMapping) mappings.get(alias);
     }
 
+    /**
+     * Returns the root resource mapping associated with the alias. Retruns
+     * <code>null</code> if no root mapping (or no mapping) is associated with the alias.
+     */
     public ResourceMapping getRootMappingByAlias(String alias) {
         return (ResourceMapping) rootMappingsByAlias.get(alias);
     }
 
+    /**
+     * Returns the non root resource mapping associated with the alias. Retruns
+     * <code>null</code> if no non root mapping (or no mapping) is associated with the alias.
+     */
+    public ResourceMapping getNonRootMappingByAlias(String alias) {
+        return (ResourceMapping) nonRootMappingsByAlias.get(alias);
+    }
+
+    /**
+     * Returns <code>true</code> if the given alias has a root resource mapping.
+     */
     public boolean hasRootMappingByAlias(String alias) {
         return rootMappingsByAlias.get(alias) != null;
     }
@@ -325,7 +348,7 @@ public class CompassMapping {
      * Returns <code>true</code> if there is a <b>root</b> {@link org.compass.core.mapping.osem.ClassMapping}
      * for the given alias.
      */
-    public boolean hasClassMapping(String alias) {
+    public boolean hasRootClassMapping(String alias) {
         return (rootMappingsByAlias.get(alias) instanceof ClassMapping);
     }
 
@@ -333,23 +356,35 @@ public class CompassMapping {
      * Returns <code>true</code> if there is a <b>root</b> {@link org.compass.core.mapping.rsem.RawResourceMapping}
      * for the given alias.
      */
-    public boolean hasRawResourceMapping(String alias) {
+    public boolean hasRootRawResourceMapping(String alias) {
         return (rootMappingsByAlias.get(alias) instanceof RawResourceMapping);
     }
 
     /**
      * Returns <code>true</code> if the given <b>className</b> has multiple class mappings.
      */
-    public boolean hasMultipleClassMapping(String className) {
-        return hasMutipleClassMappingByClass.contains(className);
+    public boolean hasMultipleRootClassMapping(String className) {
+        return rootMappingsByClass.hasMultipleMappingsByName(className);
     }
 
     /**
      * Returns the direct class mapping for the given class (root or not). Will not try to
      * navigate up the interface/superclass in order to find the "nearset" class mapping.
+     *
+     * <p>If a class has more than one mappings (using differnet aliases) will return the
+     * first one.
      */
-    public ClassMapping getDirectClassMappingByClass(Class clazz) {
-        return (ClassMapping) mappingsByClass.get(clazz.getName());
+    public ResourceMapping getDirectMappingByClass(Class clazz) {
+        return mappingsByClass.getResourceMappingByName(clazz.getName());
+    }
+
+    /**
+     * Returns all the direct class mapping for the given class (root or not). Will not
+     * try to navigate up the interface/superclass in order to find the "nearest" class
+     * mapping.
+     */
+    public List getAllDirectMappingByClass(Class clazz) {
+        return mappingsByClass.getUnmodifiableMappingsByName(clazz.getName());
     }
 
     /**
@@ -357,7 +392,7 @@ public class CompassMapping {
      * Similar way that {@link #findRootMappingByClass(Class)} except the search
      * is on all the ClassMappings (even ones that are not marked as root).
      */
-    public ResourceMapping getResourceMappingByClass(Class clazz) {
+    public ResourceMapping getMappingByClass(Class clazz) {
         return doGetResourceMappingByClass(clazz, false, mappingsByClass, cachedMappingsByClass);
     }
 
@@ -365,7 +400,7 @@ public class CompassMapping {
      * Finds a root mapping by the class name. If a root mapping is not found
      * for the class name, than searches for mappings for the interfaces, if not
      * found, checks for subclasses, and subclassess interfaces. Note: If there
-     * is no direct mapping that match the class name, than the mapping that is
+     * is no direct mapping that match the class name, then the mapping that is
      * found should be marked as poly.
      *
      * @param clazz The class to find root mapping for
@@ -383,40 +418,64 @@ public class CompassMapping {
         return doGetResourceMappingByClass(clazz, false, rootMappingsByClass, cachedRootMappingsByClass);
     }
 
+    /**
+     * Finds a non root mapping by the class name. If a non root mapping is not found
+     * for the class name, than searches for mappings for the interfaces, if not
+     * found, checks for subclasses, and subclassess interfaces. Note: If there
+     * is no direct mapping that match the class name, then the mapping that is
+     * found should be marked as poly.
+     *
+     * @param clazz The class to find root mapping for
+     * @return The resource mapping
+     */
+    public ResourceMapping findNonRootMappingByClass(Class clazz) throws MappingException {
+        return doGetResourceMappingByClass(clazz, true, nonRootMappingsByClass, cachedNonRootMappingsByClass);
+    }
+
+    /**
+     * Does exactly the same as {@link #findNonRootMappingByClass(Class)}, but returns <code>null</code>
+     * if nothing is found (does not throw an exception).
+     */
+    public ResourceMapping getNonRootMappingByClass(Class clazz) throws MappingException {
+        return doGetResourceMappingByClass(clazz, false, nonRootMappingsByClass, cachedNonRootMappingsByClass);
+    }
+
     private ResourceMapping doGetResourceMappingByClass(Class clazz, boolean throwEx,
-                                                        HashMap mappingClassMap, ConcurrentHashMap cachedMappingsMap) throws MappingException {
+                                                        ResourceMappingsByNameHolder mappingByClass,
+                                                        ResourceMappingsByNameHolder cachedMappingsByClass) throws MappingException {
         // we don't really care that we might execute it twice (for caching)
-        ResourceMapping rm = (ResourceMapping) cachedMappingsMap.get(clazz);
+        String className = clazz.getName();
+        ResourceMapping rm = cachedMappingsByClass.getResourceMappingByName(className);
         if (rm != null) {
             if (rm == nullResourceMappingEntryInCache) {
                 if (throwEx) {
-                    throw new MappingException("Failed to find any mappings for class [" + clazz.getName() + "]");
+                    throw new MappingException("Failed to find any mappings for class [" + className + "]");
                 }
                 return null;
             }
             return rm;
         }
-        rm = doGetActualResourceMappingByClass(clazz, mappingClassMap);
+        rm = doGetActualResourceMappingByClass(clazz, mappingByClass);
         if (rm == null) {
-            cachedMappingsMap.put(clazz, nullResourceMappingEntryInCache);
+            cachedMappingsByClass.addMapping(className, nullResourceMappingEntryInCache);
             if (throwEx) {
-                throw new MappingException("Failed to find any mappings for class [" + clazz.getName() + "]");
+                throw new MappingException("Failed to find any mappings for class [" + className + "]");
             }
             return null;
         } else {
-            cachedMappingsMap.put(clazz, rm);
+            cachedMappingsByClass.addMapping(className, rm);
         }
         return rm;
     }
 
-    private ResourceMapping doGetActualResourceMappingByClass(Class clazz, HashMap mappingClassMap) {
-        ResourceMapping rm = (ResourceMapping) mappingClassMap.get(clazz.getName());
+    private ResourceMapping doGetActualResourceMappingByClass(Class clazz, ResourceMappingsByNameHolder mappingByClass) {
+        ResourceMapping rm = mappingByClass.getResourceMappingByName(clazz.getName());
         if (rm != null) {
             return rm;
         }
         Class[] interfaces = clazz.getInterfaces();
         for (int i = 0; i < interfaces.length; i++) {
-            rm = (ResourceMapping) mappingClassMap.get(interfaces[i].getName());
+            rm = mappingByClass.getResourceMappingByName(interfaces[i].getName());
             if (rm != null) {
                 return rm;
             }
@@ -425,7 +484,7 @@ public class CompassMapping {
         if (superClass == null) {
             return null;
         }
-        return doGetActualResourceMappingByClass(superClass, mappingClassMap);
+        return doGetActualResourceMappingByClass(superClass, mappingByClass);
     }
 
     public ResourceMapping[] getRootMappings() {
@@ -442,5 +501,49 @@ public class CompassMapping {
 
     public void setPath(PropertyPath path) {
         this.path = path;
+    }
+
+
+    private class ResourceMappingsByNameHolder {
+
+        private final HashMap mappings = new HashMap();
+
+        void addMapping(String name, ResourceMapping resourceMapping) {
+            List l = (List) mappings.get(name);
+            if (l == null) {
+                l = new ArrayList();
+                mappings.put(name, l);
+            }
+            l.add(resourceMapping);
+        }
+
+        public void clear() {
+            mappings.clear();
+        }
+
+        public List getMappingsByName(String name) {
+            return (List) mappings.get(name);
+        }
+
+        public List getUnmodifiableMappingsByName(String name) {
+            return Collections.unmodifiableList((List) mappings.get(name));
+        }
+
+        /**
+         * Returns the first class mapping matching the given name. Returns
+         * <code>null</code> of no mapping matches the name.
+         */
+        public ResourceMapping getResourceMappingByName(String name) {
+            List l = getMappingsByName(name);
+            if (l == null) {
+                return null;
+            }
+            return (ResourceMapping) l.get(0);
+        }
+
+        public boolean hasMultipleMappingsByName(String name) {
+            List l = getMappingsByName(name);
+            return l != null && l.size() > 1;
+        }
     }
 }

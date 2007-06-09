@@ -25,7 +25,6 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.spi.AliasedObject;
 import org.compass.core.spi.InternalCompassSession;
@@ -85,15 +84,18 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
     }
 
     public void marshallIds(Object root, Object id) {
-        ClassMapping classMapping = (ClassMapping) mapping.getResourceMappingByClass(root.getClass());
-        if (classMapping == null) {
-            throw new MarshallingException("No class mapping is defined for class [" + root.getClass() + "]");
+        ResourceMapping resourceMapping = mapping.getMappingByClass(root.getClass());
+        if (resourceMapping == null) {
+            throw new MarshallingException("No resource mapping is defined for class [" + root.getClass() + "]");
         }
-        ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+    }
+
+    public void marshallIds(ResourceMapping resourceMapping, Object root, Object id) {
+        ResourcePropertyMapping[] ids = resourceMapping.getIdMappings();
         if (ids.length == 0) {
             return;
         }
-        Object[] idsValues = unmarshallIds(classMapping, id, createContext());
+        Object[] idsValues = unmarshallIds(resourceMapping, id, createContext());
         for (int i = 0; i < idsValues.length; i++) {
             setId(root, idsValues[i], (ClassPropertyMetaDataMapping) ids[i]);
         }

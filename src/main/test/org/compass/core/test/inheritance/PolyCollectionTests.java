@@ -19,7 +19,7 @@ public class PolyCollectionTests extends AbstractTestCase {
 
     public void testClassBasedRefAliasIdentification() {
         CompassMapping compassMapping = ((InternalCompass) getCompass()).getMapping();
-        ClassMapping classMapping = (ClassMapping) compassMapping.getResourceMappingByAlias("cComponentNoRefAlias");
+        ClassMapping classMapping = (ClassMapping) compassMapping.getMappingByAlias("cComponentNoRefAlias");
         assertEquals(2, ((HasRefAliasMapping) classMapping.getMapping("a")).getRefAliases().length);
     }
 

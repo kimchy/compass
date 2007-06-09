@@ -21,14 +21,14 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.Compass;
-import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.spi.InternalCompass;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 import org.compass.gps.device.jdbc.mapping.ColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
@@ -94,7 +94,7 @@ public class ResultSetRowMarshallHelper {
         this.session = session;
         this.dialect = dialect;
         this.rowSnapshot = rowSnapshot;
-        resourceMapping = ((InternalCompass) compass).getMapping().getResourceMappingByAlias(mapping.getAlias());
+        resourceMapping = ((InternalCompass) compass).getMapping().getMappingByAlias(mapping.getAlias());
         if (rowSnapshot == null || !mapping.supportsVersioning()) {
             marshallVersioning = false;
         } else {

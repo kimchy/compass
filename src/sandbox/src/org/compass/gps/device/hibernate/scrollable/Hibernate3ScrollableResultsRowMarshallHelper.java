@@ -85,7 +85,7 @@ public class Hibernate3ScrollableResultsRowMarshallHelper {
         this.session = session;
         this.rowSnapshot = rowSnapshot;
         this.dialect = new Hibernate3Dialect();
-        resourceMapping = ((InternalCompass) compass).getMapping().getResourceMappingByAlias(mapping.getAlias());
+        resourceMapping = ((InternalCompass) compass).getMapping().getMappingByAlias(mapping.getAlias());
         if (rowSnapshot == null || !mapping.supportsVersioning()) {
             marshallVersioning = false;
         } else {

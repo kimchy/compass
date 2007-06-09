@@ -147,6 +147,15 @@ public interface MarshallingStrategy {
     void marshallIds(Object root, Object id);
 
     /**
+     * Marhsalls the give id into the actual object. Kindda hacky... .
+     *
+     * @param resourceMapping The resource mapping for the given object
+     * @param root            The object to marshall the ids into
+     * @param id              The id to marshall into the root object
+     */
+    void marshallIds(ResourceMapping resourceMapping, Object root, Object id);
+
+    /**
      * Unmarshalls the given id object into an array of all the id values. The results depends
      * on the type of the mappings (raw resource/class).
      * <p/>
