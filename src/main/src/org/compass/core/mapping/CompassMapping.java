@@ -504,6 +504,10 @@ public class CompassMapping {
     }
 
 
+    /**
+     * A resource mapping holder based on a name (actually, any string). Holds a map keyed
+     * by the name and the value a list of ResourceMapping registered under the name
+     */
     private class ResourceMappingsByNameHolder {
 
         private final HashMap mappings = new HashMap();
@@ -538,7 +542,7 @@ public class CompassMapping {
             if (l == null) {
                 return null;
             }
-            return (ResourceMapping) l.get(0);
+            return (ResourceMapping) l.get(l.size() - 1);
         }
 
         public boolean hasMultipleMappingsByName(String name) {

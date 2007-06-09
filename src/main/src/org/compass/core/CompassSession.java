@@ -93,23 +93,6 @@ public interface CompassSession extends CompassOperations {
      * Creats a new query builder, used to build queries programmatically.
      *
      * @return The query builder.
-     * @deprecated please use queryBuilder
-     */
-    CompassQueryBuilder createQueryBuilder() throws CompassException;
-
-    /**
-     * Creats a new query filter builder, used to build filters of queries
-     * programmatically.
-     *
-     * @return The query filter builder.
-     * @deprecated please use queryFilterBuilder
-     */
-    CompassQueryFilterBuilder createQueryFilterBuilder() throws CompassException;
-
-    /**
-     * Creats a new query builder, used to build queries programmatically.
-     *
-     * @return The query builder.
      */
     CompassQueryBuilder queryBuilder() throws CompassException;
 

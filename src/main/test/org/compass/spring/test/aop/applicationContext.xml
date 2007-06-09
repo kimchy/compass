@@ -49,7 +49,7 @@
     </bean>
     
     <bean id="proxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
-        <property name="beanNames"><value>mockDaoOrService</value></property>
+        <property name="beanNames" value="mockDaoOrService"/>
         <property name="interceptorNames">
             <list>
                 <value>compassCreateAdvisor</value>
