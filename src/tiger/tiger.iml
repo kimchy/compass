@@ -467,15 +467,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/openjpa/openjpa-all-0.9.6-incubating.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/openjpa/serp-1.11.0.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -498,6 +489,21 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/openjpa/openjpa-0.9.7-incubating.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../../../libs/openjpa/0.9.7/source/openjpa-kernel-5/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../../../../../libs/openjpa/0.9.7/source/openjpa-persistence/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../../../../../libs/openjpa/0.9.7/source/openjpa-lib/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../../../../../libs/openjpa/0.9.7/source/openjpa-kernel/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../../../../../libs/openjpa/0.9.7/source/openjpa-jdbc/src/main/java" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntryProperties />

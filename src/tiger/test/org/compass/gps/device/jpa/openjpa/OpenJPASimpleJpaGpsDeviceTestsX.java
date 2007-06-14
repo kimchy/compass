@@ -11,7 +11,7 @@ import org.compass.gps.device.jpa.JpaGpsDevice;
  * Performs JPA tests using OpenJPA specific support.
  *
  * Currently, this test is disabled (the X suffix) since it requires the following setting:
- * -javaagent:lib/openjpa/openjpa-all-0.9.6-incubating.jar
+ * -javaagent:lib/openjpa/openjpa-0.9.7-incubating.jar
  *
  * @author kimchy
  */

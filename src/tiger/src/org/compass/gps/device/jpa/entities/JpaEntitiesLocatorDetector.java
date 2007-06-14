@@ -55,9 +55,7 @@ public abstract class JpaEntitiesLocatorDetector {
 
 
                     public String onOpenJPA() {
-                        // TODO once the OpenJPA locator works, replace the default one
-//                        return "org.compass.gps.device.jpa.entities.OpenJPAJpaEntitiesLocator";
-                        return DefaultJpaEntitiesLocator.class.getName();
+                        return "org.compass.gps.device.jpa.entities.OpenJPAJpaEntitiesLocator";
                     }
 
                     public String onUnknown() {

@@ -1,13 +1,16 @@
 package org.compass.gps.device.jpa.lifecycle;
 
+import java.util.Collection;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.openjpa.event.DeleteListener;
 import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.event.PersistListener;
 import org.apache.openjpa.event.StoreListener;
+import org.apache.openjpa.meta.ClassMetaData;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
@@ -55,7 +58,19 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
         }
     }
 
+    private boolean useSpecificClassEvents = true;
+
+    private ClassLoader classLoader;
+
     private OpenJPAEventListener eventListener;
+
+    public void setUseSpecificClassEvents(boolean useSpecificClassEvents) {
+        this.useSpecificClassEvents = useSpecificClassEvents;
+    }
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
 
@@ -64,16 +79,19 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
         OpenJPAEntityManagerFactory emf = OpenJPAPersistence.cast(entityManagerFactory);
 
         eventListener = new OpenJPAEventListener(device);
-        
-        emf.addLifecycleListener(eventListener, null);
-        // TODO once we manage to understand how to get the class meta data properly
-//        ClassMetaData[] classMetaDatas = emf.getConfiguration().getMetaDataRepositoryInstance().getMetaDatas();
-//        for (ClassMetaData classMetaData : classMetaDatas) {
-//            Class mappedClass = classMetaData.getDescribedType();
-//            if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
-//                emf.addLifecycleListener(eventListener, mappedClass);
-//            }
-//        }
+
+        if (useSpecificClassEvents) {
+            Collection<Class> classes = emf.getConfiguration().getMetaDataRepositoryInstance().loadPersistentTypes(true, classLoader);
+            for (Class clazz : classes) {
+                ClassMetaData classMetaData = emf.getConfiguration().getMetaDataRepositoryInstance().getMetaData(clazz, classLoader, true);
+                Class mappedClass = classMetaData.getDescribedType();
+                if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
+                    emf.addLifecycleListener(eventListener, mappedClass);
+                }
+            }
+        } else {
+            emf.addLifecycleListener(eventListener, null);
+        }
     }
 
     public void removeLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {

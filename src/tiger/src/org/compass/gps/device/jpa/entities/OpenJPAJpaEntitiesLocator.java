@@ -1,6 +1,7 @@
 package org.compass.gps.device.jpa.entities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -18,14 +19,17 @@ import org.compass.gps.spi.CompassGpsInterfaceDevice;
  * A specilized version that works with OpenJPA. This class should be used instead of
  * {@link org.compass.gps.device.jpa.entities.DefaultJpaEntitiesLocator} since it works with both openjpa xml files and annotatios.
  *
- * <p>Currently disabled until I figure out how to get all the class meta data from OpenJPA. Use the default one
- * until then.
- *
  * @author kimchy
  */
 public class OpenJPAJpaEntitiesLocator implements JpaEntitiesLocator {
 
     protected Log log = LogFactory.getLog(getClass());
+
+    private ClassLoader classLoader;
+
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
 
     public EntityInformation[] locate(EntityManagerFactory entityManagerFactory, JpaGpsDevice device)
             throws JpaGpsDeviceException {
@@ -40,8 +44,9 @@ public class OpenJPAJpaEntitiesLocator implements JpaEntitiesLocator {
         EntityManager entityManager = emf.createEntityManager();
         entityManager.close();
 
-        ClassMetaData[] classMetaDatas = emf.getConfiguration().getMetaDataRepositoryInstance().getMetaDatas();
-        for (ClassMetaData classMetaData : classMetaDatas) {
+        Collection<Class> classes = emf.getConfiguration().getMetaDataRepositoryInstance().loadPersistentTypes(true, classLoader);
+        for (Class clazz : classes) {
+            ClassMetaData classMetaData = emf.getConfiguration().getMetaDataRepositoryInstance().getMetaData(clazz, classLoader, true);
             String entityname = classMetaData.getDescribedType().getName();
             if (!gps.hasMappingForEntityForIndex((entityname))) {
                 if (log.isDebugEnabled()) {
@@ -53,7 +58,6 @@ public class OpenJPAJpaEntitiesLocator implements JpaEntitiesLocator {
             if (shouldFilter(entityname, classMetaData, device)) {
                 continue;
             }
-            Class<?> clazz = classMetaData.getDescribedType();
             ResourceMapping resourceMapping = gps.getMappingForEntityForIndex(entityname);
             EntityInformation entityInformation = new EntityInformation(clazz, entityname, resourceMapping.getSubIndexHash().getSubIndexes());
             entitiesList.add(entityInformation);
