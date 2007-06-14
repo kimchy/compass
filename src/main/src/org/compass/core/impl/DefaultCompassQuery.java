@@ -24,6 +24,7 @@ import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 import org.compass.core.mapping.CompassMapping.ResourcePropertyLookup;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
@@ -102,6 +103,19 @@ public class DefaultCompassQuery implements CompassQuery {
 
     public CompassQuery setAliases(String[] aliases) {
         searchEngineQuery.setAliases(aliases);
+        return this;
+    }
+
+    public CompassQuery setTypes(Class[] types) {
+        if (types == null) {
+            setAliases(null);
+        }
+        String[] aliases = new String[types.length];
+        for (int i = 0; i < types.length; i++) {
+            ResourceMapping resourceMapping = session.getMapping().getRootMappingByClass(types[i]);
+            aliases[i] = resourceMapping.getAlias();
+        }
+        setAliases(aliases);
         return this;
     }
 

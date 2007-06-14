@@ -238,12 +238,22 @@ public interface CompassQuery {
 
     /**
      * Narrows down the query to be executed only against the given aliases.
-     * If set to <code>null</code>, will use all sub indexes.
+     * If set to <code>null</code>, will use all aliases.
      *
      * @param aliases aliases the query will be executed against
-     * @return thr query
+     * @return th query
      */
     CompassQuery setAliases(String[] aliases);
+
+    /**
+     * Narrows down the query to be executed only against the given types.
+     * Internally will translate the classes to the relevant <b>root</b>
+     * aliases and call {@link #setAliases(String[])}.
+     *
+     * @param types class types the query will be executed against
+     * @return the query
+     */
+    CompassQuery setTypes(Class[] types);
 
     /**
      * Sets a filter to the query. Please see {@link CompassQueryFilterBuilder}.

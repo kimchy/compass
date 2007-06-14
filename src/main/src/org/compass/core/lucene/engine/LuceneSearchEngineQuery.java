@@ -18,9 +18,13 @@ package org.compass.core.lucene.engine;
 
 import java.util.ArrayList;
 
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.compass.core.CompassQuery.SortDirection;
 import org.compass.core.CompassQuery.SortImplicitType;
@@ -60,11 +64,14 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
 
     private LuceneSearchEngineQueryFilter filter;
 
+    private Query origQuery;
+
     private Query query;
 
     public LuceneSearchEngineQuery(LuceneSearchEngine searchEngine, Query query) {
         this.searchEngine = searchEngine;
         this.query = query;
+        this.origQuery = query;
     }
 
     public SearchEngineQuery addSort(String propertyName) {
@@ -159,7 +166,24 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
     }
 
     public SearchEngineQuery setAliases(String[] aliases) {
+        if (aliases == null) {
+            query = origQuery;
+            return this;
+        }
+
+        String aliasProperty = searchEngine.getSearchEngineFactory().getLuceneSettings().getAliasProperty();
+        BooleanQuery boolQuery2 = new BooleanQuery();
+        for (int i = 0; i < aliases.length; i++) {
+            boolQuery2.add(new TermQuery(new Term(aliasProperty, aliases[i])), BooleanClause.Occur.SHOULD);
+        }
+
+        BooleanQuery boolQuery = new BooleanQuery();
+        boolQuery.add(origQuery, BooleanClause.Occur.MUST);
+        boolQuery.add(boolQuery2, BooleanClause.Occur.MUST);
+        this.query = boolQuery;
+
         this.aliases = aliases;
+
         return this;
     }
 

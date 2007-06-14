@@ -149,6 +149,32 @@ public class FindTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testSubIndexTypeNarrow() {
+        addDataA(0, 10);
+        addDataB(0, 10);
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+        CompassHits hits = session.find("alias:a1 or alias:b1");
+        assertEquals(20, hits.getLength());
+
+        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+                .setTypes(new Class[]{A.class}).hits();
+        assertEquals(10, hits.getLength());
+
+        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+                .setSubIndexes(new String[]{"a1"}).hits();
+        assertEquals(10, hits.getLength());
+
+        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+                .setSubIndexes(new String[]{"a1"})
+                .setTypes(new Class[]{A.class}).hits();
+        assertEquals(10, hits.getLength());
+
+        tr.commit();
+        session.close();
+    }
+
     public void testLuceneExplanation() {
         addDataA(0, 10);
 
@@ -171,7 +197,7 @@ public class FindTests extends AbstractTestCase {
         CompassHits hits = session.find("alias:a1 or alias:b1");
         tr.commit();
         try {
-            hits = session.find("alias:a1 or alias:b1");
+            session.find("alias:a1 or alias:b1");
             fail();
         } catch (SearchEngineException e) {
             // all is well
