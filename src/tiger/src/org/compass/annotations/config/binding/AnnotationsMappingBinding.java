@@ -706,6 +706,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
         mdMapping.setBoost(searchableMetaData.boost());
 
+        mdMapping.setOverrideByName(searchableMetaData.override());
+
         mdMapping.setConverterName(searchableMetaData.converter());
         mdMapping.setExpression(searchableMetaData.expression());
         if (StringUtils.hasLength(searchableMetaData.format())) {

@@ -2,8 +2,10 @@ package org.compass.core.test.dynamic.groovy;
 
 import java.util.Calendar;
 
+import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.test.AbstractTestCase;
 
@@ -46,6 +48,27 @@ public class GroovyDynamicTests extends AbstractTestCase {
 
         Resource resource = session.loadResource("a2", new Long(1));
         assertEquals("1977", resource.get("test"));
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testTwoCompassInstancesBuild() throws Exception {
+        Compass compass2 = buildCompass();
+
+        
+        CompassSession session = compass2.openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.setId(new Long(1));
+        a.setValue("value");
+        a.setValue2("value2");
+        session.save("a1", a);
+
+        Resource resource = session.loadResource("a1", new Long(1));
+        Property[] properties = resource.getProperties("test");
+        assertEquals(1, properties.length);
 
         tr.commit();
         session.close();

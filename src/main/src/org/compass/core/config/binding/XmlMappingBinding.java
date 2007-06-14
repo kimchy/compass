@@ -581,6 +581,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         bindConverter(dynamicConf, dynamicMetaDataMapping);
 
+        boolean override = dynamicConf.getAttributeAsBoolean("override", true);
+        dynamicMetaDataMapping.setOverrideByName(override);
+
         String storeType = dynamicConf.getAttribute("store", "yes");
         dynamicMetaDataMapping.setStore(Property.Store.fromString(storeType));
         String indexType = dynamicConf.getAttribute("index", "tokenized");

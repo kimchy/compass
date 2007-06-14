@@ -73,6 +73,12 @@ public @interface SearchableDynamicMetaData {
      * @see org.compass.annotations.Searchable#enableAll
      */
     boolean excludeFromAll() default false;
+    
+    /**
+     * If there is already an existing id with the same field/property name defined,
+     * will override it.
+     */
+    boolean override() default true;
 
     /**
      * The format to apply to the value. Only applies to format-able converters

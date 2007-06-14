@@ -353,6 +353,7 @@
     <!ATTLIST dynamic-meta-data index (no|tokenized|un_tokenized) "tokenized">
     <!ATTLIST dynamic-meta-data term-vector (no|yes|positions|offsets|positions_offsets) "no">
     <!ATTLIST dynamic-meta-data omit-norms (true|false) "false">
+    <!ATTLIST dynamic-meta-data override (true|false) "true">
     <!ATTLIST dynamic-meta-data reverse (no|reader|string) "no">
     <!ATTLIST dynamic-meta-data analyzer CDATA #IMPLIED>
     <!ATTLIST dynamic-meta-data exclude-from-all (true|false) #IMPLIED>
