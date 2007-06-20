@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
@@ -161,6 +162,8 @@ public class DefaultConverterLookup implements ConverterLookup {
                 StringBuffer.class, new StringBufferConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.URL,
                 URL.class, new URLConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.URI,
+                URI.class, new URIConverter());
         // add extended types
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.FILE,
                 File.class, new FileConverter());

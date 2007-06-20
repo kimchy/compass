@@ -16,8 +16,8 @@
 
 package org.compass.core.converter.basic;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -25,12 +25,12 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class URLConverter extends AbstractBasicConverter {
+public class URIConverter extends AbstractBasicConverter {
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         try {
-            return new URL(str);
-        } catch (MalformedURLException e) {
+            return new URI(str);
+        } catch (URISyntaxException e) {
             throw new ConversionException("Failed to convert url", e);
         }
     }

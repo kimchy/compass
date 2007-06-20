@@ -180,6 +180,8 @@ public class CompassEnvironment {
 
                 public static final String URL = "url";
 
+                public static final String URI = "uri";
+
                 public static final String BIGDECIMAL = "bigdecimal";
 
                 public static final String BIGINTEGER = "biginteger";
