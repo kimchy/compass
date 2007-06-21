@@ -31,7 +31,7 @@ public class URIConverter extends AbstractBasicConverter {
         try {
             return new URI(str);
         } catch (URISyntaxException e) {
-            throw new ConversionException("Failed to convert url", e);
+            throw new ConversionException("Failed to convert uri", e);
         }
     }
 }
