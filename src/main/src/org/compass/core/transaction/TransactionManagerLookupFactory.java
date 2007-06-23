@@ -67,7 +67,7 @@ public final class TransactionManagerLookupFactory {
             try {
                 return (TransactionManagerLookup) ClassUtils.forName(tmLookupClass).newInstance();
             } catch (Exception e) {
-                throw new TransactionException("Could not instantiate TransactionManagerLookup");
+                throw new TransactionException("Could not instantiate TransactionManagerLookup", e);
             }
         }
     }
