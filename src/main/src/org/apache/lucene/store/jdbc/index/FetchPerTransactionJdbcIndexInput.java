@@ -170,19 +170,20 @@ public class FetchPerTransactionJdbcIndexInput extends JdbcBufferedIndexInput {
                 bindBlob(conn, jdbcDirectory.getTable(), name, blob);
             } else {
             }
+
             long start = bufferStart + bufferPosition;
             long end = start + bufferSize;
-            if (end > length())                  // don't read past EOF
-                end = length();
-            bufferLength = (int) (end - start);
+            if (end > length())				  // don't read past EOF
+              end = length();
+            bufferLength = (int)(end - start);
             if (bufferLength <= 0)
-                throw new IOException("read past EOF");
+              throw new IOException("read past EOF");
 
-            if (buffer == null)
-                buffer = new byte[bufferSize];          // allocate buffer lazily
-            // not doing it anymore for performance reasons (so we don't execute separate
-            // query for length)
-            //readInternal(buffer, 0, bufferLength);
+            if (buffer == null) {
+              buffer = new byte[bufferSize];		  // allocate buffer lazily
+              seekInternal(bufferStart);
+            }
+//            readInternal(buffer, 0, bufferLength);
             readInternal(blob, buffer, 0, bufferLength);
 
             bufferStart = start;

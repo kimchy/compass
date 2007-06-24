@@ -59,6 +59,9 @@ public class StringWithSeparatorReader extends Reader implements RepeatableReade
         }
         if (next >= length) {
             if (readSeparator) {
+                // reset the reader for next reads
+                close();
+                // return -1 to indicate no more data
                 return -1;
             }
             readSeparator = true;

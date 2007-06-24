@@ -109,9 +109,9 @@ public class RAMJdbcIndexOutput extends AbstractJdbcIndexOutput {
         this.jdbcDirectory = jdbcDirectory;
     }
 
-    public void flushBuffer(byte[] src, int len) {
+    public void flushBuffer(byte[] src, int offset, int len) {
         byte[] buffer;
-        int bufferPos = 0;
+        int bufferPos = offset;
         while (bufferPos != len) {
             int bufferNumber = pointer / bufferSize;
             int bufferOffset = pointer % bufferSize;

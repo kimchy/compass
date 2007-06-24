@@ -61,7 +61,7 @@ public class NoOpFileEntryHandler implements FileEntryHandler {
 
         }
 
-        public void writeBytes(byte[] b, int length) throws IOException {
+        public void writeBytes(byte[] b, int offset, int length) throws IOException {
 
         }
 

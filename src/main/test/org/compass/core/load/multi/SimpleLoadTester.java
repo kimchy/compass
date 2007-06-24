@@ -21,7 +21,12 @@ import java.io.FileInputStream;
 import java.util.Date;
 import java.util.Properties;
 
-import org.compass.core.*;
+import org.compass.core.Compass;
+import org.compass.core.CompassCallbackWithoutResult;
+import org.compass.core.CompassException;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
 
 /**
@@ -161,6 +166,7 @@ public class SimpleLoadTester {
             }
         }
 
+        System.out.println("VERIFYING INDEX USING EXISTING TEMPLATE");
         // now check that everything is in the index
         check(templates[0]);
         
@@ -168,6 +174,7 @@ public class SimpleLoadTester {
             templates[i].getCompass().close();
         }
         
+        System.out.println("VERIFYING INDEX USING NEW COMPASS INSTANCE");
         // now build a new one and check again
         CompassTemplate template = new CompassTemplate(conf.buildCompass());
         check(template);

@@ -181,8 +181,8 @@ public class AsyncMemoryMirrorDirectoryWrapper extends Directory {
             ramIndexOutput.writeByte(b);
         }
 
-        public void writeBytes(byte[] data, int size) throws IOException {
-            ramIndexOutput.writeBytes(data, size);
+        public void writeBytes(byte[] b, int offset, int length) throws IOException {
+            ramIndexOutput.writeBytes(b, offset, length);
         }
 
         public void seek(long size) throws IOException {

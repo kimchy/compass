@@ -45,8 +45,6 @@ public class LuceneSegmentsMerger {
 
     private Lock writeLock;
 
-    private Vector filesToDeleteCS;
-
     private String newSegmentName;
 
     private Vector segmentsToDelete = new Vector();
@@ -54,6 +52,8 @@ public class LuceneSegmentsMerger {
     private boolean closeDir;
 
     private LuceneSettings luceneSettings;
+
+    private SegmentInfos rollbackSegmentInfos;      // segmentInfos we will fallback to if the commit fails
 
     private IndexFileDeleter deleter;
 
@@ -68,7 +68,10 @@ public class LuceneSegmentsMerger {
         }
         this.writeLock = writeLock; // save it
         segmentInfos.read(directory);
-        this.deleter = new IndexFileDeleter(segmentInfos, directory);
+        rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
+        deleter = new IndexFileDeleter(directory,
+                new KeepOnlyLastCommitDeletionPolicy(),
+                segmentInfos, null);
     }
 
     public void mergeFromSegment(int fromSegment) throws IOException {
@@ -77,7 +80,8 @@ public class LuceneSegmentsMerger {
 
         for (int i = fromSegment; i < segmentInfos.size(); i++) {
             SegmentInfo si = segmentInfos.info(i);
-            IndexReader reader = SegmentReader.get(si);
+            // TODO: expose this as a configurable parmeter (same as in TransReader)
+            IndexReader reader = SegmentReader.get(si, 4096);
             merger.add(reader);
             segmentsToDelete.addElement(reader); // queue segment for deletion
         }
@@ -88,18 +92,27 @@ public class LuceneSegmentsMerger {
         SegmentInfo newSegmentInfo = new SegmentInfo(newSegmentName, mergedDocCount, directory, luceneSettings.isUseCompoundFile(), true);
         segmentInfos.addElement(newSegmentInfo);
         if (luceneSettings.isUseCompoundFile()) {
-            filesToDeleteCS = merger.createCompoundFile(newSegmentName + ".cfs");
+            merger.createCompoundFile(newSegmentName + ".cfs");
         }
 
     }
 
     public void commit() throws IOException {
         segmentInfos.write(directory); // commit before deleting
-        if (luceneSettings.isUseCompoundFile()) {
-            deleter.deleteFiles(filesToDeleteCS);
-            filesToDeleteCS = null;
-        }
-        deleter.deleteSegments(segmentsToDelete);
+        deleter.checkpoint(segmentInfos, true);
+    }
+
+    public void rollback() throws IOException {
+        segmentInfos.clear();
+        segmentInfos.addAll(rollbackSegmentInfos);
+        rollbackSegmentInfos = null;
+
+        // Ask deleter to locate unreferenced files we had
+        // created & remove them:
+        deleter.checkpoint(segmentInfos, false);
+
+        deleter.refresh();
+
     }
 
     public void close() throws IOException {

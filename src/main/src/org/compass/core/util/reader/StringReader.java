@@ -51,8 +51,12 @@ public class StringReader extends Reader implements RepeatableReader {
         if (len == 0) {
             return 0;
         }
-        if (next >= length)
+        if (next >= length) {
+            // reset the reader for a possible next read
+            close();
+            // and return -1 to indicate no more data
             return -1;
+        }
         int n = Math.min(length - next, len);
         str.getChars(next, next + n, cbuf, off);
         next += n;

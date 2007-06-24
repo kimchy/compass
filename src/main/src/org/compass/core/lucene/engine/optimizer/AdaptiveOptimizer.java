@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.lucene.index.LuceneSegmentsMerger;
 import org.apache.lucene.index.LuceneSubIndexInfo;
-import org.apache.lucene.index.LuceneUtils;
 import org.apache.lucene.store.Directory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
@@ -96,15 +95,19 @@ public class AdaptiveOptimizer extends AbstractLuceneSearchEngineOptimizer imple
             long commitTime = System.currentTimeMillis() - time;
             indexManager.clearCache(subIndex);
 
-            time = System.currentTimeMillis();
-            LuceneUtils.deleteUnusedFiles(dir);
-            long deleteUnusedFilesTime = System.currentTimeMillis() - time;
             if (log.isDebugEnabled()) {
                 log.debug("Optimization of sub-index [" + subIndex + "] took [" + (commitTime + mergeTime + lockTime)
                         + "ms], Locking took [" + lockTime + "ms], merge took [" + mergeTime + "ms], commit took ["
-                        + commitTime + "ms], delete unused files took [" + deleteUnusedFilesTime + "].");
+                        + commitTime + "ms].");
             }
         } catch (IOException e) {
+            if (segmentsMerger != null) {
+                try {
+                    segmentsMerger.rollback();
+                } catch (IOException e1) {
+                    log.warn("Failed to rollback optimization for [" + subIndex + "], ignoring", e);
+                }
+            }
             if (e.getMessage().startsWith("Lock obtain")) {
                 log.warn("Failed to obtain lock on sub-index [" + subIndex + "], will do it next time.");
             } else {

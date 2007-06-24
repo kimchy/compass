@@ -31,12 +31,12 @@ import org.apache.lucene.store.jdbc.JdbcFileEntrySettings;
 public abstract class JdbcBufferedIndexInput extends ConfigurableBufferedIndexInput implements JdbcIndexConfigurable {
 
     /**
-     * The buffer size setting name. See {@link JdbcFileEntrySettings#setIntSetting(String, int)}.
+     * The buffer size setting name. See {@link JdbcFileEntrySettings#setIntSetting(String,int)}.
      * Should be set in bytes.
      */
     public static final String BUFFER_SIZE_SETTING = "indexInput.bufferSize";
 
     public void configure(String name, JdbcDirectory jdbcDirectory, JdbcFileEntrySettings settings) throws IOException {
-        initBuffer(settings.getSettingAsInt(BUFFER_SIZE_SETTING, DEFAULT_BUFFER_SIZE));
+        setBufferSize(settings.getSettingAsInt(BUFFER_SIZE_SETTING, BUFFER_SIZE));
     }
 }

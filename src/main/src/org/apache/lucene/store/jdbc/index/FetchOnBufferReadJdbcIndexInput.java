@@ -82,20 +82,16 @@ public class FetchOnBufferReadJdbcIndexInput extends JdbcBufferedIndexInput {
                         if (bufferLength <= 0)
                             throw new IOException("read past EOF");
 
-                        if (buffer == null)
+                        if (buffer == null) {
                             buffer = new byte[bufferSize];          // allocate buffer lazily
-                        // not doing it anymore for performance reasons (so we don't execute separate
-                        // query for length)
-                        //readInternal(buffer, 0, bufferLength);
-
+                            seekInternal(bufferStart);
+                        }
                         // START replace read internal
                         Blob blob = rs.getBlob(2);
                         readInternal(blob, buffer, 0, bufferLength);
-                        // END replace read internal
 
                         bufferStart = start;
                         bufferPosition = 0;
-
                         return null;
                     }
                 });
@@ -115,7 +111,7 @@ public class FetchOnBufferReadJdbcIndexInput extends JdbcBufferedIndexInput {
                         }
                         Blob blob = rs.getBlob(2);
                         readInternal(blob, b, offset, length);
-                        synchronized(this) {
+                        synchronized (this) {
                             if (FetchOnBufferReadJdbcIndexInput.this.totalLength == -1) {
                                 FetchOnBufferReadJdbcIndexInput.this.totalLength = rs.getLong(3);
                             }

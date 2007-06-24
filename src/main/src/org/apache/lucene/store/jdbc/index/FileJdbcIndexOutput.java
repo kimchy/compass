@@ -49,11 +49,8 @@ public class FileJdbcIndexOutput extends AbstractJdbcIndexOutput {
         this.name = name;
     }
 
-    /**
-     * output methods:
-     */
-    public void flushBuffer(byte[] b, int size) throws IOException {
-        file.write(b, 0, size);
+    protected void flushBuffer(byte[] b, int offset, int len) throws IOException {
+        file.write(b, offset, len);
     }
 
     /**

@@ -51,8 +51,12 @@ public class ReverseStringReader extends Reader implements RepeatableReader {
         if (len == 0) {
             return 0;
         }
-        if (next <= 0)
+        if (next <= 0) {
+            // reset the repeatable reader
+            close();
+            // return -1 indicating nothing left to read
             return -1;
+        }
         int n = Math.min(next, len);
         for (int i = 0; i < n; i++) {
             cbuf[off + i] = (char) read();

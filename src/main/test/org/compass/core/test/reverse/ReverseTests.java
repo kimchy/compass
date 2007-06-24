@@ -77,10 +77,13 @@ public class ReverseTests extends AbstractTestCase {
 
         session.loadResource("a2", id);
 
-        CompassHits hits = session.find("54*");
+        CompassHits hits = session.find("valuerev:54*");
         assertEquals(1, hits.length());
 
-        hits = session.find("valuerev:54*");
+        hits = session.find("54321");
+        assertEquals(1, hits.length());
+
+        hits = session.find("54*");
         assertEquals(1, hits.length());
 
         hits = session.find("value:12*");

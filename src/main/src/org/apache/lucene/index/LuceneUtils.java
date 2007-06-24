@@ -32,15 +32,6 @@ import org.apache.lucene.store.Lock;
  */
 public abstract class LuceneUtils {
 
-
-    public static void deleteUnusedFiles(Directory directory) throws IOException {
-        SegmentInfos segmentInfos = new SegmentInfos();
-        segmentInfos.read(directory);
-        IndexFileDeleter deleter = new IndexFileDeleter(segmentInfos, directory);
-        deleter.findDeletableFiles();
-        deleter.deleteFiles();
-    }
-
     /**
      * Copies one directory contents to the other. Will automatically compound or uncompound the contents of the
      * src directory into the dest directory.
@@ -268,6 +259,10 @@ public abstract class LuceneUtils {
         try {
             final SegmentInfos segmentInfos = new SegmentInfos();
             segmentInfos.read(directory);
+            // TODO have the delete policy configurable
+            IndexFileDeleter deleter = new IndexFileDeleter(directory,
+                    new KeepOnlyLastCommitDeletionPolicy(),
+                    segmentInfos, null);
             for (int infoIndex = 0; infoIndex < segmentInfos.size(); infoIndex++) {
                 SegmentInfo segmentInfo = segmentInfos.info(infoIndex);
                 segmentInfo.setUseCompoundFile(true);
@@ -313,11 +308,9 @@ public abstract class LuceneUtils {
                 // Perform the merge
                 cfsWriter.close();
 
-                // delete the files
-                IndexFileDeleter deleter = new IndexFileDeleter(segmentInfos, directory);
-                deleter.deleteFiles(files);
             }
             segmentInfos.write(directory);
+            deleter.checkpoint(segmentInfos, true);
         } finally {
             writeLock.release();
         }
@@ -334,6 +327,10 @@ public abstract class LuceneUtils {
         try {
             final SegmentInfos segmentInfos = new SegmentInfos();
             segmentInfos.read(directory);
+            // TODO have the delete policy configurable
+            IndexFileDeleter deleter = new IndexFileDeleter(directory,
+                    new KeepOnlyLastCommitDeletionPolicy(),
+                    segmentInfos, null);
             for (int infoIndex = 0; infoIndex < segmentInfos.size(); infoIndex++) {
                 SegmentInfo segmentInfo = segmentInfos.info(infoIndex);
                 segmentInfo.setUseCompoundFile(false);
@@ -374,13 +371,9 @@ public abstract class LuceneUtils {
                         indexOutput.close();
                     }
                 }
-
-                Vector deleteFiles = new Vector();
-                deleteFiles.add(fileName);
-                IndexFileDeleter deleter = new IndexFileDeleter(segmentInfos, directory);
-                deleter.deleteFiles(deleteFiles);
             }
             segmentInfos.write(directory);
+            deleter.checkpoint(segmentInfos, true);
         } finally {
             writeLock.release();
         }

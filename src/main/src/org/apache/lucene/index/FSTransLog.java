@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.lucene.store.ConfigurableBufferedIndexInput;
+import org.apache.lucene.store.BufferedIndexInput;
 import org.apache.lucene.store.ConfigurableBufferedIndexOutput;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
@@ -278,9 +278,9 @@ public class FSTransLog implements TransLog {
                 initBuffer(writeBufferSize);
             }
 
-            public void flushBuffer(byte[] src, int len) {
+            public void flushBuffer(byte[] src, int offset, int len) {
                 byte[] buffer;
-                int bufferPos = 0;
+                int bufferPos = offset;
                 while (bufferPos != len) {
                     int bufferNumber = (int) (pointer / writeBufferSize);
                     int bufferOffset = (int) (pointer % writeBufferSize);
@@ -325,16 +325,16 @@ public class FSTransLog implements TransLog {
          * {@link org.apache.lucene.index.FSTransLog.TransDirectory.FileEntry} information
          * from the compound transactional data file.
          */
-        class TransIndexInput extends ConfigurableBufferedIndexInput {
+        class TransIndexInput extends BufferedIndexInput {
 
             private RandomAccessFile raf;
 
             private FileEntry fileEntry;
 
             public TransIndexInput(RandomAccessFile raf, FileEntry fileEntry) throws IOException {
+                super(readBufferSize);
                 this.raf = raf;
                 this.fileEntry = fileEntry;
-                initBuffer(readBufferSize);
             }
 
             protected void readInternal(byte[] b, int offset, int length) throws IOException {

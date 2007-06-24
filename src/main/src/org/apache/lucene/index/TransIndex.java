@@ -19,7 +19,6 @@ package org.apache.lucene.index;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,7 +73,11 @@ public class TransIndex {
         return infoStream;
     }
 
+    private final static int MERGE_READ_BUFFER_SIZE = 4096;
+    
     private IndexFileDeleter deleter;
+
+    private SegmentInfos rollbackSegmentInfos;      // segmentInfos we will fallback to if the commit fails
 
     // New Attributes
 
@@ -95,8 +98,6 @@ public class TransIndex {
     private ArrayList transReaders;
 
     private SegmentInfo newSegment;
-
-    private Vector filesToDeleteCS;
 
     private LuceneSettings luceneSettings;
 
@@ -172,8 +173,11 @@ public class TransIndex {
                 segmentInfos.read(directory);
             }
 
-            deleter = new IndexFileDeleter(segmentInfos, directory);
-            deleter.setInfoStream(infoStream);
+            rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
+            
+            deleter = new IndexFileDeleter(directory,
+                                           new KeepOnlyLastCommitDeletionPolicy(),
+                                           segmentInfos, infoStream);
 
         } catch (IOException e) {
             this.writeLock.release();
@@ -205,7 +209,8 @@ public class TransIndex {
 
         transLog.onDocumentAdded();
 
-        transReaders.add(SegmentReader.get(segmentInfo));
+        // TODO: expose this as a configurable parmeter
+        transReaders.add(SegmentReader.get(segmentInfo, MERGE_READ_BUFFER_SIZE));
         transCreates.add(resource.resourceKey());
 
         ((LuceneResource) resource).setDocNum(indexReader.maxDoc() + transCreates.size() - 1);
@@ -349,7 +354,7 @@ public class TransIndex {
         newSegment = new SegmentInfo(newSegmentName, mergedDocCount, directory, luceneSettings.isUseCompoundFile(), true);
         segmentInfos.addElement(newSegment);
         if (luceneSettings.isUseCompoundFile()) {
-            filesToDeleteCS = merger.createCompoundFile(newSegmentName + ".cfs");
+            merger.createCompoundFile(newSegmentName + ".cfs");
         }
     }
 
@@ -364,8 +369,6 @@ public class TransIndex {
             throw new IOException("Transaction not called first phase");
         }
 
-        String segmentsInfosFileName = segmentInfos.getCurrentSegmentFileName();
-        
         // COMPASS - Close the index reader so we commit the deleted documents
         indexSearcher.close();
         indexSearcher = null;
@@ -374,13 +377,9 @@ public class TransIndex {
 
         // now commit the segments
         segmentInfos.write(directory);
+        deleter.checkpoint(segmentInfos, true);
 
-        deleter.deleteFile(segmentsInfosFileName);    // delete old segments_N file
-        
-        if (luceneSettings.isUseCompoundFile()) {
-            deleter.deleteFiles(filesToDeleteCS);
-            filesToDeleteCS = null;
-        }
+        rollbackSegmentInfos = null;
     }
 
     /**
@@ -394,10 +393,13 @@ public class TransIndex {
         if (newSegment == null) {
             return;
         }
-        // clear the segment we created during merge
-        Vector segmentsToDelete = new Vector();
-        segmentsToDelete.add(SegmentReader.get(newSegment));
-        deleter.deleteSegments(segmentsToDelete);
+        segmentInfos.clear();
+        segmentInfos.addAll(rollbackSegmentInfos);
+
+        // Ask deleter to locate unreferenced files & remove
+        // them:
+        deleter.checkpoint(segmentInfos, false);
+        deleter.refresh();
     }
 
     /**

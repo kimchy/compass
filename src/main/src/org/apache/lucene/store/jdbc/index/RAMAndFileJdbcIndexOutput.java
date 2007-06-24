@@ -69,8 +69,8 @@ public class RAMAndFileJdbcIndexOutput extends IndexOutput implements JdbcIndexC
         switchIfNeeded(1).writeByte(b);
     }
 
-    public void writeBytes(byte[] b, int length) throws IOException {
-        switchIfNeeded(length).writeBytes(b, length);
+    public void writeBytes(byte[] b, int offset, int length) throws IOException {
+        switchIfNeeded(length).writeBytes(b, offset, length);
     }
 
     public void flush() throws IOException {
