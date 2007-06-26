@@ -58,7 +58,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
         if (root != null) {
             sValue = toString(root, resourcePropertyMapping);
         }
-        Property p = searchEngine.createProperty(sValue, resourcePropertyMapping);
+        Property p = createProperty(sValue, resourcePropertyMapping, context);
         doSetBoost(p, root, resourcePropertyMapping, context);
         resource.addProperty(p);
 
@@ -82,6 +82,19 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
         }
 
         return fromString(p.getStringValue(), resourcePropertyMapping, context);
+    }
+
+    /**
+     * Creates a new property to be added to the resource during the marshalling process. Allows
+     * sub classes to override ti in order to modify the created property.
+     *
+     * @param value                   The value of the property
+     * @param resourcePropertyMapping The resource mapping definition of the property
+     * @param context                 The context (allows to get the search engine from it)
+     * @return The property to be added to the Resource
+     */
+    protected Property createProperty(String value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return context.getSearchEngine().createProperty(value, resourcePropertyMapping);
     }
 
     /**

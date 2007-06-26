@@ -118,6 +118,7 @@ public class LuceneSearchEngine implements SearchEngine {
             throw new SearchEngineException("Unsupported Reverse type [" + mapping.getReverse() + "]");
         }
         property.setBoost(mapping.getBoost());
+        property.setOmitNorms(mapping.isOmitNorms());
         ((LuceneProperty) property).setPropertyMapping(mapping);
         return property;
     }
