@@ -98,9 +98,12 @@ public abstract class LuceneUtils {
             Property[] properties = resource.getProperties();
             boolean atleastOneAddedToAll = false;
             for (int i = 0; i < properties.length; i++) {
-                Property property = properties[i];
-                ResourcePropertyMapping resourcePropertyMapping =
-                        resourceMapping.getResourcePropertyMapping(property.getName());
+                LuceneProperty property = (LuceneProperty) properties[i];
+                ResourcePropertyMapping resourcePropertyMapping = property.getPropertyMapping();
+                // if not found within the property, try and get it based on the name from the resource mapping
+                if (resourcePropertyMapping == null) {
+                    resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
+                }
                 if (resourcePropertyMapping == null) {
                     if (!propertyNamingStrategy.isInternal(property.getName())) {
                         if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {

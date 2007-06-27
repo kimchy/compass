@@ -106,14 +106,24 @@ public class LuceneSearchEngine implements SearchEngine {
         return createProperty(mapping.getPath().getPath(), value, mapping);
     }
 
+    public Property createProperty(String value, ResourcePropertyMapping mapping,
+                                   Property.Store store, Property.Index index) throws SearchEngineException {
+        return createProperty(mapping.getPath().getPath(), value, mapping, store, index);
+    }
+
     public Property createProperty(String name, String value, ResourcePropertyMapping mapping) throws SearchEngineException {
+        return createProperty(name, value, mapping, mapping.getStore(), mapping.getIndex());
+    }
+
+    public Property createProperty(String name, String value, ResourcePropertyMapping mapping,
+                                   Property.Store store, Property.Index index) throws SearchEngineException {
         Property property;
         if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.NO) {
-            property = createProperty(name, value, mapping.getStore(), mapping.getIndex(), mapping.getTermVector());
+            property = createProperty(name, value, store, index, mapping.getTermVector());
         } else if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.READER) {
             property = createProperty(name, new ReverseStringReader(value), mapping.getTermVector());
         } else if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.STRING) {
-            property = createProperty(name, StringUtils.reverse(value), mapping.getStore(), mapping.getIndex(), mapping.getTermVector());
+            property = createProperty(name, StringUtils.reverse(value), store, index, mapping.getTermVector());
         } else {
             throw new SearchEngineException("Unsupported Reverse type [" + mapping.getReverse() + "]");
         }

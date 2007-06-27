@@ -18,18 +18,26 @@ package org.compass.core.converter.extended;
 
 import java.util.Locale;
 
+import org.compass.core.Property;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.basic.AbstractBasicConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
- * 
+ * Converts a {@link java.util.Locale} to and from a Search Engine Property. Forces
+ * the index to always be <code>UN_TOKENIZED</code>.
+ *
  * @author kimchy
- * 
  */
 public class LocaleConverter extends AbstractBasicConverter {
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
         return new Locale(str);
+    }
+
+    protected Property createProperty(String value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return context.getSearchEngine().createProperty(value, resourcePropertyMapping,
+                resourcePropertyMapping.getStore(), Property.Index.UN_TOKENIZED);
     }
 }

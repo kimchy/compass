@@ -48,6 +48,10 @@ public class LuceneProperty implements Property {
         this.propertyMapping = propertyMapping;
     }
 
+    public ResourcePropertyMapping getPropertyMapping() {
+        return propertyMapping;
+    }
+
     public RepeatableReader getRepeatableReader() {
         return this.reader;
     }
