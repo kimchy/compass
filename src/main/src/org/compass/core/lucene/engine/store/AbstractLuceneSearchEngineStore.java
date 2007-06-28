@@ -219,7 +219,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                 if (log.isDebugEnabled()) {
                     log.debug("Using native fs lock for sub index [" + subIndex + "] and lock directory [" + lockDir + "]");
                 }
-            } else if (LuceneEnvironment.LockFactory.Type.NATIVE_FS.equalsIgnoreCase(lockFactoryType)) {
+            } else if (LuceneEnvironment.LockFactory.Type.SIMPLE_FS.equalsIgnoreCase(lockFactoryType)) {
                 String lockDir = path;
                 if (lockDir == null) {
                     lockDir = connectionString + "/" + subIndex;
