@@ -68,6 +68,8 @@ public abstract class AbstractSimpleJpaGpsDeviceTests extends AbstractJpaGpsDevi
     protected void tearDownDB(EntityManager entityManager) {
         Query query = entityManager.createQuery("delete from Simple");
         query.executeUpdate();
+        query = entityManager.createQuery("delete from SimpleBase");
+        query.executeUpdate();
     }
 
     public void testSimple() throws Exception {

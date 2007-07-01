@@ -243,7 +243,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     /**
      * Sets if the device should try and automatically inject global entity lifecycle
      * listeners using either the provided {@link JpaEntityLifecycleInjector}, or if not
-     * set, using the {@link JpaEntityLifecycleInjectorDetector}.
+     * set, using the {@link JpaEntityLifecycleInjectorDetector}. Defaults to <code>false</code>.
      */
     public void setInjectEntityLifecycleListener(boolean injectEntityLifecycleListener) {
         this.injectEntityLifecycleListener = injectEntityLifecycleListener;

@@ -61,6 +61,10 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         }
     }
 
+    protected CompassGpsDevice getGpsDevice(String name) {
+        return (CompassGpsDevice) devices.get(name);
+    }
+
     private void checkDeviceValidity(CompassGpsDevice device) {
         if (device.getName() == null) {
             throw new IllegalArgumentException("Must specify a name for a gps device");

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.compass.gps.device.jpa.lifecycle;
 
 import java.util.Collection;
@@ -62,7 +78,7 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
 
     private ClassLoader classLoader;
 
-    private OpenJPAEventListener eventListener;
+    private Object eventListener;
 
     public void setUseSpecificClassEvents(boolean useSpecificClassEvents) {
         this.useSpecificClassEvents = useSpecificClassEvents;
@@ -72,13 +88,19 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
         this.classLoader = classLoader;
     }
 
+    public void setEventListener(Object eventListener) {
+        this.eventListener = eventListener;
+    }
+
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
         OpenJPAEntityManagerFactory emf = OpenJPAPersistence.cast(entityManagerFactory);
 
-        eventListener = new OpenJPAEventListener(device);
+        if (eventListener == null) {
+            eventListener = new OpenJPAEventListener(device);
+        }
 
         if (useSpecificClassEvents) {
             Collection<Class> classes = emf.getConfiguration().getMetaDataRepositoryInstance().loadPersistentTypes(true, classLoader);

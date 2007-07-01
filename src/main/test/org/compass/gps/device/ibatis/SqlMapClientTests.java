@@ -22,23 +22,20 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import junit.framework.TestCase;
-
-import org.compass.core.Compass;
-import org.compass.core.CompassHits;
-import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
-import org.compass.core.config.CompassConfiguration;
-import org.compass.gps.CompassGps;
-import org.compass.gps.device.jdbc.datasource.SingleConnectionDataSource;
-import org.compass.gps.impl.SingleCompassGps;
-
 import com.ibatis.common.resources.Resources;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 import com.ibatis.sqlmap.engine.impl.ExtendedSqlMapClient;
 import com.ibatis.sqlmap.engine.transaction.TransactionManager;
 import com.ibatis.sqlmap.engine.transaction.external.ExternalTransactionConfig;
+import junit.framework.TestCase;
+import org.compass.core.Compass;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
+import org.compass.core.config.CompassConfiguration;
+import org.compass.gps.device.jdbc.datasource.SingleConnectionDataSource;
+import org.compass.gps.impl.SingleCompassGps;
 
 /**
  * 
@@ -61,7 +58,7 @@ public class SqlMapClientTests extends TestCase {
 
     private SqlMapClient sqlMapClient;
 
-    private CompassGps compassGps;
+    private SingleCompassGps compassGps;
 
     private Compass compass;
 

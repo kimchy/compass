@@ -20,10 +20,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import junit.framework.TestCase;
-
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
-import org.compass.gps.CompassGps;
 import org.compass.gps.impl.DualCompassGps;
 import org.objectweb.jotm.Jotm;
 
@@ -35,7 +33,7 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
 
     protected Compass indexCompass;
 
-    protected CompassGps compassGps;
+    protected DualCompassGps compassGps;
 
     protected void setUp() throws Exception {
         super.setUp();

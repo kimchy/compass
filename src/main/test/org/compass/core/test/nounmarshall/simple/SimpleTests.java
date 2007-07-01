@@ -39,9 +39,9 @@ public class SimpleTests extends AbstractTestCase {
         a.id = new Long(1);
         a.value = "value";
         a.value2 = "value2";
-        session.save(a);
+        session.save("a", a);
 
-        Resource resource = session.loadResource(A.class, new Long(1));
+        Resource resource = session.loadResource("a", new Long(1));
         assertNotNull(resource);
         assertEquals(4, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
@@ -49,7 +49,7 @@ public class SimpleTests extends AbstractTestCase {
         assertEquals("1", resource.get("$/a/id"));
 
         try {
-            session.load(A.class, new Long(1));
+            session.load("a", new Long(1));
             fail();
         } catch (ConversionException e) {
 
@@ -59,4 +59,31 @@ public class SimpleTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testNoUnmarshallWithIdHasSameMetaDataAsAnotherProperty() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = new Long(1);
+        a.value = "value";
+        a.value2 = "value2";
+        session.save("a1", a);
+
+        Resource resource = session.loadResource("a1", new Long(1));
+        assertNotNull(resource);
+        assertEquals(5, resource.getProperties().length);
+        assertEquals("a1", resource.getAlias());
+        assertEquals(3, resource.getProperties("value").length);
+        assertEquals("1", resource.get("$/a1/id"));
+
+        try {
+            session.load("a1", new Long(1));
+            fail();
+        } catch (ConversionException e) {
+
+        }
+
+        tr.commit();
+        session.close();
+    }
 }

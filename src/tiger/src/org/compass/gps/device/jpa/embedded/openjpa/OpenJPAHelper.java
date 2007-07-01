@@ -1,0 +1,83 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.compass.gps.device.jpa.embedded.openjpa;
+
+import java.util.Properties;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
+import org.apache.openjpa.persistence.OpenJPAEntityManager;
+import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
+import org.apache.openjpa.persistence.OpenJPAPersistence;
+import org.compass.core.Compass;
+import org.compass.core.CompassSession;
+import org.compass.gps.device.jpa.embedded.JpaCompassGps;
+
+/**
+ * Helper class to get different Compass constructs embedded with Open JPA.
+ *
+ * @author kimchy
+ */
+public abstract class OpenJPAHelper {
+
+    private OpenJPAHelper() {
+
+    }
+
+    /**
+     * Returns the Compass instnace assoicated with the given OpenJPA {@link javax.persistence.EntityManagerFactory}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
+     * transaction (for performance reasons, mostly there is no need to start a DB transaction).
+     */
+    public static Compass getCompass(EntityManagerFactory emf) {
+        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(emf);
+        return (Compass) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_USER_OBJECT_KEY);
+    }
+
+    /**
+     * Returns the Compass Gps instnaces associated with the given OpenJPA {@link javax.persistence.EntityManagerFactory}.
+     * Used in order to perform {@link org.compass.gps.device.jpa.embedded.JpaCompassGps#index()} operation. Note, the index
+     * operation should not be perfomed within a running transaction.
+     */
+    public static JpaCompassGps getCompassGps(EntityManagerFactory emf) {
+        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(emf);
+        return (JpaCompassGps) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_GPS_USER_OBJECT_KEY);
+    }
+
+    /**
+     * Returns the current Compass session associated with the {@link oracle.toplink.essentials.ejb.cmp3.EntityManager}.
+     * Compass Session is associated with an Entity Manager when a transaction is started and removed when the
+     * transaction commits/rollsback.
+     *
+     * <p>The session can be used to perform searches that needs to take into account current transactional changes
+     * or to perform additional Compass operations that are not reflected by the mirroring feature.
+     */
+    public static CompassSession getCurrentCompassSession(EntityManager em) {
+        OpenJPAEntityManager openJPAEntityManager = OpenJPAPersistence.cast(em);
+        return (CompassSession) openJPAEntityManager.getUserObject(CompassProductDerivation.COMPASS_SESSION_USER_OBJECT_KEY);
+    }
+
+    /**
+     * Returns the index settings that are configured within the {@link javax.persistence.EntityManagerFactory}
+     * configuration. Can be used to configure exteranally a {@link org.compass.gps.device.jpa.embedded.JpaCompassGps}
+     * instnace.
+     */
+    public Properties getIndexSettings(EntityManagerFactory emf) {
+        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(emf);
+        return (Properties) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_INDEX_SETTINGS_USER_OBJECT_KEY);
+    }
+}

@@ -58,6 +58,7 @@
       <entry name="?*.xsd" />
       <entry name="?*.handlers" />
       <entry name="?*.schemas" />
+      <entry name="?*.ProductDerivation" />
     </wildcardResourcePatterns>
   </component>
   <component name="DataSourceManagerImpl" />

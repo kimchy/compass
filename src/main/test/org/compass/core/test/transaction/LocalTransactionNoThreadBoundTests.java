@@ -25,7 +25,7 @@ import org.compass.core.test.AbstractTestCase;
 public class LocalTransactionNoThreadBoundTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "transaction/A.cpm.xml" };
+        return new String[]{"transaction/A.cpm.xml"};
     }
 
     protected void addSettings(CompassSettings settings) {
@@ -111,12 +111,9 @@ public class LocalTransactionNoThreadBoundTests extends AbstractTestCase {
         nestedTr.rollback();
         nestedSession.close();
 
-        try {
-            a = (A) session.get(A.class, id);
-            tr.commit();
-        } catch (Exception e) {
-            fail();
-        }
+        a = (A) session.get(A.class, id);
+        tr.commit();
+        session.close();
 
     }
 }

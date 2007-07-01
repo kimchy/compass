@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
-import org.compass.gps.CompassGps;
 import org.compass.gps.device.hibernate.CompassTransactionInterceptor;
 import org.compass.gps.device.hibernate.Hibernate3GpsDevice;
 import org.compass.gps.impl.SingleCompassGps;
@@ -40,7 +39,7 @@ public class CollectionNonJtaTests extends TestCase {
 
     private CompassTemplate compassTemplate;
 
-    private CompassGps compassGps;
+    private SingleCompassGps compassGps;
 
     private SessionFactory sessionFactory;
 

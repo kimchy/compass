@@ -31,20 +31,6 @@ package org.compass.gps;
 public interface CompassGps {
 
     /**
-     * Adds a {@link CompassGpsDevice} to be managed.
-     * 
-     * @param gpsDevice
-     */
-    void addGpsDevice(CompassGpsDevice gpsDevice);
-
-    /**
-     * Sets a list of {@link CompassGpsDevice}s that will be managed.
-     * 
-     * @param devices
-     */
-    void setGpsDevices(CompassGpsDevice[] devices);
-
-    /**
      * Start <code>CompassGps</code> (also starts all the devices).
      * 
      * @throws CompassGpsException

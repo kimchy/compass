@@ -26,36 +26,6 @@ public class LocalTransactionTests extends AbstractTestCase {
         return new String[] { "transaction/A.cpm.xml" };
     }
 
-    public void testNestedLocalTransacitonWithCommitsAndNoNestedBegin() throws Exception {
-        CompassSession session = openSession();
-        CompassTransaction tr = session.beginTransaction();
-
-        Long id = new Long(1);
-        A a = new A();
-        a.setId(id);
-        session.save(a);
-
-        CompassSession nestedSession = openSession();
-        assertTrue(session == nestedSession);
-        a = (A) nestedSession.get(A.class, id);
-        assertNotNull(a);
-        // this actually might not be called as well
-        // nestedSession.close();
-
-        a = (A) session.get(A.class, id);
-        assertNotNull(a);
-
-        tr.commit();
-
-        // verify that the instance was saved
-        tr = session.beginTransaction();
-        a = (A) session.get(A.class, id);
-        assertNotNull(a);
-
-        tr.commit();
-        session.close();
-    }
-
     public void testNestedLocalTransactionsWithCommits() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
@@ -109,8 +79,42 @@ public class LocalTransactionTests extends AbstractTestCase {
             tr.commit();
             fail();
         } catch (Exception e) {
-
+            try {
+                tr.rollback();
+            } catch (Exception e1) {
+                
+            }
         }
+        session.close();
+    }
+    
+    public void testNestedLocalTransacitonWithCommitsAndNoNestedBegin() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
 
+        Long id = new Long(1);
+        A a = new A();
+        a.setId(id);
+        session.save(a);
+
+        CompassSession nestedSession = openSession();
+        assertTrue(session == nestedSession);
+        a = (A) nestedSession.get(A.class, id);
+        assertNotNull(a);
+        // this actually might not be called as well
+        // nestedSession.close();
+
+        a = (A) session.get(A.class, id);
+        assertNotNull(a);
+
+        tr.commit();
+
+        // verify that the instance was saved
+        tr = session.beginTransaction();
+        a = (A) session.get(A.class, id);
+        assertNotNull(a);
+
+        tr.commit();
+        session.close();
     }
 }

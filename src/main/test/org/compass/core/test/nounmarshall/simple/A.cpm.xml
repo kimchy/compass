@@ -17,4 +17,20 @@
         </property>
 
     </class>
+
+    <class name="A" alias="a1" support-unmarshall="false">
+
+        <id name="id" accessor="field">
+            <meta-data>value</meta-data>
+        </id>
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+    </class>
 </compass-core-mapping>

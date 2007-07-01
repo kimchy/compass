@@ -17,7 +17,6 @@
 package org.compass.gps.device;
 
 import junit.framework.TestCase;
-import org.compass.gps.CompassGps;
 import org.compass.gps.impl.SingleCompassGps;
 
 /**
@@ -28,7 +27,7 @@ import org.compass.gps.impl.SingleCompassGps;
 public class ScheduledMirrorGpsDeviceTests extends TestCase {
 
     public void testScheduleDevice() throws Exception {
-        CompassGps gps = new SingleCompassGps();
+        SingleCompassGps gps = new SingleCompassGps();
         
         MockActiveMirrorGpsDevice mockDevice = new MockActiveMirrorGpsDevice();
         mockDevice.setName("mockDevice");

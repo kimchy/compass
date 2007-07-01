@@ -16,15 +16,16 @@
 
 package org.compass.gps.device.jpa;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+
 import junit.framework.TestCase;
 import org.compass.annotations.config.CompassAnnotationsConfiguration;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.gps.CompassGps;
 import org.compass.gps.impl.SingleCompassGps;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 
 /**
  * @author kimchy
@@ -35,19 +36,13 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
 
     protected Compass compass;
 
-    protected SingleCompassGps compassGps;
+    protected CompassGps compassGps;
 
     @Override
     protected void setUp() throws Exception {
         entityManagerFactory = doSetUpEntityManagerFactory();
-        CompassConfiguration cpConf = new CompassAnnotationsConfiguration()
-                .setConnection("target/test-index");
-        setUpCoreCompass(cpConf);
-        compass = cpConf.buildCompass();
-        compass.getSearchEngineIndexManager().deleteIndex();
-        compass.getSearchEngineIndexManager().verifyIndex();
+        setUpCompass();
         setUpGps();
-        setUpGpsDevice();
         compassGps.start();
         setUpDB();
     }
@@ -64,8 +59,18 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
 
     protected abstract void setUpCoreCompass(CompassConfiguration conf);
 
+    protected void setUpCompass() {
+        CompassConfiguration cpConf = new CompassAnnotationsConfiguration()
+                .setConnection("target/test-index");
+        setUpCoreCompass(cpConf);
+        compass = cpConf.buildCompass();
+        compass.getSearchEngineIndexManager().deleteIndex();
+        compass.getSearchEngineIndexManager().verifyIndex();
+    }
+
     protected void setUpGps() {
         compassGps = new SingleCompassGps(compass);
+        setUpGpsDevice();
     }
 
     protected void setUpGpsDevice() {
@@ -73,7 +78,7 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
         jpaGpsDevice.setName("jdoDevice");
         jpaGpsDevice.setEntityManagerFactory(entityManagerFactory);
         addDeviceSettings(jpaGpsDevice);
-        compassGps.addGpsDevice(jpaGpsDevice);
+        ((SingleCompassGps) compassGps).addGpsDevice(jpaGpsDevice);
     }
 
     protected void addDeviceSettings(JpaGpsDevice device) {
