@@ -87,7 +87,7 @@ public class OpenJPAJpaEntitiesLocator implements JpaEntitiesLocator {
         // if it is inherited, do not add it to the classes to index, since the "from [entity]"
         // query for the base class will return results for this class as well
         if (classMetadata.getMappedPCSuperclassMetaData() != null) {
-            Class superClass = clazz.getSuperclass();
+            Class superClass = classMetadata.getMappedPCSuperclassMetaData().getDescribedType();
             // only filter out classes that their super class has compass mappings
             if (superClass != null
                     && ((CompassGpsInterfaceDevice) device.getGps()).hasMappingForEntityForIndex(superClass)) {

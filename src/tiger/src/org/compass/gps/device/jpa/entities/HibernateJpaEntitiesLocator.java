@@ -30,6 +30,7 @@ import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 
 /**
  * A specilized version that works with Hibernate. This class should be used instead of
@@ -63,7 +64,7 @@ public class HibernateJpaEntitiesLocator implements JpaEntitiesLocator {
             }
 
             ClassMetadata classMetadata = (ClassMetadata) allClassMetaData.get(entityname);
-            if (shouldFilter(entityname, classMetadata, device)) {
+            if (shouldFilter(entityname, classMetadata, allClassMetaData, device)) {
                 continue;
             }
             Class<?> clazz = classMetadata.getMappedClass(EntityMode.POJO);
@@ -91,12 +92,15 @@ public class HibernateJpaEntitiesLocator implements JpaEntitiesLocator {
      * @param device        The Jpa Gps device
      * @return <code>true</code> if the entity should be filtered out, <code>false</code> if not.
      */
-    protected boolean shouldFilter(String entityname, ClassMetadata classMetadata, JpaGpsDevice device) {
+    protected boolean shouldFilter(String entityname, ClassMetadata classMetadata, Map allClassMetaData,
+                                   JpaGpsDevice device) {
         Class<?> clazz = classMetadata.getMappedClass(EntityMode.POJO);
         // if it is inherited, do not add it to the classes to index, since the "from [entity]"
         // query for the base class will return results for this class as well
         if (classMetadata.isInherited()) {
-            Class superClass = clazz.getSuperclass();
+            String superClassEntityName = ((AbstractEntityPersister) classMetadata).getMappedSuperclass();
+            ClassMetadata superClassMetadata = (ClassMetadata) allClassMetaData.get(superClassEntityName);
+            Class superClass = superClassMetadata.getMappedClass(EntityMode.POJO);
             // only filter out classes that their super class has compass mappings
             if (superClass != null
                     && ((CompassGpsInterfaceDevice) device.getGps()).hasMappingForEntityForIndex(superClass)) {

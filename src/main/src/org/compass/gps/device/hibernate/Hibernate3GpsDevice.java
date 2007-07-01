@@ -48,6 +48,7 @@ import org.hibernate.event.PostUpdateEvent;
 import org.hibernate.event.PostUpdateEventListener;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 
 /**
  * A {@link HibernateGpsDevice} which works with hibernate 3.
@@ -427,8 +428,9 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
                 // if it is inherited, do not add it to the classes to index, since the "from [entity]"
                 // query for the base class will return results for this class as well
                 if (isInherited(classMetadata)) {
-                    Class mappedClass = classMetadata.getMappedClass(EntityMode.POJO);
-                    Class superClass = mappedClass.getSuperclass();
+                    String superClassEntityName = ((AbstractEntityPersister) classMetadata).getMappedSuperclass();
+                    ClassMetadata superClassMetadata = (ClassMetadata) allClassMetaData.get(superClassEntityName);
+                    Class superClass = superClassMetadata.getMappedClass(EntityMode.POJO);
                     // only filter out classes that their super class has compass mappings
                     if (superClass != null && compassGps.hasMappingForEntityForIndex(superClass)) {
                         if (log.isDebugEnabled()) {
