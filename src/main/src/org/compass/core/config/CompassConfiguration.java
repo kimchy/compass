@@ -381,6 +381,14 @@ public class CompassConfiguration {
         return this;
     }
 
+    public boolean tryAddClass(Class searchableClass) throws ConfigurationException {
+        boolean hasAddedResource = mappingBinding.addClass(searchableClass);
+        if (log.isInfoEnabled() && hasAddedResource) {
+            log.info("Mapping class [" + searchableClass + "]");
+        }
+        return hasAddedResource;
+    }
+
     /**
      * Read all mapping and meta-data documents from a directory tree. Assume
      * that any file named <code>*.cpm.xml</code> or <code>*.cmd.xml</code>

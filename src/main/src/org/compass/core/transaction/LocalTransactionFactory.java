@@ -23,6 +23,8 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
@@ -37,6 +39,12 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
      * of the given thread.
      */
     private static final ThreadLocal context = new ThreadLocal();
+
+    private boolean disableThreadBoundTx = false;
+
+    protected void doConfigure(CompassSettings settings) {
+        disableThreadBoundTx = settings.getSettingAsBoolean(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, false);
+    }
 
     protected boolean isWithinExistingTransaction(InternalCompassSession session) throws CompassException {
         return getTransactionBoundSession() == session;
@@ -56,6 +64,9 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
     }
 
     public CompassSession getTransactionBoundSession() throws CompassException {
+        if (disableThreadBoundTx) {
+            return null;
+        }
         Map sessionMap = sessionMap();
         if (sessionMap == null) {
             return null;
@@ -65,6 +76,9 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
     }
 
     public void unbindSessionFromTransaction(LocalTransaction tr, CompassSession session) {
+        if (disableThreadBoundTx) {
+            return;
+        }
         Map sessionMap = sessionMap();
         if (sessionMap != null) {
             sessionMap.remove(compass);
@@ -75,6 +89,9 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
     }
 
     protected void doBindSessionToTransaction(CompassTransaction tr, CompassSession session) throws CompassException {
+        if (disableThreadBoundTx) {
+            return;
+        }
         Map sessionMap = sessionMap();
         if (sessionMap == null) {
             sessionMap = new HashMap();

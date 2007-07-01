@@ -440,6 +440,13 @@ public class CompassEnvironment {
          * the auto joining of a session to a transaction.
          */
         public static final String DISABLE_AUTO_JOIN_SESSION = "compass.transaction.disableAutoJoinSession";
+
+        /**
+         * This settings allows to disable the default behaviour of the Local transaction factory to
+         * bind the session / transaction to the local thread. This means that each call to <code>beginTransaction</code>
+         * will create a new transaction and not join one if one is already in progress within the thread.
+         */
+        public static final String DISABLE_THREAD_BOUND_LOCAL_TRANSATION = "compass.transaction.disableThreadBoundLocalTransaction";
     }
 
     /**
