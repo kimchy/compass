@@ -489,7 +489,7 @@ public class CompassEnvironment {
         public static final String DEFAULT_NAME = "alias";
 
         /**
-         * The name of the property where exteneded aliases are stored in the resource.
+         * The name of the property where extended aliases are stored in the resource.
          */
         public static final String EXTENDED_ALIAS_NAME = "compass.property.extendedAlias";
 

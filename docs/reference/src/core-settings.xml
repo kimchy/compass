@@ -113,6 +113,10 @@
                 <entry>The name of the "alias" property that Compass will use (a property that holds the alias property value of a resource). Defaults to <literal>alias</literal> (set it only if one of your mapped meta data is called alias).</entry>
               </row>
               <row>
+                <entry>compass.property.extendedAlias</entry>
+                <entry>The name of the property that extended aliased (if exists) of a given Resource will be stored. This allows for poly alias queries where one can query on a "base" alias, and get all the aliases the are extending it. Defaults to <literal>extendedAlias</literal> (set it only if one of your mapped meta data is called extendedAlias).</entry>
+              </row>
+              <row>
                 <entry>compass.property.all</entry>
                 <entry>The name of the "all" property that Compass will use (a property that accumulates all the properties/meta-data). Defaults to <literal>all</literal> (set it only if one of your mapped meta data is called all). Note that it can be overriden in the mapping files.</entry>
               </row>
