@@ -21,6 +21,8 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
@@ -29,6 +31,11 @@ public class ExtendTests extends AbstractAnnotationsTestCase {
 
     protected void addExtraConf(CompassConfiguration conf) {
         conf.addClass(A.class);
+    }
+
+    public void testExtendsAliases() {
+        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("A");
+        assertEquals(2, resourceMapping.getExtendedAliases().length);
     }
 
     public void testCpmAndAnnotations() throws Exception {

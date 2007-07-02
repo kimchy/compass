@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
@@ -211,16 +212,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (searchable == null) {
             return false;
         }
-        String alias = searchable.alias();
-        if (!StringUtils.hasLength(alias)) {
-            alias = ClassUtils.getShortName(clazz);
-        } else {
-            // check if it is a lookp alias
-            Alias aliasLookup = valueLookup.lookupAlias(alias);
-            if (aliasLookup != null) {
-                alias = aliasLookup.getName();
-            }
-        }
+        String alias = getAliasFromSearchableClass(clazz, searchable);
         // try and check is the class mapping is already defined
         // if it is, we will add mapping definitions on top of it
         boolean newClassMapping = false;
@@ -311,6 +303,20 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         return true;
     }
 
+    private String getAliasFromSearchableClass(Class clazz, Searchable searchable) {
+        String alias = searchable.alias();
+        if (!StringUtils.hasLength(alias)) {
+            alias = ClassUtils.getShortName(clazz);
+        } else {
+            // check if it is a lookp alias
+            Alias aliasLookup = valueLookup.lookupAlias(alias);
+            if (aliasLookup != null) {
+                alias = aliasLookup.getName();
+            }
+        }
+        return alias;
+    }
+
     /**
      * Recursivly process the class to find all it's annotations. Lower level
      * class/interfaces with annotations will be added first.
@@ -360,9 +366,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             if (extend.length != 0) {
                 ArrayList<String> extendedMappings = new ArrayList<String>();
                 if (classMapping.getExtendedAliases() != null) {
-                    for (String extendedAlias : classMapping.getExtendedAliases()) {
-                        extendedMappings.add(extendedAlias);
-                    }
+                    extendedMappings.addAll(Arrays.asList(classMapping.getExtendedAliases()));
                 }
                 for (String extendedAlias : extend) {
                     Alias extendedAliasLookup = valueLookup.lookupAlias(extendedAlias);
@@ -374,6 +378,19 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 }
                 classMapping.setExtendedAliases(extendedMappings.toArray(new String[extendedMappings.size()]));
             }
+        }
+
+        // if the super class has Searchable annotation as well, add it to the list of extends
+        Class<?> superClass = clazz.getSuperclass();
+        if (superClass != null && superClass.isAnnotationPresent(Searchable.class)) {
+            Searchable superSearchable = superClass.getAnnotation(Searchable.class);
+            String alias = getAliasFromSearchableClass(superClass, superSearchable);
+            ArrayList<String> extendedMappings = new ArrayList<String>();
+            if (classMapping.getExtendedAliases() != null) {
+                extendedMappings.addAll(Arrays.asList(classMapping.getExtendedAliases()));
+            }
+            extendedMappings.add(alias);
+            classMapping.setExtendedAliases(extendedMappings.toArray(new String[extendedMappings.size()]));
         }
 
         for (Field field : clazz.getDeclaredFields()) {

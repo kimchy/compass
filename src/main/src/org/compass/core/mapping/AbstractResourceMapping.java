@@ -35,9 +35,9 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private SubIndexHash subIndexHash;
 
-    private String[] extendedAliases;
+    private String[] extendedAliases = new String[0];
 
-    private String[] extendingAliases;
+    private String[] extendingAliases = new String[0];
 
     private String analyzer;
 

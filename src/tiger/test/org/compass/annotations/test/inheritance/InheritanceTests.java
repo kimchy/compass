@@ -21,6 +21,8 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
@@ -31,6 +33,24 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         conf.addClass(A.class);
         conf.addClass(B.class);
         conf.addClass(C.class);
+    }
+
+    public void testExtendedAliases() {
+        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("B");
+        assertEquals(1, resourceMapping.getExtendedAliases().length);
+        assertEquals("A", resourceMapping.getExtendedAliases()[0]);
+
+        resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("A");
+        assertEquals(0, resourceMapping.getExtendedAliases().length);
+    }
+
+    public void testExtendingAliases() {
+        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("A");
+        assertEquals(1, resourceMapping.getExtendingAliases().length);
+        assertEquals("B", resourceMapping.getExtendingAliases()[0]);
+
+        resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("B");
+        assertEquals(0, resourceMapping.getExtendingAliases().length);
     }
 
     public void testOverride() throws Exception {
@@ -48,6 +68,8 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         assertEquals("value2", b.getValue2());
 
         Resource resource = session.loadResource(B.class, 1);
+        // 5 properties, one for the alias, and one for the poly class
+        assertEquals(7, resource.getProperties().length);
         assertNull(resource.get("value1"));
         assertNotNull(resource.get("value1e"));
         assertNotNull(resource.get("value2"));
@@ -76,7 +98,7 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         assertTrue(c.a instanceof B);
         assertEquals("value1", c.a.getValue1());
         assertEquals("value2", c.a.getValue2());
-        assertEquals("value3", ((B)c.a).getValue3());
+        assertEquals("value3", ((B) c.a).getValue3());
 
         Resource resource = session.loadResource(C.class, 1);
         assertNull(resource.get("value1"));
