@@ -73,11 +73,13 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
     public LuceneResource(String alias, Document document, int docNum, LuceneSearchEngine searchEngine) {
         this.document = document;
         this.searchEngine = searchEngine;
-        this.aliasProperty = searchEngine.getSearchEngineFactory().getLuceneSettings().getAliasProperty();
+        this.aliasProperty = searchEngine.getSearchEngineFactory().getAliasProperty();
         this.docNum = docNum;
         if (alias != null) {
             removeProperties(aliasProperty);
-            document.add(new Field(aliasProperty, alias, Field.Store.YES, Field.Index.UN_TOKENIZED));
+            Field aliasField = new Field(aliasProperty, alias, Field.Store.YES, Field.Index.UN_TOKENIZED);
+            aliasField.setOmitNorms(true);
+            document.add(aliasField);
         }
 
         verifyResourceMapping();

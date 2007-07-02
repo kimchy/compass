@@ -90,6 +90,18 @@ public abstract class LuceneUtils {
         }
     }
 
+    public static void addExtendedProeprty(Resource resource, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) {
+        String extendedAliasProperty = searchEngine.getSearchEngineFactory().getExtendedAliasProperty();
+        resource.removeProperties(extendedAliasProperty);
+        for (int i = 0; i < resourceMapping.getExtendedAliases().length; i++) {
+            LuceneProperty extendedAliasProp = (LuceneProperty) searchEngine.createProperty(extendedAliasProperty,
+                    resourceMapping.getExtendedAliases()[i], Property.Store.NO, Property.Index.UN_TOKENIZED);
+            extendedAliasProp.getField().setOmitNorms(true);
+            resource.addProperty(extendedAliasProp);
+        }
+
+    }
+
     public static void addAllPropertyIfNeeded(Resource resource, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) throws SearchEngineException {
         if (resourceMapping.isAllSupported()) {
             LuceneSettings luceneSettings = searchEngine.getSearchEngineFactory().getLuceneSettings();

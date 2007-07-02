@@ -51,6 +51,8 @@ public class LuceneSettings {
 
     private String aliasProperty;
 
+    private String extendedAliasProperty;
+
     private TransactionIsolation transactionIsolation;
 
     private Class transactionIsolationClass;
@@ -93,6 +95,12 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Using alias property [" + aliasProperty + "]");
         }
+
+        extendedAliasProperty = settings.getSetting(CompassEnvironment.Alias.EXTENDED_ALIAS_NAME, CompassEnvironment.Alias.DEFAULT_EXTENDED_ALIAS_NAME);
+        if (log.isDebugEnabled()) {
+            log.debug("Using extended alias property [" + extendedAliasProperty + "]");
+        }
+        
         // get the all property
         allProperty = settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME);
         if (log.isDebugEnabled()) {
@@ -208,6 +216,10 @@ public class LuceneSettings {
 
     public String getAliasProperty() {
         return aliasProperty;
+    }
+
+    public String getExtendedAliasProperty() {
+        return extendedAliasProperty;
     }
 
     public void setAliasProperty(String aliasProperty) {

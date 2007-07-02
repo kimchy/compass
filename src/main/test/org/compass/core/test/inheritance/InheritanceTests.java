@@ -18,6 +18,7 @@ package org.compass.core.test.inheritance;
 
 import java.util.HashSet;
 
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
@@ -43,6 +44,39 @@ public class InheritanceTests extends AbstractTestCase {
         for (int i = 0; i < aliasMapping.getExtendingAliases().length; i++) {
             assertTrue(aliases.contains(aliasMapping.getExtendingAliases()[i]));
         }
+    }
+
+    public void testPolyQuery() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = new Long(1);
+        ExtendsA extendsA = new ExtendsA();
+        extendsA.setId(id);
+        extendsA.setValue("value");
+        extendsA.setExtendsValue("evalue");
+
+        session.save("extends", extendsA);
+
+        extendsA = (ExtendsA) session.load("extends", id);
+        assertEquals("value", extendsA.getValue());
+
+        id = new Long(1);
+        extendsA = new ExtendsA();
+        extendsA.setId(id);
+        extendsA.setValue("value");
+        extendsA.setExtendsValue("evalue");
+
+        session.save("override", extendsA);
+
+        extendsA = (ExtendsA) session.load("override", id);
+        assertEquals("value", extendsA.getValue());
+
+        CompassHits hits = session.queryBuilder().polyAlias("base").hits();
+        assertEquals(2, hits.length());
+
+        tr.commit();
+        session.close();
     }
 
     public void testSimpleExtends() throws Exception {

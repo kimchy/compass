@@ -62,4 +62,27 @@ public class ExtendTests extends AbstractAnnotationsTestCase {
         session.close();
     }
 
+    public void testPolyAliasQuery() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.setId(1);
+        a.setValue("value");
+        a.setValue2("value2");
+        session.save(a);
+
+        CompassHits hits = session.queryBuilder().alias("A").hits();
+        assertEquals(1, hits.length());
+        hits = session.queryBuilder().polyAlias("A").hits();
+        assertEquals(1, hits.length());
+        hits = session.queryBuilder().polyAlias("A-contract").hits();
+        assertEquals(1, hits.length());
+        hits = session.queryBuilder().polyAlias("A-contract2").hits();
+        assertEquals(1, hits.length());
+
+
+        tr.commit();
+        session.close();
+    }
 }

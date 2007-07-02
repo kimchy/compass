@@ -315,6 +315,12 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         return new DefaultCompassQuery(query, session);
     }
 
+    public CompassQuery polyAlias(String aliasValue) {
+        return bool().addShould(term(session.getCompass().getSearchEngineFactory().getAliasProperty(), aliasValue))
+                .addShould(term(session.getCompass().getSearchEngineFactory().getExtendedAliasProperty(), aliasValue))
+                .toQuery();
+    }
+
     public CompassQuery term(String name, Object value) {
         ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
         SearchEngineQuery query = queryBuilder.term(lookup.getPath(), lookup.getValue(value));

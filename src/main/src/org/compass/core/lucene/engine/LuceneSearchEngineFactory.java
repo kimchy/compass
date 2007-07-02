@@ -138,6 +138,10 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
         return luceneSettings.getAliasProperty();
     }
 
+    public String getExtendedAliasProperty() {
+        return luceneSettings.getExtendedAliasProperty();
+    }
+
     public String getAllProperty() {
         return luceneSettings.getAllProperty();
     }

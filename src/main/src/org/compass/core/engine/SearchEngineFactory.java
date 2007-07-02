@@ -76,6 +76,11 @@ public interface SearchEngineFactory {
     String getAliasProperty();
 
     /**
+     * Returns the name of the extending alias property name.
+     */
+    String getExtendedAliasProperty();
+
+    /**
      * Returns the name for the all property.
      *
      * @return The name of the all property.

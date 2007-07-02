@@ -484,9 +484,19 @@ public class CompassEnvironment {
         public static final String NAME = "compass.property.alias";
 
         /**
-         * The default name for the "alias" property.
+         * The default name for the "alias" property: <code>alias</code>.
          */
         public static final String DEFAULT_NAME = "alias";
+
+        /**
+         * The name of the property where exteneded aliases are stored in the resource.
+         */
+        public static final String EXTENDED_ALIAS_NAME = "compass.property.extendedAlias";
+
+        /**
+         * The default name for the extended alias property: <code>extendedAlias</code>.
+         */
+        public static final String DEFAULT_EXTENDED_ALIAS_NAME = "extendedAlias";
     }
 
     public abstract class NamingStrategy {

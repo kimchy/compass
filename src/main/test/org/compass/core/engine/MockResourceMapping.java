@@ -62,9 +62,9 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
 
     private String alias;
 
-    private String[] extendedAliases;
+    private String[] extendedAliases = new String[0];
 
-    private String[] extendingAliases;
+    private String[] extendingAliases = new String[0];
 
     private float boost = 1.0f;
 

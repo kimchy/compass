@@ -338,6 +338,7 @@ public class LuceneSearchEngine implements SearchEngine {
             for (int i = 0; i < multiResource.size(); i++) {
                 Resource resource1 = multiResource.resource(i);
                 LuceneUtils.addAllPropertyIfNeeded(resource1, resourceMapping, this);
+                LuceneUtils.addExtendedProeprty(resource1, resourceMapping, this);
                 transaction.create((InternalResource) resource1);
                 if (log.isDebugEnabled()) {
                     log.debug("RESOURCE CREATE " + resource1);
@@ -345,6 +346,7 @@ public class LuceneSearchEngine implements SearchEngine {
             }
         } else {
             LuceneUtils.addAllPropertyIfNeeded(resource, resourceMapping, this);
+            LuceneUtils.addExtendedProeprty(resource, resourceMapping, this);
             transaction.create((InternalResource) resource);
             if (log.isDebugEnabled()) {
                 log.debug("RESOURCE CREATE " + resource);

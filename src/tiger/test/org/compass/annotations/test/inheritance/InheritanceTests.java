@@ -17,6 +17,7 @@
 package org.compass.annotations.test.inheritance;
 
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
@@ -106,6 +107,29 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         assertNotNull(resource.get("value2"));
         assertNotNull(resource.get("value2e"));
         assertEquals(resource.get("abase"), "abasevalue");
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testPolyAliasQuery() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        B b = new B();
+        b.setId(1);
+        b.setValue1("value1");
+        b.setValue2("value2");
+        session.save(b);
+
+        CompassHits hits = session.queryBuilder().alias("B").hits();
+        assertEquals(1, hits.length());
+        hits = session.queryBuilder().polyAlias("A").hits();
+        assertEquals(1, hits.length());
+        hits = session.queryBuilder().polyAlias("B").hits();
+        assertEquals(1, hits.length());
+        hits = session.queryBuilder().alias("A").hits();
+        assertEquals(0, hits.length());
 
         tr.commit();
         session.close();

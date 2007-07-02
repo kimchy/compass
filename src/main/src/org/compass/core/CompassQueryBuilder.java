@@ -321,12 +321,20 @@ public interface CompassQueryBuilder {
     CompassMultiPropertyQueryStringBuilder multiPropertyQueryString(String queryString);
 
     /**
-     * Returns a query that match the given alias.
+     * Returns a query that <b>exactly</b> match the given alias.
      *
      * @param aliasValue The alias value to match to.
      * @return The generated query.
      */
     CompassQuery alias(String aliasValue);
+
+    /**
+     * Returns a query that match the given alias or any extedning aliases.
+     *
+     * @param aliasValue The alias value to match to or any extending aliases.
+     * @return The generated query.
+     */
+    CompassQuery polyAlias(String aliasValue);
 
     /**
      * <p>Creates a query where the resource property must have the given value.
