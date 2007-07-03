@@ -334,15 +334,15 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
                 if (isFilteredForIndex(entityInformation.getName())) {
                     continue;
                 }
-                EntityManagerWrapper wrapper = entityManagerWrapper.newInstance();
-                try {
-                    int current = 0;
-                    wrapper.open();
-                    EntityManager entityManager = wrapper.getEntityManager();
-                    while (true) {
-                        if (!isRunning()) {
-                            return;
-                        }
+                int current = 0;
+                while (true) {
+                    if (!isRunning()) {
+                        return;
+                    }
+                    EntityManagerWrapper wrapper = entityManagerWrapper.newInstance();
+                    try {
+                        wrapper.open();
+                        EntityManager entityManager = wrapper.getEntityManager();
                         if (log.isDebugEnabled()) {
                             log.debug(buildMessage("Indexing entities [" + entityInformation.getName() + "] range ["
                                     + current + "-" + (current + fetchCount) + "] using query ["
@@ -357,19 +357,19 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
                         }
                         session.evictAll();
                         entityManager.clear();
+                        wrapper.close();
                         if (results.size() < fetchCount) {
                             break;
                         }
                         current += fetchCount;
+                    } catch (Exception e) {
+                        log.error(buildMessage("Failed to index the database"), e);
+                        wrapper.closeOnError();
+                        if (!(e instanceof JpaGpsDeviceException)) {
+                            throw new JpaGpsDeviceException(buildMessage("Failed to index the database"), e);
+                        }
+                        throw (JpaGpsDeviceException) e;
                     }
-                    wrapper.close();
-                } catch (Exception e) {
-                    log.error(buildMessage("Failed to index the database"), e);
-                    wrapper.closeOnError();
-                    if (!(e instanceof JpaGpsDeviceException)) {
-                        throw new JpaGpsDeviceException(buildMessage("Failed to index the database"), e);
-                    }
-                    throw (JpaGpsDeviceException) e;
                 }
             }
         }
