@@ -88,6 +88,10 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
         this.classLoader = classLoader;
     }
 
+    /**
+     * Allows to directly inject the event listener that will be used with Open JPA. Will
+     * not use Compass default one ({@link org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector.OpenJPAEventListener}.
+     */
     public void setEventListener(Object eventListener) {
         this.eventListener = eventListener;
     }
