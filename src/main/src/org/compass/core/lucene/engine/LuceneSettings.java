@@ -18,6 +18,8 @@ package org.compass.core.lucene.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.RAMTransLog;
+import org.apache.lucene.index.TransLog;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
@@ -100,7 +102,7 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Using extended alias property [" + extendedAliasProperty + "]");
         }
-        
+
         // get the all property
         allProperty = settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME);
         if (log.isDebugEnabled()) {
@@ -200,6 +202,24 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Wait for cahce invalidation on index operatrion is set to [" + waitForCacheInvalidationOnIndexOperation + "]");
         }
+    }
+
+    public TransLog createTransLog(CompassSettings settings) {
+        if (settings == null) {
+            settings = this.settings;
+        }
+        TransLog transLog;
+        try {
+            Class transLogClass = settings.getSettingAsClass(LuceneEnvironment.Transaction.TransLog.TYPE, RAMTransLog.class);
+            if (log.isTraceEnabled()) {
+                log.trace("Using Trans Log [" + transLogClass.getName() + "]");
+            }
+            transLog = (TransLog) transLogClass.newInstance();
+        } catch (Exception e) {
+            throw new SearchEngineException("Failed to create transLog", e);
+        }
+        transLog.configure(settings);
+        return transLog;
     }
 
     public CompassSettings getSettings() {

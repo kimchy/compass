@@ -29,6 +29,7 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.spi.InternalResource;
@@ -74,7 +75,7 @@ public class TransIndex {
     }
 
     private final static int MERGE_READ_BUFFER_SIZE = 4096;
-    
+
     private IndexFileDeleter deleter;
 
     private SegmentInfos rollbackSegmentInfos;      // segmentInfos we will fallback to if the commit fails
@@ -107,9 +108,9 @@ public class TransIndex {
      * transactional support, with a transactional RAM directory. Also
      * initializes a transactional segment infos.
      */
-    public TransIndex(String subIndex, Directory dir, TransLog transLog, LuceneSettings luceneSettings) throws IOException {
+    public TransIndex(String subIndex, Directory dir, LuceneSettings luceneSettings, CompassSettings runtimeSettings) throws IOException {
         this(dir, false, false, luceneSettings);
-        this.transLog = transLog;
+        this.transLog = luceneSettings.createTransLog(runtimeSettings);
         transDir = transLog.getDirectory();
         transCreates = new ArrayList();
         transReaders = new ArrayList();
@@ -174,10 +175,10 @@ public class TransIndex {
             }
 
             rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
-            
+
             deleter = new IndexFileDeleter(directory,
-                                           new KeepOnlyLastCommitDeletionPolicy(),
-                                           segmentInfos, infoStream);
+                    new KeepOnlyLastCommitDeletionPolicy(),
+                    segmentInfos, infoStream);
 
         } catch (IOException e) {
             this.writeLock.release();
