@@ -35,6 +35,48 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testIndexDeletionPolicyKeepLastCommit() {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/idp-keeplastcommit.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals(LuceneEnvironment.IndexDeletionPolicy.KeepLastCommit.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
+    }
+
+    public void testIndexDeletionPolicyKeepAll() {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/idp-keepall.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals(LuceneEnvironment.IndexDeletionPolicy.KeepAll.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
+    }
+
+    public void testIndexDeletionPolicyKeepNoneOnInit() {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/idp-keepnoneoninit.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals(LuceneEnvironment.IndexDeletionPolicy.KeepNoneOnInit.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
+    }
+
+    public void testIndexDeletionPolicyExpirationTime() {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/idp-expirationtime.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals(LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
+        assertEquals("10", settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.EXPIRATION_TIME_IN_SECONDS));
+    }
+
+    public void testIndexDeletionPolicyKeepLastN() {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/idp-keeplastn.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals(LuceneEnvironment.IndexDeletionPolicy.KeepLastN.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
+        assertEquals("10", settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.KeepLastN.NUM_TO_KEEP));
+    }
+
     public void testLockFactory() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/lockfactory.cfg.xml");

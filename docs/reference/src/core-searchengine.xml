@@ -541,6 +541,44 @@ session.getSettings().setClassSetting(RuntimeLuceneEnvironment.Transaction.Trans
 
     </sect2>
   </sect1>
+  
+  <sect1 id="core-searchengine-indexdeletionpolicy">
+    <title>Index Deletion Policy</title>
+    
+    <para>
+      Lucene allows to define an <literal>IndexDeletionPolicy</literal> which allows to control when commit points are deleted from the index storage. Index deletion policy mainly aim at allowing to keep old Lucene commit points relevant for a certain parameter (such as expiration time or number of commits), which allows for better NFS support for example. Compass allows to easily control the index deletion policy to use and comes built in with several index deletion policy implementations. Here is an example of its configuration using the default index deletion policy  which keeps only the last commit point:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+    <indexDeletionPolicy>
+        <keepLastCommit />
+    </indexDeletionPolicy>
+  </searchEngine>
+</compass>
+]]></programlisting>      
+    </para>
+    
+    <para>
+      Here is the same configuration using properties based configuration:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <settings>
+      <setting name="compass.engine.store.indexDeletionPolicy.type" value="keeplastcommit" />
+  </settings>
+</compass>
+]]></programlisting>      
+    </para>
+    
+    <para>Compass comes built in with several additional deletion policies including: <literal>keepall</literal> which keeps all commit points. <literal>keeplastn</literal> which keeps the last N commit points. <literal>expirationtime</literal> which keeps commit points for X number of seconds.</para>
+  </sect1>
 
   <sect1 id="core-searchengine-directlucene">
     <title>Direct Lucene</title>

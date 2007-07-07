@@ -117,6 +117,14 @@ public class CompassSettings {
         return Float.parseFloat(sValue);
     }
 
+    public double getSettingAsDouble(String setting, double defaultValue) {
+        String sValue = getSetting(setting);
+        if (sValue == null) {
+            return defaultValue;
+        }
+        return Double.parseDouble(sValue);
+    }
+
     public int getSettingAsInt(String setting, int defaultValue) {
         String sValue = getSetting(setting);
         if (sValue == null) {
@@ -171,6 +179,11 @@ public class CompassSettings {
     }
 
     public CompassSettings setFloatSetting(String setting, float value) {
+        setSetting(setting, String.valueOf(value));
+        return this;
+    }
+
+    public CompassSettings setDoubleSetting(String setting, double value) {
         setSetting(setting, String.valueOf(value));
         return this;
     }

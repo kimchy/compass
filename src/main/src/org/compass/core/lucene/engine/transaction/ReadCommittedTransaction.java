@@ -125,7 +125,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 wrapper.subIndex = subIndex;
                 try {
                     wrapper.dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
-                    wrapper.transIndex = new TransIndex(subIndex, wrapper.dir, luceneSettings, searchEngine.getSettings());
+                    wrapper.transIndex = new TransIndex(subIndex, wrapper.dir, searchEngine);
                 } catch (IOException e) {
                     throw new SearchEngineException("Failed to open index for sub-index [" + subIndex + "]", e);
                 }

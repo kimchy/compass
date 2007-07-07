@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 
 /**
@@ -57,10 +58,10 @@ public class LuceneSegmentsMerger {
 
     private IndexFileDeleter deleter;
 
-    public LuceneSegmentsMerger(Directory dir, boolean closeDir, LuceneSettings luceneSettings) throws IOException {
+    public LuceneSegmentsMerger(Directory dir, boolean closeDir, LuceneSearchEngineFactory searchEngineFactory) throws IOException {
         this.closeDir = closeDir;
         this.directory = dir;
-        this.luceneSettings = luceneSettings;
+        this.luceneSettings = searchEngineFactory.getLuceneSettings();
         //this.analyzer = a;
         Lock writeLock = directory.makeLock(IndexWriter.WRITE_LOCK_NAME);
         if (!writeLock.obtain(luceneSettings.getTransactionLockTimout())) { // obtain write lock
@@ -70,7 +71,7 @@ public class LuceneSegmentsMerger {
         segmentInfos.read(directory);
         rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
         deleter = new IndexFileDeleter(directory,
-                new KeepOnlyLastCommitDeletionPolicy(),
+                searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir),
                 segmentInfos, null);
     }
 

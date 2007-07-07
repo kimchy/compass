@@ -29,8 +29,8 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
-import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneResource;
+import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
@@ -108,9 +108,9 @@ public class TransIndex {
      * transactional support, with a transactional RAM directory. Also
      * initializes a transactional segment infos.
      */
-    public TransIndex(String subIndex, Directory dir, LuceneSettings luceneSettings, CompassSettings runtimeSettings) throws IOException {
-        this(dir, false, false, luceneSettings);
-        this.transLog = luceneSettings.createTransLog(runtimeSettings);
+    public TransIndex(String subIndex, Directory dir, LuceneSearchEngine searchEngine) throws IOException {
+        this(dir, false, false, searchEngine);
+        this.transLog = luceneSettings.createTransLog(searchEngine.getSettings());
         transDir = transLog.getDirectory();
         transCreates = new ArrayList();
         transReaders = new ArrayList();
@@ -141,9 +141,9 @@ public class TransIndex {
 
     // Taken from IndexWriter private constructor
     // Need to monitor against lucene changes
-    private TransIndex(Directory d, final boolean create, boolean closeDir, LuceneSettings luceneSettings)
+    private TransIndex(Directory d, final boolean create, boolean closeDir, LuceneSearchEngine searchEngine)
             throws IOException {
-        this.luceneSettings = luceneSettings;
+        this.luceneSettings = searchEngine.getSearchEngineFactory().getLuceneSettings();
         this.closeDir = closeDir;
         directory = d;
 
@@ -177,7 +177,7 @@ public class TransIndex {
             rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
 
             deleter = new IndexFileDeleter(directory,
-                    new KeepOnlyLastCommitDeletionPolicy(),
+                    searchEngine.getSearchEngineFactory().getIndexDeletionPolicyManager().createIndexDeletionPolicy(directory),
                     segmentInfos, infoStream);
 
         } catch (IOException e) {

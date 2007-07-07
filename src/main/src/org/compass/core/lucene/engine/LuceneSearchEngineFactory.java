@@ -32,6 +32,7 @@ import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
+import org.compass.core.lucene.engine.indexdeletionpolicy.IndexDeletionPolicyFactory;
 import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer;
@@ -70,6 +71,8 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
 
     private LuceneQueryParserManager queryParserManager;
 
+    private IndexDeletionPolicyFactory indexDeletionPolicyManager;
+
     private CompassSettings settings;
 
     private SearchEngineEventManager eventManager = new SearchEngineEventManager();
@@ -97,14 +100,18 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
         analyzerManager = new LuceneAnalyzerManager();
         analyzerManager.configure(settings, mapping, luceneSettings);
 
+        // build the index deletion policy manager
+        indexDeletionPolicyManager = new IndexDeletionPolicyFactory();
+        indexDeletionPolicyManager.configure(settings);
+
         // build the query parsers
         queryParserManager = new LuceneQueryParserManager(this);
         queryParserManager.configure(settings);
 
         // build the search engine store
         String subContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "index");
-        LuceneSearchEngineStore searchEngineStore = LuceneSearchEngineStoreFactory.createStore(luceneSettings
-                .getConnection(), subContext);
+        LuceneSearchEngineStore searchEngineStore =
+                LuceneSearchEngineStoreFactory.createStore(luceneSettings.getConnection(), subContext);
         searchEngineStore.configure(this, settings, mapping);
         indexManager = new DefaultLuceneSearchEngineIndexManager(this, searchEngineStore);
 
@@ -199,5 +206,9 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
 
     public LuceneQueryParserManager getQueryParserManager() {
         return this.queryParserManager;
+    }
+
+    public IndexDeletionPolicyFactory getIndexDeletionPolicyManager() {
+        return indexDeletionPolicyManager;
     }
 }

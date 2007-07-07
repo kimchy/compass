@@ -887,23 +887,113 @@ public class LuceneEnvironment {
         public static final String TYPE = "type";
     }
 
+    /**
+     * Lucene {@link org.apache.lucene.store.LockFactory} creation settings.
+     */
     public static abstract class LockFactory {
 
+        /**
+         * The settings prefix for LockFactory
+         */
         public static final String PREFIX = "compass.engine.store.lockFactory";
 
+        /**
+         * The type of the lock factory. Can either hold values stated at {@link Type} or
+         * the fully qualified class name of the {@link org.apache.lucene.store.LockFactory}
+         * implementation.
+         */
         public static final String TYPE = PREFIX + ".type";
 
+        /**
+         * Certain implementation (such as {@link Type#SIMPLE_FS} or {@link Type#NATIVE_FS})
+         * also accept an optional path where to store the index locking.
+         */
         public static final String PATH = PREFIX + ".path";
 
         public static abstract class Type {
 
+            /**
+             * No locking is perfomed, generally should not be used. Maps to Lucene
+             * {@link org.apache.lucene.store.NoLockFactory}.
+             */
             public static final String NO_LOCKING = "nolock";
 
+            /**
+             * The default lock factory uses simple FS operations to write a lock file.
+             * Maps to Lucene {@link org.apache.lucene.store.SimpleFSLockFactory}.
+             */
             public static final String SIMPLE_FS = "simplefs";
 
+            /**
+             * A native FS lock factory (uses NIO). Maps to Lucene
+             * {@link org.apache.lucene.store.NativeFSLockFactory}.
+             */
             public static final String NATIVE_FS = "nativefs";
 
+            /**
+             * A single instance lock fatory (uses memory based ones). Maps to
+             * Lucene {@link org.apache.lucene.store.SingleInstanceLockFactory}.
+             */
             public static final String SINGLE_INSTANCE = "singleinstance";
+        }
+    }
+
+    /**
+     * Settings used to control Lucene {@link org.apache.lucene.index.IndexDeletionPolicy}
+     * creation.
+     */
+    public static abstract class IndexDeletionPolicy {
+
+        public static final String PREFIX = "compass.engine.store.indexDeletionPolicy";
+
+        /**
+         * The type of the index deleteion policy. Can eb one of the logical names that
+         * comes built in with Compass, such as {@link org.compass.core.lucene.LuceneEnvironment.IndexDeletionPolicy.KeepLastCommit#NAME},
+         * or the fully qualified class name of the actual implementation. In suce a case, the implementation
+         * can also implement {@link org.compass.core.config.CompassConfigurable} and/or
+         * {@link org.compass.core.lucene.engine.indexdeletionpolicy.DirectoryConfigurable} in order
+         * to be further configured.
+         */
+        public static final String TYPE = PREFIX + ".type";
+
+        /**
+         * An index deletion policy that keeps only the last commit. Maps to
+         * Lucene {@link org.apache.lucene.index.KeepOnlyLastCommitDeletionPolicy}.
+         */
+        public static abstract class KeepLastCommit {
+
+            /**
+             * The name to put under the
+             */
+            public static final String NAME = "keeplastcommit";
+        }
+
+        /**
+         * An index deletion policy that keeps on the last N number of commits.
+         * Maps to {@link org.compass.core.lucene.engine.indexdeletionpolicy.KeepLastNDeletionPolicy}.
+         */
+        public static abstract class KeepLastN {
+
+            public static final String NAME = "keeplastn";
+
+            public static final String NUM_TO_KEEP = PREFIX + ".numToKeep";
+        }
+
+        public static abstract class ExpirationTime {
+
+            public static final String NAME = "expirationtime";
+
+            public static final String EXPIRATION_TIME_IN_SECONDS = PREFIX + "expirationTimeInSeconds";
+        }
+
+        public static abstract class KeepAll {
+
+            public static final String NAME = "keepall";
+        }
+
+        public static abstract class KeepNoneOnInit {
+
+            public static final String NAME = "keepnoneoninit";
         }
     }
 

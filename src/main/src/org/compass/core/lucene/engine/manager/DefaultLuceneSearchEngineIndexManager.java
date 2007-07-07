@@ -286,8 +286,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public IndexWriter openIndexWriter(Directory dir, boolean create) throws IOException {
-        IndexWriter indexWriter = new IndexWriter(dir, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(),
-                create);
+        IndexWriter indexWriter = new IndexWriter(dir, true, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(),
+                create, searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir));
         indexWriter.setMaxMergeDocs(luceneSettings.getMaxMergeDocs());
         indexWriter.setMergeFactor(luceneSettings.getMergeFactor());
         indexWriter.setUseCompoundFile(luceneSettings.isUseCompoundFile());
@@ -315,7 +315,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
         if (ex != null) {
             if (ex instanceof SearchEngineException) {
-                throw(SearchEngineException) ex;
+                throw (SearchEngineException) ex;
             }
             throw new SearchEngineException("Failed while executing a lucene directory based operation", ex);
         }

@@ -335,6 +335,38 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setGroupSettings(LuceneEnvironment.QueryParser.PREFIX, getElementAttribute(queryParserEle, "name"),
                     settingsHolder.names(), settingsHolder.values());
         }
+        child = DomUtils.getChildElementsByTagName(ele, "indexDeletionPolicy", true);
+        if (child.size() == 1) {
+            Element indexDeletionPolicyEle = (Element) child.get(0);
+            child = DomUtils.getChildElementsByTagName(indexDeletionPolicyEle, "keepLastCommit", true);
+            if (child.size() == 1) {
+                settings.setSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE, LuceneEnvironment.IndexDeletionPolicy.KeepLastCommit.NAME);
+            }
+            child = DomUtils.getChildElementsByTagName(indexDeletionPolicyEle, "keepAll", true);
+            if (child.size() == 1) {
+                settings.setSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE, LuceneEnvironment.IndexDeletionPolicy.KeepAll.NAME);
+            }
+            child = DomUtils.getChildElementsByTagName(indexDeletionPolicyEle, "keepLastN", true);
+            if (child.size() == 1) {
+                settings.setSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE, LuceneEnvironment.IndexDeletionPolicy.KeepLastN.NAME);
+                settings.setSetting(LuceneEnvironment.IndexDeletionPolicy.KeepLastN.NUM_TO_KEEP, ((Element) child.get(0)).getAttribute("numToKeep"));
+            }
+            child = DomUtils.getChildElementsByTagName(indexDeletionPolicyEle, "keepNoneOnInit", true);
+            if (child.size() == 1) {
+                settings.setSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE, LuceneEnvironment.IndexDeletionPolicy.KeepNoneOnInit.NAME);
+            }
+            child = DomUtils.getChildElementsByTagName(indexDeletionPolicyEle, "expirationTime", true);
+            if (child.size() == 1) {
+                settings.setSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE, LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME);
+                settings.setSetting(LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.EXPIRATION_TIME_IN_SECONDS, ((Element) child.get(0)).getAttribute("expirationTimeSeconds"));
+            }
+            child = DomUtils.getChildElementsByTagName(indexDeletionPolicyEle, "custom", true);
+            if (child.size() == 1) {
+                Element customEle = ((Element) child.get(0));
+                settings.setSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE, customEle.getAttribute("type"));
+                bindSettings(customEle, config);
+            }
+        }
     }
 
     public void bindCache(Element ele, CompassConfiguration config) {
