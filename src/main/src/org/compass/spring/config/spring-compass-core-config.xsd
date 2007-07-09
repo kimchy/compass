@@ -756,6 +756,33 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
+            <xsd:element name="indexDeletionPolicy" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:choice minOccurs="1" maxOccurs="1">
+                        <xsd:element name="keepLastCommit" />
+                        <xsd:element name="keepAll" />
+                        <xsd:element name="keepLastN">
+                            <xsd:complexType>
+                                <xsd:attribute name="numToKeep" type="xsd:nonNegativeInteger" use="required" />
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="keepNoneOnInit" />
+                        <xsd:element name="expirationTime">
+                            <xsd:complexType>
+                                <xsd:attribute name="expirationTimeSeconds" type="xsd:double" use="required" />
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="custom">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="type" type="xsd:string" use="required" />
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
         </xsd:sequence>
         <xsd:attribute name="useCompoundFile" type="booleanType" use="optional" default="true">
             <xsd:annotation>
@@ -1353,6 +1380,12 @@
                     </xsd:sequence>
                     <xsd:attribute name="name" type="xsd:string" use="required"/>
                     <xsd:attribute name="type" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="localCache" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:attribute name="subIndex" type="xsd:string" use="required" />
+                    <xsd:attribute name="connection" type="xsd:string" use="required" />
                 </xsd:complexType>
             </xsd:element>
         </xsd:sequence>

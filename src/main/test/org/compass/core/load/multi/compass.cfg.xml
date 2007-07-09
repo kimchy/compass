@@ -53,6 +53,7 @@
             <!--
             <directoryWrapperProvider name="sync-mem" type="org.compass.core.lucene.engine.store.wrapper.AsyncMemoryMirrorDirectoryWrapperProvider" />
             -->
+            <!--<localCache subIndex="__default__" connection="ram://" />-->
         </connection>
 
         <cache>

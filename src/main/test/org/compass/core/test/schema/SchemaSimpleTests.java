@@ -35,6 +35,15 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("file://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testLocalCacheSettings() {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/localcache.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("ram://", settings.getSetting(LuceneEnvironment.LocalCache.PREFIX + "." + LuceneEnvironment.LocalCache.DEFAULT_NAME + "." + LuceneEnvironment.LocalCache.CONNECTION));
+        assertEquals("file://", settings.getSetting(LuceneEnvironment.LocalCache.PREFIX + ".a." + LuceneEnvironment.LocalCache.CONNECTION));
+    }
+
     public void testIndexDeletionPolicyKeepLastCommit() {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/idp-keeplastcommit.cfg.xml");

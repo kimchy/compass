@@ -27,7 +27,7 @@ import org.compass.core.test.AbstractTestCase;
 public class SimpleTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] {"simple/A.cpm.xml"};
+        return new String[]{"simple/A.cpm.xml"};
     }
 
     public void testSimple() throws Exception {
@@ -69,10 +69,28 @@ public class SimpleTests extends AbstractTestCase {
 
         session = openSession();
         tr = session.beginTransaction();
-        for (int i = 0; i < 30; i=i+2) {
+        for (int i = 0; i < 30; i = i + 2) {
             session.delete(A.class, new Long(i));
         }
         assertEquals(15, session.queryBuilder().matchAll().hits().length());
+        tr.commit();
+        session.close();
+    }
+
+    public void testSimpleBatchInsert() {
+        CompassSession session = openSession();
+
+        CompassTransaction tr = session.beginTransaction(CompassTransaction.TransactionIsolation.BATCH_INSERT);
+        try {
+            session.find("test");
+            fail("we should not be able to perform find with batch insert transaction isolation");
+        } catch (Exception e) {
+            // all is well
+        }
+        A a = new A();
+        a.setId(new Long(1));
+        a.setValue("value");
+        session.create(a);
         tr.commit();
         session.close();
     }

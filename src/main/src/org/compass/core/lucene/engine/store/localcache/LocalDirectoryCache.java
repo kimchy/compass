@@ -1,0 +1,278 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * Copyright 2004-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.compass.core.lucene.engine.store.localcache;
+
+import java.io.IOException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.IndexFileNameFilter;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.IndexOutput;
+import org.apache.lucene.store.Lock;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
+
+/**
+ * A local directory cache wraps an actual Lucene directory with a cache Lucene directory.
+ *
+ * @author kimchy
+ */
+public class LocalDirectoryCache extends Directory {
+
+    private static final Log log = LogFactory.getLog(LocalDirectoryCache.class);
+
+    private String subIndex;
+
+    private int bufferSize = 16384;
+
+    private Directory dir;
+
+    private Directory localCacheDir;
+
+    private LuceneSearchEngineFactory searchEngineFactory;
+
+    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, LuceneSearchEngineFactory searchEngineFactory) {
+        this(subIndex, dir, localCacheDir, 16384, searchEngineFactory);
+    }
+
+    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, int bufferSize, LuceneSearchEngineFactory searchEngineFactory) {
+        this.subIndex = subIndex;
+        this.dir = dir;
+        this.localCacheDir = localCacheDir;
+        this.bufferSize = bufferSize;
+        this.searchEngineFactory = searchEngineFactory;
+    }
+
+    public void deleteFile(String name) throws IOException {
+        if (shouldPerformOperationOnActualDirectory(name)) {
+            dir.deleteFile(name);
+            if (log.isTraceEnabled()) {
+                log.trace(logMessage("Deleting [" + name + "] from actual directory"));
+            }
+        }
+        if (localCacheDir.fileExists(name)) {
+            if (log.isTraceEnabled()) {
+                log.trace(logMessage("Deleting [" + name + "] from local cache"));
+            }
+            localCacheDir.deleteFile(name);
+        }
+        // if this is a compound file extension, don't delete it from the actual directory
+        // since we never copied it
+        if (searchEngineFactory.getLuceneSettings().isUseCompoundFile() &&
+                IndexFileNameFilter.getFilter().isCFSFile(name)) {
+            return;
+        }
+        dir.deleteFile(name);
+        if (log.isTraceEnabled()) {
+            log.trace(logMessage("Deleting [" + name + "] from actual directory"));
+        }
+    }
+
+    public boolean fileExists(String name) throws IOException {
+        if (shouldPerformOperationOnActualDirectory(name)) {
+            return dir.fileExists(name);
+        }
+        if (localCacheDir.fileExists(name)) {
+            return true;
+        }
+        return dir.fileExists(name);
+    }
+
+    public long fileLength(String name) throws IOException {
+        if (shouldPerformOperationOnActualDirectory(name)) {
+            return dir.fileLength(name);
+        }
+        fetchFileIfNotExists(name);
+        return localCacheDir.fileLength(name);
+    }
+
+    public long fileModified(String name) throws IOException {
+        if (shouldPerformOperationOnActualDirectory(name)) {
+            return dir.fileLength(name);
+        }
+        fetchFileIfNotExists(name);
+        return localCacheDir.fileModified(name);
+    }
+
+    public String[] list() throws IOException {
+        return dir.list();
+    }
+
+    public void renameFile(String from, String to) throws IOException {
+        if (shouldPerformOperationOnActualDirectory(from)) {
+            dir.renameFile(from, to);
+        }
+        fetchFileIfNotExists(from);
+        localCacheDir.renameFile(from, to);
+        dir.renameFile(from, to);
+    }
+
+    public void touchFile(String name) throws IOException {
+        if (shouldPerformOperationOnActualDirectory(name)) {
+            dir.touchFile(name);
+        }
+        fetchFileIfNotExists(name);
+        localCacheDir.touchFile(name);
+        dir.touchFile(name);
+    }
+
+    public Lock makeLock(String name) {
+        return dir.makeLock(name);
+    }
+
+    public void close() throws IOException {
+        localCacheDir.close();
+        dir.close();
+    }
+
+    public IndexInput openInput(String name) throws IOException {
+        if (shouldPerformOperationOnActualDirectory(name)) {
+            return dir.openInput(name);
+        }
+        fetchFileIfNotExists(name);
+        return localCacheDir.openInput(name);
+    }
+
+    public IndexOutput createOutput(String name) throws IOException {
+        if (shouldPerformOperationOnActualDirectory(name)) {
+            return dir.createOutput(name);
+        }
+        if (log.isTraceEnabled()) {
+            log.trace(logMessage("Creating [" + name + "] in local cache"));
+        }
+        return new LocalCacheIndexOutput(name, localCacheDir.createOutput(name));
+    }
+
+    private boolean shouldPerformOperationOnActualDirectory(String name) {
+        if ("segments.gen".equals(name)) {
+            return true;
+        }
+        if (DefaultLuceneSearchEngineIndexManager.CLEAR_CACHE_NAME.equals(name)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void fetchFileIfNotExists(String name) throws IOException {
+        if (localCacheDir.fileExists(name)) {
+            return;
+        }
+        if (log.isTraceEnabled()) {
+            log.trace(logMessage("Fetching [" + name + "] to local cache"));
+        }
+        copy(dir, localCacheDir, name);
+    }
+
+    private void copy(Directory src, Directory dist, String name) throws IOException {
+        byte[] buf = new byte[bufferSize];
+        IndexOutput os = null;
+        IndexInput is = null;
+        try {
+            os = dist.createOutput(name);
+            is = src.openInput(name);
+            long len = is.length();
+            long readCount = 0;
+            while (readCount < len) {
+                int toRead = readCount + bufferSize > len ? (int) (len - readCount) : bufferSize;
+                is.readBytes(buf, 0, toRead);
+                os.writeBytes(buf, toRead);
+                readCount += toRead;
+            }
+        } finally {
+            // graceful cleanup
+            try {
+                if (os != null)
+                    os.close();
+            } finally {
+                if (is != null)
+                    is.close();
+            }
+        }
+    }
+
+    private String logMessage(String message) {
+        return "[" + subIndex + "] " + message;
+    }
+
+    public class LocalCacheIndexOutput extends IndexOutput {
+
+        private String name;
+
+        private IndexOutput localCacheIndexOutput;
+
+        public LocalCacheIndexOutput(String name, IndexOutput localCacheIndexOutput) {
+            this.name = name;
+            this.localCacheIndexOutput = localCacheIndexOutput;
+        }
+
+        public void writeByte(byte b) throws IOException {
+            localCacheIndexOutput.writeByte(b);
+        }
+
+        public void writeBytes(byte[] b, int offset, int length) throws IOException {
+            localCacheIndexOutput.writeBytes(b, offset, length);
+        }
+
+        public void seek(long size) throws IOException {
+            localCacheIndexOutput.seek(size);
+        }
+
+        public long length() throws IOException {
+            return localCacheIndexOutput.length();
+        }
+
+        public long getFilePointer() {
+            return localCacheIndexOutput.getFilePointer();
+        }
+
+        public void flush() throws IOException {
+            localCacheIndexOutput.flush();
+        }
+
+        public void close() throws IOException {
+            localCacheIndexOutput.close();
+            // if we are using compound file extension don't copy them to the actual directory
+            // just copy over the cfs file
+            if (searchEngineFactory.getLuceneSettings().isUseCompoundFile() &&
+                    IndexFileNameFilter.getFilter().isCFSFile(name)) {
+                return;
+            }
+            if (log.isTraceEnabled()) {
+                log.trace(logMessage("Creating [" + name + "] in actual directory"));
+            }
+            copy(localCacheDir, dir, name);
+        }
+    }
+}

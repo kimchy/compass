@@ -1018,4 +1018,15 @@ public class LuceneEnvironment {
          */
         public static final String DEFAULT_GROUP = "default";
     }
+
+    public static abstract class LocalCache {
+
+        public static final String DISABLE_LOCAL_CACHE = "compass.engine.disableLocalCache";
+
+        public static final String PREFIX = "compass.engine.localCache";
+
+        public static final String CONNECTION = "connection";
+
+        public static final String DEFAULT_NAME = "__default__";
+    }
 }

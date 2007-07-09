@@ -352,10 +352,13 @@ public class TransIndex {
             infoStream.println(" into " + newSegmentName + " (" + mergedDocCount + " docs)");
         }
         merger.closeReaders();
-        newSegment = new SegmentInfo(newSegmentName, mergedDocCount, directory, luceneSettings.isUseCompoundFile(), true);
+        newSegment = new SegmentInfo(newSegmentName, mergedDocCount, directory, false, true);
         segmentInfos.addElement(newSegment);
+        deleter.checkpoint(segmentInfos, false);
         if (luceneSettings.isUseCompoundFile()) {
-            merger.createCompoundFile(newSegmentName + ".cfs");
+            newSegment.setUseCompoundFile(true);
+            merger.createCompoundFile(newSegmentName + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
+            deleter.checkpoint(segmentInfos, false);
         }
     }
 
@@ -373,7 +376,8 @@ public class TransIndex {
         // COMPASS - Close the index reader so we commit the deleted documents
         indexSearcher.close();
         indexSearcher = null;
-        indexReader.close();
+        indexReader.doCommit();
+        indexReader.doClose();
         indexReader = null;
 
         // now commit the segments

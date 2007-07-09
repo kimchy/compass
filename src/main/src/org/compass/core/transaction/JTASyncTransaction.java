@@ -90,7 +90,7 @@ public class JTASyncTransaction extends AbstractJTATransaction {
                     } else {
                         if (log.isDebugEnabled()) {
                             log.debug("Rolling back compass transaction using JTA synchronization afterCompletion on thread [" +
-                                    Thread.currentThread().getName() + "]");
+                                    Thread.currentThread().getName() + "] with status [" + status + "]");
                         }
                         session.getSearchEngine().rollback();
                     }

@@ -435,6 +435,16 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                     settingsHolder.names(), settingsHolder.values());
         }
 
+        child = DomUtils.getChildElementsByTagName(ele, "localCache", true);
+        for (Iterator it = child.iterator(); it.hasNext();) {
+            Element localCacheEle = (Element) it.next();
+            String subIndex = localCacheEle.getAttribute("subIndex");
+            String connection = localCacheEle.getAttribute("connection");
+            settings.setGroupSettings(LuceneEnvironment.LocalCache.PREFIX, subIndex,
+                    new String[]{LuceneEnvironment.LocalCache.CONNECTION},
+                    new String[]{connection});
+        }
+
         child = DomUtils.getChildElementsByTagName(ele, "lockFactory", true);
         if (child.size() == 1) {
             Element lockFactoryEle = (Element) child.get(0);

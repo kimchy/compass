@@ -1305,6 +1305,12 @@
                     <xsd:attribute name="type" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
+            <xsd:element name="localCache" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:attribute name="subIndex" type="xsd:string" use="required" />
+                    <xsd:attribute name="connection" type="xsd:string" use="required" />
+                </xsd:complexType>
+            </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     <xsd:complexType name="fileConnType">

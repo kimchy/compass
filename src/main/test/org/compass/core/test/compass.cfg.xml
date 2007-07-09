@@ -65,7 +65,6 @@
         <searchEngine useCompoundFile="true">
             <optimizer type="org.compass.core.lucene.engine.optimizer.NullOptimizer" />
         </searchEngine>
-
     </compass>
 
 </compass-core-config>

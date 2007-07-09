@@ -44,6 +44,7 @@ import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
+import org.compass.core.lucene.engine.store.localcache.LocalDirectoryCacheManager;
 import org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -72,6 +73,8 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     private LuceneSettings luceneSettings;
 
     private DirectoryWrapperProvider[] directoryWrapperProviders;
+
+    private LocalDirectoryCacheManager localDirectoryCacheManager;
 
     // holds the directories cache per sub index
     private HashMap dirs = new HashMap();
@@ -142,6 +145,8 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             directoryWrapperProviders = (DirectoryWrapperProvider[]) dws.toArray(new DirectoryWrapperProvider[dws.size()]);
         }
 
+        this.localDirectoryCacheManager = new LocalDirectoryCacheManager(searchEngineFactory);
+        localDirectoryCacheManager.configure(settings);
     }
 
     public void close() {
@@ -199,6 +204,9 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     private Directory openDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
         Directory dir = doOpenDirectoryBySubIndex(subIndex, create);
+        if (dir == null) {
+            return null;
+        }
         String lockFactoryType = luceneSettings.getSettings().getSetting(LuceneEnvironment.LockFactory.TYPE);
         if (lockFactoryType != null) {
             String path = luceneSettings.getSettings().getSetting(LuceneEnvironment.LockFactory.PATH);
@@ -263,7 +271,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                 dir = directoryWrapperProviders[i].wrap(subIndex, dir);
             }
         }
-        return dir;
+        return localDirectoryCacheManager.createLocalCache(subIndex, dir);
     }
 
     protected abstract Directory doOpenDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException;
