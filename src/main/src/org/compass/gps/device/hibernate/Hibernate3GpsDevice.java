@@ -67,7 +67,7 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
  */
 public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements PassiveMirrorGpsDevice {
 
-    private class Hibernate3SessionWrapper implements HibernateSessionWrapper {
+    public class Hibernate3SessionWrapper implements HibernateSessionWrapper {
 
         private SessionFactory sessionFactory;
 
@@ -472,13 +472,20 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
         List values;
         Session session = ((Hibernate3SessionWrapper) sessionWrapper).getSession();
         try {
-            Query query = session.createQuery(info.getSelectQuery()).setFirstResult(from).setMaxResults(count);
+            Query query = doGetQuery(info, session).setFirstResult(from).setMaxResults(count);
             values = query.list();
         } catch (Exception e) {
             throw new HibernateGpsDeviceException(buildMessage("Failed to open session to fetch data for class ["
                     + info.getName() + "]"), e);
         }
         return values;
+    }
+
+    /**
+     * Can be used to override query creation for a certain hibernate entity info.
+     */
+    protected Query doGetQuery(HibernateEntityInfo info, Session session) {
+        return session.createQuery(info.getSelectQuery());
     }
 
     private void registerEventsForHibernate30(SessionFactory sessionFactory) {
