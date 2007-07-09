@@ -352,10 +352,12 @@ public class TransIndex {
             infoStream.println(" into " + newSegmentName + " (" + mergedDocCount + " docs)");
         }
         merger.closeReaders();
+        // first create a new segment with no compound format (so deletion policy will delete non compunds if in compound mode)
         newSegment = new SegmentInfo(newSegmentName, mergedDocCount, directory, false, true);
         segmentInfos.addElement(newSegment);
         deleter.checkpoint(segmentInfos, false);
         if (luceneSettings.isUseCompoundFile()) {
+            // compound if needed
             newSegment.setUseCompoundFile(true);
             merger.createCompoundFile(newSegmentName + "." + IndexFileNames.COMPOUND_FILE_EXTENSION);
             deleter.checkpoint(segmentInfos, false);
