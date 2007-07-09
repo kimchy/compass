@@ -36,7 +36,7 @@ import org.compass.gps.device.support.parallel.IndexEntity;
  */
 public abstract class AbstractHibernateGpsDevice extends AbstractParallelGpsDevice implements HibernateGpsDevice {
 
-    protected static interface HibernateSessionWrapper {
+    public static interface HibernateSessionWrapper {
         void open() throws HibernateGpsDeviceException;
 
         void close();
