@@ -73,8 +73,8 @@ public abstract class LuceneUtils {
         // set up file extensions
         ArrayList nonCompoundRelated = new ArrayList();
         nonCompoundRelated.addAll(Arrays.asList(IndexFileNames.INDEX_EXTENSIONS));
-        nonCompoundRelated.addAll(Arrays.asList(IndexFileNames.VECTOR_EXTENSIONS));
-        nonCompoundRelated.removeAll(Arrays.asList(IndexFileNames.COMPOUND_EXTENSIONS));
+        nonCompoundRelated.removeAll(Arrays.asList(IndexFileNames.INDEX_EXTENSIONS_IN_COMPOUND_FILE));
+        nonCompoundRelated.remove(IndexFileNames.COMPOUND_FILE_EXTENSION);
 
         for (int segmentIndex = 0; segmentIndex < segmentInfos.size(); segmentIndex++) {
             SegmentInfo segmentInfo = segmentInfos.info(segmentIndex);
@@ -86,7 +86,7 @@ public abstract class LuceneUtils {
                 copy(src, dest, segment + "." + name, buffer);
             }
 
-            String cfsName = segment + ".cfs";
+            String cfsName = segment + "." + IndexFileNames.COMPOUND_FILE_EXTENSION;
 
             if (srcIsCompound && !destIsCompound) {
                 segmentInfo.setUseCompoundFile(false);
@@ -106,14 +106,14 @@ public abstract class LuceneUtils {
 
                 FieldInfos fieldInfos = new FieldInfos(src, segment + ".fnm");
 
-                Vector files = new Vector(IndexFileNames.COMPOUND_EXTENSIONS.length + fieldInfos.size());
+                Vector files =
+                        new Vector(IndexFileNames.COMPOUND_EXTENSIONS.length + 1);
 
                 // Basic files
                 for (int i = 0; i < IndexFileNames.COMPOUND_EXTENSIONS.length; i++) {
                     files.add(segment + "." + IndexFileNames.COMPOUND_EXTENSIONS[i]);
                 }
 
-                // Field norm files
                 // Fieldable norm files
                 for (int i = 0; i < fieldInfos.size(); i++) {
                     FieldInfo fi = fieldInfos.fieldInfo(i);
@@ -276,33 +276,34 @@ public abstract class LuceneUtils {
 
                 FieldInfos fieldInfos = new FieldInfos(directory, segment + ".fnm");
 
-                Vector files = new Vector(IndexFileNames.COMPOUND_EXTENSIONS.length + fieldInfos.size());
+                Vector files =
+                  new Vector(IndexFileNames.COMPOUND_EXTENSIONS.length + 1);
 
                 // Basic files
                 for (int i = 0; i < IndexFileNames.COMPOUND_EXTENSIONS.length; i++) {
-                    files.add(segment + "." + IndexFileNames.COMPOUND_EXTENSIONS[i]);
+                  files.add(segment + "." + IndexFileNames.COMPOUND_EXTENSIONS[i]);
                 }
 
                 // Fieldable norm files
                 for (int i = 0; i < fieldInfos.size(); i++) {
-                    FieldInfo fi = fieldInfos.fieldInfo(i);
-                    if (fi.isIndexed && !fi.omitNorms) {
-                        files.add(segment + "." + IndexFileNames.NORMS_EXTENSION);
-                        break;
-                    }
+                  FieldInfo fi = fieldInfos.fieldInfo(i);
+                  if (fi.isIndexed && !fi.omitNorms) {
+                    files.add(segment + "." + IndexFileNames.NORMS_EXTENSION);
+                    break;
+                  }
                 }
 
                 // Vector files
                 if (fieldInfos.hasVectors()) {
-                    for (int i = 0; i < IndexFileNames.VECTOR_EXTENSIONS.length; i++) {
-                        files.add(segment + "." + IndexFileNames.VECTOR_EXTENSIONS[i]);
-                    }
+                  for (int i = 0; i < IndexFileNames.VECTOR_EXTENSIONS.length; i++) {
+                    files.add(segment + "." + IndexFileNames.VECTOR_EXTENSIONS[i]);
+                  }
                 }
 
                 // Now merge all added files
                 Iterator it = files.iterator();
                 while (it.hasNext()) {
-                    cfsWriter.addFile((String) it.next());
+                  cfsWriter.addFile((String) it.next());
                 }
 
                 // Perform the merge
