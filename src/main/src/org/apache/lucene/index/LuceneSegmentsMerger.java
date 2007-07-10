@@ -90,12 +90,14 @@ public class LuceneSegmentsMerger {
 
         merger.closeReaders();
         segmentInfos.setSize(fromSegment); // pop old infos & add new
-        SegmentInfo newSegmentInfo = new SegmentInfo(newSegmentName, mergedDocCount, directory, luceneSettings.isUseCompoundFile(), true);
+        SegmentInfo newSegmentInfo = new SegmentInfo(newSegmentName, mergedDocCount, directory, false, true);
         segmentInfos.addElement(newSegmentInfo);
+        deleter.checkpoint(segmentInfos, false);
         if (luceneSettings.isUseCompoundFile()) {
+            newSegmentInfo.setUseCompoundFile(true);
             merger.createCompoundFile(newSegmentName + ".cfs");
+            deleter.checkpoint(segmentInfos, false);
         }
-
     }
 
     public void commit() throws IOException {
