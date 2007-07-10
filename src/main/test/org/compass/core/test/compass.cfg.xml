@@ -50,6 +50,7 @@
                 </dataSourceProvider>
             </jdbc>
             -->
+            <!--<localCache subIndex="__default__" connection="ram://" />-->
         </connection>
 
         <transaction>

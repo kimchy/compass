@@ -63,6 +63,11 @@ public class LocalDirectoryCache extends Directory {
 
     private LuceneSearchEngineFactory searchEngineFactory;
 
+    /**
+     * Monitors used to control concurrent access to fetch if required
+     */
+    private Object[] monitors = new Object[100];
+
     public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, LuceneSearchEngineFactory searchEngineFactory) {
         this(subIndex, dir, localCacheDir, 16384, searchEngineFactory);
     }
@@ -73,6 +78,10 @@ public class LocalDirectoryCache extends Directory {
         this.localCacheDir = localCacheDir;
         this.bufferSize = bufferSize;
         this.searchEngineFactory = searchEngineFactory;
+
+        for (int i = 0; i < monitors.length; i++) {
+            monitors[i] = new Object();
+        }
     }
 
     public void deleteFile(String name) throws IOException {
@@ -81,6 +90,7 @@ public class LocalDirectoryCache extends Directory {
             if (log.isTraceEnabled()) {
                 log.trace(logMessage("Deleting [" + name + "] from actual directory"));
             }
+            return;
         }
         if (localCacheDir.fileExists(name)) {
             if (log.isTraceEnabled()) {
@@ -120,7 +130,7 @@ public class LocalDirectoryCache extends Directory {
 
     public long fileModified(String name) throws IOException {
         if (shouldPerformOperationOnActualDirectory(name)) {
-            return dir.fileLength(name);
+            return dir.fileModified(name);
         }
         fetchFileIfNotExists(name);
         return localCacheDir.fileModified(name);
@@ -133,6 +143,7 @@ public class LocalDirectoryCache extends Directory {
     public void renameFile(String from, String to) throws IOException {
         if (shouldPerformOperationOnActualDirectory(from)) {
             dir.renameFile(from, to);
+            return;
         }
         fetchFileIfNotExists(from);
         localCacheDir.renameFile(from, to);
@@ -142,6 +153,7 @@ public class LocalDirectoryCache extends Directory {
     public void touchFile(String name) throws IOException {
         if (shouldPerformOperationOnActualDirectory(name)) {
             dir.touchFile(name);
+            return;
         }
         fetchFileIfNotExists(name);
         localCacheDir.touchFile(name);
@@ -186,13 +198,15 @@ public class LocalDirectoryCache extends Directory {
     }
 
     private void fetchFileIfNotExists(String name) throws IOException {
-        if (localCacheDir.fileExists(name)) {
-            return;
+        synchronized (monitors[Math.abs(name.hashCode()) % monitors.length]) {
+            if (localCacheDir.fileExists(name)) {
+                return;
+            }
+            if (log.isTraceEnabled()) {
+                log.trace(logMessage("Fetching [" + name + "] to local cache"));
+            }
+            copy(dir, localCacheDir, name);
         }
-        if (log.isTraceEnabled()) {
-            log.trace(logMessage("Fetching [" + name + "] to local cache"));
-        }
-        copy(dir, localCacheDir, name);
     }
 
     private void copy(Directory src, Directory dist, String name) throws IOException {

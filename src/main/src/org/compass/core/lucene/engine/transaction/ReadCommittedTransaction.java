@@ -49,7 +49,6 @@ import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
-import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.ChainedFilter;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -107,11 +106,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
         private LuceneSearchEngineIndexManager indexManager;
 
-        private LuceneSettings luceneSettings;
-
         public TransIndexManager(LuceneSearchEngineFactory searchEngineFactory) {
             this.indexManager = searchEngineFactory.getLuceneIndexManager();
-            this.luceneSettings = searchEngineFactory.getLuceneSettings();
         }
 
         public TransIndexWrapper getTransIndexBySubIndex(String subIndex) {

@@ -105,7 +105,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         // first aquire write lock for all the sub-indexes
         final String[] subIndexes = searchEngineStore.getSubIndexes();
         final Lock[] writerLocks = new Lock[subIndexes.length];
-        final Lock[] commitLocks = new Lock[subIndexes.length];
 
         try {
             try {
@@ -159,7 +158,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             // call the second step
             callback.secondStep();
         } finally {
-            LuceneUtils.clearLocks(commitLocks);
             LuceneUtils.clearLocks(writerLocks);
         }
     }
