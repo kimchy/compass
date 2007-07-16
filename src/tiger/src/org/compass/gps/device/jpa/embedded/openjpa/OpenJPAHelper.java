@@ -39,8 +39,8 @@ public abstract class OpenJPAHelper {
     }
 
     /**
-     * Returns the Compass instnace assoicated with the given OpenJPA {@link javax.persistence.EntityManagerFactory}.
-     * This allows to get a Compass instance in order to perform search operations for example outside of a JPA
+     * Returns the Compass instance assoicated with the given OpenJPA {@link javax.persistence.EntityManagerFactory}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
      * transaction (for performance reasons, mostly there is no need to start a DB transaction).
      */
     public static Compass getCompass(EntityManagerFactory emf) {
@@ -49,13 +49,13 @@ public abstract class OpenJPAHelper {
     }
 
     /**
-     * Returns the Compass instnace assoicated with the given OpenJPA {@link javax.persistence.EntityManager}.
-     * This allows to get a Compass instance in order to perform search operations for example outside of a JPA
+     * Returns the Compass instance assoicated with the given OpenJPA {@link javax.persistence.EntityManager}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
      * transaction (for performance reasons, mostly there is no need to start a DB transaction).
      */
     public static Compass getCompass(EntityManager em) {
         OpenJPAEntityManagerFactory openJpaEmf =
-            OpenJPAPersistence.cast(em).getEntityManagerFactory();
+                OpenJPAPersistence.cast(em).getEntityManagerFactory();
         return (Compass) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_USER_OBJECT_KEY);
     }
 
@@ -76,7 +76,7 @@ public abstract class OpenJPAHelper {
      */
     public static JpaCompassGps getCompassGps(EntityManager em) {
         OpenJPAEntityManagerFactory openJpaEmf =
-            OpenJPAPersistence.cast(em).getEntityManagerFactory();
+                OpenJPAPersistence.cast(em).getEntityManagerFactory();
         return (JpaCompassGps) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_GPS_USER_OBJECT_KEY);
     }
 
@@ -110,7 +110,7 @@ public abstract class OpenJPAHelper {
      */
     public Properties getIndexSettings(EntityManager em) {
         OpenJPAEntityManagerFactory openJpaEmf =
-            OpenJPAPersistence.cast(em).getEntityManagerFactory();
+                OpenJPAPersistence.cast(em).getEntityManagerFactory();
         return (Properties) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_INDEX_SETTINGS_USER_OBJECT_KEY);
     }
 }

@@ -17,21 +17,29 @@
 package org.compass.gps.device.jpa.embedded.openjpa;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import javax.persistence.EntityNotFoundException;
 
 import org.apache.openjpa.conf.OpenJPAConfiguration;
+import org.apache.openjpa.conf.OpenJPAConfigurationImpl;
 import org.apache.openjpa.event.BeginTransactionListener;
 import org.apache.openjpa.event.BrokerFactoryEvent;
 import org.apache.openjpa.event.BrokerFactoryListener;
 import org.apache.openjpa.event.EndTransactionListener;
+import org.apache.openjpa.event.RemoteCommitEvent;
+import org.apache.openjpa.event.RemoteCommitListener;
 import org.apache.openjpa.event.TransactionEvent;
 import org.apache.openjpa.kernel.Broker;
 import org.apache.openjpa.kernel.BrokerFactory;
 import org.apache.openjpa.lib.conf.AbstractProductDerivation;
 import org.apache.openjpa.lib.conf.Configuration;
+import org.apache.openjpa.persistence.Extent;
+import org.apache.openjpa.persistence.OpenJPAEntityManager;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
+import org.apache.openjpa.util.OpenJPAId;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -66,6 +74,16 @@ import org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector;
  * <code>gps.index.compass.</code>. For more information on indexing and mirroring Compass please check
  * {@link org.compass.gps.impl.SingleCompassGps}.
  *
+ * <p>Specific properties that this plugin can use:
+ * <ul>
+ * <li>compass.openjpa.reindexOnStartup: Set it to <code>true</code> in order to perform full reindex of the database on startup.
+ * Defaults to <code>false</code>.
+ * </li>
+ * <li>compass.openjpa.registerRemoteCommitListener: Set it to <code>true</code> in order to register for remote commits
+ * notifications. Defaults to <code>false</code>.
+ * </li>
+ * </ul>
+ *
  * @author kimchy
  */
 public class CompassProductDerivation extends AbstractProductDerivation {
@@ -84,6 +102,12 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
     private static final String COMPASS_GPS_INDEX_PREFIX = "gps.index.";
 
+
+    public static final String REINDEX_ON_STARTUP = "compass.openjpa.reindexOnStartup";
+
+    public static final String REGISTER_REMOTE_COMMIT_LISTENER = "compass.openjpa.registerRemoteCommitListener";
+
+
     private Compass compass;
 
     private DefaultJpaCompassGps jpaCompassGps;
@@ -98,7 +122,12 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         if (!(config instanceof OpenJPAConfiguration)) {
             return false;
         }
-        final OpenJPAConfiguration openJpaConfig = (OpenJPAConfiguration) config;
+        final OpenJPAConfigurationImpl openJpaConfig = (OpenJPAConfigurationImpl) config;
+
+        // Compass can make use of changed object IDs when receiving remote
+        // commit events; reset the default setting to true.
+        openJpaConfig.remoteProviderPlugin.setTransmitPersistedObjectIds(true);
+
         openJpaConfig.getBrokerFactoryEventManager().addListener(new BrokerFactoryListener() {
             public void afterBrokerFactoryCreate(BrokerFactoryEvent event) {
                 Properties props = new Properties();
@@ -143,7 +172,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
                 event.getBrokerFactory().putUserObject(COMPASS_USER_OBJECT_KEY, compass);
 
-                registerTransactionListener(event.getBrokerFactory());
+                registerListeners(event.getBrokerFactory(), openJpaProps);
 
                 // extract index properties so they will be used
                 Properties indexProps = new Properties();
@@ -170,13 +199,18 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 jpaCompassGps.addGpsDevice(jpaGpsDevice);
                 jpaCompassGps.start();
 
+                String reindexOnStartup = (String) openJpaProps.get(REINDEX_ON_STARTUP);
+                if ("true".equalsIgnoreCase(reindexOnStartup)) {
+                    jpaCompassGps.index();
+                }
+
                 event.getBrokerFactory().putUserObject(COMPASS_GPS_USER_OBJECT_KEY, jpaCompassGps);
             }
         });
         return false;
     }
 
-    protected void registerTransactionListener(BrokerFactory brokerFactory) {
+    protected void registerListeners(BrokerFactory brokerFactory, Map<String, Object> openJpaProps) {
         brokerFactory.addTransactionListener(new BeginTransactionListener() {
             public void afterBegin(TransactionEvent transactionEvent) {
                 Broker broker = (Broker) transactionEvent.getSource();
@@ -240,6 +274,13 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 }
             }
         });
+
+        String registerRemoteCommitListener = (String) openJpaProps.get(REGISTER_REMOTE_COMMIT_LISTENER);
+        if ("true".equalsIgnoreCase(registerRemoteCommitListener)) {
+            brokerFactory.getConfiguration().getRemoteCommitEventManager()
+                    .addListener(new RemoteCommitListenerImpl(
+                            OpenJPAPersistence.toEntityManagerFactory(brokerFactory)));
+        }
     }
 
     public void beforeConfigurationClose(Configuration configuration) {
@@ -248,6 +289,115 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         }
         if (compass != null) {
             compass.close();
+        }
+    }
+
+    private static class RemoteCommitListenerImpl
+            implements RemoteCommitListener {
+
+        private final OpenJPAEntityManagerFactory factory;
+
+        private RemoteCommitListenerImpl(OpenJPAEntityManagerFactory emf) {
+            factory = emf;
+        }
+
+        public void afterCommit(RemoteCommitEvent event) {
+            OpenJPAEntityManager em = null;
+            try {
+                switch (event.getPayloadType()) {
+                    case RemoteCommitEvent.PAYLOAD_OIDS:
+                        em = reindexTypesByName(event.getPersistedTypeNames(), em);
+                        em = reindexObjectsById(event.getUpdatedObjectIds(), em);
+                        deleteObjectsById(event.getDeletedObjectIds());
+                        break;
+                    case RemoteCommitEvent.PAYLOAD_OIDS_WITH_ADDS:
+                        em = reindexObjectsById(event.getPersistedObjectIds(), em);
+                        em = reindexObjectsById(event.getUpdatedObjectIds(), em);
+                        deleteObjectsById(event.getDeletedObjectIds());
+                        break;
+                    case RemoteCommitEvent.PAYLOAD_EXTENTS:
+                        Collection c = new HashSet();
+                        c.addAll(event.getPersistedTypeNames());
+                        c.addAll(event.getUpdatedTypeNames());
+                        c.addAll(event.getDeletedTypeNames());
+                        em = reindexTypesByName(c, em);
+                        break;
+                    case RemoteCommitEvent.PAYLOAD_LOCAL_STALE_DETECTION:
+                        em = reindexObjectsById(event.getUpdatedObjectIds(), em);
+                        break;
+                    default:
+                        // TODO log the unknown payload type as a warning 
+                }
+            } catch (Exception e) {
+                // TODO logging. Also, we might want to do more fine-grained
+                // TODO exception-handling.
+                e.printStackTrace();
+            } finally {
+                if (em != null)
+                    em.close();
+            }
+        }
+
+        @SuppressWarnings({"unchecked"})
+        private OpenJPAEntityManager reindexObjectsById(Collection oids,
+                                                        OpenJPAEntityManager em) {
+            if (em == null)
+                em = factory.createEntityManager();
+            for (OpenJPAId oid : (Collection<OpenJPAId>) oids) {
+                reindexOid(oid, em);
+            }
+            return em;
+        }
+
+        @SuppressWarnings({"unchecked"})
+        private void deleteObjectsById(Collection oids) {
+            for (OpenJPAId oid : (Collection<OpenJPAId>) oids) {
+                delete(oid);
+            }
+        }
+
+        @SuppressWarnings({"unchecked"})
+        private OpenJPAEntityManager reindexTypesByName(Collection typeNames,
+                                                        OpenJPAEntityManager em) {
+            if (em == null)
+                em = factory.createEntityManager();
+            ClassLoader loader = factory.getConfiguration().getClassResolverInstance().getClassLoader(null, null);
+            for (String typeName : (Collection<String>) typeNames) {
+                try {
+                    Class cls = Class.forName(typeName, true, loader);
+                    Extent extent = em.createExtent(cls, true);
+                    for (Object o : extent.list())
+                        reindex(o);
+                } catch (ClassNotFoundException e) {
+                    // A problem happened while loading the class;
+                    // ignore this class and move on to the next.
+                    // TODO logging!
+                    e.printStackTrace();
+                }
+            }
+            return em;
+        }
+
+        private void reindexOid(OpenJPAId oid, OpenJPAEntityManager em) {
+            try {
+                Object o = em.find(oid.getType(), oid.getIdObject());
+                reindex(o);
+            } catch (EntityNotFoundException e) {
+                delete(oid);
+            }
+        }
+
+        private void reindex(Object o) {
+            // TODO reindex the argument
+        }
+
+        private void delete(OpenJPAId oid) {
+            Class cls = oid.getType();
+            Object id = oid.getIdObject();
+            // TODO delete the specified record from the index
+        }
+
+        public void close() {
         }
     }
 }
