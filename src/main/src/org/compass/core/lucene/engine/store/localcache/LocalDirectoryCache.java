@@ -286,6 +286,11 @@ public class LocalDirectoryCache extends Directory {
                 String name = (String) it.next();
                 synchronized (monitors[Math.abs(name.hashCode()) % monitors.length]) {
                     try {
+                        // don't do anything with a cfs file since it will not be in the actual directory
+                        if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneSettings().isUseCompoundFile() &&
+                                IndexFileNameFilter.getFilter().isCFSFile(name)) {
+                            continue;
+                        }
                         if (localCacheDir.fileExists(name)) {
                             localCacheDir.deleteFile(name);
                         }
