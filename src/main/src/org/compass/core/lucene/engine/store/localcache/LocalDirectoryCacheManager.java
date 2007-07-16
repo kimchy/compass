@@ -35,6 +35,8 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStoreFactory;
+import org.compass.core.util.backport.java.util.concurrent.Executors;
+import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @author kimchy
@@ -48,10 +50,25 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
     private Map subIndexLocalCacheGroups;
 
     private LuceneSearchEngineFactory searchEngineFactory;
+    
     private String subContext;
+
+    private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
     public LocalDirectoryCacheManager(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
+    }
+
+    public LuceneSearchEngineFactory getSearchEngineFactory() {
+        return searchEngineFactory;
+    }
+
+    public ScheduledExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void close() {
+        executorService.shutdown();
     }
 
     public void configure(CompassSettings settings) throws CompassException {
@@ -103,6 +120,6 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
         } else {
             throw new SearchEngineException("Local cache does not supprt the following connection [" + connection + "]");
         }
-        return new LocalDirectoryCache(subIndex, dir, localCacheDirectory, searchEngineFactory);
+        return new LocalDirectoryCache(subIndex, dir, localCacheDirectory, this);
     }
 }

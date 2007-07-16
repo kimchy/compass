@@ -33,6 +33,9 @@
 package org.compass.core.lucene.engine.store.localcache;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,11 +44,19 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.Lock;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
+import org.compass.core.util.backport.java.util.concurrent.ScheduledFuture;
+import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
 
 /**
  * A local directory cache wraps an actual Lucene directory with a cache Lucene directory.
+ * This local cache supports several instnaces working against the same directory.
+ *
+ * <p>Read operations are performed first by copying the file content to the local cache.
+ * list and lock operations are perfomed directly against the actual directory.
+ *
+ * <p>A scheduled taks runs in a 10 seconds interval and clean up the local cache directory
+ * by deleting anything that is in the local cache and not in the remote directory.
  *
  * @author kimchy
  */
@@ -61,27 +72,32 @@ public class LocalDirectoryCache extends Directory {
 
     private Directory localCacheDir;
 
-    private LuceneSearchEngineFactory searchEngineFactory;
+    private LocalDirectoryCacheManager localDirectoryCacheManager;
+
+    private ScheduledFuture cleanupTaskFuture;
 
     /**
      * Monitors used to control concurrent access to fetch if required
      */
     private Object[] monitors = new Object[100];
 
-    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, LuceneSearchEngineFactory searchEngineFactory) {
-        this(subIndex, dir, localCacheDir, 16384, searchEngineFactory);
+    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, LocalDirectoryCacheManager localDirectoryCacheManager) {
+        this(subIndex, dir, localCacheDir, 16384, localDirectoryCacheManager);
     }
 
-    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, int bufferSize, LuceneSearchEngineFactory searchEngineFactory) {
+    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, int bufferSize, LocalDirectoryCacheManager localDirectoryCacheManager) {
         this.subIndex = subIndex;
         this.dir = dir;
         this.localCacheDir = localCacheDir;
         this.bufferSize = bufferSize;
-        this.searchEngineFactory = searchEngineFactory;
+        this.localDirectoryCacheManager = localDirectoryCacheManager;
 
         for (int i = 0; i < monitors.length; i++) {
             monitors[i] = new Object();
         }
+
+        cleanupTaskFuture = localDirectoryCacheManager.getExecutorService().scheduleWithFixedDelay(new CleanupTask(),
+                10, 10, TimeUnit.SECONDS);
     }
 
     public void deleteFile(String name) throws IOException {
@@ -100,7 +116,7 @@ public class LocalDirectoryCache extends Directory {
         }
         // if this is a compound file extension, don't delete it from the actual directory
         // since we never copied it
-        if (searchEngineFactory.getLuceneSettings().isUseCompoundFile() &&
+        if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneSettings().isUseCompoundFile() &&
                 IndexFileNameFilter.getFilter().isCFSFile(name)) {
             return;
         }
@@ -165,6 +181,7 @@ public class LocalDirectoryCache extends Directory {
     }
 
     public void close() throws IOException {
+        cleanupTaskFuture.cancel(true);
         localCacheDir.close();
         dir.close();
     }
@@ -240,6 +257,48 @@ public class LocalDirectoryCache extends Directory {
         return "[" + subIndex + "] " + message;
     }
 
+
+    /**
+     * A clean up task that deletes files from the local cache that exist within the local cache
+     * and do no exist within the remote directory.
+     */
+    public class CleanupTask implements Runnable {
+
+        public void run() {
+            String[] currentList;
+            String[] remoteList;
+            try {
+                currentList = localCacheDir.list();
+                remoteList = dir.list();
+            } catch (IOException e) {
+                log.error(logMessage("Failed to list directory"), e);
+                return;
+            }
+
+            HashSet filesToCleanUp = new HashSet();
+            filesToCleanUp.addAll(Arrays.asList(currentList));
+
+            for (int i = 0; i < remoteList.length; i++) {
+                filesToCleanUp.remove(remoteList[i]);
+            }
+
+            for (Iterator it = filesToCleanUp.iterator(); it.hasNext();) {
+                String name = (String) it.next();
+                synchronized (monitors[Math.abs(name.hashCode()) % monitors.length]) {
+                    try {
+                        if (localCacheDir.fileExists(name)) {
+                            localCacheDir.deleteFile(name);
+                        }
+                    } catch (IOException e) {
+                        if (log.isDebugEnabled()) {
+                            log.debug(logMessage("Failed to clean local file [" + name + "]"), e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public class LocalCacheIndexOutput extends IndexOutput {
 
         private String name;
@@ -279,7 +338,7 @@ public class LocalDirectoryCache extends Directory {
             localCacheIndexOutput.close();
             // if we are using compound file extension don't copy them to the actual directory
             // just copy over the cfs file
-            if (searchEngineFactory.getLuceneSettings().isUseCompoundFile() &&
+            if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneSettings().isUseCompoundFile() &&
                     IndexFileNameFilter.getFilter().isCFSFile(name)) {
                 return;
             }

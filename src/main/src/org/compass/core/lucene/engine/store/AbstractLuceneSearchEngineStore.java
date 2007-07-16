@@ -150,6 +150,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     public void close() {
+        localDirectoryCacheManager.close();
         closeDirectories();
         doClose();
     }

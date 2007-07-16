@@ -323,6 +323,44 @@
     </para>
   </sect1>
   
+  <sect1 id="core-connection-localcache">
+    <title>Local Directory Cache</title>
+    
+    <para>
+      Compass supports local directory cache implementation allowing to have a local cache per sub index or globally for all sub indexes (that do not have a local cache already specifically defined for them). Local cache can be really useful where a certain sub index is heavily accessed and a local in memory cache is required to improve its performance. Another example is using a local file system based cache when working with a Jdbc directory.
+    </para>
+    
+    <para>
+      Local Cache fully supports several Compass instances running against the same directory (unlike the directory wrappers explained in the next section) and keeps its local cache state synchronized with external changes periodically.
+    </para>
+    
+    <para>
+      Here is an example configuring a memory based local cache for sub index called a:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+      <localCache subIndex="a" connection="ram://" />
+  </connection>
+</compass>
+]]></programlisting>
+    </para>
+    
+    <para>
+      And here is an example of how it can be configured to use local file system cache for all different sub indexes (using the special <literal>__default__</literal> keyword):
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+      <localCache subIndex="__default__" connection="file://tmp/cache" />
+  </connection>
+</compass>
+]]></programlisting>
+    </para>
+    
+    <para>
+      Other than using a faster local cache directory implementation, Compass also improve compound file structure performance by performing the compound operation on the local cache and only flushing the already compound index structure.
+    </para>
+  </sect1>
+  
   <sect1 id="core-connection-directoryWrapper">
     <title>Lucene Directory Wrapper</title>
     
