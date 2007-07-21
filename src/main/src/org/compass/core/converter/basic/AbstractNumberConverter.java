@@ -70,20 +70,23 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
     }
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
-        try {
-            if (hasFormatter) {
-                return fromNumber((Number) formatter.parse(str));
-            } else {
-                return defaultFromString(str, resourcePropertyMapping);
+        if (hasFormatter) {
+            for (int i = 0; i < formatters.length; i++) {
+                try {
+                    return fromNumber((Number) formatters[i].parse(str));
+                } catch (ParseException e) {
+                    // do nothing, continue to the next one
+                }
             }
-        } catch (ParseException e) {
-            throw new ConversionException("Failed to parse number [" + str + "]", e);
+            throw new ConversionException("Failed to parse date [" + str + "]");
+        } else {
+            return defaultFromString(str, resourcePropertyMapping);
         }
     }
 
     public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
         if (hasFormatter) {
-            return formatter.format(o);
+            return formatters[0].format(o);
         } else {
             return defaultToString(o, resourcePropertyMapping);
         }

@@ -20,16 +20,23 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
+import org.compass.core.config.CompassMappingAware;
 import org.compass.core.engine.SearchEngineQueryParseException;
+import org.compass.core.mapping.CompassMapping;
 
 /**
  * @author kimchy
  */
-public class DefaultLuceneQueryParser implements LuceneQueryParser {
+public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappingAware {
 
+    private CompassMapping mapping;
+
+    public void setCompassMapping(CompassMapping mapping) {
+        this.mapping = mapping;
+    }
 
     public Query parse(String property, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
-        QueryParser queryParser = new CompassQueryParser(property, analyzer);
+        QueryParser queryParser = new CompassQueryParser(property, analyzer, mapping);
         queryParser.setDefaultOperator(operator);
         try {
             return queryParser.parse(queryString);
@@ -39,7 +46,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser {
     }
 
     public Query parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
-        QueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer);
+        QueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping);
         queryParser.setDefaultOperator(operator);
         try {
             return queryParser.parse(queryString);

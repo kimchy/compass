@@ -22,6 +22,9 @@ import org.apache.lucene.search.Query;
 import org.compass.core.engine.SearchEngineQueryParseException;
 
 /**
+ * A Lucene query parsers allows to plug in different parsers responsible
+ * for parsing a query string into a Lucene {@link org.apache.lucene.search.Query}.
+ *
  * @author kimchy
  */
 public interface LuceneQueryParser {

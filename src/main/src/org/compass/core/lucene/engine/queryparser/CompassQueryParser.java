@@ -23,6 +23,7 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
 import org.compass.core.lucene.search.ConstantScorePrefixQuery;
+import org.compass.core.mapping.CompassMapping;
 
 /**
  * Extends Lucene {@link org.apache.lucene.queryParser.QueryParser} and overrides {@link #getRangeQuery(String,String,String,boolean)}
@@ -33,8 +34,11 @@ import org.compass.core.lucene.search.ConstantScorePrefixQuery;
  */
 public class CompassQueryParser extends QueryParser {
 
-    public CompassQueryParser(String f, Analyzer a) {
+    private CompassMapping mapping;
+
+    public CompassQueryParser(String f, Analyzer a, CompassMapping mapping) {
         super(f, a);
+        this.mapping = mapping;
     }
 
     /**
@@ -46,10 +50,29 @@ public class CompassQueryParser extends QueryParser {
             part2 = part2.toLowerCase();
         }
 
-        return new ConstantScoreRangeQuery(field,
-                "*".equals(part1) ? null : part1,
-                "*".equals(part2) ? null : part2,
-                inclusive, inclusive);
+        CompassMapping.ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
+        lookup.setConvertOnlyWithDotPath(false);
+        if (lookup.hasSpecificConverter()) {
+            if ("*".equals(part1)) {
+                part1 = null;
+            } else {
+                part1 = lookup.getValue(lookup.fromString(part1));
+            }
+            if ("*".equals(part2)) {
+                part2 = null;
+            } else {
+                part2 = lookup.getValue(lookup.fromString(part2));
+            }
+        } else {
+            if ("*".equals(part1)) {
+                part1 = null;
+            }
+            if ("*".equals(part2)) {
+                part2 = null;
+            }
+        }
+
+        return new ConstantScoreRangeQuery(field, part1, part2, inclusive, inclusive);
     }
 
     protected Query getPrefixQuery(String field, String termStr) throws ParseException {

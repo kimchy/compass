@@ -140,6 +140,22 @@ session.delete(Author.class, "12"); // Everything in the search engine is a Stri
         </para>
 
       </sect2>
+      
+      <sect2 id="Range Queries Extensions">
+        <title>Query String - Range Queries Extensions</title>
+        
+        <para>
+          Compass simplifies the usage of range queries when working with dates and numbers. When using numbers it is preferred to store the number if a lexicography correct value (such as 00001, usually using the format attribute). When using range queries, Compass allows to execute the following query: value:[1 TO 3] and internally Compass will automatically translate it to value:[0001 TO 0003].
+        </para>
+        
+        <para>
+          When using dates, Compass allows to use several different formats for the same property. The format of the Date object should be sortable in order to perform range queries. This means, for example, that the format attribute should be: format="yyyy-MM-dd". This allows for range queries such as: date:[1980-01-01 TO 1985-01-01] to work. Compass also allows to use different formats for range queries. It can be configured within the format configuration: format="yyyy-MM-dd;dd-MM-yyyy" (the first format is the one used to store the String). And now the following range query can be executed: date:[01-01-1980 TO 01-01-1985].
+        </para>
+        
+        <para>
+          Compass also allows for math like date formats using the now keyword. For example: "now+1year" will translate to a date with a year from now. For more information please refer to the DateMathParser javadoc.
+        </para>
+      </sect2>
 
       <sect2 id="CompassHits">
         <title>CompassHits, CompassDetachedHits &amp; CompassHitsOperations</title>

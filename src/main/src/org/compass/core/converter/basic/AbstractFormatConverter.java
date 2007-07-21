@@ -17,6 +17,7 @@
 package org.compass.core.converter.basic;
 
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
@@ -38,7 +39,7 @@ import org.compass.core.config.CompassSettings;
  */
 public abstract class AbstractFormatConverter extends AbstractBasicConverter implements CompassConfigurable, FormatConverter {
 
-    protected ThreadSafeFormat formatter;
+    protected ThreadSafeFormat[] formatters;
 
     protected boolean hasFormatter = true;
 
@@ -59,21 +60,11 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
             hasFormatter = false;
             return;
         }
-
-        ThreadSafeFormat.FormatterFactory formatterFactory = doCreateFormatterFactory();
-        formatterFactory.configure(format, locale);
-
-        int minPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.Format.MIN_POOL_SIZE, 4);
-        int maxPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.Format.MIN_POOL_SIZE, 20);
-
-        formatter = new ThreadSafeFormat(minPoolSize, maxPoolSize, formatterFactory);
+        createFormatters(format, settings);
     }
 
     public void setFormat(String format) {
-        ThreadSafeFormat.FormatterFactory formatterFactory = doCreateFormatterFactory();
-        formatterFactory.configure(format, locale);
-
-        formatter = new ThreadSafeFormat(4, 20, formatterFactory);
+        createFormatters(format, null);
     }
 
     public FormatConverter copy() {
@@ -90,5 +81,22 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
 
     protected String doGetDefaultFormat() {
         return null;
+    }
+
+    private void createFormatters(String format, CompassSettings settings) {
+        StringTokenizer tokenizer = new StringTokenizer(format, ";");
+        formatters = new ThreadSafeFormat[tokenizer.countTokens()];
+        for (int i = 0; i < formatters.length; i++) {
+            String currentFromat = tokenizer.nextToken();
+            ThreadSafeFormat.FormatterFactory formatterFactory = doCreateFormatterFactory();
+            formatterFactory.configure(currentFromat, locale);
+            int minPoolSize = 4;
+            int maxPoolSize = 20;
+            if (settings != null) {
+                minPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.Format.MIN_POOL_SIZE, minPoolSize);
+                maxPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.Format.MAX_POOL_SIZE, maxPoolSize);
+            }
+            formatters[i] = new ThreadSafeFormat(minPoolSize, maxPoolSize, formatterFactory);
+        }
     }
 }

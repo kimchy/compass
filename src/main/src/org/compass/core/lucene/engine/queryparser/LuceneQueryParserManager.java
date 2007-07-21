@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassMappingAware;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.lucene.LuceneEnvironment;
@@ -39,7 +40,10 @@ public class LuceneQueryParserManager implements CompassConfigurable {
 
     private HashMap queryParsers = new HashMap();
 
+    private LuceneSearchEngineFactory searchEngineFactory;
+
     public LuceneQueryParserManager(LuceneSearchEngineFactory searchEngineFactory) {
+        this.searchEngineFactory = searchEngineFactory;
     }
 
     public void configure(CompassSettings settings) throws CompassException {
@@ -65,10 +69,15 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             if (queryParser instanceof CompassConfigurable) {
                 ((CompassConfigurable) queryParser).configure(queryParserSettings);
             }
+            if (queryParser instanceof CompassMappingAware) {
+                ((CompassMappingAware) queryParser).setCompassMapping(searchEngineFactory.getMapping());
+            }
             queryParsers.put(queryParserName, queryParser);
         }
         if (queryParsers.get(LuceneEnvironment.QueryParser.DEFAULT_GROUP) == null) {
-            queryParsers.put(LuceneEnvironment.QueryParser.DEFAULT_GROUP, new DefaultLuceneQueryParser());
+            DefaultLuceneQueryParser queryParser = new DefaultLuceneQueryParser();
+            queryParser.setCompassMapping(searchEngineFactory.getMapping());
+            queryParsers.put(LuceneEnvironment.QueryParser.DEFAULT_GROUP, queryParser);
         }
     }
 

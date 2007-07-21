@@ -17,13 +17,16 @@
 package org.compass.core.lucene.engine.queryparser;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
+import org.compass.core.lucene.search.ConstantScorePrefixQuery;
+import org.compass.core.mapping.CompassMapping;
 
 /**
- * Extends Lucene {@link org.apache.lucene.queryParser.MultiFieldQueryParser} and overrides {@link #getRangeQuery(String, String, String, boolean)}
+ * Extends Lucene {@link org.apache.lucene.queryParser.MultiFieldQueryParser} and overrides {@link #getRangeQuery(String,String,String,boolean)}
  * since lucene performs data parsing which is a performance killer. Anyhow, handling dates in Compass
  * is different and simpler than Lucene.
  *
@@ -31,8 +34,11 @@ import org.apache.lucene.search.Query;
  */
 public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
 
-    public CompassMultiFieldQueryParser(String[] fields, Analyzer analyzer) {
+    private CompassMapping mapping;
+
+    public CompassMultiFieldQueryParser(String[] fields, Analyzer analyzer, CompassMapping mapping) {
         super(fields, analyzer);
+        this.mapping = mapping;
     }
 
     /**
@@ -44,10 +50,37 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
             part2 = part2.toLowerCase();
         }
 
-        return new ConstantScoreRangeQuery(field,
-                "*".equals(part1) ? null : part1,
-                "*".equals(part2) ? null : part2,
-                inclusive, inclusive);
+        CompassMapping.ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
+        lookup.setConvertOnlyWithDotPath(false);
+        if (lookup.hasSpecificConverter()) {
+            if ("*".equals(part1)) {
+                part1 = null;
+            } else {
+                part1 = lookup.getValue(lookup.fromString(part1));
+            }
+            if ("*".equals(part2)) {
+                part2 = null;
+            } else {
+                part2 = lookup.getValue(lookup.fromString(part2));
+            }
+        } else {
+            if ("*".equals(part1)) {
+                part1 = null;
+            }
+            if ("*".equals(part2)) {
+                part2 = null;
+            }
+        }
+
+        return new ConstantScoreRangeQuery(field, part1, part2, inclusive, inclusive);
     }
 
+    protected Query getPrefixQuery(String field, String termStr) throws ParseException {
+        if (getLowercaseExpandedTerms()) {
+            termStr = termStr.toLowerCase();
+        }
+
+        Term t = new Term(field, termStr);
+        return new ConstantScorePrefixQuery(t);
+    }
 }

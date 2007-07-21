@@ -20,14 +20,20 @@ import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
+ * Converts dates to String and vice versa. Supports the notion of "now" using
+ * {@link org.compass.core.converter.basic.DateMathParser}.
+ *
  * @author kimchy
  */
 public class DateConverter extends AbstractFormatConverter {
+
+    public static final String DEFAULT_NOW_PREFIX = "now";
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-S-a";
 
@@ -58,15 +64,33 @@ public class DateConverter extends AbstractFormatConverter {
         return new DateConverter.DateFormatter();
     }
 
+    /**
+     * Try all the configured formatters to format the str into an Object.
+     */
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
         try {
-            return formatter.parse(str);
+            if (str.toLowerCase().startsWith(DEFAULT_NOW_PREFIX)) {
+                // TODO have timezone pluggable
+                DateMathParser p = new DateMathParser(TimeZone.getDefault(), locale);
+                return p.parseMath(str.substring(DEFAULT_NOW_PREFIX.length()));
+            }
+            for (int i = 0; i < formatters.length; i++) {
+                try {
+                    return formatters[i].parse(str);
+                } catch (ParseException e) {
+                    // do nothing, continue to the next one
+                }
+            }
+            throw new ConversionException("Failed to parse date [" + str + "]");
         } catch (ParseException e) {
             throw new ConversionException("Failed to parse date [" + str + "]", e);
         }
     }
 
+    /**
+     * Uses the first configured formatter (also known as the default one) to convert it to String.
+     */
     public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
-        return formatter.format(o);
+        return formatters[0].format(o);
     }
 }
