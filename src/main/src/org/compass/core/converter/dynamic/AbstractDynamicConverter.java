@@ -17,8 +17,8 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * A simple base class for {@link DynamicConverter}. Requires implementation of
  * {@link #evaluate(Object,org.compass.core.mapping.ResourcePropertyMapping)}.
- * <p/>
- * Also holds a {@link FormatConverter} for expression that return formatable
+ *
+ * <p>Also holds a {@link FormatConverter} for expression that return formatable
  * objects (like Date).
  *
  * @author kimchy

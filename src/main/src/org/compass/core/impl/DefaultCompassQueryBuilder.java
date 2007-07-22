@@ -29,7 +29,7 @@ import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineMultiPropert
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQuerySpanNearBuilder;
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQuerySpanOrBuilder;
 import org.compass.core.engine.SearchEngineQueryBuilder.SearchEngineQueryStringBuilder;
-import org.compass.core.mapping.CompassMapping.ResourcePropertyLookup;
+import org.compass.core.mapping.ResourcePropertyLookup;
 import org.compass.core.spi.InternalCompassSession;
 
 /**

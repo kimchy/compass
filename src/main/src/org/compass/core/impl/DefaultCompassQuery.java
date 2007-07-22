@@ -23,8 +23,8 @@ import org.compass.core.CompassQueryFilter;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
-import org.compass.core.mapping.CompassMapping.ResourcePropertyLookup;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyLookup;
 import org.compass.core.spi.InternalCompassSession;
 
 /**

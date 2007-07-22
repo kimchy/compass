@@ -24,6 +24,7 @@ import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
 import org.compass.core.lucene.search.ConstantScorePrefixQuery;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourcePropertyLookup;
 
 /**
  * Extends Lucene {@link org.apache.lucene.queryParser.MultiFieldQueryParser} and overrides {@link #getRangeQuery(String,String,String,boolean)}
@@ -41,6 +42,15 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         this.mapping = mapping;
     }
 
+    protected Query getFieldQuery(String field, String queryText) throws ParseException {
+        ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
+        lookup.setConvertOnlyWithDotPath(false);
+        if (lookup.hasSpecificConverter()) {
+            queryText = lookup.normalizeString(queryText);
+        }
+        return super.getFieldQuery(field, queryText);
+    }
+    
     /**
      * Override it so we won't use the date format to try and parse dates
      */
@@ -50,18 +60,18 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
             part2 = part2.toLowerCase();
         }
 
-        CompassMapping.ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
+        ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
         lookup.setConvertOnlyWithDotPath(false);
         if (lookup.hasSpecificConverter()) {
             if ("*".equals(part1)) {
                 part1 = null;
             } else {
-                part1 = lookup.getValue(lookup.fromString(part1));
+                part1 = lookup.normalizeString(part1);
             }
             if ("*".equals(part2)) {
                 part2 = null;
             } else {
-                part2 = lookup.getValue(lookup.fromString(part2));
+                part2 = lookup.normalizeString(part2);
             }
         } else {
             if ("*".equals(part1)) {

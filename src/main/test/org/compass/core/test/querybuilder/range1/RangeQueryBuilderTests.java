@@ -32,6 +32,22 @@ public class RangeQueryBuilderTests extends AbstractTestCase {
         return new String[]{"querybuilder/range1/mapping.cpm.xml"};
     }
 
+    public void testIntExactNoPadding() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        a.value = 1;
+        session.save("a", a);
+
+        CompassHits hits = session.find("value:1");
+        assertEquals(1, hits.length());
+        
+        tr.commit();
+        session.close();
+    }
+
     public void testIntRangeNoPadding() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
@@ -88,7 +104,7 @@ public class RangeQueryBuilderTests extends AbstractTestCase {
         a.date2 = new Date();
         session.save("a", a);
 
-        // verify the the default forma woårks
+        // verify that the default format works
         CompassHits hits = session.find("date2:[2000-01-01 TO 2010-01-01]");
         assertEquals(1, hits.length());
 

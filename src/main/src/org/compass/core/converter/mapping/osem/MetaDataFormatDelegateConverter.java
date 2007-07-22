@@ -71,4 +71,8 @@ public class MetaDataFormatDelegateConverter implements DelegateConverter, Resou
     public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
         return delegatedConverter.toString(o, resourcePropertyMapping);
     }
+
+    public boolean canNormalize() {
+        return delegatedConverter.canNormalize();
+    }
 }

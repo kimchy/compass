@@ -99,4 +99,12 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
             formatters[i] = new ThreadSafeFormat(minPoolSize, maxPoolSize, formatterFactory);
         }
     }
+
+    /**
+     * Format based converters should can be used (and should) when using query parser notation.
+     * Returns <code>true</code>.
+     */
+    public boolean canNormalize() {
+        return true;
+    }
 }

@@ -20,6 +20,7 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourcePropertyLookup;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -49,7 +50,7 @@ public class ComponentTests extends AbstractTestCase {
         assertEquals(1, resourcePropertyMappings.length);
         assertEquals("$/first/id", resourcePropertyMappings[0].getPath().getPath());
         assertEquals("id", resourcePropertyMappings[0].getName());
-        CompassMapping.ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup("value");
+        ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup("value");
         assertEquals(7, lookup.getResourcePropertyMappings().length);
 
         ResourcePropertyMapping resourcePropertyMapping = firstMapping.getResourcePropertyMappingByDotPath("id");

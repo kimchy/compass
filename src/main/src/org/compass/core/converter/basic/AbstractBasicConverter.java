@@ -175,4 +175,11 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
         return fromString(str, resourcePropertyMapping);
     }
 
+    /**
+     * Return <code>false</code>. Specific parsers that can convert on query string should override this method
+     * and return <code>true</code>.
+     */
+    public boolean canNormalize() {
+        return false;
+    }
 }

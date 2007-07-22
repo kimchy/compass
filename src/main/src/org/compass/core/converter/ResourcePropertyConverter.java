@@ -37,8 +37,8 @@ public interface ResourcePropertyConverter extends Converter {
 
     /**
      * Converts the Object into a String.
-     * <p/>
-     * Note that toString must be able to handle a <code>null</code> resourcePropertyMapping.
+     *
+     * <p>Note that toString must be able to handle a <code>null</code> resourcePropertyMapping.
      *
      * @param o                       The Object to convert from
      * @param resourcePropertyMapping The resource proeprty mapping
@@ -47,4 +47,10 @@ public interface ResourcePropertyConverter extends Converter {
      */
     String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException;
 
+    /**
+     * Returns <code>true</code> if this converter should be used to convert query parser related
+     * values. Conversion is done by calling {@link #fromString(String, org.compass.core.mapping.ResourcePropertyMapping)}
+     * and then {@link #toString(Object, org.compass.core.mapping.ResourcePropertyMapping)}.
+     */
+    boolean canNormalize();
 }

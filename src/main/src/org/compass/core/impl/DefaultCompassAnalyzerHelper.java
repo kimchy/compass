@@ -22,9 +22,9 @@ import org.compass.core.CompassAnalyzerHelper;
 import org.compass.core.CompassException;
 import org.compass.core.CompassToken;
 import org.compass.core.Resource;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
-import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourcePropertyLookup;
+import org.compass.core.spi.InternalCompassSession;
 
 /**
  * @author kimchy
@@ -64,7 +64,7 @@ public class DefaultCompassAnalyzerHelper implements CompassAnalyzerHelper {
     }
 
     public CompassToken[] analyze(String propertyName, String text) throws CompassException {
-        CompassMapping.ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
+        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
         return analyzerHelper.analyze(lookup.getPath(), text);
     }
 
@@ -73,7 +73,7 @@ public class DefaultCompassAnalyzerHelper implements CompassAnalyzerHelper {
     }
 
     public CompassToken[] analyze(String propertyName, Reader textReader) throws CompassException {
-        CompassMapping.ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
+        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
         return analyzerHelper.analyze(lookup.getPath(), textReader);
     }
 }
