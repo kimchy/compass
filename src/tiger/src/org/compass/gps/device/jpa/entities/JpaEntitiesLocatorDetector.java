@@ -33,7 +33,7 @@ import org.compass.gps.device.jpa.support.NativeJpaHelper;
  * Currently support the following JPA implementations: Hibernate, TopLink Essentials (Glassfish Persistence), OpenJPA.
  * <p/>
  * Assumes that the <code>EntityManagerFactory</code> is the native one, since the
- * {@link org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor} of the
+ * {@link org.compass.gps.device.jpa.NativeJpaExtractor} of the
  * {@link org.compass.gps.device.jpa.JpaGpsDevice} was used to extract it.
  *
  * @author kimchy

@@ -16,10 +16,10 @@
 
 package org.compass.gps.device.jpa.entities;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-
-import javax.persistence.EntityManagerFactory;
 
 /**
  * Resposible for locating entities for the index process. Most of the times the {@link DefaultJpaEntitiesLocator}
@@ -27,7 +27,7 @@ import javax.persistence.EntityManagerFactory;
  * both annotations and other means of configuration (like xml), an implementaiton of this locator is required.
  * <p/>
  * Assume that the <code>EntityManagerFactory</code> is the native one, since the
- * {@link org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor} of the
+ * {@link org.compass.gps.device.jpa.NativeJpaExtractor} of the
  * {@link JpaGpsDevice} was used to extract it.
  *
  * @author kimchy

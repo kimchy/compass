@@ -17,19 +17,17 @@
 package org.compass.gps.device.jpa;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 
-import org.compass.core.CompassSession;
 import org.compass.core.util.Assert;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.PassiveMirrorGpsDevice;
 import org.compass.gps.device.jpa.entities.EntityInformation;
 import org.compass.gps.device.jpa.entities.JpaEntitiesLocator;
 import org.compass.gps.device.jpa.entities.JpaEntitiesLocatorDetector;
+import org.compass.gps.device.jpa.indexer.JpaIndexEntitiesIndexer;
+import org.compass.gps.device.jpa.indexer.JpaIndexEntitiesIndexerDetector;
 import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjector;
 import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjectorDetector;
 import org.compass.gps.device.jpa.support.NativeJpaHelper;
@@ -55,6 +53,11 @@ import org.compass.gps.device.support.parallel.IndexEntity;
  * JpaEntitiesLocatorDetector} to auto detect the correct locator (which defaults to the ({@link
  * org.compass.gps.device.jpa.entities.DefaultJpaEntitiesLocator}).
  *
+ * <p>The indexing process itself is done through an implementation of
+ * {@link org.compass.gps.device.jpa.indexer.JpaIndexEntitiesIndexer}. There are several implemenations
+ * for it including a default one that uses plain JPA APIs. Specific implementations (such as Hibernate
+ * and OpenJPA) are used for better performance.
+ *
  * <p>Mirroring can be done in two ways. The first one is using JPA official API, implemeting
  * an Entity Lifecycle listener and specifing it for each entity class via annotations. Compass
  * comes with helper base clases for it, {@link AbstractCompassJpaEntityListener} and
@@ -72,7 +75,7 @@ import org.compass.gps.device.support.parallel.IndexEntity;
  * <p>Mirroring can be turned off using the {@link #setMirrorDataChanges(boolean)} to <code>false</code>.
  * It defaults to <code>true<code>.
  *
- * <p>The device allows for {@link NativeEntityManagerFactoryExtractor} to be set, for applications
+ * <p>The device allows for {@link NativeJpaExtractor} to be set, for applications
  * that use a framework or by themself wrap the actual <code>EntityManagerFactory</code> implementation.
  *
  * <p>For advance usage, the device allows for {@link EntityManagerWrapper} to be set,
@@ -114,7 +117,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
 
     private boolean injectEntityLifecycleListener;
 
-    private NativeEntityManagerFactoryExtractor nativeEntityManagerFactoryExtractor;
+    private NativeJpaExtractor nativeJpaExtractor;
 
     private EntityManagerFactory nativeEntityManagerFactory;
 
@@ -124,6 +127,8 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
 
     private Map<String, JpaQueryProvider> queryProviderByName = new HashMap<String, JpaQueryProvider>();
 
+    private JpaIndexEntitiesIndexer entitiesIndexer;
+
     protected void doStart() throws CompassGpsException {
         Assert.notNull(entityManagerFactory, buildMessage("Must set JPA EntityManagerFactory"));
         if (entityManagerWrapper == null) {
@@ -132,15 +137,15 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
         entityManagerWrapper.setUp(entityManagerFactory);
 
         nativeEntityManagerFactory = entityManagerFactory;
-        if (nativeEntityManagerFactoryExtractor != null) {
-            nativeEntityManagerFactory = nativeEntityManagerFactoryExtractor.extractNative(nativeEntityManagerFactory);
+        if (nativeJpaExtractor != null) {
+            nativeEntityManagerFactory = nativeJpaExtractor.extractNative(nativeEntityManagerFactory);
             if (nativeEntityManagerFactory == null) {
                 throw new JpaGpsDeviceException(buildMessage("Native EntityManager extractor returned null"));
             }
             if (log.isDebugEnabled()) {
                 log.debug(buildMessage("Using native EntityManagerFactory ["
                         + nativeEntityManagerFactory.getClass().getName() + "] extracted by ["
-                        + nativeEntityManagerFactoryExtractor.getClass().getName() + "]"));
+                        + nativeJpaExtractor.getClass().getName() + "]"));
             }
         } else {
             nativeEntityManagerFactory = NativeJpaHelper.extractNativeJpa(entityManagerFactory);
@@ -169,6 +174,14 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
             }
             lifecycleInjector.injectLifecycle(nativeEntityManagerFactory, this);
         }
+
+        if (entitiesIndexer == null) {
+            entitiesIndexer = JpaIndexEntitiesIndexerDetector.detectEntitiesIndexer(nativeEntityManagerFactory);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(buildMessage("Using entities indexer [" + entitiesIndexer.getClass().getName() + "]"));
+        }
+        entitiesIndexer.setJpaGpsDevice(this);
     }
 
     protected void doStop() throws CompassGpsException {
@@ -192,7 +205,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     }
 
     protected IndexEntitiesIndexer doGetIndexEntitiesIndexer() {
-        return new JpaIndexEntitiesIndexer();
+        return entitiesIndexer;
     }
 
     /**
@@ -219,7 +232,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     }
 
     /**
-     * Sets the Entity Manager factory wrapper to control the entity manager operations. This is mandatory since the
+     * Sets the Entity Manager factory wrapper to control the entity manager operations. This is optional since the
      * device has sensible defaults for it.
      *
      * @param entityManagerWrapper The entity manager wrapper to control the manager operations.
@@ -229,15 +242,29 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     }
 
     /**
-     * Sets a specialized native entity manager factory extractor.
+     * Returns the Entity Manager factory wrapper to control the entity manager operations.
+     */
+    public EntityManagerWrapper getEntityManagerWrapper() {
+        return entityManagerWrapper;
+    }
+
+    /**
+     * <p>Sets a specialized native entity manager factory extractor.
      * For applications that use a framework or by themself wrap the actual
      * <code>EntityManagerFactory</code> implementation.
-     * <p/>
+     *
      * The native extractor is mainly used for specialized {@link JpaEntityLifecycleInjector}
      * and {@link JpaEntitiesLocator}.
      */
-    public void setNativeEntityManagerFactoryExtractor(NativeEntityManagerFactoryExtractor nativeEntityManagerFactoryExtractor) {
-        this.nativeEntityManagerFactoryExtractor = nativeEntityManagerFactoryExtractor;
+    public void setNativeExtractor(NativeJpaExtractor nativeJpaExtractor) {
+        this.nativeJpaExtractor = nativeJpaExtractor;
+    }
+
+    /**
+     * Returns the native extractor.
+     */
+    public NativeJpaExtractor getNativeJpaExtractor() {
+        return nativeJpaExtractor;
     }
 
     /**
@@ -271,11 +298,17 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     /**
      * Sets the fetch count for the indexing process. A large number will perform the indexing faster,
      * but will consume more memory. Defaults to <code>200</code>.
-     *
-     * @param fetchCount
      */
     public void setFetchCount(int fetchCount) {
         this.fetchCount = fetchCount;
+    }
+
+    /**
+     * Returns the fetch count for the indexing process. A large number will perform the indexing faster,
+     * but will consume more memory. Default to <code>200</code>.
+     */
+    public int getFetchCount() {
+        return this.fetchCount;
     }
 
     /**
@@ -326,52 +359,12 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
         queryProviderByName.put(entityName, queryProvider);
     }
 
-    private class JpaIndexEntitiesIndexer implements IndexEntitiesIndexer {
-
-        public void performIndex(CompassSession session, IndexEntity[] entities) {
-            for (IndexEntity indexEntity : entities) {
-                EntityInformation entityInformation = (EntityInformation) indexEntity;
-                if (isFilteredForIndex(entityInformation.getName())) {
-                    continue;
-                }
-                int current = 0;
-                while (true) {
-                    if (!isRunning()) {
-                        return;
-                    }
-                    EntityManagerWrapper wrapper = entityManagerWrapper.newInstance();
-                    try {
-                        wrapper.open();
-                        EntityManager entityManager = wrapper.getEntityManager();
-                        if (log.isDebugEnabled()) {
-                            log.debug(buildMessage("Indexing entities [" + entityInformation.getName() + "] range ["
-                                    + current + "-" + (current + fetchCount) + "] using query ["
-                                    + entityInformation.getQueryProvider() + "]"));
-                        }
-                        Query query = entityInformation.getQueryProvider().createQuery(entityManager, entityInformation);
-                        query.setFirstResult(current);
-                        query.setMaxResults(fetchCount);
-                        List results = query.getResultList();
-                        for (Object result : results) {
-                            session.create(result);
-                        }
-                        session.evictAll();
-                        entityManager.clear();
-                        wrapper.close();
-                        if (results.size() < fetchCount) {
-                            break;
-                        }
-                        current += fetchCount;
-                    } catch (Exception e) {
-                        log.error(buildMessage("Failed to index the database"), e);
-                        wrapper.closeOnError();
-                        if (!(e instanceof JpaGpsDeviceException)) {
-                            throw new JpaGpsDeviceException(buildMessage("Failed to index the database"), e);
-                        }
-                        throw (JpaGpsDeviceException) e;
-                    }
-                }
-            }
-        }
+    /**
+     * Sets a custom entities indexer that will be used to index the data. By default will
+     * be detected automatically based on the actual implemenation of JPA used and will try
+     * to use it.
+     */
+    public void setEntitiesIndexer(JpaIndexEntitiesIndexer entitiesIndexer) {
+        this.entitiesIndexer = entitiesIndexer;
     }
 }

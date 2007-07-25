@@ -75,11 +75,11 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
         this.filteredEntitiesForIndex = filteredEntitiesForIndex;
     }
 
-    protected String buildMessage(String message) {
+    public String buildMessage(String message) {
         return "{" + name + "}: " + message;
     }
 
-    protected boolean isFilteredForIndex(String entity) {
+    public boolean isFilteredForIndex(String entity) {
         return (filteredEntitiesLookupForIndex != null && filteredEntitiesLookupForIndex.contains(entity));
     }
 

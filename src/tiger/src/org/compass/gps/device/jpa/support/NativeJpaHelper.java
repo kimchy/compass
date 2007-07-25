@@ -6,7 +6,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
-import org.compass.gps.device.jpa.NativeEntityManagerFactoryExtractor;
+import org.compass.gps.device.jpa.NativeJpaExtractor;
 
 /**
  * @author kimchy
@@ -56,18 +56,18 @@ public abstract class NativeJpaHelper {
         }
         interfacesAsStrings.add(emf.getClass().getName());
 
-        NativeEntityManagerFactoryExtractor extractor = null;
+        NativeJpaExtractor extractor = null;
         if (interfacesAsStrings.contains("org.springframework.orm.jpa.EntityManagerFactoryInfo")) {
             try {
-                extractor = (NativeEntityManagerFactoryExtractor)
-                        ClassUtils.forName("org.compass.spring.device.jpa.SpringNativeEntityManagerFactoryExtractor").newInstance();
+                extractor = (NativeJpaExtractor)
+                        ClassUtils.forName("org.compass.spring.device.jpa.SpringNativeJpaExtractor").newInstance();
             } catch (Exception e) {
                 throw new JpaGpsDeviceException("Failed to load/create spring native extractor", e);
             }
         } else if (interfacesAsStrings.contains("org.jboss.ejb3.entity.InjectedEntityManagerFactory")) {
             try {
-                extractor = (NativeEntityManagerFactoryExtractor)
-                        ClassUtils.forName("org.compass.jboss.device.jpa.JBossNativeHibernateEntityManagerFactoryExtractor").newInstance();
+                extractor = (NativeJpaExtractor)
+                        ClassUtils.forName("org.compass.jboss.device.jpa.JBossNativeHibernateJpaExtractor").newInstance();
             } catch (Exception e) {
                 throw new JpaGpsDeviceException("Failed to load/create JBoss native extractor", e);
             }
