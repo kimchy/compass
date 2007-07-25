@@ -40,7 +40,7 @@ public class SQLServerDialect extends SybaseDialect {
 
     public String sqlTableExists(String catalog, String schemaName) {
         StringBuffer sb = new StringBuffer();
-        sb.append("select table_name from INFORMATION_SCHEMA.Tables where lower(table_name) = ?");
+        sb.append("select table_name from INFORMATION_SCHEMA.TABLES where lower(table_name) = ?");
         if (schemaName != null) {
             sb.append(" and lower(table_schema) = '").append(schemaName.toLowerCase()).append("'");
         }

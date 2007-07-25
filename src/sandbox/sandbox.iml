@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="JAVA_MODULE" version="4">
-  <component name="ModuleRootManager" />
+  <component name="FacetManager">
+    <facet type="hibernate" name="Hibernate">
+      <configuration>
+        <option name="myHibernateValidationEnabled" value="true" />
+        <datasource-map>
+          <unit-entry name="&lt;anonymous&gt;hibernate3.cfg.xml@199" />
+        </datasource-map>
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/test/org/compass/gps/device/hibernate/scrollable/hibernate3.cfg.xml" optional="false" version="3.0" />
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../target/classes" />
     <exclude-output />
