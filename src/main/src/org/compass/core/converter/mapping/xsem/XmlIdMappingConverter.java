@@ -1,12 +1,12 @@
 package org.compass.core.converter.mapping.xsem;
 
-import org.compass.core.converter.Converter;
-import org.compass.core.converter.ConversionException;
 import org.compass.core.Resource;
-import org.compass.core.xml.XmlObject;
-import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.Converter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.xsem.XmlPropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.xml.XmlObject;
 
 /**
  * Responsible for converting {@link XmlObject} based on {@link org.compass.core.mapping.xsem.XmlIdMapping}.
@@ -42,7 +42,7 @@ public class XmlIdMappingConverter implements Converter {
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        throw new ConversionException("Not supported operation");
+        throw new ConversionException("Not supported, please use xml-content mapping");
     }
 
 }

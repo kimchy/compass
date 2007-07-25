@@ -155,7 +155,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
     }
 
     public Object[] unmarshallIds(Object id, ResourceMapping resourceMapping, MarshallingContext context) throws ConversionException {
-        throw new ConversionException("Not supported");
+        throw new ConversionException("Not supported, please use xml-content mapping");
     }
 
     private XmlObject getActualXmlObject(XmlObject rootXmlObject, XmlObjectMapping xmlObjectMapping, MarshallingContext context, Resource resource) {

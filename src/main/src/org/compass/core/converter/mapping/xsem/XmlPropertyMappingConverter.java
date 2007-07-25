@@ -58,6 +58,6 @@ public class XmlPropertyMappingConverter implements Converter {
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        throw new ConversionException("Not supported");
+        throw new ConversionException("Not supported, please use xml-content mapping");
     }
 }

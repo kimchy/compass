@@ -46,7 +46,7 @@ import org.compass.core.xml.XmlObject;
  * <p/>
  * In order to perform the conversion between {@link XmlObject} and raw xml, the converter
  * uses a {@link XmlContentConverter} implementation. There is no default one, and it must
- * be cofigured for this converter to funtion using {@link CompassEnvironment.Converter.XmlContent.TYPE).
+ * be cofigured for this converter to funtion using {@link CompassEnvironment.Converter.XmlContent#TYPE).
  * <p/>
  * {@link XmlContentConverter} implementations are wrapped by one of the three built in strategies:
  * {@link PrototypeXmlContentConverterWrapper}, {@link PoolXmlContentConverterWrapper},
@@ -128,7 +128,7 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
      * <p/>
      * Extracted to a method so special converters can control null handling.
      *
-     * @param context
+     * @param context The marshalling context
      * @return <code>true</code> if the converter should handle null values
      */
     protected boolean handleNulls(MarshallingContext context) {
@@ -139,7 +139,7 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
      * Is the value read from the search engine is a <code>null</code> value
      * during the unmarshall process.
      *
-     * @param context
+     * @param context The marshalling context
      * @param value   The value to check for <code>null</code> value.
      * @return <code>true</code> if the value represents a null value.
      */

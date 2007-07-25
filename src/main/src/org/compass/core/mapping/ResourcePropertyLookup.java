@@ -1,5 +1,6 @@
 package org.compass.core.mapping;
 
+import org.compass.core.converter.Converter;
 import org.compass.core.converter.ResourcePropertyConverter;
 
 /**
@@ -173,10 +174,14 @@ public final class ResourcePropertyLookup {
         if (!hasSpecificConverter()) {
             return value;
         }
-        ResourcePropertyConverter converter = (ResourcePropertyConverter) resourcePropertyMapping.getConverter();
-        if (!converter.canNormalize()) {
+        Converter converter = resourcePropertyMapping.getConverter();
+        if (!(converter instanceof ResourcePropertyConverter)) {
             return value;
         }
-        return converter.toString(converter.fromString(value, resourcePropertyMapping), resourcePropertyMapping);
+        ResourcePropertyConverter rpConverter = (ResourcePropertyConverter) converter;
+        if (!rpConverter.canNormalize()) {
+            return value;
+        }
+        return rpConverter.toString(rpConverter.fromString(value, resourcePropertyMapping), resourcePropertyMapping);
     }
 }

@@ -43,6 +43,9 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
     }
 
     protected Query getFieldQuery(String field, String queryText) throws ParseException {
+        if (field == null) {
+            return super.getFieldQuery(field, queryText);
+        }
         ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
         lookup.setConvertOnlyWithDotPath(false);
         if (lookup.hasSpecificConverter()) {
