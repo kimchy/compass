@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 import javax.persistence.EntityNotFoundException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.openjpa.conf.OpenJPAConfiguration;
 import org.apache.openjpa.conf.OpenJPAConfigurationImpl;
 import org.apache.openjpa.event.BeginTransactionListener;
@@ -159,7 +161,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 if (settings.getSetting(CompassEnvironment.Transaction.FACTORY) == null ||
                         settings.getSetting(CompassEnvironment.Transaction.FACTORY).equals(LocalTransactionFactory.class.getName())) {
                     if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
-                        // if no factory is defined
+                        // if no emf is defined
                         settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
                     }
                 }
@@ -277,9 +279,8 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
         String registerRemoteCommitListener = (String) openJpaProps.get(REGISTER_REMOTE_COMMIT_LISTENER);
         if ("true".equalsIgnoreCase(registerRemoteCommitListener)) {
-            brokerFactory.getConfiguration().getRemoteCommitEventManager()
-                    .addListener(new RemoteCommitListenerImpl(
-                            OpenJPAPersistence.toEntityManagerFactory(brokerFactory)));
+            brokerFactory.getConfiguration().getRemoteCommitEventManager().addListener(new CompassRemoteCommitListener(
+                            OpenJPAPersistence.toEntityManagerFactory(brokerFactory), compass));
         }
     }
 
@@ -292,109 +293,116 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         }
     }
 
-    private static class RemoteCommitListenerImpl
-            implements RemoteCommitListener {
+    private static class CompassRemoteCommitListener implements RemoteCommitListener {
 
-        private final OpenJPAEntityManagerFactory factory;
+        private static final Log log = LogFactory.getLog(CompassRemoteCommitListener.class);
 
-        private RemoteCommitListenerImpl(OpenJPAEntityManagerFactory emf) {
-            factory = emf;
+        private final OpenJPAEntityManagerFactory emf;
+
+        private final Compass compass;
+
+        private CompassRemoteCommitListener(OpenJPAEntityManagerFactory emf, Compass compass) {
+            this.emf = emf;
+            this.compass = compass;
         }
 
+        @SuppressWarnings({"unchecked"})
         public void afterCommit(RemoteCommitEvent event) {
-            OpenJPAEntityManager em = null;
+            OpenJPAEntityManager em = emf.createEntityManager();
+            CompassSession session = compass.openSession();
+            CompassTransaction tr = null;
             try {
+                tr = session.beginTransaction();
                 switch (event.getPayloadType()) {
                     case RemoteCommitEvent.PAYLOAD_OIDS:
-                        em = reindexTypesByName(event.getPersistedTypeNames(), em);
-                        em = reindexObjectsById(event.getUpdatedObjectIds(), em);
-                        deleteObjectsById(event.getDeletedObjectIds());
+                        reindexTypesByName(event.getPersistedTypeNames(), em, session);
+                        reindexObjectsById(event.getUpdatedObjectIds(), em, session);
+                        deleteObjectsById(event.getDeletedObjectIds(), session);
                         break;
                     case RemoteCommitEvent.PAYLOAD_OIDS_WITH_ADDS:
-                        em = reindexObjectsById(event.getPersistedObjectIds(), em);
-                        em = reindexObjectsById(event.getUpdatedObjectIds(), em);
-                        deleteObjectsById(event.getDeletedObjectIds());
+                        reindexObjectsById(event.getPersistedObjectIds(), em, session);
+                        reindexObjectsById(event.getUpdatedObjectIds(), em, session);
+                        deleteObjectsById(event.getDeletedObjectIds(), session);
                         break;
                     case RemoteCommitEvent.PAYLOAD_EXTENTS:
                         Collection c = new HashSet();
                         c.addAll(event.getPersistedTypeNames());
                         c.addAll(event.getUpdatedTypeNames());
                         c.addAll(event.getDeletedTypeNames());
-                        em = reindexTypesByName(c, em);
+                        reindexTypesByName(c, em, session);
                         break;
                     case RemoteCommitEvent.PAYLOAD_LOCAL_STALE_DETECTION:
-                        em = reindexObjectsById(event.getUpdatedObjectIds(), em);
+                        reindexObjectsById(event.getUpdatedObjectIds(), em, session);
                         break;
                     default:
-                        // TODO log the unknown payload type as a warning 
+                        log.warn("Unknown remote commit event type [" + event.getPayloadType() + "], ignoring...");
                 }
+                tr.commit();
             } catch (Exception e) {
-                // TODO logging. Also, we might want to do more fine-grained
-                // TODO exception-handling.
-                e.printStackTrace();
+                log.error("Failed to perform remote commit syncronization", e); 
+                if (tr != null) {
+                    tr.rollback();
+                }
             } finally {
-                if (em != null)
+                if (session != null) {
+                    session.close();
+                }
+                if (em != null) {
                     em.close();
+                }
             }
         }
 
         @SuppressWarnings({"unchecked"})
-        private OpenJPAEntityManager reindexObjectsById(Collection oids,
-                                                        OpenJPAEntityManager em) {
-            if (em == null)
-                em = factory.createEntityManager();
+        private void reindexObjectsById(Collection oids, OpenJPAEntityManager em, CompassSession session) {
             for (OpenJPAId oid : (Collection<OpenJPAId>) oids) {
-                reindexOid(oid, em);
+                reindexOid(oid, em, session);
             }
-            return em;
         }
 
         @SuppressWarnings({"unchecked"})
-        private void deleteObjectsById(Collection oids) {
+        private void deleteObjectsById(Collection oids, CompassSession session) {
             for (OpenJPAId oid : (Collection<OpenJPAId>) oids) {
-                delete(oid);
+                delete(oid, session);
             }
         }
 
         @SuppressWarnings({"unchecked"})
-        private OpenJPAEntityManager reindexTypesByName(Collection typeNames,
-                                                        OpenJPAEntityManager em) {
-            if (em == null)
-                em = factory.createEntityManager();
-            ClassLoader loader = factory.getConfiguration().getClassResolverInstance().getClassLoader(null, null);
+        private void reindexTypesByName(Collection typeNames, OpenJPAEntityManager em, CompassSession session) {
+            ClassLoader loader = emf.getConfiguration().getClassResolverInstance().getClassLoader(null, null);
             for (String typeName : (Collection<String>) typeNames) {
                 try {
                     Class cls = Class.forName(typeName, true, loader);
+                    // delete all objects matching the given type
+                    session.delete(session.queryBuilder().matchAll().setTypes(new Class[] {cls}));
                     Extent extent = em.createExtent(cls, true);
-                    for (Object o : extent.list())
-                        reindex(o);
+                    for (Object o : extent.list()) {
+                        reindex(o, session);
+                    }
                 } catch (ClassNotFoundException e) {
-                    // A problem happened while loading the class;
-                    // ignore this class and move on to the next.
-                    // TODO logging!
-                    e.printStackTrace();
+                    log.error("Failed to find class", e);
                 }
             }
-            return em;
         }
 
-        private void reindexOid(OpenJPAId oid, OpenJPAEntityManager em) {
+        @SuppressWarnings({"unchecked"})
+        private void reindexOid(OpenJPAId oid, OpenJPAEntityManager em, CompassSession session) {
             try {
                 Object o = em.find(oid.getType(), oid.getIdObject());
-                reindex(o);
+                reindex(o, session);
             } catch (EntityNotFoundException e) {
-                delete(oid);
+                delete(oid, session);
             }
         }
 
-        private void reindex(Object o) {
-            // TODO reindex the argument
+        private void reindex(Object o, CompassSession session) {
+            session.save(o);
         }
 
-        private void delete(OpenJPAId oid) {
+        private void delete(OpenJPAId oid, CompassSession session) {
             Class cls = oid.getType();
             Object id = oid.getIdObject();
-            // TODO delete the specified record from the index
+            session.delete(cls, id);
         }
 
         public void close() {
