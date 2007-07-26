@@ -70,11 +70,11 @@ public class OpenJPAJpaEntitiesLocator implements JpaEntitiesLocator {
 
     /**
      * Returns <code>true</code> if the entity name needs to be filtered.
-     * <p/>
-     * Implementation filteres out inherited OpenJPA mappings, since the select query
+     *
+     * <p>Implementation filteres out inherited OpenJPA mappings, since the select query
      * for the base class will cover any inherited classes as well.
-     * <p/>
-     * Note, that this method is called after it has been verified that the class has
+     *
+     * <p>Note, that this method is called after it has been verified that the class has
      * Compass mappings (either directly, or indirectly by an interface or a super class).
      *
      * @param entityname    The name of the entity
