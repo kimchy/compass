@@ -21,8 +21,8 @@ import org.compass.gps.CompassGpsDevice;
 /**
  * A general Hiberante device interface, can work with both Hibernate 2 and
  * Hibernate 3.
- * <p>
- * The hibernate device provides support for using hibernate and hibernate
+ *
+ * <p>The hibernate device provides support for using hibernate and hibernate
  * mapping files to index a database. The path can be views as: Database <->
  * Hibernate <-> Objects <-> Compass::Gps <-> Compass::Core (Search Engine).
  * What it means is that for every object that has both hibernate and compass
@@ -42,7 +42,7 @@ public interface HibernateGpsDevice extends CompassGpsDevice {
     void setFetchCount(int fetchCount);
 
     /**
-     * Sets a list of filtered enteties (enteties that are mapped to the database)
+     * Sets a list of filtered entities (entities that are mapped to the database)
      * that will not be indexed.
      */
     void setFilteredEntitiesForIndex(String[] filteredEntitiesForIndex);
