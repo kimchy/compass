@@ -92,6 +92,11 @@ public class EntityInformation implements IndexEntity {
         return this.queryProvider;
     }
 
+    /**
+     * Returns a list of the sub indexes this indexable
+     * content the index entity represents is going to
+     * be indexed into. Used for parallel indexing.
+     */
     public String[] getSubIndexes() {
         return subIndexes;
     }
