@@ -43,7 +43,7 @@ import org.compass.gps.device.support.parallel.IndexEntity;
  */
 public class OpenJPAJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer {
 
-    private static final Log log = LogFactory.getLog(DefaultJpaIndexEntitiesIndexer.class);
+    private static final Log log = LogFactory.getLog(OpenJPAJpaIndexEntitiesIndexer.class);
 
     private JpaGpsDevice jpaGpsDevice;
 

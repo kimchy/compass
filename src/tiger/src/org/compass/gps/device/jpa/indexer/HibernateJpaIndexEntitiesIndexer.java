@@ -38,7 +38,7 @@ import org.hibernate.ejb.HibernateQuery;
  */
 public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer {
 
-    private static final Log log = LogFactory.getLog(DefaultJpaIndexEntitiesIndexer.class);
+    private static final Log log = LogFactory.getLog(HibernateJpaIndexEntitiesIndexer.class);
 
     private JpaGpsDevice jpaGpsDevice;
 
