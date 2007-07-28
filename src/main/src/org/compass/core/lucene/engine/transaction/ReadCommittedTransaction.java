@@ -28,15 +28,12 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TransIndex;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -412,23 +409,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     private Hits findByIds(Searcher indexSearcher, String subIndex, ResourceKey resourceKey, Filter filter)
             throws SearchEngineException {
         Property[] ids = resourceKey.getIds();
-        Query query;
-        int numberOfAliases = indexManager.getStore().getNumberOfAliasesBySubIndex(subIndex);
-        if (numberOfAliases == 1 && ids.length == 1) {
-            query = new TermQuery(new Term(ids[0].getName(), ids[0].getStringValue()));
-        } else {
-            BooleanQuery bQuery = new BooleanQuery();
-            if (numberOfAliases > 1) {
-                String aliasProperty = searchEngine.getSearchEngineFactory().getLuceneSettings().getAliasProperty();
-                Term t = new Term(aliasProperty, resourceKey.getAlias());
-                bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
-            }
-            for (int i = 0; i < ids.length; i++) {
-                Term t = new Term(ids[i].getName(), ids[i].getStringValue());
-                bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
-            }
-            query = bQuery;
-        }
+        Query query = LuceneUtils.buildResourceLoadQuery(searchEngine.getSearchEngineFactory(), subIndex, resourceKey);
         try {
             if (filter == null) {
                 return indexSearcher.search(query);

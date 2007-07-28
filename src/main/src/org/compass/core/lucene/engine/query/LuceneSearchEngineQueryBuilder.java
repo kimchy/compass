@@ -16,6 +16,8 @@
 
 package org.compass.core.lucene.engine.query;
 
+import java.io.Reader;
+
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.FuzzyQuery;
@@ -28,6 +30,7 @@ import org.apache.lucene.search.spans.SpanFirstQuery;
 import org.apache.lucene.search.spans.SpanNotQuery;
 import org.apache.lucene.search.spans.SpanQuery;
 import org.apache.lucene.search.spans.SpanTermQuery;
+import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
@@ -167,5 +170,13 @@ public class LuceneSearchEngineQueryBuilder implements SearchEngineQueryBuilder 
 
     public SearchEngineQuerySpanOrBuilder spanOr() {
         return new LuceneSearchEngineQuerySpanOrBuilder(searchEngine);
+    }
+
+    public SearchEngineMoreLikeThisQueryBuilder moreLikeThis(Resource idResource) {
+        return new LuceneSearchEngineMoreLikeThisQueryBuilder(searchEngine, idResource);
+    }
+
+    public SearchEngineMoreLikeThisQueryBuilder moreLikeThis(Reader reader) {
+        return new LuceneSearchEngineMoreLikeThisQueryBuilder(searchEngine, reader);
     }
 }

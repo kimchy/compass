@@ -16,10 +16,14 @@
 
 package org.compass.core.impl;
 
+import java.io.Reader;
+import java.io.Serializable;
+
 import org.compass.core.CompassException;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassQuery.CompassSpanQuery;
 import org.compass.core.CompassQueryBuilder;
+import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
@@ -276,6 +280,98 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
         }
     }
 
+    public static class DefaultCompassMoreLikeThisQuery implements CompassMoreLikeThisQuery {
+
+        private SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder queryBuilder;
+
+        private InternalCompassSession session;
+
+        public DefaultCompassMoreLikeThisQuery(SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder queryBuilder, InternalCompassSession session) {
+            this.queryBuilder = queryBuilder;
+            this.session = session;
+        }
+
+        public CompassMoreLikeThisQuery setSubIndexes(String[] subIndexes) {
+            queryBuilder.setSubIndexes(subIndexes);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setAliases(String[] aliases) {
+            queryBuilder.setAliases(aliases);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setProperties(String[] properties) {
+            if (properties == null) {
+                queryBuilder.setProperties(properties);
+            } else {
+                String[] updatedProperties = new String[properties.length];
+                for (int i = 0; i < properties.length; i++) {
+                    ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(properties[i]);
+                    updatedProperties[i] = lookup.getPath();
+                }
+                queryBuilder.setProperties(updatedProperties);
+            }
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery addProperty(String property) {
+            ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(property);
+            queryBuilder.addProperty(lookup.getPath());
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setAnalyzer(String analyzer) {
+            queryBuilder.setAnalyzer(analyzer);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setBoost(boolean boost) {
+            queryBuilder.setBoost(boost);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setMaxNumTokensParsed(int maxNumTokensParsed) {
+            queryBuilder.setMaxNumTokensParsed(maxNumTokensParsed);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setMaxQueryTerms(int maxQueryTerms) {
+            queryBuilder.setMaxQueryTerms(maxQueryTerms);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setMaxWordLen(int maxWordLen) {
+            queryBuilder.setMaxWordLen(maxWordLen);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setMinWordLen(int minWordLen) {
+            queryBuilder.setMinWordLen(minWordLen);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setMinResourceFreq(int minDocFreq) {
+            queryBuilder.setMinResourceFreq(minDocFreq);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setMinTermFreq(int minTermFreq) {
+            queryBuilder.setMinTermFreq(minTermFreq);
+            return this;
+        }
+
+        public CompassMoreLikeThisQuery setStopWords(String[] stopWords) {
+            queryBuilder.setStopWords(stopWords);
+            return this;
+        }
+
+        public CompassQuery toQuery() {
+            SearchEngineQuery query = queryBuilder.toQuery();
+            return new DefaultCompassQuery(query, session);
+        }
+    }
+
     private SearchEngineQueryBuilder queryBuilder;
 
     private InternalCompassSession session;
@@ -431,5 +527,16 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
     public CompassQuerySpanOrBuilder spanOr() {
         return new DefaultCompassQuerySpanOrBuilder(queryBuilder.spanOr(), session);
+    }
+
+    public CompassMoreLikeThisQuery moreLikeThis(String alias, Serializable id) {
+        Resource idResource = session.getMarshallingStrategy().marshallIds(alias, id);
+        SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder mltQueryBuilder = queryBuilder.moreLikeThis(idResource);
+        return new DefaultCompassMoreLikeThisQuery(mltQueryBuilder, session);
+    }
+
+    public CompassMoreLikeThisQuery moreLikeThis(Reader reader) {
+        SearchEngineQueryBuilder.SearchEngineMoreLikeThisQueryBuilder mltQueryBuilder = queryBuilder.moreLikeThis(reader);
+        return new DefaultCompassMoreLikeThisQuery(mltQueryBuilder, session);
     }
 }

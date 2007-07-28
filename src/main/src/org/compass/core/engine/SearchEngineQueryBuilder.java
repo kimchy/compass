@@ -16,6 +16,9 @@
 
 package org.compass.core.engine;
 
+import java.io.Reader;
+
+import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineQuery.SearchEngineSpanQuery;
 
 /**
@@ -96,6 +99,35 @@ public interface SearchEngineQueryBuilder {
         SearchEngineSpanQuery toQuery();
     }
 
+    public static interface SearchEngineMoreLikeThisQueryBuilder extends SearchEngineToQuery {
+
+        SearchEngineMoreLikeThisQueryBuilder setSubIndexes(String[] subIndexes);
+
+        SearchEngineMoreLikeThisQueryBuilder setAliases(String[] aliases);
+
+        SearchEngineMoreLikeThisQueryBuilder setProperties(String[] properties);
+
+        SearchEngineMoreLikeThisQueryBuilder addProperty(String property);
+
+        SearchEngineMoreLikeThisQueryBuilder setAnalyzer(String analyzer);
+
+        SearchEngineMoreLikeThisQueryBuilder setBoost(boolean boost);
+
+        SearchEngineMoreLikeThisQueryBuilder setMaxNumTokensParsed(int maxNumTokensParsed);
+
+        SearchEngineMoreLikeThisQueryBuilder setMaxQueryTerms(int maxQueryTerms);
+
+        SearchEngineMoreLikeThisQueryBuilder setMaxWordLen(int maxWordLen);
+
+        SearchEngineMoreLikeThisQueryBuilder setMinResourceFreq(int minDocFreq);
+
+        SearchEngineMoreLikeThisQueryBuilder setMinTermFreq(int minTermFreq);
+
+        SearchEngineMoreLikeThisQueryBuilder setMinWordLen(int minWordLen);
+
+        SearchEngineMoreLikeThisQueryBuilder setStopWords(String[] stopWords);
+    }
+
     SearchEngineBooleanQueryBuilder bool();
 
     SearchEngineBooleanQueryBuilder bool(boolean disableCoord);
@@ -144,4 +176,8 @@ public interface SearchEngineQueryBuilder {
     SearchEngineSpanQuery spanNot(SearchEngineSpanQuery include, SearchEngineSpanQuery exclude);
 
     SearchEngineQuerySpanOrBuilder spanOr();
+
+    SearchEngineMoreLikeThisQueryBuilder moreLikeThis(Resource idResource);
+
+    SearchEngineMoreLikeThisQueryBuilder moreLikeThis(Reader reader);
 }

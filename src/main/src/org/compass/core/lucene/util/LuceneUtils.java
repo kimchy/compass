@@ -29,7 +29,11 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Lock;
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -37,14 +41,17 @@ import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.InternalResource;
+import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.reader.MultiIOReader;
 import org.compass.core.util.reader.StringReader;
 import org.compass.core.util.reader.StringWithSeparatorReader;
@@ -53,6 +60,32 @@ import org.compass.core.util.reader.StringWithSeparatorReader;
  * @author kimchy
  */
 public abstract class LuceneUtils {
+
+    public static Query buildResourceLoadQuery(LuceneSearchEngineFactory searchEngineFactory, ResourceKey resourceKey) {
+        return buildResourceLoadQuery(searchEngineFactory, ResourceHelper.computeSubIndex(resourceKey), resourceKey);
+    }
+
+    public static Query buildResourceLoadQuery(LuceneSearchEngineFactory searchEngineFactory, String subIndex, ResourceKey resourceKey) {
+        Property[] ids = resourceKey.getIds();
+        int numberOfAliases = searchEngineFactory.getLuceneIndexManager().getStore().getNumberOfAliasesBySubIndex(subIndex);
+        Query query;
+        if (numberOfAliases == 1 && ids.length == 1) {
+            query = new TermQuery(new Term(ids[0].getName(), ids[0].getStringValue()));
+        } else {
+            BooleanQuery bQuery = new BooleanQuery();
+            if (numberOfAliases > 1) {
+                String aliasProperty = searchEngineFactory.getLuceneSettings().getAliasProperty();
+                Term t = new Term(aliasProperty, resourceKey.getAlias());
+                bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
+            }
+            for (int i = 0; i < ids.length; i++) {
+                Term t = new Term(ids[i].getName(), ids[i].getStringValue());
+                bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
+            }
+            query = bQuery;
+        }
+        return query;
+    }
 
     public static Resource[] hitsToResourceArray(final Hits hits, LuceneSearchEngine searchEngine) throws SearchEngineException {
         int length = hits.length();

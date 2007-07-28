@@ -16,6 +16,9 @@
 
 package org.compass.core;
 
+import java.io.Reader;
+import java.io.Serializable;
+
 import org.compass.core.CompassQuery.CompassSpanQuery;
 
 /**
@@ -277,6 +280,86 @@ public interface CompassQueryBuilder {
          * Returns the generated span or query.
          */
         CompassSpanQuery toQuery();
+    }
+
+    /**
+     * A more like this query builder (maps to Lucene <code>MoreLikeThis</code> feature withing
+     * the contrib queries package).
+     */
+    public static interface CompassMoreLikeThisQuery extends ToCompassQuery {
+
+        /**
+         * Sets the sub indexes that "more liket this" hits will be searched on
+         */
+        CompassMoreLikeThisQuery setSubIndexes(String[] subIndexes);
+
+        /**
+         * Sets the aliases that "more liket this" hits will be searched on
+         */
+        CompassMoreLikeThisQuery setAliases(String[] aliases);
+
+        /**
+         * Sets properties to the more like this query will be performed on.
+         */
+        CompassMoreLikeThisQuery setProperties(String[] properties);
+
+        /**
+         * Adds a property to the more like this query will be performed on.
+         */
+        CompassMoreLikeThisQuery addProperty(String property);
+
+        /**
+         * Sets the analyzer that will be used to analyze a more like this string (used when
+         * using {@link CompassQueryBuilder#moreLikeThis(java.io.Reader)}.
+         */
+        CompassMoreLikeThisQuery setAnalyzer(String analyzer);
+
+        /**
+         * Sets whether to boost terms in query based on "score" or not.
+         */
+        CompassMoreLikeThisQuery setBoost(boolean boost);
+
+        /**
+         * The maximum number of tokens to parse in each example doc field that is not stored with TermVector support
+         */
+        CompassMoreLikeThisQuery setMaxNumTokensParsed(int maxNumTokensParsed);
+
+        /**
+         * Sets the maximum number of query terms that will be included in any generated query.
+         */
+        CompassMoreLikeThisQuery setMaxQueryTerms(int maxQueryTerms);
+
+        /**
+         * Sets the maximum word length above which words will be ignored. Set this to 0 for no
+         * maximum word length. The default is <code>0</code>.
+         */
+        CompassMoreLikeThisQuery setMaxWordLen(int maxWordLen);
+
+        /**
+         * Sets the minimum word length below which words will be ignored. Set this to 0 for no
+         * minimum word length. The default is <code>0</code>.
+         */
+        CompassMoreLikeThisQuery setMinWordLen(int minWordLen);
+
+        /**
+         * Sets the frequency at which words will be ignored which do not occur in at least this
+         * many resources. Defaults to 5.
+         */
+        CompassMoreLikeThisQuery setMinResourceFreq(int minDocFreq);
+
+        /**
+         * Sets the frequency below which terms will be ignored in the source doc. Defaults to 2.
+         */
+        CompassMoreLikeThisQuery setMinTermFreq(int minTermFreq);
+
+        /**
+         * Set the set of stopwords.
+         * Any word in this set is considered "uninteresting" and ignored.
+         * Even if your Analyzer allows stopwords, you might want to tell the MoreLikeThis code to ignore them, as
+         * for the purposes of document similarity it seems reasonable to assume that "a stop word is never interesting".
+         */
+        CompassMoreLikeThisQuery setStopWords(String[] stopWords);
+
     }
 
     /**
@@ -608,4 +691,17 @@ public interface CompassQueryBuilder {
      * @return The span query builder
      */
     CompassQuerySpanOrBuilder spanOr();
+
+    /**
+     * Constructs a more like this query. The id can be an object of
+     * the class (with the id attributes set), an array of id objects, or the
+     * actual id object. Throws an exception if the resource is not found.
+     */
+    CompassMoreLikeThisQuery moreLikeThis(String alias, Serializable id);
+
+    /**
+     * Constructs a more like this query to find hits that are similar to
+     * the give text represented by the reader.
+     */
+    CompassMoreLikeThisQuery moreLikeThis(Reader reader);
 }
