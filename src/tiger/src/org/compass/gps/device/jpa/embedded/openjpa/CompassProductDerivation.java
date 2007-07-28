@@ -79,11 +79,12 @@ import org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector;
  * <p>Specific properties that this plugin can use:
  * <ul>
  * <li>compass.openjpa.reindexOnStartup: Set it to <code>true</code> in order to perform full reindex of the database on startup.
- * Defaults to <code>false</code>.
- * </li>
+ * Defaults to <code>false</code>.</li>
  * <li>compass.openjpa.registerRemoteCommitListener: Set it to <code>true</code> in order to register for remote commits
- * notifications. Defaults to <code>false</code>.
- * </li>
+ * notifications. Defaults to <code>false</code>.</li>
+ * <li>compass.openjpa.indexQuery.[entity name/class]: Specific select query that will be used to perform the indexing
+ * for the mentioned specific entity name / class. Note, before calling {@link org.compass.gps.CompassGps#index()} there
+ * is an option the programmatically control this.</li>
  * </ul>
  *
  * @author kimchy
@@ -108,6 +109,8 @@ public class CompassProductDerivation extends AbstractProductDerivation {
     public static final String REINDEX_ON_STARTUP = "compass.openjpa.reindexOnStartup";
 
     public static final String REGISTER_REMOTE_COMMIT_LISTENER = "compass.openjpa.registerRemoteCommitListener";
+
+    public static final String INDEX_QUERY_PREFIX = "compass.openjpa.indexQuery.";
 
 
     private Compass compass;
@@ -191,6 +194,13 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 JpaGpsDevice jpaGpsDevice = new JpaGpsDevice(DefaultJpaCompassGps.JPA_DEVICE_NAME, emf);
                 jpaGpsDevice.setMirrorDataChanges(true);
                 jpaGpsDevice.setInjectEntityLifecycleListener(true);
+                for (Map.Entry<String, Object> entry : openJpaProps.entrySet()) {
+                    if (entry.getKey().startsWith(INDEX_QUERY_PREFIX)) {
+                        String entityName = entry.getKey().substring(INDEX_QUERY_PREFIX.length());
+                        String selectQuery = (String) entry.getValue();
+                        jpaGpsDevice.setIndexSelectQuery(entityName, selectQuery);
+                    }
+                }
 
                 OpenJPAJpaEntityLifecycleInjector lifecycleInjector = new OpenJPAJpaEntityLifecycleInjector();
                 lifecycleInjector.setEventListener(new EmbeddedOpenJPAEventListener(jpaGpsDevice));
@@ -280,7 +290,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         String registerRemoteCommitListener = (String) openJpaProps.get(REGISTER_REMOTE_COMMIT_LISTENER);
         if ("true".equalsIgnoreCase(registerRemoteCommitListener)) {
             brokerFactory.getConfiguration().getRemoteCommitEventManager().addListener(new CompassRemoteCommitListener(
-                            OpenJPAPersistence.toEntityManagerFactory(brokerFactory), compass));
+                    OpenJPAPersistence.toEntityManagerFactory(brokerFactory), compass));
         }
     }
 
@@ -339,7 +349,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 }
                 tr.commit();
             } catch (Exception e) {
-                log.error("Failed to perform remote commit syncronization", e); 
+                log.error("Failed to perform remote commit syncronization", e);
                 if (tr != null) {
                     tr.rollback();
                 }
@@ -374,7 +384,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 try {
                     Class cls = Class.forName(typeName, true, loader);
                     // delete all objects matching the given type
-                    session.delete(session.queryBuilder().matchAll().setTypes(new Class[] {cls}));
+                    session.delete(session.queryBuilder().matchAll().setTypes(new Class[]{cls}));
                     Extent extent = em.createExtent(cls, true);
                     for (Object o : extent.list()) {
                         reindex(o, session);
