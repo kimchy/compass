@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.hibernate;
+package org.compass.gps.device.hibernate.dep;
 
 import org.compass.gps.device.support.parallel.IndexEntity;
 

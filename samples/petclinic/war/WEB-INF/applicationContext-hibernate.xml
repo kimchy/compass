@@ -66,7 +66,7 @@
             <ref local="transactionManager" />
         </property>
     </bean>
-	 <bean id="hibernateGpsDevice" class="org.compass.spring.device.hibernate.SpringHibernate3GpsDevice">
+	 <bean id="hibernateGpsDevice" class="org.compass.spring.device.hibernate.dep.SpringHibernate3GpsDevice">
 	   <property name="name"><value>hibernateDevice</value></property>
 	   <property name="sessionFactory"><ref local="sessionFactory" /></property>
 	 </bean>

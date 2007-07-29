@@ -16,34 +16,287 @@
 
 package org.compass.gps.device.hibernate;
 
-import org.compass.gps.CompassGpsDevice;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.compass.core.util.Assert;
+import org.compass.gps.CompassGpsException;
+import org.compass.gps.PassiveMirrorGpsDevice;
+import org.compass.gps.device.hibernate.entities.DefaultHibernateEntitiesLocator;
+import org.compass.gps.device.hibernate.entities.EntityInformation;
+import org.compass.gps.device.hibernate.entities.HibernateEntitiesLocator;
+import org.compass.gps.device.hibernate.indexer.HibernateIndexEntitiesIndexer;
+import org.compass.gps.device.hibernate.indexer.PaginationHibernateIndexEntitiesIndexer;
+import org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityLifecycleInjector;
+import org.compass.gps.device.hibernate.lifecycle.HibernateEntityLifecycleInjector;
+import org.compass.gps.device.hibernate.lifecycle.HibernateMirrorFilter;
+import org.compass.gps.device.support.parallel.AbstractParallelGpsDevice;
+import org.compass.gps.device.support.parallel.IndexEntitiesIndexer;
+import org.compass.gps.device.support.parallel.IndexEntity;
+import org.hibernate.SessionFactory;
 
 /**
- * A general Hiberante device interface, can work with both Hibernate 2 and
- * Hibernate 3.
- *
- * <p>The hibernate device provides support for using hibernate and hibernate
- * mapping files to index a database. The path can be views as: Database <->
- * Hibernate <-> Objects <-> Compass::Gps <-> Compass::Core (Search Engine).
- * What it means is that for every object that has both hibernate and compass
- * mappings, you will be able to index it's data, as well as real time mirroring
- * of data changes (in case of Hibernate 3).
- * 
  * @author kimchy
  */
-public interface HibernateGpsDevice extends CompassGpsDevice {
+public class HibernateGpsDevice extends AbstractParallelGpsDevice implements PassiveMirrorGpsDevice {
+
+    private SessionFactory sessionFactory;
+
+    private boolean mirrorDataChanges = true;
+
+    private int fetchCount = 200;
+
+    private HibernateEntitiesLocator entitiesLocator;
+
+    private HibernateEntityLifecycleInjector lifecycleInjector;
+
+    private boolean ignoreMirrorExceptions;
+
+    private HibernateMirrorFilter mirrorFilter;
+
+    private NativeHibernateExtractor nativeExtractor;
+
+    private HibernateIndexEntitiesIndexer entitiesIndexer;
+
+    private Map queryProviderByClass = new HashMap();
+
+    private Map queryProviderByName = new HashMap();
+
+
+    private SessionFactory nativeSessionFactory;
+
+    public HibernateGpsDevice() {
+
+    }
+
+    public HibernateGpsDevice(String name, SessionFactory sessionFactory) {
+        setName(name);
+        setSessionFactory(sessionFactory);
+    }
+
+    protected void doStart() throws CompassGpsException {
+        Assert.notNull(sessionFactory, buildMessage("Must set Hibernate SessionFactory"));
+
+        nativeSessionFactory = sessionFactory;
+        if (nativeExtractor != null) {
+            nativeSessionFactory = nativeExtractor.extractNative(sessionFactory);
+            if (nativeSessionFactory == null) {
+                throw new HibernateGpsDeviceException(buildMessage("Native SessionFactory extractor returned null"));
+            }
+            if (log.isDebugEnabled()) {
+                log.debug(buildMessage("Using native EntityManagerFactory ["
+                        + nativeSessionFactory.getClass().getName() + "] extracted by ["
+                        + nativeExtractor.getClass().getName() + "]"));
+            }
+        }
+
+        if (entitiesLocator == null) {
+            entitiesLocator = new DefaultHibernateEntitiesLocator();
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(buildMessage("Using index entityLocator [" + entitiesLocator.getClass().getName() + "]"));
+        }
+
+        if (mirrorDataChanges) {
+            if (lifecycleInjector == null) {
+                lifecycleInjector = new DefaultHibernateEntityLifecycleInjector();
+            }
+            if (log.isDebugEnabled()) {
+                log.debug(buildMessage("Using lifecycleInjector [" + lifecycleInjector.getClass().getName() + "]"));
+            }
+            lifecycleInjector.injectLifecycle(nativeSessionFactory, this);
+        }
+
+        if (entitiesIndexer == null) {
+            entitiesIndexer = new PaginationHibernateIndexEntitiesIndexer();
+        }
+        if (log.isDebugEnabled()) {
+            log.debug(buildMessage("Using entities indexer [" + entitiesIndexer.getClass().getName() + "]"));
+        }
+        entitiesIndexer.setHibernateGpsDevice(this);
+    }
+
+    protected void doStop() throws CompassGpsException {
+        if (mirrorDataChanges) {
+            lifecycleInjector.removeLifecycle(nativeSessionFactory, this);
+        }
+    }
+
+    protected IndexEntity[] doGetIndexEntities() throws CompassGpsException {
+        EntityInformation[] entitiesInformation = entitiesLocator.locate(nativeSessionFactory, this);
+        // apply specific select statements
+        for (int i = 0; i < entitiesInformation.length; i++) {
+            EntityInformation entityInformation = entitiesInformation[i];
+            if (queryProviderByClass.get(entityInformation.getEntityClass()) != null) {
+                entityInformation.setQueryProvider((HibernateQueryProvider) queryProviderByClass.get(entityInformation.getEntityClass()));
+            }
+            if (queryProviderByName.get(entityInformation.getName()) != null) {
+                entityInformation.setQueryProvider((HibernateQueryProvider) queryProviderByName.get(entityInformation.getName()));
+            }
+        }
+        return entitiesInformation;
+    }
+
+    protected IndexEntitiesIndexer doGetIndexEntitiesIndexer() {
+        return entitiesIndexer;
+    }
 
     /**
-     * The batch fetch count the should be used when fetching data from a
-     * hiberante mapped class. Defaults to 200.
-     * 
-     * @param fetchCount
+     * Sets the Hibernate <code>SessionFactory</code> to be used before the start operation.
      */
-    void setFetchCount(int fetchCount);
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     /**
-     * Sets a list of filtered entities (entities that are mapped to the database)
-     * that will not be indexed.
+     * Sets the fetch count for the indexing process. A large number will perform the indexing faster,
+     * but will consume more memory. Defaults to <code>200</code>.
      */
-    void setFilteredEntitiesForIndex(String[] filteredEntitiesForIndex);
+    public void setFetchCount(int fetchCount) {
+        this.fetchCount = fetchCount;
+    }
+
+    /**
+     * Returns the fetch count for the indexing process. A large number will perform the indexing faster,
+     * but will consume more memory. Default to <code>200</code>.
+     */
+    public int getFetchCount() {
+        return this.fetchCount;
+    }
+
+    /**
+     * @see org.compass.gps.MirrorDataChangesGpsDevice#isMirrorDataChanges()
+     */
+    public boolean isMirrorDataChanges() {
+        return mirrorDataChanges;
+    }
+
+    /**
+     * Should exceptions be ignored during the mirroring operations (the Hibernate event listeners).
+     * Defaults to <code>false</code>.
+     */
+    public boolean isIgnoreMirrorExceptions() {
+        return ignoreMirrorExceptions;
+    }
+
+    /**
+     * Should exceptions be ignored during the mirroring operations (the Hibernate event listeners).
+     * Defaults to <code>false</code>.
+     */
+    public void setIgnoreMirrorExceptions(boolean ignoreMirrorExceptions) {
+        this.ignoreMirrorExceptions = ignoreMirrorExceptions;
+    }
+
+    /**
+     * @see org.compass.gps.MirrorDataChangesGpsDevice#setMirrorDataChanges(boolean)
+     */
+    public void setMirrorDataChanges(boolean mirrorDataChanges) {
+        this.mirrorDataChanges = mirrorDataChanges;
+    }
+
+    /**
+     * Sets a pluggable index entities locator allowing to control the indexes entties that
+     * will be used. Defaults to {@link org.compass.gps.device.hibernate.entities.DefaultHibernateEntitiesLocator}.
+     */
+    public void setEntitiesLocator(HibernateEntitiesLocator entitiesLocator) {
+        this.entitiesLocator = entitiesLocator;
+    }
+
+    /**
+     * Returns mirroring filter that can filter hibernate mirror events. If no mirror filter is set
+     * no filtering will happen.
+     */
+    public HibernateMirrorFilter getMirrorFilter() {
+        return mirrorFilter;
+    }
+
+    /**
+     * Sets a mirroring filter that can filter hibernate mirror events. If no mirror filter is set
+     * no filtering will happen.
+     *
+     * @param mirrorFilter The mirror filter handler
+     */
+    public void setMirrorFilter(HibernateMirrorFilter mirrorFilter) {
+        this.mirrorFilter = mirrorFilter;
+    }
+
+    /**
+     * Sets a native Hibernate extractor to work with frameworks that wrap the actual
+     * SessionFactory.
+     */
+    public void setNativeExtractor(NativeHibernateExtractor nativeExtractor) {
+        this.nativeExtractor = nativeExtractor;
+    }
+
+    /**
+     * Sets a custom entities indexer allowing to control the indexing process.
+     * Defaults to {@link org.compass.gps.device.hibernate.indexer.PaginationHibernateIndexEntitiesIndexer}.
+     */
+    public void setEntitiesIndexer(HibernateIndexEntitiesIndexer entitiesIndexer) {
+        this.entitiesIndexer = entitiesIndexer;
+    }
+
+    /**
+     * Sets a custom lifecycle injector controlling the injection of Hibernate lifecycle
+     * listeners for mirroring operations. Defaults to {@link org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityLifecycleInjector}.
+     */
+    public void setLifecycleInjector(HibernateEntityLifecycleInjector lifecycleInjector) {
+        this.lifecycleInjector = lifecycleInjector;
+    }
+
+    /**
+     * <p>Sets a specific select statement for the index process of the given
+     * entity class. The same as {@link #setIndexQueryProvider(Class,HibernateQueryProvider)}
+     * using {@link org.compass.gps.device.hibernate.DefaultHibernateQueryProvider}.
+     * <p>Note, this information is used when the device starts.
+     *
+     * @param entityClass The Entity class to associate the select query with
+     * @param selectQuery The select query to execute when indexing the given entity
+     */
+    public void setIndexSelectQuery(Class entityClass, String selectQuery) {
+        setIndexQueryProvider(entityClass, new DefaultHibernateQueryProvider(selectQuery));
+    }
+
+    /**
+     * Sets a specific select statement for the index process of the given
+     * entity name. The same as {@link #setIndexQueryProvider(String,HibernateQueryProvider)}
+     * using {@link org.compass.gps.device.hibernate.DefaultHibernateQueryProvider}
+     * <p>Note, this information is used when the device starts.
+     *
+     * @param entityName  The entity name to associate the select query with
+     * @param selectQuery The select query to execute when indexing the given entity
+     */
+    public void setIndexSelectQuery(String entityName, String selectQuery) {
+        setIndexQueryProvider(entityName, new DefaultHibernateQueryProvider(selectQuery));
+    }
+
+    /**
+     * Sets a specific query provider for the index process of the given entity class.
+     * <p>Note, this information is used when the device starts.
+     *
+     * @param entityClass   The Entity class to associate the query provider with
+     * @param queryProvider The query provider to execute when indexing the given entity
+     */
+    public void setIndexQueryProvider(Class entityClass, HibernateQueryProvider queryProvider) {
+        queryProviderByClass.put(entityClass, queryProvider);
+    }
+
+    /**
+     * Sets a specific query provider for the index process of the given entity name.
+     * <p>Note, this information is used when the device starts.
+     *
+     * @param entityName    The Entity name to associate the query provider with
+     * @param queryProvider The query provider to execute when indexing the given entity
+     */
+    public void setIndexQueryProvider(String entityName, HibernateQueryProvider queryProvider) {
+        queryProviderByName.put(entityName, queryProvider);
+    }
+
+    /**
+     * Returns a native Hibernate extractor to work with frameworks that wrap the actual
+     * SessionFactory.
+     */
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
 }

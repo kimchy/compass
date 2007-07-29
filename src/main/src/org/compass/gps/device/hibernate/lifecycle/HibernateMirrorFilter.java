@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.hibernate;
+package org.compass.gps.device.hibernate.lifecycle;
 
+import org.hibernate.event.PostDeleteEvent;
 import org.hibernate.event.PostInsertEvent;
 import org.hibernate.event.PostUpdateEvent;
-import org.hibernate.event.PostDeleteEvent;
 
 /**
  * Allows to hook filtering of object during the mirroring process.

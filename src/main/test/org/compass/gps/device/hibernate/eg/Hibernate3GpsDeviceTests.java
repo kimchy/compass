@@ -22,7 +22,7 @@ import java.util.Date;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.gps.device.hibernate.Hibernate3GpsDevice;
+import org.compass.gps.device.hibernate.dep.Hibernate3GpsDevice;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

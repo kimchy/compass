@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
-import org.compass.gps.device.hibernate.Hibernate3GpsDevice;
+import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.impl.SingleCompassGps;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -75,7 +75,7 @@ public class CollectionTests extends TestCase {
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         sessionFactory = conf.buildSessionFactory();
 
-        Hibernate3GpsDevice device = new Hibernate3GpsDevice();
+        HibernateGpsDevice device = new HibernateGpsDevice();
         device.setSessionFactory(sessionFactory);
         device.setName("hibernateDevice");
         compassGps.addGpsDevice(device);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.hibernate;
+package org.compass.gps.device.hibernate.dep;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,9 +29,10 @@ import net.sf.hibernate.Transaction;
 import net.sf.hibernate.cfg.Configuration;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 
 /**
- * A {@link HibernateGpsDevice} which works with hibernate 2.
+ * A {@link org.compass.gps.device.hibernate.HibernateGpsDevice} which works with hibernate 2.
  * <p/>
  * You must either set the Hibernate <code>Configuration</code> or the
  * <code>SessionFactory</code> to be used by the device. Note that if the

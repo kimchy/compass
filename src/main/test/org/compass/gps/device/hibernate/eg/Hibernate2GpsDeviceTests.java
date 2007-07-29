@@ -24,11 +24,10 @@ import net.sf.hibernate.SessionFactory;
 import net.sf.hibernate.Transaction;
 import net.sf.hibernate.cfg.Configuration;
 import net.sf.hibernate.cfg.Environment;
-
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.gps.device.hibernate.Hibernate2GpsDevice;
+import org.compass.gps.device.hibernate.dep.Hibernate2GpsDevice;
 
 /**
  * @author kimchy

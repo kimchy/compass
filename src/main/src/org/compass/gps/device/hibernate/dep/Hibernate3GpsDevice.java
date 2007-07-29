@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.hibernate;
+package org.compass.gps.device.hibernate.dep;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,6 +32,7 @@ import org.compass.core.util.FieldInvoker;
 import org.compass.core.util.MethodInvoker;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.PassiveMirrorGpsDevice;
+import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.hibernate.EntityMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
@@ -51,7 +52,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 
 /**
- * A {@link HibernateGpsDevice} which works with hibernate 3.
+ * A {@link org.compass.gps.device.hibernate.HibernateGpsDevice} which works with hibernate 3.
  * <p/>
  * You must either set the Hibernate <code>Configuration</code> or the
  * <code>SessionFactory</code> to be used by the device. Note that if the
@@ -64,6 +65,7 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
  * <code>PostDeleteEventListener</code> events.
  *
  * @author kimchy
+ * @deprecated Please use {@link org.compass.gps.device.hibernate.HibernateGpsDevice}.
  */
 public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements PassiveMirrorGpsDevice {
 

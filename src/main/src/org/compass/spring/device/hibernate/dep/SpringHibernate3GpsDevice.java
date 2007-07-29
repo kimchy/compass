@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.spring.device.hibernate;
+package org.compass.spring.device.hibernate.dep;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
+import org.compass.gps.device.hibernate.dep.Hibernate3GpsDevice;
 import org.hibernate.SessionFactory;
 
 /**
@@ -30,12 +31,12 @@ import org.hibernate.SessionFactory;
  * <code>true</code>, which is the default from spring 1.2.X).
  * <p>
  * Use this hibernate gps device instead of
- * <code>org.compass.gps.device.hibernate.Hibernate3GpsDevice</code> if you
+ * <code>org.compass.gps.device.hibernate.dep.Hibernate3GpsDevice</code> if you
  * are using Hibernate 3 and Spring.
  * 
  * @author kimchy
  */
-public class SpringHibernate3GpsDevice extends org.compass.gps.device.hibernate.Hibernate3GpsDevice {
+public class SpringHibernate3GpsDevice extends Hibernate3GpsDevice {
 
     public static SessionFactory getNativeSessionFactory(SessionFactory sessionFactory) {
         if (Proxy.isProxyClass(sessionFactory.getClass())) {

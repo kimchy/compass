@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.hibernate;
+package org.compass.gps.device.hibernate.dep;
 
 import java.util.Iterator;
 import java.util.List;
 
 import org.compass.core.CompassSession;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.device.support.parallel.AbstractParallelGpsDevice;
 import org.compass.gps.device.support.parallel.IndexEntitiesIndexer;
 import org.compass.gps.device.support.parallel.IndexEntity;
@@ -34,7 +35,7 @@ import org.compass.gps.device.support.parallel.IndexEntity;
  *
  * @author kimchy
  */
-public abstract class AbstractHibernateGpsDevice extends AbstractParallelGpsDevice implements HibernateGpsDevice {
+public abstract class AbstractHibernateGpsDevice extends AbstractParallelGpsDevice {
 
     public static interface HibernateSessionWrapper {
         void open() throws HibernateGpsDeviceException;
