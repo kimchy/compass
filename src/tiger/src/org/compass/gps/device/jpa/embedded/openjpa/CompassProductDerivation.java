@@ -209,6 +209,10 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 jpaCompassGps = new DefaultJpaCompassGps();
                 jpaCompassGps.setCompass(compass);
                 jpaCompassGps.addGpsDevice(jpaGpsDevice);
+
+                // before we start the Gps, open and close a broker
+                emf.createEntityManager().close();
+
                 jpaCompassGps.start();
 
                 String reindexOnStartup = (String) openJpaProps.get(REINDEX_ON_STARTUP);

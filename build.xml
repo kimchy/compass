@@ -338,7 +338,7 @@
 
         <junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
 
-            <jvmarg line="-Djava.awt.headless=true -Xmx128m -XX:MaxPermSize=128m"/>
+            <jvmarg line="-Djava.awt.headless=true -Xmx256m -XX:MaxPermSize=128m"/>
             <!-- Needed since the order of the jar loading is unknown, and Lucene SegmentReader might -->
             <!-- be loaded before compass (should not happen in actual apps)) -->
             <sysproperty key="org.apache.lucene.SegmentReader.class"
@@ -370,7 +370,7 @@
 
         <junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
 
-            <jvmarg line="-Djava.awt.headless=true -Xmx128m -XX:MaxPermSize=128m"/>
+            <jvmarg line="-Djava.awt.headless=true -Xmx256m -XX:MaxPermSize=128m"/>
             <!-- Needed since the order of the jar loading is unknown, and Lucene SegmentReader might -->
             <!-- be loaded before compass (should not happen in actual apps)) -->
             <sysproperty key="org.apache.lucene.SegmentReader.class"
@@ -382,7 +382,7 @@
             <classpath location="${target.classes.dir}"/>
 
             <!-- Need files loaded as resources -->
-            <classpath location="${tiget.test.dir}"/>
+            <classpath location="${tiger.test.dir}"/>
 
             <classpath refid="all-libs"/>
 
