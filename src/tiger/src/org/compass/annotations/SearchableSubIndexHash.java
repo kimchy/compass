@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import org.compass.core.engine.subindex.SubIndexHash;
 
 /**
- * Configures a {@link SubIndexHash} associated with the given {@link @Searchable}
+ * Configures a {@link SubIndexHash} associated with the given {@link Searchable}
  *
  * @author kimchy
  * @see SubIndexHash

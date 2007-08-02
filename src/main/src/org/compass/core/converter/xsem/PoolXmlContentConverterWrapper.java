@@ -36,8 +36,8 @@ public class PoolXmlContentConverterWrapper implements XmlContentConverter, Comp
     private final Object mutex = new Object();
 
     /**
-     * Configures the pool used from {@link CompassEnvironment.Converter.XmlContent.MIN_POOL_SIZE} and
-     * {@link CompassEnvironment.Converter.XmlContent.MAX_POOL_SIZE}.
+     * Configures the pool used from {@link CompassEnvironment.Converter.XmlContent#MIN_POOL_SIZE} and
+     * {@link CompassEnvironment.Converter.XmlContent#MAX_POOL_SIZE}.
      */
     public void configure(CompassSettings settings) throws CompassException {
         this.settings = settings;

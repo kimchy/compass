@@ -16,10 +16,10 @@
 
 package org.compass.core.mapping.xsem;
 
-import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.AbstractResourcePropertyMapping;
 import org.compass.core.Property;
+import org.compass.core.mapping.AbstractResourcePropertyMapping;
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
@@ -27,7 +27,7 @@ import org.compass.core.Property;
 public class XmlContentMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping {
 
     /**
-     * Xml content mapping is always {@link Property.Index.NO}.
+     * Xml content mapping is always {@link Property.Index#NO}.
      */
     public Property.Index getIndex() {
         return Property.Index.NO;

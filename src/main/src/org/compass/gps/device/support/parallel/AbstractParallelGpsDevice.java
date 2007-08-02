@@ -55,7 +55,7 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
     private IndexEntitiesIndexer indexEntitiesIndexer;
 
     /**
-     * Starts the device. Calls {@link @doGetIndexEntities} in order to get all the
+     * Starts the device. Calls {@link #doGetIndexEntities} in order to get all the
      * indexeable entities and uses the {@link org.compass.gps.device.support.parallel.IndexEntitiesPartitioner}
      * to partition them index groups that can be parallel indexed. Also calls
      * {@link #doGetIndexEntitiesIndexer()} in order to obtain the index entities indexer.

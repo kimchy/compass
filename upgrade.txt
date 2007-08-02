@@ -1,6 +1,12 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
+VERSION 1.2 M3 (August 3, 2007)
+===============================
+
+1. New HibernateGpsDevice with mcuh improved features. Hibernate3GpsDevice, Hibernate2GpsDevice, and
+   SpringHibernate3GpsDevice refactored to a different package with "dep" at the end.
+
 VERSION 1.2 M2 (June 25, 2007)
 ==============================
 

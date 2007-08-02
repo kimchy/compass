@@ -43,12 +43,12 @@ import org.compass.core.xml.XmlObject;
 /**
  * Handles xml content mapping definition. Saves the raw xml content from {@link XmlObject}
  * into the search engine, and unmarshalls raw xml content into {@link XmlObject}.
- * <p/>
- * In order to perform the conversion between {@link XmlObject} and raw xml, the converter
+ *
+ * <p>In order to perform the conversion between {@link XmlObject} and raw xml, the converter
  * uses a {@link XmlContentConverter} implementation. There is no default one, and it must
  * be cofigured for this converter to funtion using {@link CompassEnvironment.Converter.XmlContent#TYPE).
- * <p/>
- * {@link XmlContentConverter} implementations are wrapped by one of the three built in strategies:
+ *
+ * <p>{@link XmlContentConverter} implementations are wrapped by one of the three built in strategies:
  * {@link PrototypeXmlContentConverterWrapper}, {@link PoolXmlContentConverterWrapper},
  * {@link SingletonXmlContentConverterWrapper}, or a user provided fully qualified class name.
  *
@@ -125,8 +125,8 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
      * converter process nulls or not. Usually the converter will not
      * persist null values, but sometimes it might be needed
      * ({@link org.compass.core.marshall.MarshallingContext#handleNulls()}).
-     * <p/>
-     * Extracted to a method so special converters can control null handling.
+     *
+     * <p>Extracted to a method so special converters can control null handling.
      *
      * @param context The marshalling context
      * @return <code>true</code> if the converter should handle null values
