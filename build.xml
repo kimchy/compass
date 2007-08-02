@@ -110,6 +110,7 @@
                 <include name="**/*.xml"/>
                 <include name="**/*.dtd"/>
                 <include name="**/*.xsd"/>
+                <include name="META-INF/**" />
             </fileset>
         </copy>
 
@@ -127,6 +128,18 @@
             <classpath refid="all-libs"/>
         </javac>
 
+        <copy todir="${target.classes.dir}" preservelastmodified="true">
+            <fileset dir="${tiger.src.dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.handlers"/>
+                <include name="**/*.schemas"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.dtd"/>
+                <include name="**/*.xsd"/>
+                <include name="META-INF/**" />
+            </fileset>
+        </copy>
+        
     </target>
 
 
