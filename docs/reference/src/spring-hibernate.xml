@@ -2,6 +2,14 @@
   <title>Hibernate 3 Gps Device Support</title>
 
   <sect1 id="spring-hibernate-introduction">
+   <title>Deprecation Note</title>
+
+	<para>
+		This device has been deprecated and moved to <literal>org.compass.spring.device.hibernate.dep</literal> package. Please use the new <classname>HibernateGpsDevice</classname> which allows for a pluggable native Hibernate extractor.
+	</para>
+  </sect1>
+
+  <sect1 id="spring-hibernate-introduction">
    <title>Introduction</title>
 
     <para>

@@ -22,15 +22,41 @@
       <title>Configuration</title>
 
       <para>
-        When configuring the Hibernate device, one must instantiate either <literal>Hibernate2GpsDevice</literal> (for Hibernate 2 version) or <literal>Hibernate3GpsDevice</literal> (for Hibernate 3 version). After instantiating the device, it must be initialized by either a Hibernate <literal>Configuration</literal> or a Hibernate <literal>SessionFactory</literal>. When configuring the device with Hibernate <literal>Configuration</literal>, a new <literal>SessionFactory</literal> is created when the device is started.
-      </para>
-
-      <para>
-        It is more preferable to configure the device with the <literal>SessionFactory</literal> that the actual application will use, especially since data mirroring will only work when both the device and the application will use the same <literal>SessionFactory</literal>.
+        When configuring the Hibernate device, one must instantiate <literal>HibernateGpsDevice</literal>. After instantiating the device, it must be initialized with a Hibernate <literal>SessionFactory</literal>. 
       </para>
 
       <para>
         Here is a code sample of how to configure the hibernate device:
+<programlisting><![CDATA[Compass compass = ... // set compass instance
+CompassGps gps = new SingleCompassGps(compass);
+CompassGpsDevice hibernateDevice = new HibernateGpsDevice("hibernate", sessionFactory);
+gps.addDevice(hibernateDevice);
+.... // configure other devices
+gps.start();
+]]></programlisting>
+      </para>
+
+		<para>
+			In order to register event listener with Hibernate <classname>SessionFactory</classname>, the actual instance of the session factory need to be obtained. The Hibernate device allows for a pluggable <classname>NativeHibernateExtractor</classname> implementation responsible for extracting the actual instance. Compass comes with a default implementation when working within a Spring environment called: <classname>SpringNativeHibernateExtractor</classname>.
+		</para>
+
+		<sect2 id="dep-hibernate-device">
+			<title>Deprecated Hibernate Devices</title>
+			
+			<para>
+				For backward compatibility, Compass supports previous <literal>Hibernate2GpsDevice</literal> and <literal>Hibenrate3GpsDevice</literal>. The classes have moved to a different package, and are usable with a simple change to the package name. The new package for the deprecated devices is: <literal>org.compass.gps.device.hibernate.dep</literal>.
+			</para>
+			
+			
+			<sect3 id="hibernate-configuration">
+				<title>Configuration</title>
+
+			    <para>When configuring the Hibernate device, one must instantiate either <literal>Hibernate2GpsDevice</literal> (for Hibernate 2 version) or <literal>Hibernate3GpsDevice</literal> (for Hibernate 3 version). After instantiating the device, it must be initialized by either a Hibernate <literal>Configuration</literal> or a Hibernate <literal>SessionFactory</literal>. When configuring the device with Hibernate <literal>Configuration</literal>, a new <literal>SessionFactory</literal> is created when the device is started.</para>
+
+			    <para>It is more preferable to configure the device with the <literal>SessionFactory</literal> that the actual application will use, especially since data mirroring will only work when both the device and the application will use the same <literal>SessionFactory</literal>.</para>
+
+			    <para>
+			    	Here is a code sample of how to configure the hibernate device:
 <programlisting><![CDATA[Compass compass = ... // set compass instance
 CompassGps gps = new SingleCompassGps(compass);
 CompassGpsDevice hibernateDevice =
@@ -42,7 +68,9 @@ gps.addDevice(hibernateDevice);
 .... // configure other devices
 gps.start();
 ]]></programlisting>
-      </para>
+			    </para>
+			</sect3>
+		</sect2>
 
     </sect1>
 
@@ -50,12 +78,16 @@ gps.start();
       <title>Index Operation</title>
 
       <para>
-        Hibernate Gps device provides the ability to index a database. It supports both Hibernate 2 and Hibernate 3 versions. Compass will index objects (or their matching database tables in the Hibernate mappings) specified in both the Hibernate mappings and Compass::Core mappings (OSEM) files.
+        Hibernate Gps device provides the ability to index a database. Compass will index objects (or their matching database tables in the Hibernate mappings) specified in both the Hibernate mappings and Compass::Core mappings (OSEM) files.
       </para>
 
-      <para>
-        When indexing Compass::Gps, the Hibernate device can be configured with a <literal>fetchCount</literal>. The <literal>fetchCount</literal> parameter controls the pagination process of indexing a class (and it's represented table) so in case of large tables, the memory level can be controlled.
-      </para>
+	  <para>
+		The indexing process is pluggable and Compass comes with two implementations. The first, <classname>PaginationHibernateIndexEntitiesIndexer</classname>, uses <literal>setFirstResult</literal> and <literal>setMaxResults</literal> in order to perform pagination. The second one, <classname>ScrollableHibernateIndexEntitiesIndexer</classname>, uses Hibernate scrollable resultset in order to index the data. The default indexer used is the pagination indexer though the scrollable indexer is faster due to a memory leak in Hibernate (up to 3.2.4, should be fixed in the next minor version).
+	  </para>
+	
+	  <para>
+		During the indexing process Compass will execute a default query which will fetch all the relevant data from the database using Hibernate. The query itself can be controlled both by setting a static sql query and providing a query provider. This setting applies per entity.
+	  </para>
 
     </sect1>
 

@@ -52,9 +52,10 @@
         </property>
     </bean>
 
-     <bean id="hibernateGpsDevice" class="org.compass.spring.device.hibernate.dep.SpringHibernate3GpsDevice">
+     <bean id="hibernateGpsDevice" class="org.compass.gps.device.hibernate.HibernateGpsDevice">
        <property name="name"><value>hibernateDevice</value></property>
        <property name="sessionFactory"><ref local="sessionFactory" /></property>
+       <property name="nativeExtractor"><bean class="org.compass.spring.device.hibernate.SpringNativeHibernateExtractor" /></property>
      </bean>
 
      <bean id="hibernateGps" class="org.compass.gps.impl.SingleCompassGps" init-method="start" destroy-method="stop">
