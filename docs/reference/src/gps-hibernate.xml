@@ -28,7 +28,7 @@
       <para>
         Here is a code sample of how to configure the hibernate device:
 <programlisting><![CDATA[Compass compass = ... // set compass instance
-CompassGps gps = new SingleCompassGps(compass);
+SingleCompassGps gps = new SingleCompassGps(compass);
 CompassGpsDevice hibernateDevice = new HibernateGpsDevice("hibernate", sessionFactory);
 gps.addDevice(hibernateDevice);
 .... // configure other devices
@@ -58,7 +58,7 @@ gps.start();
 			    <para>
 			    	Here is a code sample of how to configure the hibernate device:
 <programlisting><![CDATA[Compass compass = ... // set compass instance
-CompassGps gps = new SingleCompassGps(compass);
+SingleCompassGps gps = new SingleCompassGps(compass);
 CompassGpsDevice hibernateDevice =
 // If Hibernate 2
      new Hibernate2GpsDevice("hibernate", sessionFactory);
