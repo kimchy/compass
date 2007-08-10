@@ -85,6 +85,7 @@ import org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector;
  * <li>compass.openjpa.indexQuery.[entity name/class]: Specific select query that will be used to perform the indexing
  * for the mentioned specific entity name / class. Note, before calling {@link org.compass.gps.CompassGps#index()} there
  * is an option the programmatically control this.</li>
+ * <li>compass.openjpa.config: A classpath that points to Compass configuration.</li>
  * </ul>
  *
  * @author kimchy
@@ -111,6 +112,8 @@ public class CompassProductDerivation extends AbstractProductDerivation {
     public static final String REGISTER_REMOTE_COMMIT_LISTENER = "compass.openjpa.registerRemoteCommitListener";
 
     public static final String INDEX_QUERY_PREFIX = "compass.openjpa.indexQuery.";
+
+    public static final String COMPASS_CONFIG_LOCATION = "compass.openjpa.config";
 
 
     private Compass compass;
@@ -151,6 +154,11 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 CompassConfiguration compassConfiguration = CompassConfigurationFactory.newConfiguration();
                 CompassSettings settings = compassConfiguration.getSettings();
                 settings.addSettings(props);
+
+                String configLocation = (String) openJpaProps.get(COMPASS_CONFIG_LOCATION);
+                if (configLocation != null) {
+                    compassConfiguration.configure(configLocation);
+                }
 
                 Collection<Class> classes = openJpaConfig.getMetaDataRepositoryInstance().loadPersistentTypes(true, null);
                 for (Class jpaClass : classes) {
