@@ -741,7 +741,7 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="indexManagerScheduleInterval" type="xsd:positiveInteger" use="optional">
+        <xsd:attribute name="indexManagerScheduleInterval" type="xsd:integer" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The index manager schedule interval (in seconds) where different actions related to index manager
