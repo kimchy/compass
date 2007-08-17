@@ -74,7 +74,7 @@
     <!ATTLIST xml-boost name CDATA #REQUIRED>
     <!ATTLIST xml-boost xpath CDATA #REQUIRED>
     <!ATTLIST xml-boost default CDATA #IMPLIED>
-    <!ATTLIST xml-analyzer converter CDATA #IMPLIED>
+    <!ATTLIST xml-boost converter CDATA #IMPLIED>
 
 <!ELEMENT resource-contract (
     resource-id*,
