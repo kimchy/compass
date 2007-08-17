@@ -336,6 +336,7 @@
     <!ATTLIST parent name CDATA #REQUIRED>
     <!ATTLIST parent converter CDATA #IMPLIED>
     <!ATTLIST parent accessor CDATA "property">
+    <!ATTLIST parent cascade CDATA  #IMPLIED>
 
 <!ELEMENT constant (
     meta-data,

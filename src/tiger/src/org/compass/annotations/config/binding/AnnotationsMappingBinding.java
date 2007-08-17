@@ -47,7 +47,6 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.osem.AbstractRefAliasMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -471,6 +470,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
     private void bindParent(SearchableParent searchableParent, ParentMapping parentMapping, Class<?> clazz, Type type) {
         bindConverter(parentMapping, searchableParent.converter(), clazz, type);
+        bindCascades(searchableParent.cascade(), parentMapping);
     }
 
     private void bindBoost(SearchableBoostProperty searchableBoostProperty, ClassBoostPropertyMapping boostPropertyMapping,
@@ -523,7 +523,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         bindCascades(searchableComponent.cascade(), componentMapping);
     }
 
-    private void bindCascades(Cascade[] cascades, AbstractRefAliasMapping refAliasMapping) {
+    private void bindCascades(Cascade[] cascades, CascadeMapping cascadeMapping) {
         if (cascades == null || cascades.length == 0) {
             return;
         }
@@ -531,7 +531,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         for (int i = 0; i < cascades.length; i++) {
             mappingCascades[i] = AnnotationsBindingUtils.convert(cascades[i]);
         }
-        refAliasMapping.setCascades(mappingCascades);
+        cascadeMapping.setCascades(mappingCascades);
     }
 
     /**

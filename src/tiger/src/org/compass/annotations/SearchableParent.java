@@ -48,4 +48,10 @@ public @interface SearchableParent {
      * under a custom name, which can then be used here as well.
      */
     String accessor() default "";
+
+    /**
+     * The operations that will cascade to the target association. Defaults to no operations
+     * being cascaded.
+     */
+    Cascade[] cascade() default {};
 }

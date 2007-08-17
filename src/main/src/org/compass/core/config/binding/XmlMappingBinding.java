@@ -38,7 +38,6 @@ import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.AbstractRefAliasMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -643,7 +642,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         bindCascade(componentConf, compMapping);
     }
 
-    private void bindCascade(ConfigurationHelper refConf, AbstractRefAliasMapping refAliasMapping) {
+    private void bindCascade(ConfigurationHelper refConf, CascadeMapping cascadeMapping) {
         String commaSeparatedCascades = refConf.getAttribute("cascade", null);
         if (commaSeparatedCascades == null) {
             return;
@@ -655,7 +654,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             cascades.add(CascadeMapping.Cascade.fromString(cascade));
         }
         if (cascades.size() > 0) {
-            refAliasMapping.setCascades((CascadeMapping.Cascade[]) cascades.toArray(new CascadeMapping.Cascade[cascades.size()]));
+            cascadeMapping.setCascades((CascadeMapping.Cascade[]) cascades.toArray(new CascadeMapping.Cascade[cascades.size()]));
         }
     }
 
@@ -667,6 +666,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         parentMapping.setAccessor(parentConf.getAttribute("accessor", null));
         parentMapping.setPropertyName(name);
         parentMapping.setDefinedInAlias(aliasMapping.getAlias());
+
+        bindCascade(parentConf, parentMapping);
     }
 
     private void bindClassProperty(ConfigurationHelper classPropertyConf, AliasMapping aliasMapping,
