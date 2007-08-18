@@ -35,6 +35,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStoreFactory;
+import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.util.backport.java.util.concurrent.Executors;
 import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
 
@@ -50,7 +51,7 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
     private Map subIndexLocalCacheGroups;
 
     private LuceneSearchEngineFactory searchEngineFactory;
-    
+
     private String subContext;
 
     private ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
@@ -106,6 +107,7 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
                 LuceneSearchEngineStoreFactory.MMAP_PREFIX.startsWith(connection)) {
             String path = connection.substring(LuceneSearchEngineStoreFactory.FILE_PREFIX.length(), connection.length()) + "/" + subContext + "/" + subIndex;
             File filePath = new File(path);
+            LuceneUtils.deleteDir(filePath);
             if (!filePath.exists()) {
                 boolean created = filePath.mkdirs();
                 if (!created) {
