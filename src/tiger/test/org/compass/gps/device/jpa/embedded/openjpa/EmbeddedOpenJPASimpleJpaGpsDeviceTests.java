@@ -14,9 +14,6 @@ import org.compass.gps.device.jpa.model.Simple;
 /**
  * Performs JPA tests using OpenJPA specific support.
  *
- * Currently, this test is disabled (the X suffix) since it requires the following setting:
- * -javaagent:lib/openjpa/openjpa-1.0.0-SNAPSHOT.jar
- *
  * @author kimchy
  */
 public class EmbeddedOpenJPASimpleJpaGpsDeviceTests extends AbstractSimpleJpaGpsDeviceTests {

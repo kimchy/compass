@@ -122,6 +122,8 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
     private boolean commitBeforeCompletion;
 
+    private boolean openJpaControlledTransaction;
+
     public int getType() {
         return TYPE_FEATURE;
     }
@@ -167,21 +169,24 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
                 // create some default settings
 
-                // if the settings is configured to use local transaciton, disable thread bound setting since
-                // we are using OpenJPA to managed transaction scope and not thread locals
-                if (settings.getSetting(CompassEnvironment.Transaction.FACTORY) == null ||
-                        settings.getSetting(CompassEnvironment.Transaction.FACTORY).equals(LocalTransactionFactory.class.getName())) {
+                String transactionFactory = (String) openJpaProps.get(CompassEnvironment.Transaction.FACTORY);
+                if (transactionFactory == null || LocalTransactionFactory.class.getName().equals(transactionFactory)) {
+                    openJpaControlledTransaction = true;
+                    // if the settings is configured to use local transaciton, disable thread bound setting since
+                    // we are using OpenJPA to managed transaction scope (using user objects on the em) and not thread locals
                     if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
                         // if no emf is defined
                         settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
                     }
+                } else {
+                    // JPA is not controlling the transaction (using JTA Sync or XA), don't commit/rollback
+                    // with OpenJPA transaction listeners
+                    openJpaControlledTransaction = false;
                 }
 
                 compass = compassConfiguration.buildCompass();
 
-                commitBeforeCompletion = settings.getSettingAsBoolean(
-                        CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, false);
-
+                commitBeforeCompletion = settings.getSettingAsBoolean(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, false);
 
                 event.getBrokerFactory().putUserObject(COMPASS_USER_OBJECT_KEY, compass);
 
@@ -235,6 +240,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
     }
 
     protected void registerListeners(BrokerFactory brokerFactory, Map<String, Object> openJpaProps) {
+
         brokerFactory.addTransactionListener(new BeginTransactionListener() {
             public void afterBegin(TransactionEvent transactionEvent) {
                 Broker broker = (Broker) transactionEvent.getSource();
@@ -277,7 +283,9 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 CompassTransaction tr = (CompassTransaction) broker.getUserObject(COMPASS_TRANSACTION_USER_OBJECT_KEY);
                 CompassSession session = (CompassSession) broker.getUserObject(COMPASS_SESSION_USER_OBJECT_KEY);
                 try {
-                    tr.commit();
+                    if (openJpaControlledTransaction) {
+                        tr.commit();
+                    }
                 } finally {
                     session.close();
                     broker.putUserObject(COMPASS_TRANSACTION_USER_OBJECT_KEY, null);
@@ -290,7 +298,9 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 CompassTransaction tr = (CompassTransaction) broker.getUserObject(COMPASS_TRANSACTION_USER_OBJECT_KEY);
                 CompassSession session = (CompassSession) broker.getUserObject(COMPASS_SESSION_USER_OBJECT_KEY);
                 try {
-                    tr.rollback();
+                    if (openJpaControlledTransaction) {
+                        tr.rollback();
+                    }
                 } finally {
                     session.close();
                     broker.putUserObject(COMPASS_TRANSACTION_USER_OBJECT_KEY, null);
