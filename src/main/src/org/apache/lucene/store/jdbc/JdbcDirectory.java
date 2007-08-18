@@ -72,8 +72,7 @@ import org.apache.lucene.store.jdbc.support.JdbcTemplate;
  * <p/>
  * Also, for none managed applications, there is an option working with autoCommit=true mode. The system will work much
  * slower, and it is only supported on a portion of the databases, but any existing code that uses Lucene with any
- * other <code>Directory</code> implemenation should work as is. Note, if working in this mode, to set the system to use
- * commit lock ({@link JdbcDirectorySettings#setUseCommitLocks(boolean)} .
+ * other <code>Directory</code> implemenation should work as is.
  * <p/>
  * If working within managed environments, an external transaction management should be performed (using JTA for example).
  * Simple solutions can be using CMT or Spring Framework abstraction of transaction managers. Currently, the jdbc directory

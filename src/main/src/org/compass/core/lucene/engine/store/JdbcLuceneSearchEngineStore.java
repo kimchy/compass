@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.DirectoryWrapper;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcDirectorySettings;
 import org.apache.lucene.store.jdbc.JdbcFileEntrySettings;
@@ -194,8 +195,11 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         Exception last = null;
         for (int i = 0; i < subIndexes.length; i++) {
             try {
-                JdbcDirectory jdbcDirectory = (JdbcDirectory) getDirectoryBySubIndex(subIndexes[i], false);
-                jdbcDirectory.deleteMarkDeleted();
+                Directory dir = getDirectoryBySubIndex(subIndexes[i], false);
+                if (dir instanceof DirectoryWrapper) {
+                    dir = ((DirectoryWrapper) dir).getWrappedDirectory();
+                }
+                ((JdbcDirectory) dir).deleteMarkDeleted();
             } catch (Exception e) {
                 last = e;
             }
@@ -238,6 +242,9 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
             template.executeForSubIndex(subIndexes[i], false,
                     new LuceneStoreCallback() {
                         public Object doWithStore(Directory dir) throws IOException {
+                            if (dir instanceof DirectoryWrapper) {
+                                dir = ((DirectoryWrapper) dir).getWrappedDirectory();
+                            }
                             deleteDirectory((JdbcDirectory) dir);
                             return null;
                         }
@@ -248,6 +255,9 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
 
     protected Boolean indexExists(Directory dir) throws IOException {
         try {
+            if (dir instanceof DirectoryWrapper) {
+                dir = ((DirectoryWrapper) dir).getWrappedDirectory();
+            }
             // for databases that fail if there is no table (like postgres)
             if (dialect.supportsTableExists()) {
                 boolean tableExists = ((JdbcDirectory) dir).tableExists();
@@ -275,7 +285,10 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         for (int i = 0; i < getSubIndexes().length; i++) {
             final String subIndex = getSubIndexes()[i];
             template.executeForSubIndex(subIndex, false, new LuceneStoreCallback() {
-                public Object doWithStore(final Directory dest) {
+                public Object doWithStore(Directory dest) {
+                    if (dest instanceof DirectoryWrapper) {
+                        dest = ((DirectoryWrapper) dest).getWrappedDirectory();
+                    }
                     JdbcDirectory jdbcDirectory = (JdbcDirectory) dest;
                     try {
                         jdbcDirectory.deleteContent();

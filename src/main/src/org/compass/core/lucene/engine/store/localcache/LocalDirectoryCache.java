@@ -41,6 +41,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexFileNameFilter;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.DirectoryWrapper;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.Lock;
@@ -60,7 +61,7 @@ import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
  *
  * @author kimchy
  */
-public class LocalDirectoryCache extends Directory {
+public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
 
     private static final Log log = LogFactory.getLog(LocalDirectoryCache.class);
 
@@ -98,6 +99,10 @@ public class LocalDirectoryCache extends Directory {
 
         cleanupTaskFuture = localDirectoryCacheManager.getExecutorService().scheduleWithFixedDelay(new CleanupTask(),
                 10, 10, TimeUnit.SECONDS);
+    }
+
+    public Directory getWrappedDirectory() {
+        return this.dir;
     }
 
     public void deleteFile(String name) throws IOException {
