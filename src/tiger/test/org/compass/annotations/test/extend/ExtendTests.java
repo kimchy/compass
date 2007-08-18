@@ -85,4 +85,38 @@ public class ExtendTests extends AbstractAnnotationsTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testSetAliases() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.setId(1);
+        a.setValue("value");
+        a.setValue2("value2");
+        session.save(a);
+        
+        CompassHits hits = session.queryBuilder().matchAll().setAliases(new String[] {"A"}).hits();
+        assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testSetClases() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.setId(1);
+        a.setValue("value");
+        a.setValue2("value2");
+        session.save(a);
+
+        CompassHits hits = session.queryBuilder().matchAll().setTypes(new Class[] {A.class}).hits();
+        assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
 }
