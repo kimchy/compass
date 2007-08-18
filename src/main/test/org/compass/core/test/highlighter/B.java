@@ -16,26 +16,14 @@
 
 package org.compass.core.test.highlighter;
 
-import java.util.Set;
-
 /**
+ * 
  * @author kimchy
+ *
  */
-public class A {
-
-    private Long id;
-
+public class B {
+    
     private String text;
-
-    private Set b;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getText() {
         return text;
@@ -43,13 +31,5 @@ public class A {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public Set getB() {
-        return b;
-    }
-
-    public void setB(Set b) {
-        this.b = b;
     }
 }

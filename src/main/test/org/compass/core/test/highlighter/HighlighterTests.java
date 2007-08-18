@@ -16,6 +16,9 @@
 
 package org.compass.core.test.highlighter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassHighlighter;
 import org.compass.core.CompassHits;
@@ -26,6 +29,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.test.AbstractTestCase;
+
 
 /**
  * @author kimchy
@@ -45,6 +49,8 @@ public class HighlighterTests extends AbstractTestCase {
         super.addSettings(settings);
         settings.setGroupSettings(LuceneEnvironment.Highlighter.PREFIX, "smallFragmenter",
                 new String[]{LuceneEnvironment.Highlighter.Fragmenter.SIMPLE_SIZE}, new String[]{"20"});
+        settings.setGroupSettings(LuceneEnvironment.Highlighter.PREFIX, "commaSeparator",
+                new String[]{LuceneEnvironment.Highlighter.SEPARATOR}, new String[]{","});
     }
 
     public void testSimpleHighlighting() {
@@ -123,6 +129,25 @@ public class HighlighterTests extends AbstractTestCase {
         tr.commit();
     }
 
+    public void testMultiResourceHighlighter() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        setUpMultiPropertyData(session, new String[]{"Lucene", "Luke", "Lukas"});
+
+        CompassHits hits = session.find("Lu*e");
+
+        String[] fragments = hits.highlighter(0).multiResourceFragment("text");
+        assertEquals(2, fragments.length);
+
+        String fragment = hits.highlighter(0)
+                .setHighlighter("commaSeparator")
+                .multiResourceFragmentWithSeparator("text");
+        assertEquals("<b>Lucene</b>,<b>Luke</b>", fragment);
+
+        tr.commit();
+    }
+
     private void setUpData(CompassSession session) {
         setUpData(session, "a");
     }
@@ -134,6 +159,19 @@ public class HighlighterTests extends AbstractTestCase {
             resource.addProperty("text", texts[i]);
             session.save(resource);
         }
+    }
+
+    private void setUpMultiPropertyData(CompassSession session, String[] words) {
+        A a = new A();
+        a.setId(Long.decode("1"));
+        Set setOfB = new LinkedHashSet();
+        for (int i = 0; i < words.length; i++) {
+            B b1 = new B();
+            b1.setText(words[i]);
+            setOfB.add(b1);
+        }
+        a.setB(setOfB);
+        session.save(a);
     }
 
 }

@@ -18,6 +18,8 @@ package org.compass.core.lucene.engine;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -25,6 +27,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.index.TermPositionVector;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.Scorer;
@@ -40,9 +43,7 @@ import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterSettings;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, LuceneDelegatedClose {
 
@@ -136,8 +137,10 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
     }
 
     public String fragment(Resource resource, String propertyName, String text) throws SearchEngineException {
+
         Highlighter highlighter = createHighlighter(propertyName);
         TokenStream tokenStream = createTokenStream(resource, propertyName, text);
+
         try {
             return highlighter.getBestFragment(tokenStream, text);
         } catch (IOException e) {
@@ -170,15 +173,61 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
         Highlighter highlighter = createHighlighter(propertyName);
         TokenStream tokenStream = createTokenStream(resource, propertyName, text);
         try {
-            String actualSeparator = separator;
-            if (actualSeparator == null) {
-                actualSeparator = highlighterSettings.getSeparator();
-            }
+            String actualSeparator = getActualSeparator();
             return highlighter.getBestFragments(tokenStream, text, getMaxNumFragments(), actualSeparator);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to highlight fragments for alias [" + resource.getAlias()
                     + "] and property [" + propertyName + "]");
         }
+    }
+
+    public String[] multiResourceFragment(Resource resource, String propertyName)
+            throws SearchEngineException {
+        return multiResourceFragment(resource, propertyName, getTextsFromResource(resource, propertyName));
+    }
+
+    public String[] multiResourceFragment(Resource resource, String propertyName, String[] texts)
+            throws SearchEngineException {
+        List fragmentList = new ArrayList();
+        Highlighter highlighter = createHighlighter(propertyName);
+        for (int i = 0; i < texts.length; i++) {
+            String text = texts[i];
+            if (text != null && text.length() > 0) {
+                //TokenStream tokenStream = createTokenStream(resource, propertyName, text);
+                // We have to re-analyze one field value at a time
+                TokenStream tokenStream = analyzer.tokenStream(propertyName, new StringReader(text));
+                try {
+                    String fragment = highlighter.getBestFragment(tokenStream, text);
+                    if (fragment != null && fragment.length() > 0) {
+                        fragmentList.add(fragment);
+                    }
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to highlight fragments for alias [" + resource.getAlias()
+                            + "] and property [" + propertyName + "]");
+                }
+            }
+        }
+        return (String[]) fragmentList.toArray(new String[fragmentList.size()]);
+    }
+
+    public String multiResourceFragmentWithSeparator(Resource resource, String propertyName)
+            throws SearchEngineException {
+        return multiResourceFragmentWithSeparator(resource, propertyName, getTextsFromResource(resource, propertyName));
+    }
+
+    public String multiResourceFragmentWithSeparator(Resource resource, String propertyName, String[] texts)
+            throws SearchEngineException {
+        String[] fragments = multiResourceFragment(resource, propertyName, texts);
+        String actualSeparator = getActualSeparator();
+        StringBuffer fragment = new StringBuffer();
+        if (fragments.length > 0) {
+            for (int i = 0; i < (fragments.length - 1); i++) {
+                fragment.append(fragments[i]);
+                fragment.append(actualSeparator);
+            }
+            fragment.append(fragments[fragments.length - 1]);
+        }
+        return fragment.toString();
     }
 
     protected TokenStream createTokenStream(Resource resource, String propertyName, String text)
@@ -226,7 +275,8 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
     protected Highlighter createHighlighter(String propertyName) throws SearchEngineException {
         Highlighter highlighter = new Highlighter(highlighterSettings.getFormatter(), highlighterSettings.getEncoder(),
                 createScorer(propertyName));
-        highlighter.setTextFragmenter(highlighterSettings.getFragmenter());
+        Fragmenter f = highlighterSettings.getFragmenter();
+        highlighter.setTextFragmenter(f);
         if (maxBytesToAnalyze == -1) {
             highlighter.setMaxDocBytesToAnalyze(highlighterSettings.getMaxBytesToAnalyze());
         } else {
@@ -256,11 +306,28 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
         return text;
     }
 
+    private String[] getTextsFromResource(Resource resource, String propertyName) {
+        String[] texts = resource.getValues(propertyName);
+        if (texts == null || texts.length == 0) {
+            throw new SearchEngineException("No texts are stored for property [" + propertyName + "] and alias ["
+                    + resource.getAlias() + "]");
+        }
+        return texts;
+    }
+
     private int getMaxNumFragments() {
         if (maxNumFragments == -1) {
             return highlighterSettings.getMaxNumFragments();
         }
         return maxNumFragments;
+    }
+
+    private String getActualSeparator() {
+        String actualSeparator = separator;
+        if (actualSeparator == null) {
+            actualSeparator = highlighterSettings.getSeparator();
+        }
+        return actualSeparator;
     }
 
     public void close() throws SearchEngineException {
@@ -269,4 +336,5 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
         }
         closed = true;
     }
+
 }

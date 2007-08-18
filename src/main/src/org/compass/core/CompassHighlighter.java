@@ -242,7 +242,7 @@ public interface CompassHighlighter {
 
     /**
      * Returns the best highlighted fragments for the given property name /
-     * meta-data, speparated with the given separator. The highlighted text will
+     * meta-data, separated with the given separator. The highlighted text will
      * be retrived from the index, so it must be stored.
      * <p>
      * Note, that the number of fragments will be between <code>0</code> and
@@ -265,7 +265,7 @@ public interface CompassHighlighter {
 
     /**
      * Returns the best highlighted fragments for the given property name /
-     * meta-data, speparated with the given separator. The given text will be
+     * meta-data, separated with the given separator. The given text will be
      * used for highlight.
      * <p>
      * Note, that the number of fragments will be between <code>0</code> and
@@ -284,5 +284,91 @@ public interface CompassHighlighter {
      * @throws CompassException
      */
     String fragmentsWithSeparator(String propertyName, String text) throws CompassException;
+    
+    /**
+	 * Returns the best highlighted fragment of each matching <i>multi</i> resource
+	 * property name / meta-data (i.e.: when there is more then one property of the
+	 * same name). The highlighted texts will be retrived from the index, so it must
+	 * be stored.
+     * <p>
+     * Note, that the number of returned fragments is not limited by
+     * <code>maxNumFragments</code> value.
+     * <p>
+     * The name can either be the actual resource property or meta-data value,
+     * or the path to the given resource property (alias.rProperty), or the
+     * class property (alias.cProperty) or the path to the meta-data
+     * (alias.cProperty.metaData)
+     * 
+     * @param propertyName
+     * 				The resource property name / meta-data.
+     * @return The best fragment texts highlighted.
+     * @throws CompassException
+     */
+    String[] multiResourceFragment(String propertyName) throws CompassException;
+    
+    /**
+     * Returns the best highlighted fragment of each matching <i>multi</ib> resource
+	 * property name / meta-data (i.e.: when there is more then one property of the
+	 * same name). The given texts will be used for highlight. Handy when the texts
+     * are not stored in the index.
+     * <p>
+     * Note, that the number of returned fragments is not limited by
+     * <code>maxNumFragments</code> value.
+     * <p>
+     * The name can either be the actual resource property or meta-data value,
+     * or the path to the given resource property (alias.rProperty), or the
+     * class property (alias.cProperty) or the path to the meta-data
+     * (alias.cProperty.metaData)
+     * 
+     * @param propertyName
+     * 				The resource property name / meta-data.
+     * @param texts
+     * 				Texts to be highlighted.
+     * @return The best fragment texts highlighted.
+     * @throws CompassException
+     */
+    String[] multiResourceFragment(String propertyName, String[] texts) throws CompassException;
+    
+    /**
+     * Returns the best highlighted fragments for the given <i>multi</i> property
+     * name / meta-data, separated with the given separator. The highlighted text
+     * will be retrived from the index, so it must be stored.
+     * <p>
+     * Note, that the number of separeted fragments is not
+     * limited by <code>maxNumFragments</code> value.
+     * <p>
+     * The name can either be the actual resource property or meta-data value,
+     * or the path to the given resource property (alias.rProperty), or the
+     * class property (alias.cProperty) or the path to the meta-data
+     * (alias.cProperty.metaData)
+     * 
+     * @param propertyName
+     * 				The resource property name / meta-data.
+     * @return The best fragments highlighted and separated.
+     * @throws CompassException
+     */
+    String multiResourceFragmentWithSeparator(String propertyName) throws CompassException;
+    
+    /**
+     * Returns the best highlighted fragments for the given <i>multi</i> property
+     * name / meta-data, separated with the given separator. The given texts will
+     * be used for highlight.
+     * <p>
+     * Note, that the number of fragments contained in returned string is not
+     * limited by <code>maxNumFragments</code> value.
+     * <p>
+     * The name can either be the actual resource property or meta-data value,
+     * or the path to the given resource property (alias.rProperty), or the
+     * class property (alias.cProperty) or the path to the meta-data
+     * (alias.cProperty.metaData)
+     * 
+     * @param propertyName
+     * 				The resource property name / meta-data.
+     * @param texts
+     * 				Texts to be highlighted.
+     * @return The best fragments highlighted and separated.
+     * @throws CompassException
+     */
+    String multiResourceFragmentWithSeparator(String propertyName, String[] texts) throws CompassException;
 
 }

@@ -2,7 +2,7 @@
     "-//Compass/Compass Core Mapping DTD 1.0//EN"
     "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
 
-<compass-core-mapping package="org.compass.core.test.formatter">
+<compass-core-mapping package="org.compass.core.test.highlighter">
 
     <resource alias="a">
         
@@ -20,5 +20,21 @@
 
     </resource>
 
+    <class name="A" alias="parent">
+        
+        <id name="id" />
+        
+		<component name="b" ref-alias="child"/>
+
+    </class>
+	
+    <class name="B" alias="child" root="false">
+    
+		<property name="text" class="java.lang.String">
+			<meta-data index="un_tokenized">text</meta-data>
+		</property>
+    
+    </class>
+    
 </compass-core-mapping>
     
