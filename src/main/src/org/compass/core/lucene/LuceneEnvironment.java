@@ -1017,6 +1017,12 @@ public class LuceneEnvironment {
          * The default query parser group that must be set.
          */
         public static final String DEFAULT_GROUP = "default";
+
+        /**
+         * The default parsers implementation allows to set if leading wildcards
+         * are allowed or not. Boolen value defaults to <code>false</code>. 
+         */
+        public static final String DEFAULT_PARSER_ALLOW_LEADING_WILDCARD = "allowLeadingWildcard";
     }
 
     public static abstract class LocalCache {

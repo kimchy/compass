@@ -20,16 +20,26 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassMappingAware;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineQueryParseException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.CompassMapping;
 
 /**
  * @author kimchy
  */
-public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappingAware {
+public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappingAware, CompassConfigurable {
 
     private CompassMapping mapping;
+
+    private boolean allowLeadingWildcard;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        allowLeadingWildcard = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_LEADING_WILDCARD, false);
+    }
 
     public void setCompassMapping(CompassMapping mapping) {
         this.mapping = mapping;
@@ -38,6 +48,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     public Query parse(String property, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
         QueryParser queryParser = new CompassQueryParser(property, analyzer, mapping);
         queryParser.setDefaultOperator(operator);
+        queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         try {
             return queryParser.parse(queryString);
         } catch (ParseException e) {
@@ -48,6 +59,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     public Query parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
         QueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping);
         queryParser.setDefaultOperator(operator);
+        queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         try {
             return queryParser.parse(queryString);
         } catch (ParseException e) {
