@@ -16,7 +16,9 @@
 
 package org.compass.gps.device.jpa.embedded.openjpa;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -26,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.openjpa.conf.OpenJPAConfiguration;
 import org.apache.openjpa.conf.OpenJPAConfigurationImpl;
+import org.apache.openjpa.conf.OpenJPAVersion;
 import org.apache.openjpa.event.BeginTransactionListener;
 import org.apache.openjpa.event.BrokerFactoryEvent;
 import org.apache.openjpa.event.BrokerFactoryListener;
@@ -37,6 +40,7 @@ import org.apache.openjpa.kernel.Broker;
 import org.apache.openjpa.kernel.BrokerFactory;
 import org.apache.openjpa.lib.conf.AbstractProductDerivation;
 import org.apache.openjpa.lib.conf.Configuration;
+import org.apache.openjpa.persistence.EntityManagerFactoryImpl;
 import org.apache.openjpa.persistence.Extent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
 import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
@@ -115,6 +119,10 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
     public static final String COMPASS_CONFIG_LOCATION = "compass.openjpa.config";
 
+    // this is only used when installed in a pre-1.0 version of OpenJPA
+    private static final Map<OpenJPAConfiguration, CompassProductDerivation> derivations
+            = new HashMap<OpenJPAConfiguration, CompassProductDerivation>();
+
 
     private Compass compass;
 
@@ -123,6 +131,8 @@ public class CompassProductDerivation extends AbstractProductDerivation {
     private boolean commitBeforeCompletion;
 
     private boolean openJpaControlledTransaction;
+
+    private Properties compassProperties;
 
     public int getType() {
         return TYPE_FEATURE;
@@ -138,108 +148,168 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         // commit events; reset the default setting to true.
         openJpaConfig.remoteProviderPlugin.setTransmitPersistedObjectIds(true);
 
+        // In 0.x releases of OpenJPA, the BrokerFactoryEventManager does not exist.
+        // This check will prevent us from triggering a NoSuchMethodError.
+        if (OpenJPAVersion.MAJOR_RELEASE < 1) {
+            openJpaConfig.getLog(OpenJPAConfiguration.LOG_RUNTIME).warn(
+                    "Compass cannot automatically install itself into pre-1.0 versions of OpenJPA. To complete "
+                            + "Compass installation, you must invoke CompassProductDerivation.installCompass().");
+            derivations.put(openJpaConfig, this);
+            return false;
+        }
+
         openJpaConfig.getBrokerFactoryEventManager().addListener(new BrokerFactoryListener() {
             public void afterBrokerFactoryCreate(BrokerFactoryEvent event) {
-                Properties props = new Properties();
-                //noinspection unchecked
-                Map<String, Object> openJpaProps = openJpaConfig.toProperties(false);
-                for (Map.Entry<String, Object> entry : openJpaProps.entrySet()) {
-                    if (entry.getKey().startsWith(COMPASS_PREFIX)) {
-                        props.put(entry.getKey(), entry.getValue());
-                    }
-                }
-                if (props.isEmpty()) {
-                    return;
-                }
+                installIntoFactory(event.getBrokerFactory());
+            }
 
-
-                CompassConfiguration compassConfiguration = CompassConfigurationFactory.newConfiguration();
-                CompassSettings settings = compassConfiguration.getSettings();
-                settings.addSettings(props);
-
-                String configLocation = (String) openJpaProps.get(COMPASS_CONFIG_LOCATION);
-                if (configLocation != null) {
-                    compassConfiguration.configure(configLocation);
-                }
-
-                Collection<Class> classes = openJpaConfig.getMetaDataRepositoryInstance().loadPersistentTypes(true, null);
-                for (Class jpaClass : classes) {
-                    compassConfiguration.tryAddClass(jpaClass);
-                }
-
-                // create some default settings
-
-                String transactionFactory = (String) openJpaProps.get(CompassEnvironment.Transaction.FACTORY);
-                if (transactionFactory == null || LocalTransactionFactory.class.getName().equals(transactionFactory)) {
-                    openJpaControlledTransaction = true;
-                    // if the settings is configured to use local transaciton, disable thread bound setting since
-                    // we are using OpenJPA to managed transaction scope (using user objects on the em) and not thread locals
-                    if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
-                        // if no emf is defined
-                        settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
-                    }
-                } else {
-                    // JPA is not controlling the transaction (using JTA Sync or XA), don't commit/rollback
-                    // with OpenJPA transaction listeners
-                    openJpaControlledTransaction = false;
-                }
-
-                compass = compassConfiguration.buildCompass();
-
-                commitBeforeCompletion = settings.getSettingAsBoolean(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, false);
-
-                event.getBrokerFactory().putUserObject(COMPASS_USER_OBJECT_KEY, compass);
-
-                registerListeners(event.getBrokerFactory(), openJpaProps);
-
-                // extract index properties so they will be used
-                Properties indexProps = new Properties();
-                for (Map.Entry<String, Object> entry : openJpaProps.entrySet()) {
-                    if (entry.getKey().startsWith(COMPASS_GPS_INDEX_PREFIX)) {
-                        indexProps.put(entry.getKey().substring(COMPASS_GPS_INDEX_PREFIX.length()), entry.getValue());
-                    }
-                }
-                event.getBrokerFactory().putUserObject(COMPASS_INDEX_SETTINGS_USER_OBJECT_KEY, indexProps);
-
-                // start an internal JPA device and Gps for mirroring
-                OpenJPAEntityManagerFactory emf = OpenJPAPersistence.toEntityManagerFactory(event.getBrokerFactory());
-
-                JpaGpsDevice jpaGpsDevice = new JpaGpsDevice(DefaultJpaCompassGps.JPA_DEVICE_NAME, emf);
-                jpaGpsDevice.setMirrorDataChanges(true);
-                jpaGpsDevice.setInjectEntityLifecycleListener(true);
-                for (Map.Entry<String, Object> entry : openJpaProps.entrySet()) {
-                    if (entry.getKey().startsWith(INDEX_QUERY_PREFIX)) {
-                        String entityName = entry.getKey().substring(INDEX_QUERY_PREFIX.length());
-                        String selectQuery = (String) entry.getValue();
-                        jpaGpsDevice.setIndexSelectQuery(entityName, selectQuery);
-                    }
-                }
-
-                OpenJPAJpaEntityLifecycleInjector lifecycleInjector = new OpenJPAJpaEntityLifecycleInjector();
-                lifecycleInjector.setEventListener(new EmbeddedOpenJPAEventListener(jpaGpsDevice));
-                jpaGpsDevice.setLifecycleInjector(lifecycleInjector);
-
-                jpaCompassGps = new DefaultJpaCompassGps();
-                jpaCompassGps.setCompass(compass);
-                jpaCompassGps.addGpsDevice(jpaGpsDevice);
-
-                // before we start the Gps, open and close a broker
-                emf.createEntityManager().close();
-
-                jpaCompassGps.start();
-
-                String reindexOnStartup = (String) openJpaProps.get(REINDEX_ON_STARTUP);
-                if ("true".equalsIgnoreCase(reindexOnStartup)) {
-                    jpaCompassGps.index();
-                }
-
-                event.getBrokerFactory().putUserObject(COMPASS_GPS_USER_OBJECT_KEY, jpaCompassGps);
+            public void eventFired(BrokerFactoryEvent event) {
+                if (event.getEventType() == BrokerFactoryEvent.BROKER_FACTORY_CREATED)
+                    afterBrokerFactoryCreate(event);
             }
         });
         return false;
     }
 
-    protected void registerListeners(BrokerFactory brokerFactory, Map<String, Object> openJpaProps) {
+    /**
+     * @deprecated This is only needed for pre-1.0 versions of OpenJPA.
+     */
+    public static void installCompass(BrokerFactory factory) {
+        if (factory.getUserObject(COMPASS_USER_OBJECT_KEY) != null)
+            return;
+
+        CompassProductDerivation derivation = derivations.get(factory.getConfiguration());
+        if (derivation == null)
+            throw new IllegalStateException("no CompassProductDerivation instance registered for this configuration");
+        derivation.installIntoFactory(factory);
+    }
+
+    private void installIntoFactory(BrokerFactory factory) {
+        OpenJPAConfiguration openJpaConfig = factory.getConfiguration();
+
+        compassProperties = new Properties();
+        //noinspection unchecked
+        Map<String, Object> openJpaProps = openJpaConfig.toProperties(false);
+        for (Map.Entry<String, Object> entry : openJpaProps.entrySet()) {
+            if (entry.getKey().startsWith(COMPASS_PREFIX)) {
+                compassProperties.put(entry.getKey(), entry.getValue());
+            }
+            if (entry.getKey().startsWith(COMPASS_GPS_INDEX_PREFIX)) {
+                compassProperties.put(entry.getKey(), entry.getValue());
+            }
+        }
+        if (compassProperties.isEmpty()) {
+            return;
+        }
+
+        CompassConfiguration compassConfiguration = CompassConfigurationFactory.newConfiguration();
+        CompassSettings settings = compassConfiguration.getSettings();
+        settings.addSettings(compassProperties);
+
+        String configLocation = (String) compassProperties.get(COMPASS_CONFIG_LOCATION);
+        if (configLocation != null) {
+            compassConfiguration.configure(configLocation);
+        }
+
+        Collection<Class> classes = openJpaConfig.getMetaDataRepositoryInstance().loadPersistentTypes(true, null);
+        for (Class jpaClass : classes) {
+            compassConfiguration.tryAddClass(jpaClass);
+        }
+
+        // create some default settings
+
+        String transactionFactory = (String) compassProperties.get(CompassEnvironment.Transaction.FACTORY);
+        if (transactionFactory == null || LocalTransactionFactory.class.getName().equals(transactionFactory)) {
+            openJpaControlledTransaction = true;
+            // if the settings is configured to use local transaciton, disable thread bound setting since
+            // we are using OpenJPA to managed transaction scope (using user objects on the em) and not thread locals
+            if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
+                // if no emf is defined
+                settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
+            }
+        } else {
+            // JPA is not controlling the transaction (using JTA Sync or XA), don't commit/rollback
+            // with OpenJPA transaction listeners
+            openJpaControlledTransaction = false;
+        }
+
+        compass = compassConfiguration.buildCompass();
+
+        commitBeforeCompletion = settings.getSettingAsBoolean(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, false);
+
+        factory.putUserObject(COMPASS_USER_OBJECT_KEY, compass);
+
+        registerListeners(factory);
+
+        // extract index properties so they will be used
+        Properties indexProps = new Properties();
+        for (Map.Entry entry : compassProperties.entrySet()) {
+            String key = (String) entry.getKey();
+            if (key.startsWith(COMPASS_GPS_INDEX_PREFIX)) {
+                indexProps.put(key.substring(COMPASS_GPS_INDEX_PREFIX.length()), entry.getValue());
+            }
+        }
+        factory.putUserObject(COMPASS_INDEX_SETTINGS_USER_OBJECT_KEY, indexProps);
+
+        // start an internal JPA device and Gps for mirroring
+        OpenJPAEntityManagerFactory emf = toEntityManagerFactory(factory);
+
+        JpaGpsDevice jpaGpsDevice = new JpaGpsDevice(DefaultJpaCompassGps.JPA_DEVICE_NAME, emf);
+        jpaGpsDevice.setMirrorDataChanges(true);
+        jpaGpsDevice.setInjectEntityLifecycleListener(true);
+        for (Map.Entry entry : compassProperties.entrySet()) {
+            String key = (String) entry.getKey();
+            if (key.startsWith(INDEX_QUERY_PREFIX)) {
+                String entityName = key.substring(INDEX_QUERY_PREFIX.length());
+                String selectQuery = (String) entry.getValue();
+                jpaGpsDevice.setIndexSelectQuery(entityName, selectQuery);
+            }
+        }
+
+        OpenJPAJpaEntityLifecycleInjector lifecycleInjector = new OpenJPAJpaEntityLifecycleInjector();
+        lifecycleInjector.setEventListener(new EmbeddedOpenJPAEventListener(jpaGpsDevice));
+        jpaGpsDevice.setLifecycleInjector(lifecycleInjector);
+
+        jpaCompassGps = new DefaultJpaCompassGps();
+        jpaCompassGps.setCompass(compass);
+        jpaCompassGps.addGpsDevice(jpaGpsDevice);
+
+        // before we start the Gps, open and close a broker
+        emf.createEntityManager().close();
+
+        jpaCompassGps.start();
+
+        String reindexOnStartup = (String) compassProperties.get(REINDEX_ON_STARTUP);
+        if ("true".equalsIgnoreCase(reindexOnStartup)) {
+            jpaCompassGps.index();
+        }
+
+        factory.putUserObject(COMPASS_GPS_USER_OBJECT_KEY, jpaCompassGps);
+    }
+
+    private OpenJPAEntityManagerFactory toEntityManagerFactory(BrokerFactory factory) {
+        try {
+            Class cls;
+            try {
+                cls = Class.forName("org.apache.openjpa.persistence.JPAFacadeHelper");
+            } catch (ClassNotFoundException e) {
+                cls = OpenJPAPersistence.class;
+            }
+            return (OpenJPAEntityManagerFactory)
+                    cls.getMethod("toEntityManagerFactory", BrokerFactory.class).invoke(null, factory);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof RuntimeException)
+                throw (RuntimeException) e.getCause();
+            else
+                throw new RuntimeException(e);
+        }
+    }
+
+    protected void registerListeners(BrokerFactory brokerFactory) {
 
         brokerFactory.addTransactionListener(new BeginTransactionListener() {
             public void afterBegin(TransactionEvent transactionEvent) {
@@ -309,10 +379,10 @@ public class CompassProductDerivation extends AbstractProductDerivation {
             }
         });
 
-        String registerRemoteCommitListener = (String) openJpaProps.get(REGISTER_REMOTE_COMMIT_LISTENER);
+        String registerRemoteCommitListener = (String) compassProperties.get(REGISTER_REMOTE_COMMIT_LISTENER);
         if ("true".equalsIgnoreCase(registerRemoteCommitListener)) {
             brokerFactory.getConfiguration().getRemoteCommitEventManager().addListener(new CompassRemoteCommitListener(
-                    OpenJPAPersistence.toEntityManagerFactory(brokerFactory), compass));
+                    toEntityManagerFactory(brokerFactory), compass));
         }
     }
 
@@ -329,12 +399,14 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
         private static final Log log = LogFactory.getLog(CompassRemoteCommitListener.class);
 
-        private final OpenJPAEntityManagerFactory emf;
+        private final EntityManagerFactoryImpl emf;
 
         private final Compass compass;
 
         private CompassRemoteCommitListener(OpenJPAEntityManagerFactory emf, Compass compass) {
-            this.emf = emf;
+            // casting to EMFImpl so that this code can work with pre-1.0 and post-1.0 versions
+            // of OpenJPA.
+            this.emf = (EntityManagerFactoryImpl) emf;
             this.compass = compass;
         }
 
