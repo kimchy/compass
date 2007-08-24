@@ -18,8 +18,8 @@ package org.compass.gps.device.jpa.embedded.openjpa;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Properties;
 import javax.persistence.EntityNotFoundException;
@@ -121,7 +121,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
     // this is only used when installed in a pre-1.0 version of OpenJPA
     private static final Map<OpenJPAConfiguration, CompassProductDerivation> derivations
-            = new HashMap<OpenJPAConfiguration, CompassProductDerivation>();
+            = new IdentityHashMap<OpenJPAConfiguration, CompassProductDerivation>();
 
 
     private Compass compass;
