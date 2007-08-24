@@ -101,10 +101,10 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
         }
         String connection = settings.getSetting(LuceneEnvironment.LocalCache.CONNECTION, LuceneSearchEngineStoreFactory.MEM_PREFIX);
         Directory localCacheDirectory;
-        if (LuceneSearchEngineStoreFactory.MEM_PREFIX.startsWith(connection)) {
+        if (connection.startsWith(LuceneSearchEngineStoreFactory.MEM_PREFIX)) {
             localCacheDirectory = new RAMDirectory();
-        } else if (LuceneSearchEngineStoreFactory.FILE_PREFIX.startsWith(connection) ||
-                LuceneSearchEngineStoreFactory.MMAP_PREFIX.startsWith(connection)) {
+        } else if (connection.startsWith(LuceneSearchEngineStoreFactory.FILE_PREFIX) ||
+                connection.startsWith(LuceneSearchEngineStoreFactory.MMAP_PREFIX)) {
             String path = connection.substring(LuceneSearchEngineStoreFactory.FILE_PREFIX.length(), connection.length()) + "/" + subContext + "/" + subIndex;
             File filePath = new File(path);
             LuceneUtils.deleteDir(filePath);
