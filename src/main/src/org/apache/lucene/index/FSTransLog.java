@@ -68,13 +68,19 @@ public class FSTransLog implements TransLog {
 
     public void configure(CompassSettings settings) throws CompassException {
         String location = settings.getSetting(LuceneEnvironment.Transaction.TransLog.PATH, DEFAULT_LOCATION);
+        File fileLocation = new File(location);
+        if (!fileLocation.exists()) {
+            synchronized (FSTransLog.class) {
+                fileLocation.mkdirs();
+            }
+        }
         int readBufferSize = settings.getSettingAsInt(LuceneEnvironment.Transaction.TransLog.READ_BUFFER_SIZE, 64);
         int writeBufferSize = settings.getSettingAsInt(LuceneEnvironment.Transaction.TransLog.WRITE_BUFFER_SIZE, 2048);
         try {
             location = location + "/" + transId.nextLong();
             dir = new TransDirectory(location, writeBufferSize, readBufferSize);
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to create tran log location [" + location + "]");
+            throw new SearchEngineException("Failed to create tran log location [" + location + "]", e);
         }
     }
 
