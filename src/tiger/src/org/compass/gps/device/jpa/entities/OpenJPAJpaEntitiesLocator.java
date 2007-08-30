@@ -8,7 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.openjpa.meta.ClassMetaData;
-import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
+import org.apache.openjpa.persistence.EntityManagerFactoryImpl;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.device.jpa.JpaGpsDevice;
@@ -36,7 +36,8 @@ public class OpenJPAJpaEntitiesLocator implements JpaEntitiesLocator {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
-        OpenJPAEntityManagerFactory emf = OpenJPAPersistence.cast(entityManagerFactory);
+        // TODO this should use OpenJPAEnitiyManagerFactorySPI, here for backward compatability with pre 1.0
+        EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) OpenJPAPersistence.cast(entityManagerFactory);
 
         ArrayList<EntityInformation> entitiesList = new ArrayList<EntityInformation>();
 

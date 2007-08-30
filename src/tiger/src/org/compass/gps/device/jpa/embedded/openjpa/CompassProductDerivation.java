@@ -150,7 +150,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
         // In 0.x releases of OpenJPA, the BrokerFactoryEventManager does not exist.
         // This check will prevent us from triggering a NoSuchMethodError.
-        if (!hasBrokerFactoryEvents()) {
+        if (!isReleasedVersion()) {
             openJpaConfig.getLog(OpenJPAConfiguration.LOG_RUNTIME).warn(
                     "Compass cannot automatically install itself into pre-1.0 versions of OpenJPA. To complete "
                             + "Compass installation, you must invoke CompassProductDerivation.installCompass().");
@@ -513,7 +513,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         }
     }
 
-    private boolean hasBrokerFactoryEvents() {
+    public static boolean isReleasedVersion() {
         if (OpenJPAVersion.MAJOR_RELEASE < 1)
             return false;
 

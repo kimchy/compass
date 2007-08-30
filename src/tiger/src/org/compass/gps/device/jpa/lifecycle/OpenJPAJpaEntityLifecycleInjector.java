@@ -24,7 +24,7 @@ import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.event.PersistListener;
 import org.apache.openjpa.event.StoreListener;
 import org.apache.openjpa.meta.ClassMetaData;
-import org.apache.openjpa.persistence.OpenJPAEntityManagerFactory;
+import org.apache.openjpa.persistence.EntityManagerFactoryImpl;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
@@ -100,7 +100,8 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
-        OpenJPAEntityManagerFactory emf = OpenJPAPersistence.cast(entityManagerFactory);
+        // TODO this should use OpenJPAEnitiyManagerFactorySPI, here for backward compatability with pre 1.0
+        EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) OpenJPAPersistence.cast(entityManagerFactory);
 
         if (eventListener == null) {
             eventListener = new OpenJPAEventListener(device);
@@ -121,7 +122,8 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
     }
 
     public void removeLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
-        OpenJPAEntityManagerFactory emf = OpenJPAPersistence.cast(entityManagerFactory);
+        // TODO this should use OpenJPAEnitiyManagerFactorySPI, here for backward compatability with pre 1.0
+        EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) OpenJPAPersistence.cast(entityManagerFactory);
         eventListener = new OpenJPAEventListener(device);
         emf.removeLifecycleListener(eventListener);
     }

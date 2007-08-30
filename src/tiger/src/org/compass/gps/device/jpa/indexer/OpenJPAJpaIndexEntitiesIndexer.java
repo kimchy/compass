@@ -16,21 +16,23 @@
 
 package org.compass.gps.device.jpa.indexer;
 
-import java.sql.ResultSet;
 import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.openjpa.jdbc.kernel.LRSSizes;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.apache.openjpa.persistence.OpenJPAQuery;
+import org.apache.openjpa.persistence.jdbc.FetchDirection;
 import org.apache.openjpa.persistence.jdbc.JDBCFetchPlan;
+import org.apache.openjpa.persistence.jdbc.LRSSizeAlgorithm;
+import org.apache.openjpa.persistence.jdbc.ResultSetType;
 import org.compass.core.CompassSession;
 import org.compass.gps.device.jpa.EntityManagerWrapper;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.compass.gps.device.jpa.embedded.openjpa.CompassProductDerivation;
 import org.compass.gps.device.jpa.entities.EntityInformation;
 import org.compass.gps.device.support.parallel.IndexEntity;
 
@@ -72,10 +74,9 @@ public class OpenJPAJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer {
                 Query query = entityInformation.getQueryProvider().createQuery(entityManager, entityInformation);
                 OpenJPAQuery openJPAQuery = OpenJPAPersistence.cast(query);
                 JDBCFetchPlan fetch = (JDBCFetchPlan) openJPAQuery.getFetchPlan();
-                fetch.setFetchBatchSize(fetchCount);
-                fetch.setResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE);
-                fetch.setFetchDirection(ResultSet.FETCH_FORWARD);
-                fetch.setLRSSize(LRSSizes.SIZE_UNKNOWN);
+                if (CompassProductDerivation.isReleasedVersion()) {
+                    doSetFetchPlan(fetchCount, fetch);
+                }
                 List results = openJPAQuery.getResultList();
                 for (Object item : results) {
                     session.create(item);
@@ -93,5 +94,12 @@ public class OpenJPAJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer {
                 throw (JpaGpsDeviceException) e;
             }
         }
+    }
+
+    private void doSetFetchPlan(int fetchCount, JDBCFetchPlan fetch) {
+        fetch.setFetchBatchSize(fetchCount);
+        fetch.setResultSetType(ResultSetType.SCROLL_INSENSITIVE);
+        fetch.setFetchDirection(FetchDirection.FORWARD);
+        fetch.setLRSSizeAlgorithm(LRSSizeAlgorithm.UNKNOWN);
     }
 }
