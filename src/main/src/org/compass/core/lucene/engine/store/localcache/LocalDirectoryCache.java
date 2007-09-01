@@ -150,11 +150,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
     }
 
     public long fileModified(String name) throws IOException {
-        if (shouldPerformOperationOnActualDirectory(name)) {
-            return dir.fileModified(name);
-        }
-        fetchFileIfNotExists(name);
-        return localCacheDir.fileModified(name);
+        return dir.fileModified(name);
     }
 
     public String[] list() throws IOException {
@@ -297,6 +293,9 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
                             continue;
                         }
                         if (localCacheDir.fileExists(name)) {
+                            if (log.isTraceEnabled()) {
+                                log.trace(logMessage("Clean [" + name + "] from local cache"));
+                            }
                             localCacheDir.deleteFile(name);
                         }
                     } catch (IOException e) {
