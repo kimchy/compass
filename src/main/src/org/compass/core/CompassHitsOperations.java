@@ -16,12 +16,14 @@
 
 package org.compass.core;
 
+import java.io.Serializable;
+
 /**
  * Mutual operations for hits, for both detached and transactional hits.
  *
  * @author kimchy
  */
-public interface CompassHitsOperations {
+public interface CompassHitsOperations extends Serializable {
 
     /**
      * Returns the number of hits,
