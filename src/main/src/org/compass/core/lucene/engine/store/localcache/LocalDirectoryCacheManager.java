@@ -109,9 +109,12 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
             File filePath = new File(path);
             LuceneUtils.deleteDir(filePath);
             if (!filePath.exists()) {
-                boolean created = filePath.mkdirs();
-                if (!created) {
-                    throw new SearchEngineException("Failed to create directory for local cache with path [" + path + "]");
+                synchronized (this) {
+                    // sync since there is a bug with mkdirs failing on reetrant code
+                    boolean created = filePath.mkdirs();
+                    if (!created) {
+                        throw new SearchEngineException("Failed to create directory for local cache with path [" + path + "]");
+                    }
                 }
             }
             try {

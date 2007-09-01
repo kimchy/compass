@@ -254,6 +254,21 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         }
     }
 
+    public void clearWrapper() throws IOException {
+        if (log.isTraceEnabled()) {
+            log.trace(logMessage("Clearing local cache"));
+        }
+        String[] list = localCacheDir.list();
+        for (int i = 0; i < list.length; i++) {
+            String name = list[i];
+            synchronized (monitors[Math.abs(name.hashCode()) % monitors.length]) {
+                if (localCacheDir.fileExists(name)) {
+                    localCacheDir.deleteFile(name);
+                }
+            }
+        }
+    }
+
     private String logMessage(String message) {
         return "[" + subIndex + "] " + message;
     }

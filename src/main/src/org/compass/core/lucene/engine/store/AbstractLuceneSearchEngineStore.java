@@ -30,6 +30,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.LuceneUtils;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.DirectoryWrapper;
 import org.apache.lucene.store.LockFactory;
 import org.apache.lucene.store.NativeFSLockFactory;
 import org.apache.lucene.store.NoLockFactory;
@@ -399,6 +400,18 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     public void copyFrom(final LuceneSearchEngineStore searchEngineStore) throws SearchEngineException {
+        // clear any possible wrappers
+        for (int i = 0; i < getSubIndexes().length; i++) {
+            final String subIndex = getSubIndexes()[i];
+            template.executeForSubIndex(subIndex, false, new LuceneStoreCallback() {
+                public Object doWithStore(Directory dir) throws IOException {
+                    if (dir instanceof DirectoryWrapper) {
+                        ((DirectoryWrapper) dir).clearWrapper();
+                    }
+                    return null;
+                }
+            });
+        }
         CopyFromHolder holder = doBeforeCopyFrom();
         final byte[] buffer = new byte[32768];
         final LuceneStoreTemplate srcTemplate = new LuceneStoreTemplate(searchEngineStore);
