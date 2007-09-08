@@ -17,23 +17,23 @@
 package org.compass.core.converter.basic;
 
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.util.StringUtils;
 
 /**
  * A base class that can handle {@link ThreadSafeFormat} and provide formatting support.
  * The format is read from a configuration setting {@link CompassEnvironment.Converter.Format#FORMAT}.
  * Uses a pool of formatters for better performance, using {@link CompassEnvironment.Converter.Format#MIN_POOL_SIZE},
  * and {@link CompassEnvironment.Converter.Format#MAX_POOL_SIZE} as configuration settings for the pool size.
- * <p/>
- * If specific locale is required for the formatted, the {@link CompassEnvironment.Converter.Format#LOCALE} can
+ *
+ * <p>If specific locale is required for the formatted, the {@link CompassEnvironment.Converter.Format#LOCALE} can
  * be used to specify the required locale.
- * <p/>
- * Allows to specify the default format if none is provided by overriding {@link #doGetDefaultFormat()}.
+ *
+ * <p>Allows to specify the default format if none is provided by overriding {@link #doGetDefaultFormat()}.
  *
  * @author kimchy
  */
@@ -84,10 +84,10 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
     }
 
     private void createFormatters(String format, CompassSettings settings) {
-        StringTokenizer tokenizer = new StringTokenizer(format, ";");
-        formatters = new ThreadSafeFormat[tokenizer.countTokens()];
+        String[] formatStrings = StringUtils.delimitedListToStringArray(format, "||");
+        formatters = new ThreadSafeFormat[formatStrings.length];
         for (int i = 0; i < formatters.length; i++) {
-            String currentFromat = tokenizer.nextToken();
+            String currentFromat = formatStrings[i];
             ThreadSafeFormat.FormatterFactory formatterFactory = doCreateFormatterFactory();
             formatterFactory.configure(currentFromat, locale);
             int minPoolSize = 4;
