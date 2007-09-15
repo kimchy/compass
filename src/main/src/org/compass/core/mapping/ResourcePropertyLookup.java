@@ -128,6 +128,9 @@ public final class ResourcePropertyLookup {
      * @see org.compass.core.converter.ResourcePropertyConverter
      */
     public String getValue(Object value) {
+        if (value instanceof String) {
+            return normalizeString((String) value);
+        }
         ResourcePropertyConverter converter;
         if (hasSpecificConverter()) {
             converter = (ResourcePropertyConverter) resourcePropertyMapping.getConverter();

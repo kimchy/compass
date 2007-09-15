@@ -16,6 +16,7 @@
 
 package org.compass.core.converter.basic;
 
+import java.text.DateFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,10 +50,14 @@ public class DateConverter extends AbstractFormatConverter {
         }
 
         public Format create() {
+            DateFormat dateFormat;
             if (locale != null) {
-                return new SimpleDateFormat(format, locale);
+                dateFormat = new SimpleDateFormat(format, locale);
+            } else {
+                dateFormat = new SimpleDateFormat(format);
             }
-            return new SimpleDateFormat(format);
+            dateFormat.setLenient(false);
+            return dateFormat;
         }
     }
 

@@ -108,9 +108,15 @@ public class RangeQueryBuilderTests extends AbstractTestCase {
         CompassHits hits = session.find("date2:[2000-01-01 TO 2010-01-01]");
         assertEquals(1, hits.length());
 
-        // verify that the othehr format works as well
+        hits = session.queryBuilder().between("a.date2", "2000-01-01", "2010-01-01", true).hits();
+        assertEquals(1, hits.length());
+
+        // verify that the other format works as well
         hits = session.find("date2:[01-01-2000 TO 01-01-2010]");
-        assertEquals(0, hits.length());
+        assertEquals(1, hits.length());
+
+        hits = session.queryBuilder().between("a.date2", "01-01-2000 ", "01-01-2010", true).hits();
+        assertEquals(1, hits.length());
 
         tr.commit();
         session.close();
