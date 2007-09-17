@@ -120,7 +120,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                     log.debug("Obtained write locks");
                 }
             } catch (Exception e) {
-                throw new SearchEngineException("Failed to retirieve dirty transaction locks", e);
+                throw new SearchEngineException("Failed to retrieve dirty transaction locks", e);
             }
             if (log.isDebugEnabled()) {
                 log.debug("Calling callback first step");
