@@ -53,7 +53,7 @@ public class ParentCascadeTests extends AbstractTestCase {
         session.close();
     }
 
-    public void testCascadeAll() {
+    public void testCascadeAllWithDeleteByAlias() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
