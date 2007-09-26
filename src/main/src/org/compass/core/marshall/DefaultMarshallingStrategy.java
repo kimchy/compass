@@ -66,7 +66,7 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
     }
 
     public Resource marshallIds(Class clazz, Object id) {
-        ResourceMapping resourceMapping = mapping.findRootMappingByClass(clazz);
+        ResourceMapping resourceMapping = mapping.getRootMappingByClass(clazz);
         if (resourceMapping == null) {
             return null;
         }
