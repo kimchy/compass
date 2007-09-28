@@ -106,10 +106,10 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             return store;
         }
 
-        if (classMapping.isSupportUnmarshall()) {
-            // only add specilized properties for un-marshalling when it is supported
-            if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
-                // if the class is defined as poly, persist the class name as well
+        if (classMapping.isPoly() && classMapping.getPolyClass() == null) {
+            // store the poly class only for root mappings when we don't support unmarshalling
+            // and for all classes when we do support unmarshalling
+            if (classMapping.isSupportUnmarshall() || classMapping.isRoot()) {
                 storePolyClass(resource, root, searchEngine, classMapping);
             }
         }

@@ -91,6 +91,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private void secondPassNoUnmarshalling(ClassMapping classMapping) {
         classMapping.setPath(namingStrategy.buildPath(compassMapping.getPath(), classMapping.getAlias()));
+        classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(), MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
         OsemMappingIterator.iterateMappings(new NoUnmarshallingCallback(classMapping), classMapping, false);
     }
 
@@ -100,8 +101,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
     }
 
     private void secondPass(ClassMapping classMapping, boolean onlyProperties) {
-        classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(),
-                MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
+        classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(), MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
         ArrayList innerMappingsCopy = new ArrayList();
         for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
