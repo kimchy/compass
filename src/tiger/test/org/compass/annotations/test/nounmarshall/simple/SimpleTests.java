@@ -21,7 +21,6 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
-import org.compass.core.converter.ConversionException;
 
 /**
  * @author kimchy
@@ -49,12 +48,10 @@ public class SimpleTests extends AbstractAnnotationsTestCase {
         assertEquals(2, resource.getProperties("value").length);
         assertEquals("1", resource.get("$/A/id"));
 
-        try {
-            session.load(A.class, 1);
-            fail();
-        } catch (ConversionException e) {
-
-        }
+        a = (A) session.load(A.class, 1);
+        assertEquals(1, a.id.longValue());
+        assertNull(a.value);
+        assertNull(a.value2);
 
         tr.commit();
         session.close();

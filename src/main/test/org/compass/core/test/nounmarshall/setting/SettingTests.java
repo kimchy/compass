@@ -21,7 +21,6 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.converter.ConversionException;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -53,12 +52,10 @@ public class SettingTests extends AbstractTestCase {
         assertEquals("a", resource.getAlias());
         assertEquals(2, resource.getProperties("value").length);
 
-        try {
-            session.load(A.class, new Long(1));
-            fail();
-        } catch (ConversionException e) {
-
-        }
+        a = (A) session.load(A.class, new Long(1));
+        assertEquals(1, a.id.longValue());
+        assertNull(a.value);
+        assertNull(a.value2);
 
         tr.commit();
         session.close();

@@ -19,7 +19,6 @@ package org.compass.core.test.nounmarshall.simple;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
-import org.compass.core.converter.ConversionException;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -48,12 +47,11 @@ public class SimpleTests extends AbstractTestCase {
         assertEquals(2, resource.getProperties("value").length);
         assertEquals("1", resource.get("$/a/id"));
 
-        try {
-            session.load("a", new Long(1));
-            fail();
-        } catch (ConversionException e) {
-
-        }
+        // when unmarshalling, only A with its id is set
+        a = (A) session.load("a", new Long(1));
+        assertEquals(1, a.id.longValue());
+        assertNull(a.value);
+        assertNull(a.value2);
 
         tr.commit();
         session.close();
@@ -76,12 +74,11 @@ public class SimpleTests extends AbstractTestCase {
         assertEquals(3, resource.getProperties("value").length);
         assertEquals("1", resource.get("$/a1/id"));
 
-        try {
-            session.load("a1", new Long(1));
-            fail();
-        } catch (ConversionException e) {
-
-        }
+        // when unmarshalling, only A with its id is set
+        a = (A) session.load("a1", new Long(1));
+        assertEquals(1, a.id.longValue());
+        assertNull(a.value);
+        assertNull(a.value2);
 
         tr.commit();
         session.close();

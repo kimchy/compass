@@ -72,9 +72,7 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
             highlightedText[i] = hits.highlightedText(location);
             AliasMapping aliasMapping = session.getMapping().getAliasMapping(resources[i].getAlias());
             if (aliasMapping instanceof ClassMapping) {
-                if (((ClassMapping) aliasMapping).isSupportUnmarshall()) {
-                    datas[i] = session.getByResource(resources[i]);
-                }
+                datas[i] = session.getByResource(resources[i]);
             }
         }
     }

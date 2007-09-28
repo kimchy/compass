@@ -165,7 +165,19 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         // with ids
         if (classMapping.isRoot()) {
             if (!classMapping.isSupportUnmarshall()) {
-                throw new ConversionException("Class Mapping [" + classMapping.getAlias() + "] is configured not to support un-marshalling");
+                // we don't support unmarshalling, try and unmarshall just the object with its
+                // ids set.
+                Object obj = constructObjectForUnmarshalling(classMapping, resource);
+                ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+                for (int i = 0; i < ids.length; i++) {
+                    Object idValue = ids[i].getConverter().unmarshall(resource, ids[i], context);
+                    if (idValue == null) {
+                        // was not marshalled, simply return null
+                        return null;
+                    }
+                    ((ClassPropertyMetaDataMapping) ids[i]).getSetter().set(obj, idValue);
+                }
+                return obj;
             }
             resourceKey = ((InternalResource) resource).resourceKey();
             // if it is cached, return the cached object
@@ -206,41 +218,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             }
         }
 
-        // resolve the actual class and constructor
-        Class clazz = classMapping.getClazz();
-        Constructor constructor = classMapping.getConstructor();
-        if (classMapping.isPoly()) {
-            if (classMapping.getPolyClass() != null) {
-                clazz = classMapping.getPolyClass();
-                constructor = classMapping.getPolyConstructor();
-            } else {
-                Property pClassName = resource.getProperty(classMapping.getClassPath().getPath());
-                if (pClassName == null) {
-                    // if not poly class is stored, this means that it is probably a null class stored.
-                    return null;
-                }
-                String className = pClassName.getStringValue();
-                if (className == null) {
-                    // if not poly class is stored, this means that it is probably a null class stored.
-                    return null;
-                }
-                try {
-                    clazz = ClassUtils.forName(className);
-                } catch (ClassNotFoundException e) {
-                    throw new ConversionException("Failed to create class [" + className + "] for unmarshalling", e);
-                }
-                constructor = ClassUtils.getDefaultConstructor(clazz);
-            }
-        }
-
-        // create the object
-        Object obj;
-        try {
-            obj = constructor.newInstance(null);
-        } catch (Exception e) {
-            throw new ConversionException("Failed to create class [" + clazz.getName() + "] for unmarshalling", e);
-        }
-
+        Object obj = constructObjectForUnmarshalling(classMapping, resource);
         context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, obj);
         // we will set here the object, even though no ids have been set,
         // since the ids are the first mappings that will be unmarshalled,
@@ -276,6 +254,48 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         }
         if (isNullClass) {
             return null;
+        }
+        return obj;
+    }
+
+    /**
+     * Constructs the object used for unmarshalling (no properties are set/unmarshalled) on it.
+     * <code>null</code> return value denotes no un-marshalling should be performed.
+     */
+    protected Object constructObjectForUnmarshalling(ClassMapping classMapping, Resource resource) throws ConversionException {
+        // resolve the actual class and constructor
+        Class clazz = classMapping.getClazz();
+        Constructor constructor = classMapping.getConstructor();
+        if (classMapping.isPoly()) {
+            if (classMapping.getPolyClass() != null) {
+                clazz = classMapping.getPolyClass();
+                constructor = classMapping.getPolyConstructor();
+            } else {
+                Property pClassName = resource.getProperty(classMapping.getClassPath().getPath());
+                if (pClassName == null) {
+                    // if not poly class is stored, this means that it is probably a null class stored.
+                    return null;
+                }
+                String className = pClassName.getStringValue();
+                if (className == null) {
+                    // if not poly class is stored, this means that it is probably a null class stored.
+                    return null;
+                }
+                try {
+                    clazz = ClassUtils.forName(className);
+                } catch (ClassNotFoundException e) {
+                    throw new ConversionException("Failed to create class [" + className + "] for unmarshalling", e);
+                }
+                constructor = ClassUtils.getDefaultConstructor(clazz);
+            }
+        }
+
+        // create the object
+        Object obj;
+        try {
+            obj = constructor.newInstance(null);
+        } catch (Exception e) {
+            throw new ConversionException("Failed to create class [" + clazz.getName() + "] for unmarshalling", e);
         }
         return obj;
     }

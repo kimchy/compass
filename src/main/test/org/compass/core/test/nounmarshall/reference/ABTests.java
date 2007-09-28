@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
-import org.compass.core.converter.ConversionException;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -54,18 +53,16 @@ public class ABTests extends AbstractTestCase {
         assertEquals(1, resource.getProperties("value").length);
         assertEquals("1", resource.get("$/a/b/id"));
 
-        try {
-            session.load(A.class, new Long(1));
-            fail();
-        } catch (ConversionException e) {
-            // success
-        }
+        a = (A) session.load(A.class, new Long(1));
+        assertEquals(1, a.id.longValue());
+        assertNull(a.value);
+        assertNull(a.b);
 
         tr.commit();
         session.close();
     }
 
-    public void testBwoValues() throws Exception {
+    public void testBTwoValues() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
@@ -86,12 +83,10 @@ public class ABTests extends AbstractTestCase {
         assertEquals(1, resource.getProperties("value").length);
         assertEquals("1", resource.get("$/a/b/id"));
 
-        try {
-            session.load(A.class, new Long(1));
-            fail();
-        } catch (ConversionException e) {
-            // success
-        }
+        a = (A) session.load(A.class, new Long(1));
+        assertEquals(1, a.id.longValue());
+        assertNull(a.value);
+        assertNull(a.b);
 
         tr.commit();
         session.close();

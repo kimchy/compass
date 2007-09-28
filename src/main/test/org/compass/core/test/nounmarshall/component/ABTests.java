@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
-import org.compass.core.converter.ConversionException;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -51,12 +50,10 @@ public class ABTests extends AbstractTestCase {
         assertEquals("a", resource.getAlias());
         assertEquals(2, resource.getProperties("value").length);
 
-        try {
-            session.load(A.class, new Long(1));
-            fail();
-        } catch (ConversionException e) {
-            // success
-        }
+        // make sure no unmarshall returns A only with its ids set
+        a = (A) session.load(A.class, new Long(1));
+        assertEquals(1, a.id.longValue());
+        assertNull(a.b);
 
         tr.commit();
         session.close();
@@ -81,12 +78,10 @@ public class ABTests extends AbstractTestCase {
         assertEquals("a", resource.getAlias());
         assertEquals(3, resource.getProperties("value").length);
 
-        try {
-            session.load(A.class, new Long(1));
-            fail();
-        } catch (ConversionException e) {
-            // success
-        }
+        // make sure no unmarshall returns A only with its ids set
+        a = (A) session.load(A.class, new Long(1));
+        assertEquals(1, a.id.longValue());
+        assertNull(a.b);
 
         tr.commit();
         session.close();
