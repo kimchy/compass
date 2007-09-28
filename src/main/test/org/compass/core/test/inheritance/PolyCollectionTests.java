@@ -43,14 +43,17 @@ public class PolyCollectionTests extends AbstractTestCase {
         assertEquals("mvalue", rpMapping.getPath().getPath());
         rpMapping = bComponent.getResourcePropertyMappingByDotPath("a.value.mvalue");
         assertNotNull(rpMapping);
+        assertEquals("bComponent", rpMapping.getRootAlias());
         assertEquals("mvalue", rpMapping.getName());
         assertEquals("mvalue", rpMapping.getPath().getPath());
         rpMapping = bComponent.getResourcePropertyMappingByDotPath("a.extendsValue");
+        assertEquals("bComponent", rpMapping.getRootAlias());
         assertNotNull(rpMapping);
         assertEquals("mextendsValue", rpMapping.getName());
         assertEquals("mextendsValue", rpMapping.getPath().getPath()); // no internal id needed
         rpMapping = bComponent.getResourcePropertyMappingByDotPath("a.extendsValue.mextendsValue");
         assertNotNull(rpMapping);
+        assertEquals("bComponent", rpMapping.getRootAlias());
         assertEquals("mextendsValue", rpMapping.getName());
         assertEquals("mextendsValue", rpMapping.getPath().getPath());
 

@@ -26,9 +26,9 @@ public interface ResourcePropertyMapping extends Mapping {
 
     public static class ReverseType extends Parameter {
 
-		private static final long serialVersionUID = 9135849961654313364L;
+        private static final long serialVersionUID = 9135849961654313364L;
 
-		protected ReverseType(String name) {
+        protected ReverseType(String name) {
             super(name);
         }
 
@@ -51,17 +51,24 @@ public interface ResourcePropertyMapping extends Mapping {
     }
 
     /**
-     * Returns the anayzer name that is associated with the property. Can be <code>null</code> (i.e. not set).
+     * Returns the anayzer name that is associated with the property.
+     * Can be <code>null</code> (i.e. not set).
      */
     String getAnalyzer();
 
+    /**
+     * Returns the root resource mapping alias name this resource property mapping belongs to.
+     */
     String getRootAlias();
+
+    /**
+     * Returns <code>true</code> if this mapping is an internal one (<code>$/</code> notation).
+     */
+    boolean isInternal();
 
     float getBoost();
 
     boolean isOmitNorms();
-    
-    boolean isInternal();
 
     boolean isExcludeFromAll();
 
