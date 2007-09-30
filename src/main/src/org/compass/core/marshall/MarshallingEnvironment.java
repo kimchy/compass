@@ -16,6 +16,8 @@
 
 package org.compass.core.marshall;
 
+import org.compass.core.converter.mapping.osem.ClassMappingConverter;
+
 /**
  * @author kimchy
  */
@@ -26,10 +28,13 @@ public class MarshallingEnvironment {
     public static final String PROPERTY_COLLECTION_TYPE = "colType";
 
     public static final String PROPERTY_COLLECTION_SIZE = "colSize";
+    
 
     public static final String ATTRIBUTE_PARENT = "parent";
 
     public static final String ATTRIBUTE_CURRENT = "current";
 
     public static final String ATTRIBUTE_UNMARSHALLED = "unmarshalled";
+
+    public static final String ATTRIBUTE_ROOT_CLASS_MAPPING = ClassMappingConverter.ROOT_CLASS_MAPPING_KEY;
 }
