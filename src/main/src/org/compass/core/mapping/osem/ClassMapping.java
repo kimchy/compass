@@ -19,8 +19,10 @@ package org.compass.core.mapping.osem;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.AbstractResourceMapping;
@@ -92,10 +94,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
      */
     protected void doPostProcess() throws MappingException {
         PostProcessMappingCallback callback = new PostProcessMappingCallback();
-        // since we do not perform static bindings when no unmarshalling, we will get OOME
-        // (we do not copy the mappings or use max-depth)
-        boolean recursive = isSupportUnmarshall();
-        OsemMappingIterator.iterateMappings(callback, this, recursive);
+        OsemMappingIterator.iterateMappings(callback, this, true);
         List findList = callback.getResourcePropertyMappings();
         resourcePropertyMappings = (ResourcePropertyMapping[])
                 findList.toArray(new ResourcePropertyMapping[findList.size()]);
@@ -209,7 +208,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         this.polyConstructor = polyConstructor;
     }
 
-    public static class PostProcessMappingCallback extends OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer {
+    public class PostProcessMappingCallback extends OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer {
 
         private HashMap pathMappings = new HashMap();
 
@@ -217,6 +216,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
         private StringBuffer sb = new StringBuffer();
 
+        private Set cyclicNoUnmarshallRefAliasMappings = new HashSet();
 
         /**
          * <p>Since we did not process duplicate mappings, we need to replace them with the original mappings that
@@ -263,9 +263,35 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
             }
         }
 
+        /**
+         * We iterate through (multiple) mappings. If they are of type that has ref aliases (such as
+         * component and refrence) we take into account the <code>isSupportUnmarshall</code> flag.
+         *
+         * If it is set to true, we do support unmarshalling, and we continue as usual (since we already
+         * taken care to build the correct mappings tree with discrete mappings for components and references
+         * with special care for cyclic ones using max depth)
+         *
+         * If the flag is set to false, we do not support unmarshalling. We still want to have all the mapped
+         * resource properties / meta data, so we perfrom very simply cyclic check (return false if we have
+         * encountered an alias that is referenced) which is perfectly fine for our needs (we *dont* support
+         * unmarshalling).
+         */
         public boolean onBeginMultipleMapping(ClassMapping classMapping, Mapping mapping) {
             boolean retVal = super.onBeginMultipleMapping(classMapping, mapping);
             addToPath(mapping);
+            if (retVal && !isSupportUnmarshall()) {
+                if (mapping instanceof HasRefAliasMapping) {
+                    ClassMapping[] refMappings = ((HasRefAliasMapping) mapping).getRefClassMappings();
+                    if (refMappings != null) {
+                        for (int i = 0; i < refMappings.length; i++) {
+                            if (cyclicNoUnmarshallRefAliasMappings.contains(refMappings[i].getAlias())) {
+                                return false;
+                            }
+                            cyclicNoUnmarshallRefAliasMappings.add(refMappings[i].getAlias());
+                        }
+                    }
+                }
+            }
             return retVal;
         }
 

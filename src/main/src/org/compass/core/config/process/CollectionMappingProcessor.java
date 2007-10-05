@@ -16,15 +16,40 @@
 
 package org.compass.core.config.process;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
-import org.compass.core.mapping.*;
-import org.compass.core.mapping.osem.*;
+import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.osem.AbstractCollectionMapping;
+import org.compass.core.mapping.osem.ArrayMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.CollectionMapping;
+import org.compass.core.mapping.osem.ObjectMapping;
 
 /**
+ * Goes over all the OSEM {@link org.compass.core.mapping.osem.ClassMapping}s. For each
+ * class mappings, goes over all of its mappings and checks if they represent a collection/array.
+ * If they represent a collection/array, wraps them with either a {@link org.compass.core.mapping.osem.CollectionMapping}
+ * or an {@link org.compass.core.mapping.osem.ArrayMapping}. Copies over the mappings types and set it as the
+ * collection/array element mapping.
+ *
+ * <p>A note on element mapping: Compass simplifies mappings for collection. There is no need for different
+ * property/component/reference mappings when handling collections/arrays. So, the actual mappings (property/
+ * component/reference) actually refers to the element mapping, which is why the mapping constructed is copied
+ * over as the element mapping.
+ *
  * @author kimchy
  */
 public class CollectionMappingProcessor implements MappingProcessor {

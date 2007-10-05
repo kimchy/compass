@@ -21,6 +21,8 @@ import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.hibernate.SessionFactory;
 
 /**
+ * The lifecycle injector is responsible injected and removing lifecycle event listneres.
+ *
  * @author kimchy
  */
 public interface HibernateEntityLifecycleInjector {

@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -30,6 +33,15 @@ public class ABTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"nounmarshall/component/AB.cpm.xml"};
+    }
+
+    public void testMappings() {
+        ResourceMapping aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a");
+        ResourcePropertyMapping[] aPropertyMappings = aMapping.getResourcePropertyMappings();
+        assertEquals(5, aPropertyMappings.length);
+        assertNotNull(aMapping.getResourcePropertyMapping("value"));
+        assertNotNull(aMapping.getResourcePropertyMapping("value2"));
+        assertNotNull(aMapping.getResourcePropertyMapping("id"));
     }
 
     public void testBSingleValue() throws Exception {
@@ -74,7 +86,7 @@ public class ABTests extends AbstractTestCase {
 
         Resource resource = session.loadResource(A.class, new Long(1));
         assertNotNull(resource);
-        assertEquals(5, resource.getProperties().length);
+        assertEquals(6, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(3, resource.getProperties("value").length);
 
@@ -107,7 +119,7 @@ public class ABTests extends AbstractTestCase {
 
         Resource resource = session.loadResource(A.class, new Long(1));
         assertNotNull(resource);
-        assertEquals(6, resource.getProperties().length);
+        assertEquals(7, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(4, resource.getProperties("value").length);
 
@@ -135,7 +147,7 @@ public class ABTests extends AbstractTestCase {
 
         Resource resource = session.loadResource(A.class, new Long(1));
         assertNotNull(resource);
-        assertEquals(5, resource.getProperties().length);
+        assertEquals(6, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(3, resource.getProperties("value").length);
 

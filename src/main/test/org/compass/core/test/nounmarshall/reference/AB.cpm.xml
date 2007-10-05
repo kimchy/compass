@@ -26,6 +26,7 @@
         </property>
         <property name="value2" accessor="field">
             <meta-data>value</meta-data>
+            <meta-data>value2</meta-data>
         </property>
     </class>
 </compass-core-mapping>

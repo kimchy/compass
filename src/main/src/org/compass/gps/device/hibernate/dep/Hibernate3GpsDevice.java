@@ -52,7 +52,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 
 /**
- * A {@link org.compass.gps.device.hibernate.HibernateGpsDevice} which works with hibernate 3.
+ * A hibernate device which works with hibernate 3.
  * <p/>
  * You must either set the Hibernate <code>Configuration</code> or the
  * <code>SessionFactory</code> to be used by the device. Note that if the

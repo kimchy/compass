@@ -29,6 +29,10 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 
 /**
+ * Goes over all the {@link org.compass.core.mapping.AliasMapping}s in Compass and resolves
+ * which one the mapping extends ({@link org.compass.core.mapping.AliasMapping#getExtendedAliases()}
+ * and which one are extending this alias ({@link org.compass.core.mapping.AliasMapping#getExtendingAliases()}.
+ *
  * @author kimchy
  */
 public class ResolveExtendsMappingProcessor implements MappingProcessor {

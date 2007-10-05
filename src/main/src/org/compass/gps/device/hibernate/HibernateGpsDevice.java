@@ -36,6 +36,40 @@ import org.compass.gps.device.support.parallel.IndexEntity;
 import org.hibernate.SessionFactory;
 
 /**
+ * <p>A Hibernate Gps Device.
+ *
+ * <p>The hibernate device provides support for using jpa to index a database. The path can
+ * be viewed as: Database <-> Hibernate <-> Objects <-> Compass::Gps
+ * <-> Compass::Core (Search Engine). What it means is that for every object that has both
+ * Hibernate and compass mappings, you will be able to index it's data, as well as real time mirroring of
+ * data changes.
+ *
+ * <p>When creating the object, a <code>SessionFactory</code> must be provided to the Device.
+ *
+ * <p>Indexing uses {@link HibernateEntitiesLocator} to locate all the entities that can be
+ * indexed (i.e. entities that have both Compass and Hibernate mappings). The default implementaion
+ * used it the {@link org.compass.gps.device.hibernate.entities.DefaultHibernateEntitiesLocator}.
+ *
+ * <p>The indexing process itself is done through an implementation of
+ * {@link HibernateIndexEntitiesIndexer}. It has two different implementation, the
+ * {@link org.compass.gps.device.hibernate.indexer.PaginationHibernateIndexEntitiesIndexer} and the
+ * {@link org.compass.gps.device.hibernate.indexer.ScrollableHibernateIndexEntitiesIndexer}. The default
+ * used is the pagination indexer even though it is slower because of a memory leak in versions of
+ * Hibernate prior to 3.2.5.
+ *
+ * <p>Mirroring is done by injecting lifecycle listeners into Hibernate. It is done using
+ * {@link org.compass.gps.device.hibernate.lifecycle.HibernateEntityLifecycleInjector} with
+ * a default implementation of {@link org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityLifecycleInjector}.
+ *
+ * <p>Mirroring can be turned off using the {@link #setMirrorDataChanges(boolean)} to <code>false</code>.
+ * It defaults to <code>true<code>.
+ *
+ * <p>The device allows for {@link org.compass.gps.device.hibernate.NativeHibernateExtractor} to be set,
+ * for applications that use a framework or by themself wrap the actual
+ * <code>SessionFactory</code> implementation.
+ *
+ * <p>The device extends the parallel device provinding supprot for parallel indexing.
+ *
  * @author kimchy
  */
 public class HibernateGpsDevice extends AbstractParallelGpsDevice implements PassiveMirrorGpsDevice {

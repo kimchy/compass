@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -30,6 +33,14 @@ public class ABTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"nounmarshall/reference/AB.cpm.xml"};
+    }
+
+    public void testMappings() {
+        ResourceMapping aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a");
+        ResourcePropertyMapping[] aPropertyMappings = aMapping.getResourcePropertyMappings();
+        assertEquals(3, aPropertyMappings.length);
+        assertNotNull(aMapping.getResourcePropertyMapping("value"));
+        assertNotNull(aMapping.getResourcePropertyMapping("id"));
     }
 
     public void testBSingleValue() throws Exception {
