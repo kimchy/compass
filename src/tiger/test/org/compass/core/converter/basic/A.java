@@ -34,4 +34,7 @@ public class A {
 
     @SearchableProperty
     AType value2;
+
+    @SearchableProperty
+    B.Type value3;
 }

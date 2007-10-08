@@ -39,13 +39,18 @@ public class EnumTests extends AbstractAnnotationsTestCase {
         a.id = 1;
         a.value1 = AType.TEST1;
         a.value2 = AType.TEST2;
+        a.value3 = B.Type.Call;
         session.save(a);
 
         a = (A) session.load(A.class, 1);
         assertEquals(AType.TEST1, a.value1);
         assertEquals(AType.TEST2, a.value2);
+        assertEquals(B.Type.Call, a.value3);
 
         CompassHits hits = session.find("value1:test1");
+        assertEquals(1, hits.length());
+
+        hits = session.find("value3:call");
         assertEquals(1, hits.length());
 
         tr.commit();
