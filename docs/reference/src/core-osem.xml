@@ -587,7 +587,7 @@ public class A {
             <para><emphasis>NO</emphasis>: Compass will not create an internal meta-data id, and will not try to un-marshall this property at all.</para>
           </listitem>
           <listitem>
-            <para><emphasis>NO_STORE</emphasis>: Compass will not create an internal meta-data id if all of this property mappings have store="no". Otherwise, it will be treated as AUTO.</para>
+            <para><emphasis>NO_STORE</emphasis>: Compass will not create an internal meta-data id if all of its meta-data mappings have store="no". Otherwise, it will be treated as AUTO.</para>
           </listitem>
         </itemizedlist>
       </para>
