@@ -59,12 +59,18 @@ public abstract class AnnotationsBindingUtils {
     }
 
     public static ClassPropertyMapping.ManagedId convert(ManagedId managedId) throws IllegalArgumentException {
-        if (managedId == ManagedId.AUTO) {
+        if (managedId == ManagedId.NA) {
+            return null;
+        } else if (managedId == ManagedId.AUTO) {
             return ClassPropertyMapping.ManagedId.AUTO;
         } else if (managedId == ManagedId.TRUE) {
             return ClassPropertyMapping.ManagedId.TRUE;
         } else if (managedId == ManagedId.FALSE) {
             return ClassPropertyMapping.ManagedId.FALSE;
+        } else if (managedId == ManagedId.NO) {
+            return ClassPropertyMapping.ManagedId.NO;
+        } else if (managedId == ManagedId.NO_STORE) {
+            return ClassPropertyMapping.ManagedId.NO_STORE;
         }
         throw new IllegalArgumentException("Failed to convert managedId [" + managedId + "]");
     }

@@ -468,6 +468,11 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         boolean poly = classConf.getAttributeAsBoolean("poly", false);
         classMapping.setPoly(poly);
 
+        String managedId = classConf.getAttribute("managed-id", null);
+        if (managedId != null) {
+            classMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(managedId));
+        }
+
         String polyClassName = classConf.getAttribute("poly-class", null);
         if (polyClassName != null) {
             try {
@@ -694,8 +699,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         boolean excludeFromAll = classPropertyConf.getAttributeAsBoolean("exclude-from-all", false);
         classPropertyMapping.setExcludeFromAll(excludeFromAll);
 
-        String managedId = classPropertyConf.getAttribute("managed-id", "auto");
-        classPropertyMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(managedId));
+        String managedId = classPropertyConf.getAttribute("managed-id", null);
+        if (managedId != null) {
+            classPropertyMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(managedId));
+        }
 
         String managedIdIndex = classPropertyConf.getAttribute("managed-id-index", null);
         if (managedIdIndex != null) {

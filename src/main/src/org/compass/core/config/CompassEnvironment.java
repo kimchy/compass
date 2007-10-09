@@ -540,6 +540,14 @@ public class CompassEnvironment {
         public static final String MANAGED_ID_INDEX = "compass.osem.managedId.index";
 
         /**
+         * The default managed id for all property mappings based on {@link org.compass.core.mapping.osem.ClassPropertyMapping.ManagedId}
+         * configuration. Defaults to <code>AUTO</code>.
+         *
+         * <p>This can be overriden either by using class mapping level setting or property level mapping.
+         */
+        public static final String MANAGED_ID_DEFAULT = "compass.osem.managedId";
+
+        /**
          * Controls if the default support for un-marshalling within class mappings will
          * default to <code>true</code> or <code>false</code> (unless it is explicitly set
          * in the class mapping). Defaults to <code>true</code>.

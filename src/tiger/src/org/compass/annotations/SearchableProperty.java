@@ -66,7 +66,7 @@ public @interface SearchableProperty {
     /**
      * Controls if the internal meta-data id creation.
      */
-    ManagedId managedId() default ManagedId.AUTO;
+    ManagedId managedId() default ManagedId.NA;
 
     /**
      * If the internal meta-data id is created, controls it's

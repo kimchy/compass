@@ -289,6 +289,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             classMapping.setSupportUnmarshall(false);
         }
 
+        classMapping.setManagedId(AnnotationsBindingUtils.convert(searchable.managedId()));
+
         bindConverter(classMapping, searchable.converter());
 
         processAnnotatedClass(annotationClass);

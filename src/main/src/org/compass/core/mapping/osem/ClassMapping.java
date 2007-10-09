@@ -39,6 +39,8 @@ import org.compass.core.util.Assert;
  */
 public class ClassMapping extends AbstractResourceMapping implements ResourceMapping, PostProcessingMapping {
 
+    private ClassPropertyMapping.ManagedId managedId;
+
     private PropertyPath classPath;
 
     private Class clazz;
@@ -71,6 +73,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setConstructor(getConstructor());
         copy.setPolyConstructor(getPolyConstructor());
         copy.supportUnmarshall = supportUnmarshall;
+        copy.setManagedId(getManagedId());
         return copy;
     }
 
@@ -84,6 +87,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setConstructor(getConstructor());
         copy.setPolyConstructor(getPolyConstructor());
         copy.supportUnmarshall = supportUnmarshall;
+        copy.setManagedId(getManagedId());
         return copy;
     }
 
@@ -140,6 +144,14 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public boolean isIncludePropertiesWithNoMappingsInAll() {
         return true;
+    }
+
+    public ClassPropertyMapping.ManagedId getManagedId() {
+        return managedId;
+    }
+
+    public void setManagedId(ClassPropertyMapping.ManagedId managedId) {
+        this.managedId = managedId;
     }
 
     public boolean isPoly() {

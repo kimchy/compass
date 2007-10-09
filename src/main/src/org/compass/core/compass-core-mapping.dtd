@@ -249,6 +249,7 @@
         defaults to the default analyzer.
     -->
     <!ATTLIST class all-analyzer CDATA #IMPLIED>
+    
     <!ATTLIST class all-omit-norms (true|false) "false">
     <!--
         The global converter lookup name registered with the configuration. Responsible for converting
@@ -269,6 +270,8 @@
         Defaults to true.
     -->
     <!ATTLIST class support-unmarshall (true|false) #IMPLIED>
+
+    <!ATTLIST class managed-id (auto|true|false|no|no_store) #IMPLIED>
 
 <!ELEMENT id (
     meta-data*
@@ -291,7 +294,7 @@
     <!ATTLIST property analyzer CDATA #IMPLIED>
     <!ATTLIST property override (true|false) "true">
     <!ATTLIST property accessor CDATA "property">
-    <!ATTLIST property managed-id (auto|true|false) "auto">
+    <!ATTLIST property managed-id (auto|true|false|no|no_store) #IMPLIED>
     <!ATTLIST property managed-id-index (no|un_tokenized) #IMPLIED>
     <!ATTLIST property managed-id-converter CDATA #IMPLIED>
     <!ATTLIST property exclude-from-all (true|false) "false">

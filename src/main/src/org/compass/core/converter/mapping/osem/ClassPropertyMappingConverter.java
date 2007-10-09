@@ -33,7 +33,7 @@ public class ClassPropertyMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
-        
+
         ClassPropertyMapping aMapping = (ClassPropertyMapping) mapping;
         boolean store = false;
         boolean disableInternalMappings = false;
@@ -54,6 +54,11 @@ public class ClassPropertyMappingConverter implements Converter {
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         ClassPropertyMapping aMapping = (ClassPropertyMapping) mapping;
+        // if we have not set an id property, it means that we do not know how to
+        // unmarshall this property, simply return null.
+        if (!aMapping.isIdPropertySet()) {
+            return null;
+        }
         ClassPropertyMetaDataMapping m = aMapping.getIdMapping();
         return m.getConverter().unmarshall(resource, m, context);
     }

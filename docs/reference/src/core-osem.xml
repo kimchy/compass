@@ -581,10 +581,20 @@ public class A {
             <para><emphasis>TRUE</emphasis>: Compass will always create an internal meta-data id for the searchable property.</para>
           </listitem>
           <listitem>
-            <para><emphasis>FALSE</emphasis>: Compass will not create an internal meta-data id, and will use the first searchable meta-data as the searchable property meta-data identifier..</para>
+            <para><emphasis>FALSE</emphasis>: Compass will not create an internal meta-data id, and will use the first searchable meta-data as the searchable property meta-data identifier.</para>
+          </listitem>
+          <listitem>
+            <para><emphasis>NO</emphasis>: Compass will not create an internal meta-data id, and will not try to un-marshall this property at all.</para>
+          </listitem>
+          <listitem>
+            <para><emphasis>NO_STORE</emphasis>: Compass will not create an internal meta-data id if all of this property mappings have store="no". Otherwise, it will be treated as AUTO.</para>
           </listitem>
         </itemizedlist>
       </para>
+
+      <para>
+	      Setting the managed id can be done on several levels. It can be set on the property mapping level explicitly. It can be set on the class level mapping which will then be applies to all the properties that are not set explicitly. And it can also be set globally be setting the following setting <literal>compass.osem.managedId</literal> which will apply to all the classes and properties that do not set it explicitly.
+	  </para>
     </sect2>
     
     <sect2 id="core-osem-inheritance">

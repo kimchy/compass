@@ -182,6 +182,13 @@ public @interface Searchable {
      * set here.
      */
     SupportUnmarshall supportUnmarshall() default SupportUnmarshall.NA;
+
+    /**
+     * Controls the managed id value for all the mapped properties that have no explicit setting
+     * of the managed id (also default to NA). The default value for the managed id is derived from
+     * globabl Compass settings and defaults to AUTO.
+     */
+    ManagedId managedId() default ManagedId.NA;
                       
     /**
      * A list of aliases to extend. Extending the aliases allows to include other

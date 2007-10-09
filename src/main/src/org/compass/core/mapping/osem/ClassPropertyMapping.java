@@ -50,10 +50,22 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         public static final ManagedId TRUE = new ManagedId("TRUE");
 
         /**
-         * The class proeprty will not have an internal managed id, the
+         * The class property will not have an internal managed id, the
          * meta-data that will be used as an id will be the first one.
          */
         public static final ManagedId FALSE = new ManagedId("FALSE");
+
+        /**
+         * The class proeprty will not create an internal managed id if
+         * all its meta data mappings have store=no 
+         */
+        public static final ManagedId NO_STORE = new ManagedId("NO_STORE");
+
+        /**
+         * The class property will not have any internal meta-data id, causing
+         * it not to be unmarshalled at all.
+         */
+        public static final ManagedId NO = new ManagedId("NO");
 
         public static String toString(ManagedId managedId) {
             if (managedId == ManagedId.AUTO) {
@@ -62,6 +74,10 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
                 return "true";
             } else if (managedId == ManagedId.FALSE) {
                 return "false";
+            } else if (managedId == ManagedId.NO_STORE) {
+                return "no_store";
+            } else if (managedId == ManagedId.NO) {
+                return "no";
             }
             throw new IllegalArgumentException("Can't find managed-id for [" + managedId + "]");
         }
@@ -73,6 +89,10 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
                 return ManagedId.TRUE;
             } else if ("false".equalsIgnoreCase(managedId)) {
                 return ManagedId.FALSE;
+            } else if ("no_store".equalsIgnoreCase(managedId)) {
+                return ManagedId.NO_STORE;
+            } else if ("no".equalsIgnoreCase(managedId)) {
+                return ManagedId.NO;
             }
             throw new IllegalArgumentException("Can't find managed-id for [" + managedId + "]");
         }
@@ -85,7 +105,7 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private int idPropertyIndex = ID_NOT_SET_VALUE;
 
-    private ManagedId managedId = ManagedId.AUTO;
+    private ManagedId managedId;
 
     private Converter managedIdConverter;
 

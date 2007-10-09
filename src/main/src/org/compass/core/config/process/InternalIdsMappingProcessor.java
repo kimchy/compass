@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.compass.core.Property;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
@@ -104,6 +105,11 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         List pMappings = callback.getResourcePropertyMappings();
         for (Iterator it = pMappings.iterator(); it.hasNext();) {
             ResourcePropertyMapping pMapping = (ResourcePropertyMapping) it.next();
+            // no need to count the ones we don't store since they won't
+            // be reflected when we unmarshall the data
+            if (pMapping.getStore() == Property.Store.NO) {
+                continue;
+            }
             Integer count = (Integer) propertyMappingsMap.get(pMapping.getName());
             if (count == null) {
                 count = new Integer(1);
@@ -116,44 +122,81 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         List classPropertyMappings = callback.getClassPropertyMappings();
         for (Iterator it = classPropertyMappings.iterator(); it.hasNext();) {
             ClassPropertyMapping classPropertyMapping = (ClassPropertyMapping) it.next();
+
+            // first, set the managed id if not set usign default (up to class mapping, and if
+            // not set, up to Compass settings, and if not there, default to auto).
+            if (classPropertyMapping.getManagedId() == null) {
+                if (classMapping.getManagedId() == null) {
+                    String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, "auto");
+                    classPropertyMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(globalManagedId));
+                } else {
+                    classPropertyMapping.setManagedId(classMapping.getManagedId());
+                }
+            }
+
             boolean mustBeUnTokenized = false;
             if (classPropertyMapping instanceof ClassIdPropertyMapping) {
                 mustBeUnTokenized = true;
             }
             if (classPropertyMapping.isIdPropertySet()) {
-                // the id has been set already (for example - in case of
-                // reference)
+                // the id has been set already (for example - in case of reference)
                 continue;
             } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.TRUE
                     || classPropertyMapping.mappingsSize() == 0) {
                 MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping);
             } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.AUTO) {
-                boolean foundPropertyId = false;
+                autoAddIfRequiredInternalId(propertyMappingsMap, classPropertyMapping, mustBeUnTokenized);
+            } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.NO_STORE) {
+                boolean allMetaDataHasStoreNo = true;
                 for (int i = 0; i < classPropertyMapping.mappingsSize(); i++) {
                     ClassPropertyMetaDataMapping pMapping = (ClassPropertyMetaDataMapping) classPropertyMapping.getMapping(i);
                     if (!pMapping.canActAsPropertyId()) {
                         continue;
                     }
-                    // if there is only one mapping, and it is stored, use it as
-                    // the id
-                    if (((Integer) propertyMappingsMap.get(pMapping.getName())).intValue() == 1
-                            && (pMapping.getStore() == Property.Store.YES || pMapping.getStore() == Property.Store.COMPRESS)) {
-                        if (mustBeUnTokenized && pMapping.getIndex() != Property.Index.UN_TOKENIZED) {
-                            continue;
-                        }
-                        classPropertyMapping.setIdPropertyIndex(i);
-                        foundPropertyId = true;
-                        break;
+                    if (pMapping.getStore() != Property.Store.NO) {
+                        allMetaDataHasStoreNo = false;
                     }
                 }
-
-                if (!foundPropertyId) {
-                    MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping);
-                }
+                if (!allMetaDataHasStoreNo) {
+                    autoAddIfRequiredInternalId(propertyMappingsMap, classPropertyMapping, mustBeUnTokenized);
+                } // else, don't set the id property, and don't unmarshall it
+                
+            } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.NO) {
+                // do nothing, don't set the managed id, won't be unmarshallled
             } else { // ManagedId.FALSE
                 // mark the first one as the id, the user decides
                 classPropertyMapping.setIdPropertyIndex(0);
             }
+        }
+    }
+
+    private void autoAddIfRequiredInternalId(HashMap propertyMappingsMap, ClassPropertyMapping classPropertyMapping, boolean mustBeUnTokenized) {
+        boolean foundPropertyId = false;
+        for (int i = 0; i < classPropertyMapping.mappingsSize(); i++) {
+            ClassPropertyMetaDataMapping pMapping = (ClassPropertyMetaDataMapping) classPropertyMapping.getMapping(i);
+            if (!pMapping.canActAsPropertyId()) {
+                continue;
+            }
+            if (!propertyMappingsMap.containsKey(pMapping.getName())) {
+                // there is none defined, this means that they got filtered out since they are not
+                // stored. continue in case we manage to find a candidate for internal id, if not
+                // we need to add an internal one in such cases
+                continue;
+            }
+            // if there is only one mapping, and it is stored, use it as the id
+            if (((Integer) propertyMappingsMap.get(pMapping.getName())).intValue() == 1
+                    && (pMapping.getStore() == Property.Store.YES || pMapping.getStore() == Property.Store.COMPRESS)) {
+                if (mustBeUnTokenized && pMapping.getIndex() != Property.Index.UN_TOKENIZED) {
+                    continue;
+                }
+                classPropertyMapping.setIdPropertyIndex(i);
+                foundPropertyId = true;
+                break;
+            }
+        }
+
+        if (!foundPropertyId) {
+            MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping);
         }
     }
 
