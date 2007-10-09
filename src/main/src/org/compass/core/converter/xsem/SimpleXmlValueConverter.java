@@ -38,14 +38,14 @@ import org.compass.core.xml.XmlObject;
 public class SimpleXmlValueConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
+        XmlPropertyMapping xmlPropertyMapping = (XmlPropertyMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
         // don't save a null value if the context does not states so
-        if (root == null && !handleNulls(context)) {
+        if (root == null && !handleNulls(xmlPropertyMapping, context)) {
             return false;
         }
         XmlObject xmlObject = (XmlObject) root;
-        XmlPropertyMapping xmlPropertyMapping = (XmlPropertyMapping) mapping;
-        String sValue = getNullValue(context);
+        String sValue = getNullValue(xmlPropertyMapping, context);
         if (root != null) {
             sValue = toString(xmlObject, xmlPropertyMapping);
         }
@@ -66,29 +66,32 @@ public class SimpleXmlValueConverter implements Converter {
     }
 
     /**
-     * Should the converter handle nulls? Handling nulls means should the
+     * <p>Should the converter handle nulls? Handling nulls means should the
      * converter process nulls or not. Usually the converter will not
      * persist null values, but sometimes it might be needed
      * ({@link org.compass.core.marshall.MarshallingContext#handleNulls()}).
-     * <p/>
-     * Extracted to a method so special converters can control null handling.
      *
-     * @param context
+     * <p>If a specific null value is configured with the {@link org.compass.core.mapping.ResourcePropertyMapping}
+     * then the converter will always handle nulls and write it.
+     *
+     * @param context The marshalling context
      * @return <code>true</code> if the converter should handle null values
      */
-    protected boolean handleNulls(MarshallingContext context) {
-        return context.handleNulls();
+    protected boolean handleNulls(ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return resourcePropertyMapping.hasNullValue() || context.handleNulls();
     }
 
     /**
      * If the converter handle nulls, the value that will be stored in the
-     * search engine for <code>null</code> values (during the marshall process).
+     * search engine for <code>null</code> values (during the marshall process). Uses
+     * {@link org.compass.core.mapping.ResourcePropertyMapping#getNullValue()}.
      *
-     * @param context
+     * @param resourcePropertyMapping The resource proeprty mapping to get the null value from
+     * @param context                 The marshalling context
      * @return Null value that will be inserted for <code>null</code>s.
      */
-    protected String getNullValue(MarshallingContext context) {
-        return context.getSearchEngine().getNullValue();
+    protected String getNullValue(ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return resourcePropertyMapping.getNullValue();
     }
 
     /**

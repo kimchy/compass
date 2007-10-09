@@ -16,14 +16,16 @@
 
 package org.compass.core.converter.basic;
 
+import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
  */
 public class StringConverter extends AbstractBasicConverter {
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return str.intern();
     }
 }

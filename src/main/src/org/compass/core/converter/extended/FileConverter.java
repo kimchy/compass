@@ -18,19 +18,21 @@ package org.compass.core.converter.extended;
 
 import java.io.File;
 
+import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.basic.AbstractBasicConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
  */
 public class FileConverter extends AbstractBasicConverter {
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return new File(str);
     }
 
-    public String toString(Object obj, ResourcePropertyMapping resourcePropertyMapping) {
-        return ((File) obj).getPath();
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return ((File) o).getPath();
     }
 }

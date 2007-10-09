@@ -79,4 +79,8 @@ public interface ResourcePropertyMapping extends Mapping {
     Property.TermVector getTermVector();
 
     ReverseType getReverse();
+
+    String getNullValue();
+
+    boolean hasNullValue();
 }

@@ -21,13 +21,14 @@ import java.net.URISyntaxException;
 
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
  */
 public class URIConverter extends AbstractBasicConverter {
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         try {
             return new URI(str);
         } catch (URISyntaxException e) {

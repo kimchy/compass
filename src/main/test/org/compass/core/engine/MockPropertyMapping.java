@@ -159,4 +159,12 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
     public String getRootAlias() {
         return null;
     }
+
+    public String getNullValue() {
+        return null;
+    }
+
+    public boolean hasNullValue() {
+        return false;
+    }
 }

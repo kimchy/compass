@@ -664,6 +664,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             if (StringUtils.hasLength(searchableProp.analyzer())) {
                 mdMapping.setAnalyzer(searchableProp.analyzer());
             }
+            if (StringUtils.hasLength(searchableProp.nullValue())) {
+                mdMapping.setNullValue(searchableProp.nullValue());
+            }
             mdMapping.setExcludeFromAll(searchableProp.excludeFromAll());
 
             classPropertyMapping.addMapping(mdMapping);
@@ -709,6 +712,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         if (StringUtils.hasLength(searchableMetaData.analyzer())) {
             mdMapping.setAnalyzer(searchableMetaData.analyzer());
+        }
+        if (StringUtils.hasLength(searchableMetaData.nullValue())) {
+            mdMapping.setNullValue(searchableMetaData.nullValue());
         }
         mdMapping.setExcludeFromAll(searchableMetaData.excludeFromAll());
 

@@ -19,19 +19,20 @@ package org.compass.core.converter.basic;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
  */
 public class EnumConverter extends AbstractBasicConverter {
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         ClassPropertyMetaDataMapping metaDataMapping = (ClassPropertyMetaDataMapping) resourcePropertyMapping;
         Class<? extends Enum> enumType = (Class<? extends Enum>) metaDataMapping.getGetter().getReturnType();
         return Enum.valueOf(enumType, str);
     }
 
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         return ((Enum) o).name();
     }
 }

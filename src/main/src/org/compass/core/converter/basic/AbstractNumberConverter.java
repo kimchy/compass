@@ -24,6 +24,7 @@ import java.util.Locale;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * A base class for number based converters. Allows for formatting (if specified) and for default
@@ -65,11 +66,7 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
 
     protected abstract Object fromNumber(Number number);
 
-    protected String defaultToString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
-        return super.toString(o, resourcePropertyMapping);
-    }
-
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         if (hasFormatter) {
             for (int i = 0; i < formatters.length; i++) {
                 try {
@@ -84,11 +81,15 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
         }
     }
 
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         if (hasFormatter) {
             return formatters[0].format(o);
         } else {
-            return defaultToString(o, resourcePropertyMapping);
+            return defaultToString(o, resourcePropertyMapping, context);
         }
+    }
+
+    protected String defaultToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return super.doToString(o, resourcePropertyMapping, context);
     }
 }

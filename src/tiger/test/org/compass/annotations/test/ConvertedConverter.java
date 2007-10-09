@@ -22,6 +22,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.basic.AbstractBasicConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
@@ -34,14 +35,14 @@ public class ConvertedConverter extends AbstractBasicConverter implements Compas
         separator = settings.getSetting("separator", "/");
     }
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         Converted converted = new Converted();
         converted.value1 = str.substring(0, str.indexOf(separator));
         converted.value2 = str.substring(str.indexOf(separator) + separator.length());
         return converted;
     }
 
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         Converted converted = (Converted) o;
         return converted.value1 + separator + converted.value2;
     }

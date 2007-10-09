@@ -1,0 +1,16 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.converter.nullvalue">
+
+    <class name="A" alias="a">
+
+        <id name="id" accessor="field"/>
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+    </class>
+</compass-core-mapping>

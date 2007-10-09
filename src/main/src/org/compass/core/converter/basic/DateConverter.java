@@ -25,6 +25,7 @@ import java.util.TimeZone;
 
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * Converts dates to String and vice versa. Supports the notion of "now" using
@@ -72,7 +73,7 @@ public class DateConverter extends AbstractFormatConverter {
     /**
      * Try all the configured formatters to format the str into an Object.
      */
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         try {
             if (str.toLowerCase().startsWith(DEFAULT_NOW_PREFIX)) {
                 // TODO have timezone pluggable
@@ -95,7 +96,7 @@ public class DateConverter extends AbstractFormatConverter {
     /**
      * Uses the first configured formatter (also known as the default one) to convert it to String.
      */
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         return formatters[0].format(o);
     }
 }

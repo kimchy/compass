@@ -47,6 +47,7 @@
     <!ATTLIST xml-property term-vector (no|yes|positions|offsets|positions_offsets) "no">
     <!ATTLIST xml-property omit-norms (true|false) "false">
     <!ATTLIST xml-property reverse (no|reader|string) "no">
+    <!ATTLIST xml-property null-value CDATA #IMPLIED>
     <!ATTLIST xml-property analyzer CDATA #IMPLIED>
     <!ATTLIST xml-property override (true|false) "true">
     <!ATTLIST xml-property exclude-from-all (true|false) #IMPLIED>
@@ -122,6 +123,7 @@
     <!ATTLIST resource-property omit-norms (true|false) "false">
     <!ATTLIST resource-property reverse (no|reader|string) "no">
     <!ATTLIST resource-property analyzer CDATA #IMPLIED>
+    <!ATTLIST resource-property null-value CDATA #IMPLIED>
     <!ATTLIST resource-property override (true|false) "true">
     <!ATTLIST resource-property exclude-from-all (true|false) #IMPLIED>
     <!ATTLIST resource-property converter CDATA #IMPLIED>
@@ -361,6 +363,7 @@
     <!ATTLIST dynamic-meta-data converter CDATA #REQUIRED>
     <!ATTLIST dynamic-meta-data boost CDATA #IMPLIED>
     <!ATTLIST dynamic-meta-data format CDATA #IMPLIED>
+    <!ATTLIST dynamic-meta-data null-value CDATA #IMPLIED>
     <!ATTLIST dynamic-meta-data type CDATA #IMPLIED>
 
 <!ELEMENT meta-data (
@@ -371,6 +374,7 @@
     <!ATTLIST meta-data term-vector (no|yes|positions|offsets|positions_offsets) "no">
     <!ATTLIST meta-data omit-norms (true|false) "false">
     <!ATTLIST meta-data reverse (no|reader|string) "no">
+    <!ATTLIST meta-data null-value CDATA #IMPLIED>
     <!ATTLIST meta-data analyzer CDATA #IMPLIED>
     <!ATTLIST meta-data exclude-from-all (true|false) #IMPLIED>
     <!ATTLIST meta-data converter CDATA #IMPLIED>

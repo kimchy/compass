@@ -1,6 +1,14 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
+VERSION 1.2 GA ()
+=================
+
+1. Extending AbstractBasicConverter for custom converters should now override doFromString (and
+   possibly doToString) instead of the previous fromString and toString. The converter code will
+   remain the same.
+
+
 VERSION 1.2 RC1 (September 4, 2007)
 ===================================
 

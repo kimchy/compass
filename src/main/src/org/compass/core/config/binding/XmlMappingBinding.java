@@ -275,6 +275,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         xmlPropertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         xmlPropertyMapping.setInternal(false);
         xmlPropertyMapping.setAnalyzer(xmlPropConf.getAttribute("analyzer", null));
+        xmlPropertyMapping.setNullValue(xmlPropConf.getAttribute("null-value", null));
         boolean excludeFromAll = xmlPropConf.getAttributeAsBoolean("exclude-from-all", false);
         xmlPropertyMapping.setExcludeFromAll(excludeFromAll);
         boolean override = xmlPropConf.getAttributeAsBoolean("override", true);
@@ -396,6 +397,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         propertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         propertyMapping.setInternal(false);
         propertyMapping.setAnalyzer(resourcePropConf.getAttribute("analyzer", null));
+        propertyMapping.setNullValue(resourcePropConf.getAttribute("null-value", null));
         boolean excludeFromAll = resourcePropConf.getAttributeAsBoolean("exclude-from-all", false);
         propertyMapping.setExcludeFromAll(excludeFromAll);
         boolean override = resourcePropConf.getAttributeAsBoolean("override", true);
@@ -595,6 +597,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         dynamicMetaDataMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         dynamicMetaDataMapping.setInternal(false);
         dynamicMetaDataMapping.setAnalyzer(dynamicConf.getAttribute("analyzer", null));
+        dynamicMetaDataMapping.setNullValue(dynamicConf.getAttribute("null-value", null));
         dynamicMetaDataMapping.setExcludeFromAll(dynamicConf.getAttributeAsBoolean("exclude-from-all", false));
     }
 
@@ -790,8 +793,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         mdMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         mdMapping.setInternal(false);
         mdMapping.setAnalyzer(metadataConf.getAttribute("analyzer", classPropertyMapping.getAnalyzer()));
-        boolean excludeFromAll = metadataConf.getAttributeAsBoolean("exclude-from-all", classPropertyMapping
-                .isExcludeFromAll());
+        mdMapping.setNullValue(metadataConf.getAttribute("null-value", null));
+        boolean excludeFromAll = metadataConf.getAttributeAsBoolean("exclude-from-all", classPropertyMapping.isExcludeFromAll());
         mdMapping.setExcludeFromAll(excludeFromAll);
     }
 

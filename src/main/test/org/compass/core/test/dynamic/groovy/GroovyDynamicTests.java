@@ -53,10 +53,26 @@ public class GroovyDynamicTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testExpressionWithNullValue() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.setId(new Long(1));
+        a.setDate(null);
+        session.save("a2", a);
+
+        Resource resource = session.loadResource("a2", new Long(1));
+        assertEquals("moo", resource.get("test"));
+
+        tr.commit();
+        session.close();
+    }
+
     public void testTwoCompassInstancesBuild() throws Exception {
         Compass compass2 = buildCompass();
 
-        
+
         CompassSession session = compass2.openSession();
         CompassTransaction tr = session.beginTransaction();
 

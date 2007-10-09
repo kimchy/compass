@@ -19,19 +19,21 @@ package org.compass.core.converter.basic;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 public class CalendarConverter extends DateConverter {
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
-        Date date = (Date) super.fromString(str, resourcePropertyMapping);
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+        Date date = (Date) super.doFromString(str, resourcePropertyMapping, context);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar;
     }
 
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         Date date = ((Calendar) o).getTime();
-        return super.toString(date, resourcePropertyMapping);
+        return super.doToString(date, resourcePropertyMapping, context);
     }
 }

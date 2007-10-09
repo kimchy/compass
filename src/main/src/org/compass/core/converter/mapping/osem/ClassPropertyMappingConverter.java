@@ -33,10 +33,7 @@ public class ClassPropertyMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
-        // no need to marshall if it is null
-        if (root == null && !context.handleNulls()) {
-            return false;
-        }
+        
         ClassPropertyMapping aMapping = (ClassPropertyMapping) mapping;
         boolean store = false;
         boolean disableInternalMappings = false;

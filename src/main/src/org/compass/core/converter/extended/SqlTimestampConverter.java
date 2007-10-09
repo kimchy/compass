@@ -22,6 +22,7 @@ import java.util.Date;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.basic.DateConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
@@ -35,16 +36,16 @@ public class SqlTimestampConverter extends DateConverter {
         return null;
     }
 
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         if (hasFormatter) {
-            return super.toString(o, resourcePropertyMapping);
+            return super.doToString(o, resourcePropertyMapping, context);
         }
         return o.toString();
     }
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         if (hasFormatter) {
-            Date date = (Date) super.fromString(str, resourcePropertyMapping);
+            Date date = (Date) super.doFromString(str, resourcePropertyMapping, context);
             return new Timestamp(date.getTime());
         }
         return Timestamp.valueOf(str);

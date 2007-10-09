@@ -50,12 +50,14 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
         SearchEngine searchEngine = context.getSearchEngine();
 
-        // don't save a null value if the context does not states so
         if (root == null) {
             return false;
         }
         Object value = evaluate(root, resourcePropertyMapping);
         if (value == null) {
+            if (resourcePropertyMapping.hasNullValue()) {
+                addProperty(resourcePropertyMapping.getNullValue(), resourcePropertyMapping, searchEngine, root, context, resource);
+            }
             return false;
         }
         // save the value in the search engine. Handle array/collection and single values
@@ -76,14 +78,19 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
     }
 
     protected void addProperty(Object value, ResourcePropertyMapping resourcePropertyMapping, SearchEngine searchEngine,
-                             Object root, MarshallingContext context, Resource resource) {
+                               Object root, MarshallingContext context, Resource resource) {
         String sValue;
         if (formatConverter == null) {
             sValue = value.toString();
         } else {
             sValue = formatConverter.toString(value, resourcePropertyMapping);
         }
-        Property p = searchEngine.createProperty(sValue, resourcePropertyMapping);
+        addProperty(sValue, resourcePropertyMapping, searchEngine, root, context, resource);
+    }
+
+    private void addProperty(String value, ResourcePropertyMapping resourcePropertyMapping, SearchEngine searchEngine,
+                             Object root, MarshallingContext context, Resource resource) {
+        Property p = searchEngine.createProperty(value, resourcePropertyMapping);
         doSetBoost(p, root, resourcePropertyMapping, context);
         resource.addProperty(p);
     }
@@ -109,7 +116,7 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
     /**
      * Does nothing since there is no meaning for un-marshalling for dynamic converters
      */
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         // do nothing here
         return null;
     }

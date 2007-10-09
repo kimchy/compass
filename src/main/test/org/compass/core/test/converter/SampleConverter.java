@@ -19,8 +19,10 @@ package org.compass.core.test.converter;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.basic.AbstractBasicConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
@@ -33,12 +35,12 @@ public class SampleConverter extends AbstractBasicConverter implements CompassCo
         seperator = settings.getSetting("seperator", "XXX");
     }
 
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         A.TwoStringsValue value = (A.TwoStringsValue) o;
         return value.getValue1() + seperator + value.getValue2();
     }
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         A.TwoStringsValue value = new A.TwoStringsValue();
         value.setValue1(str.substring(0, str.indexOf(seperator)));
         value.setValue2(str.substring(str.indexOf(seperator) + seperator.length()));

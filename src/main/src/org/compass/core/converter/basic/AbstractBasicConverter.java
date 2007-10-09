@@ -20,7 +20,6 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.ResourcePropertyConverter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -29,16 +28,10 @@ import org.compass.core.marshall.MarshallingContext;
  * An easy to use abstact class for Basic converters. Handles converters that usually deals with String
  * as a result of the conversion.
  *
- * <p>This base class will create a simple {@link Property} when marshalling,
- * calling {@link #toString(Object,org.compass.core.mapping.ResourcePropertyMapping)} as the {@link Property}
- * value. And will use the {@link #fromString(String,org.compass.core.mapping.ResourcePropertyMapping)} when
- * unmarhslling.
- *
- * <p>If special <code>null</code> values handling is required, the
- * {@link #handleNulls(org.compass.core.marshall.MarshallingContext)}, and
- * {@link #getNullValue(org.compass.core.marshall.MarshallingContext)} can be overriden. Note, that it is best
- * to call base implementations and extend the base funtionallity, since the base class takes special care
- * when using collections.
+ * <p>Allows to override the actual marshalling and un-marshalling of object to strings. In order to override
+ * marshalling, override {@link #doToString(Object,org.compass.core.mapping.ResourcePropertyMapping,org.compass.core.marshall.MarshallingContext)}
+ * and in order to override un-marshalling overrode
+ * {@link #doFromString(String,org.compass.core.mapping.ResourcePropertyMapping,org.compass.core.marshall.MarshallingContext)}.
  *
  * @author kimchy
  */
@@ -48,16 +41,12 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
             throws ConversionException {
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
 
         // don't save a null value if the context does not states so
-        if (root == null && !handleNulls(context)) {
+        if (root == null && !handleNulls(resourcePropertyMapping, context)) {
             return false;
         }
-        String sValue = getNullValue(context);
-        if (root != null) {
-            sValue = toString(root, resourcePropertyMapping);
-        }
+        String sValue = toString(root, resourcePropertyMapping, context);
         Property p = createProperty(sValue, resourcePropertyMapping, context);
         doSetBoost(p, root, resourcePropertyMapping, context);
         resource.addProperty(p);
@@ -77,7 +66,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
         Property p = resource.getProperty(propertyName);
 
         // don't set anything if null
-        if (p == null || isNullValue(context, p.getStringValue())) {
+        if (p == null) {
             return null;
         }
 
@@ -103,36 +92,44 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
      * persist null values, but sometimes it might be needed
      * ({@link org.compass.core.marshall.MarshallingContext#handleNulls()}).
      *
-     * <p>Extracted to a method so special converters can control null handling.
+     * <p>If a specific null value is configured with the {@link org.compass.core.mapping.ResourcePropertyMapping}
+     * then the converter will always handle nulls and write it.
      *
      * @param context The marshalling context
      * @return <code>true</code> if the converter should handle null values
      */
-    protected boolean handleNulls(MarshallingContext context) {
-        return context.handleNulls();
+    protected boolean handleNulls(ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return resourcePropertyMapping.hasNullValue() || context.handleNulls();
     }
 
     /**
      * If the converter handle nulls, the value that will be stored in the
-     * search engine for <code>null</code> values (during the marshall process).
+     * search engine for <code>null</code> values (during the marshall process). Uses
+     * {@link org.compass.core.mapping.ResourcePropertyMapping#getNullValue()}.
      *
-     * @param context The marshalling context
+     * @param resourcePropertyMapping The resource proeprty mapping to get the null value from
+     * @param context                 The marshalling context
      * @return Null value that will be inserted for <code>null</code>s.
      */
-    protected String getNullValue(MarshallingContext context) {
-        return context.getSearchEngine().getNullValue();
+    protected String getNullValue(ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return resourcePropertyMapping.getNullValue();
     }
 
     /**
-     * Is the value read from the search engine is a <code>null</code> value
-     * during the unmarshall process.
-     *
-     * @param context The marshalling context
-     * @param value   The value to check for <code>null</code> value.
-     * @return <code>true</code> if the value represents a null value.
+     * Does this value represents a null value. If the {@link org.compass.core.mapping.ResourcePropertyMapping}
+     * is configured with a null value, then returns <code>true</code> if the null value equals the value read
+     * from the index. If the resource property mapping is not configured with a null value, checks if this
+     * it has the default value representing a null value.
      */
-    protected boolean isNullValue(MarshallingContext context, String value) {
-        return context.getSearchEngine().isNullValue(value);
+    protected boolean isNullValue(String value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        if (value == null) {
+            return true;
+        }
+        if (resourcePropertyMapping.hasNullValue()) {
+            return resourcePropertyMapping.getNullValue().equals(value);
+        }
+        // the default null value is an empty string
+        return value.length() == 0;
     }
 
     /**
@@ -153,27 +150,66 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
     }
 
     /**
-     * Override option of toString, simply calls {@link #toString(Object,org.compass.core.mapping.ResourcePropertyMapping)}
-     * (without the marshalling context).
+     * Implementation calls {@link #toString(Object,org.compass.core.mapping.ResourcePropertyMapping,org.compass.core.marshall.MarshallingContext)}
+     * with <code>null</code> value for the context parameter.
+     *
+     * <p>Note, please don't override this method, please override {@link #doToString(Object,org.compass.core.mapping.ResourcePropertyMapping,org.compass.core.marshall.MarshallingContext)}
+     * to change the how the object gets marshalled into a String.
      */
-    protected String toString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
-        return toString(o, resourcePropertyMapping);
+    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
+        return toString(o, resourcePropertyMapping, null);
     }
 
     /**
-     * Default implementation of toString, simply calls the Object toString.
+     * Implementation handle nulls and if the object is not null, delegates to
+     * {@link #doToString(Object,org.compass.core.mapping.ResourcePropertyMapping,org.compass.core.marshall.MarshallingContext)}.
+     *
+     * <p>Note, please don't override this method, please override {@link #doToString(Object,org.compass.core.mapping.ResourcePropertyMapping,org.compass.core.marshall.MarshallingContext)}
+     * to change the how the object gets marshalled into a String.
      */
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
+    protected String toString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        String sValue;
+        if (o != null) {
+            sValue = doToString(o, resourcePropertyMapping, context);
+        } else {
+            sValue = getNullValue(resourcePropertyMapping, context);
+        }
+        return sValue;
+    }
+
+    /**
+     * Allows to override to toString operation. Default implementation calls the object <code>toString</code>.
+     *
+     * <p>Note, the marshalling context might be null.
+     */
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         return o.toString();
     }
 
     /**
-     * An override option default to calling {@link #fromString(String,org.compass.core.mapping.ResourcePropertyMapping)}.
-     * Allows to use the marshalling context.
+     * Calls {@link #fromString(String, org.compass.core.mapping.ResourcePropertyMapping, org.compass.core.marshall.MarshallingContext)}
+     * with a null value for the context.
+     */
+    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+        return fromString(str, resourcePropertyMapping, null);
+    }
+
+    /**
+     * Performs null checks (by calling {@link #isNullValue(String, org.compass.core.mapping.ResourcePropertyMapping, org.compass.core.marshall.MarshallingContext)})
+     * and then calls {@link #doFromString(String, org.compass.core.mapping.ResourcePropertyMapping, org.compass.core.marshall.MarshallingContext)}
+     * if the value is not <code>null</code>.
      */
     protected Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
-        return fromString(str, resourcePropertyMapping);
+        if (isNullValue(str, resourcePropertyMapping, context)) {
+            return null;
+        }
+        return doFromString(str, resourcePropertyMapping, context);
     }
+
+    /**
+     * Override the from String in order to un-marshall the String back into its object representation.
+     */
+    protected abstract Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException;
 
     /**
      * Return <code>false</code>. Specific parsers that can convert on query string should override this method

@@ -9,7 +9,7 @@
     </para>
     
     <para>
-      The process of saving an Object into the search engine is called marshalling, and the process of retrieving an object from the search engine is called un-marhsalling. As described in <xref linkend="core-searchengine-AliasResourceProperty"/>, Compass uses Resources when working against a search engine, and OSEM is the process of marshalling and un-marshalling an Object tree to a Resource (for simplicity, think of a Resource as a Map).
+      The process of saving an Object into the search engine is called marshaling, and the process of retrieving an object from the search engine is called un-marshaling. As described in <xref linkend="core-searchengine-AliasResourceProperty"/>, Compass uses Resources when working against a search engine, and OSEM is the process of marshaling and un-marshaling an Object tree to a Resource (for simplicity, think of a Resource as a Map).
     </para>
   </sect1>
   
@@ -133,7 +133,7 @@ public class Author {
       <title>Root</title>
       
       <para>
-        There are two types of searchable classes in Compass, root searchable classes and non-root searchable classes. Root searchable classes are best defined as classes that return as hits when a search is performed. For example, in a scenario where we have Customer class with a Name class, the Customer will be a root searchable class, and Name would have root="false" in it since it does not "stands on its own". Another way of looking at root searchable classes is as searchable classes that end up marhsalled into their own Resource (which is then used to work against the search engine).
+        There are two types of searchable classes in Compass, root searchable classes and non-root searchable classes. Root searchable classes are best defined as classes that return as hits when a search is performed. For example, in a scenario where we have Customer class with a Name class, the Customer will be a root searchable class, and Name would have root="false" in it since it does not "stands on its own". Another way of looking at root searchable classes is as searchable classes that end up marshaled into their own Resource (which is then used to work against the search engine).
       </para>
 
       <para>
@@ -557,7 +557,7 @@ public class A {
       <title>Managed Id</title>
       
       <para>
-        When marshalling an Object into a search engine, Compass might add internal meta-data for certain Searchable Properties in order to properly un-marshall it correctly. Here is an example mapping where an internal meta-data id will be created for the firstName and lastName searchable properties:
+        When marshaling an Object into a search engine, Compass might add internal meta-data for certain Searchable Properties in order to properly un-marshall it correctly. Here is an example mapping where an internal meta-data id will be created for the firstName and lastName searchable properties:
 <programlisting><![CDATA[@Searchable
 public class A {
   @SearchableId
@@ -1238,6 +1238,7 @@ public class Daughter extends Child {
       boost="boost value for the meta-data"
       analyzer="name of the analyzer"
       reverse="no|reader|string"
+      null-value="String value that will be stored when the property value is null"
       exclude-from-all="[parent's exclude-from-all]|false|true"
       converter="converter lookup name"
       term-vector="no|yes|positions|offsets|positions_offsets"
@@ -1284,6 +1285,10 @@ public class Daughter extends Child {
               <entry>Excludes the meta-data from participating in the "all" meta-data.</entry>
             </row>
             <row>
+              <entry>null-value (optional, defaults to not storing the anything on null)</entry>
+              <entry>A String null value that will be used when the property evaluates to null.</entry>
+            </row>
+            <row>
               <entry>converter (optional)</entry>
               <entry>The global converter lookup name registered with the configuration. Note, that in case of a <literal>Collection</literal> property, the converter will be applied to the collection elements (Compass has it's own converter for Collections).</entry>
             </row>
@@ -1317,6 +1322,7 @@ public class Daughter extends Child {
       boost="boost value for the meta-data"
       analyzer="name of the analyzer"
       reverse="no|reader|string"
+      null-value="optional String value when expression is null"
       exclude-from-all="[parent's exclude-from-all]|false|true"
       converter="the Dynamic Converter lookup name (required)"
       format="the format string (only applies to formatted elements)"
@@ -1360,6 +1366,10 @@ public class Daughter extends Child {
             <row>
               <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
               <entry>Excludes the meta-data from participating in the "all" meta-data.</entry>
+            </row>
+            <row>
+              <entry>null-value (optional, defaults to not saving the value)</entry>
+              <entry>If the expression evaluates to null, the String null value that will be stored for it.</entry>
             </row>
             <row>
               <entry>converter (required)</entry>

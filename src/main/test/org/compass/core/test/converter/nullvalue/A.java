@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package org.compass.core.converter.basic;
+package org.compass.core.test.converter.nullvalue;
 
-import org.compass.core.converter.ConversionException;
-import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.marshall.MarshallingContext;
+import java.util.Date;
 
 /**
  * @author kimchy
  */
-public class BooleanConverter extends AbstractBasicConverter {
+public class A {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
-        return str.equals("true") ? Boolean.TRUE : Boolean.FALSE;
-    }
+    long id;
+
+    Date value;
 }

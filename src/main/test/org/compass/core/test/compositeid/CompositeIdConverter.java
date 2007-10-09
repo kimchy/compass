@@ -19,20 +19,21 @@ package org.compass.core.test.compositeid;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.basic.AbstractBasicConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
  */
 public class CompositeIdConverter extends AbstractBasicConverter {
 
-    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         CompositeId id = new CompositeId();
         id.value1 = str.substring(0, str.indexOf("/"));
         id.value2 = str.substring(id.value1.length() + 1, str.length());
         return id;
     }
 
-    public String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) {
+    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         CompositeId id = (CompositeId) o;
         return id.value1 + "/" + id.value2;
     }

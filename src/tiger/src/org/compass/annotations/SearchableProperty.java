@@ -213,4 +213,10 @@ public @interface SearchableProperty {
      * generated).
      */
     String format() default "";
+
+    /**
+     * A null value to use to store in the index when the property has a <code>null</code>
+     * value. Defaults to not storing null values.
+     */
+    String nullValue() default "";
 }
