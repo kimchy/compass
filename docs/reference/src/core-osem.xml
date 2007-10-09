@@ -593,7 +593,7 @@ public class A {
       </para>
 
       <para>
-	      Setting the managed id can be done on several levels. It can be set on the property mapping level explicitly. It can be set on the class level mapping which will then be applies to all the properties that are not set explicitly. And it can also be set globally be setting the following setting <literal>compass.osem.managedId</literal> which will apply to all the classes and properties that do not set it explicitly.
+	      Setting the managed id can be done on several levels. It can be set on the property mapping level explicitly. It can be set on the class level mapping which will then be applied to all the properties that are not set explicitly. And it can also be set globally be setting the following setting <literal>compass.osem.managedId</literal> which will apply to all the classes and properties that do not set it explicitly.
 	  </para>
     </sect2>
     
