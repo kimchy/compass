@@ -307,7 +307,7 @@
     <!ATTLIST boost name CDATA #REQUIRED>
     <!ATTLIST boost default CDATA #IMPLIED>
     <!ATTLIST boost accessor (field|property) "property">
-    <!ATTLIST analyzer converter CDATA #IMPLIED>
+    <!ATTLIST boost converter CDATA #IMPLIED>
 
 <!ELEMENT analyzer (
     #PCDATA
