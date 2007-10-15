@@ -1,5 +1,5 @@
-COMPASS, Release 1.2GA-SNAPSHOT
--------------------------------
+COMPASS, Release 1.2
+--------------------
 http://www.opensymphony.com/compass
 
 
