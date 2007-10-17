@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="hibernate" name="Hibernate">
       <configuration>
-        <option name="myHibernateValidationEnabled" value="true" />
+        <setting name="validation-enabled" value="false" />
         <datasource-map>
           <unit-entry name="&lt;anonymous&gt;hibernate-nonjta.cfg.xml@199" />
         </datasource-map>
