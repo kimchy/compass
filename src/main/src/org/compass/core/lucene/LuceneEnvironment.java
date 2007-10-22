@@ -59,8 +59,9 @@ public class LuceneEnvironment {
         /**
          * The name of the analyzer to use, can be ANALYZER_WHITESPACE,
          * ANALYZER_STANDARD, ANALYZER_SIMPLE, ANALYZER_STOP, or a fully
-         * qualified class of the analyzer. <p/> It is part of the anaylzer
-         * group, and should be constructed using the
+         * qualified class of the analyzer.
+         *
+         * <p>It is part of the anaylzer group, and should be constructed using the
          * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
          * name, and the type as one of the values.
@@ -70,8 +71,9 @@ public class LuceneEnvironment {
         /**
          * The fully qualified name of the anayzer factory. Must implement the
          * {@link org.compass.core.lucene.engine.analyzer.LuceneAnalyzerFactory}
-         * inteface. <p/> It is part of the anaylzer group, and should be
-         * constructed using the
+         * inteface.
+         *
+         * <p>It is part of the anaylzer group, and should be constructed using the
          * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
          * name, and the type as one of the values.
@@ -82,8 +84,10 @@ public class LuceneEnvironment {
          * A comma separated list of stop words to use with the chosen analyzer.
          * If the string starts with <code>+</code>, the list of stop-words
          * will be added to the default set of stop words defined for the
-         * analyzer. Only supported for the default analyzers that compas with
-         * Compass. <p/> It is part of the anaylzer group, and should be
+         * analyzer. Only supported for the default analyzers that comes with
+         * Compass.
+         *
+         * <p>It is part of the anaylzer group, and should be
          * constructed using the
          * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
@@ -102,21 +106,29 @@ public class LuceneEnvironment {
 
             /**
              * An analyzer which tokenizes a text according to whitespaces.
+             *
+             * @see org.apache.lucene.analysis.WhitespaceAnalyzer
              */
             public static final String WHITESPACE = "whitespace";
 
             /**
+             * The standard lucene analyzer.
              *
+             * @see org.apache.lucene.analysis.standard.StandardAnalyzer
              */
             public static final String STANDARD = "standard";
 
             /**
+             * Simple Lucene Analyzer.
              *
+             * @see org.apache.lucene.analysis.SimpleAnalyzer
              */
             public static final String SIMPLE = "simple";
 
             /**
+             * Lucene Stop analyzer.
              *
+             * @see org.apache.lucene.analysis.StopAnalyzer
              */
             public static final String STOP = "stop";
 
