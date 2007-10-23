@@ -44,9 +44,9 @@ public class AbstractGpsDeviceWrapper implements CompassGpsDevice {
         return this.gpsDevice.getGps();
     }
 
-    public void setGps(CompassGps compassGps) {
+    public void injectGps(CompassGps compassGps) {
         checkDeviceSet();
-        this.gpsDevice.setGps(compassGps);
+        this.gpsDevice.injectGps(compassGps);
     }
 
     public String getName() {

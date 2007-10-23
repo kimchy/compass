@@ -48,7 +48,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
 
     public void addGpsDevice(CompassGpsDevice gpsDevice) {
         checkDeviceValidity(gpsDevice);
-        gpsDevice.setGps(this);
+        gpsDevice.injectGps(this);
         devices.put(gpsDevice.getName(), gpsDevice);
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         this.devices.clear();
         for (int i = 0; i < devices.length; i++) {
             checkDeviceValidity(devices[i]);
-            devices[i].setGps(this);
+            devices[i].injectGps(this);
             this.devices.put(devices[i].getName(), devices[i]);
         }
     }

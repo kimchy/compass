@@ -20,18 +20,18 @@ package org.compass.gps;
  * A Compass Gps Device is responsible for interacting with a data source and
  * reflecting it in a compass index. A data source can be a file system, or a
  * database through the use of ORM tool (like hibernate).
- * <p>
- * A device should be able to provide the ability to index the data source,
+ *
+ * <p>A device should be able to provide the ability to index the data source,
  * which usually means iterating through the device data and indexing it. It
  * might also provide "real time" monitoring of changes in the device, and
  * applying them to the index as well.
- * <p>
- * A CompassGpsDevice can not operate as a standalone, and must be a part of a
+ *
+ * <p>A CompassGpsDevice can not operate as a standalone, and must be a part of a
  * {@link org.compass.gps.CompassGps} instance (even if we have only one
  * device), since the device requires the Compass and the Batch Compass
  * instances in order to apply the changes to the index.
- * <p>
- * The device has a name associated with it, and the name must be unique among
+ *
+ * <p>The device has a name associated with it, and the name must be unique among
  * all the devices within a single CompassGps instance.
  * 
  * @author kimchy
@@ -47,18 +47,14 @@ public interface CompassGpsDevice {
 
     /**
      * Sets the name associated with the device.
-     * 
-     * @param name
      */
     void setName(String name);
 
     /**
      * Sets the CompassGps that manages the device. Optional, since if the
      * device is added to a CompassGps instance, it will be done automatically.
-     * 
-     * @param compassGps
      */
-    void setGps(CompassGps compassGps);
+    void injectGps(CompassGps compassGps);
 
     /**
      * Returns the CompassGps that manages the device.

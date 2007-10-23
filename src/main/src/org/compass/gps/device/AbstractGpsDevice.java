@@ -67,7 +67,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
         return compassGps;
     }
 
-    public void setGps(CompassGps compassGps) {
+    public void injectGps(CompassGps compassGps) {
         this.compassGps = (CompassGpsInterfaceDevice) compassGps;
     }
 
