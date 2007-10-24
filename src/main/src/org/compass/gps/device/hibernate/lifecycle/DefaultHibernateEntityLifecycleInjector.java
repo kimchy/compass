@@ -117,7 +117,12 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
         SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) sessionFactory;
         EventListeners eventListeners = sessionFactoryImpl.getEventListeners();
 
-        PostInsertEventListener[] postInsertEventListeners = eventListeners.getPostInsertEventListeners();
+        PostInsertEventListener[] postInsertEventListeners;
+        if (registerPostCommitListeneres) {
+            postInsertEventListeners = eventListeners.getPostCommitInsertEventListeners();
+        } else {
+            postInsertEventListeners = eventListeners.getPostInsertEventListeners();
+        }
         ArrayList tempPostInsertEventListeners = new ArrayList();
         for (int i = 0; i < postInsertEventListeners.length; i++) {
             PostInsertEventListener postInsertEventListener = postInsertEventListeners[i];
@@ -125,9 +130,18 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
                 tempPostInsertEventListeners.add(postInsertEventListener);
             }
         }
-        eventListeners.setPostInsertEventListeners((PostInsertEventListener[]) tempPostInsertEventListeners.toArray(new PostInsertEventListener[tempPostInsertEventListeners.size()]));
+        if (registerPostCommitListeneres) {
+            eventListeners.setPostCommitInsertEventListeners((PostInsertEventListener[]) tempPostInsertEventListeners.toArray(new PostInsertEventListener[tempPostInsertEventListeners.size()]));
+        } else {
+            eventListeners.setPostInsertEventListeners((PostInsertEventListener[]) tempPostInsertEventListeners.toArray(new PostInsertEventListener[tempPostInsertEventListeners.size()]));
+        }
 
-        PostUpdateEventListener[] postUpdateEventListeners = eventListeners.getPostUpdateEventListeners();
+        PostUpdateEventListener[] postUpdateEventListeners;
+        if (registerPostCommitListeneres) {
+            postUpdateEventListeners = eventListeners.getPostCommitUpdateEventListeners();
+        } else {
+            postUpdateEventListeners = eventListeners.getPostUpdateEventListeners();
+        }
         ArrayList tempPostUpdateEventListeners = new ArrayList();
         for (int i = 0; i < postUpdateEventListeners.length; i++) {
             PostUpdateEventListener postUpdateEventListener = postUpdateEventListeners[i];
@@ -135,9 +149,18 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
                 tempPostUpdateEventListeners.add(postUpdateEventListener);
             }
         }
-        eventListeners.setPostUpdateEventListeners((PostUpdateEventListener[]) tempPostUpdateEventListeners.toArray(new PostUpdateEventListener[tempPostUpdateEventListeners.size()]));
+        if (registerPostCommitListeneres) {
+            eventListeners.setPostCommitUpdateEventListeners((PostUpdateEventListener[]) tempPostUpdateEventListeners.toArray(new PostUpdateEventListener[tempPostUpdateEventListeners.size()]));
+        } else {
+            eventListeners.setPostUpdateEventListeners((PostUpdateEventListener[]) tempPostUpdateEventListeners.toArray(new PostUpdateEventListener[tempPostUpdateEventListeners.size()]));
+        }
 
-        PostDeleteEventListener[] postDeleteEventListeners = eventListeners.getPostDeleteEventListeners();
+        PostDeleteEventListener[] postDeleteEventListeners;
+        if (registerPostCommitListeneres) {
+            postDeleteEventListeners = eventListeners.getPostCommitDeleteEventListeners();
+        } else {
+            postDeleteEventListeners = eventListeners.getPostDeleteEventListeners();
+        }
         ArrayList tempPostDeleteEventListeners = new ArrayList();
         for (int i = 0; i < postDeleteEventListeners.length; i++) {
             PostDeleteEventListener postDeleteEventListener = postDeleteEventListeners[i];
@@ -145,6 +168,10 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
                 tempPostDeleteEventListeners.add(postDeleteEventListener);
             }
         }
-        eventListeners.setPostDeleteEventListeners((PostDeleteEventListener[]) tempPostDeleteEventListeners.toArray(new PostDeleteEventListener[tempPostDeleteEventListeners.size()]));
+        if (registerPostCommitListeneres) {
+            eventListeners.setPostCommitDeleteEventListeners((PostDeleteEventListener[]) tempPostDeleteEventListeners.toArray(new PostDeleteEventListener[tempPostDeleteEventListeners.size()]));
+        } else {
+            eventListeners.setPostDeleteEventListeners((PostDeleteEventListener[]) tempPostDeleteEventListeners.toArray(new PostDeleteEventListener[tempPostDeleteEventListeners.size()]));
+        }
     }
 }
