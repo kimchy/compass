@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine.store;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -371,9 +372,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             }
         }
         if (subIndexes != null) {
-            for (int i = 0; i < subIndexes.length; i++) {
-                ret.add(subIndexes[i]);
-            }
+            ret.addAll(Arrays.asList(subIndexes));
         }
         return (String[]) ret.toArray(new String[ret.size()]);
     }
