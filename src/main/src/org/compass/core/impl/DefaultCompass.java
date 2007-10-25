@@ -58,6 +58,7 @@ import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.transaction.TransactionFactoryFactory;
+import org.compass.core.util.backport.java.util.concurrent.Callable;
 
 /**
  * @author kimchy
@@ -423,6 +424,10 @@ public class DefaultCompass implements InternalCompass {
 
         public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
             indexManager.setWaitForCacheInvalidationBeforeSecondStep(timeToWaitInMillis);
+        }
+
+        public void executeCommit(Callable[] commits) throws SearchEngineException {
+            indexManager.executeCommit(commits);
         }
     }
 

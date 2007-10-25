@@ -17,7 +17,10 @@
 package org.compass.core.lucene.engine.manager;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,10 +29,17 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.util.backport.java.util.concurrent.Callable;
+import org.compass.core.util.backport.java.util.concurrent.ExecutionException;
+import org.compass.core.util.backport.java.util.concurrent.ExecutorService;
+import org.compass.core.util.backport.java.util.concurrent.Executors;
+import org.compass.core.util.backport.java.util.concurrent.Future;
+import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
  * @author kimchy
@@ -57,6 +67,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     private boolean isRunning = false;
 
+    private ExecutorService commitExecutorService;
+
+    private int concurrentCommitThreshold;
+
     public DefaultLuceneSearchEngineIndexManager(LuceneSearchEngineFactory searchEngineFactory,
                                                  final LuceneSearchEngineStore searchEngineStore) {
         this.searchEngineFactory = searchEngineFactory;
@@ -65,6 +79,28 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         String[] subIndexes = searchEngineStore.getSubIndexes();
         for (int i = 0; i < subIndexes.length; i++) {
             indexHoldersLocks.put(subIndexes[i], new Object());
+        }
+        if (searchEngineStore.allowConcurrentCommit() &&
+                searchEngineFactory.getSettings().getSettingAsBoolean(LuceneEnvironment.Transaction.ENABLE_CONCURRENT_COMMIT, true)) {
+            concurrentCommitThreshold = searchEngineFactory.getSettings().getSettingAsInt(LuceneEnvironment.Transaction.CONCURRENT_COMMIT_THRESHOLD, 1);
+            int maxThreads = searchEngineFactory.getSettings().getSettingAsInt(LuceneEnvironment.Transaction.MAX_CONCURRENT_COMMIT_THREADS, 10);
+            if (searchEngineStore.getSubIndexes().length < maxThreads) {
+                maxThreads = searchEngineStore.getSubIndexes().length;
+            }
+            if (maxThreads> 0) {
+                commitExecutorService = Executors.newFixedThreadPool(maxThreads, new SingleThreadThreadFactory("Compass Concurrent Commit", false));
+                if (log.isDebugEnabled()) {
+                    log.debug("Concurrent commit is enabled with max threads of [" + maxThreads + "]");
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Concurrent commit is disabled since maxThreads is set to 0 (might be there are no sub indexes, i.e. no mappings?)");
+                }
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Concurrent commit is disabled (either due to setting or store not supporting it)");
+            }
         }
     }
 
@@ -279,6 +315,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public synchronized void close() {
+        if (commitExecutorService != null) {
+            commitExecutorService.shutdown();
+        }
         clearCache();
         searchEngineStore.close();
     }
@@ -460,6 +499,47 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void performScheduledTasks() throws SearchEngineException {
         getStore().performScheduledTasks();
+    }
+
+    public void executeCommit(Callable[] commits) throws SearchEngineException {
+        if (commits.length == 0) {
+            return;
+        }
+        // if the commit executor is created, we can do concurrent commits
+        // if not, serialize it by callling it one after the other
+        if (commitExecutorService != null && commits.length > concurrentCommitThreshold) {
+            List futures;
+            try {
+                futures = commitExecutorService.invokeAll(Arrays.asList(commits));
+            } catch (InterruptedException e) {
+                throw new SearchEngineException("Failed to concurrent commit, interrupted", e);
+            }
+
+            for (Iterator it = futures.iterator(); it.hasNext();) {
+                Future future = (Future) it.next();
+                try {
+                    future.get();
+                } catch (InterruptedException e) {
+                    throw new SearchEngineException("Failed to concurrent commit, interrupted", e);
+                } catch (ExecutionException e) {
+                    if (e.getCause() instanceof SearchEngineException) {
+                        throw (SearchEngineException) e.getCause();
+                    }
+                    throw new SearchEngineException("Failed to execute commit", e.getCause());
+                }
+            }
+        } else {
+            for (int i = 0; i < commits.length; i++) {
+                try {
+                    commits[i].call();
+                } catch (Exception e) {
+                    if (e instanceof SearchEngineException) {
+                        throw (SearchEngineException) e;
+                    }
+                    throw new SearchEngineException("Failed to execute commit", e);
+                }
+            }
+        }
     }
 
     public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {

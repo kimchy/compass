@@ -120,7 +120,7 @@ public class ConcurrentParallelIndexExecutor implements ParallelIndexExecutor {
                 } catch (InterruptedException e) {
                     throw new CompassGpsException("Failed to index, interrupted", e);
                 } catch (ExecutionException e) {
-                    throw new CompassGpsException("Failed to index, erxecution exception", e);
+                    throw new CompassGpsException("Failed to index, execution exception", e);
                 }
             }
         } finally {

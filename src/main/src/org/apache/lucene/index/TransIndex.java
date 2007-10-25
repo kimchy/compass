@@ -429,11 +429,15 @@ public class TransIndex {
         transReaders.clear();
 
         try {
-            transLog.close();
-            transDir = null;
+            if (transLog != null) {
+                transLog.close();
+            }
         } catch (IOException ex) {
             // swallow this one
             log.warn("Failed to close transactional directory, ignoring", ex);
+        } finally {
+            transLog = null;
+            transDir = null;
         }
         if (closeDir) {
             try {

@@ -26,6 +26,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
+import org.compass.core.util.backport.java.util.concurrent.Callable;
 import org.compass.core.util.backport.java.util.concurrent.Executors;
 import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
 import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
@@ -187,6 +188,10 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
 
     public void performScheduledTasks() throws SearchEngineException {
         indexManager.performScheduledTasks();
+    }
+
+    public void executeCommit(Callable[] commits) throws SearchEngineException {
+        indexManager.executeCommit(commits);
     }
 
     private static class ScheduledIndexManagerRunnable implements Runnable {

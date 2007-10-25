@@ -26,6 +26,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
+import org.compass.core.util.backport.java.util.concurrent.Callable;
 
 /**
  * Specialized Lucene index manager extension.
@@ -158,4 +159,6 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
     void unCompoundIndex() throws SearchEngineException;
 
     void performScheduledTasks() throws SearchEngineException;
+
+    void executeCommit(Callable[] commits) throws SearchEngineException;
 }

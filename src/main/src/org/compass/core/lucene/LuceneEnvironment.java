@@ -521,6 +521,24 @@ public class LuceneEnvironment {
         public static final String CLEAR_CACHE_ON_COMMIT = "compass.transaction.clearCacheOnCommit";
 
         /**
+         * Should concurrent commit be enabled (if allowed by the actual Lucene store). Default to
+         * <code>true</code> if allows by store.
+         */
+        public static final String ENABLE_CONCURRENT_COMMIT = "compass.transaction.enableConcurrentCommit";
+
+        /**
+         * If concurrent commits are enabled, what is the maximum number of threads that will be used to
+         * perform the concurrent commmit operation. Default to 10 threads (or less if there are less sub indexes).
+         */
+        public static final String MAX_CONCURRENT_COMMIT_THREADS = "compass.transaction.maxConcurrentCommitThreads";
+
+        /**
+         * If concurrent commits are enabled, the threshold above which concurrent commit will happen. Below
+         * the threshold, serialized commits with no thread pool will occur. Default to 1.
+         */
+        public static final String CONCURRENT_COMMIT_THRESHOLD = "compass.transaction.concurrentCommitThreshold";
+
+        /**
          * Transaction log settings
          */
         public static final class TransLog {

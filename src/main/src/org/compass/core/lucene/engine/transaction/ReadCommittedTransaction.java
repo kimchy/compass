@@ -53,6 +53,7 @@ import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.FieldInvoker;
 import org.compass.core.util.StringUtils;
+import org.compass.core.util.backport.java.util.concurrent.Callable;
 
 /**
  * A better implementation of the read committed transaction support. Uses the
@@ -95,6 +96,59 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         public Directory dir;
     }
 
+    public static class FirstPhaseCallable implements Callable {
+
+        private TransIndexWrapper wrapper;
+
+        public FirstPhaseCallable(TransIndexWrapper wrapper) {
+            this.wrapper = wrapper;
+        }
+
+        public Object call() throws Exception {
+            try {
+                wrapper.transIndex.firstPhase();
+            } catch (IOException ex) {
+                throw new SearchEngineException("Failed in first phase commit from sub-index [" + wrapper.subIndex
+                        + "]", ex);
+            }
+            return null;
+        }
+    }
+
+    public static class SecondPhaseCallable implements Callable {
+
+        private TransIndexWrapper wrapper;
+
+        private LuceneSearchEngineIndexManager indexManager;
+
+        public SecondPhaseCallable(TransIndexWrapper wrapper, LuceneSearchEngineIndexManager indexManager) {
+            this.wrapper = wrapper;
+            this.indexManager = indexManager;
+        }
+
+        public Object call() throws Exception {
+            try {
+                wrapper.transIndex.secondPhase();
+            } catch (IOException ex) {
+                throw new SearchEngineException("Failed in second phase commit from sub-index [" + wrapper.subIndex
+                        + "]", ex);
+            } finally {
+                try {
+                    wrapper.transIndex.close();
+                } catch (IOException e) {
+                    log.warn("Failed to close sub index [" + wrapper.subIndex + "]", e);
+                } finally {
+                    try {
+                        indexManager.getStore().closeDirectory(wrapper.subIndex, wrapper.dir);
+                    } catch (Exception e) {
+                        // ignore this exception
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
     public class TransIndexManager {
 
         private HashMap transIndexMap = new HashMap();
@@ -129,27 +183,21 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         }
 
         public void firstPhase() throws SearchEngineException {
+            FirstPhaseCallable[] firstPhaseCallables = new FirstPhaseCallable[transIndexList.size()];
             for (int i = 0; i < transIndexList.size(); i++) {
                 TransIndexWrapper wrapper = (TransIndexWrapper) transIndexList.get(i);
-                try {
-                    wrapper.transIndex.firstPhase();
-                } catch (IOException ex) {
-                    throw new SearchEngineException("Failed in first phase commit from sub-index [" + wrapper.subIndex
-                            + "]", ex);
-                }
+                firstPhaseCallables[i] = new FirstPhaseCallable(wrapper);
             }
+            indexManager.executeCommit(firstPhaseCallables);
         }
 
-        public void secondPhase() throws SearchEngineException {
+        public void secondPhaseAndClose() throws SearchEngineException {
+            SecondPhaseCallable[] secondPhaseCallables = new SecondPhaseCallable[transIndexList.size()];
             for (int i = 0; i < transIndexList.size(); i++) {
                 TransIndexWrapper wrapper = (TransIndexWrapper) transIndexList.get(i);
-                try {
-                    wrapper.transIndex.secondPhase();
-                } catch (IOException ex) {
-                    throw new SearchEngineException("Failed in second phase commit from sub-index [" + wrapper.subIndex
-                            + "]", ex);
-                }
+                secondPhaseCallables[i] = new SecondPhaseCallable(wrapper, indexManager);
             }
+            indexManager.executeCommit(secondPhaseCallables);
         }
 
         public void rollback() throws SearchEngineException {
@@ -245,7 +293,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             if (onePhase) {
                 doPrepare();
             }
-            transIndexManager.secondPhase();
+            transIndexManager.secondPhaseAndClose();
             if (searchEngine.getSearchEngineFactory().getLuceneSettings().isClearCacheOnCommit()) {
                 // clear cache here for all the dirty sub indexes
                 for (Iterator it = transIndexManager.transIndexMap.keySet().iterator(); it.hasNext();) {

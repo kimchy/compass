@@ -134,4 +134,9 @@ public interface LuceneSearchEngineStore {
 	 */
 	LuceneSettings getLuceneSettings();
 
+    /**
+     * Return <code>true</code> if this store allows to perform concurrent commit (i.e. commit
+     * different sub indexes concurrently).
+     */
+    boolean allowConcurrentCommit();
 }

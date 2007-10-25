@@ -107,4 +107,8 @@ public class FSLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore {
     protected void doAfterFailedCopyFrom(Object holder) throws SearchEngineException {
         // TODO if it fails, try to rename the original one back
     }
+
+    public boolean allowConcurrentCommit() {
+        return true;
+    }
 }

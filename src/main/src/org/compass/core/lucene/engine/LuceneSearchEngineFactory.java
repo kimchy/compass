@@ -124,8 +124,7 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
         }
 
         // build the optimizer and start it
-        String optimizerClassSetting = settings.getSetting(LuceneEnvironment.Optimizer.TYPE, AdaptiveOptimizer.class
-                .getName());
+        String optimizerClassSetting = settings.getSetting(LuceneEnvironment.Optimizer.TYPE, AdaptiveOptimizer.class.getName());
         if (log.isDebugEnabled()) {
             log.debug("Using optimizer [" + optimizerClassSetting + "]");
         }
