@@ -36,6 +36,11 @@ public class LuceneSearchEngineTermFrequencies implements SearchEngineTermFreque
 
     public LuceneSearchEngineTermFrequencies(String[] propertyNames, int size, LuceneSearchEngineInternalSearch internalSearch) throws SearchEngineException {
 
+        if (internalSearch.isEmpty()) {
+            termFreqs = new CompassTermFreq[0];
+            return;
+        }
+
         PriorityQueue queue = new PriorityQueue(new Comparator() {
             public int compare(Object a, Object b) {
                 return (int) (((CompassTermFreq) b).getFreq() - ((CompassTermFreq) a).getFreq());

@@ -35,8 +35,11 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        session.save(new A(1, "test"));
         CompassTermFreq[] termFreqs = session.termFreqsBuilder(new String[]{"value2"}).toTermFreqs();
+        assertEquals(0, termFreqs.length);
+
+        session.save(new A(1, "test"));
+        termFreqs = session.termFreqsBuilder(new String[]{"value2"}).toTermFreqs();
         assertEquals(0, termFreqs.length);
 
         tr.commit();
