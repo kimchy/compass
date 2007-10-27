@@ -29,6 +29,9 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.CompassMapping;
 
 /**
+ * The deafult Lucene query parser. Uses {@link org.compass.core.lucene.LuceneEnvironment.QueryParser#DEFAULT_PARSER_ALLOW_LEADING_WILDCARD}
+ *
+ *
  * @author kimchy
  */
 public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappingAware, CompassConfigurable {
@@ -37,8 +40,11 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
 
     private boolean allowLeadingWildcard;
 
+    private boolean allowConstantScorePrefixQuery;
+
     public void configure(CompassSettings settings) throws CompassException {
         allowLeadingWildcard = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_LEADING_WILDCARD, false);
+        allowConstantScorePrefixQuery = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY, true);
     }
 
     public void setCompassMapping(CompassMapping mapping) {
@@ -46,9 +52,10 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     }
 
     public Query parse(String property, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
-        QueryParser queryParser = new CompassQueryParser(property, analyzer, mapping);
+        CompassQueryParser queryParser = new CompassQueryParser(property, analyzer, mapping);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
+        queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
         try {
             return queryParser.parse(queryString);
         } catch (ParseException e) {
@@ -57,9 +64,10 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     }
 
     public Query parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
-        QueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping);
+        CompassMultiFieldQueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
+        queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
         try {
             return queryParser.parse(queryString);
         } catch (ParseException e) {

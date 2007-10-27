@@ -129,6 +129,11 @@ public class DefaultCompassQuery implements CompassQuery {
         return this.filter;
     }
 
+    public CompassQuery rewrite() {
+        searchEngineQuery.rewrite();
+        return this;
+    }
+
     public CompassHits hits() throws CompassException {
         SearchEngineHits searchEngineHits = searchEngineQuery.hits();
         return new DefaultCompassHits(searchEngineHits, session);

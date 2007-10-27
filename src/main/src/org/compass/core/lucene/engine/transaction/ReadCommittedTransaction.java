@@ -450,7 +450,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 qFilter = query.getFilter().getFilter();
             }
         }
-        Hits hits = findByQuery(internalSearch.getSearcher(), query, qFilter);
+        Hits hits = findByQuery(internalSearch, query, qFilter);
         return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
     }
 
@@ -470,16 +470,23 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         }
     }
 
-    private Hits findByQuery(Searcher indexSearcher, LuceneSearchEngineQuery searchEngineQuery, Filter filter)
+    private Hits findByQuery(LuceneSearchEngineInternalSearch internalSearch, LuceneSearchEngineQuery searchEngineQuery, Filter filter)
             throws SearchEngineException {
         Query query = searchEngineQuery.getQuery();
+        if (searchEngineQuery.isRewrite()) {
+            try {
+                query = query.rewrite(internalSearch.getReader());
+            } catch (IOException e) {
+                throw new SearchEngineException("Failed to rewrite query [" + query.toString() + "]", e);
+            }
+        }
         Sort sort = searchEngineQuery.getSort();
         Hits hits;
         try {
             if (filter == null) {
-                hits = indexSearcher.search(query, sort);
+                hits = internalSearch.getSearcher().search(query, sort);
             } else {
-                hits = indexSearcher.search(query, filter, sort);
+                hits = internalSearch.getSearcher().search(query, filter, sort);
             }
         } catch (IOException e) {
             throw new SearchEngineException("Failed to search with query [" + query + "]", e);

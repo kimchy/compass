@@ -76,6 +76,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
         }
         if (queryParsers.get(LuceneEnvironment.QueryParser.DEFAULT_GROUP) == null) {
             DefaultLuceneQueryParser queryParser = new DefaultLuceneQueryParser();
+            queryParser.configure(new CompassSettings());
             queryParser.setCompassMapping(searchEngineFactory.getMapping());
             queryParsers.put(LuceneEnvironment.QueryParser.DEFAULT_GROUP, queryParser);
         }

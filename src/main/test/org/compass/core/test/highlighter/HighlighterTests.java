@@ -28,6 +28,7 @@ import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.queryparser.DefaultLuceneQueryParser;
 import org.compass.core.test.AbstractTestCase;
 
 
@@ -51,6 +52,9 @@ public class HighlighterTests extends AbstractTestCase {
                 new String[]{LuceneEnvironment.Highlighter.Fragmenter.SIMPLE_SIZE}, new String[]{"20"});
         settings.setGroupSettings(LuceneEnvironment.Highlighter.PREFIX, "commaSeparator",
                 new String[]{LuceneEnvironment.Highlighter.SEPARATOR}, new String[]{","});
+        settings.setGroupSettings(LuceneEnvironment.QueryParser.PREFIX, "noConstantScorePrefix",
+                new String[]{LuceneEnvironment.QueryParser.TYPE, LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY},
+                new String[] {DefaultLuceneQueryParser.class.getName(), "false"});
     }
 
     public void testSimpleHighlighting() {
@@ -84,6 +88,13 @@ public class HighlighterTests extends AbstractTestCase {
         assertEquals("This piece of text refers to <b>Kennedy</b>", fragments[0]);
         assertEquals(" to <b>Kennedy</b>", fragments[1]);
 
+        hits = session.find("Kenn*");
+        fragment = hits.highlighter(0).fragment("text");
+        assertNull(fragment);
+
+        hits = session.queryBuilder().queryString("Kenn*").setQueryParser("noConstantScorePrefix").toQuery().hits();
+        fragment = hits.highlighter(0).fragment("text");
+        assertEquals("John <b>Kennedy</b> has been shot", fragment);
 
         tr.commit();
     }
@@ -125,6 +136,11 @@ public class HighlighterTests extends AbstractTestCase {
         fragment = hits.highlighter(1).setTextTokenizer(CompassHighlighter.TextTokenizer.TERM_VECTOR).setHighlighter(
                 "smallFragmenter").setMaxNumFragments(3).fragmentsWithSeparator("text");
         assertEquals("This piece of text refers to <b>Kennedy</b>... to <b>Kennedy</b>", fragment);
+
+        // TODO This indicates a bug in Lucene?
+        hits = session.find("Kenn*");
+        fragment = hits.highlighter(0).fragment("text");
+        assertNull(fragment);
 
         tr.commit();
     }

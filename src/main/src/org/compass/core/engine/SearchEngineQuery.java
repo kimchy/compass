@@ -51,5 +51,7 @@ public interface SearchEngineQuery {
 
     SearchEngineQuery setFilter(SearchEngineQueryFilter filter);
 
+    SearchEngineQuery rewrite();
+
     SearchEngineHits hits() throws SearchEngineException;
 }

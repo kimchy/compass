@@ -37,11 +37,17 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
 
     private CompassMapping mapping;
 
+    private boolean allowConstantScorePrefixQuery;
+
     public CompassMultiFieldQueryParser(String[] fields, Analyzer analyzer, CompassMapping mapping) {
         super(fields, analyzer);
         this.mapping = mapping;
     }
 
+    public void setAllowConstantScorePrefixQuery(boolean allowConstantScorePrefixQuery) {
+        this.allowConstantScorePrefixQuery = allowConstantScorePrefixQuery;
+    }
+    
     protected Query getFieldQuery(String field, String queryText) throws ParseException {
         if (field == null) {
             return super.getFieldQuery(field, queryText);
@@ -89,6 +95,10 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
     }
 
     protected Query getPrefixQuery(String field, String termStr) throws ParseException {
+        if (!allowConstantScorePrefixQuery) {
+            return super.getPrefixQuery(field, termStr);
+        }
+        
         if (getLowercaseExpandedTerms()) {
             termStr = termStr.toLowerCase();
         }

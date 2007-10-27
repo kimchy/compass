@@ -68,6 +68,8 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
 
     private Query query;
 
+    private boolean rewrite;
+
     public LuceneSearchEngineQuery(LuceneSearchEngine searchEngine, Query query) {
         this.searchEngine = searchEngine;
         this.query = query;
@@ -198,6 +200,15 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
 
     public LuceneSearchEngineQueryFilter getFilter() {
         return this.filter;
+    }
+
+    public SearchEngineQuery rewrite() {
+        this.rewrite = true;
+        return this;
+    }
+
+    public boolean isRewrite() {
+        return this.rewrite;
     }
 
     public Query getQuery() {

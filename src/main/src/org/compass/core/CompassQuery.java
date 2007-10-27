@@ -272,6 +272,11 @@ public interface CompassQuery {
     CompassQueryFilter getFilter();
 
     /**
+     * Causes the query to be rewritten before executed to search.
+     */
+    CompassQuery rewrite();
+
+    /**
      * Performs the search and returns the hits that match the qeury.
      */
     CompassHits hits() throws CompassException;
