@@ -137,7 +137,6 @@ public class HighlighterTests extends AbstractTestCase {
                 "smallFragmenter").setMaxNumFragments(3).fragmentsWithSeparator("text");
         assertEquals("This piece of text refers to <b>Kennedy</b>... to <b>Kennedy</b>", fragment);
 
-        // TODO This indicates a bug in Lucene?
         hits = session.find("Kenn*");
         fragment = hits.highlighter(0).fragment("text");
         assertNull(fragment);
@@ -152,6 +151,7 @@ public class HighlighterTests extends AbstractTestCase {
         setUpMultiPropertyData(session, new String[]{"Lucene", "Luke", "Lukas"});
 
         CompassHits hits = session.find("Lu*e");
+        assertEquals(1, hits.length());
 
         String[] fragments = hits.highlighter(0).multiResourceFragment("text");
         assertEquals(2, fragments.length);

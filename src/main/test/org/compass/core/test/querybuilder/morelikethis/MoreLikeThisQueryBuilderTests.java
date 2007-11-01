@@ -16,6 +16,7 @@
 
 package org.compass.core.test.querybuilder.morelikethis;
 
+import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassSession;
@@ -37,12 +38,12 @@ public class MoreLikeThisQueryBuilderTests extends AbstractTestCase {
 
         A a = new A();
         a.id = 1;
-        a.value = "test with some specific keyword";
+        a.value = "test with some specific keyword keyword";
         session.save("a", a);
 
         a = new A();
         a.id = 2;
-        a.value = "another one with keyword";
+        a.value = "another one with keyword keyword";
         session.save("a", a);
 
         a = new A();
@@ -59,10 +60,11 @@ public class MoreLikeThisQueryBuilderTests extends AbstractTestCase {
 
         // verify on all (note we store term vector on it)
         query = session.queryBuilder().moreLikeThis("a", "1")
-                .setMinResourceFreq(1).setMinTermFreq(1)
+                .setMinResourceFreq(1).setMinTermFreq(2)
                 .toQuery();
-        hits = query.hits();
-        assertEquals(1, hits.length());
+        // (we will find two on this ones since the alias is added).
+        CompassDetachedHits detachedHits = query.hits().detach();
+        assertEquals(1, detachedHits.length());
 
         tr.commit();
         session.close();

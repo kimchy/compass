@@ -63,6 +63,8 @@ public interface SearchEngineQueryBuilder {
 
         SearchEngineQueryStringBuilder useAndDefaultOperator();
 
+        SearchEngineQueryStringBuilder useOrDefaultOperator();
+        
         SearchEngineQueryStringBuilder setQueryParser(String queryParser);
     }
 

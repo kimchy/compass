@@ -9,19 +9,19 @@
         <id name="id" />
         
         <property name="value">
-            <meta-data index="un_tokenized">value</meta-data>
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">value</meta-data>
         </property>
 
         <property name="value2" managed-id-index="un_tokenized">
-            <meta-data index="un_tokenized">value2</meta-data>
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">value2</meta-data>
         </property>
 
         <property name="floatValue">
-            <meta-data index="un_tokenized">floatValue</meta-data>
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">floatValue</meta-data>
         </property>
 
         <property name="intValue">
-            <meta-data index="un_tokenized">intValue</meta-data>
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">intValue</meta-data>
         </property>
 
         <component name="b" />
@@ -31,7 +31,7 @@
         <id name="id" accessor="field" />
 
         <property name="value2" accessor="field" managed-id-index="un_tokenized">
-            <meta-data index="un_tokenized">value2</meta-data>
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">value2</meta-data>
         </property>
     </class>
 

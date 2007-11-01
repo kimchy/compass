@@ -15,7 +15,7 @@
 
     </class>
 
-    <class name="A" alias="a2" analyzer="simple" all-analyzer="simple">
+    <class name="A" alias="a2" analyzer="simple">
     
         <id name="id" />
         
@@ -25,7 +25,7 @@
 
     </class>
 
-    <class name="A" alias="a3" all-analyzer="default">
+    <class name="A" alias="a3">
     
         <id name="id" />
         
@@ -53,7 +53,7 @@
 
     </class>
 
-    <class name="A" alias="a5" all-analyzer="simple">
+    <class name="A" alias="a5">
     
         <id name="id" />
         

@@ -111,7 +111,7 @@ public @interface SearchableMetaData {
      *
      * @see Searchable#enableAll
      */
-    boolean excludeFromAll() default false;
+    ExcludeFromAll excludeFromAll() default ExcludeFromAll.NO;
 
     /**
      * The converter lookup name for the given meta-data.

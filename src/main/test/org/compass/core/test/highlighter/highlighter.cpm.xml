@@ -31,7 +31,7 @@
     <class name="B" alias="child" root="false">
     
 		<property name="text" class="java.lang.String">
-			<meta-data index="un_tokenized">text</meta-data>
+			<meta-data index="un_tokenized" exclude-from-all="no_analyzed">text</meta-data>
 		</property>
     
     </class>

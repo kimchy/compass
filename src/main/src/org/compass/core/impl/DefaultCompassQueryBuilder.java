@@ -166,6 +166,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
             return this;
         }
 
+        public CompassQueryStringBuilder useOrDefaultOperator() {
+            queryBuilder.useOrDefaultOperator();
+            return this;
+        }
+
         public CompassQuery toQuery() {
             SearchEngineQuery query = queryBuilder.toQuery();
             return new DefaultCompassQuery(query, session);

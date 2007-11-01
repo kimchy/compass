@@ -171,6 +171,11 @@ public interface CompassQueryBuilder {
          * Uses the and operator as the default operator instead of OR operator.
          */
         CompassQueryStringBuilder useAndDefaultOperator();
+
+        /**
+         * Uses the OR operator as the default operator instead of AND operator.
+         */
+        CompassQueryStringBuilder useOrDefaultOperator();
     }
 
     /**

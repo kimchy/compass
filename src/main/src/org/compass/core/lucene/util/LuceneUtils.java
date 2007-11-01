@@ -18,7 +18,6 @@ package org.compass.core.lucene.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,24 +36,19 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Lock;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
+import org.compass.core.lucene.engine.all.AllAnalyzer;
 import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
-import org.compass.core.util.reader.MultiIOReader;
-import org.compass.core.util.reader.StringReader;
-import org.compass.core.util.reader.StringWithSeparatorReader;
 
 /**
  * @author kimchy
@@ -135,58 +129,22 @@ public abstract class LuceneUtils {
 
     }
 
-    public static void addAllPropertyIfNeeded(Resource resource, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) throws SearchEngineException {
-        if (resourceMapping.isAllSupported()) {
-            LuceneSettings luceneSettings = searchEngine.getSearchEngineFactory().getLuceneSettings();
-            PropertyNamingStrategy propertyNamingStrategy = searchEngine.getSearchEngineFactory().getPropertyNamingStrategy();
-            MultiIOReader reader = new MultiIOReader();
-            Property[] properties = resource.getProperties();
-            boolean atleastOneAddedToAll = false;
-            for (int i = 0; i < properties.length; i++) {
-                LuceneProperty property = (LuceneProperty) properties[i];
-                ResourcePropertyMapping resourcePropertyMapping = property.getPropertyMapping();
-                // if not found within the property, try and get it based on the name from the resource mapping
-                if (resourcePropertyMapping == null) {
-                    resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
-                }
-                if (resourcePropertyMapping == null) {
-                    if (!propertyNamingStrategy.isInternal(property.getName())) {
-                        if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {
-                            atleastOneAddedToAll = tryAddPropertyToAll(property, reader, atleastOneAddedToAll);
-                        }
-                    }
-                } else if (!resourcePropertyMapping.isExcludeFromAll() && !resourcePropertyMapping.isInternal()) {
-                    atleastOneAddedToAll = tryAddPropertyToAll(property, reader, atleastOneAddedToAll);
-                }
-            }
-            if (atleastOneAddedToAll) {
-                String allP = resourceMapping.getAllProperty();
-                if (allP == null) {
-                    allP = luceneSettings.getAllProperty();
-                }
-                Property.TermVector allTermVector = resourceMapping.getAllTermVector();
-                if (allTermVector == null) {
-                    allTermVector = luceneSettings.getAllPropertyTermVector();
-                }
-                resource.addProperty(searchEngine.createProperty(allP, reader, allTermVector));
-            }
+    public static Analyzer addAllProperty(InternalResource resource, Analyzer analyzer, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) throws SearchEngineException {
+        AllAnalyzer allAnalyzer = new AllAnalyzer(analyzer, resource, searchEngine);
+        LuceneSettings luceneSettings = searchEngine.getSearchEngineFactory().getLuceneSettings();
+        String allP = resourceMapping.getAllProperty();
+        if (allP == null) {
+            allP = luceneSettings.getAllProperty();
         }
-    }
+        Property.TermVector allTermVector = resourceMapping.getAllTermVector();
+        if (allTermVector == null) {
+            allTermVector = luceneSettings.getAllPropertyTermVector();
+        }
 
-    private static boolean tryAddPropertyToAll(Property property, MultiIOReader reader, boolean atleastOneAddedToAll) {
-        String value = property.getStringValue();
-        if (value != null) {
-            reader.add(property.getName(), new StringWithSeparatorReader(value, ' '));
-            return true;
-        }
-        // if it is a repeatable reader, we can add it to all, since we read it several times
-        RepeatableReader repeatableReader = ((LuceneProperty) property).getRepeatableReader();
-        if (repeatableReader != null) {
-            reader.add(property.getName(), (Reader) repeatableReader);
-            reader.add(new StringReader(" "));
-            return true;
-        }
-        return atleastOneAddedToAll;
+        Property property = searchEngine.createProperty(allP, allAnalyzer.createAllTokenStream(), allTermVector);
+        property.setOmitNorms(resourceMapping.isAllOmitNorms());
+        resource.addProperty(property);
+        return allAnalyzer;
     }
 
     public static List findPropertyValues(IndexReader indexReader, String propertyName) throws SearchEngineException {

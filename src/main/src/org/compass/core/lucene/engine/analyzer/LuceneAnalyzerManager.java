@@ -16,7 +16,11 @@
 
 package org.compass.core.lucene.engine.analyzer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -238,10 +242,8 @@ public class LuceneAnalyzerManager {
                                                               String resourceAnalyzerName) {
         Analyzer resourceAnalyzer = getAnalyzerMustExist(resourceAnalyzerName);
         // create the per field analyzer only if there is one that is
-        // specific to a resource property or, the all property is set and
-        // is different than the one assigned to the resource.
-        if (resourceMapping.hasSpecificAnalyzerPerResourceProperty()
-                || (resourceMapping.getAllAnalyzer() != null && !resourceAnalyzerName.equals(resourceMapping.getAllAnalyzer()))) {
+        // specific to a resource property or
+        if (resourceMapping.hasSpecificAnalyzerPerResourceProperty()) {
             PerFieldAnalyzerWrapper perFieldAnalyzerWrapper = new PerFieldAnalyzerWrapper(resourceAnalyzer);
             ResourcePropertyMapping[] propertyMappings = resourceMapping.getResourcePropertyMappings();
             for (int j = 0; j < propertyMappings.length; j++) {
@@ -255,14 +257,6 @@ public class LuceneAnalyzerManager {
                     }
                     perFieldAnalyzerWrapper.addAnalyzer(propertyMapping.getPath().getPath(), propertyAnalyzer);
                 }
-            }
-            if (resourceMapping.isAllSupported()) {
-                String allP = resourceMapping.getAllProperty();
-                if (allP == null) {
-                    allP = luceneSettings.getAllProperty();
-                }
-                Analyzer allAnalyzer = getAnalyzer(resourceMapping.getAllAnalyzer());
-                perFieldAnalyzerWrapper.addAnalyzer(allP, allAnalyzer);
             }
             return perFieldAnalyzerWrapper;
         }

@@ -181,9 +181,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         xmlObjectMapping.setAllOmitNorms(xmlObjectConf.getAttributeAsBoolean("all-omit-norms", false));
 
-        String allAnalyzer = xmlObjectConf.getAttribute("all-analyzer", null);
-        xmlObjectMapping.setAllAnalyzer(allAnalyzer);
-
         if (xmlObjectMapping.isAllSupported()) {
             String allProperty = xmlObjectConf.getAttribute("all-metadata", null);
             xmlObjectMapping.setAllProperty(allProperty);
@@ -276,8 +273,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         xmlPropertyMapping.setInternal(false);
         xmlPropertyMapping.setAnalyzer(xmlPropConf.getAttribute("analyzer", null));
         xmlPropertyMapping.setNullValue(xmlPropConf.getAttribute("null-value", null));
-        boolean excludeFromAll = xmlPropConf.getAttributeAsBoolean("exclude-from-all", false);
-        xmlPropertyMapping.setExcludeFromAll(excludeFromAll);
+        String excludeFromAll = xmlPropConf.getAttribute("exclude-from-all", "no");
+        xmlPropertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
         boolean override = xmlPropConf.getAttributeAsBoolean("override", true);
         xmlPropertyMapping.setOverrideByName(override);
 
@@ -329,10 +326,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         rawResourceMapping.setAllOmitNorms(resourceConf.getAttributeAsBoolean("all-omit-norms", false));
-
-
-        String allAnalyzer = resourceConf.getAttribute("all-analyzer", null);
-        rawResourceMapping.setAllAnalyzer(allAnalyzer);
 
         if (rawResourceMapping.isAllSupported()) {
             String allProperty = resourceConf.getAttribute("all-metadata", null);
@@ -398,8 +391,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         propertyMapping.setInternal(false);
         propertyMapping.setAnalyzer(resourcePropConf.getAttribute("analyzer", null));
         propertyMapping.setNullValue(resourcePropConf.getAttribute("null-value", null));
-        boolean excludeFromAll = resourcePropConf.getAttributeAsBoolean("exclude-from-all", false);
-        propertyMapping.setExcludeFromAll(excludeFromAll);
+        String excludeFromAll = resourcePropConf.getAttribute("exclude-from-all", "no");
+        propertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
         boolean override = resourcePropConf.getAttributeAsBoolean("override", true);
         propertyMapping.setOverrideByName(override);
     }
@@ -460,10 +453,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         classMapping.setAllOmitNorms(classConf.getAttributeAsBoolean("all-omit-norms", false));
-
-
-        String allAnalyzer = classConf.getAttribute("all-analyzer", null);
-        classMapping.setAllAnalyzer(allAnalyzer);
 
         boolean poly = classConf.getAttributeAsBoolean("poly", false);
         classMapping.setPoly(poly);
@@ -603,7 +592,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         dynamicMetaDataMapping.setInternal(false);
         dynamicMetaDataMapping.setAnalyzer(dynamicConf.getAttribute("analyzer", null));
         dynamicMetaDataMapping.setNullValue(dynamicConf.getAttribute("null-value", null));
-        dynamicMetaDataMapping.setExcludeFromAll(dynamicConf.getAttributeAsBoolean("exclude-from-all", false));
+        String excludeFromAll = dynamicConf.getAttribute("exclude-from-all", "no");
+        dynamicMetaDataMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
     }
 
     private void bindReference(ConfigurationHelper referenceConf, AliasMapping aliasMapping,
@@ -696,8 +686,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         classPropertyMapping.setAnalyzer(classPropertyConf.getAttribute("analyzer", null));
 
-        boolean excludeFromAll = classPropertyConf.getAttributeAsBoolean("exclude-from-all", false);
-        classPropertyMapping.setExcludeFromAll(excludeFromAll);
+        String excludeFromAll = classPropertyConf.getAttribute("exclude-from-all", "no");
+        classPropertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
 
         String managedId = classPropertyConf.getAttribute("managed-id", null);
         if (managedId != null) {
@@ -743,8 +733,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         constantMapping.setAnalyzer(constantConf.getAttribute("analyzer", null));
 
-        boolean excludeFromAll = constantConf.getAttributeAsBoolean("exclude-from-all", false);
-        constantMapping.setExcludeFromAll(excludeFromAll);
+        String excludeFromAll = constantConf.getAttribute("exclude-from-all", "no");
+        constantMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
 
         boolean override = constantConf.getAttributeAsBoolean("override", true);
         constantMapping.setOverrideByName(override);
@@ -801,8 +791,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         mdMapping.setInternal(false);
         mdMapping.setAnalyzer(metadataConf.getAttribute("analyzer", classPropertyMapping.getAnalyzer()));
         mdMapping.setNullValue(metadataConf.getAttribute("null-value", null));
-        boolean excludeFromAll = metadataConf.getAttributeAsBoolean("exclude-from-all", classPropertyMapping.isExcludeFromAll());
-        mdMapping.setExcludeFromAll(excludeFromAll);
+        String excludeFromAll = metadataConf.getAttribute("exclude-from-all", ResourcePropertyMapping.ExcludeFromAllType.toString(classPropertyMapping.getExcludeFromAll()));
+        mdMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
     }
 
     private void bindExtends(ConfigurationHelper conf, AliasMapping mapping) throws ConfigurationException {

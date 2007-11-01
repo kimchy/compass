@@ -1,6 +1,15 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
+VERSION 1.3 M1
+==============================
+
+1. New and improved "all" support.
+    1.a all-analyzer mapping removed from resource and class mappings. Properties added to all will use their
+        own analyzers when added to "all" and not use the removed all analyzer (which is the correct behviour).
+    1.b untokenized properties will be added by default as untokenized to the all property. Changing to previous
+        (where they were tokenized) requries adding: exclude-from-all="no_analyzed".        
+
 VERSION 1.2 (October 15, 2007)
 ==============================
 

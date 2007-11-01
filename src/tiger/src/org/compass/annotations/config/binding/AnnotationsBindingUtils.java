@@ -21,6 +21,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 
 import org.compass.annotations.Cascade;
+import org.compass.annotations.ExcludeFromAll;
 import org.compass.annotations.Index;
 import org.compass.annotations.ManagedId;
 import org.compass.annotations.ManagedIdIndex;
@@ -99,6 +100,17 @@ public abstract class AnnotationsBindingUtils {
             return ResourcePropertyMapping.ReverseType.STRING;
         }
         throw new IllegalArgumentException("Failed to convert reverse [" + reverse + "]");
+    }
+
+    public static ResourcePropertyMapping.ExcludeFromAllType convert(ExcludeFromAll excludeFromAll) throws IllegalArgumentException {
+        if (excludeFromAll == ExcludeFromAll.NO) {
+            return ResourcePropertyMapping.ExcludeFromAllType.NO;
+        } else if (excludeFromAll == ExcludeFromAll.NO_ANALYZED) {
+            return ResourcePropertyMapping.ExcludeFromAllType.NO_ANALYZED;
+        } else if (excludeFromAll == ExcludeFromAll.YES) {
+            return ResourcePropertyMapping.ExcludeFromAllType.YES;
+        }
+        throw new IllegalArgumentException("Failed to convert exclude from all [" + excludeFromAll + "]");
     }
 
     public static Property.Store convert(Store store) throws IllegalArgumentException {

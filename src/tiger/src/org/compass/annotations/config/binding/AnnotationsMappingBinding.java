@@ -266,9 +266,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             if (StringUtils.hasLength(allMetaData.name())) {
                 classMapping.setAllProperty(allMetaData.name());
             }
-            if (StringUtils.hasLength(allMetaData.analyzer())) {
-                classMapping.setAllAnalyzer(allMetaData.analyzer());
-            }
             classMapping.setAllTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
             classMapping.setAllOmitNorms(allMetaData.omitNorms());
         }
@@ -590,7 +587,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             if (StringUtils.hasLength(searchableProp.analyzer())) {
                 mdMapping.setAnalyzer(searchableProp.analyzer());
             }
-            mdMapping.setExcludeFromAll(searchableProp.excludeFromAll());
+            mdMapping.setExcludeFromAll(AnnotationsBindingUtils.convert(searchableProp.excludeFromAll()));
 
             classPropertyMapping.addMapping(mdMapping);
         }
@@ -669,7 +666,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             if (StringUtils.hasLength(searchableProp.nullValue())) {
                 mdMapping.setNullValue(searchableProp.nullValue());
             }
-            mdMapping.setExcludeFromAll(searchableProp.excludeFromAll());
+            mdMapping.setExcludeFromAll(AnnotationsBindingUtils.convert(searchableProp.excludeFromAll()));
 
             classPropertyMapping.addMapping(mdMapping);
         }
@@ -718,7 +715,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchableMetaData.nullValue())) {
             mdMapping.setNullValue(searchableMetaData.nullValue());
         }
-        mdMapping.setExcludeFromAll(searchableMetaData.excludeFromAll());
+        mdMapping.setExcludeFromAll(AnnotationsBindingUtils.convert(searchableMetaData.excludeFromAll()));
 
         classPropertyMapping.addMapping(mdMapping);
     }
@@ -750,7 +747,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchableMetaData.analyzer())) {
             mdMapping.setAnalyzer(searchableMetaData.analyzer());
         }
-        mdMapping.setExcludeFromAll(searchableMetaData.excludeFromAll());
+        mdMapping.setExcludeFromAll(AnnotationsBindingUtils.convert(searchableMetaData.excludeFromAll()));
 
         classMapping.addMapping(mdMapping);
     }
@@ -766,7 +763,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchableConstant.analyzer())) {
             constantMapping.setAnalyzer(searchableConstant.analyzer());
         }
-        constantMapping.setExcludeFromAll(searchableConstant.excludeFromAll());
+        constantMapping.setExcludeFromAll(AnnotationsBindingUtils.convert(searchableConstant.excludeFromAll()));
         constantMapping.setOverrideByName(searchableConstant.override());
         for (String value : searchableConstant.values()) {
             constantMapping.addMetaDataValue(valueLookup.lookupMetaDataValue(value));

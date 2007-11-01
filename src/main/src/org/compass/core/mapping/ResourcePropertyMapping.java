@@ -50,6 +50,43 @@ public interface ResourcePropertyMapping extends Mapping {
         }
     }
 
+    public static class ExcludeFromAllType extends Parameter {
+
+        protected ExcludeFromAllType(String name) {
+            super(name);
+        }
+
+        public static final ExcludeFromAllType NO = new ExcludeFromAllType("NO");
+
+        public static final ExcludeFromAllType YES = new ExcludeFromAllType("YES");
+
+        public static final ExcludeFromAllType NO_ANALYZED = new ExcludeFromAllType("NO_ANALYZED");
+
+        public static ExcludeFromAllType fromString(String excludeFromAllType) {
+            if ("no".equalsIgnoreCase(excludeFromAllType) || "false".equalsIgnoreCase(excludeFromAllType)) {
+                return ExcludeFromAllType.NO;
+            } else if ("yes".equalsIgnoreCase(excludeFromAllType) || "true".equalsIgnoreCase(excludeFromAllType)) {
+                return ExcludeFromAllType.YES;
+            } else if ("no_analyzed".equalsIgnoreCase(excludeFromAllType)) {
+                return ExcludeFromAllType.NO_ANALYZED;
+            }
+            throw new IllegalArgumentException("Can't find exclude from all type for [" + excludeFromAllType + "]");
+        }
+
+        public static String toString(ExcludeFromAllType excludeFromAllType) {
+            if (excludeFromAllType == NO) {
+                return "no";
+            }
+            if (excludeFromAllType == NO_ANALYZED) {
+                return "no_analyzed";
+            }
+            if (excludeFromAllType == YES) {
+                return "yes";
+            }
+            return "no";
+        }
+    }
+
     /**
      * Returns the anayzer name that is associated with the property.
      * Can be <code>null</code> (i.e. not set).
@@ -70,7 +107,7 @@ public interface ResourcePropertyMapping extends Mapping {
 
     boolean isOmitNorms();
 
-    boolean isExcludeFromAll();
+    ExcludeFromAllType getExcludeFromAll();
 
     Property.Store getStore();
 

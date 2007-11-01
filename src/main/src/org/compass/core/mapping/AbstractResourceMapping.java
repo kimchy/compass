@@ -53,8 +53,6 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private boolean allOmitNorms = false;
 
-    private String allAnalyzer;
-
     private ResourcePropertyMapping[] ids;
 
     private CascadeMapping[] cascades;
@@ -98,7 +96,6 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         resourceMapping.setBoost(getBoost());
         resourceMapping.setAllTermVector(getAllTermVector());
         resourceMapping.setAnalyzer(getAnalyzer());
-        resourceMapping.setAllAnalyzer(getAllAnalyzer());
     }
 
     public void postProcess() throws MappingException {
@@ -298,14 +295,6 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     public boolean hasSpecificAnalyzerPerResourceProperty() {
         return hasSpecificAnalyzerPerResourceProperty;
-    }
-
-    public String getAllAnalyzer() {
-        return allAnalyzer;
-    }
-
-    public void setAllAnalyzer(String allAnalyzer) {
-        this.allAnalyzer = allAnalyzer;
     }
 
     public ResourceAnalyzerController getAnalyzerController() {

@@ -10,7 +10,7 @@
         <xml-property xpath="value" />
     </xml-object>
 
-    <xml-object alias="b" xpath="/data" analyzer="simple" all-analyzer="simple">
+    <xml-object alias="b" xpath="/data" analyzer="simple">
         <xml-id name="id" xpath="id" />
         <xml-property xpath="value" />
     </xml-object>
@@ -20,7 +20,7 @@
         <xml-property xpath="value" />
     </xml-object>
 
-    <xml-object alias="d" xpath="/data" all-analyzer="default" >
+    <xml-object alias="d" xpath="/data">
         <xml-id name="id" xpath="id" />
         <xml-property name="value" xpath="value" analyzer="simple"/>
         <xml-property name="value2" xpath="value2" />
@@ -32,7 +32,7 @@
         <xml-property name="value2" xpath="value2" />
     </xml-object>
 
-    <xml-object alias="f" xpath="/data" all-analyzer="simple">
+    <xml-object alias="f" xpath="/data">
         <xml-id name="id" xpath="id" />
         <xml-property name="value" xpath="value" />
     </xml-object>

@@ -10,7 +10,7 @@
         <resource-property name="value" />
     </resource>
 
-    <resource alias="b" analyzer="simple" all-analyzer="simple">
+    <resource alias="b" analyzer="simple">
         <resource-id name="id" />
         <resource-property name="value" />
     </resource>
@@ -20,7 +20,7 @@
         <resource-property name="value" />
     </resource>
 
-    <resource alias="d" all-analyzer="default" >
+    <resource alias="d">
         <resource-id name="id" />
         <resource-property name="value" analyzer="simple"/>
         <resource-property name="value2" />
@@ -32,7 +32,7 @@
         <resource-property name="value2" />
     </resource>
 
-    <resource alias="f" all-analyzer="simple">
+    <resource alias="f">
         <resource-id name="id" />
         <resource-property name="value" />
     </resource>

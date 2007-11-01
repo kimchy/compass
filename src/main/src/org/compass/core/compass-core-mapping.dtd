@@ -25,7 +25,6 @@
     <!ATTLIST xml-object all (true|false) "true">
     <!ATTLIST xml-object all-metadata CDATA #IMPLIED>
     <!ATTLIST xml-object all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
-    <!ATTLIST xml-object all-analyzer CDATA #IMPLIED>
     <!ATTLIST xml-object all-omit-norms (true|false) "false">
     <!ATTLIST xml-object boost CDATA #IMPLIED>
 
@@ -50,7 +49,7 @@
     <!ATTLIST xml-property null-value CDATA #IMPLIED>
     <!ATTLIST xml-property analyzer CDATA #IMPLIED>
     <!ATTLIST xml-property override (true|false) "true">
-    <!ATTLIST xml-property exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST xml-property exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
     <!ATTLIST xml-property converter CDATA #IMPLIED>
     <!ATTLIST xml-property value-converter CDATA #IMPLIED>
     <!ATTLIST xml-property boost CDATA #IMPLIED>
@@ -101,7 +100,6 @@
     <!ATTLIST resource all (true|false) "true">
     <!ATTLIST resource all-metadata CDATA #IMPLIED>
     <!ATTLIST resource all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
-    <!ATTLIST resource all-analyzer CDATA #IMPLIED>
     <!ATTLIST resource all-omit-norms (true|false) "false">
     <!ATTLIST resource boost CDATA #IMPLIED>
 
@@ -110,7 +108,7 @@
     <!ATTLIST resource-id name CDATA #REQUIRED>
     <!ATTLIST resource-id analyzer CDATA #IMPLIED>
     <!ATTLIST resource-id converter CDATA #IMPLIED>
-    <!ATTLIST resource-id exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST resource-id exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
     <!ATTLIST resource-id boost CDATA #IMPLIED>
     <!ATTLIST resource-id omit-norms (true|false) "true">
 
@@ -125,7 +123,7 @@
     <!ATTLIST resource-property analyzer CDATA #IMPLIED>
     <!ATTLIST resource-property null-value CDATA #IMPLIED>
     <!ATTLIST resource-property override (true|false) "true">
-    <!ATTLIST resource-property exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST resource-property exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
     <!ATTLIST resource-property converter CDATA #IMPLIED>
     <!ATTLIST resource-property boost CDATA #IMPLIED>
 
@@ -242,13 +240,6 @@
         Defaults to configuration setting compass.property.all.termVector .
     -->
     <!ATTLIST class all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
-    <!--
-        The name of the analyzer that will be used to analyze the all meta-data.
-
-        Defaults to configuration setting compass.engine.all.analyzer, which in turn,
-        defaults to the default analyzer.
-    -->
-    <!ATTLIST class all-analyzer CDATA #IMPLIED>
     
     <!ATTLIST class all-omit-norms (true|false) "false">
     <!--
@@ -282,7 +273,7 @@
     <!ATTLIST id accessor CDATA "property">
     <!ATTLIST id managed-id (auto|true|false) "auto">
     <!ATTLIST id managed-id-converter CDATA #IMPLIED>
-    <!ATTLIST id exclude-from-all (true|false) "false">
+    <!ATTLIST id exclude-from-all (true|false|yes|no|no_analyzed) "no">
     <!ATTLIST id converter CDATA #IMPLIED>
     <!ATTLIST id boost CDATA #IMPLIED>
 
@@ -297,7 +288,7 @@
     <!ATTLIST property managed-id (auto|true|false|no|no_store) #IMPLIED>
     <!ATTLIST property managed-id-index (no|un_tokenized) #IMPLIED>
     <!ATTLIST property managed-id-converter CDATA #IMPLIED>
-    <!ATTLIST property exclude-from-all (true|false) "false">
+    <!ATTLIST property exclude-from-all (true|false|yes|no|no_analyzed) "false">
     <!ATTLIST property converter CDATA #IMPLIED>
     <!ATTLIST property boost CDATA #IMPLIED>
 
@@ -347,7 +338,7 @@
     meta-data,
     meta-data-value+
 )>
-    <!ATTLIST constant exclude-from-all (true|false) "false">
+    <!ATTLIST constant exclude-from-all (true|false|yes|no|no_analyzed) "no">
     <!ATTLIST constant override (true|false) "true">
     <!ATTLIST constant converter CDATA #IMPLIED>
 
@@ -362,7 +353,7 @@
     <!ATTLIST dynamic-meta-data override (true|false) "true">
     <!ATTLIST dynamic-meta-data reverse (no|reader|string) "no">
     <!ATTLIST dynamic-meta-data analyzer CDATA #IMPLIED>
-    <!ATTLIST dynamic-meta-data exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST dynamic-meta-data exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
     <!ATTLIST dynamic-meta-data converter CDATA #REQUIRED>
     <!ATTLIST dynamic-meta-data boost CDATA #IMPLIED>
     <!ATTLIST dynamic-meta-data format CDATA #IMPLIED>
@@ -379,7 +370,7 @@
     <!ATTLIST meta-data reverse (no|reader|string) "no">
     <!ATTLIST meta-data null-value CDATA #IMPLIED>
     <!ATTLIST meta-data analyzer CDATA #IMPLIED>
-    <!ATTLIST meta-data exclude-from-all (true|false) #IMPLIED>
+    <!ATTLIST meta-data exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
     <!ATTLIST meta-data converter CDATA #IMPLIED>
     <!ATTLIST meta-data format CDATA #IMPLIED>
     <!ATTLIST meta-data boost CDATA #IMPLIED>

@@ -37,7 +37,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private boolean isInternal = false;
 
-    private boolean excludeFromAll = false;
+    private ExcludeFromAllType excludeFromAll = ExcludeFromAllType.NO;
 
     private boolean omitNorms = false;
 
@@ -53,7 +53,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         copy.setIndex(getIndex());
         copy.setPath(getPath());
         copy.setInternal(isInternal());
-        copy.setExcludeFromAll(isExcludeFromAll());
+        copy.setExcludeFromAll(getExcludeFromAll());
         copy.setTermVector(getTermVector());
         copy.setAnalyzer(getAnalyzer());
         copy.setReverse(getReverse());
@@ -102,11 +102,11 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         this.isInternal = isInternal;
     }
 
-    public boolean isExcludeFromAll() {
+    public ExcludeFromAllType getExcludeFromAll() {
         return excludeFromAll;
     }
 
-    public void setExcludeFromAll(boolean excludeFromAll) {
+    public void setExcludeFromAll(ExcludeFromAllType excludeFromAll) {
         this.excludeFromAll = excludeFromAll;
     }
 

@@ -53,6 +53,10 @@ public class AllTests extends AbstractTestCase {
         assertEquals("test1", a.getValue1());
         assertEquals("test2", a.getValue2());
 
+        // verify that we can find the alias in the all property as well
+        result = session.find("a1");
+        assertEquals(1, result.getLength());
+
         result = session.find("test2");
         assertEquals(1, result.getLength());
         a = (A) result.data(0);

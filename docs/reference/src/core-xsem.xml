@@ -374,7 +374,7 @@ session.save(xmlObject);
       analyzer="name of the analyzer"
       reverse="no|reader|string"
       override="true|false"
-      exclude-from-all="false|true"
+      exclude-from-all="no|yes|no_analyzed"
       value-converter="value converter lookup name"
       converter="converter lookup name"
 />
@@ -416,8 +416,8 @@ session.save(xmlObject);
                      <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> xml property mappings defined for the given property. Defaults to the xml mapping analyzer decision scheme based on the analyzer set, or the <literal>xml-analyzer</literal> mapping.</entry>.
                    </row>
                    <row>
-                     <entry>exclude-from-all (optional, default to <literal>false</literal>)</entry>
-                     <entry>Excludes the property from participating in the "all" meta-data.</entry>
+                     <entry>exclude-from-all (optional, default to <literal>no</literal>)</entry>
+                     <entry>Excludes the property from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
                    </row>
                    <row>
                      <entry>override (optional, defaults to <literal>true</literal>)</entry>

@@ -20,6 +20,7 @@ import org.compass.core.Property;
 import org.compass.core.converter.Converter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.util.Parameter;
 
 /**
@@ -111,7 +112,7 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private String managedIdConverterName;
 
-    private boolean excludeFromAll = false;
+    private ResourcePropertyMapping.ExcludeFromAllType excludeFromAll = ResourcePropertyMapping.ExcludeFromAllType.NO;
 
     private String analyzer;
 
@@ -133,7 +134,7 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         mapping.setBoost(getBoost());
         mapping.setManagedId(getManagedId());
         mapping.setIdPropertyIndex(getIdPropertyIndex());
-        mapping.setExcludeFromAll(isExcludeFromAll());
+        mapping.setExcludeFromAll(getExcludeFromAll());
         mapping.setAnalyzer(getAnalyzer());
         mapping.setOverrideByName(isOverrideByName());
         mapping.setManagedIdIndex(getManagedIdIndex());
@@ -198,11 +199,11 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         return idPropertyIndex != ID_NOT_SET_VALUE;
     }
 
-    public boolean isExcludeFromAll() {
+    public ResourcePropertyMapping.ExcludeFromAllType getExcludeFromAll() {
         return excludeFromAll;
     }
 
-    public void setExcludeFromAll(boolean excludeFromAll) {
+    public void setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType excludeFromAll) {
         this.excludeFromAll = excludeFromAll;
     }
 

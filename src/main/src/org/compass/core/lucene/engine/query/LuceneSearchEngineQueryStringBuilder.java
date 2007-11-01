@@ -69,6 +69,11 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
         return this;
     }
 
+    public SearchEngineQueryBuilder.SearchEngineQueryStringBuilder useOrDefaultOperator() {
+        this.operator = QueryParser.Operator.OR;
+        return this;
+    }
+
     public SearchEngineQueryBuilder.SearchEngineQueryStringBuilder setQueryParser(String queryParser) {
         this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getQueryParser(queryParser);
         return this;

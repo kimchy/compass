@@ -58,9 +58,4 @@ public @interface SearchableAllMetaData {
      * This effectively disables indexing boosts and length normalization for this field.
      */
     boolean omitNorms() default false;
-
-    /**
-     * The analyzer that will be used on the "all" meta-data.
-     */
-    String analyzer() default "";
 }

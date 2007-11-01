@@ -835,7 +835,6 @@ public class Daughter extends Child {
         all="true|false"
         all-term-vector="no|yes|positions|offsets|positions_offsets"
         all-metadata="all meta-data"
-        all-analyzer="name of the analyzer used for the all property"
         converter="converter lookup name"
 >
     (id)*,
@@ -905,10 +904,6 @@ public class Daughter extends Child {
             <row>
               <entry>all-metadata (optional, defaults to configuration setting <literal>compass.property.all</literal>)</entry>
               <entry>The name of the all property.</entry>
-            </row>
-            <row>
-              <entry>all-analyzer (optional, defaults to configuration setting <literal>compass.engine.all.analyzer</literal>, which in turn, defaults to the <literal>default</literal> analyzer)</entry>
-              <entry>The name of the analyzer that will be used to analyze the all property.</entry>
             </row>
             <row>
               <entry>converter (optional)</entry>
@@ -984,7 +979,7 @@ public class Daughter extends Child {
       class="explicit declaration of the property class"
       managed-id="auto|true|false"
       managed-id-converter="managed id converter lookup name"
-      exclude-from-all="false|true"
+      exclude-from-all="no|yes|no_analyzed"
       converter="converter lookup name"
   >
  (meta-data)*
@@ -1025,8 +1020,8 @@ public class Daughter extends Child {
               <entry>The global converter lookup name applied to the generated managed id (if generated).</entry>
             </row>
             <row>
-              <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
-              <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level.</entry>
+              <entry>exclude-from-all (optional, defaults to <literal>no</literal>)</entry>
+              <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
             </row>
             <row>
               <entry>converter (optional)</entry>
@@ -1057,7 +1052,7 @@ public class Daughter extends Child {
       managed-id="auto|true|false"
       managed-id-index="[compass.managedId.index setting]|no|un_tokenized"
       managed-id-converter="managed id converter lookup name"
-      exclude-from-all="false|true"
+      exclude-from-all="no|yes|no_analyzed"
       converter="converter lookup name"
 >
    (meta-data)*
@@ -1109,8 +1104,8 @@ public class Daughter extends Child {
               <entry>The global converter lookup name applied to the generated managed id (if generated).</entry>
             </row>
               <row>
-                <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
-                <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level.</entry>
+                <entry>exclude-from-all (optional, defaults to <literal>no</literal>)</entry>
+                <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
               </row>
               <row>
                 <entry>converter (optional)</entry>
@@ -1249,7 +1244,7 @@ public class Daughter extends Child {
       analyzer="name of the analyzer"
       reverse="no|reader|string"
       null-value="String value that will be stored when the property value is null"
-      exclude-from-all="[parent's exclude-from-all]|false|true"
+      exclude-from-all="[parent's exclude-from-all]|no|yes|no_analyzed"
       converter="converter lookup name"
       term-vector="no|yes|positions|offsets|positions_offsets"
       format="the format string (only applies to formatted elements)"
@@ -1292,7 +1287,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
-              <entry>Excludes the meta-data from participating in the "all" meta-data.</entry>
+              <entry>Excludes the meta-data from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
             </row>
             <row>
               <entry>null-value (optional, defaults to not storing the anything on null)</entry>
@@ -1333,7 +1328,7 @@ public class Daughter extends Child {
       analyzer="name of the analyzer"
       reverse="no|reader|string"
       null-value="optional String value when expression is null"
-      exclude-from-all="[parent's exclude-from-all]|false|true"
+      exclude-from-all="[parent's exclude-from-all]|no|yes|no_analyzed"
       converter="the Dynamic Converter lookup name (required)"
       format="the format string (only applies to formatted elements)"
 >
@@ -1375,7 +1370,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
-              <entry>Excludes the meta-data from participating in the "all" meta-data.</entry>
+              <entry>Excludes the meta-data from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
             </row>
             <row>
               <entry>null-value (optional, defaults to not saving the value)</entry>
@@ -1604,7 +1599,7 @@ public class Daughter extends Child {
 
         <literal>constant</literal> element.
  <programlisting><![CDATA[<constant
-          exclude-from-all="false|true"
+          exclude-from-all="no|yes|no_analyzed"
           converter="converter lookup name"
     >
    meta-data,
@@ -1622,7 +1617,7 @@ public class Daughter extends Child {
             <tbody>
               <row>
                 <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
-                <entry>Excludes the constant meta-data and all it's values from participating in the "all" feature.</entry>
+                <entry>Excludes the constant meta-data and all it's values from participating in the "all" feature. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
               </row>
               <row>
                 <entry>override (optional, defaults to <literal>true</literal>)</entry>

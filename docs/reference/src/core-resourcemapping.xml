@@ -268,7 +268,7 @@ session.save(r);]]></programlisting>
       analyzer="name of the analyzer"
       reverse="no|reader|string"
       override="true|false"
-      exclude-from-all="[parent's exclude-from-all]|false|true"
+      exclude-from-all="no|yes|no_analyzed"
       converter="converter lookup name"
 >
 </resource-property>]]></programlisting>
@@ -302,7 +302,7 @@ session.save(r);]]></programlisting>
             </row>
             <row>
               <entry>exclude-from-all (optional, default to <literal>false</literal>)</entry>
-              <entry>Excludes the property from participating in the "all" meta-data.</entry>
+              <entry>Excludes the property from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
             </row>
             <row>
               <entry>override (optional, defaults to <literal>true</literal>)</entry>

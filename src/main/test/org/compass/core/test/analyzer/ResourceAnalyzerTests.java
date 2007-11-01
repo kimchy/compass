@@ -113,7 +113,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(0, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
-        assertEquals(0, hits.getLength());
+        assertEquals(1, hits.getLength());
 
         tr.commit();
     }
@@ -132,24 +132,6 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassHits hits = session.find("value:the");
         assertEquals(0, hits.getLength());
         hits = session.find("value2:the");
-        assertEquals(1, hits.getLength());
-
-        tr.commit();
-    }
-
-    public void testResourceAnalyzerOnlyAllAnalyzer() {
-        CompassSession session = openSession();
-        CompassTransaction tr = session.beginTransaction();
-
-        Long id = new Long(1);
-        Resource r = session.createResource("f");
-        r.addProperty("id", id);
-        r.addProperty("value", TEXT);
-        session.save(r);
-
-        CompassHits hits = session.find("value:the");
-        assertEquals(0, hits.getLength());
-        hits = session.find("the");
         assertEquals(1, hits.getLength());
 
         tr.commit();

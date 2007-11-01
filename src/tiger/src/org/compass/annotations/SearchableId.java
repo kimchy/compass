@@ -161,7 +161,7 @@ public @interface SearchableId {
      * <p/>
      * The meta-data will be auto generated only if the name has a value.
      */
-    boolean excludeFromAll() default false;
+    ExcludeFromAll excludeFromAll() default ExcludeFromAll.NO;
 
     /**
      * The converter of the auto generated {@link SearchableMetaData}. Maps to

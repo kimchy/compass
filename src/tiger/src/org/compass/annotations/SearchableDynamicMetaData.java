@@ -88,7 +88,7 @@ public @interface SearchableDynamicMetaData {
      *
      * @see org.compass.annotations.Searchable#enableAll
      */
-    boolean excludeFromAll() default false;
+    ExcludeFromAll excludeFromAll() default ExcludeFromAll.NO;
     
     /**
      * If there is already an existing id with the same field/property name defined,

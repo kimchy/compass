@@ -94,12 +94,12 @@ public class ValidatorMappingProcessor implements MappingProcessor {
         if (resourcePropertyMapping.length == 1) {
             return;
         }
-        boolean excludeFromAll = resourcePropertyMapping[0].isExcludeFromAll();
+        ResourcePropertyMapping.ExcludeFromAllType excludeFromAll = resourcePropertyMapping[0].getExcludeFromAll();
         for (int i = 1; i < resourcePropertyMapping.length; i++) {
             if (resourcePropertyMapping[i].isInternal()) {
                 continue;
             }
-            if (excludeFromAll != resourcePropertyMapping[i].isExcludeFromAll()) {
+            if (excludeFromAll != resourcePropertyMapping[i].getExcludeFromAll()) {
                 throw new InvalidMappingException("Resource property / meta-data [" + propertyName + "] of alias ["
                         + resourceMapping.getAlias() + "] has different exclude from all settings");
             }

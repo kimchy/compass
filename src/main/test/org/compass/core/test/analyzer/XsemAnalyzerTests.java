@@ -3,11 +3,11 @@ package org.compass.core.test.analyzer;
 import java.io.StringReader;
 
 import org.compass.core.CompassHits;
+import org.compass.core.CompassQuery;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassToken;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
-import org.compass.core.CompassQuery;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
@@ -119,7 +119,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(0, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
-        assertEquals(0, hits.getLength());
+        assertEquals(1, hits.getLength());
 
         tr.commit();
     }
@@ -133,20 +133,6 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         CompassHits hits = session.find("value:the");
         assertEquals(0, hits.getLength());
         hits = session.find("value2:the");
-        assertEquals(1, hits.getLength());
-
-        tr.commit();
-    }
-
-    public void testResourceAnalyzerOnlyAllAnalyzer() throws Exception {
-        CompassSession session = openSession();
-        CompassTransaction tr = session.beginTransaction();
-
-        session.save(buildAliasedXmlObject("f"));
-
-        CompassHits hits = session.find("value:the");
-        assertEquals(0, hits.getLength());
-        hits = session.find("the");
         assertEquals(1, hits.getLength());
 
         tr.commit();

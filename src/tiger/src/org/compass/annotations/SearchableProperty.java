@@ -192,7 +192,7 @@ public @interface SearchableProperty {
      * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
      * {@link #name()} is not set.
      */
-    boolean excludeFromAll() default false;
+    ExcludeFromAll excludeFromAll() default ExcludeFromAll.NO;
 
     /**
      * The converter of the auto generated {@link SearchableMetaData}. Maps to

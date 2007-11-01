@@ -206,6 +206,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
         WriterManager.IndexWriterWrapper wrapper = writerManager.openWriterBySubIndex(subIndex);
         LuceneUtils.applyBoostIfNeeded(resource, searchEngine);
         Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
+        analyzer = LuceneUtils.addAllProperty(resource, analyzer, resource.resourceKey().getResourceMapping(), searchEngine);
         LuceneUtils.createResource(wrapper.indexWriter, resource, analyzer);
     }
 

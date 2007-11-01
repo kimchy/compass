@@ -40,12 +40,6 @@ public interface ResourceMapping extends AliasMapping {
     String getAnalyzer();
 
     /**
-     * Returns the analyzer name that is associated with the all property.
-     * Can be <code>null</code>.
-     */
-    String getAllAnalyzer();
-
-    /**
      * Returns <code>true</code> if the resource proeprty mapping of the resource have
      * a specific analyzer set.
      */

@@ -136,8 +136,8 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
         return null;
     }
 
-    public boolean isExcludeFromAll() {
-        return false;
+    public ExcludeFromAllType getExcludeFromAll() {
+        return ExcludeFromAllType.NO;
     }
 
     public ReverseType getReverse() {

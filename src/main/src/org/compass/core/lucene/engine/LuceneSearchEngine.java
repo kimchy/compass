@@ -20,6 +20,7 @@ import java.io.Reader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Field;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
@@ -144,6 +145,12 @@ public class LuceneSearchEngine implements SearchEngine {
         Field.Index fieldIndex = LuceneUtils.getFieldIndex(index);
         Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(termVector);
         Field field = new Field(name, value, fieldStore, fieldIndex, fieldTermVector);
+        return new LuceneProperty(field);
+    }
+
+    public Property createProperty(String name, TokenStream tokenStream, Property.TermVector termVector) {
+        Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(termVector);
+        Field field = new Field(name, tokenStream, fieldTermVector);
         return new LuceneProperty(field);
     }
 
@@ -337,7 +344,6 @@ public class LuceneSearchEngine implements SearchEngine {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
                 Resource resource1 = multiResource.resource(i);
-                LuceneUtils.addAllPropertyIfNeeded(resource1, resourceMapping, this);
                 LuceneUtils.addExtendedProeprty(resource1, resourceMapping, this);
                 transaction.create((InternalResource) resource1);
                 if (log.isDebugEnabled()) {
@@ -345,7 +351,6 @@ public class LuceneSearchEngine implements SearchEngine {
                 }
             }
         } else {
-            LuceneUtils.addAllPropertyIfNeeded(resource, resourceMapping, this);
             LuceneUtils.addExtendedProeprty(resource, resourceMapping, this);
             transaction.create((InternalResource) resource);
             if (log.isDebugEnabled()) {

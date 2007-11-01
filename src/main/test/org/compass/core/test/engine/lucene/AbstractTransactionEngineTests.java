@@ -57,6 +57,7 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceNotExists(getSearchEngine());
 
+        multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
         assertMulitIdResourceExists(getSearchEngine());
 

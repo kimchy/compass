@@ -54,9 +54,8 @@ public class FindTests extends AbstractTestCase {
         a2.setValue("value 2");
         session.save(a2);
 
-        CompassHitIterator it = session.find("value").detach().iterator();
+        CompassHitIterator it = session.find("value 1").detach().iterator();
         assertEquals(id1, ((A) it.nextHit().getData()).getId());
-        assertEquals(id2, ((A) it.nextHit().getData()).getId());
         try {
             it.nextHit();
             fail();
