@@ -67,7 +67,7 @@ public class LuceneSearchEngineStoreFactory {
             try {
                 Class storeClass = ClassUtils.forName(className);
                 Constructor storeConst = storeClass.getConstructor(new Class[]{String.class, String.class});
-                return (LuceneSearchEngineStore) storeConst.newInstance(new Object[]{connection, subContext});
+                return (LuceneSearchEngineStore) storeConst.newInstance(new Object[]{connection.substring(index), subContext});
             } catch (Exception e) {
                 throw new SearchEngineException("Failed to create connection [" + connection + "]", e);
             }
