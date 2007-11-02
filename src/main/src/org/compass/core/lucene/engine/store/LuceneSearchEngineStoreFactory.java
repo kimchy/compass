@@ -16,6 +16,14 @@
 
 package org.compass.core.lucene.engine.store;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.util.Properties;
+
+import org.compass.core.engine.SearchEngineException;
+import org.compass.core.util.ClassUtils;
+
 public class LuceneSearchEngineStoreFactory {
 
     public static final String MEM_PREFIX = "ram://";
@@ -38,6 +46,31 @@ public class LuceneSearchEngineStoreFactory {
         }
         if (connection.startsWith(JDBC_PREFIX)) {
             return new JdbcLuceneSearchEngineStore(connection.substring(JDBC_PREFIX.length(), connection.length()), subContext);
+        }
+        int index = connection.indexOf("://");
+        if (index != -1) {
+            String pluggableStore = connection.substring(0, index);
+            InputStream is = LuceneSearchEngineStore.class.getResourceAsStream("/compass-store-" + pluggableStore + ".properties");
+            Properties props;
+            try {
+                props = new Properties();
+                props.load(is);
+            } catch (Exception e) {
+                try {
+                    is.close();
+                } catch (IOException e1) {
+                    // ignore
+                }
+                throw new SearchEngineException("Failed to create store [" + connection + "]", e);
+            }
+            String className = props.getProperty("type");
+            try {
+                Class storeClass = ClassUtils.forName(className);
+                Constructor storeConst = storeClass.getConstructor(new Class[]{String.class, String.class});
+                return (LuceneSearchEngineStore) storeConst.newInstance(new Object[]{connection, subContext});
+            } catch (Exception e) {
+                throw new SearchEngineException("Failed to create connection [" + connection + "]", e);
+            }
         }
         return new FSLuceneSearchEngineStore(connection, subContext);
     }
