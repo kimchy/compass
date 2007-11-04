@@ -391,11 +391,11 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         // do nothing here
     }
 
-    protected class CopyFromHolder {
+    public static class CopyFromHolder {
 
-        boolean createOriginalDirectory = false;
+        public boolean createOriginalDirectory = false;
 
-        Object data;
+        public Object data;
     }
 
     public void copyFrom(final LuceneSearchEngineStore searchEngineStore) throws SearchEngineException {
