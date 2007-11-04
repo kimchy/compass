@@ -42,6 +42,7 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
+import org.compass.core.util.ClassUtils;
 import org.compass.core.util.JdkVersion;
 
 /**
@@ -167,6 +168,24 @@ public class CompassConfiguration {
      * @return the Compass
      */
     public Compass buildCompass() throws CompassException {
+
+        // add any mappings set in the properties
+        for (Iterator it = settings.keySet().iterator(); it.hasNext();) {
+            String setting = (String) it.next();
+            if (setting.startsWith(CompassEnvironment.MAPPING_PREFIX)) {
+                String mapping = settings.getSetting(setting);
+                if (mapping.endsWith("cpm.xml") || mapping.endsWith("cmd.xml")) {
+                    addResource(mapping);
+                } else {
+                    try {
+                        addClass(ClassUtils.forName(mapping));
+                    } catch (ClassNotFoundException e) {
+                        throw new CompassException("Failed to find class [" + mapping + "]");
+                    }
+                }
+            }
+        }
+
 
         CompassSettings copySettings = settings.copy();
 

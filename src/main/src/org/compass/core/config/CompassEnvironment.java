@@ -40,6 +40,8 @@ public class CompassEnvironment {
      */
     public static final String NAME = "compass.name";
 
+    public static final String MAPPING_PREFIX = "compass.mapping";
+
     /**
      * Settings for global rregistration and handling of property accessors.
      * <p/>
