@@ -16,7 +16,6 @@
 
 package org.compass.core.lucene.engine.store;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
@@ -58,7 +57,7 @@ public class LuceneSearchEngineStoreFactory {
             } catch (Exception e) {
                 try {
                     is.close();
-                } catch (IOException e1) {
+                } catch (Exception e1) {
                     // ignore
                 }
                 throw new SearchEngineException("Failed to create store [" + connection + "]", e);
