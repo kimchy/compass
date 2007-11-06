@@ -53,8 +53,8 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             String queryParserName = (String) entry.getKey();
             CompassSettings queryParserSettings = (CompassSettings) entry.getValue();
 
-            if (log.isInfoEnabled()) {
-                log.info("Building query parser [" + queryParserName + "]");
+            if (log.isDebugEnabled()) {
+                log.debug("Building query parser [" + queryParserName + "] with settings " + queryParserSettings);
             }
             String queryParserType = queryParserSettings.getSetting(LuceneEnvironment.QueryParser.TYPE);
             if (queryParserType == null) {
@@ -75,6 +75,9 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             queryParsers.put(queryParserName, queryParser);
         }
         if (queryParsers.get(LuceneEnvironment.QueryParser.DEFAULT_GROUP) == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No default query parser found (under groupd [default]), registering a default one");
+            }
             DefaultLuceneQueryParser queryParser = new DefaultLuceneQueryParser();
             queryParser.configure(new CompassSettings());
             queryParser.setCompassMapping(searchEngineFactory.getMapping());

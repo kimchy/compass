@@ -16,6 +16,8 @@
 
 package org.compass.core.lucene.engine.queryparser;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -36,6 +38,8 @@ import org.compass.core.mapping.CompassMapping;
  */
 public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappingAware, CompassConfigurable {
 
+    private static Log log = LogFactory.getLog(DefaultLuceneQueryParser.class);
+
     private CompassMapping mapping;
 
     private boolean allowLeadingWildcard;
@@ -45,6 +49,9 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     public void configure(CompassSettings settings) throws CompassException {
         allowLeadingWildcard = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_LEADING_WILDCARD, false);
         allowConstantScorePrefixQuery = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY, true);
+        if (log.isDebugEnabled()) {
+            log.debug("Query Parser configured with allowLeadingWildcard [" + allowLeadingWildcard + "] and allowConstantScorePrefixQuery [" + allowConstantScorePrefixQuery + "]");
+        }
     }
 
     public void setCompassMapping(CompassMapping mapping) {
