@@ -566,5 +566,11 @@ public class CompassEnvironment {
          * Disable all cascading operations.
          */
         public static final String DISABLE = "compass.cascade.disable";
+
+        /**
+         * The fully qualified class name of a class implementing CompassCascadeFilter, which
+         * allows filtering of create/insert/delete cascade operations.
+         */
+        public static final String FILTER_TYPE = "compass.cascade.filter.type";
     }
 }
