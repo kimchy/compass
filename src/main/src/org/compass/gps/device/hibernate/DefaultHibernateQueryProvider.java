@@ -32,6 +32,8 @@ public class DefaultHibernateQueryProvider implements HibernateQueryProvider {
 
     private String selectQuery;
 
+    private boolean isUsingDefaultSelectQuery;
+
     /**
      * Creates a new query provider based on the entity name. The select
      * statement is <code>from entityName</code>.
@@ -41,6 +43,7 @@ public class DefaultHibernateQueryProvider implements HibernateQueryProvider {
      */
     public DefaultHibernateQueryProvider(Class entityClass, String entityName) {
         this.selectQuery = "from " + entityName;
+        this.isUsingDefaultSelectQuery = true;
     }
 
     /**
@@ -68,7 +71,7 @@ public class DefaultHibernateQueryProvider implements HibernateQueryProvider {
      * <code>null</code> if the select query is set.
      */
     public Criteria createCriteria(Session session, EntityInformation entityInformation) {
-        if (selectQuery != null) {
+        if (!isUsingDefaultSelectQuery) {
             return null;
         }
         Class type = entityInformation.getEntityClass();
