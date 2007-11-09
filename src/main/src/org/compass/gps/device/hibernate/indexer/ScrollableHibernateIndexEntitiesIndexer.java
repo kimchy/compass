@@ -16,6 +16,9 @@
 
 package org.compass.gps.device.hibernate.indexer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassSession;
@@ -23,16 +26,26 @@ import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.device.hibernate.entities.EntityInformation;
 import org.compass.gps.device.support.parallel.IndexEntity;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
+import org.hibernate.metadata.ClassMetadata;
 
 /**
  * A Hibernate indexer uses Hibernate <code>ScrollableResults</code> to index the database
  * instead of using <code>setFirstResult</code> and <code>setMaxResults</code>. Using scrollable
  * results yields better performance especially for large result set.
+ *
+ * <p>First tries to call {@link org.compass.gps.device.hibernate.HibernateQueryProvider#createCriteria(org.hibernate.Session, org.compass.gps.device.hibernate.entities.EntityInformation)}
+ * in order to use Hibernate <code>Criteria</code> to construct the cursor. If no criteria is returned (<code>null</code>
+ * is returned), Hibernate <code>Query</code> is used by calling {@link org.compass.gps.device.hibernate.HibernateQueryProvider#createQuery(org.hibernate.Session, org.compass.gps.device.hibernate.entities.EntityInformation)}.
+ *
+ * <p>When using Criteria, by default, orders the results by entity id. This can be turned off either globablly using
+ * {@link #setPerformOrderById(boolean)}, or per entity using {@link #setPerformOrderById(String, boolean)}.
  *
  * @author kimchy
  */
@@ -42,8 +55,28 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
 
     private HibernateGpsDevice device;
 
+    private boolean performOrderById = true;
+
+    private Map performOrderByPerEntity = new HashMap();
+
     public void setHibernateGpsDevice(HibernateGpsDevice device) {
         this.device = device;
+    }
+
+    /**
+     * Should this indxer order by the ids when <code>Criteria</code> is available.
+     * Defaults to <code>true</code>.
+     */
+    public void setPerformOrderById(boolean performOrderById) {
+        this.performOrderById = performOrderById;
+    }
+
+    /**
+     * Should this indxer order by the ids when <code>Criteria</code> is available for
+     * the given entity. Defaults to {@link #setPerformOrderById(boolean)}.
+     */
+    public void setPerformOrderById(String entity, boolean performOrderById) {
+        performOrderByPerEntity.put(entity, new Boolean(performOrderById));
     }
 
     public void performIndex(CompassSession session, IndexEntity[] entities) {
@@ -64,17 +97,37 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
                     log.debug(device.buildMessage("Indexing entities [" + entityInformation.getName() + "] using query ["
                             + entityInformation.getQueryProvider() + "]"));
                 }
-                Query query = entityInformation.getQueryProvider().createQuery(hibernateSession, entityInformation);
-                // TODO how can we set the fetchCount?
-                cursor = query.scroll(ScrollMode.FORWARD_ONLY);
+
+                Criteria criteria = entityInformation.getQueryProvider().createCriteria(hibernateSession, entityInformation);
+                if (criteria != null) {
+                    if (performOrderById) {
+                        Boolean performOrder = (Boolean) performOrderByPerEntity.get(entityInformation.getName());
+                        if (performOrder == null || performOrder.booleanValue()) {
+                            ClassMetadata metadata = hibernateSession.getSessionFactory().getClassMetadata(entityInformation.getName());
+                            criteria.addOrder(Order.asc(metadata.getIdentifierPropertyName()));
+                        }
+                    }
+                    criteria.setFetchSize(device.getFetchCount());
+                    cursor = criteria.scroll(ScrollMode.FORWARD_ONLY);
+                } else {
+                    Query query = entityInformation.getQueryProvider().createQuery(hibernateSession, entityInformation);
+                    cursor = query.scroll(ScrollMode.FORWARD_ONLY);
+                }
+
+                int index = 0;
                 while (cursor.next()) {
                     Object item = cursor.get(0);
                     session.create(item);
                     hibernateSession.evict(item);
                     session.evictAll();
+                    if (index++ == device.getFetchCount()) {
+                        // clear Hibernate first level cache since it might hold additional objects
+                        hibernateSession.clear();
+                        index = 0;
+                    }
                 }
                 cursor.close();
-                session.evictAll();
+
                 hibernateTransaction.commit();
             } catch (Exception e) {
                 log.error(device.buildMessage("Failed to index the database"), e);

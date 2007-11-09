@@ -54,8 +54,7 @@ import org.hibernate.SessionFactory;
  * {@link HibernateIndexEntitiesIndexer}. It has two different implementation, the
  * {@link org.compass.gps.device.hibernate.indexer.PaginationHibernateIndexEntitiesIndexer} and the
  * {@link org.compass.gps.device.hibernate.indexer.ScrollableHibernateIndexEntitiesIndexer}. The default
- * used is the pagination indexer even though it is slower because of a memory leak in versions of
- * Hibernate prior to 3.2.5.
+ * used is the scrollable indexer.
  *
  * <p>Mirroring is done by injecting lifecycle listeners into Hibernate. It is done using
  * {@link org.compass.gps.device.hibernate.lifecycle.HibernateEntityLifecycleInjector} with
@@ -280,8 +279,13 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
 
     /**
      * <p>Sets a specific select statement for the index process of the given
-     * entity class. The same as {@link #setIndexQueryProvider(Class,HibernateQueryProvider)}
-     * using {@link org.compass.gps.device.hibernate.DefaultHibernateQueryProvider}.
+     * entity class.
+     *
+     * <p>Note, when using {@link org.compass.gps.device.hibernate.indexer.ScrollableHibernateIndexEntitiesIndexer}
+     * it is preferable not to use this mehotd, instead use
+     * {@link #setIndexQueryProvider(Class, HibernateQueryProvider)} and return a
+     * Hibernate <code>Criteria</code> object instead.
+     *
      * <p>Note, this information is used when the device starts.
      *
      * @param entityClass The Entity class to associate the select query with
@@ -293,8 +297,13 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
 
     /**
      * Sets a specific select statement for the index process of the given
-     * entity name. The same as {@link #setIndexQueryProvider(String,HibernateQueryProvider)}
-     * using {@link org.compass.gps.device.hibernate.DefaultHibernateQueryProvider}
+     * entity name.
+     *
+     * <p>Note, when using {@link org.compass.gps.device.hibernate.indexer.ScrollableHibernateIndexEntitiesIndexer}
+     * it is preferable not to use this mehotd, instead use
+     * {@link #setIndexQueryProvider(String, HibernateQueryProvider)} and return a
+     * Hibernate <code>Criteria</code> object instead.
+     *
      * <p>Note, this information is used when the device starts.
      *
      * @param entityName  The entity name to associate the select query with

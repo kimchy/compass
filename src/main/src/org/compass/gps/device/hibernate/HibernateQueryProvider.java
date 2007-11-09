@@ -17,19 +17,25 @@
 package org.compass.gps.device.hibernate;
 
 import org.compass.gps.device.hibernate.entities.EntityInformation;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
- * During indexing time provides the Jpa Query to extract the data
+ * During indexing time provides the Hibernate Query to extract the data
  * to be indexed per entity.
+ *
+ * <p>Can return either return <code>Query</code> or <code>Criteria</code>.
+ * Indexers ({@link org.compass.gps.device.hibernate.indexer.HibernateIndexEntitiesIndexer}
+ * are encouraged to first check the criteria, and if that returns <code>null</code>
+ * use the query.
  *
  * @author kimchy
  */
 public interface HibernateQueryProvider {
 
     /**
-     * Create a Jpa Query based on the Jpa <code>EntityManager</code> and
+     * Create a HIbnerate Query based on the Hibernate <code>Session</code> and
      * the {@link org.compass.gps.device.hibernate.entities.EntityInformation}.
      *
      * @param session           The Hibernate session to create the query with
@@ -37,4 +43,16 @@ public interface HibernateQueryProvider {
      * @return the Hibernate query
      */
     Query createQuery(Session session, EntityInformation entityInformation);
+
+    /**
+     * Create a Criteria query based on the <code>EntityManager</code>
+     * and the {@link org.compass.gps.device.hibernate.entities.EntityInformation}.
+     * Criteria queries respect customizations about eager fetching of
+     * collections.
+     *
+     * @param session           The Hibernate session to create the query with
+     * @param entityInformation The enity information to create the query with
+     * @return the Hibernate query
+     */
+    Criteria createCriteria(Session session, EntityInformation entityInformation);
 }

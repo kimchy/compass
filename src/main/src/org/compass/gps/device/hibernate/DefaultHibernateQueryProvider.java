@@ -17,6 +17,7 @@
 package org.compass.gps.device.hibernate;
 
 import org.compass.gps.device.hibernate.entities.EntityInformation;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -60,6 +61,18 @@ public class DefaultHibernateQueryProvider implements HibernateQueryProvider {
             return session.createQuery(selectQuery);
         }
         return session.createQuery("from " + entityInformation.getName());
+    }
+
+    /**
+     * Creates the Hibernate criteria for the given entity information. Returns
+     * <code>null</code> if the select query is set.
+     */
+    public Criteria createCriteria(Session session, EntityInformation entityInformation) {
+        if (selectQuery != null) {
+            return null;
+        }
+        Class type = entityInformation.getEntityClass();
+    	return session.createCriteria(type);
     }
 
     public String toString() {

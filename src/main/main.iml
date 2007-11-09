@@ -53,7 +53,9 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/hibernate/hibernate3.jar!/" />
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
+          <root url="http://www.hibernate.org/hib_docs/v3/api/" />
+        </JAVADOC>
         <SOURCES />
       </library>
     </orderEntry>

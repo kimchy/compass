@@ -82,11 +82,11 @@ gps.start();
       </para>
 
 	  <para>
-		The indexing process is pluggable and Compass comes with two implementations. The first, <classname>PaginationHibernateIndexEntitiesIndexer</classname>, uses <literal>setFirstResult</literal> and <literal>setMaxResults</literal> in order to perform pagination. The second one, <classname>ScrollableHibernateIndexEntitiesIndexer</classname>, uses Hibernate scrollable resultset in order to index the data. The default indexer used is the pagination indexer (though the scrollable indexer is faster) due to a memory leak in Hibernate (up to 3.2.4, fixed in the next minor version).
+		The indexing process is pluggable and Compass comes with two implementations. The first, <classname>PaginationHibernateIndexEntitiesIndexer</classname>, uses <literal>setFirstResult</literal> and <literal>setMaxResults</literal> in order to perform pagination. The second one, <classname>ScrollableHibernateIndexEntitiesIndexer</classname>, uses Hibernate scrollable resultset in order to index the data. The default indexer used is the scrollable indexer.
 	  </para>
 	
 	  <para>
-		During the indexing process Compass will execute a default query which will fetch all the relevant data from the database using Hibernate. The query itself can be controlled both by setting a static sql query and providing a query provider. This setting applies per entity.
+		During the indexing process Compass will execute a default query which will fetch all the relevant data from the database using Hibernate. The query itself can be controlled both by setting a static sql query and providing a query provider. This setting applies per entity. Note, when using the scrollable indexer, it is preferable to use a custom query provider that will return specific Hibernate <literal>Criteria</literal> instead of using static sql query.
 	  </para>
 
     </sect1>
