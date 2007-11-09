@@ -16,6 +16,9 @@
 
 package org.compass.gps.device.jpa.indexer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassSession;
@@ -23,16 +26,29 @@ import org.compass.gps.device.jpa.EntityManagerWrapper;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.entities.EntityInformation;
+import org.compass.gps.device.jpa.queryprovider.HibernateJpaQueryProvider;
 import org.compass.gps.device.support.parallel.IndexEntity;
+import org.hibernate.Criteria;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Order;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.ejb.HibernateQuery;
+import org.hibernate.metadata.ClassMetadata;
 
 /**
  * A Hibernate indexer uses Hibernate <code>ScrollableResults</code> to index the database
  * instead of using <code>setFirstResult</code> and <code>setMaxResults</code>. Using scrollable
  * results yields better performance especially for large result set.
+ *
+ * <p>Also takes into accont if using {@link HibernateJpaQueryProvider} by called its <code>createCriteria</code>
+ * instead of the default <code>createQuery</code>. The criteria better handles outer joins, allows to set the
+ * fetch size, and automatically supports ordering by the ids of the entities.
+ *
+ * <p>Note, if using {@link org.compass.gps.device.jpa.JpaGpsDevice#setIndexSelectQuery(Class, String)} will cause
+ * not to be able to use <code>Criteria</code>. Instead, make sure to use {@link org.compass.gps.device.jpa.JpaGpsDevice#setIndexQueryProvider(Class, org.compass.gps.device.jpa.queryprovider.JpaQueryProvider)}
+ * and provider your own extension on top of {@link org.compass.gps.device.jpa.queryprovider.HibernateJpaQueryProvider}
+ * that returns your own <code>Criteria</code>.
  *
  * @author kimchy
  */
@@ -42,8 +58,28 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
 
     private JpaGpsDevice jpaGpsDevice;
 
+    private boolean performOrderById = true;
+
+    private Map<String, Boolean> performOrderByPerEntity = new HashMap<String, Boolean>();
+
     public void setJpaGpsDevice(JpaGpsDevice jpaGpsDevice) {
         this.jpaGpsDevice = jpaGpsDevice;
+    }
+
+    /**
+     * Should this indxer order by the ids when <code>Criteria</code> is available.
+     * Defaults to <code>true</code>.
+     */
+    public void setPerformOrderById(boolean performOrderById) {
+        this.performOrderById = performOrderById;
+    }
+
+    /**
+     * Should this indxer order by the ids when <code>Criteria</code> is available for
+     * the given entity. Defaults to {@link #setPerformOrderById(boolean)}.
+     */
+    public void setPerformOrderById(String entity, boolean performOrderById) {
+        performOrderByPerEntity.put(entity, performOrderById);
     }
 
     public void performIndex(CompassSession session, IndexEntity[] entities) {
@@ -65,14 +101,37 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
                     log.debug(jpaGpsDevice.buildMessage("Indexing entities [" + entityInformation.getName() + "] using query ["
                             + entityInformation.getQueryProvider() + "]"));
                 }
-                HibernateQuery query = (HibernateQuery) entityInformation.getQueryProvider().createQuery(entityManager, entityInformation);
-                // TODO how can we set the fetchCount?
-                cursor = query.getHibernateQuery().scroll(ScrollMode.FORWARD_ONLY);
+
+                if (entityInformation.getQueryProvider() instanceof HibernateJpaQueryProvider) {
+                    Criteria criteria = ((HibernateJpaQueryProvider) entityInformation.getQueryProvider()).createCriteria(entityManager, entityInformation);
+                    if (criteria != null) {
+                        if (performOrderById) {
+                            Boolean performOrder = performOrderByPerEntity.get(entityInformation.getName());
+                            if (performOrder == null || performOrder) {
+                                ClassMetadata metadata = entityManager.getSession().getSessionFactory().getClassMetadata(entityInformation.getName());
+                                criteria.addOrder(Order.asc(metadata.getIdentifierPropertyName()));
+                            }
+                        }
+                        criteria.setFetchSize(fetchCount);
+                        cursor = criteria.scroll(ScrollMode.FORWARD_ONLY);
+                    }
+                }
+                if (cursor == null) {
+                    HibernateQuery query = (HibernateQuery) entityInformation.getQueryProvider().createQuery(entityManager, entityInformation);
+                    cursor = query.getHibernateQuery().scroll(ScrollMode.FORWARD_ONLY);
+                }
+
+                int index = 0;
                 while (cursor.next()) {
                     Object item = cursor.get(0);
                     session.create(item);
                     entityManager.getSession().evict(item);
                     session.evictAll();
+                    if (index++ == fetchCount) {
+                        // clear Hibernate first level cache since it might hold additional objects
+                        entityManager.getSession().clear();
+                        index = 0;
+                    }
                 }
                 cursor.close();
                 entityManager.clear();

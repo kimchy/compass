@@ -30,6 +30,8 @@ import org.compass.gps.device.jpa.indexer.JpaIndexEntitiesIndexer;
 import org.compass.gps.device.jpa.indexer.JpaIndexEntitiesIndexerDetector;
 import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjector;
 import org.compass.gps.device.jpa.lifecycle.JpaEntityLifecycleInjectorDetector;
+import org.compass.gps.device.jpa.queryprovider.DefaultJpaQueryProvider;
+import org.compass.gps.device.jpa.queryprovider.JpaQueryProvider;
 import org.compass.gps.device.jpa.support.NativeJpaHelper;
 import org.compass.gps.device.support.parallel.AbstractParallelGpsDevice;
 import org.compass.gps.device.support.parallel.IndexEntitiesIndexer;
@@ -314,7 +316,13 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     /**
      * <p>Sets a specific select statement for the index process of the given
      * entity class. The same as {@link #setIndexQueryProvider(Class,JpaQueryProvider)}
-     * using {@link org.compass.gps.device.jpa.DefaultJpaQueryProvider}.
+     * using {@link org.compass.gps.device.jpa.queryprovider.DefaultJpaQueryProvider}.
+     *
+     * <p>Certain JPA implementations have specific query providers with possible
+     * enhanced functionality in regards to indexing. When using this method
+     * instead of providing their specific implementation might mean less functionality
+     * from the indexer.
+     *
      * <p>Note, this information is used when the device starts.
      *
      * @param entityClass The Entity class to associate the select query with
@@ -327,7 +335,13 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     /**
      * Sets a specific select statement for the index process of the given
      * entity name. The same as {@link #setIndexQueryProvider(String,JpaQueryProvider)}
-     * using {@link org.compass.gps.device.jpa.DefaultJpaQueryProvider}.
+     * using {@link org.compass.gps.device.jpa.queryprovider.DefaultJpaQueryProvider}.
+     *
+     * <p>Certain JPA implementations have specific query providers with possible
+     * enhanced functionality in regards to indexing. When using this method
+     * instead of providing their specific implementation might mean less functionality
+     * from the indexer.
+     *
      * <p>Note, this information is used when the device starts.
      *
      * @param entityName  The entity name to associate the select query with

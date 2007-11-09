@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
+import org.compass.gps.device.jpa.queryprovider.HibernateJpaQueryProvider;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.hibernate.EntityMode;
 import org.hibernate.SessionFactory;
@@ -69,7 +70,8 @@ public class HibernateJpaEntitiesLocator implements JpaEntitiesLocator {
             }
             Class<?> clazz = classMetadata.getMappedClass(EntityMode.POJO);
             ResourceMapping resourceMapping = gps.getMappingForEntityForIndex(entityname);
-            EntityInformation entityInformation = new EntityInformation(clazz, entityname, resourceMapping.getSubIndexHash().getSubIndexes());
+            EntityInformation entityInformation = new EntityInformation(clazz, entityname,
+                    new HibernateJpaQueryProvider(clazz, entityname), resourceMapping.getSubIndexHash().getSubIndexes());
             entitiesList.add(entityInformation);
             if (log.isDebugEnabled()) {
                 log.debug("Entity [" + entityname + "] will be indexed");

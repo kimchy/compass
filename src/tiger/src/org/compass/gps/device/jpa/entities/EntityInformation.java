@@ -16,8 +16,8 @@
 
 package org.compass.gps.device.jpa.entities;
 
-import org.compass.gps.device.jpa.DefaultJpaQueryProvider;
-import org.compass.gps.device.jpa.JpaQueryProvider;
+import org.compass.gps.device.jpa.queryprovider.DefaultJpaQueryProvider;
+import org.compass.gps.device.jpa.queryprovider.JpaQueryProvider;
 import org.compass.gps.device.support.parallel.IndexEntity;
 
 /**
@@ -67,7 +67,7 @@ public class EntityInformation implements IndexEntity {
     }
 
     /**
-     * Sets a string based select query. Uses {@link org.compass.gps.device.jpa.DefaultJpaQueryProvider}
+     * Sets a string based select query. Uses {@link org.compass.gps.device.jpa.queryprovider.DefaultJpaQueryProvider}
      * based on the string query.
      */
     public void setSelectQuery(String selectQuery) {
