@@ -26,6 +26,7 @@ import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.device.hibernate.entities.EntityInformation;
 import org.compass.gps.device.support.parallel.IndexEntity;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -63,8 +64,14 @@ public class PaginationHibernateIndexEntitiesIndexer implements HibernateIndexEn
                         log.debug(device.buildMessage("Indexing entity [" + entityInfo.getName() + "] range ["
                                 + current + "-" + (current + fetchCount) + "]"));
                     }
-                    Query query = entityInfo.getQueryProvider().createQuery(hibernateSession, entityInfo).setFirstResult(current).setMaxResults(fetchCount);
-                    List values = query.list();
+                    List values;
+                    Criteria criteria = entityInfo.getQueryProvider().createCriteria(hibernateSession, entityInfo);
+                    if (criteria != null) {
+                        values = criteria.list();
+                    } else {
+                        Query query = entityInfo.getQueryProvider().createQuery(hibernateSession, entityInfo).setFirstResult(current).setMaxResults(fetchCount);
+                        values = query.list();
+                    }
                     for (Iterator it = values.iterator(); it.hasNext();) {
                         session.create(it.next());
                     }
