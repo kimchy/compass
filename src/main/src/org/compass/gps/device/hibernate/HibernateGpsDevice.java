@@ -26,7 +26,7 @@ import org.compass.gps.device.hibernate.entities.DefaultHibernateEntitiesLocator
 import org.compass.gps.device.hibernate.entities.EntityInformation;
 import org.compass.gps.device.hibernate.entities.HibernateEntitiesLocator;
 import org.compass.gps.device.hibernate.indexer.HibernateIndexEntitiesIndexer;
-import org.compass.gps.device.hibernate.indexer.PaginationHibernateIndexEntitiesIndexer;
+import org.compass.gps.device.hibernate.indexer.ScrollableHibernateIndexEntitiesIndexer;
 import org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityLifecycleInjector;
 import org.compass.gps.device.hibernate.lifecycle.HibernateEntityLifecycleInjector;
 import org.compass.gps.device.hibernate.lifecycle.HibernateMirrorFilter;
@@ -141,7 +141,7 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
         }
 
         if (entitiesIndexer == null) {
-            entitiesIndexer = new PaginationHibernateIndexEntitiesIndexer();
+            entitiesIndexer = new ScrollableHibernateIndexEntitiesIndexer();
         }
         if (log.isDebugEnabled()) {
             log.debug(buildMessage("Using entities indexer [" + entitiesIndexer.getClass().getName() + "]"));
