@@ -122,16 +122,23 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
                 }
 
                 int index = 0;
+                Object prev = null;
                 while (cursor.next()) {
                     Object item = cursor.get(0);
-                    session.create(item);
-                    entityManager.getSession().evict(item);
-                    session.evictAll();
-                    if (index++ == fetchCount) {
-                        // clear Hibernate first level cache since it might hold additional objects
-                        entityManager.getSession().clear();
-                        index = 0;
+                    if (item != prev && prev != null) {
+                        session.create(prev);
+                        entityManager.getSession().evict(prev);
+                        session.evictAll();
+                        if (index++ == fetchCount) {
+                            // clear Hibernate first level cache since it might hold additional objects
+                            entityManager.getSession().clear();
+                            index = 0;
+                        }
                     }
+                    prev = item;
+                }
+                if (prev != null) {
+                    session.create(prev);
                 }
                 cursor.close();
                 entityManager.clear();

@@ -115,16 +115,23 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
                 }
 
                 int index = 0;
+                Object prev = null;
                 while (cursor.next()) {
                     Object item = cursor.get(0);
-                    session.create(item);
-                    hibernateSession.evict(item);
-                    session.evictAll();
-                    if (index++ == device.getFetchCount()) {
-                        // clear Hibernate first level cache since it might hold additional objects
-                        hibernateSession.clear();
-                        index = 0;
+                    if (item != prev && prev != null) {
+                        session.create(prev);
+                        hibernateSession.evict(prev);
+                        session.evictAll();
+                        if (index++ == device.getFetchCount()) {
+                            // clear Hibernate first level cache since it might hold additional objects
+                            hibernateSession.clear();
+                            index = 0;
+                        }
                     }
+                    prev = item;
+                }
+                if (prev != null) {
+                    session.create(prev);
                 }
                 cursor.close();
 
