@@ -16,10 +16,13 @@
 
 package org.compass.core.lucene.engine.queryparser;
 
+import java.util.Vector;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
 import org.compass.core.lucene.search.ConstantScorePrefixQuery;
@@ -47,7 +50,7 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
     public void setAllowConstantScorePrefixQuery(boolean allowConstantScorePrefixQuery) {
         this.allowConstantScorePrefixQuery = allowConstantScorePrefixQuery;
     }
-    
+
     protected Query getFieldQuery(String field, String queryText) throws ParseException {
         if (field == null) {
             return super.getFieldQuery(field, queryText);
@@ -59,11 +62,20 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         }
         return super.getFieldQuery(field, queryText);
     }
-    
+
     /**
      * Override it so we won't use the date format to try and parse dates
      */
     protected Query getRangeQuery(String field, String part1, String part2, boolean inclusive) throws ParseException {
+        if (field == null) {
+            Vector clauses = new Vector();
+            for (int i = 0; i < fields.length; i++) {
+                clauses.add(new BooleanClause(getRangeQuery(fields[i], part1, part2, inclusive), BooleanClause.Occur.SHOULD));
+            }
+            return getBooleanQuery(clauses, true);
+        }
+
+
         if (getLowercaseExpandedTerms()) {
             part1 = part1.toLowerCase();
             part2 = part2.toLowerCase();
@@ -98,7 +110,16 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         if (!allowConstantScorePrefixQuery) {
             return super.getPrefixQuery(field, termStr);
         }
-        
+
+        if (field == null) {
+            Vector clauses = new Vector();
+            for (int i = 0; i < fields.length; i++) {
+                clauses.add(new BooleanClause(getPrefixQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
+            }
+            return getBooleanQuery(clauses, true);
+        }
+
+
         if (getLowercaseExpandedTerms()) {
             termStr = termStr.toLowerCase();
         }
