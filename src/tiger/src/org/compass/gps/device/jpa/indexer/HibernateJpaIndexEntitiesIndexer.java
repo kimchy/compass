@@ -31,6 +31,7 @@ import org.compass.gps.device.support.parallel.IndexEntity;
 import org.hibernate.Criteria;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.ejb.HibernateQuery;
@@ -121,26 +122,22 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
                     cursor = query.getHibernateQuery().scroll(ScrollMode.FORWARD_ONLY);
                 }
 
-                int index = 0;
+                // store things in row buffer to allow using batch fetching in Hibernate
+                RowBuffer buffer = new RowBuffer(session, entityManager.getSession(), fetchCount);
                 Object prev = null;
                 while (cursor.next()) {
                     Object item = cursor.get(0);
                     if (item != prev && prev != null) {
-                        session.create(prev);
-                        entityManager.getSession().evict(prev);
-                        session.evictAll();
-                        if (index++ == fetchCount) {
-                            // clear Hibernate first level cache since it might hold additional objects
-                            entityManager.getSession().clear();
-                            index = 0;
-                        }
+                        buffer.put(prev);
                     }
                     prev = item;
                 }
                 if (prev != null) {
-                    session.create(prev);
+                    buffer.put(prev);
                 }
+                buffer.close();
                 cursor.close();
+
                 entityManager.clear();
                 wrapper.close();
             } catch (Exception e) {
@@ -160,4 +157,40 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
             }
         }
     }
+
+    private class RowBuffer {
+        private Object[] buffer;
+        private int index = 0;
+        private CompassSession compassSession;
+        private Session hibernateSession;
+
+        RowBuffer(CompassSession compassSession, Session hibernateSession, int fetchCount) {
+            this.compassSession = compassSession;
+            this.hibernateSession = hibernateSession;
+            this.buffer = new Object[fetchCount];
+        }
+
+        public void put(Object row) {
+            if (index >= buffer.length) {
+                flush();
+            }
+            buffer[index] = row;
+            index++;
+        }
+
+        public void close() {
+            flush();
+            buffer = null;
+        }
+
+        private void flush() {
+            for (int i = 0; i < index; i++) {
+                compassSession.create(buffer[i]);
+            }
+            compassSession.evictAll();
+            hibernateSession.clear();
+            index = 0;
+        }
+    }
+    
 }
