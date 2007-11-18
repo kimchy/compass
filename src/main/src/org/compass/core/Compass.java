@@ -99,4 +99,9 @@ public interface Compass extends Referenceable, Serializable {
      * @return the search engine index manager
      */
     SearchEngineIndexManager getSearchEngineIndexManager();
+
+    /**
+     * Returns <code>true</code> if the Compass instance is already closed
+     */
+    boolean isClosed();
 }

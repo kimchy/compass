@@ -123,9 +123,17 @@ public interface CompassSession extends CompassOperations {
     CompassAnalyzerHelper analyzerHelper() throws CompassException;
 
     /**
-     * Closes the CompassSession.
+     * Closes the CompassSession. Note, if this session another session, it won't
+     * actually be closed, and defer closing the session to the other session.
      *
      * @throws CompassException
      */
     void close() throws CompassException;
+
+    /**
+     * Returns <code>true</code> if the session is closed. Note, if this session
+     * "joined" another session, it won't actually be closed, and defer closing
+     * the session to the outer session.
+     */
+    boolean isClosed();
 }

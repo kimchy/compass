@@ -91,6 +91,8 @@ public class DefaultCompass implements InternalCompass {
 
     private FirstLevelCacheFactory firstLevelCacheFactory;
 
+    private volatile boolean closed = false;
+
     public DefaultCompass(CompassMapping mapping, ConverterLookup converterLookup, CompassMetaData compassMetaData,
                           PropertyNamingStrategy propertyNamingStrategy, CompassSettings settings) throws CompassException {
         this(mapping, converterLookup, compassMetaData, propertyNamingStrategy, settings, false);
@@ -164,6 +166,7 @@ public class DefaultCompass implements InternalCompass {
     }
 
     public CompassMapping getMapping() {
+        checkClosed();
         return this.mapping;
     }
 
@@ -172,6 +175,7 @@ public class DefaultCompass implements InternalCompass {
     }
 
     public CompassSession openSession(boolean allowCreate) {
+        checkClosed();
         CompassSession session = transactionFactory.getTransactionBoundSession();
 
         if (session != null) {
@@ -188,6 +192,9 @@ public class DefaultCompass implements InternalCompass {
     }
 
     public void close() {
+        if (closed) {
+            return;
+        }
         log.info("Closing Compass [" + name + "]");
         if (settings.getSettingAsBoolean(CompassEnvironment.Jndi.ENABLE, false)) {
             CompassObjectFactory.removeInstance(uuid, name, settings);
@@ -199,6 +206,10 @@ public class DefaultCompass implements InternalCompass {
         }
         searchEngineFactory.close();
         log.info("Closed Compass [" + name + "]");
+    }
+
+    public boolean isClosed() {
+        return this.closed;
     }
 
     // from javax.naming.Referenceable
@@ -251,6 +262,12 @@ public class DefaultCompass implements InternalCompass {
         }
 
         CompassObjectFactory.addInstance(uuid, name, this, settings);
+    }
+
+    private void checkClosed() throws IllegalStateException {
+        if (closed) {
+            throw new IllegalStateException("Compass already closed");
+        }
     }
 
     private static class TransactionalSearchEngineIndexManager implements LuceneSearchEngineIndexManager {
