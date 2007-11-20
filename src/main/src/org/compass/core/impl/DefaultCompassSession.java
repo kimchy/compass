@@ -444,6 +444,10 @@ public class DefaultCompassSession implements InternalCompassSession {
         }
     }
 
+    public boolean isClosed() {
+        return this.closed;
+    }
+
     public InternalCompass getCompass() {
         return compass;
     }

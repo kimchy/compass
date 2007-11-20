@@ -75,6 +75,9 @@ public class InheritanceTests extends AbstractTestCase {
         CompassHits hits = session.queryBuilder().polyAlias("base").hits();
         assertEquals(2, hits.length());
 
+        hits = session.find("base");
+        assertEquals(2, hits.length());
+
         tr.commit();
         session.close();
     }
