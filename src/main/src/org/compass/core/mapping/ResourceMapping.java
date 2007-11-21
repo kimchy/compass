@@ -78,6 +78,11 @@ public interface ResourceMapping extends AliasMapping {
     boolean isAllSupported();
 
     /**
+     * Should the alias be excluded from the "all" property. Default should be <code>false</code>.
+     */
+    boolean isExcludeAliasFromAll();
+
+    /**
      * Returns <code>true</code> if when adding the different {@link org.compass.core.Resource} properties,
      * properties with no mappings will be added to the "all" property. A resoruce can have property with no
      * mappings if it was added programtically to the resource.

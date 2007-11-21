@@ -180,6 +180,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         xmlObjectMapping.setAllOmitNorms(xmlObjectConf.getAttributeAsBoolean("all-omit-norms", false));
+        xmlObjectMapping.setExcludeAliasFromAll(xmlObjectConf.getAttributeAsBoolean("exclude-alias-from-all", false));
 
         if (xmlObjectMapping.isAllSupported()) {
             String allProperty = xmlObjectConf.getAttribute("all-metadata", null);
@@ -326,6 +327,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         rawResourceMapping.setAllOmitNorms(resourceConf.getAttributeAsBoolean("all-omit-norms", false));
+        rawResourceMapping.setExcludeAliasFromAll(resourceConf.getAttributeAsBoolean("exclude-alias-from-all", false));
 
         if (rawResourceMapping.isAllSupported()) {
             String allProperty = resourceConf.getAttribute("all-metadata", null);
@@ -453,6 +455,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         classMapping.setAllOmitNorms(classConf.getAttributeAsBoolean("all-omit-norms", false));
+        classMapping.setExcludeAliasFromAll(classConf.getAttributeAsBoolean("exclude-alias-from-all", false));
 
         boolean poly = classConf.getAttributeAsBoolean("poly", false);
         classMapping.setPoly(poly);

@@ -211,4 +211,8 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
     public boolean isAllOmitNorms() {
         return false;
     }
+
+    public boolean isExcludeAliasFromAll() {
+        return true;
+    }
 }

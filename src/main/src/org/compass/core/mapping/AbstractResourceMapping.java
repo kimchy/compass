@@ -45,7 +45,9 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private boolean isRoot = true;
 
-    private boolean isAllSupported;
+    private boolean isAllSupported = true;
+
+    private boolean excludeAliasFromAll = false;
 
     private String allProperty;
 
@@ -96,6 +98,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         resourceMapping.setBoost(getBoost());
         resourceMapping.setAllTermVector(getAllTermVector());
         resourceMapping.setAnalyzer(getAnalyzer());
+        resourceMapping.setExcludeAliasFromAll(isExcludeAliasFromAll());
     }
 
     public void postProcess() throws MappingException {
@@ -327,5 +330,13 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     public void setCascades(CascadeMapping[] cascades) {
         this.cascades = cascades;
+    }
+
+    public boolean isExcludeAliasFromAll() {
+        return excludeAliasFromAll;
+    }
+
+    public void setExcludeAliasFromAll(boolean excludeAliasFromAll) {
+        this.excludeAliasFromAll = excludeAliasFromAll;
     }
 }

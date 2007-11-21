@@ -261,6 +261,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         }
 
         classMapping.setAllSupported(searchable.enableAll());
+        classMapping.setExcludeAliasFromAll(searchable.excludeAliasFromAll());
         SearchableAllMetaData allMetaData = annotationClass.getAnnotation(SearchableAllMetaData.class);
         if (allMetaData != null) {
             if (StringUtils.hasLength(allMetaData.name())) {

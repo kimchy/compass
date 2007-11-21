@@ -26,6 +26,7 @@
     <!ATTLIST xml-object all-metadata CDATA #IMPLIED>
     <!ATTLIST xml-object all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
     <!ATTLIST xml-object all-omit-norms (true|false) "false">
+    <!ATTLIST xml-object exclude-alias-from-all (true|false) "false">
     <!ATTLIST xml-object boost CDATA #IMPLIED>
 
 <!ELEMENT xml-id EMPTY
@@ -101,6 +102,7 @@
     <!ATTLIST resource all-metadata CDATA #IMPLIED>
     <!ATTLIST resource all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
     <!ATTLIST resource all-omit-norms (true|false) "false">
+    <!ATTLIST resource exclude-alias-from-all (true|false) "false">
     <!ATTLIST resource boost CDATA #IMPLIED>
 
 <!ELEMENT resource-id EMPTY
@@ -242,6 +244,9 @@
     <!ATTLIST class all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
     
     <!ATTLIST class all-omit-norms (true|false) "false">
+
+    <!ATTLIST class exclude-alias-from-all (true|false) "false">
+
     <!--
         The global converter lookup name registered with the configuration. Responsible for converting
         the ClassMapping definition.

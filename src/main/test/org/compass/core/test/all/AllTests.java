@@ -254,4 +254,22 @@ public class AllTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testExcludeAliasFromAll() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = new Long(1);
+        A a = new A();
+        a.setId(id);
+        a.setValue1("test1");
+        a.setValue2("test2");
+        session.save("a9", a);
+
+        CompassHits hits = session.find("a9");
+        assertEquals(0, hits.length());
+
+        tr.commit();
+        session.close();
+    }
 }

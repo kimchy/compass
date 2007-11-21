@@ -64,20 +64,22 @@ public class AllAnalyzer extends Analyzer {
         this.searchEngine = searchEngine;
 
         if (resourceMapping.isAllSupported()) {
-            // add the alias to all prpoerty (lowecased, so finding it will be simple)
-            tokens.add(new Token(resource.getAlias().toLowerCase(), 0, resource.getAlias().length()));
-            // add the extended property
-            Property[] properties = resource.getProperties(searchEngine.getSearchEngineFactory().getExtendedAliasProperty());
-            if (properties != null) {
-                for (int i = 0; i < properties.length; i++) {
-                    tokens.add(new Token(properties[i].getStringValue().toLowerCase(), 0, properties[i].getStringValue().length()));
+            if (!resourceMapping.isExcludeAliasFromAll()) {
+                // add the alias to all prpoerty (lowecased, so finding it will be simple)
+                tokens.add(new Token(resource.getAlias().toLowerCase(), 0, resource.getAlias().length()));
+                // add the extended property
+                Property[] properties = resource.getProperties(searchEngine.getSearchEngineFactory().getExtendedAliasProperty());
+                if (properties != null) {
+                    for (int i = 0; i < properties.length; i++) {
+                        tokens.add(new Token(properties[i].getStringValue().toLowerCase(), 0, properties[i].getStringValue().length()));
+                    }
                 }
             }
 
             // go over all the un tokenized properties and add them as tokens (if required)
             // they are added since they will never get analyzed thus tokenStream will never
             // be called on them
-            properties = resource.getProperties();
+            Property[] properties = resource.getProperties();
             for (int i = 0; i < properties.length; i++) {
                 LuceneProperty property = (LuceneProperty) properties[i];
                 ResourcePropertyMapping resourcePropertyMapping = property.getPropertyMapping();

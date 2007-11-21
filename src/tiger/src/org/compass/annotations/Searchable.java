@@ -134,6 +134,11 @@ public @interface Searchable {
     boolean enableAll() default true;
 
     /**
+     * Controls is the alias will be stored within the "all" proeprty or not.
+     */
+    boolean excludeAliasFromAll() default false;
+
+    /**
      * Defines if the searchable class is a root class. A root class is a top
      * level searchable class. You should define the searchable class with <code>false</code>
      * if it only acts as mapping definitions for a {@link SearchableComponent}.
