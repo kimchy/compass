@@ -186,6 +186,8 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
             for (int i = 0; i < index; i++) {
                 compassSession.create(buffer[i]);
             }
+            // clear buffer and sessions to allow for GC
+            buffer = new Object[buffer.length];
             compassSession.evictAll();
             hibernateSession.clear();
             index = 0;

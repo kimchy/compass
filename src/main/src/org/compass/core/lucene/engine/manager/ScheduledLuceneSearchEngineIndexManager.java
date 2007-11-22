@@ -204,16 +204,6 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
 
         public void run() {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Checking for global cache invalidation");
-                }
-                indexManager.checkAndClearIfNotifiedAllToClearCache();
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Failed to check clear cache", e);
-                }
-            }
-            try {
                 indexManager.performScheduledTasks();
             } catch (Exception e) {
                 if (log.isDebugEnabled()) {

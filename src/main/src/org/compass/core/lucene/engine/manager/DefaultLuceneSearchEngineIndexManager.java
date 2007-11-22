@@ -87,7 +87,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             if (searchEngineStore.getSubIndexes().length < maxThreads) {
                 maxThreads = searchEngineStore.getSubIndexes().length;
             }
-            if (maxThreads> 0) {
+            if (maxThreads > 0) {
                 commitExecutorService = Executors.newFixedThreadPool(maxThreads, new SingleThreadThreadFactory("Compass Concurrent Commit", false));
                 if (log.isDebugEnabled()) {
                     log.debug("Concurrent commit is enabled with max threads of [" + maxThreads + "]");
@@ -498,6 +498,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void performScheduledTasks() throws SearchEngineException {
+        checkAndClearIfNotifiedAllToClearCache();
         getStore().performScheduledTasks();
     }
 
