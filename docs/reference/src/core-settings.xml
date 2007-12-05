@@ -657,10 +657,6 @@
               <entry>The name of the analyzer to use for the all property (see the next section about Search Engine Analyzers).</entry>
             </row>
             <row>
-              <entry>compass.transaction.clearCacheOnCommit</entry>
-              <entry>Should the cache be cleared on commit. Note, that setting it to <literal>false</literal> might mean that the transaction isolation level will not function properly (for example, with read_committed, it will mean that data that is committed will take time to be reflected in the index). Defaults to <literal>true</literal>.</entry>
-            </row>
-            <row>
               <entry>compass.transaction.lockDir</entry>
               <entry>The directory where the search engine will maintain it's locking file mechanism for inter and outer process transaction synchronization. Defaults to the <literal>java.io.tmpdir</literal> Java system property. This is a JVM level property.</entry>
             </row>

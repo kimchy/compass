@@ -79,8 +79,6 @@ public class LuceneSettings {
 
     private String lockDir;
 
-    private boolean clearCacheOnCommit;
-
     public void configure(CompassSettings settings) throws SearchEngineException {
         this.settings = settings;
         connection = settings.getSetting(CompassEnvironment.CONNECTION);
@@ -169,11 +167,6 @@ public class LuceneSettings {
         if (lockDir != null) {
             throw new IllegalArgumentException("compass.transaction.lockDir setting is no longer supported. " +
                     "The lock by default is stored in the index directory now, and can be conrolled by using LockFactory");
-        }
-
-        clearCacheOnCommit = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, true);
-        if (log.isDebugEnabled()) {
-            log.debug("Using clear cache on commit [" + clearCacheOnCommit + "]");
         }
 
         maxMergeDocs = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, Integer.MAX_VALUE);
@@ -352,10 +345,6 @@ public class LuceneSettings {
 
     public boolean isWaitForCacheInvalidationOnIndexOperation() {
         return waitForCacheInvalidationOnIndexOperation;
-    }
-
-    public boolean isClearCacheOnCommit() {
-        return this.clearCacheOnCommit;
     }
 
     public String getSubContext() {

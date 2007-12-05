@@ -24,6 +24,7 @@ import javax.naming.StringRefAddr;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Compass;
 import org.compass.core.CompassCallback;
@@ -359,6 +360,10 @@ public class DefaultCompass implements InternalCompass {
 
         public void clearCache() throws SearchEngineException {
             indexManager.clearCache();
+        }
+
+        public void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException {
+            indexManager.refreshCache(subIndex, indexSearcher);
         }
 
         public void notifyAllToClearCache() throws SearchEngineException {

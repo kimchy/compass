@@ -62,8 +62,6 @@ public class TransIndex {
 
     private Lock writeLock;
 
-    private boolean closeDir;
-
     private PrintStream infoStream = null;
 
     public void setInfoStream(PrintStream infoStream) {
@@ -102,6 +100,11 @@ public class TransIndex {
 
     private LuceneSettings luceneSettings;
 
+    private String subIndex;
+
+    // index readers array that will be return on commit
+    private IndexReader[] commitIndexReaders;
+
     /**
      * Opens a new transaction index. Try to obtain a write lock. Opens an index
      * reader and an index searcher on the basic index. <p/> Initializes the
@@ -109,7 +112,8 @@ public class TransIndex {
      * initializes a transactional segment infos.
      */
     public TransIndex(String subIndex, Directory dir, LuceneSearchEngine searchEngine) throws IOException {
-        this(dir, false, false, searchEngine);
+        this(dir, false, searchEngine);
+        this.subIndex = subIndex;
         this.transLog = luceneSettings.createTransLog(searchEngine.getSettings());
         transDir = transLog.getDirectory();
         transCreates = new ArrayList();
@@ -121,11 +125,15 @@ public class TransIndex {
         if (segmentInfos.size() == 1) { // index is optimized
             indexReader = SegmentReader.get(segmentInfos, segmentInfos.info(0), false);
             ((CompassSegmentReader) indexReader).setSubIndex(subIndex);
+            commitIndexReaders = new IndexReader[2];
+            commitIndexReaders[0] = indexReader;
         } else {
+            commitIndexReaders = new IndexReader[segmentInfos.size() + 1];
             IndexReader[] readers = new IndexReader[segmentInfos.size()];
             for (int i = segmentInfos.size() - 1; i >= 0; i--) {
                 try {
                     readers[i] = SegmentReader.get(segmentInfos.info(i));
+                    commitIndexReaders[i] = readers[i];
                 } catch (IOException e) {
                     // Close all readers we had opened:
                     for (i++; i < segmentInfos.size(); i++) {
@@ -141,10 +149,9 @@ public class TransIndex {
 
     // Taken from IndexWriter private constructor
     // Need to monitor against lucene changes
-    private TransIndex(Directory d, final boolean create, boolean closeDir, LuceneSearchEngine searchEngine)
+    private TransIndex(Directory d, final boolean create, LuceneSearchEngine searchEngine)
             throws IOException {
         this.luceneSettings = searchEngine.getSearchEngineFactory().getLuceneSettings();
-        this.closeDir = closeDir;
         directory = d;
 
         if (create) {
@@ -370,7 +377,7 @@ public class TransIndex {
      *
      * @throws IOException
      */
-    public void secondPhase() throws IOException {
+    public IndexSearcher secondPhase() throws IOException {
         if (newSegment == null) {
             throw new IOException("Transaction not called first phase");
         }
@@ -379,7 +386,7 @@ public class TransIndex {
         indexSearcher.close();
         indexSearcher = null;
         indexReader.doCommit();
-        indexReader.doClose();
+//        indexReader.doClose();
         indexReader = null;
 
         // now commit the segments
@@ -387,6 +394,9 @@ public class TransIndex {
         deleter.checkpoint(segmentInfos, true);
 
         rollbackSegmentInfos = null;
+
+        commitIndexReaders[commitIndexReaders.length - 1] = SegmentReader.get(segmentInfos.info(segmentInfos.size() - 1));
+        return new IndexSearcher(new CompassMultiReader(subIndex, directory, segmentInfos, false, commitIndexReaders));
     }
 
     /**
@@ -438,15 +448,6 @@ public class TransIndex {
         } finally {
             transLog = null;
             transDir = null;
-        }
-        if (closeDir) {
-            try {
-                directory.close();
-            } catch (IOException ex) {
-                // swallow this one
-                log.warn("Failed to close directory, ignoring", ex);
-            }
-            directory = null;
         }
         if (writeLock != null) {
             writeLock.release();

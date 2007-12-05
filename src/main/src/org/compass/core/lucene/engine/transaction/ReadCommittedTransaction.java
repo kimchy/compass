@@ -30,6 +30,7 @@ import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TransIndex;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
@@ -128,7 +129,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
         public Object call() throws Exception {
             try {
-                wrapper.transIndex.secondPhase();
+                IndexSearcher indexSearcher = wrapper.transIndex.secondPhase();
+                indexManager.refreshCache(wrapper.subIndex, indexSearcher);
             } catch (IOException ex) {
                 throw new SearchEngineException("Failed in second phase commit from sub-index [" + wrapper.subIndex
                         + "]", ex);
@@ -294,13 +296,6 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 doPrepare();
             }
             transIndexManager.secondPhaseAndClose();
-            if (searchEngine.getSearchEngineFactory().getLuceneSettings().isClearCacheOnCommit()) {
-                // clear cache here for all the dirty sub indexes
-                for (Iterator it = transIndexManager.transIndexMap.keySet().iterator(); it.hasNext();) {
-                    String subIndex = (String) it.next();
-                    indexManager.clearCache(subIndex);
-                }
-            }
         } finally {
             transIndexManager.close();
             transIndexManager.clear();

@@ -55,6 +55,12 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
             this.subIndex = subIndex;
         }
 
+        public LuceneIndexHolder(String subIndex, IndexSearcher indexSearcher, Directory dir) {
+            this.subIndex = subIndex;
+            this.indexSearcher = indexSearcher;
+            this.dir = dir;
+        }
+
         public IndexSearcher getIndexSearcher() {
             return indexSearcher;
         }
@@ -113,6 +119,8 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
     void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException;
 
     LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException;
+
+    void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException;
 
     /**
      * Since there might be several instances of Compass running against the same index, they

@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
@@ -130,6 +131,10 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
 
     public void clearCache(String subIndex) throws SearchEngineException {
         indexManager.clearCache(subIndex);
+    }
+
+    public void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException {
+        indexManager.refreshCache(subIndex, indexSearcher);
     }
 
     public void clearCache() throws SearchEngineException {

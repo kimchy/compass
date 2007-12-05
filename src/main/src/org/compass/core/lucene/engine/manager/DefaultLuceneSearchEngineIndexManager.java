@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.engine.SearchEngineException;
@@ -271,6 +272,17 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             if (indexHolder != null) {
                 indexHolder.markForClose();
             }
+        }
+    }
+
+    public void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException {
+        synchronized (indexHoldersLocks.get(subIndex)) {
+            LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.remove(subIndex);
+            if (indexHolder != null) {
+                indexHolder.markForClose();
+            }
+            indexHolder = new LuceneIndexHolder(subIndex, indexSearcher, getDirectory(subIndex));
+            indexHolders.put(subIndex, indexHolder);
         }
     }
 

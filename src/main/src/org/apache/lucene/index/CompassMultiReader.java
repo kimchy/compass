@@ -28,7 +28,7 @@ public class CompassMultiReader extends MultiReader implements HasSubIndexReader
 
     private String subIndex;
 
-    CompassMultiReader(String subIndex, Directory directory, SegmentInfos sis, boolean closeDirectory,
+    public CompassMultiReader(String subIndex, Directory directory, SegmentInfos sis, boolean closeDirectory,
             IndexReader[] subReaders) {
         super(directory, sis, closeDirectory, subReaders);
         this.subIndex = subIndex;

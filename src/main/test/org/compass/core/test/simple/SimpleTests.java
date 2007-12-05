@@ -69,6 +69,7 @@ public class SimpleTests extends AbstractTestCase {
 
         session = openSession();
         tr = session.beginTransaction();
+        assertEquals(30, session.queryBuilder().matchAll().hits().length());
         for (int i = 0; i < 30; i = i + 2) {
             session.delete(A.class, new Long(i));
         }
