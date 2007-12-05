@@ -49,6 +49,8 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
 
         private String subIndex;
 
+        private boolean closeIndexReader = false;
+
         public LuceneIndexHolder(String subIndex, Directory dir) throws IOException {
             this.dir = dir;
             this.indexSearcher = new IndexSearcher(dir);
@@ -59,6 +61,7 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
             this.subIndex = subIndex;
             this.indexSearcher = indexSearcher;
             this.dir = dir;
+            this.closeIndexReader = true;
         }
 
         public IndexSearcher getIndexSearcher() {
@@ -95,6 +98,11 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
             if (markForClose && count <= 0) {
                 try {
                     indexSearcher.close();
+                } catch (Exception e) {
+                    // do nothing
+                }
+                try {
+                    indexSearcher.getIndexReader().close();
                 } catch (Exception e) {
                     // do nothing
                 }
