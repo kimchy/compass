@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -106,9 +105,10 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
         if (moreLikeThis.getFieldNames() == null) {
             moreLikeThis.setFieldNames(new String[]{property});
         } else {
-            List fieldNames = Arrays.asList(moreLikeThis.getFieldNames());
-            fieldNames.add(property);
-            moreLikeThis.setFieldNames((String[]) fieldNames.toArray(new String[fieldNames.size()]));
+            String[] newNames = new String[moreLikeThis.getFieldNames().length + 1];
+            System.arraycopy(moreLikeThis.getFieldNames(), 0, newNames, 0, moreLikeThis.getFieldNames().length);
+            newNames[newNames.length -1] = property;
+            moreLikeThis.setFieldNames(newNames);
         }
         return this;
     }

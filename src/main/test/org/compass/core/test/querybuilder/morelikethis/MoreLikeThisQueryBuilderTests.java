@@ -66,6 +66,9 @@ public class MoreLikeThisQueryBuilderTests extends AbstractTestCase {
         CompassDetachedHits detachedHits = query.hits().detach();
         assertEquals(1, detachedHits.length());
 
+        // just test adding several properties
+        session.queryBuilder().moreLikeThis("a", "1").addProperty("value").addProperty("alias");
+
         tr.commit();
         session.close();
     }
