@@ -112,7 +112,7 @@ public class TransIndex {
      * initializes a transactional segment infos.
      */
     public TransIndex(String subIndex, Directory dir, LuceneSearchEngine searchEngine) throws IOException {
-        this(dir, false, searchEngine);
+        this(dir, searchEngine);
         this.subIndex = subIndex;
         this.transLog = luceneSettings.createTransLog(searchEngine.getSettings());
         transDir = transLog.getDirectory();
@@ -149,15 +149,10 @@ public class TransIndex {
 
     // Taken from IndexWriter private constructor
     // Need to monitor against lucene changes
-    private TransIndex(Directory d, final boolean create, LuceneSearchEngine searchEngine)
+    private TransIndex(Directory d, LuceneSearchEngine searchEngine)
             throws IOException {
         this.luceneSettings = searchEngine.getSearchEngineFactory().getLuceneSettings();
         directory = d;
-
-        if (create) {
-            // Clear the write lock in case it's leftover:
-            directory.clearLock(IndexWriter.WRITE_LOCK_NAME);
-        }
 
         Lock writeLock = directory.makeLock(IndexWriter.WRITE_LOCK_NAME);
         if (!writeLock.obtain(luceneSettings.getTransactionLockTimout())) // obtain write lock
@@ -165,21 +160,7 @@ public class TransIndex {
         this.writeLock = writeLock;                   // save it
 
         try {
-            if (create) {
-                // Try to read first.  This is to allow create
-                // against an index that's currently open for
-                // searching.  In this case we write the next
-                // segments_N file with no segments:
-                try {
-                    segmentInfos.read(directory);
-                    segmentInfos.clear();
-                } catch (IOException e) {
-                    // Likely this means it's a fresh directory
-                }
-                segmentInfos.write(directory);
-            } else {
-                segmentInfos.read(directory);
-            }
+            segmentInfos.read(directory);
 
             rollbackSegmentInfos = (SegmentInfos) segmentInfos.clone();
 
