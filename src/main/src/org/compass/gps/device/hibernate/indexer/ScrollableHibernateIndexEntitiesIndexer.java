@@ -97,6 +97,7 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
                 }
                 throw (HibernateGpsDeviceException) e;
             } finally {
+                hibernateSession.close();
                 session.close();
             }
         }
