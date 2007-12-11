@@ -20,6 +20,8 @@ import org.compass.core.Resource;
 import org.compass.core.spi.ResourceKey;
 
 /**
+ * A null first level cache, not storing anything.
+ *
  * @author kimchy
  */
 public class NullFirstLevelCache implements FirstLevelCache {
