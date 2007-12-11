@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -59,9 +60,9 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     protected Log log = LogFactory.getLog(getClass());
 
-    private Map<String, ArrayList<String>> aliasesBySubIndex = new HashMap<String, ArrayList<String>>();
+    private Map<String, List<String>> aliasesBySubIndex = new HashMap<String, List<String>>();
 
-    private Map<String, ArrayList<String>> subIndexesByAlias = new HashMap<String, ArrayList<String>>();
+    private Map<String, List<String>> subIndexesByAlias = new HashMap<String, List<String>>();
 
     private String[] subIndexes;
 
@@ -97,7 +98,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             for (String subIndex : tempSubIndexes) {
                 subIndexesSet.add(subIndex.intern());
 
-                ArrayList<String> list = subIndexesByAlias.get(alias);
+                List<String> list = subIndexesByAlias.get(alias);
                 if (list == null) {
                     list = new ArrayList<String>();
                     subIndexesByAlias.put(alias, list);
@@ -356,7 +357,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         }
         HashSet<String> ret = new HashSet<String>();
         for (String aliase : aliases) {
-            ArrayList<String> subIndexesList = subIndexesByAlias.get(aliase);
+            List<String> subIndexesList = subIndexesByAlias.get(aliase);
             if (subIndexesList == null) {
                 throw new IllegalArgumentException("No sub-index is mapped to alias [" + aliase + "]");
             }
