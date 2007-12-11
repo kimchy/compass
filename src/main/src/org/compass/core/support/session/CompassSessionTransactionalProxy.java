@@ -74,10 +74,10 @@ public class CompassSessionTransactionalProxy implements InvocationHandler, Seri
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.getName().equals("equals")) {
             // Only consider equal when proxies are identical.
-            return Boolean.valueOf(proxy == args[0]);
+            return proxy == args[0];
         } else if (method.getName().equals("hashCode")) {
             // Use hashCode of Compass proxy.
-            return new Integer(hashCode());
+            return hashCode();
         }
         InternalCompassSession session = (InternalCompassSession) compass.openSession();
         try {
