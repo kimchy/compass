@@ -1,7 +1,7 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 1.3 M1
+VERSION 2.0 M1
 ==============================
 
 1. New and improved "all" support.

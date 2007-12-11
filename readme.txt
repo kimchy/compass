@@ -1,4 +1,4 @@
-COMPASS, Release 1.3 M1 SNAPSHOT
+COMPASS, Release 2.0 M1 SNAPSHOT
 --------------------------------
 http://www.opensymphony.com/compass
 

@@ -65,16 +65,16 @@
 
     <releases>
         <release>
-            <version>1.3M1-SNAPSHOT</version>
+            <version>2.0M1-SNAPSHOT</version>
             <date>Latest svn build</date>
             <jiraId>10102</jiraId>
             <downloads>
                 <download>
-                    <url>versions/1.3M1-SNAPSHOT/release/compass-1.3M1-SNAPSHOT.zip</url>
+                    <url>versions/2.0M1-SNAPSHOT/release/compass-2.0M1-SNAPSHOT.zip</url>
                     <name>Compass</name>
                 </download>
                 <download>
-                    <url>versions/1.3M1-SNAPSHOT/release/compass-1.3M1-SNAPSHOT-with-dependencies.zip</url>
+                    <url>versions/2.0M1-SNAPSHOT/release/compass-2.0M1-SNAPSHOT-with-dependencies.zip</url>
                     <name>With Dependencies</name>
                 </download>
             </downloads>
