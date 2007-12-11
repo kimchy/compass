@@ -17,6 +17,9 @@
 package org.apache.lucene.store.wrapper;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,9 +29,6 @@ import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.RAMOutputStream;
-import org.compass.core.util.backport.java.util.concurrent.ExecutorService;
-import org.compass.core.util.backport.java.util.concurrent.Executors;
-import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
@@ -144,7 +144,7 @@ public class AsyncMemoryMirrorDirectoryWrapper extends Directory {
         executorService.shutdown();
         if (!executorService.isTerminated()) {
             try {
-                if (!executorService.awaitTermination(awaitTermination, TimeUnit.MINUTES)) {
+                if (!executorService.awaitTermination(60 * awaitTermination, TimeUnit.SECONDS)) {
                     logAsyncErrorMessage("wait for async tasks to shutdown");
                 }
             } catch (InterruptedException e) {

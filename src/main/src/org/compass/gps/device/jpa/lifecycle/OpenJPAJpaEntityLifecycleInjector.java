@@ -117,7 +117,7 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
                 }
             }
         } else {
-            emf.addLifecycleListener(eventListener, null);
+            emf.addLifecycleListener(eventListener);
         }
     }
 

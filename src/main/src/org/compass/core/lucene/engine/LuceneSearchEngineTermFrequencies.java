@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.PriorityQueue;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
@@ -25,7 +26,6 @@ import org.compass.core.CompassTermFreq;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineTermFrequencies;
 import org.compass.core.impl.DefaultCompassTermFreq;
-import org.compass.core.util.backport.java.util.PriorityQueue;
 
 /**
  * @author kimchy
@@ -41,9 +41,9 @@ public class LuceneSearchEngineTermFrequencies implements SearchEngineTermFreque
             return;
         }
 
-        PriorityQueue queue = new PriorityQueue(new Comparator() {
-            public int compare(Object a, Object b) {
-                return (int) (((CompassTermFreq) b).getFreq() - ((CompassTermFreq) a).getFreq());
+        PriorityQueue<CompassTermFreq> queue = new PriorityQueue<CompassTermFreq>(10, new Comparator<CompassTermFreq>() {
+            public int compare(CompassTermFreq a, CompassTermFreq b) {
+                return (int) (b.getFreq() - a.getFreq());
             }
         });
 

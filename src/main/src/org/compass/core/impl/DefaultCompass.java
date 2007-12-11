@@ -17,6 +17,7 @@
 package org.compass.core.impl;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
@@ -59,7 +60,6 @@ import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.transaction.TransactionFactoryFactory;
-import org.compass.core.util.backport.java.util.concurrent.Callable;
 
 /**
  * @author kimchy

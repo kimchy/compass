@@ -19,6 +19,7 @@ package org.compass.core.jndi;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.naming.Context;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
@@ -35,7 +36,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.util.backport.java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Resolves <code>Compass</code> JNDI lookups and deserialization

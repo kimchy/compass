@@ -124,6 +124,10 @@ public class CompassEnvironment {
                 public static final String BIGDECIMAL = "bigdecimal";
 
                 public static final String BIGINTEGER = "biginteger";
+
+                public static final String ENUM = "enum";
+
+                public static final String STRINGBUILDER = "stringbuilder";
             }
 
             public abstract class Extendend {
@@ -179,6 +183,10 @@ public class CompassEnvironment {
                 public static final String STRING = "string";
 
                 public static final String STRINGBUFFER = "stringbuffer";
+
+                public static final String STRINGBUILDER = "stringbuilder";
+
+                public static final String ENUM = "enum";
 
                 public static final String URL = "url";
 

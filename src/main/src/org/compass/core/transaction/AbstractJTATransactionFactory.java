@@ -17,6 +17,7 @@
 package org.compass.core.transaction;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.transaction.Status;
@@ -32,7 +33,6 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.jndi.NamingHelper;
 import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.util.backport.java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A base class for JTA transaction strategies. Associates a {@link org.compass.core.CompassSession}

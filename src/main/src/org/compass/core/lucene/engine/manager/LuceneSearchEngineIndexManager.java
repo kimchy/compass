@@ -17,6 +17,7 @@
 package org.compass.core.lucene.engine.manager;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -26,7 +27,6 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
-import org.compass.core.util.backport.java.util.concurrent.Callable;
 
 /**
  * Specialized Lucene index manager extension.

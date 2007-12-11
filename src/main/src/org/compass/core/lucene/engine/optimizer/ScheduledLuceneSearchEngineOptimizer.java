@@ -16,6 +16,10 @@
 
 package org.compass.core.lucene.engine.optimizer;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassSettings;
@@ -23,9 +27,6 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.util.backport.java.util.concurrent.Executors;
-import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
-import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**

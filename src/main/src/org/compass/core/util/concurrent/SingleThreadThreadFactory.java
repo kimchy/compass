@@ -16,7 +16,8 @@
 
 package org.compass.core.util.concurrent;
 
-import org.compass.core.util.backport.java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadFactory;
+
 
 /**
  * @author kimchy

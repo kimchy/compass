@@ -17,6 +17,8 @@
 package org.compass.core.lucene.engine.store.wrapper;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.wrapper.AsyncMemoryMirrorDirectoryWrapper;
@@ -24,8 +26,6 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.util.backport.java.util.concurrent.ExecutorService;
-import org.compass.core.util.backport.java.util.concurrent.Executors;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**

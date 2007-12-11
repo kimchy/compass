@@ -16,8 +16,6 @@
 
 package org.compass.annotations.test;
 
-import org.compass.annotations.config.CompassAnnotationsConfiguration;
-import org.compass.core.config.CompassConfiguration;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -31,9 +29,5 @@ public abstract class AbstractAnnotationsTestCase extends AbstractTestCase {
 
     protected String getPackagePrefix() {
         return "org/compass/annotations/test/";
-    }
-
-    protected CompassConfiguration createConfiguration() {
-        return new CompassAnnotationsConfiguration();
     }
 }

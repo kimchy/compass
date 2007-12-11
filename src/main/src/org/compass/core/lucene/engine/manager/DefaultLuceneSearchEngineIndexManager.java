@@ -18,9 +18,15 @@ package org.compass.core.lucene.engine.manager;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,11 +41,6 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.util.LuceneUtils;
-import org.compass.core.util.backport.java.util.concurrent.Callable;
-import org.compass.core.util.backport.java.util.concurrent.ExecutionException;
-import org.compass.core.util.backport.java.util.concurrent.ExecutorService;
-import org.compass.core.util.backport.java.util.concurrent.Executors;
-import org.compass.core.util.backport.java.util.concurrent.Future;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
@@ -523,7 +524,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (commitExecutorService != null && commits.length > concurrentCommitThreshold) {
             List futures;
             try {
-                futures = commitExecutorService.invokeAll(Arrays.asList(commits));
+                Collection commitsCol = Arrays.asList(commits);
+                futures = commitExecutorService.invokeAll(commitsCol);
             } catch (InterruptedException e) {
                 throw new SearchEngineException("Failed to concurrent commit, interrupted", e);
             }

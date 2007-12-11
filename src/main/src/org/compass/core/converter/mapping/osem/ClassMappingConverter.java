@@ -98,10 +98,9 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                         "] used within a collection/array and has null value, in such cases please define at least one id mapping on it");
             }
             // go over all the ids and put a null value in it (just so we keep the order)
-            ResourcePropertyMapping[] ids = classMapping.getIdMappings();
             boolean store = false;
-            for (int i = 0; i < ids.length; i++) {
-                store |= ids[i].getConverter().marshall(resource, context.getSearchEngine().getNullValue(), ids[i], context);
+            for (ResourcePropertyMapping id : classMapping.getIdMappings()) {
+                store |= id.getConverter().marshall(resource, context.getSearchEngine().getNullValue(), id, context);
             }
             return store;
         }
@@ -168,14 +167,13 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 // we don't support unmarshalling, try and unmarshall just the object with its
                 // ids set.
                 Object obj = constructObjectForUnmarshalling(classMapping, resource);
-                ResourcePropertyMapping[] ids = classMapping.getIdMappings();
-                for (int i = 0; i < ids.length; i++) {
-                    Object idValue = ids[i].getConverter().unmarshall(resource, ids[i], context);
+                for (ResourcePropertyMapping id : classMapping.getIdMappings()) {
+                    Object idValue = id.getConverter().unmarshall(resource, id, context);
                     if (idValue == null) {
                         // was not marshalled, simply return null
                         return null;
                     }
-                    ((ClassPropertyMetaDataMapping) ids[i]).getSetter().set(obj, idValue);
+                    ((ClassPropertyMetaDataMapping) id).getSetter().set(obj, idValue);
                 }
                 return obj;
             }
@@ -198,8 +196,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 // if we do have values in the ids, but all of them are null, it means that we
                 // marked a null object
                 boolean nullClass = true;
-                for (int i = 0; i < propIds.length; i++) {
-                    if (!context.getSearchEngine().isNullValue(propIds[i].getStringValue())) {
+                for (Property propId : propIds) {
+                    if (!context.getSearchEngine().isNullValue(propId.getStringValue())) {
                         nullClass = false;
                     }
                 }
@@ -210,9 +208,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 // the ids, so the rest of the unmarshalling process will work
                 if (resource instanceof CollectionResourceWrapper) {
                     CollectionResourceWrapper colWrapper = (CollectionResourceWrapper) resource;
-                    ResourcePropertyMapping[] ids = classMapping.getIdMappings();
-                    for (int i = 0; i < ids.length; i++) {
-                        colWrapper.rollbackGetProperty(ids[i].getPath().getPath());
+                    for (ResourcePropertyMapping id : classMapping.getIdMappings()) {
+                        colWrapper.rollbackGetProperty(id.getPath().getPath());
                     }
                 }
             }
@@ -293,7 +290,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         // create the object
         Object obj;
         try {
-            obj = constructor.newInstance(null);
+            obj = constructor.newInstance();
         } catch (Exception e) {
             throw new ConversionException("Failed to create class [" + clazz.getName() + "] for unmarshalling", e);
         }
@@ -307,8 +304,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         ResourcePropertyMapping[] ids = classMapping.getIdMappings();
         if (classMapping.getClazz().isAssignableFrom(id.getClass())) {
             // the object is the key
-            for (int i = 0; i < ids.length; i++) {
-                ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) ids[i];
+            for (ResourcePropertyMapping rpId : ids) {
+                ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) rpId;
                 stored |= convertId(idResource, classPropertyMetaDataMapping.getGetter().get(id), classPropertyMetaDataMapping, context);
             }
         } else if (id.getClass().isArray()) {
@@ -432,7 +429,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
         public IdentityAliasedObjectKey(String alias, Object value) {
             this.alias = alias;
-            this.objHashCode = new Integer(System.identityHashCode(value));
+            this.objHashCode = System.identityHashCode(value);
         }
 
 
@@ -518,8 +515,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
         private int getHashCode() {
             int result = alias.hashCode();
-            for (int i = 0; i < idsValues.length; i++) {
-                result = 29 * result + idsValues[i].hashCode();
+            for (Object idValue : idsValues) {
+                result = 29 * result + idValue.hashCode();
             }
             return result;
         }

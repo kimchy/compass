@@ -21,6 +21,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import junit.framework.TestCase;
 import org.compass.core.Compass;
@@ -28,9 +31,6 @@ import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassTemplate;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
-import org.compass.core.util.backport.java.util.concurrent.ExecutorService;
-import org.compass.core.util.backport.java.util.concurrent.Executors;
-import org.compass.core.util.backport.java.util.concurrent.Future;
 
 
 public class DuplicateHitsTests extends TestCase {

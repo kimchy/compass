@@ -56,7 +56,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
         public void set(Object target, Object value) throws CompassException {
             try {
-                method.invoke(target, new Object[] { value });
+                method.invoke(target, value);
             } catch (NullPointerException npe) {
                 if (value == null && method.getParameterTypes()[0].isPrimitive()) {
                     throw new PropertyAccessException(npe, "Null value was assigned to a property of primitive type",
@@ -125,7 +125,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
         public Object get(Object target) throws CompassException {
             try {
-                return method.invoke(target, null);
+                return method.invoke(target);
             } catch (InvocationTargetException ite) {
                 throw new PropertyAccessException(ite, "Exception occurred inside", false, clazz, propertyName);
             } catch (IllegalAccessException iae) {
@@ -206,15 +206,15 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
         Method[] methods = theClass.getDeclaredMethods();
         Method potentialSetter = null;
-        for (int i = 0; i < methods.length; i++) {
-            String methodName = methods[i].getName();
+        for (Method method : methods) {
+            String methodName = method.getName();
 
-            if (methods[i].getParameterTypes().length == 1 && methodName.startsWith("set")) {
+            if (method.getParameterTypes().length == 1 && methodName.startsWith("set")) {
                 String testStdMethod = Introspector.decapitalize(methodName.substring(3));
                 String testOldMethod = methodName.substring(3);
                 if (testStdMethod.equals(propertyName) || testOldMethod.equals(propertyName)) {
-                    potentialSetter = methods[i];
-                    if (returnType == null || methods[i].getParameterTypes()[0].equals(returnType))
+                    potentialSetter = method;
+                    if (returnType == null || method.getParameterTypes()[0].equals(returnType))
                         return potentialSetter;
                 }
             }
@@ -262,17 +262,17 @@ public class BasicPropertyAccessor implements PropertyAccessor {
     private static Method getterMethod(Class theClass, String propertyName) {
 
         Method[] methods = theClass.getDeclaredMethods();
-        for (int i = 0; i < methods.length; i++) {
+        for (Method method : methods) {
             // only carry on if the method has no parameters
-            if (methods[i].getParameterTypes().length == 0) {
-                String methodName = methods[i].getName();
+            if (method.getParameterTypes().length == 0) {
+                String methodName = method.getName();
 
                 // try "get"
                 if (methodName.startsWith("get")) {
                     String testStdMethod = Introspector.decapitalize(methodName.substring(3));
                     String testOldMethod = methodName.substring(3);
                     if (testStdMethod.equals(propertyName) || testOldMethod.equals(propertyName))
-                        return methods[i];
+                        return method;
 
                 }
 
@@ -286,7 +286,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
                     String testStdMethod = Introspector.decapitalize(methodName.substring(2));
                     String testOldMethod = methodName.substring(2);
                     if (testStdMethod.equals(propertyName) || testOldMethod.equals(propertyName))
-                        return methods[i];
+                        return method;
                 }
             }
         }

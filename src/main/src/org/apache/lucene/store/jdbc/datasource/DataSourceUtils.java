@@ -40,7 +40,7 @@ public abstract class DataSourceUtils {
     static {
         try {
             springConnectionProxyClass = Class.forName("org.springframework.jdbc.datasource.ConnectionProxy");
-            springConnectionProxy = springConnectionProxyClass.getMethod("getTargetConnection", null);
+            springConnectionProxy = springConnectionProxyClass.getMethod("getTargetConnection");
         } catch (Exception e) {
             springConnectionProxy = null;
             springConnectionProxyClass = null;
@@ -189,11 +189,6 @@ public abstract class DataSourceUtils {
      * returned.
      * <p>
      * <code>-1</code> is returned if none is found.
-     *
-     * @param metaData
-     * @param columnName
-     * @return Column index for the given column name
-     * @throws java.sql.SQLException
      */
     public static int getColumnIndexFromColumnName(ResultSetMetaData metaData, String columnName) throws SQLException {
         for (int i = 1; i <= metaData.getColumnCount(); i++) {
@@ -213,7 +208,7 @@ public abstract class DataSourceUtils {
         if (springConnectionProxy != null && springConnectionProxyClass != null) {
             if (springConnectionProxyClass.isAssignableFrom(conn.getClass())) {
                 try {
-                    return (Connection) springConnectionProxy.invoke(conn, null);
+                    return (Connection) springConnectionProxy.invoke(conn);
                 } catch (Exception e) {
                     return conn;
                 }

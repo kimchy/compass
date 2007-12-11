@@ -32,7 +32,7 @@ public class JOTM implements TransactionManagerLookup {
     public TransactionManager getTransactionManager(CompassSettings settings) throws TransactionException {
         try {
             Class clazz = Class.forName("org.objectweb.jotm.Current");
-            return (TransactionManager) clazz.getMethod("getTransactionManager", null).invoke(null, null);
+            return (TransactionManager) clazz.getMethod("getTransactionManager").invoke(null);
         } catch (Exception e) {
             throw new TransactionException("Could not obtain JOTM transaction manager instance", e);
         }

@@ -16,35 +16,14 @@
 
 package org.compass.annotations.config;
 
-import org.compass.annotations.config.binding.AnnotationsMappingBinding;
-import org.compass.annotations.config.binding.OverrideAnnotationsWithCpmMappingBinding;
 import org.compass.core.config.CompassConfiguration;
-import org.compass.core.config.CompassMappingBinding;
-import org.compass.core.converter.ConverterLookup;
-import org.compass.core.converter.basic.EnumConverter;
-import org.compass.core.converter.basic.StringBuilderConverter;
 
 /**
- * A specialized Compass configuration that can handle classes that have
- * search annotations. Allows for integration with other xml mappings
- * (annotations can extend contracts defined in xml files), and also provides
- * the ability to override annotations definition by having a mapping file
- * matching the class with <code>cpm.ann.xml</code> suffix. If the annotated
- * class also have a <code>cpm.xml</code> mapping definitions, both mappings
- * will be joined, with the <code>cpm.xml</code> read first.
+ * Acts as a placeholder for backward compliance. Compass is now Java 5 and no need to
+ * to have a special one.
  *
  * @author kimchy
  */
 public class CompassAnnotationsConfiguration extends CompassConfiguration {
 
-    protected void addMappingBindings(CompassMappingBinding mappingBinding) {
-        super.addMappingBindings(mappingBinding);
-        mappingBinding.addMappingBinding(new AnnotationsMappingBinding());
-        mappingBinding.addMappingBinding(new OverrideAnnotationsWithCpmMappingBinding());
-    }
-
-    protected void registerExtraConverters(ConverterLookup converterLookup) {
-        converterLookup.registerConverter("enum", new EnumConverter(), Enum.class);
-        converterLookup.registerConverter("stringbuilder", new StringBuilderConverter(), StringBuilder.class);
-    }
 }

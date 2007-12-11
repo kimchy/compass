@@ -117,6 +117,8 @@ public class DefaultConverterLookup implements ConverterLookup {
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.SHORT, ShortConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRING, StringConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRINGBUFFER, StringBufferConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRINGBUILDER, StringBuilderConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.ENUM, EnumConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.URL, URLConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.FILE, FileConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.INPUT_STREAM, InputStreamConverter.class);
@@ -160,6 +162,10 @@ public class DefaultConverterLookup implements ConverterLookup {
                 String.class, new StringConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.STRINGBUFFER,
                 StringBuffer.class, new StringBufferConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.STRINGBUILDER,
+                StringBuilder.class, new StringBuilderConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.ENUM,
+                Enum.class, new EnumConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.URL,
                 URL.class, new URLConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.URI,

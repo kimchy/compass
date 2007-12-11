@@ -16,48 +16,12 @@
 
 package org.compass.core.config;
 
-import org.compass.core.util.ClassUtils;
-import org.compass.core.util.JdkVersion;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * @author kimchy
  */
 public abstract class CompassConfigurationFactory {
 
-    private static final Log log = LogFactory.getLog(CompassConfigurationFactory.class);
-
-    private static final String DEFAULT_COMPASS_CONFIG = "org.compass.core.config.CompassConfiguration";
-
-    private static final String ANNOTATIONS_COMPASS_CONFIG = "org.compass.annotations.config.CompassAnnotationsConfiguration";
-
     public static CompassConfiguration newConfiguration() throws ConfigurationException {
-        String compassConfigurationClassName = DEFAULT_COMPASS_CONFIG;
-        if (JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15) {
-            compassConfigurationClassName = ANNOTATIONS_COMPASS_CONFIG;
-        }
-        Class compassConfigurationClass;
-        CompassConfiguration config;
-        try {
-            compassConfigurationClass = ClassUtils.forName(compassConfigurationClassName);
-        } catch (ClassNotFoundException e) {
-            try {
-                compassConfigurationClass = ClassUtils.forName(DEFAULT_COMPASS_CONFIG);
-            } catch (ClassNotFoundException e1) {
-                throw new ConfigurationException("Failed to create configuration class ["
-                        + compassConfigurationClassName + "] and default [" + DEFAULT_COMPASS_CONFIG + "]", e);
-            }
-        }
-        if (log.isInfoEnabled()) {
-            log.info("Using configuration [" + compassConfigurationClass.getName() + "]");
-        }
-        try {
-            config = (CompassConfiguration) compassConfigurationClass.newInstance();
-        } catch (Exception e) {
-            throw new ConfigurationException("Failed to create configuration class ["
-                    + compassConfigurationClass.getName() + "]", e);
-        }
-        return config;
+        return new CompassConfiguration();
     }
 }

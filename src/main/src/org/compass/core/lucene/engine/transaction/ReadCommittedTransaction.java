@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,7 +55,6 @@ import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.FieldInvoker;
 import org.compass.core.util.StringUtils;
-import org.compass.core.util.backport.java.util.concurrent.Callable;
 
 /**
  * A better implementation of the read committed transaction support. Uses the

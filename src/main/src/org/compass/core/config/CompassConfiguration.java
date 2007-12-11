@@ -24,6 +24,8 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.compass.annotations.config.binding.AnnotationsMappingBinding;
+import org.compass.annotations.config.binding.OverrideAnnotationsWithCpmMappingBinding;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.config.binding.XmlMappingBinding;
@@ -43,7 +45,6 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
 import org.compass.core.util.ClassUtils;
-import org.compass.core.util.JdkVersion;
 
 /**
  * Used to configure <code>Compass</code> instances.
@@ -73,14 +74,6 @@ import org.compass.core.util.JdkVersion;
  */
 public class CompassConfiguration {
 
-    static {
-        // for the lack of a nicer way to place this without chaning the backport code
-        if (JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15) {
-            System.setProperty("org.compass.core.util.backport.java.util.concurrent.NanoTimerProvider",
-                    "org.compass.core.util.concurrent.SystemNanoTimer");
-        }
-    }
-
     protected static final Log log = LogFactory.getLog(CompassConfiguration.class);
 
     private CompassMetaData metaData;
@@ -109,6 +102,8 @@ public class CompassConfiguration {
     protected void addMappingBindings(CompassMappingBinding mappingBinding) {
         mappingBinding.addMappingBinding(new XmlMetaDataBinding());
         mappingBinding.addMappingBinding(new XmlMappingBinding());
+        mappingBinding.addMappingBinding(new AnnotationsMappingBinding());
+        mappingBinding.addMappingBinding(new OverrideAnnotationsWithCpmMappingBinding());
     }
 
     /**

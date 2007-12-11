@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,8 +38,6 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStoreFactory;
 import org.compass.core.lucene.util.LuceneUtils;
-import org.compass.core.util.backport.java.util.concurrent.Executors;
-import org.compass.core.util.backport.java.util.concurrent.ScheduledExecutorService;
 
 /**
  * @author kimchy

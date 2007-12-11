@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,8 +48,6 @@ import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.Lock;
 import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
-import org.compass.core.util.backport.java.util.concurrent.ScheduledFuture;
-import org.compass.core.util.backport.java.util.concurrent.TimeUnit;
 
 /**
  * A local directory cache wraps an actual Lucene directory with a cache Lucene directory.

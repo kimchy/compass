@@ -54,7 +54,7 @@ public class WebSphere implements TransactionManagerLookup {
                 }
             }
 
-            return (TransactionManager) clazz.getMethod("getTransactionManager", null).invoke(null, null);
+            return (TransactionManager) clazz.getMethod("getTransactionManager").invoke(null);
         } catch (Exception e) {
             throw new TransactionException("Could not obtain WebSphere JTSXA instance", e);
         }

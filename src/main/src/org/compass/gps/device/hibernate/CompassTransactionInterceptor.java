@@ -18,6 +18,7 @@ package org.compass.gps.device.hibernate;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
@@ -25,7 +26,6 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.util.FieldInvoker;
-import org.compass.core.util.backport.java.util.concurrent.ConcurrentHashMap;
 import org.hibernate.CallbackException;
 import org.hibernate.EntityMode;
 import org.hibernate.Interceptor;
