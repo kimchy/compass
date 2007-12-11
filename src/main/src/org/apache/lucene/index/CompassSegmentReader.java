@@ -18,7 +18,7 @@ package org.apache.lucene.index;
 
 /**
  * A specific Lucene <code>SegmentReader</code> which holds the subIndex it is
- * associated with.
+ * associated with. 
  * 
  * @author kimchy
  */
