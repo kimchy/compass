@@ -27,17 +27,17 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalProperty;
 import org.compass.core.spi.InternalResource;
 
 /**
  * The All Analyzer is a specific analyzer that is used to wrap the analyzer passed when adding
- * a document. It will gather all the tokens that the actual analyzer generates for fields are
- * aree included in All and allow to get them using {@link #createAllTokenStream()} (which will
- * be used to create thea all field with).
+ * a document. It will gather all the tokens that the actual analyzer generates for fields that
+ * are included in All and allow to get them using {@link #createAllTokenStream()} (which will
+ * be used to create the all field with).
  *
  * <p>Un tokenized fields (which will not go through the analysis process) are identied when this
  * analyzed is constructed and are added to the all field if they are supposed to be included.
@@ -54,7 +54,7 @@ public class AllAnalyzer extends Analyzer {
 
     private LuceneSearchEngine searchEngine;
 
-    private ArrayList tokens = new ArrayList();
+    private ArrayList<Token> tokens = new ArrayList<Token>();
 
     private AllTokenStreamCollector allTokenStreamCollector = new AllTokenStreamCollector();
 
@@ -70,8 +70,8 @@ public class AllAnalyzer extends Analyzer {
                 // add the extended property
                 Property[] properties = resource.getProperties(searchEngine.getSearchEngineFactory().getExtendedAliasProperty());
                 if (properties != null) {
-                    for (int i = 0; i < properties.length; i++) {
-                        tokens.add(new Token(properties[i].getStringValue().toLowerCase(), 0, properties[i].getStringValue().length()));
+                    for (Property property : properties) {
+                        tokens.add(new Token(property.getStringValue().toLowerCase(), 0, property.getStringValue().length()));
                     }
                 }
             }
@@ -79,10 +79,8 @@ public class AllAnalyzer extends Analyzer {
             // go over all the un tokenized properties and add them as tokens (if required)
             // they are added since they will never get analyzed thus tokenStream will never
             // be called on them
-            Property[] properties = resource.getProperties();
-            for (int i = 0; i < properties.length; i++) {
-                LuceneProperty property = (LuceneProperty) properties[i];
-                ResourcePropertyMapping resourcePropertyMapping = property.getPropertyMapping();
+            for (Property property : resource.getProperties()) {
+                ResourcePropertyMapping resourcePropertyMapping = ((InternalProperty) property).getPropertyMapping();
                 // if not found within the property, try and get it based on the name from the resource mapping
                 if (resourcePropertyMapping == null) {
                     resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
@@ -150,9 +148,13 @@ public class AllAnalyzer extends Analyzer {
         return new AllTokenStream();
     }
 
+    /**
+     * The all token stream. To be used with the all property as its token stream. This stream will
+     * return all the tokens created and collected by this analyzer.
+     */
     private class AllTokenStream extends TokenStream {
 
-        private Iterator tokenIt;
+        private Iterator<Token> tokenIt;
 
         private int offset = 0;
 
@@ -164,7 +166,7 @@ public class AllAnalyzer extends Analyzer {
                 tokenIt = tokens.iterator();
             }
             if (tokenIt.hasNext()) {
-                Token token = (Token) tokenIt.next();
+                Token token = tokenIt.next();
                 // TODO fix offset when upgrading to newer lucene version as it has setters for it (also uses char[])
                 int delta = token.endOffset() - token.startOffset();
                 Token retVal = new Token(token.termText(), offset, offset + delta, token.type());
@@ -177,6 +179,10 @@ public class AllAnalyzer extends Analyzer {
         }
     }
 
+    /**
+     * A token stream that wraps the actual token stream and collects all the
+     * tokens it produces.
+     */
     private class AllTokenStreamCollector extends TokenStream {
 
         private TokenStream tokenStream;

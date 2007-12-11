@@ -17,15 +17,15 @@
 package org.compass.core.lucene;
 
 import org.apache.lucene.document.Field;
-import org.compass.core.Property;
 import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalProperty;
 
 /**
  * @author kimchy
  */
-public class LuceneProperty implements Property {
+public class LuceneProperty implements InternalProperty {
 
     private static final long serialVersionUID = 3690475809949104182L;
 
