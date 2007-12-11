@@ -22,7 +22,7 @@
 
 	</sect1>
 
-    <sect1 id="jpa-conifguration">
+    <sect1 id="embeddedopenjpa-conifguration">
 		<title>Configuration</title>
 
     	<para>
@@ -55,7 +55,7 @@
       
     </sect1>
 
-    <sect1 id="jpa-index">
+    <sect1 id="embeddedopenjpa-index">
     	<title>Index Operation</title>
 
       	<para>
@@ -75,7 +75,7 @@
 
     </sect1>
 
-    <sect1 id="jpa-datamirroring">
+    <sect1 id="embeddedopenjpa-datamirroring">
       	<title>Real Time Data Mirroring</title>
 
       	<para>

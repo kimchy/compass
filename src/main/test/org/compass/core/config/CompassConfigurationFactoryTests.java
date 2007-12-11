@@ -14,33 +14,23 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.component;
+package org.compass.core.config;
 
-import java.util.List;
-import java.util.Set;
-import org.compass.annotations.Searchable;
-import org.compass.annotations.SearchableComponent;
-import org.compass.annotations.SearchableId;
-import org.compass.annotations.SearchableProperty;
+import junit.framework.TestCase;
+import org.compass.annotations.config.CompassAnnotationsConfiguration;
+import org.compass.core.util.JdkVersion;
 
 /**
  * @author kimchy
  */
-@Searchable
-public class A {
+public class CompassConfigurationFactoryTests extends TestCase {
 
-    @SearchableId
-    long id;
-
-    @SearchableProperty
-    String value;
-
-    @SearchableComponent
-    B b;
-
-    @SearchableComponent
-    List<B> bValues;
-
-    @SearchableComponent
-    Set<B> bValuesSet;
+    public void testAnnotationsFactory() {
+        CompassConfiguration conf = CompassConfigurationFactory.newConfiguration();
+        if (JdkVersion.getMajorJavaVersion() >= JdkVersion.JAVA_15) {
+            assertEquals(CompassAnnotationsConfiguration.class, conf.getClass());
+        } else {
+            assertEquals(CompassConfiguration.class, conf.getClass());
+        }
+    }
 }

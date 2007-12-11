@@ -14,45 +14,34 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.jpa.model;
+package org.compass.annotations.test.component;
+
+import java.util.List;
+import java.util.Set;
 
 import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableComponent;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
-
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.io.Serializable;
 
 /**
  * @author kimchy
  */
-@Entity
 @Searchable
-public class Simple implements Serializable {
+public class A {
 
     @SearchableId
-    @Id
-    private Integer id;
+    long id;
 
     @SearchableProperty
-    @Basic
-    private String value;
+    String value;
 
-    public Integer getId() {
-        return id;
-    }
+    @SearchableComponent
+    B b;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    @SearchableComponent
+    List<B> bValues;
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    @SearchableComponent
+    Set<B> bValuesSet;
 }

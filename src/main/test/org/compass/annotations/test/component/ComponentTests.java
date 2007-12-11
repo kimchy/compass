@@ -20,7 +20,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.compass.annotations.test.AbstractAnnotationsTestCase;
-import org.compass.core.*;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassQuery;
+import org.compass.core.CompassQueryBuilder;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
+import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 
 /**

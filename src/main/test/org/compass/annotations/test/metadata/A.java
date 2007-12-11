@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.jpa.model;
+package org.compass.annotations.test.metadata;
 
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableMetaData;
+import org.compass.annotations.SearchableMetaDatas;
 import org.compass.annotations.SearchableProperty;
-
-import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * @author kimchy
  */
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Searchable(subIndex = "simple1")
-public class SimpleBase implements Serializable {
+@Searchable
+public class A {
 
     @SearchableId
-    @Id
-    private Integer id;
+    private int id;
 
     @SearchableProperty
-    @Basic
+    @SearchableMetaDatas({@SearchableMetaData(name = "value1"), @SearchableMetaData(name = "value2")})
     private String value;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

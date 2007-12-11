@@ -48,7 +48,7 @@ gps.start();
 			</para>
 			
 			
-			<sect3 id="hibernate-configuration">
+			<sect3 id="dep-hibernate-configuration">
 				<title>Configuration</title>
 
 			    <para>When configuring the Hibernate device, one must instantiate either <literal>Hibernate2GpsDevice</literal> (for Hibernate 2 version) or <literal>Hibernate3GpsDevice</literal> (for Hibernate 3 version). After instantiating the device, it must be initialized by either a Hibernate <literal>Configuration</literal> or a Hibernate <literal>SessionFactory</literal>. When configuring the device with Hibernate <literal>Configuration</literal>, a new <literal>SessionFactory</literal> is created when the device is started.</para>

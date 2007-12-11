@@ -95,6 +95,25 @@
           <module name="compass" />
         </modules>
       </facet-type>
+      <facet-type id="jpa">
+        <modules>
+          <module name="main" />
+        </modules>
+      </facet-type>
+      <facet-type id="hibernate">
+        <modules>
+          <module name="main">
+            <files>
+              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/gps/device/hibernate/collection/hibernate-nonjta.cfg.xml" />
+              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/gps/device/hibernate/collection/hibernate.cfg.xml" />
+              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/gps/device/hibernate/eg/hibernate2.cfg.xml" />
+              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/gps/device/hibernate/eg/hibernate3.cfg.xml" />
+              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/gps/device/hibernate/simple/hibernate.cfg.xml" />
+              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/gps/device/hibernate/transaction/hibernate.cfg.xml" />
+            </files>
+          </module>
+        </modules>
+      </facet-type>
     </autodetection-disabled>
   </component>
   <component name="IdProvider" IDEtalkID="E441679FD1D927792A7A75945B504C2F" />

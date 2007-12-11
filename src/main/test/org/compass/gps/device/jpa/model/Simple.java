@@ -14,28 +14,37 @@
  * limitations under the License.
  */
 
-package org.compass.annotations.test.metadata;
+package org.compass.gps.device.jpa.model;
 
-import org.compass.annotations.*;
+import java.io.Serializable;
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
  */
+@Entity
 @Searchable
-public class A {
+public class Simple implements Serializable {
 
     @SearchableId
-    private int id;
+    @Id
+    private Integer id;
 
     @SearchableProperty
-    @SearchableMetaDatas({@SearchableMetaData(name = "value1"), @SearchableMetaData(name = "value2")})
+    @Basic
     private String value;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
