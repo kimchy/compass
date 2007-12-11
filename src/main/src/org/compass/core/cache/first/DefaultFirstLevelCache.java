@@ -22,20 +22,22 @@ import org.compass.core.Resource;
 import org.compass.core.spi.ResourceKey;
 
 /**
+ * A default implementation of first level cache. 
+ *
  * @author kimchy
  */
 public class DefaultFirstLevelCache implements FirstLevelCache {
 
-    private HashMap objects = new HashMap();
+    private HashMap<ResourceKey, Object> objects = new HashMap<ResourceKey, Object>();
 
-    private HashMap resources = new HashMap();
+    private HashMap<ResourceKey, Resource> resources = new HashMap<ResourceKey, Resource>();
 
     public Object get(ResourceKey key) {
         return objects.get(key);
     }
 
     public Resource getResource(ResourceKey key) {
-        return (Resource) resources.get(key);
+        return resources.get(key);
     }
 
     public void set(ResourceKey key, Object obj) {

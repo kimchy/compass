@@ -20,9 +20,11 @@ import org.compass.core.Resource;
 import org.compass.core.spi.ResourceKey;
 
 /**
- * 
+ * First leve cache used to store resources and objects that are used within a session
+ * level. Since sessions are not thread safe, there is no need to worry about thread
+ * safety here.
+ *
  * @author kimchy
- * 
  */
 public interface FirstLevelCache {
 
