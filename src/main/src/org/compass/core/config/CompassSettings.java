@@ -18,7 +18,6 @@ package org.compass.core.config;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,9 +33,9 @@ public class CompassSettings {
 
     private Properties settings;
 
-    private final Map groups = new ConcurrentHashMap();
+    private final Map<String, HashMap<Object, CompassSettings>> groups = new ConcurrentHashMap<String, HashMap<Object, CompassSettings>>();
 
-    private Map registry = new ConcurrentHashMap();
+    private Map<Object, Object> registry = new ConcurrentHashMap<Object, Object>();
 
     public CompassSettings() {
         this(new Properties());
@@ -56,7 +55,7 @@ public class CompassSettings {
 
     public CompassSettings copy() {
         CompassSettings copySettings = new CompassSettings((Properties) settings.clone());
-        copySettings.registry = new ConcurrentHashMap(registry);
+        copySettings.registry = new ConcurrentHashMap<Object, Object>(registry);
         return copySettings;
     }
 
@@ -80,14 +79,14 @@ public class CompassSettings {
         if (settingPrefix.charAt(settingPrefix.length() - 1) != '.') {
             settingPrefix = settingPrefix + ".";
         }
-        Map group = (Map) groups.get(settingPrefix);
+        Map<Object, CompassSettings> group = groups.get(settingPrefix);
         if (group != null) {
             return group;
         }
         // we don't really care that it might happen twice
-        HashMap map = new HashMap();
-        for (Iterator it = settings.keySet().iterator(); it.hasNext();) {
-            String setting = (String) it.next();
+        HashMap<Object, CompassSettings> map = new HashMap<Object, CompassSettings>();
+        for (Object o : settings.keySet()) {
+            String setting = (String) o;
             if (setting.startsWith(settingPrefix)) {
                 String nameValue = setting.substring(settingPrefix.length());
                 int dotIndex = nameValue.indexOf('.');
@@ -97,7 +96,7 @@ public class CompassSettings {
                 }
                 String name = nameValue.substring(0, dotIndex);
                 String value = nameValue.substring(dotIndex + 1);
-                CompassSettings groupSettings = (CompassSettings) map.get(name);
+                CompassSettings groupSettings = map.get(name);
                 if (groupSettings == null) {
                     groupSettings = new CompassSettings();
                     map.put(name, groupSettings);
@@ -146,7 +145,7 @@ public class CompassSettings {
         if (sValue == null) {
             return defaultValue;
         }
-        return Boolean.valueOf(sValue).booleanValue();
+        return Boolean.valueOf(sValue);
     }
 
     public Class getSettingAsClass(String setting, Class clazz) throws ClassNotFoundException {

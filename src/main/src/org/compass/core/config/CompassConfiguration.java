@@ -86,7 +86,7 @@ public class CompassConfiguration {
 
     protected ConfigurationBuilder configurationBuilder = new SmartConfigurationBuilder();
 
-    private HashMap temporaryConvertersByName = new HashMap();
+    private HashMap<String, Converter> temporaryConvertersByName = new HashMap<String, Converter>();
 
     public CompassConfiguration() {
         mapping = new CompassMapping();
@@ -187,9 +187,9 @@ public class CompassConfiguration {
         ConverterLookup converterLookup = new DefaultConverterLookup();
         registerExtraConverters(converterLookup);
         converterLookup.configure(copySettings);
-        for (Iterator it = temporaryConvertersByName.keySet().iterator(); it.hasNext();) {
-            String converterName = (String) it.next();
-            Converter converter = (Converter) temporaryConvertersByName.get(converterName);
+        for (Iterator<String> it = temporaryConvertersByName.keySet().iterator(); it.hasNext();) {
+            String converterName = it.next();
+            Converter converter = temporaryConvertersByName.get(converterName);
             converterLookup.registerConverter(converterName, converter);
         }
 
