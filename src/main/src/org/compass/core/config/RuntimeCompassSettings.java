@@ -68,7 +68,7 @@ public class RuntimeCompassSettings extends CompassSettings {
         return globalSettings.getSetting(setting, defaultValue);
     }
 
-    public Map getSettingGroups(String settingPrefix) {
+    public Map<String, CompassSettings> getSettingGroups(String settingPrefix) {
         Map group = runtimeSettings.getSettingGroups(settingPrefix);
         if (group.size() != 0) {
             return group;

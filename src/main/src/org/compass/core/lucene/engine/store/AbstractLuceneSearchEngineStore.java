@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -60,9 +59,9 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     protected Log log = LogFactory.getLog(getClass());
 
-    private Map aliasesBySubIndex = new HashMap();
+    private Map<String, ArrayList<String>> aliasesBySubIndex = new HashMap<String, ArrayList<String>>();
 
-    private Map subIndexesByAlias = new HashMap();
+    private Map<String, ArrayList<String>> subIndexesByAlias = new HashMap<String, ArrayList<String>>();
 
     private String[] subIndexes;
 
@@ -79,7 +78,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     private LocalDirectoryCacheManager localDirectoryCacheManager;
 
     // holds the directories cache per sub index
-    private HashMap dirs = new HashMap();
+    private HashMap<String, Directory> dirs = new HashMap<String, Directory>();
 
     public AbstractLuceneSearchEngineStore(String connectionString, String subContext) {
         this.connectionString = connectionString;
@@ -91,44 +90,40 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
         this.luceneSettings = searchEngineFactory.getLuceneSettings();
 
-        HashSet subIndexesSet = new HashSet();
-        ResourceMapping[] rootMappings = mapping.getRootMappings();
-        for (int i = 0; i < rootMappings.length; i++) {
-            ResourceMapping resourceMapping = rootMappings[i];
+        HashSet<String> subIndexesSet = new HashSet<String>();
+        for (ResourceMapping resourceMapping : mapping.getRootMappings()) {
             String alias = resourceMapping.getAlias();
             String[] tempSubIndexes = resourceMapping.getSubIndexHash().getSubIndexes();
-            for (int j = 0; j < tempSubIndexes.length; j++) {
-                String subIndex = tempSubIndexes[j];
+            for (String subIndex : tempSubIndexes) {
                 subIndexesSet.add(subIndex.intern());
 
-                ArrayList list = (ArrayList) subIndexesByAlias.get(alias);
+                ArrayList<String> list = subIndexesByAlias.get(alias);
                 if (list == null) {
-                    list = new ArrayList();
+                    list = new ArrayList<String>();
                     subIndexesByAlias.put(alias, list);
                 }
                 list.add(subIndex);
 
-                list = (ArrayList) aliasesBySubIndex.get(subIndex);
+                list = aliasesBySubIndex.get(subIndex);
                 if (aliasesBySubIndex.get(subIndex) == null) {
-                    list = new ArrayList();
+                    list = new ArrayList<String>();
                     aliasesBySubIndex.put(subIndex, list);
                 }
                 list.add(alias);
             }
         }
-        subIndexes = (String[]) subIndexesSet.toArray(new String[subIndexesSet.size()]);
+        subIndexes = subIndexesSet.toArray(new String[subIndexesSet.size()]);
 
         // set up directory wrapper providers
-        Map dwSettingGroups = settings.getSettingGroups(LuceneEnvironment.DirectoryWrapper.PREFIX);
+        Map<String, CompassSettings> dwSettingGroups = settings.getSettingGroups(LuceneEnvironment.DirectoryWrapper.PREFIX);
         if (dwSettingGroups.size() > 0) {
-            ArrayList dws = new ArrayList();
-            for (Iterator it = dwSettingGroups.entrySet().iterator(); it.hasNext();) {
-                Map.Entry entry = (Map.Entry) it.next();
-                String dwName = (String) entry.getKey();
+            ArrayList<DirectoryWrapperProvider> dws = new ArrayList<DirectoryWrapperProvider>();
+            for (Map.Entry<String, CompassSettings> entry : dwSettingGroups.entrySet()) {
+                String dwName = entry.getKey();
                 if (log.isInfoEnabled()) {
                     log.info("Building directory wrapper [" + dwName + "]");
                 }
-                CompassSettings dwSettings = (CompassSettings) entry.getValue();
+                CompassSettings dwSettings = entry.getValue();
                 String dwType = dwSettings.getSetting(LuceneEnvironment.DirectoryWrapper.TYPE);
                 if (dwType == null) {
                     throw new ConfigurationException("Directory wrapper [" + dwName + "] has no type associated with it");
@@ -144,7 +139,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                 }
                 dws.add(dw);
             }
-            directoryWrapperProviders = (DirectoryWrapperProvider[]) dws.toArray(new DirectoryWrapperProvider[dws.size()]);
+            directoryWrapperProviders = dws.toArray(new DirectoryWrapperProvider[dws.size()]);
         }
 
         this.localDirectoryCacheManager = new LocalDirectoryCacheManager(searchEngineFactory);
@@ -158,8 +153,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     protected void closeDirectories() {
-        for (Iterator it = dirs.values().iterator(); it.hasNext();) {
-            Directory dir = (Directory) it.next();
+        for (Directory dir : dirs.values()) {
             try {
                 dir.close();
             } catch (IOException e) {
@@ -182,11 +176,11 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     public int getNumberOfAliasesBySubIndex(String subIndex) {
-        return ((ArrayList) aliasesBySubIndex.get(subIndex)).size();
+        return (aliasesBySubIndex.get(subIndex)).size();
     }
 
     public Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
-        Directory dir = (Directory) dirs.get(subIndex);
+        Directory dir = dirs.get(subIndex);
         if (dir == null) {
             dir = openDirectoryBySubIndex(subIndex, create);
             dirs.put(subIndex, dir);
@@ -270,8 +264,8 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             dir.setLockFactory(lockFactory);
         }
         if (directoryWrapperProviders != null) {
-            for (int i = 0; i < directoryWrapperProviders.length; i++) {
-                dir = directoryWrapperProviders[i].wrap(subIndex, dir);
+            for (DirectoryWrapperProvider directoryWrapperProvider : directoryWrapperProviders) {
+                dir = directoryWrapperProvider.wrap(subIndex, dir);
             }
         }
         return localDirectoryCacheManager.createLocalCache(subIndex, dir);
@@ -291,13 +285,12 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     protected boolean indexExists(final String subIndex) throws SearchEngineException {
         try {
-            Boolean retVal = (Boolean) template.executeForSubIndex(subIndex, false,
+            return (Boolean) template.executeForSubIndex(subIndex, false,
                     new LuceneStoreCallback() {
                         public Object doWithStore(Directory dir) throws IOException {
                             return indexExists(dir);
                         }
                     });
-            return retVal.booleanValue();
         } catch (SearchEngineException e) {
             return false;
         }
@@ -319,15 +312,15 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     public void createIndex() throws SearchEngineException {
-        for (int i = 0; i < subIndexes.length; i++) {
-            createIndex(subIndexes[i]);
+        for (String subIndexe : subIndexes) {
+            createIndex(subIndexe);
         }
     }
 
     public boolean verifyIndex() throws SearchEngineException {
         boolean createdIndex = false;
-        for (int i = 0; i < subIndexes.length; i++) {
-            if (verifyIndex(subIndexes[i])) {
+        for (String subIndexe : subIndexes) {
+            if (verifyIndex(subIndexe)) {
                 createdIndex = true;
             }
         }
@@ -335,8 +328,8 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
     }
 
     public boolean indexExists() throws SearchEngineException {
-        for (int i = 0; i < subIndexes.length; i++) {
-            if (!indexExists(subIndexes[i])) {
+        for (String subIndexe : subIndexes) {
+            if (!indexExists(subIndexe)) {
                 return false;
             }
         }
@@ -361,30 +354,29 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             }
             return subIndexes;
         }
-        HashSet ret = new HashSet();
-        for (int i = 0; i < aliases.length; i++) {
-            ArrayList subIndexesList = (ArrayList) subIndexesByAlias.get(aliases[i]);
+        HashSet<String> ret = new HashSet<String>();
+        for (String aliase : aliases) {
+            ArrayList<String> subIndexesList = subIndexesByAlias.get(aliase);
             if (subIndexesList == null) {
-                throw new IllegalArgumentException("No sub-index is mapped to alias [" + aliases[i] + "]");
+                throw new IllegalArgumentException("No sub-index is mapped to alias [" + aliase + "]");
             }
-            for (int j = 0; j < subIndexesList.size(); j++) {
-                ret.add(subIndexesList.get(j));
+            for (String subIndex : subIndexesList) {
+                ret.add(subIndex);
             }
         }
         if (subIndexes != null) {
             ret.addAll(Arrays.asList(subIndexes));
         }
-        return (String[]) ret.toArray(new String[ret.size()]);
+        return ret.toArray(new String[ret.size()]);
     }
 
     public boolean isLocked(String subIndex) throws SearchEngineException {
-        Boolean retVal = (Boolean) template.executeForSubIndex(subIndex, false,
+        return (Boolean) template.executeForSubIndex(subIndex, false,
                 new LuceneStoreCallback() {
                     public Object doWithStore(Directory dir) throws IOException {
-                        return Boolean.valueOf(IndexReader.isLocked(dir));
+                        return IndexReader.isLocked(dir);
                     }
                 });
-        return retVal.booleanValue();
     }
 
     public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {

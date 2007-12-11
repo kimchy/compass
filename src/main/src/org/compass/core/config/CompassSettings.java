@@ -33,7 +33,7 @@ public class CompassSettings {
 
     private Properties settings;
 
-    private final Map<String, HashMap<Object, CompassSettings>> groups = new ConcurrentHashMap<String, HashMap<Object, CompassSettings>>();
+    private final Map<String, HashMap<String, CompassSettings>> groups = new ConcurrentHashMap<String, HashMap<String, CompassSettings>>();
 
     private Map<Object, Object> registry = new ConcurrentHashMap<Object, Object>();
 
@@ -75,16 +75,16 @@ public class CompassSettings {
         return settings.getProperty(setting, defaultValue);
     }
 
-    public Map getSettingGroups(String settingPrefix) {
+    public Map<String, CompassSettings> getSettingGroups(String settingPrefix) {
         if (settingPrefix.charAt(settingPrefix.length() - 1) != '.') {
             settingPrefix = settingPrefix + ".";
         }
-        Map<Object, CompassSettings> group = groups.get(settingPrefix);
+        Map<String, CompassSettings> group = groups.get(settingPrefix);
         if (group != null) {
             return group;
         }
         // we don't really care that it might happen twice
-        HashMap<Object, CompassSettings> map = new HashMap<Object, CompassSettings>();
+        HashMap<String, CompassSettings> map = new HashMap<String, CompassSettings>();
         for (Object o : settings.keySet()) {
             String setting = (String) o;
             if (setting.startsWith(settingPrefix)) {
