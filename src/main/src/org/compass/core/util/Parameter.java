@@ -26,7 +26,8 @@ import java.util.Map;
  * A serializable Enum class. (Taken from lucene).
  */
 public abstract class Parameter implements Serializable {
-    static Map allParameters = new HashMap();
+    
+    static Map<String, Parameter> allParameters = new HashMap<String, Parameter>();
 
     private String name;
 
