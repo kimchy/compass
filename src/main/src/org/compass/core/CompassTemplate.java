@@ -115,7 +115,7 @@ public class CompassTemplate implements CompassOperations {
      * @return An object as the result of the compass action
      * @throws CompassException
      */
-    public Object execute(CompassCallback action) throws CompassException {
+    public <T> T execute(CompassCallback<T> action) throws CompassException {
         return execute(null, action);
     }
 
@@ -128,13 +128,13 @@ public class CompassTemplate implements CompassOperations {
      * @return An object as the result of the compass action
      * @throws CompassException
      */
-    public Object execute(TransactionIsolation transactionIsolation, CompassCallback action) throws CompassException {
+    public <T> T execute(TransactionIsolation transactionIsolation, CompassCallback<T> action) throws CompassException {
         CompassSession session = compass.openSession();
         session.getSettings().addSettings(globalSessionSettings);
         CompassTransaction tx = null;
         try {
             tx = session.beginTransaction(transactionIsolation);
-            Object result = action.doInCompass(session);
+            T result = action.doInCompass(session);
             tx.commit();
             return result;
         } catch (RuntimeException e) {

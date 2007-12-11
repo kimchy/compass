@@ -22,25 +22,25 @@ package org.compass.core;
  * implementation. The typical implementation will call
  * CompassSession.load/find/save to perform some operations on searchable
  * objects.
- * 
+ *
  * @author kimchy
  */
-public interface CompassCallback {
+public interface CompassCallback<T> {
 
     /**
      * Gets called by <code>CompassTemplate.execute</code> with an active
      * Compass Session. Does not need to care about activating or closing the
      * Session, or handling transactions.
-     * <p>
-     * If called within a thread-bound Compass transaction (initiated by an
+     *
+     * <p>If called within a thread-bound Compass transaction (initiated by an
      * outer compass transaction abstraction), the code will simply get executed
      * on the outer compass transaction with its transactional semantics.
-     * <p>
-     * Allows for returning a result object created within the callback, i.e. a
+     *
+     * <p>Allows for returning a result object created within the callback, i.e. a
      * domain object or a hits of domain objects. Note that there's special
      * support for single step actions: see CompassTemplate.find etc. A thrown
      * RuntimeException is treated as application exception, it gets propagated
      * to the caller of the template.
      */
-    Object doInCompass(CompassSession session) throws CompassException;
+    T doInCompass(CompassSession session) throws CompassException;
 }
