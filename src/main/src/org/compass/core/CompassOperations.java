@@ -203,7 +203,7 @@ public interface CompassOperations {
      * @return The object, returns <code>null</code> if not found
      * @throws CompassException
      */
-    Object get(Class clazz, Serializable id) throws CompassException;
+    <T> T get(Class<T> clazz, Serializable id) throws CompassException;
 
     /**
      * Returns an object that match the mapping specified for the defined alias,
@@ -229,7 +229,7 @@ public interface CompassOperations {
      * @return The object
      * @throws CompassException
      */
-    Object load(Class clazz, Serializable id) throws CompassException;
+    <T> T load(Class<T> clazz, Serializable id) throws CompassException;
 
     /**
      * Loads and returns an object that match the mapping specified for the

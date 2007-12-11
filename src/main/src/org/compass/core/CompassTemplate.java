@@ -83,8 +83,6 @@ public class CompassTemplate implements CompassOperations {
     /**
      * Creates a new CompassTemplate instance, already initialized with a
      * Compass instance.
-     *
-     * @param compass
      */
     public CompassTemplate(Compass compass) {
         this.compass = compass;
@@ -92,8 +90,6 @@ public class CompassTemplate implements CompassOperations {
 
     /**
      * Sets the compass instance that will be used by the template.
-     *
-     * @param compass
      */
     public void setCompass(Compass compass) {
         this.compass = compass;
@@ -167,8 +163,8 @@ public class CompassTemplate implements CompassOperations {
      * @return The hits that match the query
      * @throws CompassException
      */
-    public CompassHitsOperations executeFind(CompassCallback action) throws CompassException {
-        return (CompassHitsOperations) execute(action);
+    public CompassHitsOperations executeFind(CompassCallback<CompassHitsOperations> action) throws CompassException {
+        return execute(action);
     }
 
     // Compass Operations
@@ -178,7 +174,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void create(final Object obj) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.create(obj);
                 return null;
@@ -187,7 +183,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void create(final String alias, final Object obj) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.create(alias, obj);
                 return null;
@@ -196,7 +192,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public Property createProperty(final String name, final Reader value) throws CompassException {
-        return (Property) execute(new CompassCallback() {
+        return (Property) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.createProperty(name, value);
             }
@@ -205,7 +201,7 @@ public class CompassTemplate implements CompassOperations {
 
     public Property createProperty(final String name, final byte[] value, final Property.Store store)
             throws CompassException {
-        return (Property) execute(new CompassCallback() {
+        return (Property) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.createProperty(name, value, store);
             }
@@ -214,7 +210,7 @@ public class CompassTemplate implements CompassOperations {
 
     public Property createProperty(final String name, final Reader value, final Property.TermVector termVector)
             throws CompassException {
-        return (Property) execute(new CompassCallback() {
+        return (Property) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.createProperty(name, value, termVector);
             }
@@ -223,7 +219,7 @@ public class CompassTemplate implements CompassOperations {
 
     public Property createProperty(final String name, final String value, final Property.Store store,
                                    final Property.Index index) throws CompassException {
-        return (Property) execute(new CompassCallback() {
+        return (Property) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.createProperty(name, value, store, index);
             }
@@ -232,7 +228,7 @@ public class CompassTemplate implements CompassOperations {
 
     public Property createProperty(final String name, final String value, final Property.Store store,
                                    final Property.Index index, final Property.TermVector termVector) throws CompassException {
-        return (Property) execute(new CompassCallback() {
+        return (Property) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.createProperty(name, value, store, index, termVector);
             }
@@ -240,7 +236,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public Resource createResource(final String alias) throws CompassException {
-        return (Resource) execute(new CompassCallback() {
+        return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.createResource(alias);
             }
@@ -248,7 +244,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void delete(final Object obj) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.delete(obj);
                 return null;
@@ -257,7 +253,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void delete(final Resource resource) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.delete(resource);
                 return null;
@@ -266,7 +262,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void delete(final Class clazz, final Object obj) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.delete(clazz, obj);
                 return null;
@@ -275,7 +271,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void delete(final String alias, final Object obj) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.delete(alias, obj);
                 return null;
@@ -284,7 +280,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void delete(final CompassQuery query) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.delete(query);
                 return null;
@@ -293,16 +289,16 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public CompassHits find(final String query) throws CompassException {
-        return (CompassHits) executeFind(new CompassCallback() {
-            public Object doInCompass(CompassSession session) throws CompassException {
+        return execute(new CompassCallback<CompassHits>() {
+            public CompassHits doInCompass(CompassSession session) throws CompassException {
                 return session.find(query);
             }
         });
     }
 
     public CompassDetachedHits findWithDetach(final String query) throws CompassException {
-        return (CompassDetachedHits) executeFind(new CompassCallback() {
-            public Object doInCompass(CompassSession session) throws CompassException {
+        return execute(new CompassCallback<CompassDetachedHits>() {
+            public CompassDetachedHits doInCompass(CompassSession session) throws CompassException {
                 return session.find(query).detach();
             }
         });
@@ -310,23 +306,23 @@ public class CompassTemplate implements CompassOperations {
 
     public CompassDetachedHits findWithDetach(final String query, final int from, final int size)
             throws CompassException {
-        return (CompassDetachedHits) executeFind(new CompassCallback() {
-            public Object doInCompass(CompassSession session) throws CompassException {
+        return execute(new CompassCallback<CompassDetachedHits>() {
+            public CompassDetachedHits doInCompass(CompassSession session) throws CompassException {
                 return session.find(query).detach(from, size);
             }
         });
     }
 
-    public Object get(final Class clazz, final Serializable id) throws CompassException {
-        return execute(new CompassCallback() {
-            public Object doInCompass(CompassSession session) throws CompassException {
+    public <T> T get(final Class<T> clazz, final Serializable id) throws CompassException {
+        return execute(new CompassCallback<T>() {
+            public T doInCompass(CompassSession session) throws CompassException {
                 return session.get(clazz, id);
             }
         });
     }
 
     public Object get(final String alias, final Serializable id) throws CompassException {
-        return execute(new CompassCallback() {
+        return execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.get(alias, id);
             }
@@ -334,7 +330,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public Resource getResource(final Class clazz, final Serializable id) throws CompassException {
-        return (Resource) execute(new CompassCallback() {
+        return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.getResource(clazz, id);
             }
@@ -342,23 +338,23 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public Resource getResource(final String alias, final Serializable id) throws CompassException {
-        return (Resource) execute(new CompassCallback() {
+        return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.getResource(alias, id);
             }
         });
     }
 
-    public Object load(final Class clazz, final Serializable id) throws CompassException {
-        return execute(new CompassCallback() {
-            public Object doInCompass(CompassSession session) throws CompassException {
+    public <T> T load(final Class<T> clazz, final Serializable id) throws CompassException {
+        return execute(new CompassCallback<T>() {
+            public T doInCompass(CompassSession session) throws CompassException {
                 return session.load(clazz, id);
             }
         });
     }
 
     public Object load(final String alias, final Serializable id) throws CompassException {
-        return execute(new CompassCallback() {
+        return execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.load(alias, id);
             }
@@ -366,7 +362,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public Resource loadResource(final Class clazz, final Serializable id) throws CompassException {
-        return (Resource) execute(new CompassCallback() {
+        return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.loadResource(clazz, id);
             }
@@ -374,7 +370,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public Resource loadResource(final String alias, final Serializable id) throws CompassException {
-        return (Resource) execute(new CompassCallback() {
+        return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.loadResource(alias, id);
             }
@@ -382,7 +378,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void save(final Object obj) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.save(obj);
                 return null;
@@ -391,7 +387,7 @@ public class CompassTemplate implements CompassOperations {
     }
 
     public void save(final String alias, final Object obj) throws CompassException {
-        execute(new CompassCallback() {
+        execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.save(alias, obj);
                 return null;

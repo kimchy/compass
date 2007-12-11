@@ -23,7 +23,7 @@ package org.compass.core;
  * 
  * @author kimchy
  */
-public abstract class CompassCallbackWithoutResult implements CompassCallback {
+public abstract class CompassCallbackWithoutResult implements CompassCallback<Object> {
 
     public Object doInCompass(CompassSession session) throws CompassException {
         doInCompassWithoutResult(session);
@@ -34,8 +34,8 @@ public abstract class CompassCallbackWithoutResult implements CompassCallback {
      * Gets called by <code>CompassTemplate.execute</code> with an active
      * Compass Session. Does not need to care about activating or closing the
      * Session, or handling transactions.
-     * <p>
-     * If called without a thread-bound Compass transaction (initiated by an
+     *
+     * <p>If called without a thread-bound Compass transaction (initiated by an
      * outer compass transaction abstraction), the code will simply get executed
      * on the outer compass transaction with its transactional semantics.
      * 

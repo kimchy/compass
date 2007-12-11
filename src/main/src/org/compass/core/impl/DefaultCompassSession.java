@@ -196,13 +196,14 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
-    public Object get(Class clazz, Serializable id) throws CompassException {
+    public <T> T get(Class<T> clazz, Serializable id) throws CompassException {
         checkClosed();
         Resource resource = getResource(clazz, id);
         if (resource == null) {
             return null;
         }
-        return getByResource(resource);
+        //noinspection unchecked
+        return (T) getByResource(resource);
     }
 
     public Object get(String alias, Serializable id) throws CompassException {
@@ -269,10 +270,11 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
-    public Object load(Class clazz, Serializable id) throws CompassException {
+    public <T> T load(Class<T> clazz, Serializable id) throws CompassException {
         checkClosed();
         Resource resource = loadResource(clazz, id);
-        return getByResource(resource);
+        //noinspection unchecked
+        return (T) getByResource(resource);
     }
 
     public Object load(String alias, Serializable id) throws CompassException {
