@@ -759,17 +759,17 @@
             <xsd:element name="indexDeletionPolicy" minOccurs="0" maxOccurs="1">
                 <xsd:complexType>
                     <xsd:choice minOccurs="1" maxOccurs="1">
-                        <xsd:element name="keepLastCommit" />
-                        <xsd:element name="keepAll" />
+                        <xsd:element name="keepLastCommit"/>
+                        <xsd:element name="keepAll"/>
                         <xsd:element name="keepLastN">
                             <xsd:complexType>
-                                <xsd:attribute name="numToKeep" type="xsd:nonNegativeInteger" use="required" />
+                                <xsd:attribute name="numToKeep" type="xsd:nonNegativeInteger" use="required"/>
                             </xsd:complexType>
                         </xsd:element>
-                        <xsd:element name="keepNoneOnInit" />
+                        <xsd:element name="keepNoneOnInit"/>
                         <xsd:element name="expirationTime">
                             <xsd:complexType>
-                                <xsd:attribute name="expirationTimeSeconds" type="xsd:double" use="required" />
+                                <xsd:attribute name="expirationTimeSeconds" type="xsd:double" use="required"/>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="custom">
@@ -777,7 +777,7 @@
                                 <xsd:sequence>
                                     <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
                                 </xsd:sequence>
-                                <xsd:attribute name="type" type="xsd:string" use="required" />
+                                <xsd:attribute name="type" type="xsd:string" use="required"/>
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:choice>
@@ -1348,8 +1348,8 @@
                     </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                    <xsd:attribute name="type" type="xsd:string" use="required" />
-                    <xsd:attribute name="path" type="xsd:string" use="optional" />
+                    <xsd:attribute name="type" type="xsd:string" use="required"/>
+                    <xsd:attribute name="path" type="xsd:string" use="optional"/>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="directoryWrapperProvider" minOccurs="0" maxOccurs="unbounded">
@@ -1375,8 +1375,8 @@
             </xsd:element>
             <xsd:element name="localCache" minOccurs="0" maxOccurs="unbounded">
                 <xsd:complexType>
-                    <xsd:attribute name="subIndex" type="xsd:string" use="required" />
-                    <xsd:attribute name="connection" type="xsd:string" use="required" />
+                    <xsd:attribute name="subIndex" type="xsd:string" use="required"/>
+                    <xsd:attribute name="connection" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
         </xsd:sequence>
@@ -1579,23 +1579,21 @@
                                     </xsd:annotation>
                                 </xsd:attribute>
                                 <xsd:attribute name="defaultTransacitonIsolation" type="xsd:nonNegativeInteger"
-                                               use="optional" default="0">
+                                               use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The default TransactionIsolation state of connections created by this pool.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="initialSize" type="xsd:nonNegativeInteger" use="optional"
-                                               default="0">
+                                <xsd:attribute name="initialSize" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The initial number of connections that are created when the pool is started.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="maxActive" type="xsd:nonNegativeInteger" use="optional"
-                                               default="0">
+                                <xsd:attribute name="maxActive" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The maximum number of active connections that can be allocated from this
@@ -1603,7 +1601,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="maxIdle" type="xsd:nonNegativeInteger" use="optional" default="0">
+                                <xsd:attribute name="maxIdle" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The maximum number of active connections that can remain idle in the pool,
@@ -1611,7 +1609,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="minIdle" type="xsd:nonNegativeInteger" use="optional" default="0">
+                                <xsd:attribute name="minIdle" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The minimum number of active connections that can remain idle in the pool,
@@ -1619,7 +1617,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="maxWait" type="xsd:nonNegativeInteger" use="optional" default="0">
+                                <xsd:attribute name="maxWait" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The maximum number of milliseconds that the pool will wait (when there are
@@ -1628,8 +1626,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="maxOpenPreparedStatements" type="xsd:integer"
-                                               use="optional" default="0">
+                                <xsd:attribute name="maxOpenPreparedStatements" type="xsd:integer" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The maximum number of open statements that can be allocated from the
@@ -1637,8 +1634,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="poolPreparedStatements" type="booleanType" use="optional"
-                                               default="false">
+                                <xsd:attribute name="poolPreparedStatements" type="booleanType" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Sets if the pool will cache prepared statements.
