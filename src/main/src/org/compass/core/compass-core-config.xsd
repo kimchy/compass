@@ -1224,15 +1224,6 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="clearCacheOnCommit" type="booleanType" use="optional" default="true">
-            <xsd:annotation>
-                <xsd:documentation>
-                    Should the cache be cleared on commit. Note, that setting it to false might mean that the
-                    transaction isolation level will not function properly (for example, with read_committed, it will
-                    mean that data that is committed will take time to be reflected in the index). Defaults to true.
-                </xsd:documentation>
-            </xsd:annotation>
-        </xsd:attribute>
         <xsd:attribute name="lockTimeout" type="xsd:positiveInteger" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
@@ -1511,23 +1502,21 @@
                                     </xsd:annotation>
                                 </xsd:attribute>
                                 <xsd:attribute name="defaultTransacitonIsolation" type="xsd:nonNegativeInteger"
-                                               use="optional" default="0">
+                                               use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The default TransactionIsolation state of connections created by this pool.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="initialSize" type="xsd:nonNegativeInteger" use="optional"
-                                               default="0">
+                                <xsd:attribute name="initialSize" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The initial number of connections that are created when the pool is started.
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="maxActive" type="xsd:nonNegativeInteger" use="optional"
-                                               default="0">
+                                <xsd:attribute name="maxActive" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The maximum number of active connections that can be allocated from this
@@ -1535,7 +1524,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="maxIdle" type="xsd:nonNegativeInteger" use="optional" default="0">
+                                <xsd:attribute name="maxIdle" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The maximum number of active connections that can remain idle in the pool,
@@ -1543,7 +1532,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="minIdle" type="xsd:nonNegativeInteger" use="optional" default="0">
+                                <xsd:attribute name="minIdle" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The minimum number of active connections that can remain idle in the pool,
@@ -1551,7 +1540,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="maxWait" type="xsd:nonNegativeInteger" use="optional" default="0">
+                                <xsd:attribute name="maxWait" type="xsd:nonNegativeInteger" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The maximum number of milliseconds that the pool will wait (when there are
@@ -1560,8 +1549,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="maxOpenPreparedStatements" type="xsd:integer"
-                                               use="optional" default="0">
+                                <xsd:attribute name="maxOpenPreparedStatements" type="xsd:integer" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             The maximum number of open statements that can be allocated from the
@@ -1569,8 +1557,7 @@
                                         </xsd:documentation>
                                     </xsd:annotation>
                                 </xsd:attribute>
-                                <xsd:attribute name="poolPreparedStatements" type="booleanType" use="optional"
-                                               default="false">
+                                <xsd:attribute name="poolPreparedStatements" type="booleanType" use="optional">
                                     <xsd:annotation>
                                         <xsd:documentation>
                                             Sets if the pool will cache prepared statements.
