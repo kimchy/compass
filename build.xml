@@ -664,7 +664,7 @@
         <mkdir dir="${sandbox.target.classes.dir}"/>
         <mkdir dir="${sandbox.target.classes.dir}/META-INF"/>
 
-        <javac destdir="${sandbox.target.classes.dir}" source="1.3" target="1.3" debug="${debug}"
+        <javac destdir="${sandbox.target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
                deprecation="false" optimize="false" failonerror="true">
             <src path="${sandbox.src.dir}"/>
             <classpath refid="all-libs"/>
@@ -720,7 +720,7 @@
 
         <mkdir dir="${sandbox.target.testclasses.dir}"/>
 
-        <javac destdir="${sandbox.target.testclasses.dir}" source="1.3" target="1.3" debug="${debug}"
+        <javac destdir="${sandbox.target.testclasses.dir}" source="1.5" target="1.5" debug="${debug}"
                deprecation="false" optimize="false" failonerror="true">
             <src path="${sandbox.test.dir}"/>
             <classpath refid="all-libs"/>
