@@ -17,7 +17,6 @@
 package org.compass.core.config;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.compass.core.config.process.*;
 import org.compass.core.converter.ConverterLookup;
@@ -29,7 +28,7 @@ import org.compass.core.mapping.CompassMapping;
  */
 public class CompassMappingProcessor implements MappingProcessor {
 
-    private ArrayList mappingProcessors = new ArrayList();
+    private ArrayList<MappingProcessor> mappingProcessors = new ArrayList<MappingProcessor>();
 
     public CompassMappingProcessor() {
         mappingProcessors.add(new ResolveExtendsMappingProcessor());
@@ -53,8 +52,8 @@ public class CompassMappingProcessor implements MappingProcessor {
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws ConfigurationException {
         CompassMapping retMapping = compassMapping;
-        for (Iterator it = mappingProcessors.iterator(); it.hasNext();) {
-            retMapping = ((MappingProcessor) it.next()).process(retMapping, namingStrategy, converterLookup, settings);
+        for (MappingProcessor mappingProcessor : mappingProcessors) {
+            retMapping = mappingProcessor.process(retMapping, namingStrategy, converterLookup, settings);
         }
         return retMapping;
     }
