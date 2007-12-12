@@ -2,14 +2,8 @@
 <classpath>
 	<classpathentry kind="src" output="target/classes" path="src/main/src"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/main/test"/>
-	<classpathentry kind="src" output="target/classes" path="src/tiger/src"/>
-	<classpathentry kind="src" output="target/tiger-test-classes" path="src/tiger/test"/>
 	<classpathentry kind="src" output="target/sandbox/classes" path="src/sandbox/src"/>
 	<classpathentry kind="src" output="target/sandbox/test-classes" path="src/sandbox/test"/>
-	<classpathentry kind="src" output="samples/library/target/classes" path="samples/library/src/java"/>
-	<classpathentry kind="src" output="samples/library/target/classes" path="samples/library/src/test"/>
-	<classpathentry kind="src" output="samples/petclinic/target/classes" path="samples/petclinic/src/java"/>
-	<classpathentry kind="src" output="samples/petclinic/target/testclasses" path="samples/petclinic/src/test"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate2.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb/hsqldb.jar"/>
@@ -82,7 +76,11 @@
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-el.jar"/>
 	<classpathentry kind="lib" path="lib/velocity/velocity-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-jexl-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/openjpa/serp-1.11.0.jar"/>
-	<classpathentry kind="lib" path="lib/openjpa/openjpa-all-0.9.6-incubating.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate-validator.jar"/>
+	<classpathentry kind="lib" path="lib/jboss/jboss-ejb3.jar"/>
+	<classpathentry kind="lib" path="lib/lucene/lucene-queries.jar"/>
+	<classpathentry kind="lib" path="lib/openjpa/openjpa-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/openjpa/serp-1.13.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
