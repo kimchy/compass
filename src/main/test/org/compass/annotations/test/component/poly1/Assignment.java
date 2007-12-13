@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.component.poly2;
+package org.compass.annotations.test.component.poly1;
 
 import org.compass.annotations.Searchable;
-import org.compass.annotations.SearchableProperty;
 
 @Searchable(root = false)
 public class Assignment {
 
     String status;
 
-    @SearchableProperty
     public String getStatus() {
         return status;
     }

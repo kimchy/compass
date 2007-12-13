@@ -14,23 +14,48 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.component.poly2;
+package org.compass.annotations.test.component.poly1;
+
+import java.util.List;
 
 import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableComponent;
+import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 
-@Searchable(root = false)
-public class Assignment {
+@Searchable
+public class Address {
 
-    String status;
+    Long id;
+
+    String name;
+
+    List<Assignment> assignment;
 
     @SearchableProperty
-    public String getStatus() {
-        return status;
+    public String getName() {
+        return name;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setName(String name) {
+        this.name = name;
     }
 
+    @SearchableComponent
+    public List<Assignment> getAssignment() {
+        return assignment;
+    }
+
+    public void setAssignment(List<Assignment> assignment) {
+        this.assignment = assignment;
+    }
+
+    @SearchableId
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
