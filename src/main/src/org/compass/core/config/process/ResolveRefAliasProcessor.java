@@ -80,7 +80,7 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
                         classMapping.getAlias() + "], but there are multiple class mappings for [" + clazz.getName()
                         + "]. Please set the ref-alias explicitly.");
             }
-            HashSet aliases = new HashSet();
+            HashSet<String> aliases = new HashSet<String>();
             for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
                 Mapping iterateMapping = (Mapping) it.next();
                 if (iterateMapping instanceof ClassMapping) {
@@ -104,45 +104,51 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
                             classMapping.getAlias() + "], but no class mapping was found for [" + clazz.getName() + "]");
                 }
             }
-            mapping.setRefAliases((String[]) aliases.toArray(new String[aliases.size()]));
+            mapping.setRefAliases(aliases.toArray(new String[aliases.size()]));
         }
         // go over the ref alias mappings and resolve them. Also add extending
         // ref aliases
         String[] aliases = mapping.getRefAliases();
-        LinkedHashSet aliasesSet = new LinkedHashSet();
-        ArrayList refMappings = new ArrayList();
-        for (int i = 0; i < aliases.length; i++) {
-            AliasMapping refAliasMapping = compassMapping.getAliasMapping(aliases[i]);
+        LinkedHashSet<String> aliasesSet = new LinkedHashSet<String>();
+        ArrayList<ClassMapping> refMappings = new ArrayList<ClassMapping>();
+        for (String alias : aliases) {
+            AliasMapping refAliasMapping = compassMapping.getAliasMapping(alias);
             if (refAliasMapping == null) {
-                throw new MappingException("Failed to resolve ref-alias [" + aliases[i] + "] for ["
+                throw new MappingException("Failed to resolve ref-alias [" + alias + "] for ["
                         + mapping.getName() + "] in alias [" + classMapping.getAlias() + "]");
             }
-            if (aliasesSet.contains(aliases[i])) {
+            if (aliasesSet.contains(alias)) {
                 continue;
             }
             // it might be a contract mapping, so we will not add it here
             // but add all the class mappings that extend it
             if (refAliasMapping instanceof ClassMapping) {
-                aliasesSet.add(aliases[i]);
-                refMappings.add(refAliasMapping);
+                aliasesSet.add(alias);
+                refMappings.add((ClassMapping) refAliasMapping);
             }
             // now add all the ones that extend the ref mapping
             String[] extendingAliases = refAliasMapping.getExtendingAliases();
             if (extendingAliases != null) {
-                for (int j = 0; j < extendingAliases.length; j++) {
-                    AliasMapping aliasMapping = compassMapping.getAliasMapping(extendingAliases[j]);
+                for (String extendingAlias : extendingAliases) {
+                    AliasMapping aliasMapping = compassMapping.getAliasMapping(extendingAlias);
                     if (aliasesSet.contains(aliasMapping.getAlias())) {
                         continue;
                     }
                     // check that it is ClassMapping (it might be ContractMapping for example)
                     if (aliasMapping instanceof ClassMapping) {
                         aliasesSet.add(aliasMapping.getAlias());
-                        refMappings.add(aliasMapping);
+                        refMappings.add((ClassMapping) aliasMapping);
                     }
                 }
             }
         }
-        mapping.setRefAliases((String[]) aliasesSet.toArray(new String[aliasesSet.size()]));
-        mapping.setRefClassMappings((ClassMapping[]) refMappings.toArray(new ClassMapping[refMappings.size()]));
+        mapping.setRefAliases(aliasesSet.toArray(new String[aliasesSet.size()]));
+        mapping.setRefClassMappings(refMappings.toArray(new ClassMapping[refMappings.size()]));
+        // if we have more than one ref class mapping, all of them *must* be poly, change it to be one
+        if (mapping.getRefClassMappings().length > 1) {
+            for (ClassMapping refClassMapping : mapping.getRefClassMappings()) {
+                refClassMapping.setPoly(true);
+            }
+        }
     }
 }

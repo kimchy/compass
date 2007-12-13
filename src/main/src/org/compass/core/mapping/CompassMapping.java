@@ -56,7 +56,7 @@ public class CompassMapping {
 
     private final NullResourceMapping nullResourceMappingEntryInCache = new NullResourceMapping();
 
-    private final HashMap resourcePropertyMappingByPath = new HashMap();
+    private final HashMap<String, ResourcePropertyMapping[]> resourcePropertyMappingByPath = new HashMap<String, ResourcePropertyMapping[]>();
 
     private PropertyPath path;
 
@@ -83,7 +83,7 @@ public class CompassMapping {
                 ResourcePropertyMapping rpm = resourcePropertyMappings[j];
                 if (rpm.getPath() != null) {
                     String path = rpm.getPath().getPath();
-                    ResourcePropertyMapping[] rpms = (ResourcePropertyMapping[]) resourcePropertyMappingByPath.get(path);
+                    ResourcePropertyMapping[] rpms = resourcePropertyMappingByPath.get(path);
                     if (rpms == null) {
                         resourcePropertyMappingByPath.put(path, new ResourcePropertyMapping[]{rpm});
                     } else {
@@ -185,7 +185,7 @@ public class CompassMapping {
         if (dotIndex != -1) {
             return new ResourcePropertyMapping[] {getResourcePropertyMappingByPath(path)};
         }
-        return (ResourcePropertyMapping[]) resourcePropertyMappingByPath.get(path);
+        return resourcePropertyMappingByPath.get(path);
     }
 
     /**
@@ -271,7 +271,7 @@ public class CompassMapping {
      * try to navigate up the interface/superclass in order to find the "nearest" class
      * mapping.
      */
-    public List getAllDirectMappingByClass(Class clazz) {
+    public List<ResourceMapping> getAllDirectMappingByClass(Class clazz) {
         return mappingsByClass.getUnmodifiableMappingsByName(clazz.getName());
     }
 
@@ -398,12 +398,12 @@ public class CompassMapping {
      */
     private class ResourceMappingsByNameHolder {
 
-        private final HashMap mappings = new HashMap();
+        private final HashMap<String, List<ResourceMapping>> mappings = new HashMap<String, List<ResourceMapping>>();
 
         void addMapping(String name, ResourceMapping resourceMapping) {
-            List l = (List) mappings.get(name);
+            List<ResourceMapping> l = mappings.get(name);
             if (l == null) {
-                l = new ArrayList();
+                l = new ArrayList<ResourceMapping>();
                 mappings.put(name, l);
             }
             l.add(resourceMapping);
@@ -413,12 +413,12 @@ public class CompassMapping {
             mappings.clear();
         }
 
-        public List getMappingsByName(String name) {
-            return (List) mappings.get(name);
+        public List<ResourceMapping> getMappingsByName(String name) {
+            return mappings.get(name);
         }
 
-        public List getUnmodifiableMappingsByName(String name) {
-            return Collections.unmodifiableList((List) mappings.get(name));
+        public List<ResourceMapping> getUnmodifiableMappingsByName(String name) {
+            return Collections.unmodifiableList(mappings.get(name));
         }
 
         /**
@@ -426,15 +426,15 @@ public class CompassMapping {
          * <code>null</code> of no mapping matches the name.
          */
         public ResourceMapping getResourceMappingByName(String name) {
-            List l = getMappingsByName(name);
+            List<ResourceMapping> l = getMappingsByName(name);
             if (l == null) {
                 return null;
             }
-            return (ResourceMapping) l.get(l.size() - 1);
+            return l.get(l.size() - 1);
         }
 
         public boolean hasMultipleMappingsByName(String name) {
-            List l = getMappingsByName(name);
+            List<ResourceMapping> l = getMappingsByName(name);
             return l != null && l.size() > 1;
         }
     }
