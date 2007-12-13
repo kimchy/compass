@@ -335,7 +335,7 @@
       <module fileurl="file://$PROJECT_DIR$/src/sandbox/sandbox.iml" filepath="$PROJECT_DIR$/src/sandbox/sandbox.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="false" project-jdk-name="1.5" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="1.5" project-jdk-type="JavaSDK" />
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="Compass Tests" type="JUnit" factoryName="JUnit" enabled="false" merge="false">
       <module name="compass" />

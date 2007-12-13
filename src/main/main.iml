@@ -289,7 +289,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../../libs/lucene/2.2/src/java" />
+          <root url="file://$MODULE_DIR$/../../../../../opt/lucene/2.2/src/java" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -695,6 +695,24 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/jboss/jboss-ejb3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/jgroups/jgroups-all.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/mina/mina-core-1.1.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
