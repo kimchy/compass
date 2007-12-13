@@ -124,6 +124,13 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="enable" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If all should be enabled globally or not. Defaults to true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="highlighter" minOccurs="0" maxOccurs="unbounded">
@@ -1263,6 +1270,8 @@
                 <xsd:element name="mmap" type="mmapConnType"/>
                 <xsd:element name="ram" type="ramConnType"/>
                 <xsd:element name="jdbc" type="jdbcConnType"/>
+                <xsd:element name="space" type="spaceConnType"/>
+                <xsd:element name="custom" type="customConnType"/>
             </xsd:choice>
             <xsd:element name="lockFactory" minOccurs="0" maxOccurs="1">
                 <xsd:annotation>
@@ -1318,6 +1327,27 @@
             </xsd:annotation>
         </xsd:attribute>
     </xsd:complexType>
+    <xsd:complexType name="spaceConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A GigaSpace based index.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="url" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The url of the Space connecting to.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="bucketSize" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The bucket size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
     <xsd:complexType name="mmapConnType">
         <xsd:annotation>
             <xsd:documentation>
@@ -1345,6 +1375,20 @@
                 <xsd:documentation>
                     The logical path of the memory index. (Used to support multiple Compass instances with ram based
                     index).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="customConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A custom connection type. Uses the url and possibly additional settings to configure it.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="url" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The url for the custom connection type.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

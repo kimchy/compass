@@ -170,6 +170,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.All.NAME, getElementAttribute(allPropertyEle, "name"));
             settings.setSetting(CompassEnvironment.All.TERM_VECTOR, getElementAttribute(allPropertyEle, "termVector"));
             settings.setSetting(LuceneEnvironment.ALL_ANALYZER, getElementAttribute(allPropertyEle, "analyzer"));
+            settings.setSetting(CompassEnvironment.All.ENABLED, getElementAttribute(allPropertyEle, "enabled"));
         }
         child = DomUtils.getChildElementsByTagName(ele, "optimizer", true);
         if (child.size() == 1) {
@@ -480,6 +481,27 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 path = "ram://" + path;
             }
             settings.setSetting(CompassEnvironment.CONNECTION, path);
+            return;
+        }
+        // --- Space Connection ---
+        child = DomUtils.getChildElementsByTagName(ele, "space", true);
+        if (child.size() == 1) {
+            Element connEle = (Element) child.get(0);
+            String path = getElementAttribute(connEle, "url");
+            if (!path.startsWith("space://")) {
+                path = "space://" + path;
+            }
+            settings.setSetting(CompassEnvironment.CONNECTION, path);
+            // we don't use the static constant so we don't create dependency on GigaSpaces
+            settings.setSetting("compass.engine.store.space.bucketSize", getElementAttribute(connEle, "bucketSize"));
+            return;
+        }
+        // --- Custom Connection ---
+        child = DomUtils.getChildElementsByTagName(ele, "custom", true);
+        if (child.size() == 1) {
+            Element connEle = (Element) child.get(0);
+            String url = getElementAttribute(connEle, "url");
+            settings.setSetting(CompassEnvironment.CONNECTION, url);
             return;
         }
         // --- JDBC Connection --

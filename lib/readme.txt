@@ -243,3 +243,8 @@ distribution/website before using any of them in your own applications.
 * xpp/xpp3-1.1.3_8.jar
 - XPP3 (http://www.extreme.indiana.edu/xgws/xsoap/xpp/)
 - required at runtime when using XPP3 based xml parsing with XSEM
+
+* gigaspaces/*
+
+- GigaSpaces Community edition (http://www.gigaspaces.com) version 6.0.2
+- required for building compass

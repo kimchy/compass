@@ -41,6 +41,9 @@
 <!ENTITY spring-aop  SYSTEM "spring-aop.xml">
 <!ENTITY spring-mvc  SYSTEM "spring-mvc.xml">
 
+<!ENTITY needle-intro  SYSTEM "needle-intro.xml">
+<!ENTITY needle-gigaspaces  SYSTEM "needle-gigaspaces.xml">
+
 <!ENTITY samples-intro  SYSTEM "samples-intro.xml">
 <!ENTITY samples-library  SYSTEM "samples-library.xml">
 <!ENTITY samples-petclinic SYSTEM "samples-petclinic.xml">
@@ -130,6 +133,14 @@
     &spring-jdbc;
     &spring-aop;
     &spring-mvc;
+  </part>
+
+  <part id="compass-needle">
+    <title>Compass Needle</title>
+    <partintro>
+    &needle-intro;
+    </partintro>
+    &needle-gigaspaces;
   </part>
 
   <part>

@@ -49,7 +49,7 @@ public class LuceneSearchEngineStoreFactory {
         int index = connection.indexOf("://");
         if (index != -1) {
             String pluggableStore = connection.substring(0, index);
-            InputStream is = LuceneSearchEngineStore.class.getResourceAsStream("/compass-store-" + pluggableStore + ".properties");
+            InputStream is = LuceneSearchEngineStore.class.getResourceAsStream("/META-INF/compass/store-" + pluggableStore + ".properties");
             Properties props;
             try {
                 props = new Properties();

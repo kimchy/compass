@@ -635,6 +635,7 @@
                 <include name="lib/toplink/**"/>
                 <include name="lib/velocity/**"/>
                 <include name="lib/xpp/**"/>
+                <include name="lib/gigaspaces/**"/>
             </zipfileset>
         </zip>
 
