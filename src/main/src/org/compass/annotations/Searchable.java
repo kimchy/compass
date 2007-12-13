@@ -127,11 +127,11 @@ public @interface Searchable {
      * Controls if the searchable class will create it's own internal "all"
      * meta-data. The "all" meta-data holds searchable information of all
      * the class searchable content.
-     * <p/>
-     * If using the "all" meta-data, it can be controlled using the
+     *
+     * <p>If using the "all" meta-data, it can be controlled using the
      * {@link SearchableAllMetaData} annotation.
      */
-    boolean enableAll() default true;
+    EnableAll enableAll() default EnableAll.NA;
 
     /**
      * Controls is the alias will be stored within the "all" proeprty or not.

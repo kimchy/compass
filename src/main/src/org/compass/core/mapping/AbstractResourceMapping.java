@@ -45,7 +45,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private boolean isRoot = true;
 
-    private boolean isAllSupported = true;
+    private Boolean isAllSupported;
 
     private boolean excludeAliasFromAll = false;
 
@@ -264,11 +264,11 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         this.allProperty = allProperty;
     }
 
-    public boolean isAllSupported() {
+    public Boolean isAllSupported() {
         return isAllSupported;
     }
 
-    public void setAllSupported(boolean isAllSupported) {
+    public void setAllSupported(Boolean isAllSupported) {
         this.isAllSupported = isAllSupported;
     }
 

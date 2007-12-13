@@ -481,6 +481,14 @@ public class CompassEnvironment {
          */
         public static final String TERM_VECTOR = "compass.property.all.termVector";
 
+        /**
+         * If all property will be globablly enabled or not. By default it is enabled.
+         *
+         * <p>Note, enabling and disabling all property can also be done on the mapping
+         * itself. If it is explicitly defined on the mappings, then it will override this
+         * setting.
+         */
+        public static final String ENABLED = "compass.property.all.enabled";
     }
 
     /**

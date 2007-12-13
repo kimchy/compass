@@ -260,7 +260,11 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             log.trace("Alias [" + classMapping.getAlias() + "] is mapped to sub index hash [" + classMapping.getSubIndexHash() + "]");
         }
 
-        classMapping.setAllSupported(searchable.enableAll());
+        if (searchable.enableAll() == EnableAll.TRUE) {
+            classMapping.setAllSupported(true);
+        } else if (searchable.enableAll() == EnableAll.FALSE) {
+            classMapping.setAllSupported(false);
+        }
         classMapping.setExcludeAliasFromAll(searchable.excludeAliasFromAll());
         SearchableAllMetaData allMetaData = annotationClass.getAnnotation(SearchableAllMetaData.class);
         if (allMetaData != null) {

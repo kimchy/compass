@@ -8,7 +8,10 @@ VERSION 2.0 M1
     1.a all-analyzer mapping removed from resource and class mappings. Properties added to all will use their
         own analyzers when added to "all" and not use the removed all analyzer (which is the correct behviour).
     1.b untokenized properties will be added by default as untokenized to the all property. Changing to previous
-        (where they were tokenized) requries adding: exclude-from-all="no_analyzed".        
+        (where they were tokenized) requries adding: exclude-from-all="no_analyzed".
+
+2. Ability to disable/enable "all" support globally using compass.property.all.enabled property. Searchable
+   annotation changed its enableAll attribute to work with an enumartion and not a boolean value.
 
 VERSION 1.2 (October 15, 2007)
 ==============================

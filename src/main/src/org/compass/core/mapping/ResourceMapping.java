@@ -75,7 +75,7 @@ public interface ResourceMapping extends AliasMapping {
      * all property is a special property that have all the other resource values in it to be
      * searchable.
      */
-    boolean isAllSupported();
+    Boolean isAllSupported();
 
     /**
      * Should the alias be excluded from the "all" property. Default should be <code>false</code>.

@@ -127,7 +127,7 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
         return null;
     }
 
-    public boolean isAllSupported() {
+    public Boolean isAllSupported() {
         return true;
     }
 

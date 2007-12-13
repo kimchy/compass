@@ -168,9 +168,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String analyzer = xmlObjectConf.getAttribute("analyzer", null);
         xmlObjectMapping.setAnalyzer(analyzer);
 
-        String sAllSupported = xmlObjectConf.getAttribute("all", "true");
-        boolean allSupported = sAllSupported.equalsIgnoreCase("true");
-        xmlObjectMapping.setAllSupported(allSupported);
+        String sAllSupported = xmlObjectConf.getAttribute("all", null);
+        if (sAllSupported != null) {
+            xmlObjectMapping.setAllSupported(sAllSupported.equalsIgnoreCase("true"));
+        }
 
         String termVectorType = xmlObjectConf.getAttribute("all-term-vector", null);
         if (termVectorType == null) {
@@ -315,9 +316,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String analyzer = resourceConf.getAttribute("analyzer", null);
         rawResourceMapping.setAnalyzer(analyzer);
 
-        String sAllSupported = resourceConf.getAttribute("all", "true");
-        boolean allSupported = sAllSupported.equalsIgnoreCase("true");
-        rawResourceMapping.setAllSupported(allSupported);
+        String sAllSupported = resourceConf.getAttribute("all", null);
+        if (sAllSupported != null) {
+            rawResourceMapping.setAllSupported(sAllSupported.equalsIgnoreCase("true"));
+        }
 
         String termVectorType = resourceConf.getAttribute("all-term-vector", null);
         if (termVectorType == null) {
@@ -439,8 +441,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String analyzer = classConf.getAttribute("analyzer", null);
         classMapping.setAnalyzer(analyzer);
 
-        boolean allSupported = classConf.getAttributeAsBoolean("all", true);
-        classMapping.setAllSupported(allSupported);
+        String sAllSupported = classConf.getAttribute("all", null);
+        if (sAllSupported != null) {
+            classMapping.setAllSupported(sAllSupported.equalsIgnoreCase("true"));
+        }
 
         if (classMapping.isAllSupported()) {
             String allProperty = classConf.getAttribute("all-metadata", null);

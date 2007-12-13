@@ -22,6 +22,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.AbstractResourceMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
@@ -29,8 +30,8 @@ import org.compass.core.mapping.osem.ClassMapping;
 
 /**
  * Reolves late attributes associated usually with {@link ClassMapping}, they are:
- * <p/>
- * SupportUnmarshall: One can set globally if ClassMappings will support unmarshalling or not.
+ *
+ * <p>SupportUnmarshall: One can set globally if ClassMappings will support unmarshalling or not.
  *
  * @author kimchy
  */
@@ -46,6 +47,12 @@ public class ResolveLateAttributesMappingProcessor implements MappingProcessor {
                 ClassMapping classMapping = (ClassMapping) m;
                 if (!classMapping.isSupportUnmarshallSet()) {
                     classMapping.setSupportUnmarshall(settings.getSettingAsBoolean(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, true));
+                }
+            }
+            if (m instanceof AbstractResourceMapping) {
+                AbstractResourceMapping resourceMapping = (AbstractResourceMapping) m;
+                if (resourceMapping.isAllSupported() == null) {
+                    resourceMapping.setAllSupported(settings.getSettingAsBoolean(CompassEnvironment.All.ENABLED, true));
                 }
             }
         }
