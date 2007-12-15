@@ -63,55 +63,57 @@ public class AllAnalyzer extends Analyzer {
         this.resourceMapping = resource.resourceKey().getResourceMapping();
         this.searchEngine = searchEngine;
 
-        if (resourceMapping.isAllSupported()) {
-            if (!resourceMapping.isExcludeAliasFromAll()) {
-                // add the alias to all prpoerty (lowecased, so finding it will be simple)
-                tokens.add(new Token(resource.getAlias().toLowerCase(), 0, resource.getAlias().length()));
-                // add the extended property
-                Property[] properties = resource.getProperties(searchEngine.getSearchEngineFactory().getExtendedAliasProperty());
-                if (properties != null) {
-                    for (Property property : properties) {
-                        tokens.add(new Token(property.getStringValue().toLowerCase(), 0, property.getStringValue().length()));
-                    }
+        if (!resourceMapping.isAllSupported()) {
+            return;
+        }
+
+        if (!resourceMapping.isExcludeAliasFromAll()) {
+            // add the alias to all prpoerty (lowecased, so finding it will be simple)
+            tokens.add(new Token(resource.getAlias().toLowerCase(), 0, resource.getAlias().length()));
+            // add the extended property
+            Property[] properties = resource.getProperties(searchEngine.getSearchEngineFactory().getExtendedAliasProperty());
+            if (properties != null) {
+                for (Property property : properties) {
+                    tokens.add(new Token(property.getStringValue().toLowerCase(), 0, property.getStringValue().length()));
                 }
             }
+        }
 
-            // go over all the un tokenized properties and add them as tokens (if required)
-            // they are added since they will never get analyzed thus tokenStream will never
-            // be called on them
-            for (Property property : resource.getProperties()) {
-                ResourcePropertyMapping resourcePropertyMapping = ((InternalProperty) property).getPropertyMapping();
-                // if not found within the property, try and get it based on the name from the resource mapping
-                if (resourcePropertyMapping == null) {
-                    resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
-                }
-                if (resourcePropertyMapping != null && resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED
-                        && !resourcePropertyMapping.isInternal() && !(resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.YES)) {
-                    String value = property.getStringValue();
-                    if (value != null) {
-                        // if NO exclude from all, just add it
-                        // if NO_ANALYZED, will analyze it as well
-                        if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.NO) {
-                            tokens.add(new Token(value, 0, value.length()));
-                        } else
-                        if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.NO_ANALYZED) {
-                            Analyzer propAnalyzer;
-                            if (resourcePropertyMapping.getAnalyzer() != null) {
-                                propAnalyzer = searchEngine.getSearchEngineFactory()
-                                        .getAnalyzerManager().getAnalyzerMustExist(resourcePropertyMapping.getAnalyzer());
-                            } else {
-                                propAnalyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getAnalyzerByResource(resource);
+        // go over all the un tokenized properties and add them as tokens (if required)
+        // they are added since they will never get analyzed thus tokenStream will never
+        // be called on them
+        for (Property property : resource.getProperties()) {
+            ResourcePropertyMapping resourcePropertyMapping = ((InternalProperty) property).getPropertyMapping();
+            // if not found within the property, try and get it based on the name from the resource mapping
+            if (resourcePropertyMapping == null) {
+                resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
+            }
+            if (resourcePropertyMapping != null && resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED
+                    && !resourcePropertyMapping.isInternal() && !(resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.YES)) {
+                String value = property.getStringValue();
+                if (value != null) {
+                    // if NO exclude from all, just add it
+                    // if NO_ANALYZED, will analyze it as well
+                    if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.NO) {
+                        tokens.add(new Token(value, 0, value.length()));
+                    } else
+                    if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.NO_ANALYZED) {
+                        Analyzer propAnalyzer;
+                        if (resourcePropertyMapping.getAnalyzer() != null) {
+                            propAnalyzer = searchEngine.getSearchEngineFactory()
+                                    .getAnalyzerManager().getAnalyzerMustExist(resourcePropertyMapping.getAnalyzer());
+                        } else {
+                            propAnalyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getAnalyzerByResource(resource);
+                        }
+                        TokenStream ts = propAnalyzer.tokenStream(property.getName(), new StringReader(value));
+                        try {
+                            Token token = ts.next();
+                            while (token != null) {
+                                tokens.add(token);
+                                token = ts.next();
                             }
-                            TokenStream ts = propAnalyzer.tokenStream(property.getName(), new StringReader(value));
-                            try {
-                                Token token = ts.next();
-                                while (token != null) {
-                                    tokens.add(token);
-                                    token = ts.next();
-                                }
-                            } catch (IOException e) {
-                                throw new SearchEngineException("Failed to analyzer " + property, e);
-                            }
+                        } catch (IOException e) {
+                            throw new SearchEngineException("Failed to analyzer " + property, e);
                         }
                     }
                 }
