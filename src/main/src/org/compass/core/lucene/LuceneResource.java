@@ -44,13 +44,13 @@ import org.compass.core.util.StringUtils;
 /**
  * @author kimchy
  */
-public class LuceneResource implements AliasedObject, InternalResource, Map {
+public class LuceneResource implements AliasedObject, InternalResource, Map<String, Property[]> {
 
     private static final long serialVersionUID = 3904681565727306034L;
 
     private Document document;
 
-    private ArrayList properties = new ArrayList();
+    private ArrayList<Property> properties = new ArrayList<Property>();
 
     private String aliasProperty;
 
@@ -114,7 +114,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
         return resourceKey;
     }
 
-    public String get(String name) {
+    public String getValue(String name) {
         return document.get(name);
     }
 
@@ -131,7 +131,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
     }
 
     public String getAlias() {
-        return get(aliasProperty);
+        return getValue(aliasProperty);
     }
 
     public String getId() {
@@ -211,9 +211,9 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
 
     public Resource removeProperty(String name) {
         document.removeField(name);
-        Iterator it = properties.iterator();
+        Iterator<Property> it = properties.iterator();
         while (it.hasNext()) {
-            Property property = (Property) it.next();
+            Property property = it.next();
             if (property.getName().equals(name)) {
                 it.remove();
                 return this;
@@ -224,9 +224,9 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
 
     public Resource removeProperties(String name) {
         document.removeFields(name);
-        Iterator it = properties.iterator();
+        Iterator<Property> it = properties.iterator();
         while (it.hasNext()) {
-            Property property = (Property) it.next();
+            Property property = it.next();
             if (property.getName().equals(name)) {
                 it.remove();
             }
@@ -235,8 +235,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
     }
 
     public Property getProperty(String name) {
-        for (int i = 0; i < properties.size(); i++) {
-            Property property = (Property) properties.get(i);
+        for (Property property : properties) {
             if (property.getName().equals(name)) {
                 return property;
             }
@@ -245,9 +244,9 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
     }
 
     public Property[] getProperties(String name) {
-        List result = new ArrayList();
+        List<Property> result = new ArrayList<Property>();
         for (int i = 0; i < properties.size(); i++) {
-            Property property = (Property) properties.get(i);
+            Property property = properties.get(i);
             if (property.getName().equals(name)) {
                 result.add(property);
             }
@@ -256,11 +255,11 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
         if (result.size() == 0)
             return new Property[0];
 
-        return (Property[]) result.toArray(new Property[result.size()]);
+        return result.toArray(new Property[result.size()]);
     }
 
     public Property[] getProperties() {
-        return (Property[]) properties.toArray(new LuceneProperty[properties.size()]);
+        return properties.toArray(new Property[properties.size()]);
     }
 
     public float getBoost() {
@@ -313,62 +312,57 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
         throw new UnsupportedOperationException("Map operations are supported for read operations only");
     }
 
-    public void putAll(Map t) {
+    public void putAll(Map<? extends String, ? extends Property[]> t) {
         for (Iterator it = t.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Entry) it.next();
-            put(entry.getKey(), entry.getValue());
+            put((String) entry.getKey(), (Property[]) entry.getValue());
         }
     }
 
-    public Object remove(Object key) {
+    public Property[] remove(Object key) {
         removeProperties(key.toString());
         // TODO should return the old value
         return null;
     }
 
-    public Object put(Object key, Object value) {
-        removeProperties(key.toString());
-        if (value instanceof Property) {
-            addProperty((Property) value);
-        } else if (value instanceof Property[]) {
-            Property[] valueProps = (Property[]) value;
-            for (int i = 0; i < valueProps.length; i++) {
-                addProperty(valueProps[i]);
-            }
+    public Property[] put(String key, Property[] value) {
+        removeProperties(key);
+        for (Property aValue : value) {
+            addProperty(aValue);
         }
         // TODO should return the old value
         return null;
     }
 
-    public Set entrySet() {
-        Set keySey = keySet();
-        Set entrySet = Collections.unmodifiableSet(new HashSet());
+    public Set<Map.Entry<String, Property[]>> entrySet() {
+        Set<String> keySey = keySet();
+        Set<Entry<String, Property[]>> entrySet = new HashSet<Entry<String, Property[]>>();
         for (Iterator it = keySey.iterator(); it.hasNext();) {
             final String name = it.next().toString();
             final Property[] props = getProperties(name);
-            entrySet.add(new Map.Entry() {
-                public Object getKey() {
+            entrySet.add(new Map.Entry<String, Property[]>() {
+                public String getKey() {
                     return name;
                 }
 
-                public Object getValue() {
+                public Property[] getValue() {
                     return props;
                 }
 
-                public Object setValue(Object value) {
+                public Property[] setValue(Property[] value) {
                     put(name, value);
                     // TODO should return the old value
                     return null;
                 }
             });
         }
-        return entrySet;
+        return Collections.unmodifiableSet(entrySet);
     }
 
-    public Set keySet() {
-        Set keySet = new HashSet();
-        for (Iterator it = properties.iterator(); it.hasNext();) {
-            keySet.add(((Property) it.next()).getName());
+    public Set<String> keySet() {
+        Set<String> keySet = new HashSet<String>();
+        for (Property property : properties) {
+            keySet.add((property).getName());
         }
         return Collections.unmodifiableSet(keySet);
     }
@@ -385,16 +379,16 @@ public class LuceneResource implements AliasedObject, InternalResource, Map {
         return this.properties.isEmpty();
     }
 
-    public Collection values() {
-        Set keySey = keySet();
-        List values = Collections.unmodifiableList(new ArrayList());
-        for (Iterator it = keySey.iterator(); it.hasNext();) {
-            values.add(get(it.next()));
+    public Collection<Property[]> values() {
+        Set<String> keySet = keySet();
+        List<Property[]> values = new ArrayList<Property[]>();
+        for (String name : keySet) {
+            values.add(getProperties(name));
         }
-        return values;
+        return Collections.unmodifiableList(values);
     }
 
-    public Object get(Object key) {
+    public Property[] get(Object key) {
         return getProperties(key.toString());
     }
 }

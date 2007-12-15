@@ -69,17 +69,17 @@ public class RsemModuloTests extends AbstractTestCase {
         session.save(r);
 
         r = session.loadResource("a", new Long(1));
-        assertEquals("value1", r.get("value"));
+        assertEquals("value1", r.getValue("value"));
         r = session.loadResource("a", new Long(2));
-        assertEquals("value2", r.get("value"));
+        assertEquals("value2", r.getValue("value"));
 
         tr.commit();
 
         tr = session.beginTransaction();
         r = session.loadResource("a", new Long(1));
-        assertEquals("value1", r.get("value"));
+        assertEquals("value1", r.getValue("value"));
         r = session.loadResource("a", new Long(2));
-        assertEquals("value2", r.get("value"));
+        assertEquals("value2", r.getValue("value"));
         tr.commit();
 
         subIndexInfo = LuceneSubIndexInfo.getIndexInfo("index_0", session);
@@ -138,28 +138,28 @@ public class RsemModuloTests extends AbstractTestCase {
         session.save(r);
 
         r = session.loadResource("a", new Long(1));
-        assertEquals("value1", r.get("value"));
+        assertEquals("value1", r.getValue("value"));
         r = session.loadResource("a", new Long(2));
-        assertEquals("value2", r.get("value"));
+        assertEquals("value2", r.getValue("value"));
 
         r = session.loadResource("b", new Long(1));
-        assertEquals("valueb1", r.get("value"));
+        assertEquals("valueb1", r.getValue("value"));
         r = session.loadResource("b", new Long(2));
-        assertEquals("valueb2", r.get("value"));
+        assertEquals("valueb2", r.getValue("value"));
 
         tr.commit();
 
         tr = session.beginTransaction();
 
         r = session.loadResource("a", new Long(1));
-        assertEquals("value1", r.get("value"));
+        assertEquals("value1", r.getValue("value"));
         r = session.loadResource("a", new Long(2));
-        assertEquals("value2", r.get("value"));
+        assertEquals("value2", r.getValue("value"));
 
         r = session.loadResource("b", new Long(1));
-        assertEquals("valueb1", r.get("value"));
+        assertEquals("valueb1", r.getValue("value"));
         r = session.loadResource("b", new Long(2));
-        assertEquals("valueb2", r.get("value"));
+        assertEquals("valueb2", r.getValue("value"));
 
         tr.commit();
 

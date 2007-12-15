@@ -309,7 +309,7 @@ public class Hibernate3ScrollableResultsGpsDeviceTests extends TestCase {
 
         gpsDevice.performMirroring();
         r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
-        assertEquals("new first name", r.get("parent_first_name"));
+        assertEquals("new first name", r.getValue("parent_first_name"));
 
         // test that delete works
         s = sessionFactory.openSession();

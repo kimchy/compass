@@ -69,7 +69,7 @@ public class ConverterTests extends AbstractTestCase {
         assertEquals("test2", tsv.getValue2());
 
         Resource resource = session.loadResource("a", id);
-        assertEquals("test1XXX1test2", resource.get("mvalue"));
+        assertEquals("test1XXX1test2", resource.getValue("mvalue"));
 
         tr.commit();
     }
@@ -97,7 +97,7 @@ public class ConverterTests extends AbstractTestCase {
         assertEquals("test2", tsv.getValue2());
 
         Resource resource = session.loadResource("a1", id);
-        assertEquals("test1YYYtest2", resource.get("mvalue"));
+        assertEquals("test1YYYtest2", resource.getValue("mvalue"));
 
         tr.commit();
     }

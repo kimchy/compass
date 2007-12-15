@@ -188,7 +188,7 @@ public class LuceneAnalyzerManager {
         }
         ResourceAnalyzerController analyzerController = resourceMapping.getAnalyzerController();
         String analyzerPropertyName = analyzerController.getAnalyzerResourcePropertyName();
-        String analyzerName = resource.get(analyzerPropertyName);
+        String analyzerName = resource.getValue(analyzerPropertyName);
         if (analyzerName == null) {
             analyzerName = analyzerController.getNullAnalyzer();
         }

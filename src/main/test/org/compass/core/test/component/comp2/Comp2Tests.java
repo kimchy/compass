@@ -61,15 +61,15 @@ public class Comp2Tests extends AbstractTestCase {
 
         Resource resource = session.loadResource(User.class, new Integer(1));
         assertEquals(9, resource.getProperties().length);
-        assertEquals("user", resource.get("alias"));
-        assertEquals(User.class.getName(), resource.get("$/user/class"));
-        assertEquals("test user", resource.get("description2"));
-        assertEquals("1", resource.get("$/user/id"));
-        assertEquals(SpecialPerson.class.getName(), resource.get("$/user/identity/class"));
-        assertEquals("test person", resource.get("description1"));
-        assertEquals("1", resource.get("$/user/identity/id"));
-        assertEquals("name1", resource.get("person"));
-        assertEquals("1", resource.get("$/user/identity/names/colSize"));
+        assertEquals("user", resource.getValue("alias"));
+        assertEquals(User.class.getName(), resource.getValue("$/user/class"));
+        assertEquals("test user", resource.getValue("description2"));
+        assertEquals("1", resource.getValue("$/user/id"));
+        assertEquals(SpecialPerson.class.getName(), resource.getValue("$/user/identity/class"));
+        assertEquals("test person", resource.getValue("description1"));
+        assertEquals("1", resource.getValue("$/user/identity/id"));
+        assertEquals("name1", resource.getValue("person"));
+        assertEquals("1", resource.getValue("$/user/identity/names/colSize"));
 
         tr.commit();
         session.close();
@@ -104,15 +104,15 @@ public class Comp2Tests extends AbstractTestCase {
 
         Resource resource = session.loadResource(User.class, new Integer(1));
         assertEquals(9, resource.getProperties().length);
-        assertEquals("user", resource.get("alias"));
-        assertEquals(User.class.getName(), resource.get("$/user/class"));
-        assertEquals("test user", resource.get("description2"));
-        assertEquals("1", resource.get("$/user/id"));
-        assertEquals(Person.class.getName(), resource.get("$/user/identity/class"));
-        assertEquals("test person", resource.get("description1"));
-        assertEquals("1", resource.get("$/user/identity/id"));
-        assertEquals("name1", resource.get("person"));
-        assertEquals("1", resource.get("$/user/identity/names/colSize"));
+        assertEquals("user", resource.getValue("alias"));
+        assertEquals(User.class.getName(), resource.getValue("$/user/class"));
+        assertEquals("test user", resource.getValue("description2"));
+        assertEquals("1", resource.getValue("$/user/id"));
+        assertEquals(Person.class.getName(), resource.getValue("$/user/identity/class"));
+        assertEquals("test person", resource.getValue("description1"));
+        assertEquals("1", resource.getValue("$/user/identity/id"));
+        assertEquals("name1", resource.getValue("person"));
+        assertEquals("1", resource.getValue("$/user/identity/names/colSize"));
 
         tr.commit();
         session.close();

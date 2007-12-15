@@ -84,23 +84,23 @@ public class ResourceTests extends AbstractTestCase {
         session.save(r);
 
         r = session.getResource("a", "1");
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("a", new String[]{"1"});
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("a", id);
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("a", new Property[]{id});
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("a", r);
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         CompassHits hits = session.find("test");
         assertEquals(1, hits.getLength());
-        assertEquals("this is a test", hits.resource(0).get("mvalue"));
+        assertEquals("this is a test", hits.resource(0).getValue("mvalue"));
 
         session.delete("a", "1");
         r = session.getResource("a", r);
@@ -124,17 +124,17 @@ public class ResourceTests extends AbstractTestCase {
         session.save(r);
 
         r = session.getResource("b", new String[]{"1", "2"});
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("b", new Property[]{id1, id2});
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("b", r);
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         CompassHits hits = session.find("test");
         assertEquals(1, hits.getLength());
-        assertEquals("this is a test", hits.resource(0).get("mvalue"));
+        assertEquals("this is a test", hits.resource(0).getValue("mvalue"));
 
         tr.commit();
         session.close();
@@ -217,7 +217,7 @@ public class ResourceTests extends AbstractTestCase {
         session.save(r);
 
         r = session.getResource("d", "1");
-        assertEquals("this is a test", r.get("value1"));
+        assertEquals("this is a test", r.getValue("value1"));
 
         tr.commit();
         session.close();
@@ -234,8 +234,8 @@ public class ResourceTests extends AbstractTestCase {
         session.save(r);
 
         r = session.getResource("e", "1");
-        assertNull(r.get("value1"));
-        assertEquals("test2", r.get("value2"));
+        assertNull(r.getValue("value1"));
+        assertEquals("test2", r.getValue("value2"));
 
         tr.commit();
         session.close();

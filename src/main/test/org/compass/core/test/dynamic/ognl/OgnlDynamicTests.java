@@ -27,8 +27,8 @@ public class OgnlDynamicTests extends AbstractTestCase {
         session.save("a1", a);
 
         Resource resource = session.loadResource("a1", new Long(1));
-        assertEquals("valuevalue2", resource.get("test"));
-        assertEquals("value", resource.get("test1"));
+        assertEquals("valuevalue2", resource.getValue("test"));
+        assertEquals("value", resource.getValue("test1"));
 
         tr.commit();
         session.close();
@@ -46,7 +46,7 @@ public class OgnlDynamicTests extends AbstractTestCase {
         session.save("a2", a);
 
         Resource resource = session.loadResource("a2", new Long(1));
-        assertEquals("1977", resource.get("test"));
+        assertEquals("1977", resource.getValue("test"));
 
         tr.commit();
         session.close();

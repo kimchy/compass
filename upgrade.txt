@@ -13,6 +13,8 @@ VERSION 2.0 M1
 2. Ability to disable/enable "all" support globally using compass.property.all.enabled property. Searchable
    annotation changed its enableAll attribute to work with an enumartion and not a boolean value.
 
+3. Renamed Resource#get to Resource#getValue. (sorry...)
+
 VERSION 1.2 (October 15, 2007)
 ==============================
 

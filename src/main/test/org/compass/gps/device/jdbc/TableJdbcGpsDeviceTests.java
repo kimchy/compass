@@ -185,7 +185,7 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
         gpsDevice.performMirroring();
         r = compassTemplate.loadResource("parent", "1");
-        assertEquals("new first name", r.get("FIRST_NAME"));
+        assertEquals("new first name", r.getValue("FIRST_NAME"));
 
         // test that delete works
         con = JdbcUtils.getConnection(dataSource);

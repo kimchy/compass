@@ -43,12 +43,12 @@ public class ManagedIdTests extends AbstractTestCase {
         session.save(a);
 
         Resource r = session.getResource(A.class, id);
-        String val = r.get("$/a/id");
+        String val = r.getValue("$/a/id");
         assertNotNull(val);
         assertEquals("1", val);
-        val = r.get("$/a/value1");
+        val = r.getValue("$/a/value1");
         assertNull(val);
-        val = r.get("$/a/value2");
+        val = r.getValue("$/a/value2");
         assertNull(val);
 
         tr.commit();
@@ -67,13 +67,13 @@ public class ManagedIdTests extends AbstractTestCase {
         session.save(b);
 
         Resource r = session.getResource(B.class, id);
-        String val = r.get("$/b/id");
+        String val = r.getValue("$/b/id");
         assertNotNull(val);
         assertEquals("1", val);
-        val = r.get("$/b/value1");
+        val = r.getValue("$/b/value1");
         assertNotNull(val);
         assertEquals("value1", val);
-        val = r.get("$/b/value2");
+        val = r.getValue("$/b/value2");
         assertNotNull(val);
         assertEquals("value2", val);
 
@@ -93,12 +93,12 @@ public class ManagedIdTests extends AbstractTestCase {
         session.save(c);
 
         Resource r = session.getResource(C.class, id);
-        String val = r.get("$/c/id");
+        String val = r.getValue("$/c/id");
         assertNotNull(val);
         assertEquals("1", val);
-        val = r.get("$/c/value1");
+        val = r.getValue("$/c/value1");
         assertNull(val);
-        val = r.get("$/c/value2");
+        val = r.getValue("$/c/value2");
         assertNull(val);
 
         tr.commit();
@@ -117,12 +117,12 @@ public class ManagedIdTests extends AbstractTestCase {
         session.save(c);
 
         Resource r = session.getResource(Constant.class, id);
-        String val = r.get("$/constant/id");
+        String val = r.getValue("$/constant/id");
         assertNotNull(val);
         assertEquals("1", val);
-        val = r.get("$/constant/value1");
+        val = r.getValue("$/constant/value1");
         assertNotNull(val);
-        val = r.get("$/constant/value2");
+        val = r.getValue("$/constant/value2");
         assertNull(val);
 
         tr.commit();
@@ -147,16 +147,16 @@ public class ManagedIdTests extends AbstractTestCase {
         session.save(parentComponent);
 
         Resource r = session.getResource(ParentComponent.class, id);
-        String val = r.get("$/parentComp/id");
+        String val = r.getValue("$/parentComp/id");
         assertNotNull(val);
         assertEquals("1", val);
-        val = r.get("$/parentComp/value1");
+        val = r.getValue("$/parentComp/value1");
         assertNotNull(val);
-        val = r.get("$/parentComp/value2");
+        val = r.getValue("$/parentComp/value2");
         assertNotNull(val);
-        val = r.get("$/parentComp/childComponent/value1");
+        val = r.getValue("$/parentComp/childComponent/value1");
         assertNotNull(val);
-        val = r.get("$/parentComp/childComponent/value2");
+        val = r.getValue("$/parentComp/childComponent/value2");
         assertNotNull(val);
 
         tr.commit();
@@ -183,14 +183,14 @@ public class ManagedIdTests extends AbstractTestCase {
         session.save(pr);
 
         Resource r = session.getResource(ParentReference.class, id);
-        String val = r.get("$/parentRef/id");
+        String val = r.getValue("$/parentRef/id");
         assertNotNull(val);
         assertEquals("1", val);
-        val = r.get("$/parentRef/value1");
+        val = r.getValue("$/parentRef/value1");
         assertNull(val);
-        val = r.get("$/parentRef/value2");
+        val = r.getValue("$/parentRef/value2");
         assertNull(val);
-        val = r.get("$/parentRef/childReference/id");
+        val = r.getValue("$/parentRef/childReference/id");
         assertNotNull(val);
         assertEquals("1", val);
 

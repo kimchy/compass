@@ -37,7 +37,7 @@ public class FormatLocaleTests extends AbstractTestCase {
 
         Resource resource = session.loadResource(A.class, "1");
         // german separator is "," not "." - we verify that the locale was accepted
-        assertEquals("123,46", resource.get("value"));
+        assertEquals("123,46", resource.getValue("value"));
 
 
         tr.commit();

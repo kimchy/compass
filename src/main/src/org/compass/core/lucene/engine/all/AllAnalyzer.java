@@ -88,8 +88,16 @@ public class AllAnalyzer extends Analyzer {
             if (resourcePropertyMapping == null) {
                 resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
             }
-            if (resourcePropertyMapping != null && resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED
-                    && !resourcePropertyMapping.isInternal() && !(resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.YES)) {
+            if (resourcePropertyMapping == null) {
+                continue;
+            }
+            if (resourcePropertyMapping.isInternal()) {
+                continue;
+            }
+            if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.YES) {
+                continue;
+            }
+            if (resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED) {
                 String value = property.getStringValue();
                 if (value != null) {
                     // if NO exclude from all, just add it

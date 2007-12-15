@@ -52,7 +52,7 @@ public class CyclicTests extends AbstractTestCase {
         assertEquals(4, resource.getProperties().length);
         assertEquals(2, resource.getProperties("value").length);
         // this is our actual id
-        assertEquals("1", resource.get("$/cyclic/id"));
+        assertEquals("1", resource.getValue("$/cyclic/id"));
         // note, only the root class mappings ids are saved
         assertEquals(1, resource.getProperties("$/cyclic/id").length);
 
@@ -86,7 +86,7 @@ public class CyclicTests extends AbstractTestCase {
         assertEquals(5, resource.getProperties().length);
         assertEquals(3, resource.getProperties("value").length);
         // this is our actual id
-        assertEquals("1", resource.get("$/cyclic/id"));
+        assertEquals("1", resource.getValue("$/cyclic/id"));
         // note, only the root class mappings ids are saved
         assertEquals(1, resource.getProperties("$/cyclic/id").length);
 

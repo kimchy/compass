@@ -32,9 +32,9 @@ public class JexlDynamicTests extends AbstractAnnotationsTestCase {
         session.save(a);
 
         Resource resource = session.loadResource(A.class, 1);
-        assertEquals("valuevalue2", resource.get("test"));
-        assertEquals("value", resource.get("test2"));
-        assertEquals("1977", resource.get("date"));
+        assertEquals("valuevalue2", resource.getValue("test"));
+        assertEquals("value", resource.getValue("test2"));
+        assertEquals("1977", resource.getValue("date"));
 
         tr.commit();
         session.close();

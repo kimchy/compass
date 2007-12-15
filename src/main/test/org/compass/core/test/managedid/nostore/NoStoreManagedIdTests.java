@@ -39,7 +39,7 @@ public class NoStoreManagedIdTests extends AbstractTestCase {
         assertEquals("value2", a.value2);
 
         Resource resource = session.loadResource("a2", "1");
-        assertNull(resource.get("$/a2/value2"));
+        assertNull(resource.getValue("$/a2/value2"));
 
         tr.commit();
         session.close();
@@ -62,7 +62,7 @@ public class NoStoreManagedIdTests extends AbstractTestCase {
         assertEquals("value2", a.value2);
 
         Resource resource = session.loadResource(alias, "1");
-        assertNull(resource.get("$/" + alias + "/value2"));
+        assertNull(resource.getValue("$/" + alias + "/value2"));
 
         tr.commit();
         session.close();

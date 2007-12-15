@@ -50,8 +50,8 @@ public class ConverterTests extends AbstractAnnotationsTestCase {
         assertEquals("value2", a.value.value2);
 
         Resource resource = session.loadResource(A.class, a.id);
-        assertEquals("id1#id2", resource.get("$/A/id"));
-        assertEquals("value1#value2", resource.get("value"));
+        assertEquals("id1#id2", resource.getValue("$/A/id"));
+        assertEquals("value1#value2", resource.getValue("value"));
 
         CompassHits hits = session.find("value1#value2");
         assertEquals(1, hits.length());

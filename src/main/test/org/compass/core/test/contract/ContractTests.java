@@ -46,9 +46,9 @@ public class ContractTests extends AbstractTestCase {
         session.save("a", a);
 
         Resource r = session.loadResource("a", id);
-        assertNotNull(r.get("mvalue1"));
-        assertNotNull(r.get("mvalue2"));
-        assertNotNull(r.get("mvalueA"));
+        assertNotNull(r.getValue("mvalue1"));
+        assertNotNull(r.getValue("mvalue2"));
+        assertNotNull(r.getValue("mvalueA"));
 
         tr.commit();
         session.close();
@@ -68,9 +68,9 @@ public class ContractTests extends AbstractTestCase {
         session.save("a1", a);
 
         Resource r = session.loadResource("a1", id);
-        assertNull(r.get("mvalue1"));
-        assertNotNull(r.get("mvalue2"));
-        assertNotNull(r.get("mvalueEx"));
+        assertNull(r.getValue("mvalue1"));
+        assertNotNull(r.getValue("mvalue2"));
+        assertNotNull(r.getValue("mvalueEx"));
 
         tr.commit();
         session.close();
@@ -90,9 +90,9 @@ public class ContractTests extends AbstractTestCase {
         session.save("a2", a);
 
         Resource r = session.loadResource("a2", id);
-        assertNotNull(r.get("mvalue1"));
-        assertNotNull(r.get("mvalue2"));
-        assertNotNull(r.get("mvalueEx"));
+        assertNotNull(r.getValue("mvalue1"));
+        assertNotNull(r.getValue("mvalue2"));
+        assertNotNull(r.getValue("mvalueEx"));
 
         tr.commit();
         session.close();

@@ -246,7 +246,7 @@ public class ReplaceIndexTests extends TestCase {
         A a = (A) session.load(subIndex, id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource(subIndex, id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());

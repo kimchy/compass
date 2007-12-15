@@ -25,7 +25,7 @@ public class VelocityDynamicTests extends AbstractTestCase {
         session.save("a1", a);
 
         Resource resource = session.loadResource("a1", new Long(1));
-        assertEquals("value value2", resource.get("test"));
+        assertEquals("value value2", resource.getValue("test"));
 
         tr.commit();
         session.close();

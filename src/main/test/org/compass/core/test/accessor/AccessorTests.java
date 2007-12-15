@@ -107,7 +107,7 @@ public class AccessorTests extends AbstractTestCase {
 
         o = (C) session.load("c", id);
         Resource resource = session.loadResource("c", id);
-        assertEquals("value special", resource.get("special"));
+        assertEquals("value special", resource.getValue("special"));
 
         tr.commit();
         session.close();

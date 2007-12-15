@@ -46,7 +46,7 @@ public class SimpleTests extends AbstractAnnotationsTestCase {
         assertEquals(4, resource.getProperties().length);
         assertEquals("A", resource.getAlias());
         assertEquals(2, resource.getProperties("value").length);
-        assertEquals("1", resource.get("$/A/id"));
+        assertEquals("1", resource.getValue("$/A/id"));
 
         a = (A) session.load(A.class, 1);
         assertEquals(1, a.id.longValue());

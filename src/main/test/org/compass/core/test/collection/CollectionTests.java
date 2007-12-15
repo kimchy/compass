@@ -66,7 +66,7 @@ public class CollectionTests extends AbstractTestCase {
         assertEquals("test2", list.get(1));
 
         Resource r = session.loadResource("simple-type-col", id);
-        assertEquals("2", r.get("$/simple-type-col/strings/colSize"));
+        assertEquals("2", r.getValue("$/simple-type-col/strings/colSize"));
 
         CompassHits result = session.find("mvalue:test1");
         o = (SimpleTypeCollection) result.data(0);
@@ -118,7 +118,7 @@ public class CollectionTests extends AbstractTestCase {
         assertEquals("test", o.getValue());
         assertEquals(0, o.getStrings().size());
         Resource r = session.loadResource("no-metadata-stored", id);
-        assertEquals("0", r.get("$/no-metadata-stored/strings/colSize"));
+        assertEquals("0", r.getValue("$/no-metadata-stored/strings/colSize"));
 
         transaction.commit();
         session.close();

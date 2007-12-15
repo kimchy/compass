@@ -115,12 +115,12 @@ public class MapConverter implements Converter, CompassConfigurable {
                 context.getSession().getCompass().getSearchEngineFactory().getPropertyNamingStrategy();
         // save keys (under an internal name)
         String keyPath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "keys").getPath();
-        String strKeys = resource.get(keyPath);
+        String strKeys = resource.getValue(keyPath);
         if (strKeys == null) {
             return null;
         }
         String valuePath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "values").getPath();
-        String strValues = resource.get(valuePath);
+        String strValues = resource.getValue(valuePath);
         String[] keys = StringUtils.tokenizeToStringArray(strKeys, ",");
         String[] values = StringUtils.tokenizeToStringArray(strValues, ",");
         if (keys.length != values.length) {

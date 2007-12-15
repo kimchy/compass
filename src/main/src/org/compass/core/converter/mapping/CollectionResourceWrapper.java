@@ -55,7 +55,7 @@ public class CollectionResourceWrapper implements Resource {
         this.resource = resource;
     }
 
-    public String get(String name) {
+    public String getValue(String name) {
         return computeProperty(name).getStringValue();
     }
 

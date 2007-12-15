@@ -54,16 +54,16 @@ public class FirstCacheTests extends AbstractTestCase {
         session.save(r);
 
         Resource cachedR = session.getResource("r", "1");
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         // compass creates a new Resource for the saved resource
         // so we check for equals on alias and id
         assertTrue(r.getAlias().equals(cachedR.getAlias()));
-        assertTrue(r.get("id").equals(cachedR.get("id")));
+        assertTrue(r.getValue("id").equals(cachedR.getValue("id")));
         r = cachedR;
 
         cachedR = session.getResource("r", new String[] { "1" });
-        assertEquals("this is a test", r.get("mvalue"));
+        assertEquals("this is a test", r.getValue("mvalue"));
 
         assertTrue(r == cachedR);
 

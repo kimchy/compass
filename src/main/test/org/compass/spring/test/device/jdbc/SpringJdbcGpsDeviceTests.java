@@ -145,7 +145,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
 
         gpsDevice.performMirroring();
         r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
-        assertEquals("new first name", r.get("parent_first_name"));
+        assertEquals("new first name", r.getValue("parent_first_name"));
 
         // test that delete works
         con = JdbcUtils.getConnection(dataSource);
@@ -209,7 +209,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
 
         gpsDevice.performMirroring();
         r = compassTemplate.loadResource("parent", "1");
-        assertEquals("new first name", r.get("FIRST_NAME"));
+        assertEquals("new first name", r.getValue("FIRST_NAME"));
 
         // test that delete works
         con = JdbcUtils.getConnection(dataSource);

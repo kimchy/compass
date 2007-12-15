@@ -53,12 +53,12 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         assertNull(session.get("data1", "1"));
 
         Resource resource = session.loadResource("data1", "1");
-        assertEquals("1", resource.get("$/data1/id"));
+        assertEquals("1", resource.getValue("$/data1/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
 
         resource = session.loadResource("data1", xmlObject);
-        assertEquals("1", resource.get("$/data1/id"));
+        assertEquals("1", resource.getValue("$/data1/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
 
@@ -79,7 +79,7 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         session.save(xmlObject);
 
         Resource resource = session.loadResource("data2", "1");
-        assertEquals("1", resource.get("$/data2/id"));
+        assertEquals("1", resource.getValue("$/data2/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
 
@@ -103,12 +103,12 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         session.save(xmlObject);
 
         Resource resource = session.loadResource("data3", "1");
-        assertEquals("1", resource.get("$/data3/id"));
+        assertEquals("1", resource.getValue("$/data3/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
 
         resource = session.getResource("data3", "2");
-        assertEquals("2", resource.get("$/data3/id"));
+        assertEquals("2", resource.getValue("$/data3/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
 
@@ -137,16 +137,16 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         session.save(xmlObject);
 
         Resource resource = session.loadResource("data4", "1");
-        assertEquals("1", resource.get("$/data4/id"));
+        assertEquals("1", resource.getValue("$/data4/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
-        assertNotNull(resource.get("content"));
+        assertNotNull(resource.getValue("content"));
 
         resource = session.getResource("data4", "2");
-        assertEquals("2", resource.get("$/data4/id"));
+        assertEquals("2", resource.getValue("$/data4/id"));
         assertEquals(2, resource.getProperties("eleText").length);
         assertEquals(2, resource.getProperties("value").length);
-        assertNotNull(resource.get("content"));
+        assertNotNull(resource.getValue("content"));
 
         xmlObject = (AliasedXmlObject) session.get("data4", "1");
         assertNotNull(xmlObject);

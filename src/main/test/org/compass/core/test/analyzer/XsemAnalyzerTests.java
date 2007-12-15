@@ -52,7 +52,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         // this one will use the simple analyzer
         Resource r = session.loadResource("a", new Long(1));
-        CompassToken[] tokens = session.analyzerHelper().setAnalyzer("simple").analyze(r.get("value"));
+        CompassToken[] tokens = session.analyzerHelper().setAnalyzer("simple").analyze(r.getValue("value"));
         assertEquals(9, tokens.length);
         assertEquals("the", tokens[0].getTermText());
         assertEquals("quick", tokens[1].getTermText());
@@ -60,7 +60,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals("fox", tokens[3].getTermText());
 
         // this one will use the default analyzer
-        tokens = session.analyzerHelper().setAnalyzerByAlias("a").analyze(r.get("value"));
+        tokens = session.analyzerHelper().setAnalyzerByAlias("a").analyze(r.getValue("value"));
         assertEquals(7, tokens.length);
         assertEquals("quick", tokens[0].getTermText());
         assertEquals("brown", tokens[1].getTermText());

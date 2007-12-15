@@ -26,7 +26,6 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
-import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.MultiResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
@@ -34,11 +33,11 @@ import org.compass.core.util.StringUtils;
 /**
  * @author kimchy
  */
-public class LuceneMultiResource implements MultiResource, Map {
+public class LuceneMultiResource implements MultiResource, Map<String, Property[]> {
 
     private LuceneResource currentResource;
 
-    private ArrayList resources = new ArrayList();
+    private ArrayList<Resource> resources = new ArrayList<Resource>();
 
     private String alias;
 
@@ -62,7 +61,7 @@ public class LuceneMultiResource implements MultiResource, Map {
     }
 
     public ResourceKey resourceKey() {
-        return ((InternalResource) currentResource).resourceKey();
+        return currentResource.resourceKey();
     }
 
     public void addResource() {
@@ -71,7 +70,7 @@ public class LuceneMultiResource implements MultiResource, Map {
     }
 
     public Resource resource(int i) {
-        return (Resource) resources.get(i);
+        return resources.get(i);
     }
 
     public void clear() {
@@ -101,8 +100,8 @@ public class LuceneMultiResource implements MultiResource, Map {
         return currentResource.getIdProperties();
     }
 
-    public String get(String name) {
-        return currentResource.get(name);
+    public String getValue(String name) {
+        return currentResource.getValue(name);
     }
 
     public Object getObject(String name) {
@@ -194,31 +193,31 @@ public class LuceneMultiResource implements MultiResource, Map {
         return currentResource.containsValue(value);
     }
 
-    public Collection values() {
+    public Collection<Property[]> values() {
         return currentResource.values();
     }
 
-    public void putAll(Map t) {
+    public void putAll(Map<? extends String, ? extends Property[]> t) {
         currentResource.putAll(t);
     }
 
-    public Set entrySet() {
+    public Set<Map.Entry<String, Property[]>> entrySet() {
         return currentResource.entrySet();
     }
 
-    public Set keySet() {
+    public Set<String> keySet() {
         return currentResource.keySet();
     }
 
-    public Object get(Object key) {
+    public Property[] get(Object key) {
         return currentResource.get(key);
     }
 
-    public Object remove(Object key) {
+    public Property[] remove(Object key) {
         return currentResource.remove(key);
     }
 
-    public Object put(Object key, Object value) {
+    public Property[] put(String key, Property[] value) {
         return currentResource.put(key, value);
     }
 }

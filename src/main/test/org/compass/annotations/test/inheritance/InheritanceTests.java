@@ -71,11 +71,11 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         Resource resource = session.loadResource(B.class, 1);
         // 5 properties, one for the alias, and one for the poly class
         assertEquals(7, resource.getProperties().length);
-        assertNull(resource.get("value1"));
-        assertNotNull(resource.get("value1e"));
-        assertNotNull(resource.get("value2"));
-        assertNotNull(resource.get("value2e"));
-        assertEquals(resource.get("abase"), "abasevalue");
+        assertNull(resource.getValue("value1"));
+        assertNotNull(resource.getValue("value1e"));
+        assertNotNull(resource.getValue("value2"));
+        assertNotNull(resource.getValue("value2e"));
+        assertEquals(resource.getValue("abase"), "abasevalue");
 
         tr.commit();
         session.close();
@@ -102,11 +102,11 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         assertEquals("value3", ((B) c.a).getValue3());
 
         Resource resource = session.loadResource(C.class, 1);
-        assertNull(resource.get("value1"));
-        assertNotNull(resource.get("value1e"));
-        assertNotNull(resource.get("value2"));
-        assertNotNull(resource.get("value2e"));
-        assertEquals(resource.get("abase"), "abasevalue");
+        assertNull(resource.getValue("value1"));
+        assertNotNull(resource.getValue("value1e"));
+        assertNotNull(resource.getValue("value2"));
+        assertNotNull(resource.getValue("value2e"));
+        assertEquals(resource.getValue("abase"), "abasevalue");
 
         tr.commit();
         session.close();

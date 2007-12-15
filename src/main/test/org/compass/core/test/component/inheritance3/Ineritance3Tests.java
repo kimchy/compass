@@ -48,11 +48,11 @@ public class Ineritance3Tests extends AbstractTestCase {
 
         Resource resource = session.loadResource(Father.class, "1");
         assertEquals(6, resource.getProperties().length);
-        assertEquals("father", resource.get("alias"));
-        assertEquals("1", resource.get("$/father/id"));
+        assertEquals("father", resource.getValue("alias"));
+        assertEquals("1", resource.getValue("$/father/id"));
         assertEquals(2, resource.getProperties("name").length);
-        assertEquals(Child.class.getName(), resource.get("$/father/child/class"));
-        assertEquals("2", resource.get("$/father/child/names/colSize"));
+        assertEquals(Child.class.getName(), resource.getValue("$/father/child/class"));
+        assertEquals("2", resource.getValue("$/father/child/names/colSize"));
 
         father = (Father) session.load(Father.class, "1");
         assertEquals(2, father.child.names.length);

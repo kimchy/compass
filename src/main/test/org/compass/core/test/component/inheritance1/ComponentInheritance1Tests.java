@@ -46,23 +46,23 @@ public class ComponentInheritance1Tests extends AbstractTestCase {
 
         Resource resource = session.loadResource("father", father.getId());
         assertEquals(17, resource.getProperties().length);
-        assertEquals("father", resource.get("alias"));
-        assertEquals("0", resource.get("$/father/id"));
+        assertEquals("father", resource.getValue("alias"));
+        assertEquals("0", resource.getValue("$/father/id"));
         assertEquals("Sir Ivan", resource.getProperties("name")[0].getStringValue());
-        assertEquals("Sir Ivan", resource.get("$/father/name"));
-        assertEquals(FavouriteSonImpl.class.getName(), resource.get("$/father/favouriteSon/class"));
-        assertEquals("0", resource.get("$/father/favouriteSon/id"));
+        assertEquals("Sir Ivan", resource.getValue("$/father/name"));
+        assertEquals(FavouriteSonImpl.class.getName(), resource.getValue("$/father/favouriteSon/class"));
+        assertEquals("0", resource.getValue("$/father/favouriteSon/id"));
         assertEquals("Ivan Jr", resource.getProperties("name")[1].getStringValue());
-        assertEquals("Ivan Jr", resource.get("$/father/favouriteSon/name"));
-        assertEquals("0", resource.get("$/father/favouriteSon/father/id"));
+        assertEquals("Ivan Jr", resource.getValue("$/father/favouriteSon/name"));
+        assertEquals("0", resource.getValue("$/father/favouriteSon/father/id"));
         assertEquals("child", resource.getProperties("childalias")[0].getStringValue());
-        assertEquals(DaughterImpl.class.getName(), resource.get("$/father/children/class"));
-        assertEquals("1", resource.get("$/father/children/id"));
+        assertEquals(DaughterImpl.class.getName(), resource.getValue("$/father/children/class"));
+        assertEquals("1", resource.getValue("$/father/children/id"));
         assertEquals("Betty Jr", resource.getProperties("name")[2].getStringValue());
-        assertEquals("Betty Jr", resource.get("$/father/children/name"));
-        assertEquals("0", resource.get("$/father/children/father/id"));
+        assertEquals("Betty Jr", resource.getValue("$/father/children/name"));
+        assertEquals("0", resource.getValue("$/father/children/father/id"));
         assertEquals("child", resource.getProperties("childalias")[1].getStringValue());
-        assertEquals("1", resource.get("$/father/children/colSize"));
+        assertEquals("1", resource.getValue("$/father/children/colSize"));
 
         tr.commit();
         session.close();

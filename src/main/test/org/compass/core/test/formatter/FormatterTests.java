@@ -98,24 +98,24 @@ public class FormatterTests extends AbstractTestCase {
         session.save("a", a);
 
         Resource r = session.loadResource("a", id);
-        assertEquals("12", r.get("intSimple"));
-        assertEquals("0,012", r.get("intFormatted"));
-        assertEquals("12", r.get("shortSimple"));
-        assertEquals("0,012", r.get("shortFormatted"));
-        assertEquals("12", r.get("longSimple"));
-        assertEquals("0,012", r.get("longFormatted"));
-        assertEquals("12", r.get("bigIntegerSimple"));
-        assertEquals("0,012", r.get("bigIntegerFormatted"));
-        assertEquals("12.56789", r.get("doubleSimple"));
-        assertEquals("0,012.57", r.get("doubleFormatted"));
-        assertEquals("12.56789", r.get("floatSimple"));
-        assertEquals("0,012.57", r.get("floatFormatted"));
-        assertEquals(bigDecimal.toString(), r.get("bigDecimalSimple"));
-        assertEquals("0,012.57", r.get("bigDecimalFormatted"));
+        assertEquals("12", r.getValue("intSimple"));
+        assertEquals("0,012", r.getValue("intFormatted"));
+        assertEquals("12", r.getValue("shortSimple"));
+        assertEquals("0,012", r.getValue("shortFormatted"));
+        assertEquals("12", r.getValue("longSimple"));
+        assertEquals("0,012", r.getValue("longFormatted"));
+        assertEquals("12", r.getValue("bigIntegerSimple"));
+        assertEquals("0,012", r.getValue("bigIntegerFormatted"));
+        assertEquals("12.56789", r.getValue("doubleSimple"));
+        assertEquals("0,012.57", r.getValue("doubleFormatted"));
+        assertEquals("12.56789", r.getValue("floatSimple"));
+        assertEquals("0,012.57", r.getValue("floatFormatted"));
+        assertEquals(bigDecimal.toString(), r.getValue("bigDecimalSimple"));
+        assertEquals("0,012.57", r.getValue("bigDecimalFormatted"));
         SimpleDateFormat sdf = new SimpleDateFormat(DateConverter.DEFAULT_DATE_FORMAT);
-        assertEquals(sdf.format(date), r.get("dateSimple"));
+        assertEquals(sdf.format(date), r.getValue("dateSimple"));
         sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
-        assertEquals(sdf.format(date), r.get("dateFormatted"));
+        assertEquals(sdf.format(date), r.getValue("dateFormatted"));
 
         tr.commit();
     }
@@ -175,26 +175,26 @@ public class FormatterTests extends AbstractTestCase {
         session.save("a2", a);
 
         Resource r = session.loadResource("a2", id);
-        assertEquals("12", r.get("intSimple"));
-        assertEquals("0,012", r.get("intFormatted"));
-        assertEquals("12", r.get("shortSimple"));
-        assertEquals("0,012", r.get("shortFormatted"));
-        assertEquals("12", r.get("longSimple"));
-        assertEquals("0,012", r.get("longFormatted"));
-        assertEquals("12", r.get("bigIntegerSimple"));
-        assertEquals("0,012", r.get("bigIntegerFormatted"));
-        assertEquals("12.56789", r.get("doubleSimple"));
-        assertEquals("0,012.57", r.get("doubleFormatted"));
-        assertEquals("12.56789", r.get("floatSimple"));
-        assertEquals("0,012.57", r.get("floatFormatted"));
-        assertEquals(bigDecimal.toString(), r.get("bigDecimalSimple"));
-        assertEquals("0,012.57", r.get("bigDecimalFormatted"));
+        assertEquals("12", r.getValue("intSimple"));
+        assertEquals("0,012", r.getValue("intFormatted"));
+        assertEquals("12", r.getValue("shortSimple"));
+        assertEquals("0,012", r.getValue("shortFormatted"));
+        assertEquals("12", r.getValue("longSimple"));
+        assertEquals("0,012", r.getValue("longFormatted"));
+        assertEquals("12", r.getValue("bigIntegerSimple"));
+        assertEquals("0,012", r.getValue("bigIntegerFormatted"));
+        assertEquals("12.56789", r.getValue("doubleSimple"));
+        assertEquals("0,012.57", r.getValue("doubleFormatted"));
+        assertEquals("12.56789", r.getValue("floatSimple"));
+        assertEquals("0,012.57", r.getValue("floatFormatted"));
+        assertEquals(bigDecimal.toString(), r.getValue("bigDecimalSimple"));
+        assertEquals("0,012.57", r.getValue("bigDecimalFormatted"));
         SimpleDateFormat sdf = new SimpleDateFormat(DateConverter.DEFAULT_DATE_FORMAT);
-        assertEquals(sdf.format(date), r.get("dateSimple"));
+        assertEquals(sdf.format(date), r.getValue("dateSimple"));
         sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
-        assertEquals(sdf.format(date), r.get("dateFormatted"));
-        assertEquals(sdf.format(date), r.get("timeFormatted"));
-        assertEquals(sdf.format(date), r.get("timestampFormatted"));
+        assertEquals(sdf.format(date), r.getValue("dateFormatted"));
+        assertEquals(sdf.format(date), r.getValue("timeFormatted"));
+        assertEquals(sdf.format(date), r.getValue("timestampFormatted"));
 
         tr.commit();
     }

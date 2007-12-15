@@ -42,8 +42,8 @@ public class NoUnmarshallInheritance1Tests extends AbstractTestCase {
 
         Resource resource = session.loadResource("father", father.getId());
         assertEquals(7, resource.getProperties().length);
-        assertEquals("father", resource.get("alias"));
-        assertEquals("0", resource.get("$/father/id"));
+        assertEquals("father", resource.getValue("alias"));
+        assertEquals("0", resource.getValue("$/father/id"));
         assertEquals("Sir Ivan", resource.getProperties("name")[0].getStringValue());
         assertEquals("Ivan Jr", resource.getProperties("name")[1].getStringValue());
         assertEquals("child", resource.getProperties("childalias")[0].getStringValue());

@@ -101,7 +101,7 @@ public abstract class LuceneUtils {
         }
         float boostValue = boostPropertyMapping.getDefaultBoost();
         String boostPropertyName = boostPropertyMapping.getBoostResourcePropertyName();
-        String sBoostValue = resource.get(boostPropertyName);
+        String sBoostValue = resource.getValue(boostPropertyName);
         if (!searchEngine.isNullValue(sBoostValue)) {
             boostValue = Float.parseFloat(sBoostValue);
         }

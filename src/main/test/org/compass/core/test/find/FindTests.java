@@ -81,11 +81,11 @@ public class FindTests extends AbstractTestCase {
         assertEquals(10, detachedHits.getLength());
         assertEquals(50, detachedHits.totalLength());
         Resource r = detachedHits.resource(0);
-        assertEquals("40", r.get("id"));
+        assertEquals("40", r.getValue("id"));
         assertEquals(new Long(40), ((A) detachedHits.data(0)).getId());
 
         CompassHit hit = detachedHits.hit(0);
-        assertEquals("40", hit.getResource().get("id"));
+        assertEquals("40", hit.getResource().getValue("id"));
         assertEquals(new Long(40), ((A) hit.getData()).getId());
 
         Resource[] resources = detachedHits.getResources();

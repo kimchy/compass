@@ -43,7 +43,7 @@ public class SimpleTests extends AbstractTestCase {
         assertEquals("value", a.getValue());
 
         Resource resource = session.loadResource(A.class, new Long(1));
-        assertEquals("value", resource.get("value"));
+        assertEquals("value", resource.getValue("value"));
         assertEquals("1", resource.getId());
         assertEquals(1, resource.getIds().length);
         assertEquals("1", resource.getIds()[0]);

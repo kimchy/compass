@@ -75,7 +75,7 @@ public interface Resource extends AliasedObject, Serializable {
      * @param name The name of the property
      * @return The first value that match the name
      */
-    String get(String name);
+    String getValue(String name);
 
     /**
      * Returns the object vlaue of the property with the given name if any exists

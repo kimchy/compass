@@ -298,7 +298,7 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
     }
 
     private String getTextFromResource(Resource resource, String propertyName) {
-        String text = resource.get(propertyName);
+        String text = resource.getValue(propertyName);
         if (text == null) {
             throw new SearchEngineException("No text is stored for property [" + propertyName + "] and alias ["
                     + resource.getAlias() + "]");

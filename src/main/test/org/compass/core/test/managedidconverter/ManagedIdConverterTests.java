@@ -58,8 +58,8 @@ public class ManagedIdConverterTests extends AbstractTestCase {
 
         // check that the simple converter was applied to the managed id created
         Resource resource = session.loadResource("a", new Integer(1));
-        assertEquals("Xvalue1", resource.get("$/a/value1"));
-        assertEquals("Xvalue2", resource.get("$/a/value2"));
+        assertEquals("Xvalue1", resource.getValue("$/a/value1"));
+        assertEquals("Xvalue2", resource.getValue("$/a/value2"));
 
         tr.commit();
         session.close();

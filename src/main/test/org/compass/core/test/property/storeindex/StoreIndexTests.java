@@ -69,7 +69,7 @@ public class StoreIndexTests extends AbstractTestCase {
         a = (A) session.load("a1", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a1", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTokenized());
@@ -102,7 +102,7 @@ public class StoreIndexTests extends AbstractTestCase {
         tr = session.beginTransaction();
 
         Resource r = session.loadResource("a3", id);
-        assertNull(r.get("mvalue1"));
+        assertNull(r.getValue("mvalue1"));
 
         CompassHits hits = session.find("mvalue1:test");
         assertEquals(1, hits.getLength());
@@ -125,7 +125,7 @@ public class StoreIndexTests extends AbstractTestCase {
         a = (A) session.load("a4", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a4", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(false, r.getProperty("mvalue1").isCompressed());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
@@ -152,7 +152,7 @@ public class StoreIndexTests extends AbstractTestCase {
         a = (A) session.load("a5", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a5", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(true, r.getProperty("mvalue1").isCompressed());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
@@ -179,7 +179,7 @@ public class StoreIndexTests extends AbstractTestCase {
         a = (A) session.load("a6", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a6", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(false, r.getProperty("mvalue1").isCompressed());
         assertEquals(false, r.getProperty("mvalue1").isIndexed());
@@ -206,7 +206,7 @@ public class StoreIndexTests extends AbstractTestCase {
         a = (A) session.load("a7", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a7", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(false, r.getProperty("mvalue1").isTermVectorStored());
@@ -235,7 +235,7 @@ public class StoreIndexTests extends AbstractTestCase {
         a = (A) session.load("a8", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a8", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());
@@ -286,7 +286,7 @@ public class StoreIndexTests extends AbstractTestCase {
         a = (A) session.load("a9", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a9", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());
@@ -330,7 +330,7 @@ public class StoreIndexTests extends AbstractTestCase {
         a = (A) session.load("a10", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a10", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());
@@ -389,7 +389,7 @@ public class StoreIndexTests extends AbstractTestCase {
         A a = (A) session.load("a11", id);
         assertEquals("first test string", a.getValue());
         Resource r = session.loadResource("a11", id);
-        assertNotNull(r.get("mvalue1"));
+        assertNotNull(r.getValue("mvalue1"));
         assertEquals(true, r.getProperty("mvalue1").isStored());
         assertEquals(true, r.getProperty("mvalue1").isIndexed());
         assertEquals(true, r.getProperty("mvalue1").isTermVectorStored());
@@ -441,7 +441,7 @@ public class StoreIndexTests extends AbstractTestCase {
         tr = session.beginTransaction();
 
         Resource r = session.loadResource("a12", id);
-        assertNull(r.get("mvalue1"));
+        assertNull(r.getValue("mvalue1"));
 
         hits = session.find("mvalue1:test");
         assertEquals(1, hits.getLength());
