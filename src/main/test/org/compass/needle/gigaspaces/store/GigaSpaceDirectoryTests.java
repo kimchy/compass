@@ -34,7 +34,7 @@ public class GigaSpaceDirectoryTests extends TestCase {
     private IJSpace space;
 
     protected void setUp() throws Exception {
-        space = (IJSpace) SpaceFinder.find("/./luceneDirecotry");
+        space = (IJSpace) SpaceFinder.find("/./lucene");
         space.clear(null, null);
     }
 
@@ -87,6 +87,7 @@ public class GigaSpaceDirectoryTests extends TestCase {
     private void insertData(GigaSpaceDirectory dir) throws IOException {
         byte[] test = new byte[]{1, 2, 3, 4, 5, 6, 7, 8};
         IndexOutput indexOutput = dir.createOutput("value1");
+        indexOutput.writeBytes(new byte[] {2, 4, 6, 7, 8}, 5);
         indexOutput.writeInt(-1);
         indexOutput.writeLong(10);
         indexOutput.writeInt(0);
@@ -94,10 +95,12 @@ public class GigaSpaceDirectoryTests extends TestCase {
         indexOutput.writeBytes(test, 8);
         indexOutput.writeBytes(test, 5);
 
-        indexOutput.seek(28);
+        indexOutput.seek(0);
         indexOutput.writeByte((byte) 8);
-        indexOutput.seek(30);
-        indexOutput.writeBytes(new byte[]{1, 2}, 2);
+        if (dir.getBucketSize() > 4) {
+            indexOutput.seek(2);
+            indexOutput.writeBytes(new byte[]{1, 2}, 2);
+        }
 
         indexOutput.close();
     }
@@ -105,9 +108,11 @@ public class GigaSpaceDirectoryTests extends TestCase {
     private void verifyData(GigaSpaceDirectory dir) throws IOException {
         byte[] test = new byte[]{1, 2, 3, 4, 5, 6, 7, 8};
         assertTrue(dir.fileExists("value1"));
-        assertEquals(33, dir.fileLength("value1"));
+        assertEquals(38, dir.fileLength("value1"));
 
         IndexInput indexInput = dir.openInput("value1");
+        indexInput.readBytes(test, 0, 5);
+        assertEquals(8, test[0]);
         assertEquals(-1, indexInput.readInt());
         assertEquals(10, indexInput.readLong());
         assertEquals(0, indexInput.readInt());
@@ -116,13 +121,13 @@ public class GigaSpaceDirectoryTests extends TestCase {
         assertEquals((byte) 1, test[0]);
         assertEquals((byte) 8, test[7]);
         indexInput.readBytes(test, 0, 5);
-        assertEquals((byte) 8, test[0]);
+        assertEquals((byte) 1, test[0]);
         assertEquals((byte) 5, test[4]);
 
         indexInput.seek(28);
-        assertEquals((byte) 8, indexInput.readByte());
+        assertEquals((byte) 4, indexInput.readByte());
         indexInput.seek(30);
-        assertEquals((byte) 1, indexInput.readByte());
+        assertEquals((byte) 6, indexInput.readByte());
 
         indexInput.close();
     }
