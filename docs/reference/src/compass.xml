@@ -43,6 +43,7 @@
 
 <!ENTITY needle-intro  SYSTEM "needle-intro.xml">
 <!ENTITY needle-gigaspaces  SYSTEM "needle-gigaspaces.xml">
+<!ENTITY needle-coherence  SYSTEM "needle-coherence.xml">
 
 <!ENTITY samples-intro  SYSTEM "samples-intro.xml">
 <!ENTITY samples-library  SYSTEM "samples-library.xml">
@@ -141,6 +142,7 @@
     &needle-intro;
     </partintro>
     &needle-gigaspaces;
+    &needle-coherence;
   </part>
 
   <part>

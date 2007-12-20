@@ -32,9 +32,20 @@ import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 
 /**
+ * The default coherence directory allowing to store Lucene index within Coherence directory.
+ *
+ * <p>The implementation uses {@link org.compass.needle.coherence.FileHeaderKey} and
+ * {@link org.compass.needle.coherence.FileHeaderValue} as the header information for a file
+ * (such as size and timestamp), and includes one or more buckets using
+ * {@link org.compass.needle.coherence.FileBucketKey} and {@link org.compass.needle.coherence.FileBucketValue}.
+ *
+ * <p>Locking is done using {@link DefaultCoherenceLockFactory}.
+ *
+ * <p>Note, if possible with the coherence edition, it is preferable to use {@link InvocableCoherenceDirectory}.
+ *
  * @author kimchy
  */
-public class DefaultCoherenceDirectory extends CoherenceDirectory {
+public class DataGridCoherenceDirectory extends CoherenceDirectory {
 
     public static final int DEFAULT_BUCKET_SIZE = 20 * 1024;
 
@@ -57,24 +68,24 @@ public class DefaultCoherenceDirectory extends CoherenceDirectory {
     private Filter listFilter;
 
 
-    public DefaultCoherenceDirectory(String cacheName) {
+    public DataGridCoherenceDirectory(String cacheName) {
         this(cacheName, cacheName, DEFAULT_BUCKET_SIZE);
     }
 
-    public DefaultCoherenceDirectory(String cacheName, String indexName) {
+    public DataGridCoherenceDirectory(String cacheName, String indexName) {
         this(cacheName, indexName, DEFAULT_BUCKET_SIZE);
     }
 
-    public DefaultCoherenceDirectory(String cacheName, String indexName, int bucketSize) {
+    public DataGridCoherenceDirectory(String cacheName, String indexName, int bucketSize) {
         this(CacheFactory.getCache(cacheName), indexName, bucketSize);
         this.closeCache = true;
     }
 
-    public DefaultCoherenceDirectory(NamedCache cache, String indexName) {
+    public DataGridCoherenceDirectory(NamedCache cache, String indexName) {
         this(cache, indexName, DEFAULT_BUCKET_SIZE);
     }
 
-    public DefaultCoherenceDirectory(NamedCache cache, String indexName, int bucketSize) {
+    public DataGridCoherenceDirectory(NamedCache cache, String indexName, int bucketSize) {
         this.indexName = indexName;
         this.cache = cache;
         this.bucketSize = bucketSize;

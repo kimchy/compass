@@ -1348,6 +1348,7 @@
                 <xsd:element name="ram" type="ramConnType"/>
                 <xsd:element name="jdbc" type="jdbcConnType"/>
                 <xsd:element name="space" type="spaceConnType"/>
+                <xsd:element name="coherence" type="coherenceConnType"/>
                 <xsd:element name="custom" type="customConnType"/>
             </xsd:choice>
             <xsd:element name="lockFactory" minOccurs="0" maxOccurs="1">
@@ -1410,6 +1411,13 @@
                 A GigaSpace based index.
             </xsd:documentation>
         </xsd:annotation>
+        <xsd:attribute name="indexName" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the index
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
         <xsd:attribute name="url" type="xsd:string" use="required">
             <xsd:annotation>
                 <xsd:documentation>
@@ -1423,6 +1431,47 @@
                     The bucket size of the index.
                 </xsd:documentation>
             </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="coherenceConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A Coherence based index.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="cacheName" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the cache
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="indexName" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the index
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="bucketSize" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The bucket size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="type" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The type of the coherence directory. Defaults to invocable.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="datagrid"/>
+                    <xsd:enumeration value="invocable"/>
+                </xsd:restriction>
+            </xsd:simpleType>
         </xsd:attribute>
     </xsd:complexType>
     <xsd:complexType name="mmapConnType">

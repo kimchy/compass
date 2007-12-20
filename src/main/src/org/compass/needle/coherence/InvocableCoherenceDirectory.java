@@ -16,7 +16,7 @@ import com.tangosol.util.processor.ConditionalRemove;
  *
  * @author kimchy
  */
-public class InvocableCoherenceDirectory extends DefaultCoherenceDirectory {
+public class InvocableCoherenceDirectory extends DataGridCoherenceDirectory {
 
     public InvocableCoherenceDirectory(String cacheName) {
         super(cacheName);

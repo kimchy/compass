@@ -487,13 +487,27 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "space", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
-            String path = getElementAttribute(connEle, "url");
-            if (!path.startsWith("space://")) {
-                path = "space://" + path;
-            }
-            settings.setSetting(CompassEnvironment.CONNECTION, path);
+            String url = getElementAttribute(connEle, "url");
+            String indexName = getElementAttribute(connEle, "indexName");
+            settings.setSetting(CompassEnvironment.CONNECTION, "space://" + indexName + ":" + url);
             // we don't use the static constant so we don't create dependency on GigaSpaces
             settings.setSetting("compass.engine.store.space.bucketSize", getElementAttribute(connEle, "bucketSize"));
+            return;
+        }
+        // --- Coherence Connection ---
+        child = DomUtils.getChildElementsByTagName(ele, "coherence", true);
+        if (child.size() == 1) {
+            Element connEle = (Element) child.get(0);
+            String indexName = getElementAttribute(connEle, "indexName");
+            String cacheName = getElementAttribute(connEle, "cacheName");
+            String type = getElementAttribute(connEle, "type", "invocable");
+            if ("invocable".equals(type)) {
+                settings.setSetting(CompassEnvironment.CONNECTION, "coherence://" + indexName + ":" + cacheName);
+            } else {
+                settings.setSetting(CompassEnvironment.CONNECTION, "coherence-dg://" + indexName + ":" + cacheName);
+            }
+            // we don't use the static constant so we don't create dependency on GigaSpaces
+            settings.setSetting("compass.engine.store.coherence.bucketSize", getElementAttribute(connEle, "bucketSize"));
             return;
         }
         // --- Custom Connection ---

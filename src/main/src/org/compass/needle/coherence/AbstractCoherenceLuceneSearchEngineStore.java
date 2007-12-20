@@ -51,7 +51,7 @@ public abstract class AbstractCoherenceLuceneSearchEngineStore extends AbstractL
     }
 
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
-        bucketSize = settings.getSettingAsInt(BUCKET_SIZE_PROP, DefaultCoherenceDirectory.DEFAULT_BUCKET_SIZE);
+        bucketSize = settings.getSettingAsInt(BUCKET_SIZE_PROP, DataGridCoherenceDirectory.DEFAULT_BUCKET_SIZE);
         cache = CacheFactory.getCache(cacheName);
         super.configure(searchEngineFactory, settings, mapping);
     }

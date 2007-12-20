@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine.store;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 import org.compass.core.engine.SearchEngineException;
@@ -67,6 +68,8 @@ public class LuceneSearchEngineStoreFactory {
                 Class storeClass = ClassUtils.forName(className);
                 Constructor storeConst = storeClass.getConstructor(new Class[]{String.class, String.class});
                 return (LuceneSearchEngineStore) storeConst.newInstance(new Object[]{connection.substring(index + 3), subContext});
+            } catch (InvocationTargetException e) {
+                throw new SearchEngineException("Failed to create connection [" + connection + "]", e.getTargetException());
             } catch (Exception e) {
                 throw new SearchEngineException("Failed to create connection [" + connection + "]", e);
             }
