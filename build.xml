@@ -18,6 +18,12 @@
 
     </path>
 
+    <condition property="coherence.exists">
+        <and>
+            <available file="${lib.dir}/coherence/tangosol.jar"/>
+        </and>
+    </condition>
+
     <target name="usage">
 
         <echo message=""/>
@@ -54,8 +60,10 @@
         <delete dir="${reference.dir}/html_single"/>
         <delete dir="${reference.dir}/pdf"/>
 
-        <ant antfile="${samples.dir}/library/build.xml" target="clean" dir="${samples.dir}/library/" inheritall="false" />
-        <ant antfile="${samples.dir}/petclinic/build.xml" target="clean" dir="${samples.dir}/petclinic/" inheritall="false" />
+        <ant antfile="${samples.dir}/library/build.xml" target="clean" dir="${samples.dir}/library/"
+             inheritall="false"/>
+        <ant antfile="${samples.dir}/petclinic/build.xml" target="clean" dir="${samples.dir}/petclinic/"
+             inheritall="false"/>
 
     </target>
 
@@ -71,10 +79,12 @@
         <mkdir dir="${target.classes.dir}/META-INF"/>
 
         <javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true">
+               deprecation="false" optimize="false" failonerror="true" excludes="**/coherence/**">
             <src path="${main.src.dir}"/>
             <classpath refid="all-libs"/>
         </javac>
+
+        <antcall target="buildcoherence"/>
 
         <copy todir="${target.classes.dir}" preservelastmodified="true">
             <fileset dir="${main.src.dir}">
@@ -84,10 +94,18 @@
                 <include name="**/*.xml"/>
                 <include name="**/*.dtd"/>
                 <include name="**/*.xsd"/>
-                <include name="META-INF/**" />
+                <include name="META-INF/**"/>
             </fileset>
         </copy>
 
+    </target>
+
+    <target name="buildcoherence" description="Compiles coherence code if jars exists" if="coherence.exists">
+        <javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
+               deprecation="false" optimize="false" failonerror="true" includes="**/coherence/**">
+            <src path="${main.src.dir}"/>
+            <classpath refid="all-libs"/>
+        </javac>
     </target>
 
 
@@ -159,7 +177,7 @@
               todir="${dist.dir}/schema" preservelastmodified="true"/>
 
         <copy todir="${dist.dir}/lucene">
-            <fileset dir="${lib.dir}/lucene" />
+            <fileset dir="${lib.dir}/lucene"/>
         </copy>
 
         <copy file="${lib.dir}/jakarta-commons/commons-logging.jar" todir="${dist.dir}"/>
@@ -196,7 +214,7 @@
             </packageset>
             <link href="http://java.sun.com/j2ee/1.4/docs/api"/>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
-            <link href="http://lucene.apache.org/java/docs/api/" />
+            <link href="http://lucene.apache.org/java/docs/api/"/>
             <link href="http://www.junit.org/junit/javadoc/"/>
             <link href="http://logging.apache.org/log4j/docs/api/"/>
         </javadoc>
@@ -213,11 +231,13 @@
         <mkdir dir="${target.testclasses.dir}"/>
 
         <javac destdir="${target.testclasses.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true">
+               deprecation="false" optimize="false" failonerror="true" excludes="**/coherence/**">
             <src path="${main.test.dir}"/>
             <classpath refid="all-libs"/>
             <classpath location="${target.classes.dir}"/>
         </javac>
+
+        <antcall target="buildcoherencetests"/>
 
         <!-- Pick up config files from test directory -->
         <copy todir="${target.testclasses.dir}" preservelastmodified="true">
@@ -244,6 +264,16 @@
 
     </target>
 
+    <target name="buildcoherencetests"
+            description="Compile coherence test source tree java files into class files" if="coherence.exists">
+
+        <javac destdir="${target.testclasses.dir}" source="1.5" target="1.5" debug="${debug}"
+               deprecation="false" optimize="false" failonerror="true" includes="**/coherence/**">
+            <src path="${main.test.dir}"/>
+            <classpath refid="all-libs"/>
+            <classpath location="${target.classes.dir}"/>
+        </javac>
+    </target>
 
     <target name="buildtests" depends="buildmaintests" description="Compile main test sources"/>
 
