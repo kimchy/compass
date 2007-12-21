@@ -1,0 +1,83 @@
+<chapter id="needle-coherence">
+	<title>Coherence</title>
+	
+	<sect1 id="needle-coherence-introduction">
+	    <title>Overview</title>
+	    
+	    <para>
+	        The Compass Needle <ulink url="http://www.tangosol.com">Coherence</ulink> integration allows to store a Lucene index within Coherence Data Grid. 
+	    </para>
+	</sect1>
+	
+	<sect1 id="needle-coherence-directory">
+	    <title>Lucene Directory</title>
+	    <para>
+	        Compass provides two types of Lucene Directory implementations using Coherence, <classname>DataGridCoherenceDirectory</classname> and <classname>InvocableCoherenceDirectory</classname>.
+	    </para>
+	    
+	    <para>
+	        Here is a simple example of how it can be used:
+<programlisting><![CDATA[CoherenceDirectory dir = new InvocableCoherenceDirectory("cacheName", "indexName");
+// ... (use the dir with IndexWriter and IndexSearcher)
+dir.close();
+]]></programlisting>	        
+	    </para>
+	    
+	    <para>
+	        In the above example we created the invocable Coherence directory on top of Coherence's Data Grid with an index named "test". The directory can now be used to create Lucene <classname>IndexWriter</classname> and <classname>IndexSearcher</classname>.
+	    </para>
+	    
+	    <para>
+	        The Lucene directory interface represents a virtual file system. Implementing it on top of Coherence is done by breaking files into a file header, called <classname>FileEntryKey</classname>/<classname>FileEntryValue</classname> and one or more <classname>FileBucketKey</classname>/<classname>FileBucketValue</classname>. The file header holds the meta data of the file, for example, its size and timestamp, while the file bucket holds a bucket size of the actual file content. The bucket size can be controlled when constructing the coherence directory, but note that it must not be changed if connecting to an existing index.
+	    </para>
+	    
+	    <para>
+	        The <classname>DataGridCoherenceDirectory</classname> uses coherence features that are supported by all of coherence editions. It uses coherence lock API and plain Map remove APIs. The <classname>InvocableCoherenceDirectory</classname> uses coherence invocation service support allowing to delete files (header and buckets) in parallel (without returning results), and use <classname>FileLockKey</classname> existence as an indicator for locking (conditional put) which results in better performance (for remove operations) and better lock API implementation.
+	    </para>
+	    
+	    <para>
+	        Note, it is preferable to configure the directory not to use the compound index format as it yields better performance.
+	    </para>
+	</sect1>
+	
+	<sect1 id="needle-coherence-store">
+	    <title>Compass Store</title>
+	    
+	    <para>
+	        Compass allows for simple integration with <classname>DataGridCoherenceDirectory</classname> and <classname>InvocableCoherenceDirectory</classname> as the index storage mechanism. The following example shows how Compass can be configured to work against an invocable coherence directory based index with an index named test and cache name named testcache:
+	    </para>
+	    
+	    <para>
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <coherence indexName="test" cacheName="testcache"/>
+  </connection>
+</compass>
+]]></programlisting>
+	    </para>
+	    
+	    <para>
+	        The following shows how to configure it using properties based configuration:
+<programlisting><![CDATA[compass.engine.connection=coherence://test:testcache
+]]></programlisting>
+	    </para>
+	    
+	    <para>
+	        Since the lucene directory actually deletes a file from the file system, when several clients are connected to the index and are updating the index, it is important to configure Compass with an index deletion strategy that won't delete files only after a period of time (this will allow other clients time to refresh their cache). Here is an example of how this can be configured (see more in the search engine section):
+	        
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <coherence indexName="test" cacheName="testcache" type="datagrid" />
+  </connection>
+
+  <searchEngine>
+    <indexDeletionPolicy>
+        <expirationTime expirationTimeSeconds="600" />
+    </indexDeletionPolicy>
+  </searchEngine>
+</compass>
+]]></programlisting>      	        
+	    </para>
+	</sect1>
+	</chapter>

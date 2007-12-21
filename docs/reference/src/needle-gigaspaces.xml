@@ -1,0 +1,123 @@
+<chapter id="needle-gigaspaces">
+	<title>GigaSpaces</title>
+	
+	<sect1 id="needle-gigaspaces-introduction">
+	    <title>Overview</title>
+	    
+	    <para>
+	        The Compass Needle <ulink url="http://www.gigaspaces.com">GigaSpaces</ulink> integration allows to store a Lucene index within GigaSpaces. It also allows to automatically index the data grid using Compass OSEM support and mirror changes done to the data grid into the search engine.
+	    </para>
+	</sect1>
+	
+	<sect1 id="needle-gigasapces-directory">
+	    <title>Lucene Directory</title>
+	    <para>
+	        Compass provides a <classname>GigaSpaceDirectory</classname> which is an implementation of Lucene <classname>Directory</classname> allowing to store the index within GigaSpaces data grid.
+	    </para>
+	    
+	    <para>
+	        Here is a simple example of how it can be used:
+<programlisting><![CDATA[IJSpace space = SpaceFinder.find("jini://*/*/mySpace");
+GigaSpaceDirectory dir = new GigaSpaceDirectory(space, "test");
+// ... (use the dir with IndexWriter and IndexSearcher)
+]]></programlisting>	        
+	    </para>
+	    
+	    <para>
+	        In the above example we created a directory on top of GigaSpace's Space with an index named "test". The directory can now be used to create Lucene <classname>IndexWriter</classname> and <classname>IndexSearcher</classname>.
+	    </para>
+	    
+	    <para>
+	        The Lucene directory interface represents a virtual file system. Implementing it on top of the Space is done by breaking files into a file header, called <classname>FileEntry</classname> and one or more <classname>FileBucketEntry</classname>. The <classname>FileEntry</classname> holds the meta data of the file, for example, its size and timestamp, while the <classname>FileBucketEntry</classname> holds a bucket size of the actual file content. The bucket size can be controlled when constructing the <classname>GigaSpaceDirectory</classname>, but note that it must not be changed if connecting to an existing index.
+	    </para>
+	    
+	    <para>
+	        Note, it is preferable to configure the directory not to use the compound index format as it yields better performance.
+	    </para>
+	</sect1>
+	
+	<sect1 id="needle-gigaspacse-store">
+	    <title>Compass Store</title>
+	    
+	    <para>
+	        Compass allows for simple integration with <classname>GigaSpaceDirectory</classname> as the index storage mechanism. The following example shows how Compass can be configured to work against a GigaSpaces based index with an index named test:
+	    </para>
+	    
+	    <para>
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <space indexName="test" url="jini://*/*/mySpace"/>
+  </connection>
+</compass>
+]]></programlisting>
+	    </para>
+	    
+	    <para>
+	        The following shows how to configure it using properties based configuration:
+<programlisting><![CDATA[compass.engine.connection=space://test:jini://*/*/mySpace
+]]></programlisting>
+	    </para>
+	    
+	    <para>
+	        Since the lucene directory actually deletes a file from the file system, when several clients are connected to the index and are updating the index, it is important to configure Compass with an index deletion strategy that won't delete files only after a period of time (this will allow other clients time to refresh their cache). Here is an example of how this can be configured (see more in the search engine section):
+	        
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <space indexName="test" url="jini://*/*/mySpace" />
+  </connection>
+
+  <searchEngine>
+    <indexDeletionPolicy>
+        <expirationTime expirationTimeSeconds="600" />
+    </indexDeletionPolicy>
+  </searchEngine>
+</compass>
+]]></programlisting>      	        
+	    </para>
+	</sect1>
+	
+	<sect1 id="needle-gigaspaces-mirror">
+	    <title>Searchable Space</title>
+	    
+	    <para>
+	        The GigaSpaces integration comes with a built in external data source that can be used with GigaSpaces <ulink url="http://www.gigaspaces.com/wiki/display/GS6/Mirror+Service+-+6.0">Mirror Service</ulink>. Basically, a mirror allows to mirror changes done to the Space (data grid) into the search engine in a reliable asynchronous manner. The following is an example of how it can be configured within a mirror processing unit (for more information see <ulink url="http://www.gigaspaces.com/wiki/display/GS6/Open+Spaces+Persistency+Scenarios+-+Mirror">here</ulink>)
+	    </para>
+	    
+	    <para>
+<programlisting><![CDATA[<beans xmlns="http://www.springframework.org/schema/beans" ...
+    
+  <bean id="compass" class="org.compass.spring.LocalCompassBean">
+     <property name="classMappings">
+       <list>
+         <value>eg.Blog</value>
+         <value>eg.Post</value>
+         <value>eg.Comment</value>
+       </list>
+     </property>
+     <property name="compassSettings">
+       <props>
+         <prop key="compass.engine.connection">space://blog:jini://*/*/searchContent</prop>
+         <!--  Configure expiration time so other clients that 
+               haven't refreshed the cache will still see deleted files -->
+         <prop key="compass.engine.store.indexDeletionPolicy.type">expirationtime</prop>
+         <prop key="compass.engine.store.indexDeletionPolicy.expirationTimeInSeconds">300</prop>
+       </props>
+     </property>
+  </bean>
+
+  <bean id="compassDataSource" class="org.compass.needle.gigaspaces.CompassDataSource">
+    <property name="compass" ref="compass" />
+  </bean>
+
+  <os-core:space id="mirrodSpace" url="/./mirror-service" schema="mirror" 
+                 external-data-source="compassDataSource" />
+</beans>
+]]></programlisting>      	        
+	    </para>
+	    
+	    <para>
+	        The above configuration will mirror any changes done in the data grid into the search engine through the Compass instance. It will, further more, connect and store the index content on a specific Space called blog.
+	    </para>
+	</sect1>
+</chapter>
