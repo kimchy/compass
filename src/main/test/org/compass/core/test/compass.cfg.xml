@@ -5,8 +5,8 @@
     <compass name="default">
 
         <connection>
-            <!--<file path="target/test-index"/>-->
-            <space indexName="test" url="/./space" />
+            <file path="target/test-index"/>
+            <!--<space indexName="test" url="/./space" />-->
             <!--<coherence cacheName="test" indexName="lucene" type="invocable" />-->
             <!--
             <jdbc dialect="org.apache.lucene.store.jdbc.dialect.HSQLDialect" managed="false">
