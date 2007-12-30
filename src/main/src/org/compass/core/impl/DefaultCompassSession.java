@@ -171,10 +171,18 @@ public class DefaultCompassSession implements InternalCompassSession {
         searchEngine.flush();
     }
 
+    public Resource getResource(Class clazz, Object... ids) throws CompassException {
+        return getResource(clazz, (Object) ids);
+    }
+
     public Resource getResource(Class clazz, Object id) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(clazz, id);
         return getResourceByIdResource(idResource);
+    }
+
+    public Resource getResource(String alias, Object... ids) throws CompassException {
+        return getResource(alias, (Object) ids);
     }
 
     public Resource getResource(String alias, Object id) throws CompassException {
@@ -195,6 +203,10 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
+    public <T> T get(Class<T> clazz, Object... ids) throws CompassException {
+        return get(clazz, (Object) ids);
+    }
+
     public <T> T get(Class<T> clazz, Object id) throws CompassException {
         checkClosed();
         Resource resource = getResource(clazz, id);
@@ -203,6 +215,10 @@ public class DefaultCompassSession implements InternalCompassSession {
         }
         //noinspection unchecked
         return (T) getByResource(resource);
+    }
+
+    public Object get(String alias, Object... ids) throws CompassException {
+        return get(alias, (Object) ids);
     }
 
     public Object get(String alias, Object id) throws CompassException {
@@ -245,10 +261,18 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
+    public Resource loadResource(Class clazz, Object... ids) throws CompassException {
+        return loadResource(clazz, (Object) ids);
+    }
+
     public Resource loadResource(Class clazz, Object id) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(clazz, id);
         return loadResourceByIdResource(idResource);
+    }
+
+    public Resource loadResource(String alias, Object... ids) throws CompassException {
+        return loadResource(alias, (Object) ids);
     }
 
     public Resource loadResource(String alias, Object id) throws CompassException {
@@ -269,11 +293,19 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
+    public <T> T load(Class<T> clazz, Object... ids) throws CompassException {
+        return load(clazz, (Object) ids);
+    }
+
     public <T> T load(Class<T> clazz, Object id) throws CompassException {
         checkClosed();
         Resource resource = loadResource(clazz, id);
         //noinspection unchecked
         return (T) getByResource(resource);
+    }
+
+    public Object load(String alias, Object... ids) throws CompassException {
+        return load(alias, (Object) ids);
     }
 
     public Object load(String alias, Object id) throws CompassException {
@@ -351,6 +383,10 @@ public class DefaultCompassSession implements InternalCompassSession {
         }
     }
 
+    public void delete(String alias, Object... ids) throws CompassException {
+        delete(alias, (Object) ids);
+    }
+
     public void delete(String alias, Object obj) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(alias, obj);
@@ -361,6 +397,10 @@ public class DefaultCompassSession implements InternalCompassSession {
         if (idResource == null && !performedCascading) {
             throw new MarshallingException("Alias [" + alias + "] has no root mappings and no cascading defined, no operation was perfomed");
         }
+    }
+
+    public void delete(Class clazz, Object... ids) throws CompassException {
+        delete(clazz, (Object) ids);
     }
 
     public void delete(Class clazz, Object obj) throws CompassException {

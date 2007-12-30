@@ -39,7 +39,7 @@ public class InheritanceIdTests extends AbstractAnnotationsTestCase {
         b.value = "test";
         session.save(b);
 
-        b = (B) session.load(B.class, 1);
+        b = session.load(B.class, 1);
         assertEquals(1, b.id);
         assertEquals("test", b.value);
 

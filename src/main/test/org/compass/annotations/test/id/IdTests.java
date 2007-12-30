@@ -57,7 +57,7 @@ public class IdTests extends AbstractAnnotationsTestCase {
         a.setValue("value");
         session.save(a);
 
-        a = (A) session.load(A.class, 1);
+        a = session.load(A.class, 1);
         assertEquals("value", a.getValue());
 
         CompassHits hits = session.find("value");

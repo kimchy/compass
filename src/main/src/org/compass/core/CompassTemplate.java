@@ -344,12 +344,20 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
+    public <T> T load(Class<T> clazz, Object... ids) throws CompassException {
+        return load(clazz, (Object) ids);
+    }
+
     public <T> T load(final Class<T> clazz, final Object id) throws CompassException {
         return execute(new CompassCallback<T>() {
             public T doInCompass(CompassSession session) throws CompassException {
                 return session.load(clazz, id);
             }
         });
+    }
+
+    public Object load(String alias, Object... ids) throws CompassException {
+        return load(alias, (Object) ids);
     }
 
     public Object load(final String alias, final Object id) throws CompassException {
@@ -424,5 +432,37 @@ public class CompassTemplate implements CompassOperations {
                 session.evictAll();
             }
         });
+    }
+
+    public Resource getResource(Class clazz, Object... ids) throws CompassException {
+        return getResource(clazz, (Object) ids);
+    }
+
+    public Resource getResource(String alias, Object... ids) throws CompassException {
+        return getResource(alias, (Object) ids);
+    }
+
+    public Resource loadResource(Class clazz, Object... ids) throws CompassException {
+        return loadResource(clazz, (Object) ids);
+    }
+
+    public Resource loadResource(String alias, Object... ids) throws CompassException {
+        return loadResource(alias, (Object) ids);
+    }
+
+    public void delete(String alias, Object... ids) throws CompassException {
+        delete(alias, (Object) ids);
+    }
+
+    public void delete(Class clazz, Object... ids) throws CompassException {
+        delete(clazz, (Object) ids);
+    }
+
+    public <T> T get(Class<T> clazz, Object... ids) throws CompassException {
+        return get(clazz, (Object) ids);
+    }
+
+    public Object get(String alias, Object... ids) throws CompassException {
+        return get(alias, (Object) ids);
     }
 }

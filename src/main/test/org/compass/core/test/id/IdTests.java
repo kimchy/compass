@@ -82,24 +82,24 @@ public class IdTests extends AbstractTestCase {
         assertEquals("2", o.getId2());
         assertEquals("test", o.getValue());
 
-        o = (MultipleId) session.load(MultipleId.class, new Object[]{new Long(1), "2"});
+        o = session.load(MultipleId.class, 1, "2");
         assertEquals(new Long(1), o.getId());
         assertEquals("2", o.getId2());
         assertEquals("test", o.getValue());
 
-        o = (MultipleId) session.load(MultipleId.class, o);
+        o = session.load(MultipleId.class, o);
         assertEquals(new Long(1), o.getId());
         assertEquals("2", o.getId2());
         assertEquals("test", o.getValue());
 
         session.delete(o);
-        o = (MultipleId) session.get(MultipleId.class, o);
+        o = session.get(MultipleId.class, o);
         assertNull(o);
 
         tr.commit();
 
         tr = session.beginTransaction();
-        o = (MultipleId) session.get(MultipleId.class, ref);
+        o = session.get(MultipleId.class, ref);
         assertNull(o);
         tr.commit();
     }
@@ -113,12 +113,12 @@ public class IdTests extends AbstractTestCase {
         o.setValue("test");
         session.save(o);
 
-        o = (MultipleId) session.load(MultipleId.class, new Object[]{new Long(1), "2"});
+        o = session.load(MultipleId.class, 1, "2");
         assertEquals(new Long(1), o.getId());
         assertEquals("2", o.getId2());
 
-        session.delete("multiple-id", new Object[]{new Long(1), "2"});
-        o = (MultipleId) session.get(MultipleId.class, new Object[]{new Long(1), "2"});
+        session.delete("multiple-id", 1, "2");
+        o = session.get(MultipleId.class, 1, "2");
         assertNull(o);
 
         tr.commit();

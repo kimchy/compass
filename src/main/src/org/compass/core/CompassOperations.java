@@ -121,6 +121,17 @@ public interface CompassOperations {
     Resource getResource(Class clazz, Object id) throws CompassException;
 
     /**
+     * Returns a Resource that match the mapping specified for the defined class
+     * type, and specified ids.
+     *
+     * @param clazz The class that represents the required mapping
+     * @param ids   The ids that identifies the resource
+     * @return The resource, returns <code>null</code> if not found
+     * @throws CompassException
+     */
+    Resource getResource(Class clazz, Object... ids) throws CompassException;
+
+    /**
      * Returns a Resource that match the mapping specified for the defined alias
      * (possibley different object types), and matches the specified id. The id
      * can be an object of the class (with the id attributes set), an array of
@@ -133,6 +144,18 @@ public interface CompassOperations {
      * @throws CompassException
      */
     Resource getResource(String alias, Object id) throws CompassException;
+
+    /**
+     * Returns a Resource that match the mapping specified for the defined alias
+     * (possibley different object types), and matches the specified ids. Returns
+     * <code>null</code> if the object is not found.
+     *
+     * @param alias The alias that represents the required mapping
+     * @param ids   The ids that identifies the resource
+     * @return The resource
+     * @throws CompassException
+     */
+    Resource getResource(String alias, Object... ids) throws CompassException;
 
     /**
      * Loads and returns a Resource that match the mapping specified for the
@@ -149,6 +172,18 @@ public interface CompassOperations {
 
     /**
      * Loads and returns a Resource that match the mapping specified for the
+     * defined class, and matches the specified ids. Throws an exception if
+     * the resource is not found.
+     *
+     * @param clazz The class that represents the required mapping
+     * @param ids   The ids that identifies the resource
+     * @return The resource
+     * @throws CompassException
+     */
+    Resource loadResource(Class clazz, Object... ids) throws CompassException;
+
+    /**
+     * Loads and returns a Resource that match the mapping specified for the
      * defined alias, and matches the specified id. The id can be an object of
      * the class (with the id attributes set), an array of id objects, or the
      * actual id object. Throws an exception if the resource is not found.
@@ -159,6 +194,18 @@ public interface CompassOperations {
      * @throws CompassException
      */
     Resource loadResource(String alias, Object id) throws CompassException;
+
+    /**
+     * Loads and returns a Resource that match the mapping specified for the
+     * defined alias, and matches the specified ids. Throws an exception if
+     * the resource is not found.
+     *
+     * @param alias The alias that represents the required mapping
+     * @param ids   The ids that identifies the resource
+     * @return The resource
+     * @throws CompassException
+     */
+    Resource loadResource(String alias, Object... ids) throws CompassException;
 
     /**
      * Deletes an object from Compass. The object must have been either loaded
@@ -181,6 +228,16 @@ public interface CompassOperations {
     void delete(String alias, Object obj) throws CompassException;
 
     /**
+     * Deletes an object from Compass with multiple alias's based on
+     * its ids.
+     *
+     * @param alias The alias that the objects maps under
+     * @param ids   The ids of the object to delete
+     * @throws CompassException
+     */
+    void delete(String alias, Object... ids) throws CompassException;
+
+    /**
      * Deletes an object from Compass that match the mapping specified for the defined class.
      * The object can either be the id (or an array of ids), or the actual data object with
      * it's property ids set.
@@ -190,6 +247,16 @@ public interface CompassOperations {
      * @throws CompassException
      */
     void delete(Class clazz, Object obj) throws CompassException;
+
+    /**
+     * Deletes an object from Compass that match the mapping specified for the defined class
+     * based on its ids.
+     *
+     * @param clazz The class that represtents the required mapping
+     * @param ids   The object ids to delete
+     * @throws CompassException
+     */
+    void delete(Class clazz, Object... ids) throws CompassException;
 
     /**
      * Returns an object that match the mapping specified for the defined class,
@@ -205,6 +272,18 @@ public interface CompassOperations {
     <T> T get(Class<T> clazz, Object id) throws CompassException;
 
     /**
+     * Returns an object that match the mapping specified for the defined class,
+     * and matches the specified ids. Returns <code>null</code> if the object
+     * is not found.
+     *
+     * @param clazz The class that represents the required mapping
+     * @param ids   The ids that identifies the resource
+     * @return The object, returns <code>null</code> if not found
+     * @throws CompassException
+     */
+    <T> T get(Class<T> clazz, Object... ids) throws CompassException;
+
+    /**
      * Returns an object that match the mapping specified for the defined alias,
      * and matches the specified id. The id can be an object of the class (with
      * the id attributes set), an array of id objects, or the actual id object.
@@ -216,6 +295,18 @@ public interface CompassOperations {
      * @throws CompassException
      */
     Object get(String alias, Object id) throws CompassException;
+
+    /**
+     * Returns an object that match the mapping specified for the defined alias,
+     * and matches the specified ids. Returns <code>null</code> if the object is
+     * not found.
+     *
+     * @param alias The alias that represents the required mapping
+     * @param ids   The ids that identifies the resource
+     * @return The object, returns <code>null</code> if not found
+     * @throws CompassException
+     */
+    Object get(String alias, Object... ids) throws CompassException;
 
     /**
      * Loads and returns an object that match the mapping specified for the
@@ -232,6 +323,17 @@ public interface CompassOperations {
 
     /**
      * Loads and returns an object that match the mapping specified for the
+     * defined class, and matches the specified ids.
+     *
+     * @param clazz The class that represents the required mapping
+     * @param ids   The ids that identifies the resource
+     * @return The object
+     * @throws CompassException
+     */
+    <T> T load(Class<T> clazz, Object... ids) throws CompassException;
+
+    /**
+     * Loads and returns an object that match the mapping specified for the
      * defined class, and matches the specified id. The id can be an object of
      * the class (with the id attributes set), an array of id objects, or the
      * actual id object. Throws an exception if the resource is not found.
@@ -242,6 +344,17 @@ public interface CompassOperations {
      * @throws CompassException
      */
     Object load(String alias, Object id) throws CompassException;
+
+    /**
+     * Loads and returns an object that match the mapping specified for the
+     * defined class, and matches the specified ids.
+     *
+     * @param alias The alias that represents the required mapping
+     * @param ids   The ids that identifies the resource
+     * @return The object
+     * @throws CompassException
+     */
+    Object load(String alias, Object... ids) throws CompassException;
 
     /**
      * Deletes all entries in the index that match the given query.
