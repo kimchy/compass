@@ -47,8 +47,18 @@ import org.compass.core.util.ClassUtils;
  */
 public class ClassMappingConverter implements ResourceMappingConverter {
 
+    /**
+     * Under this key within the context the root class mapping can be found.
+     */
     public static final String ROOT_CLASS_MAPPING_KEY = "$rcmk";
 
+    /**
+     * Disable internal mappings is a marker within the context if internal mappings should not
+     * be marshalled.
+     *
+     * <p>Internal mappings are disabled for inner components (not root classes) when support
+     * unmarshall is set to <code>false</code>.
+     */
     public static final String DISABLE_INTERNAL_MAPPINGS = "$dim";
 
     private static final Object DISABLE_INTERNAL_MAPPINGS_MARK = new Object();
