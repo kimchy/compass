@@ -105,8 +105,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         findList = callback.getClassPropertyMappings();
         classPropertyMappings = (ClassPropertyMapping[]) findList.toArray(new ClassPropertyMapping[findList.size()]);
         findList = findClassPropertyIdMappings();
-        classIdPropertyMappings = (ClassIdPropertyMapping[]) findList.toArray(new ClassIdPropertyMapping[findList
-                .size()]);
+        classIdPropertyMappings = (ClassIdPropertyMapping[]) findList.toArray(new ClassIdPropertyMapping[findList.size()]);
         pathMappings = callback.getPathMappings();
     }
 
@@ -123,16 +122,35 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
     }
 
     /**
-     * Dynamically finds all the {@link ClassIdPropertyMapping}s for the class.
-     *
-     * @return A list of the class {@link ClassIdPropertyMapping}s.
+     * Dynamically find the id mappings.
      */
-    public List findClassPropertyIdMappings() {
-        ArrayList idMappingList = new ArrayList();
+    public List<Mapping> findIdMappings() {
+        ArrayList<Mapping> idMappingList = new ArrayList<Mapping>();
         for (Iterator it = mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
             if (m instanceof ClassIdPropertyMapping) {
                 idMappingList.add(m);
+            }
+            if (m instanceof IdComponentMapping) {
+                idMappingList.add(m);
+            }
+        }
+        return idMappingList;
+    }
+
+    /**
+     * Dynamically finds all the {@link ClassIdPropertyMapping}s for the class.
+     */
+    public List<ClassIdPropertyMapping> findClassPropertyIdMappings() {
+        ArrayList<ClassIdPropertyMapping> idMappingList = new ArrayList<ClassIdPropertyMapping>();
+        for (Iterator it = mappingsIt(); it.hasNext();) {
+            Mapping m = (Mapping) it.next();
+            if (m instanceof ClassIdPropertyMapping) {
+                idMappingList.add((ClassIdPropertyMapping) m);
+            }
+            if (m instanceof IdComponentMapping) {
+                IdComponentMapping idComponentMapping = (IdComponentMapping) m;
+                idMappingList.addAll(idComponentMapping.getRefClassMappings()[0].findClassPropertyIdMappings());
             }
         }
         return idMappingList;

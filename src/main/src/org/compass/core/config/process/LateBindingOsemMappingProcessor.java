@@ -36,6 +36,7 @@ import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.IdComponentMapping;
 import org.compass.core.mapping.osem.OsemMappingIterator;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
@@ -56,7 +57,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     // helper runtime state
 
-    private List chainedComponents = new ArrayList();
+    private List<ComponentMapping> chainedComponents = new ArrayList<ComponentMapping>();
 
     /**
      * Used to externaly control the managed id option (for example for ref-comp-mapping,
@@ -102,13 +103,15 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private void secondPass(ClassMapping classMapping, boolean onlyProperties) {
         classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(), MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
-        ArrayList innerMappingsCopy = new ArrayList();
+        ArrayList<Mapping> innerMappingsCopy = new ArrayList<Mapping>();
         for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
             Mapping copyMapping = m.copy();
             boolean removeMapping = false;
             if (m instanceof ClassPropertyMapping) {
                 removeMapping = secondPass((ClassPropertyMapping) copyMapping, classMapping);
+            } else if (m instanceof IdComponentMapping) {
+                removeMapping = secondPass((IdComponentMapping) copyMapping, classMapping);
             } else {
                 if (!onlyProperties) {
                     if (copyMapping instanceof ComponentMapping) {
@@ -130,8 +133,8 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             }
         }
         classMapping.clearMappings();
-        for (Iterator it = innerMappingsCopy.iterator(); it.hasNext();) {
-            classMapping.addMapping((Mapping) it.next());
+        for (Iterator<Mapping> it = innerMappingsCopy.iterator(); it.hasNext();) {
+            classMapping.addMapping(it.next());
         }
     }
 
@@ -192,22 +195,21 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         for (int i = 0; i < refMappings.length; i++) {
             // in case of reference, use internal ids for the refrence ids
             // get the original ids, since we will copy them later
-            List ids = refMappings[i].findClassPropertyIdMappings();
+            List<Mapping> ids = refMappings[i].findIdMappings();
 
             // shallow copy the ref class mappings, and ony add the ids (as copies)
             ClassMapping refClass = (ClassMapping) refMappings[i].shallowCopy();
-            for (Iterator it = ids.iterator(); it.hasNext();) {
-                refClass.addMapping(((Mapping) it.next()).copy());
+            for (Object id : ids) {
+                refClass.addMapping(((Mapping) id).copy());
             }
 
             refClass.setPath(referenceMapping.getPath());
             secondPass(refClass, true);
 
-            for (Iterator it = refClass.mappingsIt(); it.hasNext();) {
-                ClassIdPropertyMapping idMapping = (ClassIdPropertyMapping) it.next();
-                idMapping.clearMappings();
+            for (ClassIdPropertyMapping mapping : refClass.findClassPropertyIdMappings()) {
+                mapping.clearMappings();
                 // create the internal id
-                MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping);
+                MappingProcessorUtils.addInternalId(settings, converterLookup, mapping);
             }
             // since we create our own special ref class mapping that only holds the
             // ids, we need to call the post process here
@@ -219,8 +221,8 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private boolean secondPass(ComponentMapping compMapping, Mapping fatherMapping) {
         int numberOfComponentsWithTheSameAlias = 0;
-        for (Iterator it = chainedComponents.iterator(); it.hasNext();) {
-            ComponentMapping tempComponentMapping = (ComponentMapping) it.next();
+        for (Iterator<ComponentMapping> it = chainedComponents.iterator(); it.hasNext();) {
+            ComponentMapping tempComponentMapping = it.next();
             if (compMapping.hasAtLeastOneRefAlias(tempComponentMapping.getRefAliases())) {
                 numberOfComponentsWithTheSameAlias++;
             }
@@ -257,7 +259,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             classPropertyMapping.setManagedId(managedId);
         }
 
-        ArrayList innerMappingsCopy = new ArrayList();
+        ArrayList<ClassPropertyMetaDataMapping> innerMappingsCopy = new ArrayList<ClassPropertyMetaDataMapping>();
         for (Iterator it = classPropertyMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
             ClassPropertyMetaDataMapping metaDataMappingCopy = (ClassPropertyMetaDataMapping) m.copy();
@@ -265,8 +267,8 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             innerMappingsCopy.add(metaDataMappingCopy);
         }
         classPropertyMapping.clearMappings();
-        for (Iterator it = innerMappingsCopy.iterator(); it.hasNext();) {
-            classPropertyMapping.addMapping((Mapping) it.next());
+        for (Iterator<ClassPropertyMetaDataMapping> it = innerMappingsCopy.iterator(); it.hasNext();) {
+            classPropertyMapping.addMapping(it.next());
         }
         return false;
     }

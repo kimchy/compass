@@ -45,7 +45,7 @@ public class IdTests extends AbstractAnnotationsTestCase {
         ClassMapping AMApping = (ClassMapping) mapping.getRootMappingByAlias("A");
         ClassIdPropertyMapping[] idMappings = AMApping.getClassIdPropertyMappings();
         assertEquals(1, idMappings.length);
-        ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
+        ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getResourceIdMappings();
         assertEquals(1, resourcePropertyMappings.length);
         assertEquals("test", resourcePropertyMappings[0].getPath().getPath());
         assertEquals("test", resourcePropertyMappings[0].getName());

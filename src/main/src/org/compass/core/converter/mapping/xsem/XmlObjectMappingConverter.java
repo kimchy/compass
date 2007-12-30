@@ -28,7 +28,6 @@ import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -97,7 +96,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
         SearchEngine searchEngine = context.getSearchEngine();
 
         XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) resourceMapping;
-        ResourcePropertyMapping[] ids = resourceMapping.getIdMappings();
+        Mapping[] ids = resourceMapping.getIdMappings();
         if (id instanceof XmlObject) {
             XmlObject rootXmlObject = getActualXmlObject((XmlObject) id, xmlObjectMapping, context, idResource);
             if (xmlObjectMapping.getXPath() != null) {

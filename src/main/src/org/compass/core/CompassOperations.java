@@ -17,7 +17,6 @@
 package org.compass.core;
 
 import java.io.Reader;
-import java.io.Serializable;
 
 /**
  * A interface describing all the available operations allowed by compass.
@@ -119,7 +118,7 @@ public interface CompassOperations {
      * @return The resource, returns <code>null</code> if not found
      * @throws CompassException
      */
-    Resource getResource(Class clazz, Serializable id) throws CompassException;
+    Resource getResource(Class clazz, Object id) throws CompassException;
 
     /**
      * Returns a Resource that match the mapping specified for the defined alias
@@ -133,7 +132,7 @@ public interface CompassOperations {
      * @return The resource
      * @throws CompassException
      */
-    Resource getResource(String alias, Serializable id) throws CompassException;
+    Resource getResource(String alias, Object id) throws CompassException;
 
     /**
      * Loads and returns a Resource that match the mapping specified for the
@@ -146,7 +145,7 @@ public interface CompassOperations {
      * @return The resource
      * @throws CompassException
      */
-    Resource loadResource(Class clazz, Serializable id) throws CompassException;
+    Resource loadResource(Class clazz, Object id) throws CompassException;
 
     /**
      * Loads and returns a Resource that match the mapping specified for the
@@ -159,7 +158,7 @@ public interface CompassOperations {
      * @return The resource
      * @throws CompassException
      */
-    Resource loadResource(String alias, Serializable id) throws CompassException;
+    Resource loadResource(String alias, Object id) throws CompassException;
 
     /**
      * Deletes an object from Compass. The object must have been either loaded
@@ -203,7 +202,7 @@ public interface CompassOperations {
      * @return The object, returns <code>null</code> if not found
      * @throws CompassException
      */
-    <T> T get(Class<T> clazz, Serializable id) throws CompassException;
+    <T> T get(Class<T> clazz, Object id) throws CompassException;
 
     /**
      * Returns an object that match the mapping specified for the defined alias,
@@ -216,7 +215,7 @@ public interface CompassOperations {
      * @return The object, returns <code>null</code> if not found
      * @throws CompassException
      */
-    Object get(String alias, Serializable id) throws CompassException;
+    Object get(String alias, Object id) throws CompassException;
 
     /**
      * Loads and returns an object that match the mapping specified for the
@@ -229,7 +228,7 @@ public interface CompassOperations {
      * @return The object
      * @throws CompassException
      */
-    <T> T load(Class<T> clazz, Serializable id) throws CompassException;
+    <T> T load(Class<T> clazz, Object id) throws CompassException;
 
     /**
      * Loads and returns an object that match the mapping specified for the
@@ -242,7 +241,7 @@ public interface CompassOperations {
      * @return The object
      * @throws CompassException
      */
-    Object load(String alias, Serializable id) throws CompassException;
+    Object load(String alias, Object id) throws CompassException;
 
     /**
      * Deletes all entries in the index that match the given query.

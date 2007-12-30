@@ -107,10 +107,14 @@ public interface ResourceMapping extends AliasMapping {
     boolean isAllOmitNorms();
 
     /**
-     * Returns all the resource property mappings that acts as the id of the resource. Used to load
-     * the resource or delete it.
+     * Returns all mappings that represent ids of a resource.
      */
-    ResourcePropertyMapping[] getIdMappings();
+    Mapping[] getIdMappings();
+
+    /**
+     * Returns all the id mappigns for the low level resource mapping.
+     */
+    ResourcePropertyMapping[] getResourceIdMappings();
 
     /**
      * Returns a list of all the cascade mappings. Will return null if no cascading is defined.

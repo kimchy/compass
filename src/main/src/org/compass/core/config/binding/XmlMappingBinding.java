@@ -47,6 +47,7 @@ import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.IdComponentMapping;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawBoostPropertyMapping;
@@ -502,6 +503,12 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         for (int i = 0; i < ids.length; i++) {
             ClassIdPropertyMapping idMapping = new ClassIdPropertyMapping();
             bindClassProperty(ids[i], classMapping, idMapping);
+            classMapping.addMapping(idMapping);
+        }
+        ConfigurationHelper[] idComponents = classConf.getChildren("id-component");
+        for (int i = 0; i < idComponents.length; i++) {
+            IdComponentMapping idMapping = new IdComponentMapping();
+            bindComponent(idComponents[i], classMapping, idMapping);
             classMapping.addMapping(idMapping);
         }
         ConfigurationHelper[] properties = classConf.getChildren("property");

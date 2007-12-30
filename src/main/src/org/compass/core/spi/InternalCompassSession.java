@@ -16,8 +16,6 @@
 
 package org.compass.core.spi;
 
-import java.io.Serializable;
-
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
@@ -43,7 +41,7 @@ public interface InternalCompassSession extends CompassSession {
 
     FirstLevelCache getFirstLevelCache();
 
-    Object get(String alias, Serializable id, MarshallingContext context) throws CompassException;
+    Object get(String alias, Object id, MarshallingContext context) throws CompassException;
 
     Object getByResource(Resource resource) throws CompassException;
 

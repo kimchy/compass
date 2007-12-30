@@ -46,7 +46,7 @@ public class ComponentTests extends AbstractTestCase {
         assertEquals(2, propertyNames.length);
         ClassIdPropertyMapping[] idMappings = firstMapping.getClassIdPropertyMappings();
         assertEquals(1, idMappings.length);
-        ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
+        ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getResourceIdMappings();
         assertEquals(1, resourcePropertyMappings.length);
         assertEquals("$/first/id", resourcePropertyMappings[0].getPath().getPath());
         assertEquals("id", resourcePropertyMappings[0].getName());

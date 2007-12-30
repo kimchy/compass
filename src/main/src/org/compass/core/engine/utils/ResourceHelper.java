@@ -22,8 +22,8 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
 
@@ -65,7 +65,7 @@ public abstract class ResourceHelper {
      */
     public static Property[] toIds(Resource resource, ResourceMapping resourceMapping, boolean idsMustExist)
             throws SearchEngineException {
-        ResourcePropertyMapping[] pMappings = resourceMapping.getIdMappings();
+        Mapping[] pMappings = resourceMapping.getResourceIdMappings();
         Property[] ids = new Property[pMappings.length];
         for (int i = 0; i < pMappings.length; i++) {
             ids[i] = resource.getProperty(pMappings[i].getPath().getPath());
@@ -86,7 +86,7 @@ public abstract class ResourceHelper {
 
     public static Property[] toIds(SearchEngine searchEngine, String[] values, ResourceMapping mapping)
             throws SearchEngineException {
-        ResourcePropertyMapping[] idsMapping = mapping.getIdMappings();
+        Mapping[] idsMapping = mapping.getResourceIdMappings();
         if (values.length != idsMapping.length) {
             throw new SearchEngineException("The id values don't match the id mapping. Id values ["
                     + StringUtils.arrayToCommaDelimitedString(values) + "], Ids Mappings ["

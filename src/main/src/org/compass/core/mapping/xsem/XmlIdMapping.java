@@ -2,15 +2,19 @@ package org.compass.core.mapping.xsem;
 
 import org.compass.core.Property;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.ResourceIdMappingProvider;
+import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
 public class XmlIdMapping extends XmlPropertyMapping implements ResourceIdMappingProvider {
 
-    public ResourcePropertyMapping[] getIdMappings() {
+    public Mapping[] getIdMappings() {
+        return getResourceIdMappings();
+    }
+
+    public ResourcePropertyMapping[] getResourceIdMappings() {
         return new ResourcePropertyMapping[]{this};
     }
 

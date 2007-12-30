@@ -55,7 +55,9 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private boolean allOmitNorms = false;
 
-    private ResourcePropertyMapping[] ids;
+    private Mapping[] idMappings;
+
+    private ResourcePropertyMapping[] idPropertyMappings;
 
     private CascadeMapping[] cascades;
 
@@ -72,13 +74,20 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     private BoostPropertyMapping boostPropertyMapping;
 
     /**
-     * Gets the ids of the resource.
+     * Gets the idMappings of the resource.
      */
-    public ResourcePropertyMapping[] getIdMappings() {
-        if (ids == null) {
+    public Mapping[] getIdMappings() {
+        if (idMappings == null) {
             buildResourceIds();
         }
-        return ids;
+        return idMappings;
+    }
+
+    public ResourcePropertyMapping[] getResourceIdMappings() {
+        if (idPropertyMappings == null) {
+            buildResourceIds();
+        }
+        return idPropertyMappings;
     }
 
     protected void copy(AbstractResourceMapping resourceMapping) {
@@ -111,17 +120,23 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     protected abstract void doPostProcess() throws MappingException;
 
     private void buildResourceIds() {
-        ArrayList resourceIds = new ArrayList();
+        ArrayList<Mapping> resourceIds = new ArrayList<Mapping>();
+        ArrayList<ResourcePropertyMapping> resourceIdPropertyMappings = new ArrayList<ResourcePropertyMapping>();
         for (Iterator it = mappingsIt(); it.hasNext();) {
             Mapping mapping = (Mapping) it.next();
             if (mapping instanceof ResourceIdMappingProvider) {
-                ResourcePropertyMapping[] tempIds = ((ResourceIdMappingProvider) mapping).getIdMappings();
+                Mapping[] tempIds = ((ResourceIdMappingProvider) mapping).getIdMappings();
                 for (int i = 0; i < tempIds.length; i++) {
                     resourceIds.add(tempIds[i]);
                 }
+                ResourcePropertyMapping[] tempPropertyIds = ((ResourceIdMappingProvider) mapping).getResourceIdMappings();
+                for (int i = 0; i < tempPropertyIds.length; i++) {
+                    resourceIdPropertyMappings.add(tempPropertyIds[i]);
+                }
             }
         }
-        ids = (ResourcePropertyMapping[]) resourceIds.toArray(new ResourcePropertyMapping[resourceIds.size()]);
+        idMappings = resourceIds.toArray(new Mapping[resourceIds.size()]);
+        idPropertyMappings = resourceIdPropertyMappings.toArray(new ResourcePropertyMapping[resourceIdPropertyMappings.size()]);
     }
 
     private void buildResourcePropertyMap() {

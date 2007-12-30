@@ -22,7 +22,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.engine.SearchEngine;
-import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.HasRefAliasMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
@@ -48,7 +48,7 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
             if (!context.handleNulls()) {
                 return false;
             }
-            ResourcePropertyMapping[] ids = refMapping.getIdMappings();
+            Mapping[] ids = refMapping.getResourceIdMappings();
             boolean store = false;
             for (int i = 0; i < ids.length; i++) {
                 store |= ids[i].getConverter().marshall(resource, context.getSearchEngine().getNullValue(), ids[i], context);

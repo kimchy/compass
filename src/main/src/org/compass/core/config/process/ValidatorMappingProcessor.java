@@ -58,7 +58,7 @@ public class ValidatorMappingProcessor implements MappingProcessor {
     }
 
     private void validatieHasAtLeastOneId(ResourceMapping resourceMapping) {
-        ResourcePropertyMapping[] idMappings = resourceMapping.getIdMappings();
+        Mapping[] idMappings = resourceMapping.getIdMappings();
         if (idMappings.length == 0) {
             throw new MappingException("Mapping for alias [" + resourceMapping.getAlias() + "] has no id mappings defined. " +
                     "Either you forgot to add id mappings for it, or it is a component mapping that requires no ids and it " +

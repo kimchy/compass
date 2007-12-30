@@ -187,6 +187,10 @@ public class AllAnalyzer extends Analyzer {
 
             return null;
         }
+
+        public String toString() {
+            return "all-stream";
+        }
     }
 
     /**

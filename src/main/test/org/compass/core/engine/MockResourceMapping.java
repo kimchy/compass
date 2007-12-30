@@ -55,7 +55,11 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
             ids = result;
         }
 
-        public ResourcePropertyMapping[] getIdMappings() {
+        public Mapping[] getIdMappings() {
+            return ids;
+        }
+
+        public ResourcePropertyMapping[] getResourceIdMappings() {
             return ids;
         }
     }
@@ -84,8 +88,12 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
         idMapping.addId(id);
     }
 
-    public ResourcePropertyMapping[] getIdMappings() {
+    public Mapping[] getIdMappings() {
         return idMapping.getIdMappings();
+    }
+
+    public ResourcePropertyMapping[] getResourceIdMappings() {
+        return idMapping.getResourceIdMappings();
     }
 
     public SubIndexHash getSubIndexHash() {

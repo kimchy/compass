@@ -31,9 +31,7 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.OsemMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -109,7 +107,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             }
             // go over all the ids and put a null value in it (just so we keep the order)
             boolean store = false;
-            for (ResourcePropertyMapping id : classMapping.getIdMappings()) {
+            for (Mapping id : classMapping.getResourceIdMappings()) {
                 store |= id.getConverter().marshall(resource, context.getSearchEngine().getNullValue(), id, context);
             }
             return store;
@@ -136,7 +134,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                     if (!classMapping.isSupportUnmarshall()) {
                         return true;
                     }
-                    ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+                    Mapping[] ids = classMapping.getIdMappings();
                     boolean store = false;
                     for (int i = 0; i < ids.length; i++) {
                         store |= ids[i].getConverter().marshall(resource, idObjKey.idsValues[i], ids[i], context);
@@ -177,13 +175,13 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 // we don't support unmarshalling, try and unmarshall just the object with its
                 // ids set.
                 Object obj = constructObjectForUnmarshalling(classMapping, resource);
-                for (ResourcePropertyMapping id : classMapping.getIdMappings()) {
+                for (Mapping id : classMapping.getIdMappings()) {
                     Object idValue = id.getConverter().unmarshall(resource, id, context);
                     if (idValue == null) {
                         // was not marshalled, simply return null
                         return null;
                     }
-                    ((ClassPropertyMetaDataMapping) id).getSetter().set(obj, idValue);
+                    ((ObjectMapping) id).getSetter().set(obj, idValue);
                 }
                 return obj;
             }
@@ -218,7 +216,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 // the ids, so the rest of the unmarshalling process will work
                 if (resource instanceof CollectionResourceWrapper) {
                     CollectionResourceWrapper colWrapper = (CollectionResourceWrapper) resource;
-                    for (ResourcePropertyMapping id : classMapping.getIdMappings()) {
+                    for (Mapping id : classMapping.getResourceIdMappings()) {
                         colWrapper.rollbackGetProperty(id.getPath().getPath());
                     }
                 }
@@ -311,23 +309,23 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             throws ConversionException {
         ClassMapping classMapping = (ClassMapping) resourceMapping;
         boolean stored = false;
-        ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+        Mapping[] ids = classMapping.getIdMappings();
         if (classMapping.getClazz().isAssignableFrom(id.getClass())) {
             // the object is the key
-            for (ResourcePropertyMapping rpId : ids) {
-                ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) rpId;
-                stored |= convertId(idResource, classPropertyMetaDataMapping.getGetter().get(id), classPropertyMetaDataMapping, context);
+            for (Mapping rpId : ids) {
+                ObjectMapping objectMapping = (ObjectMapping) rpId;
+                stored |= convertId(idResource, objectMapping.getGetter().get(id), rpId, context);
             }
         } else if (id.getClass().isArray()) {
             if (Array.getLength(id) != ids.length) {
                 throw new ConversionException("Trying to load class with [" + Array.getLength(id)
-                        + "] while has ids mappings of [" + ids.length + "]");
+                        + "] mappings while has ids mappings of [" + ids.length + "]");
             }
             for (int i = 0; i < ids.length; i++) {
-                stored |= convertId(idResource, Array.get(id, i), (ClassPropertyMetaDataMapping) ids[i], context);
+                stored |= convertId(idResource, Array.get(id, i), ids[i], context);
             }
         } else if (ids.length == 1) {
-            stored = convertId(idResource, id, (ClassPropertyMetaDataMapping) ids[0], context);
+            stored = convertId(idResource, id, ids[0], context);
         } else {
             String type = id.getClass().getName();
             throw new ConversionException("Cannot marshall ids, not supported id object type [" + type
@@ -336,17 +334,17 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         return stored;
     }
 
-    private boolean convertId(Resource resource, Object root, ClassPropertyMetaDataMapping mdMapping, MarshallingContext context) {
+    private boolean convertId(Resource resource, Object root, Mapping mapping, MarshallingContext context) {
         if (root == null) {
-            throw new ConversionException("Trying to marshall a null id [" + mdMapping.getName() + "]");
+            throw new ConversionException("Trying to marshall a null id [" + mapping.getName() + "]");
         }
-        return mdMapping.getConverter().marshall(resource, root, mdMapping, context);
+        return mapping.getConverter().marshall(resource, root, mapping, context);
     }
 
     public Object[] unmarshallIds(Object id, ResourceMapping resourceMapping, MarshallingContext context)
             throws ConversionException {
         ClassMapping classMapping = (ClassMapping) resourceMapping;
-        ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+        Mapping[] ids = classMapping.getIdMappings();
         Object[] idsValues = new Object[ids.length];
         if (id instanceof Resource) {
             Resource resource = (Resource) id;
@@ -360,8 +358,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         } else if (classMapping.getClazz().isAssignableFrom(id.getClass())) {
             // the object is the key
             for (int i = 0; i < ids.length; i++) {
-                ClassPropertyMetaDataMapping classPropertyMetaDataMapping = (ClassPropertyMetaDataMapping) ids[i];
-                idsValues[i] = classPropertyMetaDataMapping.getGetter().get(id);
+                ObjectMapping objectMapping = (ObjectMapping) ids[i];
+                idsValues[i] = objectMapping.getGetter().get(id);
             }
         } else if (id.getClass().isArray()) {
             if (Array.getLength(id) != ids.length) {
@@ -475,7 +473,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
         public IdsAliasesObjectKey(ClassMapping classMapping, Object value) {
             this.alias = classMapping.getAlias();
-            ResourcePropertyMapping[] ids = classMapping.getIdMappings();
+            Mapping[] ids = classMapping.getIdMappings();
             idsValues = new Object[ids.length];
             for (int i = 0; i < ids.length; i++) {
                 OsemMapping m = (OsemMapping) ids[i];

@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.annotations.test.idcomponent;
+
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
 
 /**
- * A marker interface for mappings that can provide id mapppings for a resource.
- * 
  * @author kimchy
  */
-public interface ResourceIdMappingProvider {
+@Searchable(root = false)
+public class B {
 
-    Mapping[] getIdMappings();
+    @SearchableId
+    long id1;
 
-    ResourcePropertyMapping[] getResourceIdMappings();
+    @SearchableId
+    long id2;
+
+    public B() {
+    }
+
+    public B(long id1, long id2) {
+        this.id1 = id1;
+        this.id2 = id2;
+    }
 }

@@ -1,0 +1,26 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.idcomponent">
+
+    <class name="A" alias="a">
+
+        <id-component name="b" accessor="field" />
+
+        <property name="value" accessor="field">
+            <meta-data>mvalue</meta-data>
+        </property>
+    </class>
+
+    <class name="B" alias="b" root="false">
+        <id name="id1" accessor="field" />
+        <id name="id2" accessor="field" />
+    </class>
+
+    <class name="C" alias="c">
+        <id name="id" accessor="field" />
+        <reference name="a" accessor="field" />
+    </class>
+
+</compass-core-mapping>

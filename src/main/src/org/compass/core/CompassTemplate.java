@@ -17,7 +17,6 @@
 package org.compass.core;
 
 import java.io.Reader;
-import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -313,7 +312,7 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
-    public <T> T get(final Class<T> clazz, final Serializable id) throws CompassException {
+    public <T> T get(final Class<T> clazz, final Object id) throws CompassException {
         return execute(new CompassCallback<T>() {
             public T doInCompass(CompassSession session) throws CompassException {
                 return session.get(clazz, id);
@@ -321,7 +320,7 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
-    public Object get(final String alias, final Serializable id) throws CompassException {
+    public Object get(final String alias, final Object id) throws CompassException {
         return execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.get(alias, id);
@@ -329,7 +328,7 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
-    public Resource getResource(final Class clazz, final Serializable id) throws CompassException {
+    public Resource getResource(final Class clazz, final Object id) throws CompassException {
         return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.getResource(clazz, id);
@@ -337,7 +336,7 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
-    public Resource getResource(final String alias, final Serializable id) throws CompassException {
+    public Resource getResource(final String alias, final Object id) throws CompassException {
         return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.getResource(alias, id);
@@ -345,7 +344,7 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
-    public <T> T load(final Class<T> clazz, final Serializable id) throws CompassException {
+    public <T> T load(final Class<T> clazz, final Object id) throws CompassException {
         return execute(new CompassCallback<T>() {
             public T doInCompass(CompassSession session) throws CompassException {
                 return session.load(clazz, id);
@@ -353,7 +352,7 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
-    public Object load(final String alias, final Serializable id) throws CompassException {
+    public Object load(final String alias, final Object id) throws CompassException {
         return execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.load(alias, id);
@@ -361,7 +360,7 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
-    public Resource loadResource(final Class clazz, final Serializable id) throws CompassException {
+    public Resource loadResource(final Class clazz, final Object id) throws CompassException {
         return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.loadResource(clazz, id);
@@ -369,7 +368,7 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
-    public Resource loadResource(final String alias, final Serializable id) throws CompassException {
+    public Resource loadResource(final String alias, final Object id) throws CompassException {
         return (Resource) execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {
                 return session.loadResource(alias, id);

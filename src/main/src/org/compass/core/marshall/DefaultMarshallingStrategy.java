@@ -23,9 +23,9 @@ import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.spi.AliasedObject;
 import org.compass.core.spi.InternalCompassSession;
 
@@ -88,28 +88,28 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
         if (resourceMapping == null) {
             throw new MarshallingException("No resource mapping is defined for class [" + root.getClass() + "]");
         }
-        ResourcePropertyMapping[] ids = resourceMapping.getIdMappings();
+        Mapping[] ids = resourceMapping.getIdMappings();
         if (ids == null || ids.length == 0) {
             return;
         }
         Object[] idsValues = unmarshallIds(resourceMapping, id, createContext());
         for (int i = 0; i < idsValues.length; i++) {
-            setId(root, idsValues[i], (ClassPropertyMetaDataMapping) ids[i]);
+            setId(root, idsValues[i], (ObjectMapping) ids[i]);
         }
     }
 
     public void marshallIds(ResourceMapping resourceMapping, Object root, Object id) {
-        ResourcePropertyMapping[] ids = resourceMapping.getIdMappings();
+        Mapping[] ids = resourceMapping.getIdMappings();
         if (ids.length == 0) {
             return;
         }
         Object[] idsValues = unmarshallIds(resourceMapping, id, createContext());
         for (int i = 0; i < idsValues.length; i++) {
-            setId(root, idsValues[i], (ClassPropertyMetaDataMapping) ids[i]);
+            setId(root, idsValues[i], (ObjectMapping) ids[i]);
         }
     }
 
-    private void setId(Object root, Object id, ClassPropertyMetaDataMapping mdMapping) {
+    private void setId(Object root, Object id, ObjectMapping mdMapping) {
         Setter setter = mdMapping.getSetter();
         setter.set(root, id);
     }

@@ -25,7 +25,6 @@ import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -47,7 +46,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
             throws ConversionException {
         SearchEngine searchEngine = context.getSearchEngine();
 
-        ResourcePropertyMapping[] ids = resourceMapping.getIdMappings();
+        Mapping[] ids = resourceMapping.getIdMappings();
         if (id instanceof Resource) {
             for (int i = 0; i < ids.length; i++) {
                 Resource rId = (Resource) id;
@@ -85,7 +84,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
 
     public Object[] unmarshallIds(Object id, ResourceMapping resourceMapping, MarshallingContext context)
             throws ConversionException {
-        ResourcePropertyMapping[] ids = resourceMapping.getIdMappings();
+        Mapping[] ids = resourceMapping.getIdMappings();
         Object[] idsValues = new Object[ids.length];
         if (id instanceof Resource) {
             Resource resource = (Resource) id;

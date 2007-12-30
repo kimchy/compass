@@ -34,6 +34,7 @@ import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.AliasedObject;
@@ -156,10 +157,10 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     }
 
     public Property[] getIdProperties() {
-        ResourcePropertyMapping[] resourcePropertyMappings = resourceMapping.getIdMappings();
-        Property[] idProperties = new Property[resourcePropertyMappings.length];
-        for (int i = 0; i < resourcePropertyMappings.length; i++) {
-            idProperties[i] = getProperty(resourcePropertyMappings[i].getPath().getPath());
+        Mapping[] idMappings = resourceMapping.getResourceIdMappings();
+        Property[] idProperties = new Property[idMappings.length];
+        for (int i = 0; i < idMappings.length; i++) {
+            idProperties[i] = getProperty(idMappings[i].getPath().getPath());
         }
         return idProperties;
     }

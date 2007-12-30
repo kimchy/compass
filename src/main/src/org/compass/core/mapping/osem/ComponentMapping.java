@@ -33,10 +33,14 @@ public class ComponentMapping extends AbstractRefAliasMapping implements Overrid
 
     public Mapping copy() {
         ComponentMapping copy = new ComponentMapping();
-        super.copy(copy);
-        copy.setOverrideByName(isOverrideByName());
-        copy.setMaxDepth(getMaxDepth());
+        copy(copy);
         return copy;
+    }
+
+    protected void copy(ComponentMapping componentMapping) {
+        super.copy(componentMapping);
+        componentMapping.setOverrideByName(isOverrideByName());
+        componentMapping.setMaxDepth(getMaxDepth());
     }
 
     public boolean canBeCollectionWrapped() {

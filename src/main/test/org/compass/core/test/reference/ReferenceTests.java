@@ -45,7 +45,7 @@ public class ReferenceTests extends AbstractTestCase {
         ClassMapping yMapping = ((ReferenceMapping) xMapping.getMapping("y")).getRefClassMappings()[0];
         ClassIdPropertyMapping[] idMappings = yMapping.getClassIdPropertyMappings();
         assertEquals(1, idMappings.length);
-        ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getIdMappings();
+        ResourcePropertyMapping[] resourcePropertyMappings = idMappings[0].getResourceIdMappings();
         assertEquals(1, resourcePropertyMappings.length);
         assertEquals("$/x/y/id", resourcePropertyMappings[0].getPath().getPath());
         assertEquals("id", resourcePropertyMappings[0].getName());

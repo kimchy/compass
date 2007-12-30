@@ -144,7 +144,7 @@
     <!ATTLIST resource-boost converter CDATA #IMPLIED>
 
 <!ELEMENT contract ( 
-    id*,
+    (id|id-component)*,
     parent?,
     (analyzer?),
     (boost?),
@@ -162,7 +162,7 @@
 -->
 <!ELEMENT class (
     sub-index-hash?,
-    id*,
+    (id|id-component)*,
     parent?,
     (analyzer?),
     (boost?),
@@ -312,6 +312,16 @@
     <!ATTLIST analyzer null-analyzer CDATA #IMPLIED>
     <!ATTLIST analyzer accessor (field|property) "property">
     <!ATTLIST analyzer converter CDATA #IMPLIED>
+
+<!ELEMENT id-component EMPTY
+>
+    <!ATTLIST id-component name CDATA #REQUIRED>
+    <!ATTLIST id-component ref-alias CDATA #IMPLIED>
+    <!ATTLIST id-component override (true|false) "true">
+    <!ATTLIST id-component max-depth CDATA #IMPLIED>
+    <!ATTLIST id-component converter CDATA #IMPLIED>
+    <!ATTLIST id-component accessor CDATA "property">
+    <!ATTLIST id-component cascade CDATA  #IMPLIED>
 
 <!ELEMENT component EMPTY
 >

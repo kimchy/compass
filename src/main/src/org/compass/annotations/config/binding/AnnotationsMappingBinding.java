@@ -56,6 +56,7 @@ import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.IdComponentMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
@@ -427,6 +428,12 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindObjectMapping(classPropertyMapping, accessor, name, searchableId.accessor(), searchableClass);
             bindClassPropertyIdMapping(searchableId, classPropertyMapping, clazz, type, annotatedElement);
             classMapping.addMapping(classPropertyMapping);
+        } else if (annotation instanceof SearchableIdComponent) {
+            IdComponentMapping componentMapping = new IdComponentMapping();
+            SearchableIdComponent searchableComponent = (SearchableIdComponent) annotation;
+            bindObjectMapping(componentMapping, accessor, name, searchableComponent.accessor(), searchableClass);
+            bindComponent(searchableComponent, componentMapping, clazz, type);
+            classMapping.addMapping(componentMapping);
         } else if (annotation instanceof SearchableProperty) {
             ClassPropertyMapping classPropertyMapping = new ClassPropertyMapping();
             SearchableProperty searchableProperty = (SearchableProperty) annotation;
@@ -510,6 +517,24 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     }
 
     private void bindComponent(SearchableComponent searchableComponent, ComponentMapping componentMapping,
+                               Class<?> clazz, Type type) {
+
+        bindConverter(componentMapping, searchableComponent.converter(), clazz, type);
+
+        if (StringUtils.hasLength(searchableComponent.refAlias())) {
+            componentMapping.setRefAliases(getAliases(searchableComponent.refAlias()));
+        } else {
+            componentMapping.setRefClass(AnnotationsBindingUtils.getCollectionParameterClass(clazz, type));
+        }
+
+        componentMapping.setMaxDepth(searchableComponent.maxDepth());
+
+        componentMapping.setOverrideByName(searchableComponent.override());
+
+        bindCascades(searchableComponent.cascade(), componentMapping);
+    }
+
+    private void bindComponent(SearchableIdComponent searchableComponent, ComponentMapping componentMapping,
                                Class<?> clazz, Type type) {
 
         bindConverter(componentMapping, searchableComponent.converter(), clazz, type);

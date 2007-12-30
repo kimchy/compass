@@ -17,7 +17,6 @@
 package org.compass.core.impl;
 
 import java.io.Reader;
-import java.io.Serializable;
 
 import org.compass.core.CompassAnalyzerHelper;
 import org.compass.core.CompassException;
@@ -172,13 +171,13 @@ public class DefaultCompassSession implements InternalCompassSession {
         searchEngine.flush();
     }
 
-    public Resource getResource(Class clazz, Serializable id) throws CompassException {
+    public Resource getResource(Class clazz, Object id) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(clazz, id);
         return getResourceByIdResource(idResource);
     }
 
-    public Resource getResource(String alias, Serializable id) throws CompassException {
+    public Resource getResource(String alias, Object id) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(alias, id);
         return getResourceByIdResource(idResource);
@@ -196,7 +195,7 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
-    public <T> T get(Class<T> clazz, Serializable id) throws CompassException {
+    public <T> T get(Class<T> clazz, Object id) throws CompassException {
         checkClosed();
         Resource resource = getResource(clazz, id);
         if (resource == null) {
@@ -206,7 +205,7 @@ public class DefaultCompassSession implements InternalCompassSession {
         return (T) getByResource(resource);
     }
 
-    public Object get(String alias, Serializable id) throws CompassException {
+    public Object get(String alias, Object id) throws CompassException {
         checkClosed();
         Resource resource = getResource(alias, id);
         if (resource == null) {
@@ -215,7 +214,7 @@ public class DefaultCompassSession implements InternalCompassSession {
         return getByResource(resource);
     }
 
-    public Object get(String alias, Serializable id, MarshallingContext context) throws CompassException {
+    public Object get(String alias, Object id, MarshallingContext context) throws CompassException {
         checkClosed();
         Resource resource = getResource(alias, id);
         if (resource == null) {
@@ -246,13 +245,13 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
-    public Resource loadResource(Class clazz, Serializable id) throws CompassException {
+    public Resource loadResource(Class clazz, Object id) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(clazz, id);
         return loadResourceByIdResource(idResource);
     }
 
-    public Resource loadResource(String alias, Serializable id) throws CompassException {
+    public Resource loadResource(String alias, Object id) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(alias, id);
         return loadResourceByIdResource(idResource);
@@ -270,14 +269,14 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
-    public <T> T load(Class<T> clazz, Serializable id) throws CompassException {
+    public <T> T load(Class<T> clazz, Object id) throws CompassException {
         checkClosed();
         Resource resource = loadResource(clazz, id);
         //noinspection unchecked
         return (T) getByResource(resource);
     }
 
-    public Object load(String alias, Serializable id) throws CompassException {
+    public Object load(String alias, Object id) throws CompassException {
         checkClosed();
         Resource resource = loadResource(alias, id);
         return getByResource(resource);

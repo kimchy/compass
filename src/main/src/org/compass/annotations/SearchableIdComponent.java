@@ -22,12 +22,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specifies a searchable component on property or field of the {@link Searchable} class.
+ * Specifies a searchable id component on property or field of the {@link org.compass.annotations.Searchable} class.
  *
- * <p>A searchable component is a class field/property that reference another class, which
- * content need to be embedded into the content of its {@link Searchable} class. It will
- * results in searches performed on the component class to return the component field/property
- * searchable class.
+ * <p>A searchable id component is a class field/property that reference another class, which
+ * content need to be embedded into the content of its {@link org.compass.annotations.Searchable} class and
+ * represents one of its ids.
  *
  * <p>The referenced class must have searchable definitions, defined either using annotations
  * or other means (like xml).
@@ -47,42 +46,42 @@ import java.lang.annotation.Target;
  * referenced searchable class mapping definitions.
  *
  * @author kimchy
- * @see Searchable
- * @see SearchableReference
+ * @see org.compass.annotations.Searchable
+ * @see org.compass.annotations.SearchableReference
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SearchableComponent {
+public @interface SearchableIdComponent {
 
     /**
      * The reference alias that points to the searchable class (either defined using
      * annotations or xml). Not required since most of the times it can be automatically
      * detected.
      */
-    String refAlias() default "";
+    public abstract String refAlias() default "";
 
     /**
      * Should the component definitions override an already existing component definitions
      * for the same field/property.
      */
-    boolean override() default true;
+    public abstract boolean override() default true;
 
     /**
      * The operations that will cascade to the target association. Defaults to no operations
      * being cascaded.
      */
-    Cascade[] cascade() default {};
+    public abstract Cascade[] cascade() default {};
 
     /**
      * The depth of cyclic component references allowed.
      */
-    int maxDepth() default 1;
+    public abstract int maxDepth() default 1;
 
     /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ComponentMapping}.
      * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.ComponentMappingConverter}.
      */
-    String converter() default "";
+    public abstract String converter() default "";
 
     /**
      * The property accessor that will be fetch and write the property value.
@@ -91,5 +90,5 @@ public @interface SearchableComponent {
      * explicitly set. Compass also supports custom property accessors, registered
      * under a custom name, which can then be used here as well.
      */
-    String accessor() default "";
+    public abstract String accessor() default "";
 }
