@@ -156,6 +156,24 @@ public class TransactionAwareDataSourceProxy implements DataSource {
     }
 
 
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        try {
+            Method method = dataSource.getClass().getMethod("unwarp", Class.class);
+            return (T) method.invoke(dataSource, iface);
+        } catch (Exception e) {
+            throw new SQLException("Failed to invoke unwrap " + e.getMessage());
+        }
+    }
+
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        try {
+            Method method = dataSource.getClass().getMethod("isWrapperFor", Class.class);
+            return (Boolean) method.invoke(dataSource, iface);
+        } catch (Exception e) {
+            throw new SQLException("Failed to invoke isWrapperFor " + e.getMessage());
+        }
+    }
+
     /**
      * Invocation handler that delegates close calls on JDBC Connections
      * to to being aware of thread-bound transactions.

@@ -71,6 +71,13 @@ public class InputStreamBlob implements Blob {
         return is;
     }
 
+    public void free() throws SQLException {
+    }
+
+    public InputStream getBinaryStream(long pos, long length) throws SQLException {
+        throw new UnsupportedOperationException("");
+    }
+
     public OutputStream setBinaryStream(long pos) throws SQLException {
         throw new UnsupportedOperationException("");
     }

@@ -18,7 +18,6 @@ package org.apache.lucene.store.jdbc.datasource;
 
 import java.io.PrintWriter;
 import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 /**
@@ -54,4 +53,19 @@ public abstract class AbstractDataSource implements DataSource {
         throw new UnsupportedOperationException("setLogWriter");
     }
 
+    //---------------------------------------------------------------------
+    // Implementation of JDBC 4.0's Wrapper interface
+    //---------------------------------------------------------------------
+
+    public Object unwrap(Class iface) throws SQLException {
+        if (!DataSource.class.equals(iface)) {
+            throw new SQLException("DataSource of type [" + getClass().getName() +
+                    "] can only be unwrapped as [javax.sql.DataSource], not as [" + iface.getName());
+        }
+        return this;
+    }
+
+    public boolean isWrapperFor(Class iface) throws SQLException {
+        return DataSource.class.equals(iface);
+    }
 }
