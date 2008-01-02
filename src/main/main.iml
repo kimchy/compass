@@ -814,9 +814,7 @@
           <root url="jar://$MODULE_DIR$/../../lib/coherence/coherence-hibernate.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="intellijad://intellijad" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntryProperties />
