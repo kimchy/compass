@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.spi.InternalCompass;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringCompassContextTests extends TestCase {
 
-    public void testSimpleDaoWithCompassContext() {
+    public void testSimpleDaoWithCompassContext() throws Exception {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("org/compass/spring/test/context/simple-context.xml");
 
         CompassContextDao dao = (CompassContextDao) ctx.getBean("dao");
@@ -46,9 +47,11 @@ public class SpringCompassContextTests extends TestCase {
 
         tr.commit();
         session.close();
+
+        ((DisposableBean) ctx).destroy();
     }
 
-    public void testSimpleDaoWithLocalCompassSession() {
+    public void testSimpleDaoWithLocalCompassSession() throws Exception {
         ApplicationContext ctx = new ClassPathXmlApplicationContext("org/compass/spring/test/context/simple-context.xml");
 
         CompassContextDao2 dao = (CompassContextDao2) ctx.getBean("dao2");
@@ -66,5 +69,7 @@ public class SpringCompassContextTests extends TestCase {
 
         tr.commit();
         session.close();
+
+        ((DisposableBean) ctx).destroy();
     }
 }
