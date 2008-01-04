@@ -396,6 +396,16 @@ public class TransIndex {
      * @throws IOException
      */
     public void rollback() throws IOException {
+        // COMPASS - Close the index reader so we commit the deleted documents
+        if (indexSearcher != null) {
+            indexSearcher.close();
+            indexSearcher = null;
+        }
+        if (indexReader != null) {
+            indexReader.close();
+            indexReader = null;
+        }
+
         // check if firstPhase was called at all
         if (newSegment == null) {
             return;

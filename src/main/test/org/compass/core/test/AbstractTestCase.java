@@ -42,15 +42,17 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
     }
 
     protected void setUp() throws Exception {
+        compass.getSearchEngineIndexManager().clearCache();
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
-            // do nothing
+            e.printStackTrace();
         }
         compass.getSearchEngineIndexManager().verifyIndex();
     }
 
     protected void tearDown() throws Exception {
+        compass.getSearchEngineIndexManager().clearCache();
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {

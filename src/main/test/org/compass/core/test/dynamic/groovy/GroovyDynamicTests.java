@@ -88,5 +88,8 @@ public class GroovyDynamicTests extends AbstractTestCase {
 
         tr.commit();
         session.close();
+
+        compass2.getSearchEngineIndexManager().clearCache();
+        compass2.close();
     }
 }

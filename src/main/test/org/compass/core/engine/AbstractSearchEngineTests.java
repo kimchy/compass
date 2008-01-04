@@ -55,6 +55,7 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
 
     protected void tearDown() throws Exception {
         searchEngine.close();
+        searchEngineFactory.getIndexManager().clearCache();
         searchEngineFactory.getIndexManager().deleteIndex();
         compass.close();
         super.tearDown();

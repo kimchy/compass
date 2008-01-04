@@ -30,6 +30,7 @@ import org.compass.core.Resource;
 import org.compass.gps.ActiveMirrorGpsDevice;
 import org.compass.gps.CompassGps;
 import org.compass.gps.device.jdbc.JdbcUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -67,6 +68,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
 
     protected void tearDown() throws Exception {
         tearDownDB();
+        ((DisposableBean) dataSourceApplicationContext).destroy();
     }
 
     protected void setUpDB() throws SQLException {
