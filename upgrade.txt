@@ -15,6 +15,10 @@ VERSION 2.0 M1
 
 3. Renamed Resource#get to Resource#getValue. (sorry...)
 
+4. Query Strings now support the "dot path" notation (and then some). When executing a query in the format of:
+   "user.address.street:astreet", the query will automatically map to the property meta data / property and also
+    add the user alias to it so it will only match users.
+
 VERSION 1.2 (October 15, 2007)
 ==============================
 

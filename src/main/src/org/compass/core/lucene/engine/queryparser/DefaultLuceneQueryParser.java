@@ -26,6 +26,8 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassMappingAware;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.SearchEngineFactoryAware;
+import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.SearchEngineQueryParseException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.CompassMapping;
@@ -36,11 +38,13 @@ import org.compass.core.mapping.CompassMapping;
  *
  * @author kimchy
  */
-public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappingAware, CompassConfigurable {
+public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappingAware, SearchEngineFactoryAware, CompassConfigurable {
 
     private static Log log = LogFactory.getLog(DefaultLuceneQueryParser.class);
 
     private CompassMapping mapping;
+
+    private SearchEngineFactory searchEngineFactory;
 
     private boolean allowLeadingWildcard;
 
@@ -58,8 +62,12 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         this.mapping = mapping;
     }
 
+    public void setSearchEngineFactory(SearchEngineFactory searchEngineFactory) {
+        this.searchEngineFactory = searchEngineFactory;
+    }
+
     public Query parse(String property, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
-        CompassQueryParser queryParser = new CompassQueryParser(property, analyzer, mapping);
+        CompassQueryParser queryParser = new CompassQueryParser(property, analyzer, mapping, searchEngineFactory);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
@@ -71,7 +79,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     }
 
     public Query parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
-        CompassMultiFieldQueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping);
+        CompassMultiFieldQueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping, searchEngineFactory);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);

@@ -22,6 +22,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
+import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.search.ConstantScorePrefixQuery;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyLookup;
@@ -37,15 +38,44 @@ public class CompassQueryParser extends QueryParser {
 
     private CompassMapping mapping;
 
+    private SearchEngineFactory searchEngineFactory;
+
     private boolean allowConstantScorePrefixQuery;
 
-    public CompassQueryParser(String f, Analyzer a, CompassMapping mapping) {
+    private boolean addAliasQueryWithDotPath = true;
+
+    public CompassQueryParser(String f, Analyzer a, CompassMapping mapping, SearchEngineFactory searchEngineFactory) {
         super(f, a);
         this.mapping = mapping;
+        this.searchEngineFactory = searchEngineFactory;
     }
 
     public void setAllowConstantScorePrefixQuery(boolean allowConstantScorePrefixQuery) {
         this.allowConstantScorePrefixQuery = allowConstantScorePrefixQuery;
+    }
+
+    public void setAddAliasQueryWithDotPath(boolean addAliasQueryWithDotPath) {
+        this.addAliasQueryWithDotPath = addAliasQueryWithDotPath;
+    }
+
+    protected Query getWildcardQuery(String field, String termStr) throws ParseException {
+        ResourcePropertyLookup lookup = null;
+        if (field != null) {
+            lookup = mapping.getResourcePropertyLookup(field);
+            lookup.setConvertOnlyWithDotPath(false);
+            field = lookup.getPath();
+        }
+        return QueryParserUtils.andAliasQueryIfNeeded(super.getWildcardQuery(field, termStr), lookup, addAliasQueryWithDotPath, searchEngineFactory);
+    }
+
+    protected Query getFuzzyQuery(String field, String termStr, float minSimilarity) throws ParseException {
+        ResourcePropertyLookup lookup = null;
+        if (field != null) {
+            lookup = mapping.getResourcePropertyLookup(field);
+            lookup.setConvertOnlyWithDotPath(false);
+            field = lookup.getPath();
+        }
+        return QueryParserUtils.andAliasQueryIfNeeded(super.getFuzzyQuery(field, termStr, minSimilarity), lookup, addAliasQueryWithDotPath, searchEngineFactory);
     }
 
     protected Query getFieldQuery(String field, String queryText) throws ParseException {
@@ -57,7 +87,7 @@ public class CompassQueryParser extends QueryParser {
         if (lookup.hasSpecificConverter()) {
             queryText = lookup.normalizeString(queryText);
         }
-        return super.getFieldQuery(field, queryText);
+        return QueryParserUtils.andAliasQueryIfNeeded(super.getFieldQuery(lookup.getPath(), queryText), lookup, addAliasQueryWithDotPath, searchEngineFactory);
     }
 
     /**
@@ -91,19 +121,22 @@ public class CompassQueryParser extends QueryParser {
             }
         }
 
-        return new ConstantScoreRangeQuery(field, part1, part2, inclusive, inclusive);
+        return QueryParserUtils.andAliasQueryIfNeeded(new ConstantScoreRangeQuery(lookup.getPath(), part1, part2, inclusive, inclusive), lookup, addAliasQueryWithDotPath, searchEngineFactory);
     }
 
     protected Query getPrefixQuery(String field, String termStr) throws ParseException {
+        ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
+        lookup.setConvertOnlyWithDotPath(false);
+
         if (!allowConstantScorePrefixQuery) {
-            return super.getPrefixQuery(field, termStr);
+            return super.getPrefixQuery(lookup.getPath(), termStr);
         }
-        
+
         if (getLowercaseExpandedTerms()) {
             termStr = termStr.toLowerCase();
         }
 
-        Term t = new Term(field, termStr);
-        return new ConstantScorePrefixQuery(t);
+        Term t = new Term(lookup.getPath(), termStr);
+        return QueryParserUtils.andAliasQueryIfNeeded(new ConstantScorePrefixQuery(t), lookup, addAliasQueryWithDotPath, searchEngineFactory);
     }
 }

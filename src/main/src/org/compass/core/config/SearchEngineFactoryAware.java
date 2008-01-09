@@ -16,18 +16,15 @@
 
 package org.compass.core.config;
 
-import org.compass.core.mapping.CompassMapping;
+import org.compass.core.engine.SearchEngineFactory;
 
 /**
- * An interface allowing for custom components that wish to be aware of CompassMapping
- * to be injected with it.
- *
  * @author kimchy
  */
-public interface CompassMappingAware {
+public interface SearchEngineFactoryAware {
 
     /**
-     * Injects the component with the compass mappings.
+     * Injects the search engine factory.
      */
-    void setCompassMapping(CompassMapping mapping);
+    void setSearchEngineFactory(SearchEngineFactory searchEngineFactory);
 }

@@ -10,6 +10,8 @@ import org.compass.core.converter.ResourcePropertyConverter;
  */
 public final class ResourcePropertyLookup {
 
+    private AliasMapping aliasMapping;
+
     private ResourcePropertyMapping resourcePropertyMapping;
 
     private ResourcePropertyMapping[] resourcePropertyMappings;
@@ -33,6 +35,7 @@ public final class ResourcePropertyLookup {
             int dotIndex = name.indexOf('.');
             if (dotIndex != -1) {
                 dotPathAlias = name.substring(0, dotIndex);
+                aliasMapping = compassMapping.getAliasMapping(dotPathAlias);
             }
             this.resourcePropertyMapping = compassMapping.getResourcePropertyMappingByPath(name);
             if (resourcePropertyMapping == null) {
@@ -75,6 +78,14 @@ public final class ResourcePropertyLookup {
      */
     public String getDotPathAlias() {
         return dotPathAlias;
+    }
+
+    /**
+     * Returns the alias mapping if using dot path notation. Returns <code>null</code> if dot path notation
+     * was not used.
+     */
+    public AliasMapping getAliasMapping() {
+        return aliasMapping;
     }
 
     /**

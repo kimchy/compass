@@ -17,7 +17,6 @@
 package org.compass.core.lucene.engine.queryparser;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -27,6 +26,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassMappingAware;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.config.SearchEngineFactoryAware;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.util.ClassUtils;
@@ -38,7 +38,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
 
     private static final Log log = LogFactory.getLog(LuceneQueryParserManager.class);
 
-    private HashMap queryParsers = new HashMap();
+    private HashMap<String, LuceneQueryParser> queryParsers = new HashMap<String, LuceneQueryParser>();
 
     private LuceneSearchEngineFactory searchEngineFactory;
 
@@ -47,11 +47,10 @@ public class LuceneQueryParserManager implements CompassConfigurable {
     }
 
     public void configure(CompassSettings settings) throws CompassException {
-        Map queryParserSettingGroups = settings.getSettingGroups(LuceneEnvironment.QueryParser.PREFIX);
-        for (Iterator it = queryParserSettingGroups.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String queryParserName = (String) entry.getKey();
-            CompassSettings queryParserSettings = (CompassSettings) entry.getValue();
+        Map<String, CompassSettings> queryParserSettingGroups = settings.getSettingGroups(LuceneEnvironment.QueryParser.PREFIX);
+        for (Map.Entry<String, CompassSettings> entry : queryParserSettingGroups.entrySet()) {
+            String queryParserName = entry.getKey();
+            CompassSettings queryParserSettings = entry.getValue();
 
             if (log.isDebugEnabled()) {
                 log.debug("Building query parser [" + queryParserName + "] with settings " + queryParserSettings);
@@ -72,6 +71,9 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             if (queryParser instanceof CompassMappingAware) {
                 ((CompassMappingAware) queryParser).setCompassMapping(searchEngineFactory.getMapping());
             }
+            if (queryParser instanceof SearchEngineFactoryAware) {
+                ((SearchEngineFactoryAware) queryParser).setSearchEngineFactory(searchEngineFactory);
+            }
             queryParsers.put(queryParserName, queryParser);
         }
         if (queryParsers.get(LuceneEnvironment.QueryParser.DEFAULT_GROUP) == null) {
@@ -81,6 +83,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             DefaultLuceneQueryParser queryParser = new DefaultLuceneQueryParser();
             queryParser.configure(new CompassSettings());
             queryParser.setCompassMapping(searchEngineFactory.getMapping());
+            queryParser.setSearchEngineFactory(searchEngineFactory);
             queryParsers.put(LuceneEnvironment.QueryParser.DEFAULT_GROUP, queryParser);
         }
     }
@@ -90,7 +93,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
     }
 
     public LuceneQueryParser getQueryParser(String queryParserName) throws IllegalArgumentException {
-        LuceneQueryParser queryParser = (LuceneQueryParser) queryParsers.get(queryParserName);
+        LuceneQueryParser queryParser = queryParsers.get(queryParserName);
         if (queryParser == null) {
             throw new IllegalArgumentException("No query parser is configured under [" + queryParserName + "]");
         }

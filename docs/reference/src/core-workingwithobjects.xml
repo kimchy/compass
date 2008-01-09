@@ -289,6 +289,10 @@ CompassHits hits =  queryBuilder.bool()
 ]]></programlisting>
 
         </para>
+        
+        <para>
+            When using query strings and query parsers, Compass enhances Lucene query parser to support custom formats (for dates and numbers, for example) as well as support dot path notation. The query: <literal>a.familyname.family-name:london</literal> will result in a query matching on <literal>familyName</literal> to <literal>london</literal> as well as wrapping the query with one that will only match the <literal>a</literal> alias.
+        </para>
 
       </sect2>
 

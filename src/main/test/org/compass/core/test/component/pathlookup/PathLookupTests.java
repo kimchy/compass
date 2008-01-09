@@ -35,9 +35,15 @@ public class PathLookupTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A(1, new B("test"));
-        session.save(a);
+        session.save("a", a);
+
+        a = new A(2, new B("test"));
+        session.save("a1", a);
 
         CompassHits hits = session.queryBuilder().term("a.b.value", "test").hits();
+        assertEquals(2, hits.length());
+
+        hits = session.find("a.b.value:test");
         assertEquals(1, hits.length());
 
         tr.commit();
