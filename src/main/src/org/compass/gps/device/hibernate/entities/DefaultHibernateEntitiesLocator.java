@@ -47,7 +47,7 @@ public class DefaultHibernateEntitiesLocator implements HibernateEntitiesLocator
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
-        ArrayList entitiesList = new ArrayList();
+        ArrayList<EntityInformation> entitiesList = new ArrayList<EntityInformation>();
 
         Map allClassMetaData = sessionFactory.getAllClassMetadata();
         for (Iterator it = allClassMetaData.keySet().iterator(); it.hasNext();) {
