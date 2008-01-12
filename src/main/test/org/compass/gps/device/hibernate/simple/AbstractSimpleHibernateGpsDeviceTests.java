@@ -37,33 +37,37 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
         conf.addClass(Simple.class).addClass(SimpleBase.class).addClass(SimpleExtend.class);
     }
 
+    protected String getHiberanteCfgLocation() {
+        return "/org/compass/gps/device/hibernate/simple/hibernate.cfg.xml";
+    }
+
     protected SessionFactory doSetUpSessionFactory() {
-        Configuration conf = new Configuration().configure("/org/compass/gps/device/hibernate/simple/hibernate.cfg.xml")
+        Configuration conf = new Configuration().configure(getHiberanteCfgLocation())
                 .setProperty(Environment.HBM2DDL_AUTO, "create");
         return conf.buildSessionFactory();
     }
 
     protected void setUpDB(Session session) {
         Simple simple = new Simple();
-        simple.setId(new Integer(1));
+        simple.setId(1);
         simple.setValue("value1");
         session.save(simple);
         simple = new Simple();
-        simple.setId(new Integer(2));
+        simple.setId(2);
         simple.setValue("value2");
         session.save(simple);
         simple = new Simple();
-        simple.setId(new Integer(3));
+        simple.setId(3);
         simple.setValue("value3");
         session.save(simple);
 
         SimpleBase simpleBase = new SimpleBase();
-        simpleBase.setId(new Integer(1));
+        simpleBase.setId(1);
         simpleBase.setValue("value");
         session.save(simpleBase);
 
         SimpleExtend simpleExtend = new SimpleExtend();
-        simpleExtend.setId(new Integer(2));
+        simpleExtend.setId(2);
         simpleExtend.setValue("value");
         simpleExtend.setValueExtend("valueExtended");
         session.save(simpleExtend);
@@ -82,9 +86,9 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
         CompassSession sess = compass.openSession();
         CompassTransaction tr = sess.beginTransaction();
 
-        Simple simple = (Simple) sess.load(Simple.class, new Integer(1));
+        Simple simple = sess.load(Simple.class, 1);
         Assert.assertEquals("value1", simple.getValue());
-        simple = (Simple) sess.load(Simple.class, new Integer(2));
+        simple = sess.load(Simple.class, 2);
         Assert.assertEquals("value2", simple.getValue());
 
         CompassHits hits = sess.find("value1");
@@ -94,7 +98,7 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
         sess.close();
     }
 
-    public void testMirror() throws Exception {
+    public void testMirrorWithCommit() throws Exception {
         compassGps.index();
 
         Session session = sessionFactory.openSession();
@@ -102,16 +106,16 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
 
         // insert a new one
         Simple simple = new Simple();
-        simple.setId(new Integer(4));
+        simple.setId(4);
         simple.setValue("value4");
         session.save(simple);
 
         // delete the second one
-        simple = (Simple) session.load(Simple.class, new Integer(2));
+        simple = (Simple) session.load(Simple.class, 2);
         session.delete(simple);
 
         // update the first one
-        simple = (Simple) session.load(Simple.class, new Integer(1));
+        simple = (Simple) session.load(Simple.class, 1);
         simple.setValue("updatedValue1");
         session.save(simple);
 
@@ -123,14 +127,14 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
         CompassSession sess = compass.openSession();
         CompassTransaction compassTransaction = sess.beginTransaction();
 
-        simple = (Simple) sess.load(Simple.class, new Integer(4));
-        Assert.assertEquals("value4", simple.getValue());
+        simple = sess.load(Simple.class, 4);
+        assertEquals("value4", simple.getValue());
 
-        simple = (Simple) sess.get(Simple.class, new Integer(2));
-        Assert.assertNull(simple);
+        simple = sess.get(Simple.class, 2);
+        assertNull(simple);
 
-        simple = (Simple) sess.load(Simple.class, new Integer(1));
-        Assert.assertEquals("updatedValue1", simple.getValue());
+        simple = sess.load(Simple.class, 1);
+        assertEquals("updatedValue1", simple.getValue());
 
         compassTransaction.commit();
         sess.close();
@@ -142,9 +146,9 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
         CompassSession sess = compass.openSession();
         CompassTransaction tr = sess.beginTransaction();
 
-        SimpleBase simpleBase = (SimpleBase) sess.load(SimpleBase.class, new Integer(1));
+        SimpleBase simpleBase = sess.load(SimpleBase.class, 1);
         Assert.assertEquals("value", simpleBase.getValue());
-        SimpleExtend simpleExtend = (SimpleExtend) sess.load(SimpleExtend.class, new Integer(2));
+        SimpleExtend simpleExtend = sess.load(SimpleExtend.class, 2);
         Assert.assertEquals("value", simpleExtend.getValue());
         Assert.assertEquals("valueExtended", simpleExtend.getValueExtend());
 
@@ -152,7 +156,7 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
                 .queryString("value").toQuery()
                 .setSubIndexes(new String[]{"simple1"})
                 .hits();
-        Assert.assertEquals(2, hits.length());
+        assertEquals(2, hits.length());
 
 
         tr.commit();

@@ -96,6 +96,10 @@ public class SingleCompassGps extends AbstractCompassGps {
         if (indexCompassSettings.getSetting(LuceneEnvironment.LocalCache.DISABLE_LOCAL_CACHE) == null) {
             indexCompassSettings.setBooleanSetting(LuceneEnvironment.LocalCache.DISABLE_LOCAL_CACHE, true);
         }
+        // indexing relies on thread local binding of local transactions
+        if (indexCompassSettings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
+            indexCompassSettings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, false);
+        }
         if (indexCompassSettings.getSetting(CompassEnvironment.Cascade.DISABLE) == null) {
             indexCompassSettings.setBooleanSetting(CompassEnvironment.Cascade.DISABLE, true);
         }

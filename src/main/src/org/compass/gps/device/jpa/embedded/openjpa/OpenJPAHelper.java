@@ -96,7 +96,7 @@ public abstract class OpenJPAHelper {
     /**
      * Returns the index settings that are configured within the {@link javax.persistence.EntityManagerFactory}
      * configuration. Can be used to configure exteranally a {@link org.compass.gps.device.jpa.embedded.JpaCompassGps}
-     * instnace.
+     * instance.
      */
     public Properties getIndexSettings(EntityManagerFactory emf) {
         OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(emf);

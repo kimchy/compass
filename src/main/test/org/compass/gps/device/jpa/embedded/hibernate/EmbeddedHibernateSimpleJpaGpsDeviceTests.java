@@ -1,37 +1,35 @@
-package org.compass.gps.device.jpa.embedded.openjpa;
+package org.compass.gps.device.jpa.embedded.hibernate;
 
 import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 
-import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.gps.device.jpa.AbstractSimpleJpaGpsDeviceTests;
 import org.compass.gps.device.jpa.model.Simple;
+import org.hibernate.ejb.HibernatePersistence;
 
 /**
- * Performs JPA tests using OpenJPA specific support.
+ * Performs JPA tests using Hibernate specific support.
  *
  * @author kimchy
  */
-public class EmbeddedOpenJPASimpleJpaGpsDeviceTests extends AbstractSimpleJpaGpsDeviceTests {
+public class EmbeddedHibernateSimpleJpaGpsDeviceTests extends AbstractSimpleJpaGpsDeviceTests {
 
     protected void setUpCompass() {
-        compass = OpenJPAHelper.getCompass(entityManagerFactory);
+        compass = HibernateJpaHelper.getCompass(entityManagerFactory);
         assertNotNull(compass);
     }
 
     protected void setUpGps() {
-        compassGps = OpenJPAHelper.getCompassGps(entityManagerFactory);
+        compassGps = HibernateJpaHelper.getCompassGps(entityManagerFactory);
         assertNotNull(compass);
     }
 
     protected EntityManagerFactory doSetUpEntityManagerFactory() {
-        EntityManagerFactory emf = new PersistenceProviderImpl().createEntityManagerFactory("embeddedopenjpa", new HashMap());
-        emf.createEntityManager().close();
-        return emf;
+        return new HibernatePersistence().createEntityManagerFactory("embeddedhibernate", new HashMap());
     }
 
     public void testRollbackTransaction() throws Exception {

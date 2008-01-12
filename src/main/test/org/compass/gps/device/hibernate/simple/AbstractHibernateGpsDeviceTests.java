@@ -35,6 +35,8 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
 
     protected Compass compass;
 
+    protected HibernateGpsDevice hibernateGpsDevice;
+
     protected CompassGps compassGps;
 
     protected void setUp() throws Exception {
@@ -71,7 +73,7 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
     }
 
     protected void setUpGpsDevice() {
-        HibernateGpsDevice hibernateGpsDevice = new HibernateGpsDevice();
+        hibernateGpsDevice = new HibernateGpsDevice();
         hibernateGpsDevice.setName("jdoDevice");
         hibernateGpsDevice.setSessionFactory(sessionFactory);
         addDeviceSettings(hibernateGpsDevice);

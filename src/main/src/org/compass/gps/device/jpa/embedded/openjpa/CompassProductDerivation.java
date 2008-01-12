@@ -61,7 +61,7 @@ import org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector;
 /**
  * An OpenJPA Compass product derivation. Simply by adding the Compass jar to the class path this product
  * derivation will be registered with OpenJPA. This derivation will not add Compass support to OpenJPA if
- * not Compass setting is set. The single required setting (for example, within the persistence.xml) is
+ * no Compass setting is set. The single required setting (for example, within the persistence.xml) is
  * Compass engine connection setting ({@link org.compass.core.config.CompassEnvironment#CONNECTION}.
  *
  * <p>The embedded Open JPA support uses Compass GPS and adds an "embedded" Compass, or adds a searchable
@@ -354,10 +354,13 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 CompassSession session = (CompassSession) broker.getUserObject(COMPASS_SESSION_USER_OBJECT_KEY);
                 try {
                     if (openJpaControlledTransaction) {
-                        tr.commit();
+                        try {
+                            tr.commit();
+                        } finally {
+                            session.close();
+                        }
                     }
                 } finally {
-                    session.close();
                     broker.putUserObject(COMPASS_TRANSACTION_USER_OBJECT_KEY, null);
                     broker.putUserObject(COMPASS_SESSION_USER_OBJECT_KEY, null);
                 }
@@ -369,10 +372,13 @@ public class CompassProductDerivation extends AbstractProductDerivation {
                 CompassSession session = (CompassSession) broker.getUserObject(COMPASS_SESSION_USER_OBJECT_KEY);
                 try {
                     if (openJpaControlledTransaction) {
-                        tr.rollback();
+                        try {
+                            tr.rollback();
+                        } finally {
+                            session.close();
+                        }
                     }
                 } finally {
-                    session.close();
                     broker.putUserObject(COMPASS_TRANSACTION_USER_OBJECT_KEY, null);
                     broker.putUserObject(COMPASS_SESSION_USER_OBJECT_KEY, null);
                 }

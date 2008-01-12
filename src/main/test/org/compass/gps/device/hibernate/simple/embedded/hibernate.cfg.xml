@@ -1,0 +1,30 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        
+        <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+        <property name="hibernate.connection.url">jdbc:hsqldb:mem:test</property>
+        <property name="hibernate.connection.username">sa</property>
+        <property name="hibernate.connection.password"></property>
+
+        <property name="compass.engine.connection">target/test-index</property>
+
+        <mapping resource="org/compass/gps/device/hibernate/simple/Simple.hbm.xml"/>
+        <mapping resource="org/compass/gps/device/hibernate/simple/SimpleEx.hbm.xml"/>
+
+        <event type="post-update">
+            <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+        </event>
+        <event type="post-insert">
+            <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+        </event>
+        <event type="post-delete">
+            <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+        </event>
+
+    </session-factory>
+</hibernate-configuration>

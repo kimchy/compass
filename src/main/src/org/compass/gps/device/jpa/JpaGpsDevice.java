@@ -210,6 +210,14 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
         return entitiesIndexer;
     }
 
+    public EntityManagerFactory getEntityManagerFactory() {
+        return this.entityManagerFactory;
+    }
+
+    public EntityManagerFactory getNativeEntityManagerFactory() {
+        return this.nativeEntityManagerFactory;
+    }
+
     /**
      * @see org.compass.gps.MirrorDataChangesGpsDevice#isMirrorDataChanges()
      */

@@ -16,6 +16,7 @@
 
 package org.compass.gps.device.jpa.embedded;
 
+import org.compass.core.Compass;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -28,6 +29,13 @@ import org.compass.gps.impl.SingleCompassGps;
 public class DefaultJpaCompassGps extends SingleCompassGps implements JpaCompassGps {
 
     public static final String JPA_DEVICE_NAME = "jpa";
+
+    public DefaultJpaCompassGps() {
+    }
+
+    public DefaultJpaCompassGps(Compass compass) {
+        super(compass);
+    }
 
     /**
      * Returns the Jps Gps device associated with this Compass Gps. The device is
