@@ -71,8 +71,8 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         }
 
         try {
-            if (log.isDebugEnabled()) {
-                log.debug(device.buildMessage("Creating [" + entity + "]"));
+            if (log.isTraceEnabled()) {
+                log.trace(device.buildMessage("Creating [" + entity + "]"));
             }
             compassGps.executeForMirror(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
@@ -109,8 +109,8 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         }
 
         try {
-            if (log.isDebugEnabled()) {
-                log.debug(device.buildMessage("Updating [" + entity + "]"));
+            if (log.isTraceEnabled()) {
+                log.trace(device.buildMessage("Updating [" + entity + "]"));
             }
             compassGps.executeForMirror(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
@@ -145,8 +145,8 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         }
 
         try {
-            if (log.isDebugEnabled()) {
-                log.debug(device.buildMessage("Deleting [" + entity + "]"));
+            if (log.isTraceEnabled()) {
+                log.trace(device.buildMessage("Deleting [" + entity + "]"));
             }
             compassGps.executeForMirror(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {

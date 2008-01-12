@@ -154,6 +154,9 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             }
         }
         TransactionSyncHolder holder = getOrCreateHolder(event.getSession());
+        if (log.isTraceEnabled()) {
+            log.trace("Deleting [" + entity + "]");
+        }
         holder.session.delete(entity);
         afterOperation(holder);
     }
@@ -172,6 +175,9 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             }
         }
         TransactionSyncHolder holder = getOrCreateHolder(event.getSession());
+        if (log.isTraceEnabled()) {
+            log.trace("Creating [" + entity + "]");
+        }
         holder.session.create(entity);
         afterOperation(holder);
     }
@@ -190,6 +196,9 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             }
         }
         TransactionSyncHolder holder = getOrCreateHolder(event.getSession());
+        if (log.isTraceEnabled()) {
+            log.trace("Updating [" + entity + "]");
+        }
         holder.session.save(entity);
         afterOperation(holder);
     }
@@ -234,6 +243,9 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
         if (compassHolder == null) {
             compassHolder = initCompassHolder(cfg);
             if (compassHolder != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Regsitering new Compass Holder [" + compassHolder + "]");
+                }
                 contextMap.put(cfg, compassHolder);
             }
         }
@@ -254,6 +266,9 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             }
         }
         if (compassProperties.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.debug("No Compass properties defined, disabling Compass");
+            }
             return null;
         }
 
@@ -273,6 +288,9 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             atleastOneClassAdded |= compassConfiguration.tryAddClass(mappedClass);
         }
         if (!atleastOneClassAdded) {
+            if (log.isDebugEnabled()) {
+                log.debug("No searchable class mappings found in Hibernate class mappings, disabling Compass");
+            }
             return null;
         }
 
@@ -375,8 +393,8 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
                 return;
             }
             if (compassHolder.hibernateControlledTransaction) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Committing compass transaction using Hibernate synchronization beforeCompletion on thread [" +
+                if (log.isTraceEnabled()) {
+                    log.trace("Committing compass transaction using Hibernate synchronization beforeCompletion on thread [" +
                             Thread.currentThread().getName() + "]");
                 }
                 holder.tr.commit();
@@ -392,14 +410,14 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
                     if (compassHolder.hibernateControlledTransaction) {
                         try {
                             if (status == Status.STATUS_COMMITTED) {
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Committing compass transaction using Hibernate synchronization afterCompletion on thread [" +
+                                if (log.isTraceEnabled()) {
+                                    log.trace("Committing compass transaction using Hibernate synchronization afterCompletion on thread [" +
                                             Thread.currentThread().getName() + "]");
                                 }
                                 holder.tr.commit();
                             } else {
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Rolling back compass transaction using Hibernate synchronization afterCompletion on thread [" +
+                                if (log.isTraceEnabled()) {
+                                    log.trace("Rolling back compass transaction using Hibernate synchronization afterCompletion on thread [" +
                                             Thread.currentThread().getName() + "]");
                                 }
                                 holder.tr.rollback();
