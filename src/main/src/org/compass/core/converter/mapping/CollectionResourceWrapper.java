@@ -107,6 +107,18 @@ public class CollectionResourceWrapper implements Resource {
         throw new ConversionException("should not be called");
     }
 
+    public Resource setProperty(String name, Object value) throws SearchEngineException {
+        throw new ConversionException("should not be called");
+    }
+
+    public Resource setProperty(String name, Reader value) throws SearchEngineException {
+        throw new ConversionException("should not be called");
+    }
+
+    public Resource setProperty(Property property) {
+        throw new ConversionException("should not be called");
+    }
+
     public Property getProperty(String name) {
         return computeProperty(name);
     }

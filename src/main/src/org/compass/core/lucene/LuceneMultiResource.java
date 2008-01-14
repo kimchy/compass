@@ -127,6 +127,21 @@ public class LuceneMultiResource implements MultiResource, Map<String, Property[
         return this;
     }
 
+    public Resource setProperty(String name, Object value) throws SearchEngineException {
+        currentResource.setProperty(name, value);
+        return this;
+    }
+
+    public Resource setProperty(String name, Reader value) throws SearchEngineException {
+        currentResource.setProperty(name, value);
+        return this;
+    }
+
+    public Resource setProperty(Property property) {
+        currentResource.setProperty(property);
+        return this;
+    }
+
     public Resource removeProperty(String name) {
         currentResource.removeProperty(name);
         return this;

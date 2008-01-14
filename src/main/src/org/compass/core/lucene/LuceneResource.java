@@ -210,6 +210,21 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         return this;
     }
 
+    public Resource setProperty(String name, Object value) throws SearchEngineException {
+        removeProperties(name);
+        return addProperty(name, value);
+    }
+
+    public Resource setProperty(String name, Reader value) throws SearchEngineException {
+        removeProperties(name);
+        return addProperty(name, value);
+    }
+
+    public Resource setProperty(Property property) {
+        removeProperties(property.getName());
+        return addProperty(property);
+    }
+
     public Resource removeProperty(String name) {
         document.removeField(name);
         Iterator<Property> it = properties.iterator();
