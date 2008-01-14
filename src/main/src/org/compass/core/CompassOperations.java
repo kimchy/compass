@@ -27,7 +27,8 @@ public interface CompassOperations {
 
     /**
      * Creates a resource, that is used with the actual Search Engine
-     * implementation.
+     * implementation. <b>Note</b> that this resource will not be created
+     * within the Search Engine.
      *
      * @return a new resource
      * @throws CompassException
@@ -40,10 +41,10 @@ public interface CompassOperations {
      * Property interface (Property.Store and Property.Index). It stores no term
      * vector information (Property.TermVector.NO).
      *
-     * @param name
-     * @param value
-     * @param store
-     * @param index
+     * @param name  The name of the property
+     * @param value The value of the property
+     * @param store Teh store setting for the property
+     * @param index The index setting for the property
      * @return a new property
      * @throws CompassException
      */
@@ -206,6 +207,14 @@ public interface CompassOperations {
      * @throws CompassException
      */
     Resource loadResource(String alias, Object... ids) throws CompassException;
+
+    /**
+     * Saves a resource within Search Engine.
+     *
+     * @param resource The resource to save
+     * @throws CompassException
+     */
+    void saveResource(Resource resource) throws CompassException;
 
     /**
      * Deletes an object from Compass. The object must have been either loaded

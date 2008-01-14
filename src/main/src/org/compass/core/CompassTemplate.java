@@ -393,6 +393,15 @@ public class CompassTemplate implements CompassOperations {
         });
     }
 
+    public void saveResource(final Resource resource) throws CompassException {
+        execute(new CompassCallback<Object>() {
+            public Object doInCompass(CompassSession session) throws CompassException {
+                session.saveResource(resource);
+                return null;
+            }
+        });
+    }
+
     public void save(final String alias, final Object obj) throws CompassException {
         execute(new CompassCallback<Object>() {
             public Object doInCompass(CompassSession session) throws CompassException {

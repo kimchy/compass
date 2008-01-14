@@ -383,6 +383,11 @@ public class DefaultCompassSession implements InternalCompassSession {
         }
     }
 
+    public void saveResource(Resource resource) throws CompassException {
+        searchEngine.save(resource);
+        ResourceKey key = ((InternalResource) resource).resourceKey();
+    }
+
     public void delete(String alias, Object... ids) throws CompassException {
         delete(alias, (Object) ids);
     }
