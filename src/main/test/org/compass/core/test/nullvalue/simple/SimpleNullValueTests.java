@@ -51,4 +51,52 @@ public class SimpleNullValueTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testManagedIdNullValueBothValuesNull() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        a.value = null;
+        a.value2 = null;
+        session.save("a1", a);
+
+        a = (A) session.load("a1", "1");
+        assertEquals(1, a.id);
+        assertNull(a.value);
+        assertNull(a.value2);
+
+        CompassHits hits = session.find("moo");
+        assertEquals(1, hits.length());
+        hits = session.find("value:moo");
+        assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testManagedIdNullValueSingleValueNull() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        a.value = null;
+        a.value2 = "2";
+        session.save("a1", a);
+
+        a = (A) session.load("a1", "1");
+        assertEquals(1, a.id);
+        assertNull(a.value);
+        assertEquals("2", a.value2);
+
+        CompassHits hits = session.find("moo");
+        assertEquals(1, hits.length());
+        hits = session.find("value:moo");
+        assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
 }

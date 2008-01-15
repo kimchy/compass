@@ -13,4 +13,18 @@
         </property>
 
     </class>
+
+    <class name="A" alias="a1">
+
+        <id name="id" accessor="field"/>
+
+        <property name="value" accessor="field">
+            <meta-data null-value="moo">value</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data null-value="moo">value</meta-data>
+        </property>
+
+    </class>
 </compass-core-mapping>

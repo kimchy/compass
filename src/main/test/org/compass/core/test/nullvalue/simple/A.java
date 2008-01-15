@@ -24,4 +24,6 @@ public class A {
     long id;
 
     String value;
+
+    String value2;
 }
