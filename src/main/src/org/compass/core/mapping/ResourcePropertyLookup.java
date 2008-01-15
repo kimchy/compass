@@ -4,7 +4,7 @@ import org.compass.core.converter.Converter;
 import org.compass.core.converter.ResourcePropertyConverter;
 
 /**
-     * A simple lookup class, for a given path, will provide simple access to
+ * A simple lookup class, for a given path, will provide simple access to
  * it's path and value converter. Also supports path escaping ('a.b' or will
  * result in a.b and not alias a and resource property b).
  */
@@ -63,6 +63,24 @@ public final class ResourcePropertyLookup {
      */
     public void setConvertOnlyWithDotPath(boolean convertOnlyWithDotPath) {
         this.convertOnlyWithDotPath = convertOnlyWithDotPath;
+    }
+
+    /**
+     * Returns the analyzer associated with the resource property. <code>null</code> if none
+     * is configured on the resource property or resource level.
+     */
+    public String getAnalyzer() {
+        if (resourcePropertyMapping != null) {
+            if (resourcePropertyMapping.getAnalyzer() != null) {
+                return resourcePropertyMapping.getAnalyzer();
+            }
+        }
+        if (resourcePropertyMapping != null) {
+            if (resourcePropertyMapping.getAnalyzer() != null) {
+                return resourcePropertyMapping.getAnalyzer();
+            }
+        }
+        return null;
     }
 
     /**

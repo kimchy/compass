@@ -19,6 +19,8 @@ package org.compass.core.lucene.engine.queryparser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.queryParser.CompassMultiFieldQueryParser;
+import org.apache.lucene.queryParser.CompassQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
