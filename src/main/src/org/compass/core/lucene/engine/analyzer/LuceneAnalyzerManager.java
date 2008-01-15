@@ -18,7 +18,6 @@ package org.compass.core.lucene.engine.analyzer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -49,15 +48,15 @@ public class LuceneAnalyzerManager {
 
     private static final Log log = LogFactory.getLog(LuceneAnalyzerManager.class);
 
-    private HashMap analyzers = new HashMap();
+    private HashMap<String, Analyzer> analyzers = new HashMap<String, Analyzer>();
 
     private Analyzer defaultAnalyzer;
 
     private Analyzer searchAnalyzer;
 
-    private HashMap aliasAnalyzers = new HashMap();
+    private HashMap<String, Analyzer> aliasAnalyzers = new HashMap<String, Analyzer>();
 
-    private HashMap analyzersFilters = new HashMap();
+    private HashMap<String, LuceneAnalyzerTokenFilterProvider> analyzersFilters = new HashMap<String, LuceneAnalyzerTokenFilterProvider>();
 
     private CompassMapping mapping;
 
@@ -73,13 +72,12 @@ public class LuceneAnalyzerManager {
     }
 
     private void buildAnalyzersFilters(CompassSettings settings) {
-        Map analyzerFilterSettingGroups = settings.getSettingGroups(LuceneEnvironment.AnalyzerFilter.PREFIX);
-        for (Iterator it = analyzerFilterSettingGroups.keySet().iterator(); it.hasNext();) {
-            String analyzerFilterName = (String) it.next();
+        Map<String, CompassSettings> analyzerFilterSettingGroups = settings.getSettingGroups(LuceneEnvironment.AnalyzerFilter.PREFIX);
+        for (String analyzerFilterName : analyzerFilterSettingGroups.keySet()) {
             if (log.isInfoEnabled()) {
                 log.info("Building analyzer filter [" + analyzerFilterName + "]");
             }
-            CompassSettings analyzerFilterSettings = (CompassSettings) analyzerFilterSettingGroups.get(analyzerFilterName);
+            CompassSettings analyzerFilterSettings = analyzerFilterSettingGroups.get(analyzerFilterName);
             String analyzerFilterType = analyzerFilterSettings.getSetting(LuceneEnvironment.AnalyzerFilter.TYPE);
             if (analyzerFilterType == null) {
                 throw new SearchEngineException("Failed to locate analyzer filter [" + analyzerFilterName + "] type, it must be set");
@@ -99,22 +97,21 @@ public class LuceneAnalyzerManager {
     }
 
     private void buildAnalyzers(CompassSettings settings, CompassMapping mapping) {
-        Map analyzerSettingGroups = settings.getSettingGroups(LuceneEnvironment.Analyzer.PREFIX);
-        for (Iterator it = analyzerSettingGroups.keySet().iterator(); it.hasNext();) {
-            String analyzerName = (String) it.next();
+        Map<String, CompassSettings> analyzerSettingGroups = settings.getSettingGroups(LuceneEnvironment.Analyzer.PREFIX);
+        for (String analyzerName : analyzerSettingGroups.keySet()) {
             if (log.isInfoEnabled()) {
                 log.info("Building analyzer [" + analyzerName + "]");
             }
-            Analyzer analyzer = buildAnalyzer(analyzerName, (CompassSettings) analyzerSettingGroups.get(analyzerName));
+            Analyzer analyzer = buildAnalyzer(analyzerName, analyzerSettingGroups.get(analyzerName));
             analyzers.put(analyzerName, analyzer);
         }
-        defaultAnalyzer = (Analyzer) analyzers.get(LuceneEnvironment.Analyzer.DEFAULT_GROUP);
+        defaultAnalyzer = analyzers.get(LuceneEnvironment.Analyzer.DEFAULT_GROUP);
         if (defaultAnalyzer == null) {
             // if no default anayzer is defined, we need to configre one
             defaultAnalyzer = buildAnalyzer(LuceneEnvironment.Analyzer.DEFAULT_GROUP, new CompassSettings());
             analyzers.put(LuceneEnvironment.Analyzer.DEFAULT_GROUP, defaultAnalyzer);
         }
-        searchAnalyzer = (Analyzer) analyzers.get(LuceneEnvironment.Analyzer.SEARCH_GROUP);
+        searchAnalyzer = analyzers.get(LuceneEnvironment.Analyzer.SEARCH_GROUP);
         if (searchAnalyzer == null) {
             searchAnalyzer = defaultAnalyzer;
         }
@@ -124,9 +121,7 @@ public class LuceneAnalyzerManager {
 
     private void buildAnalyzerPerAlias(CompassMapping mapping)
             throws SearchEngineException {
-        ResourceMapping[] resourceMappings = mapping.getRootMappings();
-        for (int i = 0; i < resourceMappings.length; i++) {
-            ResourceMapping resourceMapping = resourceMappings[i];
+        for (ResourceMapping resourceMapping : mapping.getRootMappings()) {
             String alias = resourceMapping.getAlias();
             String resourceAnalyzerName = LuceneEnvironment.Analyzer.DEFAULT_GROUP;
             if (resourceMapping.getAnalyzer() != null) {
@@ -155,7 +150,7 @@ public class LuceneAnalyzerManager {
      * Returns the Lucene {@link Analyzer} registed under the given name.
      */
     public Analyzer getAnalyzer(String analyzerName) {
-        return (Analyzer) analyzers.get(analyzerName);
+        return analyzers.get(analyzerName);
     }
 
     /**
@@ -163,11 +158,11 @@ public class LuceneAnalyzerManager {
      * if the resource has more than one analyzer against one of its properties.
      */
     public Analyzer getAnalyzerByAlias(String alias) {
-        return (Analyzer) aliasAnalyzers.get(alias);
+        return aliasAnalyzers.get(alias);
     }
 
     public Analyzer getAnalyzerByAliasMustExists(String alias) throws SearchEngineException {
-        Analyzer analyzer = (Analyzer) aliasAnalyzers.get(alias);
+        Analyzer analyzer = aliasAnalyzers.get(alias);
         if (analyzer == null) {
             throw new SearchEngineException("No analyzer is defined for alias [" + alias + "]");
         }
@@ -184,7 +179,7 @@ public class LuceneAnalyzerManager {
         String alias = resource.getAlias();
         ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
         if (resourceMapping.getAnalyzerController() == null) {
-            return (Analyzer) aliasAnalyzers.get(alias);
+            return aliasAnalyzers.get(alias);
         }
         ResourceAnalyzerController analyzerController = resourceMapping.getAnalyzerController();
         String analyzerPropertyName = analyzerController.getAnalyzerResourcePropertyName();
@@ -196,7 +191,7 @@ public class LuceneAnalyzerManager {
     }
 
     public Analyzer getAnalyzerMustExist(String analyzerName) throws SearchEngineException {
-        Analyzer analyzer = (Analyzer) analyzers.get(analyzerName);
+        Analyzer analyzer = analyzers.get(analyzerName);
         if (analyzer == null) {
             throw new SearchEngineException("No analyzer is defined for analyzer name [" + analyzerName + "]");
         }
@@ -218,14 +213,14 @@ public class LuceneAnalyzerManager {
         String filters = settings.getSetting(LuceneEnvironment.Analyzer.FILTERS);
         if (filters != null) {
             StringTokenizer tokenizer = new StringTokenizer(filters, ",");
-            ArrayList filterProviders = new ArrayList();
+            ArrayList<LuceneAnalyzerTokenFilterProvider> filterProviders = new ArrayList<LuceneAnalyzerTokenFilterProvider>();
             while (tokenizer.hasMoreTokens()) {
                 String filterProviderLookupName = tokenizer.nextToken();
                 if (!StringUtils.hasText(filterProviderLookupName)) {
                     continue;
                 }
                 LuceneAnalyzerTokenFilterProvider provider =
-                        (LuceneAnalyzerTokenFilterProvider) analyzersFilters.get(filterProviderLookupName);
+                        analyzersFilters.get(filterProviderLookupName);
                 if (provider == null) {
                     throw new SearchEngineException("Failed to located filter provider [" + filterProviderLookupName
                             + "] for analyzer [" + analyzerName + "]");
@@ -233,7 +228,7 @@ public class LuceneAnalyzerManager {
                 filterProviders.add(provider);
             }
             analyzer = new LuceneAnalyzerFilterWrapper(analyzer,
-                    (LuceneAnalyzerTokenFilterProvider[]) filterProviders.toArray(new LuceneAnalyzerTokenFilterProvider[filterProviders.size()]));
+                    filterProviders.toArray(new LuceneAnalyzerTokenFilterProvider[filterProviders.size()]));
         }
         return analyzer;
     }
@@ -246,8 +241,7 @@ public class LuceneAnalyzerManager {
         if (resourceMapping.hasSpecificAnalyzerPerResourceProperty()) {
             PerFieldAnalyzerWrapper perFieldAnalyzerWrapper = new PerFieldAnalyzerWrapper(resourceAnalyzer);
             ResourcePropertyMapping[] propertyMappings = resourceMapping.getResourcePropertyMappings();
-            for (int j = 0; j < propertyMappings.length; j++) {
-                ResourcePropertyMapping propertyMapping = propertyMappings[j];
+            for (ResourcePropertyMapping propertyMapping : propertyMappings) {
                 if (propertyMapping.getAnalyzer() != null) {
                     Analyzer propertyAnalyzer = getAnalyzer(propertyMapping.getAnalyzer());
                     if (propertyAnalyzer == null) {
