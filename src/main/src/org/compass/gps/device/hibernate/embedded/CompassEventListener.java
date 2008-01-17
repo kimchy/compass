@@ -16,11 +16,11 @@
 
 package org.compass.gps.device.hibernate.embedded;
 
-import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 
@@ -350,19 +350,19 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
 
     private class CompassHolder {
 
-        public IdentityHashMap<Transaction, TransactionSyncHolder> syncHolderPerTx = new IdentityHashMap<Transaction, TransactionSyncHolder>();
+        ConcurrentHashMap<Transaction, TransactionSyncHolder> syncHolderPerTx = new ConcurrentHashMap<Transaction, TransactionSyncHolder>();
 
-        public Properties compassProperties;
+        Properties compassProperties;
 
-        public Properties indexSettings;
+        Properties indexSettings;
 
-        public boolean commitBeforeCompletion;
+        boolean commitBeforeCompletion;
 
-        public boolean hibernateControlledTransaction;
+        boolean hibernateControlledTransaction;
 
-        private HibernateMirrorFilter mirrorFilter;
+        HibernateMirrorFilter mirrorFilter;
 
-        public Compass compass;
+        Compass compass;
     }
 
     private class TransactionSyncHolder {
