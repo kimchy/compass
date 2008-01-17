@@ -40,11 +40,11 @@ public final class ResourcePropertyLookup {
             } else {
                 path = resourcePropertyMapping.getPath().getPath();
             }
-        }
-        resourcePropertyMappings = compassMapping.getResourcePropertyMappingsByPath(path);
-        // did not find the resource mapping using "dot path", try and see if we can find a global one
-        if (resourcePropertyMappings != null && resourcePropertyMapping == null) {
-            resourcePropertyMapping = resourcePropertyMappings[0];
+            resourcePropertyMappings = compassMapping.getResourcePropertyMappingsByPath(path);
+            // did not find the resource mapping using "dot path", try and see if we can find a global one
+            if (resourcePropertyMappings != null && resourcePropertyMapping == null) {
+                resourcePropertyMapping = resourcePropertyMappings[0];
+            }
         }
     }
 
