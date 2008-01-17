@@ -689,7 +689,6 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="intellijad://intellijad" />
           <root url="file://$MODULE_DIR$/../../../../../opt/toplink/v2b58g/src" />
         </SOURCES>
       </library>

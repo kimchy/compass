@@ -117,7 +117,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
             return resourceMapping;
         }
         try {
-            Class clazz = ClassUtils.forName(name);
+            Class clazz = ClassUtils.forName(name, checkedCompass.getSettings().getClassLoader());
             return ((InternalCompass) checkedCompass).getMapping().getMappingByClass(clazz);
         } catch (Exception e) {
             // do nothing
@@ -131,7 +131,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
             return resourceMapping;
         }
         try {
-            Class clazz = ClassUtils.forName(name);
+            Class clazz = ClassUtils.forName(name, checkedCompass.getSettings().getClassLoader());
             return ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz);
         } catch (Exception e) {
             // do nothing

@@ -176,6 +176,12 @@ public interface CompassQueryBuilder {
          * Uses the OR operator as the default operator instead of AND operator.
          */
         CompassQueryStringBuilder useOrDefaultOperator();
+
+        /**
+         * Forces the query string to only use the analyzer specificed (or configured)
+         * and not take into account any analyzers that might be specifiec within the mappings.
+         */
+        CompassQueryStringBuilder forceAnalyzer();
     }
 
     /**
@@ -228,6 +234,12 @@ public interface CompassQueryBuilder {
          * (Instead of <code>(title:term1 body:term1) (title:term2 body:term2)</code>).
          */
         CompassMultiPropertyQueryStringBuilder useAndDefaultOperator();
+
+        /**
+         * Forces the query parser to use the analyzer specified or confiugred and not
+         * analyzers that might be defined on different mappings.
+         */
+        CompassMultiPropertyQueryStringBuilder forceAnalyzer();
     }
 
     /**

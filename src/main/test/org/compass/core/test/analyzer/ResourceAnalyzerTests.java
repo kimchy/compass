@@ -87,10 +87,14 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         hits = session.find("the");
         assertEquals(1, hits.length());
 
+        // this won't take into account without forcing the analyzer
         CompassQuery query = session.queryBuilder().queryString("value:the").setAnalyzer("default").toQuery();
+        assertEquals(1, query.hits().getLength());
+
+        query = session.queryBuilder().queryString("value:the").setAnalyzer("default").forceAnalyzer().toQuery();
         assertEquals(0, query.hits().getLength());
 
-        query = session.queryBuilder().queryString("value:the").setAnalyzer("simple").toQuery();
+        query = session.queryBuilder().queryString("value:the").setAnalyzer("simple").forceAnalyzer().toQuery();
         assertEquals(1, query.hits().length());
 
         tr.commit();

@@ -96,7 +96,7 @@ public class DefaultLuceneHighlighterFactory implements LuceneHighlighterFactory
         } else {
             try {
                 // the formatter is the fully qualified class name
-                encoder = (Encoder) ClassUtils.forName(encoderSetting).newInstance();
+                encoder = (Encoder) ClassUtils.forName(encoderSetting, settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new SearchEngineException("Cannot instantiate Lucene encoder [" + encoderSetting
                         + "] for highlighter [" + highlighterName
@@ -150,7 +150,7 @@ public class DefaultLuceneHighlighterFactory implements LuceneHighlighterFactory
         } else {
             try {
                 // the formatter is the fully qualified class name
-                formatter = (Formatter) ClassUtils.forName(formatterSettings).newInstance();
+                formatter = (Formatter) ClassUtils.forName(formatterSettings, settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new SearchEngineException("Cannot instantiate Lucene formatter [" + formatterSettings
                         + "] for highlighter [" + highlighterName

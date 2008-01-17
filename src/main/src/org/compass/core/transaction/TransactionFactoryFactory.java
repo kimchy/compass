@@ -40,7 +40,7 @@ public class TransactionFactoryFactory {
         }
 
         try {
-            TransactionFactory factory = (TransactionFactory) ClassUtils.forName(factoryClassName).newInstance();
+            TransactionFactory factory = (TransactionFactory) ClassUtils.forName(factoryClassName, settings.getClassLoader()).newInstance();
             factory.configure(compass, settings);
             return factory;
         } catch (Exception e) {

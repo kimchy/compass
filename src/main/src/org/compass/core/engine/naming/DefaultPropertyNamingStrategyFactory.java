@@ -46,7 +46,7 @@ public class DefaultPropertyNamingStrategyFactory implements PropertyNamingStrat
         String namingStrategySetting = settings.getSetting(CompassEnvironment.NamingStrategy.TYPE,
                 DefaultPropertyNamingStrategy.class.getName());
         try {
-            namingStrategy = (PropertyNamingStrategy) ClassUtils.forName(namingStrategySetting).newInstance();
+            namingStrategy = (PropertyNamingStrategy) ClassUtils.forName(namingStrategySetting, settings.getClassLoader()).newInstance();
         } catch (Exception e) {
             throw new SearchEngineException("Cannot create naming Strategy [" + namingStrategySetting
                     + "]. Please verify the naming setting at [" + CompassEnvironment.NamingStrategy.TYPE + "]", e);

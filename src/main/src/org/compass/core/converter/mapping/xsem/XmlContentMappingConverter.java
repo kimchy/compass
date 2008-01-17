@@ -75,7 +75,7 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
             xmlContentConverter = new PoolXmlContentConverterWrapper();
         } else {
             try {
-                xmlContentConverter = (XmlContentConverter) ClassUtils.forName(wrapper).newInstance();
+                xmlContentConverter = (XmlContentConverter) ClassUtils.forName(wrapper, settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new ConfigurationException("Failed to create wrapper [" + wrapper +
                         "], either the class name or the short name for existing wrappers is wrong", e);

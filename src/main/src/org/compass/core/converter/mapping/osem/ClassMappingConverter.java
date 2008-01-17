@@ -174,7 +174,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             if (!classMapping.isSupportUnmarshall()) {
                 // we don't support unmarshalling, try and unmarshall just the object with its
                 // ids set.
-                Object obj = constructObjectForUnmarshalling(classMapping, resource);
+                Object obj = constructObjectForUnmarshalling(classMapping, resource, context);
                 for (Mapping id : classMapping.getIdMappings()) {
                     Object idValue = id.getConverter().unmarshall(resource, id, context);
                     if (idValue == null) {
@@ -223,7 +223,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             }
         }
 
-        Object obj = constructObjectForUnmarshalling(classMapping, resource);
+        Object obj = constructObjectForUnmarshalling(classMapping, resource, context);
         context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, obj);
         // we will set here the object, even though no ids have been set,
         // since the ids are the first mappings that will be unmarshalled,
@@ -267,7 +267,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
      * Constructs the object used for unmarshalling (no properties are set/unmarshalled) on it.
      * <code>null</code> return value denotes no un-marshalling should be performed.
      */
-    protected Object constructObjectForUnmarshalling(ClassMapping classMapping, Resource resource) throws ConversionException {
+    protected Object constructObjectForUnmarshalling(ClassMapping classMapping, Resource resource, MarshallingContext context) throws ConversionException {
         // resolve the actual class and constructor
         Class clazz = classMapping.getClazz();
         Constructor constructor = classMapping.getConstructor();
@@ -287,7 +287,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                     return null;
                 }
                 try {
-                    clazz = ClassUtils.forName(className);
+                    clazz = ClassUtils.forName(className, context.getSession().getCompass().getSettings().getClassLoader());
                 } catch (ClassNotFoundException e) {
                     throw new ConversionException("Failed to create class [" + className + "] for unmarshalling", e);
                 }

@@ -98,7 +98,7 @@ public class CompassNamespaceHandler extends NamespaceHandlerSupport {
                 return LocalCompassBean.class;
             } else if (element.getLocalName().equals("context")) {
                 try {
-                    return ClassUtils.forName(COMPASS_CONTEXT_BEAN_POST_PROCESSOR);
+                    return ClassUtils.forName(COMPASS_CONTEXT_BEAN_POST_PROCESSOR, Thread.currentThread().getContextClassLoader());
                 } catch (ClassNotFoundException e) {
                     throw new CompassException("Failed to find class [" + COMPASS_CONTEXT_BEAN_POST_PROCESSOR + "]");
                 }

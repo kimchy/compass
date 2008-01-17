@@ -36,6 +36,8 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
 
     private Analyzer analyzer;
 
+    private boolean forceAnalyzer;
+
     private String queryString;
 
     private QueryParser.Operator operator = QueryParser.Operator.OR;
@@ -71,6 +73,11 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
         return this;
     }
 
+    public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder forceAnalyzer() {
+        this.forceAnalyzer = true;
+        return this;
+    }
+
     public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder setQueryParser(String queryParser) {
         this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getQueryParser(queryParser);
         return this;
@@ -78,7 +85,7 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
 
     public SearchEngineQuery toQuery() {
         Query qQuery = queryParser.parse((String[]) propertyNames.toArray(new String[propertyNames.size()]),
-                operator, analyzer, queryString);
+                operator, analyzer, forceAnalyzer, queryString);
         return new LuceneSearchEngineQuery(searchEngine, qQuery);
     }
 }

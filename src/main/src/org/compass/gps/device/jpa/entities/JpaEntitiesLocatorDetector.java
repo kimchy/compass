@@ -18,6 +18,7 @@ package org.compass.gps.device.jpa.entities;
 
 import javax.persistence.EntityManagerFactory;
 
+import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.support.NativeJpaHelper;
@@ -40,10 +41,10 @@ import org.compass.gps.device.jpa.support.NativeJpaHelper;
  */
 public abstract class JpaEntitiesLocatorDetector {
 
-    public static JpaEntitiesLocator detectLocator(EntityManagerFactory entityManagerFactory) {
+    public static JpaEntitiesLocator detectLocator(EntityManagerFactory entityManagerFactory, CompassSettings settings) {
 
         String locatorClassName =
-                NativeJpaHelper.detectNativeJpa(entityManagerFactory, new NativeJpaHelper.NativeJpaCallback<String>() {
+                NativeJpaHelper.detectNativeJpa(entityManagerFactory, settings, new NativeJpaHelper.NativeJpaCallback<String>() {
 
                     public String onHibernate() {
                         return "org.compass.gps.device.jpa.entities.HibernateJpaEntitiesLocator";
@@ -64,7 +65,7 @@ public abstract class JpaEntitiesLocatorDetector {
                 });
 
         try {
-            Class locatorClass = ClassUtils.forName(locatorClassName);
+            Class locatorClass = ClassUtils.forName(locatorClassName, settings.getClassLoader());
             return (JpaEntitiesLocator) locatorClass.newInstance();
         } catch (Exception e) {
             throw new JpaGpsDeviceException("Failed to create locator class [" + locatorClassName + "]", e);

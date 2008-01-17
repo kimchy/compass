@@ -17,6 +17,7 @@
 package org.compass.core.converter;
 
 import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassSettings;
 
 /**
  * Provides the ability to lookup a converter based on it's type. The type is
@@ -63,4 +64,9 @@ public interface ConverterLookup extends CompassConfigurable {
      * @param registerType  The type to associate the converter with
      */
     void registerConverter(String converterName, Converter converter, Class registerType);
+
+    /**
+     * Return the settings that this converter was created with.
+     */
+    CompassSettings getSettings();
 }

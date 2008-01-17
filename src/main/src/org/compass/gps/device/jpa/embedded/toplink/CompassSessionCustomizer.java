@@ -17,17 +17,15 @@
 package org.compass.gps.device.jpa.embedded.toplink;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceUnitInfo;
 
 import oracle.toplink.essentials.descriptors.ClassDescriptor;
-import oracle.toplink.essentials.ejb.cmp3.persistence.Archive;
-import oracle.toplink.essentials.ejb.cmp3.persistence.PersistenceUnitProcessor;
-import oracle.toplink.essentials.ejb.cmp3.persistence.SEPersistenceUnitInfo;
+import oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider;
 import oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl;
+import oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerSetupImpl;
 import oracle.toplink.essentials.sessions.Session;
 import oracle.toplink.essentials.threetier.ServerSession;
 import oracle.toplink.essentials.tools.sessionconfiguration.SessionCustomizer;
@@ -71,11 +69,18 @@ public class CompassSessionCustomizer implements SessionCustomizer {
         if (log.isDebugEnabled()) {
             log.debug("Compass embedded TopLink Essentials support enabled, initializing ...");
         }
-        Map<Object, Object> toplinkProps = extractProperties(session);
+        PersistenceUnitInfo persistenceUnitInfo = findPersistenceUnitInfo(session);
+        if (persistenceUnitInfo == null) {
+            throw new CompassException("Failed to find Persistence Unit Info");
+        }
+
+        Map<Object, Object> toplinkProps = new HashMap();
+        toplinkProps.putAll(persistenceUnitInfo.getProperties());
+        toplinkProps.putAll(session.getProperties());
 
         String sessionCustomizer = (String) toplinkProps.get(COMPASS_SESSION_CUSTOMIZER);
         if (sessionCustomizer != null) {
-            ((SessionCustomizer) ClassUtils.forName(sessionCustomizer).newInstance()).customize(session);
+            ((SessionCustomizer) ClassUtils.forName(sessionCustomizer, persistenceUnitInfo.getClassLoader()).newInstance()).customize(session);
         }
 
         Properties compassProperties = new Properties();
@@ -100,6 +105,8 @@ public class CompassSessionCustomizer implements SessionCustomizer {
         }
 
         CompassConfiguration compassConfiguration = CompassConfigurationFactory.newConfiguration();
+        // use the same class loader of the persistence info to load Compass classes
+        compassConfiguration.setClassLoader(persistenceUnitInfo.getClassLoader());
         CompassSettings settings = compassConfiguration.getSettings();
         settings.addSettings(compassProperties);
 
@@ -186,35 +193,23 @@ public class CompassSessionCustomizer implements SessionCustomizer {
         }
     }
 
-    /**
-     * A hack to extract the properties from the persistence xml by reading it again.
-     */
-    private Map extractProperties(Session session) throws CompassException {
-        // first, extract the persistence unit name
-        String name = session.getName();
-        if (name.lastIndexOf('-') != -1) {
-            name = name.substring(name.lastIndexOf('-') + 1);
-        }
-        if (log.isTraceEnabled()) {
-            log.trace("Extracting toplink properties using persistence unit name [" + name + "]");
-        }
-
-        final Set<Archive> pars = PersistenceUnitProcessor.findPersistenceArchives();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        for (Archive archive : pars) {
-            Iterator<SEPersistenceUnitInfo> persistenceUnits = PersistenceUnitProcessor.getPersistenceUnits(archive, classLoader).iterator();
-            while (persistenceUnits.hasNext()) {
-                SEPersistenceUnitInfo persistenceUnitInfo = persistenceUnits.next();
-                if (name.equals(persistenceUnitInfo.getPersistenceUnitName())) {
-                    // we found our persistence unit
-                    Map mergedProeprties = new HashMap();
-                    mergedProeprties.putAll(persistenceUnitInfo.getProperties());
-                    mergedProeprties.putAll(session.getProperties());
-                    return mergedProeprties;
-                }
+    protected PersistenceUnitInfo findPersistenceUnitInfo(Session session) {
+        String sessionName = session.getName();
+        int index = sessionName.indexOf('-');
+        while (index != -1) {
+            String urlAndName = sessionName.substring(0, index) + sessionName.substring(index + 1);
+            if (log.isDebugEnabled()) {
+                log.debug("Trying to find PersistenceInfo using [" + urlAndName + "]");
             }
+            EntityManagerSetupImpl emSetup = EntityManagerFactoryProvider.getEntityManagerSetupImpl(urlAndName);
+            if (emSetup != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found PersistenceInfo using [" + urlAndName + "]");
+                }
+                return emSetup.getPersistenceUnitInfo();
+            }
+            index = sessionName.indexOf('-', index + 1);
         }
-        throw new CompassException("Failed to extract persistance unit properties for [" + name + "]");
+        return null;
     }
-
 }

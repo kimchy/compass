@@ -18,6 +18,7 @@ package org.compass.gps.device.jpa.indexer;
 
 import javax.persistence.EntityManagerFactory;
 
+import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.support.NativeJpaHelper;
@@ -27,10 +28,10 @@ import org.compass.gps.device.jpa.support.NativeJpaHelper;
  */
 public abstract class JpaIndexEntitiesIndexerDetector {
 
-    public static JpaIndexEntitiesIndexer detectEntitiesIndexer(EntityManagerFactory entityManagerFactory) {
+    public static JpaIndexEntitiesIndexer detectEntitiesIndexer(EntityManagerFactory entityManagerFactory, CompassSettings settings) {
 
         String locatorClassName =
-                NativeJpaHelper.detectNativeJpa(entityManagerFactory, new NativeJpaHelper.NativeJpaCallback<String>() {
+                NativeJpaHelper.detectNativeJpa(entityManagerFactory, settings, new NativeJpaHelper.NativeJpaCallback<String>() {
 
                     public String onHibernate() {
                         return "org.compass.gps.device.jpa.indexer.HibernateJpaIndexEntitiesIndexer";
@@ -51,7 +52,7 @@ public abstract class JpaIndexEntitiesIndexerDetector {
                 });
 
         try {
-            Class locatorClass = ClassUtils.forName(locatorClassName);
+            Class locatorClass = ClassUtils.forName(locatorClassName, settings.getClassLoader());
             return (JpaIndexEntitiesIndexer) locatorClass.newInstance();
         } catch (Exception e) {
             throw new JpaGpsDeviceException("Failed to create entities indexer class [" + locatorClassName + "]", e);

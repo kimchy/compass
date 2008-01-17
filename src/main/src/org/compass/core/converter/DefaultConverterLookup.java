@@ -102,6 +102,8 @@ public class DefaultConverterLookup implements ConverterLookup {
 
     private final HashMap defaultConveterTypes = new HashMap();
 
+    private CompassSettings settings;
+
     public DefaultConverterLookup() {
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BIGDECIMAL, BigDecimalConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BIGINTEGER, BigIntegerConverter.class);
@@ -131,7 +133,12 @@ public class DefaultConverterLookup implements ConverterLookup {
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Extendend.SQL_TIMESTAMP, SqlTimestampConverter.class);
     }
 
+    public CompassSettings getSettings() {
+        return settings;
+    }
+
     public void configure(CompassSettings settings) throws CompassException {
+        this.settings = settings;
         Map converterGroups = settings.getSettingGroups(CompassEnvironment.Converter.PREFIX);
         // add basic types
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.BIGDECIMAL,
@@ -270,7 +277,7 @@ public class DefaultConverterLookup implements ConverterLookup {
             try {
                 Class converterClass = (Class) defaultConveterTypes.get(converterClassType);
                 if (converterClass == null) {
-                    converterClass = ClassUtils.forName(converterClassType);
+                    converterClass = ClassUtils.forName(converterClassType, settings.getClassLoader());
                 }
                 if (log.isDebugEnabled()) {
                     log.debug("Converter [" + converterName + "] is of type [" + converterClass.getName() + "]");
@@ -294,7 +301,7 @@ public class DefaultConverterLookup implements ConverterLookup {
                         log.debug("Converter [" + converterName + "] registered under register type [" +
                                 registerClass + "]");
                     }
-                    cachedConvertersByClassType.put(ClassUtils.forName(registerClass), converter);
+                    cachedConvertersByClassType.put(ClassUtils.forName(registerClass, settings.getClassLoader()), converter);
                     convertersByClass.put(registerClass, converter);
                 } catch (Exception e) {
                     throw new ConfigurationException("Failed to create register class [" + registerClass + "] " +
@@ -320,7 +327,7 @@ public class DefaultConverterLookup implements ConverterLookup {
                     log.debug("Converter [" + name + "] (default) configured with a non default type [" +
                             converterType + "]");
                 }
-                converter = (Converter) ClassUtils.forName(converterType).newInstance();
+                converter = (Converter) ClassUtils.forName(converterType, settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new ConfigurationException("Failed to create converter type [" + converterType + "] for " +
                         "converter name [" + name + "]");

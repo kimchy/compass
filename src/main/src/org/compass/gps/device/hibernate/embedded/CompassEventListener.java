@@ -324,7 +324,7 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
         String mirrorFilterClass = compassHolder.compassProperties.getProperty(COMPASS_MIRROR_FILTER);
         if (mirrorFilterClass != null) {
             try {
-                compassHolder.mirrorFilter = (HibernateMirrorFilter) ClassUtils.forName(mirrorFilterClass).newInstance();
+                compassHolder.mirrorFilter = (HibernateMirrorFilter) ClassUtils.forName(mirrorFilterClass, compassHolder.compass.getSettings().getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new CompassException("Failed to create mirror filter [" + mirrorFilterClass + "]", e);
             }

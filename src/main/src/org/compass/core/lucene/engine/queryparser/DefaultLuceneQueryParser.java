@@ -68,8 +68,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         this.searchEngineFactory = searchEngineFactory;
     }
 
-    public Query parse(String property, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
-        CompassQueryParser queryParser = new CompassQueryParser(property, analyzer, mapping, searchEngineFactory);
+    public Query parse(String property, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
+        CompassQueryParser queryParser = new CompassQueryParser(property, analyzer, mapping, searchEngineFactory, forceAnalyzer);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
@@ -80,8 +80,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         }
     }
 
-    public Query parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, String queryString) throws SearchEngineQueryParseException {
-        CompassMultiFieldQueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping, searchEngineFactory);
+    public Query parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
+        CompassMultiFieldQueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping, searchEngineFactory, forceAnalyzer);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);

@@ -265,7 +265,7 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
         if (classMappings != null) {
             for (int i = 0; i < classMappings.length; i++) {
-                config.addClass(ClassUtils.forName(classMappings[i]));
+                config.addClass(ClassUtils.forName(classMappings[i], getClassLoader()));
             }
         }
 
@@ -350,6 +350,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     public void destroy() throws Exception {
         this.compass.close();
+    }
+
+    protected ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
     }
 
     /**

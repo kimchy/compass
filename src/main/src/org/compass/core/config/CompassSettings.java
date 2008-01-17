@@ -37,6 +37,8 @@ public class CompassSettings {
 
     private Map<Object, Object> registry = new ConcurrentHashMap<Object, Object>();
 
+    private ClassLoader classLoader;
+
     public CompassSettings() {
         this(new Properties());
     }
@@ -56,7 +58,19 @@ public class CompassSettings {
     public CompassSettings copy() {
         CompassSettings copySettings = new CompassSettings((Properties) settings.clone());
         copySettings.registry = new ConcurrentHashMap<Object, Object>(registry);
+        copySettings.classLoader = classLoader;
         return copySettings;
+    }
+
+    void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public ClassLoader getClassLoader() {
+        if (classLoader == null) {
+            return Thread.currentThread().getContextClassLoader();
+        }
+        return classLoader;
     }
 
     public Properties getProperties() {
@@ -153,7 +167,7 @@ public class CompassSettings {
         if (sValue == null) {
             return clazz;
         }
-        return ClassUtils.forName(sValue);
+        return ClassUtils.forName(sValue, getClassLoader());
     }
 
     public Class getSettingAsClass(String setting, Class clazz, ClassLoader classLoader) throws ClassNotFoundException {

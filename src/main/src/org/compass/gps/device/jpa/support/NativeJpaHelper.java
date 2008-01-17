@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.EntityManagerFactory;
 
+import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.NativeJpaExtractor;
@@ -24,8 +25,8 @@ public abstract class NativeJpaHelper {
         T onUnknown();
     }
 
-    public static <T> T detectNativeJpa(EntityManagerFactory emf, NativeJpaCallback<T> callback) throws JpaGpsDeviceException {
-        EntityManagerFactory nativeEmf = extractNativeJpa(emf);
+    public static <T> T detectNativeJpa(EntityManagerFactory emf, CompassSettings settings, NativeJpaCallback<T> callback) throws JpaGpsDeviceException {
+        EntityManagerFactory nativeEmf = extractNativeJpa(emf, settings);
 
         Set interfaces = ClassUtils.getAllInterfacesAsSet(nativeEmf);
         Set<String> interfacesAsStrings = new HashSet<String>();
@@ -48,7 +49,7 @@ public abstract class NativeJpaHelper {
         return retVal;
     }
 
-    public static EntityManagerFactory extractNativeJpa(EntityManagerFactory emf) {
+    public static EntityManagerFactory extractNativeJpa(EntityManagerFactory emf, CompassSettings settings) {
         Set interfaces = ClassUtils.getAllInterfacesAsSet(emf);
         Set<String> interfacesAsStrings = new HashSet<String>();
         for (Object anInterface : interfaces) {
@@ -60,14 +61,14 @@ public abstract class NativeJpaHelper {
         if (interfacesAsStrings.contains("org.springframework.orm.jpa.EntityManagerFactoryInfo")) {
             try {
                 extractor = (NativeJpaExtractor)
-                        ClassUtils.forName("org.compass.spring.device.jpa.SpringNativeJpaExtractor").newInstance();
+                        ClassUtils.forName("org.compass.spring.device.jpa.SpringNativeJpaExtractor", settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new JpaGpsDeviceException("Failed to load/create spring native extractor", e);
             }
         } else if (interfacesAsStrings.contains("org.jboss.ejb3.entity.InjectedEntityManagerFactory")) {
             try {
                 extractor = (NativeJpaExtractor)
-                        ClassUtils.forName("org.compass.jboss.device.jpa.JBossNativeHibernateJpaExtractor").newInstance();
+                        ClassUtils.forName("org.compass.jboss.device.jpa.JBossNativeHibernateJpaExtractor", settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new JpaGpsDeviceException("Failed to load/create JBoss native extractor", e);
             }
@@ -78,7 +79,7 @@ public abstract class NativeJpaHelper {
         if (extractor != null) {
             nativeEmf = extractor.extractNative(emf);
             // recursivly call in order to find
-            nativeEmf = extractNativeJpa(nativeEmf);
+            nativeEmf = extractNativeJpa(nativeEmf, settings);
         }
         return nativeEmf;
     }

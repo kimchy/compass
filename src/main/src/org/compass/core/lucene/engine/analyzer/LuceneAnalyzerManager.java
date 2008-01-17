@@ -87,7 +87,7 @@ public class LuceneAnalyzerManager {
                     analyzerFilterType = SynonymAnalyzerTokenFilterProvider.class.getName();
                 }
                 LuceneAnalyzerTokenFilterProvider provider =
-                        (LuceneAnalyzerTokenFilterProvider) ClassUtils.forName(analyzerFilterType).newInstance();
+                        (LuceneAnalyzerTokenFilterProvider) ClassUtils.forName(analyzerFilterType, settings.getClassLoader()).newInstance();
                 provider.configure(analyzerFilterSettings);
                 analyzersFilters.put(analyzerFilterName, provider);
             } catch (Exception e) {
@@ -203,7 +203,7 @@ public class LuceneAnalyzerManager {
                 DefaultLuceneAnalyzerFactory.class.getName());
         LuceneAnalyzerFactory analyzerFactory;
         try {
-            analyzerFactory = (LuceneAnalyzerFactory) ClassUtils.forName(analyzerFactorySetting).newInstance();
+            analyzerFactory = (LuceneAnalyzerFactory) ClassUtils.forName(analyzerFactorySetting, settings.getClassLoader()).newInstance();
         } catch (Exception e) {
             throw new SearchEngineException("Cannot create Analyzer factory [" + analyzerFactorySetting
                     + "]. Please verify the analyzer factory setting at [" + LuceneEnvironment.Analyzer.FACTORY + "]",

@@ -75,7 +75,7 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
                         // we stored the class, use it to find the "nearset" class mappings
                         Class clazz;
                         try {
-                            clazz = ClassUtils.forName(pClassName.getStringValue());
+                            clazz = ClassUtils.forName(pClassName.getStringValue(), context.getSession().getCompass().getSettings().getClassLoader());
                         } catch (ClassNotFoundException e) {
                             throw new ConversionException("Failed to create class [" + pClassName.getStringValue() + "]", e);
                         }

@@ -64,7 +64,9 @@ public interface SearchEngineQueryBuilder {
         SearchEngineQueryStringBuilder useAndDefaultOperator();
 
         SearchEngineQueryStringBuilder useOrDefaultOperator();
-        
+
+        SearchEngineQueryStringBuilder forceAnalyzer();
+
         SearchEngineQueryStringBuilder setQueryParser(String queryParser);
     }
 
@@ -77,6 +79,8 @@ public interface SearchEngineQueryBuilder {
         SearchEngineMultiPropertyQueryStringBuilder add(String resourcePropertyName);
 
         SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator();
+
+        SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder forceAnalyzer();
 
         SearchEngineMultiPropertyQueryStringBuilder setQueryParser(String queryParser);
     }

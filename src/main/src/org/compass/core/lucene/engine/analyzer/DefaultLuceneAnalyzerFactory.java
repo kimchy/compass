@@ -80,7 +80,7 @@ public class DefaultLuceneAnalyzerFactory implements LuceneAnalyzerFactory {
         } else {
             // the analyzer must be a fully qualified class, try to instansiate
             try {
-                analyzer = (Analyzer) ClassUtils.forName(analyzerSetting).newInstance();
+                analyzer = (Analyzer) ClassUtils.forName(analyzerSetting, settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new SearchEngineException("Cannot instantiate Lucene Analyzer [" + analyzerSetting
                         + "] for analyzer [" + analyzerName + "]. Please verify the analyzer setting at ["

@@ -101,6 +101,11 @@ public interface Compass extends Referenceable, Serializable {
     SearchEngineIndexManager getSearchEngineIndexManager();
 
     /**
+     * Returns the settings Compass was started with.
+     */
+    CompassSettings getSettings();
+
+    /**
      * Returns <code>true</code> if the Compass instance is already closed
      */
     boolean isClosed();

@@ -17,7 +17,12 @@
 package org.compass.core.util;
 
 import java.beans.Introspector;
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,42 +35,42 @@ import java.util.Set;
  */
 public abstract class ClassUtils {
 
-    /** Suffix for array class names */
+    /**
+     * Suffix for array class names
+     */
     public static final String ARRAY_SUFFIX = "[]";
 
-    /** All primitive classes */
+    /**
+     * All primitive classes
+     */
     private static Class[] PRIMITIVE_CLASSES = {
-        boolean.class, byte.class, char.class, short.class, int.class, long.class, float.class, double.class};
+            boolean.class, byte.class, char.class, short.class, int.class, long.class, float.class, double.class};
 
-    /** The package separator character '.' */
+    /**
+     * The package separator character '.'
+     */
     private static final char PACKAGE_SEPARATOR_CHAR = '.';
 
-    /** The inner class separator character '$' */
+    /**
+     * The inner class separator character '$'
+     */
     private static final char INNER_CLASS_SEPARATOR_CHAR = '$';
 
-    /** The CGLIB class separator character "$$" */
+    /**
+     * The CGLIB class separator character "$$"
+     */
     private static final String CGLIB_CLASS_SEPARATOR_CHAR = "$$";
 
-    /** An empty class array */
+    /**
+     * An empty class array
+     */
     private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
 
     /**
      * Replacement for <code>Class.forName()</code> that also returns Class instances
      * for primitives (like "int") and array class names (like "String[]").
-     * <p>Always uses the thread context class loader.
-     * @param name the name of the Class
-     * @return Class instance for the supplied name
-     * @see java.lang.Class#forName
-     * @see java.lang.Thread#getContextClassLoader
-     */
-    public static Class forName(String name) throws ClassNotFoundException {
-        return forName(name, Thread.currentThread().getContextClassLoader());
-    }
-
-    /**
-     * Replacement for <code>Class.forName()</code> that also returns Class instances
-     * for primitives (like "int") and array class names (like "String[]").
-     * @param name the name of the Class
+     *
+     * @param name        the name of the Class
      * @param classLoader the class loader to use
      * @return Class instance for the supplied name
      * @see java.lang.Class#forName
@@ -87,9 +92,10 @@ public abstract class ClassUtils {
 
     /**
      * Resolve the given class name as primitive class, if appropriate.
+     *
      * @param name the name of the potentially primitive class
      * @return the primitive class, or <code>null</code> if the name does not denote
-     * a primitive class
+     *         a primitive class
      */
     public static Class resolvePrimitiveClassName(String name) {
         // Most class names will be quite long, considering that they
@@ -109,6 +115,7 @@ public abstract class ClassUtils {
     /**
      * Return the short string name of a Java class in decapitalized
      * JavaBeans property format.
+     *
      * @param clazz the class
      * @return the short name rendered in a standard JavaBeans property format
      * @see java.beans.Introspector#decapitalize(String)
@@ -135,6 +142,7 @@ public abstract class ClassUtils {
 
     /**
      * Get the class name without the qualified package name.
+     *
      * @param clazz the class to get the short name for
      * @return the class name of the class without the package name
      * @throws IllegalArgumentException if the class is null
@@ -145,6 +153,7 @@ public abstract class ClassUtils {
 
     /**
      * Get the class name without the qualified package name.
+     *
      * @param className the className to get the short name for
      * @return the class name of the class without the package name
      * @throws IllegalArgumentException if the className is empty
@@ -164,6 +173,7 @@ public abstract class ClassUtils {
     /**
      * Return the qualified name of the given method, consisting of
      * fully qualified interface/class name + "." + method name.
+     *
      * @param method the method
      * @return the qualified name of the method
      */
@@ -175,7 +185,8 @@ public abstract class ClassUtils {
     /**
      * Determine whether the given class has a method with the given signature.
      * Essentially translates <code>NoSuchMethodException</code> to "false".
-     * @param clazz the clazz to analyze
+     *
+     * @param clazz      the clazz to analyze
      * @param methodName the name of the method
      * @param paramTypes the parameter types of the method
      */
@@ -192,7 +203,8 @@ public abstract class ClassUtils {
     /**
      * Return the number of methods with a given name (with any argument types),
      * for the given class and/or its superclasses. Includes non-public methods.
-     * @param clazz the clazz to check
+     *
+     * @param clazz      the clazz to check
      * @param methodName the name of the method
      * @return the number of methods with the given name
      */
@@ -214,7 +226,8 @@ public abstract class ClassUtils {
     /**
      * Does the given class and/or its superclasses at least have one or more
      * methods (with any argument types)? Includes non-public methods.
-     * @param clazz the clazz to check
+     *
+     * @param clazz      the clazz to check
      * @param methodName the name of the method
      * @return whether there is at least one method with the given name
      */
@@ -234,9 +247,10 @@ public abstract class ClassUtils {
 
     /**
      * Return a static method of a class.
+     *
      * @param methodName the static method name
-     * @param clazz the class which defines the method
-     * @param args the parameter types to the method
+     * @param clazz      the class which defines the method
+     * @param args       the parameter types to the method
      * @return the static method, or <code>null</code> if no static method was found
      * @throws IllegalArgumentException if the method name is blank or the clazz is null
      */
@@ -262,7 +276,8 @@ public abstract class ClassUtils {
      * loading a resource file that is in the same package as a class file,
      * although {link org.springframework.core.io.ClassPathResource} is usually
      * even more convenient.
-     * @param clazz the Class whose package will be used as the base
+     *
+     * @param clazz        the Class whose package will be used as the base
      * @param resourceName the resource name to append. A leading slash is optional.
      * @return the built-up resource path
      * @see java.lang.ClassLoader#getResource
@@ -282,8 +297,9 @@ public abstract class ClassUtils {
      * could be concatenated with a slash and the name of a resource, and fed
      * directly to ClassLoader.getResource(). For it to be fed to Class.getResource,
      * a leading slash would also have to be prepended to the return value.
+     *
      * @param clazz the input class. A null value or the default (empty) package
-     * will result in an empty string ("") being returned.
+     *              will result in an empty string ("") being returned.
      * @return a path which represents the package name
      * @see java.lang.ClassLoader#getResource
      * @see java.lang.Class#getResource
@@ -298,6 +314,7 @@ public abstract class ClassUtils {
     /**
      * Return all interfaces that the given object implements as array,
      * including ones implemented by superclasses.
+     *
      * @param object the object to analyse for interfaces
      * @return all interfaces that the given object implements as array
      */
@@ -309,6 +326,7 @@ public abstract class ClassUtils {
     /**
      * Return all interfaces that the given class implements as array,
      * including ones implemented by superclasses.
+     *
      * @param clazz the class to analyse for interfaces
      * @return all interfaces that the given object implements as array
      */
@@ -320,6 +338,7 @@ public abstract class ClassUtils {
     /**
      * Return all interfaces that the given object implements as List,
      * including ones implemented by superclasses.
+     *
      * @param object the object to analyse for interfaces
      * @return all interfaces that the given object implements as List
      */
@@ -330,6 +349,7 @@ public abstract class ClassUtils {
     /**
      * Return all interfaces that the given class implements as Set,
      * including ones implemented by superclasses.
+     *
      * @param clazz the class to analyse for interfaces
      * @return all interfaces that the given object implements as Set
      */
@@ -349,7 +369,7 @@ public abstract class ClassUtils {
      * Returns <code>true</code> if the member is public and the class
      * is public.
      *
-     * @param clazz the class to check for public
+     * @param clazz  the class to check for public
      * @param member the member to check for public
      * @return <code>true</code> if the member is public and the class is public
      */
@@ -377,7 +397,7 @@ public abstract class ClassUtils {
      * @return the default constructor
      */
     public static Constructor getDefaultConstructor(Class clazz) {
-       if (isAbstractClass(clazz))
+        if (isAbstractClass(clazz))
             return null;
         try {
             Constructor constructor = clazz.getDeclaredConstructor(EMPTY_CLASS_ARRAY);

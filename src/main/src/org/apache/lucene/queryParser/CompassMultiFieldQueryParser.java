@@ -47,11 +47,13 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
 
     private boolean addAliasQueryWithDotPath = true;
 
+    private boolean forceAnalyzer;
 
-    public CompassMultiFieldQueryParser(String[] fields, Analyzer analyzer, CompassMapping mapping, SearchEngineFactory searchEngineFactory) {
+    public CompassMultiFieldQueryParser(String[] fields, Analyzer analyzer, CompassMapping mapping, SearchEngineFactory searchEngineFactory, boolean forceAnalyzer) {
         super(fields, analyzer);
         this.mapping = mapping;
         this.searchEngineFactory = (LuceneSearchEngineFactory) searchEngineFactory;
+        this.forceAnalyzer = forceAnalyzer;
     }
 
     public void setAllowConstantScorePrefixQuery(boolean allowConstantScorePrefixQuery) {
@@ -91,11 +93,13 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         if (lookup.hasSpecificConverter()) {
             queryText = lookup.normalizeString(queryText);
         }
-        String analyzerName = lookup.getAnalyzer();
         Analyzer origAnalyzer = null;
-        if (analyzerName != null) {
-            origAnalyzer = analyzer;
-            analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerMustExist(analyzerName);
+        if (!forceAnalyzer) {
+            String analyzerName = lookup.getAnalyzer();
+            if (analyzerName != null) {
+                origAnalyzer = analyzer;
+                analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerMustExist(analyzerName);
+            }
         }
         Query q = QueryParserUtils.andAliasQueryIfNeeded(super.getFieldQuery(lookup.getPath(), queryText), lookup, addAliasQueryWithDotPath, searchEngineFactory);
         if (origAnalyzer != null) {

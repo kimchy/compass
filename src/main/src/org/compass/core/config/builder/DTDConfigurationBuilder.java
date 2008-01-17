@@ -21,9 +21,9 @@ import java.io.File;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.util.ClassUtils;
 import org.compass.core.util.DTDEntityResolver;
 import org.compass.core.util.DomUtils;
-import org.compass.core.util.ClassUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -75,7 +75,7 @@ public class DTDConfigurationBuilder extends AbstractXmlConfigurationBuilder {
                         config.addPackage(pckg);
                     } else if (clazz != null) {
                         try {
-                            config.addClass(ClassUtils.forName(clazz));
+                            config.addClass(ClassUtils.forName(clazz, config.getClassLoader()));
                         } catch (ClassNotFoundException e) {
                             throw new ConfigurationException("Failed map class [" + clazz + "]", e);
                         }

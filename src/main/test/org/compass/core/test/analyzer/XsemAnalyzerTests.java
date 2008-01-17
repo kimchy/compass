@@ -98,8 +98,13 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         hits = session.find("the");
         assertEquals(1, hits.length());
 
-        CompassQuery query = session.queryBuilder().queryString("value:the").setAnalyzer("default").toQuery();
+        // this will only work if we force the analyzer so it won't take into account mappings
+        CompassQuery query = session.queryBuilder().queryString("value:the").setAnalyzer("default").forceAnalyzer().toQuery();
         assertEquals(0, query.hits().getLength());
+
+        // here we don't force so we will get it
+        query = session.queryBuilder().queryString("value:the").setAnalyzer("default").toQuery();
+        assertEquals(1, query.hits().getLength());
 
         query = session.queryBuilder().queryString("value:the").setAnalyzer("simple").toQuery();
         assertEquals(1, query.hits().length());

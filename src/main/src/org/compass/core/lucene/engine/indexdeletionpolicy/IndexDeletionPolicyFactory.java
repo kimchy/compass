@@ -54,7 +54,7 @@ public class IndexDeletionPolicyFactory implements CompassConfigurable {
             return indexDeletionPolicy;
         }
         try {
-            IndexDeletionPolicy indexDeletionPolicy = (IndexDeletionPolicy) ClassUtils.forName(indexDeletionPolicyType).newInstance();
+            IndexDeletionPolicy indexDeletionPolicy = (IndexDeletionPolicy) ClassUtils.forName(indexDeletionPolicyType, settings.getClassLoader()).newInstance();
             if (indexDeletionPolicy instanceof DirectoryConfigurable) {
                 ((DirectoryConfigurable) indexDeletionPolicy).setDirectory(dir);
             }

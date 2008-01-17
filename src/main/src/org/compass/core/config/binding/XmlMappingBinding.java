@@ -421,7 +421,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String className = classConf.getAttribute("name");
         classMapping.setName(defaultPackage + className);
         try {
-            Class clazz = ClassUtils.forName(classMapping.getName());
+            Class clazz = ClassUtils.forName(classMapping.getName(), settings.getClassLoader());
             classMapping.setClazz(clazz);
         } catch (ClassNotFoundException e) {
             throw new ConfigurationException("Failed to find class [" + defaultPackage + classMapping.getName() + "]");
@@ -473,7 +473,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String polyClassName = classConf.getAttribute("poly-class", null);
         if (polyClassName != null) {
             try {
-                classMapping.setPolyClass(ClassUtils.forName(polyClassName));
+                classMapping.setPolyClass(ClassUtils.forName(polyClassName, settings.getClassLoader()));
             } catch (ClassNotFoundException e) {
                 throw new ConfigurationException("Failed to load polyClass [" + polyClassName + "]", e);
             }
@@ -582,7 +582,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String type = dynamicConf.getAttribute("type", null);
         if (type != null) {
             try {
-                dynamicMetaDataMapping.setType(ClassUtils.forName(type));
+                dynamicMetaDataMapping.setType(ClassUtils.forName(type, settings.getClassLoader()));
             } catch (ClassNotFoundException e) {
                 throw new MappingException("Failed to find class [" + type + "]", e);
             }
@@ -856,7 +856,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String type = subIndexHashConf.getAttribute("type", null);
         SubIndexHash subIndexHash;
         try {
-            subIndexHash = (SubIndexHash) ClassUtils.forName(type).newInstance();
+            subIndexHash = (SubIndexHash) ClassUtils.forName(type, settings.getClassLoader()).newInstance();
         } catch (Exception e) {
             throw new ConfigurationException("Failed to create sub index hash of type [" + type + "]", e);
         }

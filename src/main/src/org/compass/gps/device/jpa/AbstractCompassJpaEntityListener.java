@@ -78,7 +78,7 @@ public abstract class AbstractCompassJpaEntityListener {
             return resourceMapping.operationAllowed(cascade);
         }
         try {
-            Class clazz = ClassUtils.forName(name);
+            Class clazz = ClassUtils.forName(name, getCompass().getSettings().getClassLoader());
             resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByClass(clazz);
             if (resourceMapping.isRoot()) {
                 return true;

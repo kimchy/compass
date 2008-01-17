@@ -111,12 +111,12 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
         // build the search engine store
         String subContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "index");
         LuceneSearchEngineStore searchEngineStore =
-                LuceneSearchEngineStoreFactory.createStore(luceneSettings.getConnection(), subContext);
+                LuceneSearchEngineStoreFactory.createStore(luceneSettings.getConnection(), subContext, settings);
         searchEngineStore.configure(this, settings, mapping);
         indexManager = new DefaultLuceneSearchEngineIndexManager(this, searchEngineStore);
 
         try {
-            ClassUtils.forName("org.apache.lucene.search.highlight.Highlighter");
+            ClassUtils.forName("org.apache.lucene.search.highlight.Highlighter", settings.getClassLoader());
             highlighterManager = new LuceneHighlighterManager();
             highlighterManager.configure(settings);
         } catch (ClassNotFoundException e1) {
@@ -129,7 +129,7 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
             log.debug("Using optimizer [" + optimizerClassSetting + "]");
         }
         try {
-            Class optimizerClass = ClassUtils.forName(optimizerClassSetting);
+            Class optimizerClass = ClassUtils.forName(optimizerClassSetting, settings.getClassLoader());
             searchEngineOptimizer = (LuceneSearchEngineOptimizer) optimizerClass.newInstance();
             if (searchEngineOptimizer instanceof CompassConfigurable) {
                 ((CompassConfigurable) searchEngineOptimizer).configure(settings);

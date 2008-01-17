@@ -75,27 +75,27 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
                 }
 
                 for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
-                    processMapping((Mapping) it.next(), clazz);
+                    processMapping((Mapping) it.next(), clazz, settings);
                 }
             }
         }
         return compassMapping;
     }
 
-    private void processMapping(Mapping mapping, Class clazz)
+    private void processMapping(Mapping mapping, Class clazz, CompassSettings settings)
             throws MappingException {
         if (!(mapping instanceof ObjectMapping)) {
             return;
         }
         ObjectMapping objectMapping = (ObjectMapping) mapping;
-        PropertyAccessor pAccessor = propertyAccessorFactory.getPropertyAccessor(objectMapping.getAccessor());
+        PropertyAccessor pAccessor = propertyAccessorFactory.getPropertyAccessor(objectMapping.getAccessor(), settings);
         objectMapping.setGetter(pAccessor.getGetter(clazz, objectMapping.getPropertyName()));
         objectMapping.setSetter(pAccessor.getSetter(clazz, objectMapping.getPropertyName()));
 
         if (mapping instanceof MultipleMapping) {
             MultipleMapping multipleMapping = (MultipleMapping) mapping;
             for (Iterator it = multipleMapping.mappingsIt(); it.hasNext();) {
-                processMapping((Mapping) it.next(), clazz);
+                processMapping((Mapping) it.next(), clazz, settings);
             }
         }
     }

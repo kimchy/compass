@@ -171,6 +171,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
             return this;
         }
 
+        public CompassQueryStringBuilder forceAnalyzer() {
+            queryBuilder.forceAnalyzer();
+            return this;
+        }
+
         public CompassQuery toQuery() {
             SearchEngineQuery query = queryBuilder.toQuery();
             return new DefaultCompassQuery(query, session);
@@ -212,6 +217,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         public CompassMultiPropertyQueryStringBuilder useAndDefaultOperator() {
             queryBuilder.useAndDefaultOperator();
+            return this;
+        }
+
+        public CompassMultiPropertyQueryStringBuilder forceAnalyzer() {
+            queryBuilder.forceAnalyzer();
             return this;
         }
 

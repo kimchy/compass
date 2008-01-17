@@ -69,7 +69,7 @@ public class LuceneHighlighterManager {
             highlighterFactory = new DefaultLuceneHighlighterFactory();
         } else {
             try {
-                highlighterFactory = (LuceneHighlighterFactory) ClassUtils.forName(highlighterFactorySetting)
+                highlighterFactory = (LuceneHighlighterFactory) ClassUtils.forName(highlighterFactorySetting, settings.getClassLoader())
                         .newInstance();
             } catch (Exception e) {
                 throw new SearchEngineException("Cannot create Highlighter factory [" + highlighterFactorySetting

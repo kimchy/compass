@@ -125,7 +125,7 @@ public abstract class MappingProcessorUtils {
 
         try {
             if (className != null) {
-                clazz = ClassUtils.forName(className);
+                clazz = ClassUtils.forName(className, converterLookup.getSettings().getClassLoader());
             }
         } catch (ClassNotFoundException e) {
             throw new MappingException("Failed to find class [" + className + "]", e);

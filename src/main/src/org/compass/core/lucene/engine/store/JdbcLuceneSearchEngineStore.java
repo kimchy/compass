@@ -80,7 +80,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
                 DriverManagerDataSourceProvider.class.getName());
         try {
             dataSourceProvider =
-                    (DataSourceProvider) ClassUtils.forName(dataSourceProviderClassName).newInstance();
+                    (DataSourceProvider) ClassUtils.forName(dataSourceProviderClassName, settings.getClassLoader()).newInstance();
             if (log.isDebugEnabled()) {
                 log.debug("Using data source provider [" + dataSourceProvider.getClass().getName() + "]");
             }
@@ -99,7 +99,7 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
             }
         } else {
             try {
-                dialect = (Dialect) ClassUtils.forName(dialectClassName).newInstance();
+                dialect = (Dialect) ClassUtils.forName(dialectClassName, settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new ConfigurationException("Failed to configure dialect [" + dialectClassName + "]");
             }

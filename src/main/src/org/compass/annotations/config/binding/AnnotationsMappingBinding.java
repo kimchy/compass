@@ -89,7 +89,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
         Package pckg;
         try {
-            pckg = ClassUtils.forName(packageName + ".package-info").getPackage();
+            pckg = ClassUtils.forName(packageName + ".package-info", settings.getClassLoader()).getPackage();
         } catch (ClassNotFoundException e) {
             return false;
         }

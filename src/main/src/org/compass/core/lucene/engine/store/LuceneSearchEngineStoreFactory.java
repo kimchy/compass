@@ -21,6 +21,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
+import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.util.ClassUtils;
 
@@ -34,7 +35,7 @@ public class LuceneSearchEngineStoreFactory {
 
     public static final String JDBC_PREFIX = "jdbc://";
 
-    public static LuceneSearchEngineStore createStore(String connection, String subContext) {
+    public static LuceneSearchEngineStore createStore(String connection, String subContext, CompassSettings settings) {
         if (connection.startsWith(MEM_PREFIX)) {
             return new RAMLuceneSearchEngineStore(connection.substring(MEM_PREFIX.length(), connection.length()), subContext);
         }
@@ -65,7 +66,7 @@ public class LuceneSearchEngineStoreFactory {
             }
             String className = props.getProperty("type");
             try {
-                Class storeClass = ClassUtils.forName(className);
+                Class storeClass = ClassUtils.forName(className, settings.getClassLoader());
                 Constructor storeConst = storeClass.getConstructor(new Class[]{String.class, String.class});
                 return (LuceneSearchEngineStore) storeConst.newInstance(new Object[]{connection.substring(index + 3), subContext});
             } catch (InvocationTargetException e) {

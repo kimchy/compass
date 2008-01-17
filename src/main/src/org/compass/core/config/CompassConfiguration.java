@@ -82,6 +82,8 @@ public class CompassConfiguration {
 
     private CompassSettings settings;
 
+    private ClassLoader classLoader;
+
     protected CompassMappingBinding mappingBinding;
 
     protected ConfigurationBuilder configurationBuilder = new SmartConfigurationBuilder();
@@ -104,6 +106,25 @@ public class CompassConfiguration {
         mappingBinding.addMappingBinding(new XmlMappingBinding());
         mappingBinding.addMappingBinding(new AnnotationsMappingBinding());
         mappingBinding.addMappingBinding(new OverrideAnnotationsWithCpmMappingBinding());
+    }
+
+    /**
+     * Sets the class loader that will be used to load classes and resources.
+     */
+    public CompassConfiguration setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+        this.settings.setClassLoader(classLoader);
+        return this;
+    }
+
+    /**
+     * Returns the class loader that will be used to load classes and resources.
+     */
+    public ClassLoader getClassLoader() {
+        if (this.classLoader == null) {
+            return Thread.currentThread().getContextClassLoader();
+        }
+        return this.classLoader;
     }
 
     /**
@@ -164,6 +185,10 @@ public class CompassConfiguration {
      */
     public Compass buildCompass() throws CompassException {
 
+        CompassSettings copySettings = settings.copy();
+
+        copySettings.setClassLoader(getClassLoader());
+
         // add any mappings set in the properties
         for (Iterator it = settings.keySet().iterator(); it.hasNext();) {
             String setting = (String) it.next();
@@ -173,16 +198,13 @@ public class CompassConfiguration {
                     addResource(mapping);
                 } else {
                     try {
-                        addClass(ClassUtils.forName(mapping));
+                        addClass(ClassUtils.forName(mapping, copySettings.getClassLoader()));
                     } catch (ClassNotFoundException e) {
                         throw new CompassException("Failed to find class [" + mapping + "]");
                     }
                 }
             }
         }
-
-
-        CompassSettings copySettings = settings.copy();
 
         ConverterLookup converterLookup = new DefaultConverterLookup();
         registerExtraConverters(converterLookup);

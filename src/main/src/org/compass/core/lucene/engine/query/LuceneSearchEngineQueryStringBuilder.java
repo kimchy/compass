@@ -42,6 +42,8 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
 
     private LuceneQueryParser queryParser;
 
+    private boolean forceAnalyzer;
+
     public LuceneSearchEngineQueryStringBuilder(LuceneSearchEngine searchEngine, String queryString) {
         this.searchEngine = searchEngine;
         this.queryString = queryString;
@@ -74,6 +76,11 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
         return this;
     }
 
+    public SearchEngineQueryBuilder.SearchEngineQueryStringBuilder forceAnalyzer() {
+        this.forceAnalyzer = true;
+        return this;
+    }
+
     public SearchEngineQueryBuilder.SearchEngineQueryStringBuilder setQueryParser(String queryParser) {
         this.queryParser = searchEngine.getSearchEngineFactory().getQueryParserManager().getQueryParser(queryParser);
         return this;
@@ -84,7 +91,7 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
         if (defaultSearch == null) {
             defaultSearch = searchEngine.getSearchEngineFactory().getLuceneSettings().getDefaultSearchPropery();
         }
-        Query qQuery = queryParser.parse(defaultSearch, operator, analyzer, queryString);
+        Query qQuery = queryParser.parse(defaultSearch, operator, analyzer, forceAnalyzer, queryString);
         return new LuceneSearchEngineQuery(searchEngine, qQuery);
     }
 }

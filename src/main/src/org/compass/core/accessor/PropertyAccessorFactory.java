@@ -73,7 +73,7 @@ public class PropertyAccessorFactory implements CompassConfigurable {
             }
             PropertyAccessor propertyAccessor;
             try {
-                propertyAccessor = (PropertyAccessor) ClassUtils.forName(paType).newInstance();
+                propertyAccessor = (PropertyAccessor) ClassUtils.forName(paType, settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new ConfigurationException("Failed to create property accessor [" + paName + "] type", e);
             }
@@ -90,7 +90,7 @@ public class PropertyAccessorFactory implements CompassConfigurable {
      * configured registry of property accessors, will return it. If nothing is found in
      * the registry will try to instanciate it using the type as the class name.
      */
-    public PropertyAccessor getPropertyAccessor(String type) throws MappingException {
+    public PropertyAccessor getPropertyAccessor(String type, CompassSettings settings) throws MappingException {
 
         if (type == null) {
             PropertyAccessor propertyAccessor =
@@ -108,7 +108,7 @@ public class PropertyAccessorFactory implements CompassConfigurable {
 
         Class accessorClass;
         try {
-            accessorClass = ClassUtils.forName(type);
+            accessorClass = ClassUtils.forName(type, settings.getClassLoader());
         } catch (ClassNotFoundException cnfe) {
             throw new MappingException("Could not find PropertyAccessor class [" + type + "]", cnfe);
         }

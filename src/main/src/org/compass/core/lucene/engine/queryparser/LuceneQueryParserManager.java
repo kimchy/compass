@@ -61,7 +61,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             }
             LuceneQueryParser queryParser;
             try {
-                queryParser = (LuceneQueryParser) ClassUtils.forName(queryParserType).newInstance();
+                queryParser = (LuceneQueryParser) ClassUtils.forName(queryParserType, settings.getClassLoader()).newInstance();
             } catch (Exception e) {
                 throw new ConfigurationException("Failed to create query parser class [" + queryParserType + "]", e);
             }

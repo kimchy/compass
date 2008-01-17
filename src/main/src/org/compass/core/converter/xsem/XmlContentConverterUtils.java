@@ -23,7 +23,7 @@ public abstract class XmlContentConverterUtils {
         }
         XmlContentConverter xmlContentConverter = null;
         try {
-            xmlContentConverter = (XmlContentConverter) ClassUtils.forName(type).newInstance();
+            xmlContentConverter = (XmlContentConverter) ClassUtils.forName(type, settings.getClassLoader()).newInstance();
         } catch (Exception e) {
             throw new ConfigurationException("Failed to create xmlContent [" + type + "]", e);
         }

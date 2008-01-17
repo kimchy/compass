@@ -18,6 +18,7 @@ package org.compass.gps.device.jpa.lifecycle;
 
 import javax.persistence.EntityManagerFactory;
 
+import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.support.NativeJpaHelper;
@@ -37,10 +38,10 @@ import org.compass.gps.device.jpa.support.NativeJpaHelper;
  */
 public abstract class JpaEntityLifecycleInjectorDetector {
 
-    public static JpaEntityLifecycleInjector detectInjector(EntityManagerFactory entityManagerFactory)
+    public static JpaEntityLifecycleInjector detectInjector(EntityManagerFactory entityManagerFactory, CompassSettings settings)
             throws JpaGpsDeviceException {
         String injectorClassName =
-                NativeJpaHelper.detectNativeJpa(entityManagerFactory, new NativeJpaHelper.NativeJpaCallback<String>() {
+                NativeJpaHelper.detectNativeJpa(entityManagerFactory, settings, new NativeJpaHelper.NativeJpaCallback<String>() {
 
                     public String onHibernate() {
                         return "org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityLifecycleInjector";
@@ -64,7 +65,7 @@ public abstract class JpaEntityLifecycleInjectorDetector {
         }
 
         try {
-            Class injectorClass = ClassUtils.forName(injectorClassName);
+            Class injectorClass = ClassUtils.forName(injectorClassName, settings.getClassLoader());
             return (JpaEntityLifecycleInjector) injectorClass.newInstance();
         } catch (Exception e) {
             throw new JpaGpsDeviceException("Failed to create injector class [" + injectorClassName + "]", e);

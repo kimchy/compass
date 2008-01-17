@@ -710,7 +710,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 if ("resource".equals(nodeName)) {
                     config.addResource(getElementAttribute(mappingEle, "location"));
                 } else if ("class".equals(nodeName)) {
-                    config.addClass(ClassUtils.forName(getElementAttribute(mappingEle, "name")));
+                    config.addClass(ClassUtils.forName(getElementAttribute(mappingEle, "name"), config.getClassLoader()));
                 } else if ("jar".equals(nodeName)) {
                     config.addJar(new File(getElementAttribute(mappingEle, "path")));
                 } else if ("file".equals(nodeName)) {

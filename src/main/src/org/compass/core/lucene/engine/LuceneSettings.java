@@ -148,7 +148,7 @@ public class LuceneSettings {
         String transIsolationClassSetting = settings.getSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, null);
         if (transIsolationClassSetting != null) {
             try {
-                transactionIsolationClass = ClassUtils.forName(transIsolationClassSetting);
+                transactionIsolationClass = ClassUtils.forName(transIsolationClassSetting, settings.getClassLoader());
             } catch (ClassNotFoundException e) {
                 throw new SearchEngineException("Can't find transaction class [" + transIsolationClassSetting + "]", e);
             }

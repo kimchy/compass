@@ -29,7 +29,7 @@ public class FirstLevelCacheFactory implements CompassConfigurable {
             String firstLevelCacheSetting = settings.getSetting(CompassEnvironment.Cache.FirstLevel.TYPE,
                     DefaultFirstLevelCache.class.getName());
             try {
-                firstLevelCacheClass = ClassUtils.forName(firstLevelCacheSetting);
+                firstLevelCacheClass = ClassUtils.forName(firstLevelCacheSetting, settings.getClassLoader());
             } catch (ClassNotFoundException e) {
                 throw new ConfigurationException("Failed to find class name [" + firstLevelCacheSetting
                         + "] for first level cache", e);

@@ -150,7 +150,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
                         + nativeJpaExtractor.getClass().getName() + "]"));
             }
         } else {
-            nativeEntityManagerFactory = NativeJpaHelper.extractNativeJpa(entityManagerFactory);
+            nativeEntityManagerFactory = NativeJpaHelper.extractNativeJpa(entityManagerFactory, compassGps.getMirrorCompass().getSettings());
             if (log.isDebugEnabled()) {
                 log.debug(buildMessage("Using native EntityManagerFactory ["
                         + nativeEntityManagerFactory.getClass().getName() + "] using default extractor"));
@@ -158,7 +158,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
         }
 
         if (entitiesLocator == null) {
-            entitiesLocator = JpaEntitiesLocatorDetector.detectLocator(nativeEntityManagerFactory);
+            entitiesLocator = JpaEntitiesLocatorDetector.detectLocator(nativeEntityManagerFactory, compassGps.getMirrorCompass().getSettings());
             if (log.isDebugEnabled()) {
                 log.debug(buildMessage("Using index entityLocator [" + entitiesLocator.getClass().getName() + "]"));
             }
@@ -166,7 +166,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
 
         if (injectEntityLifecycleListener && mirrorDataChanges) {
             if (lifecycleInjector == null) {
-                lifecycleInjector = JpaEntityLifecycleInjectorDetector.detectInjector(nativeEntityManagerFactory);
+                lifecycleInjector = JpaEntityLifecycleInjectorDetector.detectInjector(nativeEntityManagerFactory, compassGps.getMirrorCompass().getSettings());
             }
             if (lifecycleInjector == null) {
                 throw new JpaGpsDeviceException(buildMessage("Failed to locate lifecycleInjector"));
@@ -178,7 +178,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
         }
 
         if (entitiesIndexer == null) {
-            entitiesIndexer = JpaIndexEntitiesIndexerDetector.detectEntitiesIndexer(nativeEntityManagerFactory);
+            entitiesIndexer = JpaIndexEntitiesIndexerDetector.detectEntitiesIndexer(nativeEntityManagerFactory, compassGps.getMirrorCompass().getSettings());
         }
         if (log.isDebugEnabled()) {
             log.debug(buildMessage("Using entities indexer [" + entitiesIndexer.getClass().getName() + "]"));

@@ -16,7 +16,11 @@
 
 package org.compass.core.lucene.engine.highlighter;
 
-import org.apache.lucene.search.highlight.*;
+import org.apache.lucene.search.highlight.Encoder;
+import org.apache.lucene.search.highlight.Formatter;
+import org.apache.lucene.search.highlight.Fragmenter;
+import org.apache.lucene.search.highlight.NullFragmenter;
+import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.compass.core.CompassHighlighter;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
@@ -77,7 +81,7 @@ public class DefaultLuceneHighlighterSettings implements LuceneHighlighterSettin
         }
         Fragmenter oFragmenter;
         try {
-            Class fragmenterClass = ClassUtils.forName(fragmenterSetting);
+            Class fragmenterClass = ClassUtils.forName(fragmenterSetting, settings.getClassLoader());
             oFragmenter = (Fragmenter) fragmenterClass.newInstance();
         } catch (Exception e) {
             throw new SearchEngineException("Failed to create highlighter fragmenter class [" + fragmenterSetting

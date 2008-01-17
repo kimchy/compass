@@ -81,7 +81,7 @@ public abstract class OpenJPAHelper {
     }
 
     /**
-     * Returns the current Compass session associated with the {@link oracle.toplink.essentials.ejb.cmp3.EntityManager}.
+     * Returns the current Compass session associated with the {@link javax.persistence.EntityManager}.
      * Compass Session is associated with an Entity Manager when a transaction is started and removed when the
      * transaction commits/rollsback.
      *

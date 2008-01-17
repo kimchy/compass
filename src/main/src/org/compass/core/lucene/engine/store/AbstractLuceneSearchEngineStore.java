@@ -131,7 +131,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                 }
                 DirectoryWrapperProvider dw;
                 try {
-                    dw = (DirectoryWrapperProvider) ClassUtils.forName(dwType).newInstance();
+                    dw = (DirectoryWrapperProvider) ClassUtils.forName(dwType, settings.getClassLoader()).newInstance();
                 } catch (Exception e) {
                     throw new ConfigurationException("Failed to create directory wrapper [" + dwName + "]", e);
                 }
@@ -246,7 +246,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             } else {
                 Object temp;
                 try {
-                    temp = ClassUtils.forName(lockFactoryType).newInstance();
+                    temp = ClassUtils.forName(lockFactoryType, luceneSettings.getSettings().getClassLoader()).newInstance();
                 } catch (Exception e) {
                     throw new SearchEngineException("Failed to create lock type [" + lockFactoryType + "]", e);
                 }

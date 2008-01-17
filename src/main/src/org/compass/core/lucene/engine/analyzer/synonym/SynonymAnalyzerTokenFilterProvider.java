@@ -45,7 +45,7 @@ public class SynonymAnalyzerTokenFilterProvider implements LuceneAnalyzerTokenFi
                     LuceneEnvironment.AnalyzerFilter.Synonym.LOOKUP + "] setting for the group");
         }
         try {
-            synonymLookupProvider = (SynonymLookupProvider) ClassUtils.forName(lookupProviderClassName).newInstance();
+            synonymLookupProvider = (SynonymLookupProvider) ClassUtils.forName(lookupProviderClassName, settings.getClassLoader()).newInstance();
         } catch (Exception e) {
             throw new SearchEngineException("Failed to create lookup synonym provider [" + lookupProviderClassName + "]", e);
         }
