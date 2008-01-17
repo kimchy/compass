@@ -69,7 +69,7 @@ public class EmbeddedOpenJPAEventListener extends AbstractDeviceJpaEntityListene
         } catch (Exception e) {
             log.error("Failed while deleting [" + entity + "]", e);
             if (throwExceptionOnError()) {
-                throw new JpaGpsDeviceException("Failed while unpdating [" + entity + "]", e);
+                throw new JpaGpsDeviceException("Failed while deleting [" + entity + "]", e);
             }
         }
     }
@@ -94,7 +94,7 @@ public class EmbeddedOpenJPAEventListener extends AbstractDeviceJpaEntityListene
         } catch (Exception e) {
             log.error("Failed while creating [" + entity + "]", e);
             if (throwExceptionOnError()) {
-                throw new JpaGpsDeviceException("Failed while unpdating [" + entity + "]", e);
+                throw new JpaGpsDeviceException("Failed while creating [" + entity + "]", e);
             }
         }
     }
@@ -119,7 +119,7 @@ public class EmbeddedOpenJPAEventListener extends AbstractDeviceJpaEntityListene
         } catch (Exception e) {
             log.error("Failed while updating [" + entity + "]", e);
             if (throwExceptionOnError()) {
-                throw new JpaGpsDeviceException("Failed while unpdating [" + entity + "]", e);
+                throw new JpaGpsDeviceException("Failed while updating [" + entity + "]", e);
             }
         }
     }

@@ -100,14 +100,20 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
 
     }
 
-    private TopLinkEssentialsEventListener eventListener;
+    private DescriptorEventListener eventListener;
+
+    public void setEventListener(DescriptorEventListener eventListener) {
+        this.eventListener = eventListener;
+    }
 
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
-        eventListener = new TopLinkEssentialsEventListener(device);
-        
+        if (eventListener == null) {
+            eventListener = new TopLinkEssentialsEventListener(device);
+        }
+
         EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) entityManagerFactory;
         Session session = emf.getServerSession();
         Map descriptors = session.getDescriptors();

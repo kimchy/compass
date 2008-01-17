@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.gps.device.jpa.embedded.openjpa;
+package org.compass.gps.device.jpa.embedded.toplink;
 
 import java.util.HashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 
-import org.apache.openjpa.persistence.PersistenceProviderImpl;
+import oracle.toplink.essentials.PersistenceProvider;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.gps.device.jpa.AbstractSimpleJpaGpsDeviceTests;
@@ -32,22 +32,20 @@ import org.compass.gps.device.jpa.model.Simple;
  *
  * @author kimchy
  */
-public class EmbeddedOpenJPASimpleJpaGpsDeviceTests extends AbstractSimpleJpaGpsDeviceTests {
+public class EmbeddedToplinkSimpleJpaGpsDeviceTests extends AbstractSimpleJpaGpsDeviceTests {
 
     protected void setUpCompass() {
-        compass = OpenJPAHelper.getCompass(entityManagerFactory);
+        compass = TopLinkHelper.getCompass(entityManagerFactory);
         assertNotNull(compass);
     }
 
     protected void setUpGps() {
-        compassGps = OpenJPAHelper.getCompassGps(entityManagerFactory);
+        compassGps = TopLinkHelper.getCompassGps(entityManagerFactory);
         assertNotNull(compass);
     }
 
     protected EntityManagerFactory doSetUpEntityManagerFactory() {
-        EntityManagerFactory emf = new PersistenceProviderImpl().createEntityManagerFactory("embeddedopenjpa", new HashMap());
-        emf.createEntityManager().close();
-        return emf;
+        return new PersistenceProvider().createEntityManagerFactory("embeddedtoplink", new HashMap());
     }
 
     public void testRollbackTransaction() throws Exception {
@@ -62,12 +60,13 @@ public class EmbeddedOpenJPASimpleJpaGpsDeviceTests extends AbstractSimpleJpaGps
         simple.setId(4);
         simple.setValue("value4");
         entityManager.persist(simple);
+        entityManager.flush();
 
-        CompassSession compassSession = OpenJPAHelper.getCurrentCompassSession(entityManager);
+        CompassSession compassSession = TopLinkHelper.getCurrentCompassSession(entityManager);
         simple = compassSession.get(Simple.class, 4);
         assertNotNull(simple);
 
-        CompassSession otherCompassSession = OpenJPAHelper.getCurrentCompassSession(entityManager);
+        CompassSession otherCompassSession = TopLinkHelper.getCurrentCompassSession(entityManager);
         assertSame(compassSession, otherCompassSession);
 
         entityTransaction.rollback();
