@@ -57,7 +57,7 @@ public class LuceneHighlighterManager {
         if (defaultHighlighterSettings == null) {
             // if no default highlighter is defined, we need to configre one
             defaultHighlighterSettings = buildHighlighter(LuceneEnvironment.Highlighter.DEFAULT_GROUP,
-                    new CompassSettings());
+                    new CompassSettings(settings.getClassLoader()));
             highlightersSettings.put(LuceneEnvironment.Highlighter.DEFAULT_GROUP, defaultHighlighterSettings);
         }
     }

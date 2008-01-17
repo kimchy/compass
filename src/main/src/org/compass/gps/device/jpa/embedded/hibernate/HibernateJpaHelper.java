@@ -17,9 +17,9 @@
 package org.compass.gps.device.jpa.embedded.hibernate;
 
 import java.util.Properties;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import oracle.toplink.essentials.ejb.cmp3.EntityManager;
 import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
 import org.compass.gps.device.hibernate.embedded.HibernateHelper;

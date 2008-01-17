@@ -81,7 +81,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
                 log.debug("No default query parser found (under groupd [default]), registering a default one");
             }
             DefaultLuceneQueryParser queryParser = new DefaultLuceneQueryParser();
-            queryParser.configure(new CompassSettings());
+            queryParser.configure(new CompassSettings(settings.getClassLoader()));
             queryParser.setCompassMapping(searchEngineFactory.getMapping());
             queryParser.setSearchEngineFactory(searchEngineFactory);
             queryParsers.put(LuceneEnvironment.QueryParser.DEFAULT_GROUP, queryParser);

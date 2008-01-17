@@ -607,7 +607,9 @@
           <root url="jar://$MODULE_DIR$/../../lib/hibernate/hibernate-entitymanager.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="intellijad://intellijad" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">

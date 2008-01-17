@@ -16,6 +16,7 @@
 
 package org.compass.gps.device.jpa.embedded.toplink;
 
+import java.util.Properties;
 import java.util.Vector;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -24,7 +25,10 @@ import oracle.toplink.essentials.sessions.Session;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
+import org.compass.gps.device.jpa.JpaGpsDevice;
+import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
+import org.compass.gps.device.support.parallel.SameThreadParallelIndexExecutor;
 
 /**
  * @author kimchy
@@ -48,6 +52,19 @@ public abstract class TopLinkHelper {
         return findCompassSessionEventListener(em).getCompass();
     }
 
+    public static Properties getIndexSettings(EntityManagerFactory emf) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return getIndexSettings(em);
+        } finally {
+            em.close();
+        }
+    }
+
+    public static Properties getIndexSettings(EntityManager em) {
+        return findCompassSessionEventListener(em).getIndexSettings();
+    }
+
     public static CompassSession getCurrentCompassSession(EntityManager em) {
         Session serverSession = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) em).getServerSession();
         Session session = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) em).getUnitOfWork();
@@ -69,6 +86,21 @@ public abstract class TopLinkHelper {
 
     public static JpaCompassGps getCompassGps(EntityManager em) {
         return findCompassSessionEventListener(em).getJpaCompassGps();
+    }
+
+    public static JpaCompassGps createCompassGps(EntityManagerFactory emf) {
+        JpaGpsDevice device = new JpaGpsDevice("jpadevice", emf);
+        return createCompassGps(device);
+    }
+
+    public static JpaCompassGps createCompassGps(JpaGpsDevice device) {
+        DefaultJpaCompassGps gps = new DefaultJpaCompassGps(getCompass(device.getEntityManagerFactory()));
+        device.setMirrorDataChanges(false);
+        device.setParallelIndexExecutor(new SameThreadParallelIndexExecutor());
+        gps.setIndexProperties(getIndexSettings(device.getEntityManagerFactory()));
+        gps.addGpsDevice(device);
+        gps.start();
+        return gps;
     }
 
     private static CompassSessionEventListener findCompassSessionEventListener(EntityManager em) throws CompassException {

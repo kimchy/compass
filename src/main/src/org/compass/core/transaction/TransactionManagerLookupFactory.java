@@ -63,7 +63,7 @@ public final class TransactionManagerLookupFactory {
             }
             return null;
         } else {
-            log.info("Instantiating TransactionManagerLookup [" + tmLookupClass + "]");
+            log.info("Instansiating TransactionManagerLookup [" + tmLookupClass + "]");
             try {
                 return (TransactionManagerLookup) ClassUtils.forName(tmLookupClass, settings.getClassLoader()).newInstance();
             } catch (Exception e) {

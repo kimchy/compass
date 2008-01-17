@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
+import javax.persistence.spi.PersistenceUnitTransactionType;
 
 import oracle.toplink.essentials.descriptors.ClassDescriptor;
 import oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider;
@@ -37,6 +38,7 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.transaction.JTASyncTransactionFactory;
 import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDevice;
@@ -67,7 +69,7 @@ public class CompassSessionCustomizer implements SessionCustomizer {
 
     public void customize(Session session) throws Exception {
         if (log.isDebugEnabled()) {
-            log.debug("Compass embedded TopLink Essentials support enabled, initializing ...");
+            log.debug("Compass embedded TopLink Essentials support enabled, initializing for session [" + session + "]");
         }
         PersistenceUnitInfo persistenceUnitInfo = findPersistenceUnitInfo(session);
         if (persistenceUnitInfo == null) {
@@ -126,18 +128,27 @@ public class CompassSessionCustomizer implements SessionCustomizer {
 
         String transactionFactory = (String) compassProperties.get(CompassEnvironment.Transaction.FACTORY);
         boolean toplinkControlledTransaction;
-        if (transactionFactory == null || LocalTransactionFactory.class.getName().equals(transactionFactory)) {
-            toplinkControlledTransaction = true;
-            // if the settings is configured to use local transaciton, disable thread bound setting since
-            // we are using Toplink to managed transaction scope (using user objects on the em) and not thread locals
-            if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
-                // if no emf is defined
-                settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
+        if (transactionFactory == null) {
+            if (persistenceUnitInfo.getTransactionType() == PersistenceUnitTransactionType.JTA) {
+                transactionFactory = JTASyncTransactionFactory.class.getName();
+                toplinkControlledTransaction = false;
+            } else {
+                transactionFactory = LocalTransactionFactory.class.getName();
+                toplinkControlledTransaction = true;
             }
+            settings.setSetting(CompassEnvironment.Transaction.FACTORY, transactionFactory);
         } else {
             // JPA is not controlling the transaction (using JTA Sync or XA), don't commit/rollback
             // with Toplink transaction listeners
             toplinkControlledTransaction = false;
+        }
+
+        // if the settings is configured to use local transaciton, disable thread bound setting since
+        // we are using Toplink to managed transaction scope (using user objects on the em) and not thread locals
+        // will only be taken into account when using local transactions
+        if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
+            // if no emf is defined
+            settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
         }
 
         Compass compass = compassConfiguration.buildCompass();
@@ -183,10 +194,13 @@ public class CompassSessionCustomizer implements SessionCustomizer {
 
         String reindexOnStartup = (String) compassProperties.get(REINDEX_ON_STARTUP);
         if ("true".equalsIgnoreCase(reindexOnStartup)) {
+            log.info("Indexing the database on startup...");
             jpaCompassGps.index();
+            log.info("Finished the database on startup");
         }
 
-        session.getEventManager().addListener(new CompassSessionEventListener(compass, jpaCompassGps, commitBeforeCompletion, toplinkControlledTransaction));
+        session.getEventManager().addListener(new CompassSessionEventListener(compass, jpaCompassGps,
+                commitBeforeCompletion, toplinkControlledTransaction, indexProps));
 
         if (log.isDebugEnabled()) {
             log.debug("Compass embedded TopLink Essentials support active");

@@ -43,6 +43,11 @@ public class CompassSettings {
         this(new Properties());
     }
 
+    public CompassSettings(ClassLoader classLoader) {
+        this(new Properties());
+        this.classLoader = classLoader;
+    }
+
     public CompassSettings(Properties settings) {
         this.settings = settings;
     }
@@ -62,15 +67,31 @@ public class CompassSettings {
         return copySettings;
     }
 
+    public CompassSettings clear() {
+        this.settings.clear();
+        return this;
+    }
+
     void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
 
+    /**
+     * Returns the class loader. If none is defined, return the thread context class loader.
+     */
     public ClassLoader getClassLoader() {
         if (classLoader == null) {
             return Thread.currentThread().getContextClassLoader();
         }
         return classLoader;
+    }
+
+    /**
+     * Returns the direct class loader configured for this settings. <code>null</code>
+     * if none is defined.
+     */
+    public ClassLoader getDirectClassLoader() {
+        return this.classLoader;
     }
 
     public Properties getProperties() {
@@ -113,6 +134,7 @@ public class CompassSettings {
                 CompassSettings groupSettings = map.get(name);
                 if (groupSettings == null) {
                     groupSettings = new CompassSettings();
+                    groupSettings.setClassLoader(getClassLoader());
                     map.put(name, groupSettings);
                 }
                 groupSettings.setSetting(value, getSetting(setting));

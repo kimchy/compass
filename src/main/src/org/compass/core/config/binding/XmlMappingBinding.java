@@ -860,7 +860,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         } catch (Exception e) {
             throw new ConfigurationException("Failed to create sub index hash of type [" + type + "]", e);
         }
-        CompassSettings settings = new CompassSettings();
+        CompassSettings settings = this.settings.copy().clear();
         ConfigurationHelper[] settingsConf = subIndexHashConf.getChildren("setting");
         if (subIndexHash instanceof CompassConfigurable) {
             for (int i = 0; i < settingsConf.length; i++) {

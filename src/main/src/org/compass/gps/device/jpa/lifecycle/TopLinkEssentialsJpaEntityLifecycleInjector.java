@@ -7,6 +7,7 @@ import javax.persistence.EntityManagerFactory;
 import oracle.toplink.essentials.descriptors.ClassDescriptor;
 import oracle.toplink.essentials.descriptors.DescriptorEvent;
 import oracle.toplink.essentials.descriptors.DescriptorEventListener;
+import oracle.toplink.essentials.ejb.cmp3.EntityManager;
 import oracle.toplink.essentials.internal.ejb.cmp3.base.EntityManagerFactoryImpl;
 import oracle.toplink.essentials.sessions.Session;
 import org.compass.core.mapping.CascadeMapping;
@@ -114,8 +115,10 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
             eventListener = new TopLinkEssentialsEventListener(device);
         }
 
-        EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) entityManagerFactory;
-        Session session = emf.getServerSession();
+        EntityManager entityManager = (EntityManager) entityManagerFactory.createEntityManager();
+        Session session = entityManager.getServerSession();
+        entityManager.close();
+
         Map descriptors = session.getDescriptors();
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;

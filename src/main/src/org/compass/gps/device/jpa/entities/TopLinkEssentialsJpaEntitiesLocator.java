@@ -6,7 +6,7 @@ import javax.persistence.EntityManagerFactory;
 
 import oracle.toplink.essentials.descriptors.ClassDescriptor;
 import oracle.toplink.essentials.descriptors.InheritancePolicy;
-import oracle.toplink.essentials.internal.ejb.cmp3.base.EntityManagerFactoryImpl;
+import oracle.toplink.essentials.ejb.cmp3.EntityManager;
 import oracle.toplink.essentials.sessions.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,8 +30,9 @@ public class TopLinkEssentialsJpaEntitiesLocator implements JpaEntitiesLocator {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
-        EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) entityManagerFactory;
-        Session session = emf.getServerSession();
+        EntityManager entityManager = (EntityManager) entityManagerFactory.createEntityManager();
+        Session session = entityManager.getServerSession();
+        entityManager.close();
 
         ArrayList<EntityInformation> entitiesList = new ArrayList<EntityInformation>();
 

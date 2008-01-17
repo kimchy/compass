@@ -318,7 +318,7 @@ public class DefaultConverterLookup implements ConverterLookup {
     private void addDefaultConverter(Map converterGroups, String name, Class[] types, Converter converter) {
         CompassSettings converterSettings = (CompassSettings) converterGroups.remove(name);
         if (converterSettings == null) {
-            converterSettings = new CompassSettings();
+            converterSettings = new CompassSettings(settings.getClassLoader());
         }
         String converterType = converterSettings.getSetting(CompassEnvironment.Converter.TYPE);
         if (converterType != null) {

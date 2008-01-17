@@ -25,6 +25,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
@@ -46,6 +48,8 @@ import org.compass.gps.spi.CompassGpsInterfaceDevice;
  * @author kimchy
  */
 public class ConcurrentParallelIndexExecutor implements ParallelIndexExecutor {
+
+    private static final Log log = LogFactory.getLog(ConcurrentParallelIndexExecutor.class);
 
     private int maxThreads = -1;
 

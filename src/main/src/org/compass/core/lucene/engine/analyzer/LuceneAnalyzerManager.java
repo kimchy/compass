@@ -108,7 +108,7 @@ public class LuceneAnalyzerManager {
         defaultAnalyzer = analyzers.get(LuceneEnvironment.Analyzer.DEFAULT_GROUP);
         if (defaultAnalyzer == null) {
             // if no default anayzer is defined, we need to configre one
-            defaultAnalyzer = buildAnalyzer(LuceneEnvironment.Analyzer.DEFAULT_GROUP, new CompassSettings());
+            defaultAnalyzer = buildAnalyzer(LuceneEnvironment.Analyzer.DEFAULT_GROUP, new CompassSettings(settings.getClassLoader()));
             analyzers.put(LuceneEnvironment.Analyzer.DEFAULT_GROUP, defaultAnalyzer);
         }
         searchAnalyzer = analyzers.get(LuceneEnvironment.Analyzer.SEARCH_GROUP);

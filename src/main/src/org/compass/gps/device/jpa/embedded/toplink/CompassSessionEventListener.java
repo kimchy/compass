@@ -16,6 +16,7 @@
 
 package org.compass.gps.device.jpa.embedded.toplink;
 
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import oracle.toplink.essentials.sessions.Session;
@@ -36,6 +37,8 @@ public class CompassSessionEventListener extends SessionEventAdapter {
 
     private JpaCompassGps jpaCompassGps;
 
+    private Properties indexSettings;
+
     private boolean commitBeforeCompletion;
 
     private boolean toplinkControlledTransaction;
@@ -43,11 +46,13 @@ public class CompassSessionEventListener extends SessionEventAdapter {
     private ConcurrentHashMap<Session, CompassSessionHolder> sessionsHolders = new ConcurrentHashMap<Session, CompassSessionHolder>();
 
     public CompassSessionEventListener(Compass compass, JpaCompassGps jpaCompassGps,
-                                       boolean commitBeforeCompletion, boolean toplinkControlledTransaction) {
+                                       boolean commitBeforeCompletion, boolean toplinkControlledTransaction,
+                                       Properties indexSettings) {
         this.compass = compass;
         this.jpaCompassGps = jpaCompassGps;
         this.commitBeforeCompletion = commitBeforeCompletion;
         this.toplinkControlledTransaction = toplinkControlledTransaction;
+        this.indexSettings = indexSettings;
     }
 
     public Compass getCompass() {
@@ -56,6 +61,10 @@ public class CompassSessionEventListener extends SessionEventAdapter {
 
     public JpaCompassGps getJpaCompassGps() {
         return jpaCompassGps;
+    }
+
+    public Properties getIndexSettings() {
+        return indexSettings;
     }
 
     public CompassSession getCurrentCompassSession(Session session) {
@@ -135,6 +144,15 @@ public class CompassSessionEventListener extends SessionEventAdapter {
         return event.getSession();
     }
 
+    protected void finalize() throws Throwable {
+        super.finalize();
+        //TODO: is there a better place to close this?
+        if (jpaCompassGps.isRunning()) {
+            jpaCompassGps.stop();
+        }
+        compass.close();
+    }
+    
     private class CompassSessionHolder {
 
         CompassSession session;
