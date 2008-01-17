@@ -37,7 +37,6 @@ import org.compass.core.mapping.CompassMapping;
 /**
  * The deafult Lucene query parser. Uses {@link org.compass.core.lucene.LuceneEnvironment.QueryParser#DEFAULT_PARSER_ALLOW_LEADING_WILDCARD}
  *
- *
  * @author kimchy
  */
 public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappingAware, SearchEngineFactoryAware, CompassConfigurable {
@@ -77,6 +76,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
             return queryParser.parse(queryString);
         } catch (ParseException e) {
             throw new SearchEngineQueryParseException(queryString, e);
+        } catch (IllegalArgumentException e) {
+            throw new SearchEngineQueryParseException(queryString, e);
         }
     }
 
@@ -88,6 +89,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         try {
             return queryParser.parse(queryString);
         } catch (ParseException e) {
+            throw new SearchEngineQueryParseException(queryString, e);
+        } catch (IllegalArgumentException e) {
             throw new SearchEngineQueryParseException(queryString, e);
         }
     }
