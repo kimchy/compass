@@ -62,6 +62,7 @@ public class EmbeddedOpenJPASimpleJpaGpsDeviceTests extends AbstractSimpleJpaGps
         simple.setId(4);
         simple.setValue("value4");
         entityManager.persist(simple);
+        entityManager.flush();
 
         CompassSession compassSession = OpenJPAHelper.getCurrentCompassSession(entityManager);
         simple = compassSession.get(Simple.class, 4);
