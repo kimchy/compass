@@ -48,10 +48,6 @@ public class NullValueMappingProcessor implements MappingProcessor {
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
 
         globalNullValue = settings.getSetting(CompassEnvironment.NullValue.NULL_VALUE);
-        if (globalNullValue == null) {
-            // nothing to do, bail
-            return compassMapping;
-        }
 
         for (Iterator rIt = compassMapping.mappingsIt(); rIt.hasNext();) {
             Mapping mapping = (Mapping) rIt.next();
