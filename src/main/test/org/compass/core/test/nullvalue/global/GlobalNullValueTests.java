@@ -16,6 +16,7 @@
 
 package org.compass.core.test.nullvalue.global;
 
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
@@ -56,6 +57,13 @@ public class GlobalNullValueTests extends AbstractTestCase {
         assertEquals("moo", resource.getValue("value2"));
         // value3 defines $disable$ which means it needs to be disabled
         assertNull(resource.getValue("value3"));
+
+        CompassHits hits = session.find("value1:koo");
+        assertEquals(1, hits.length());
+        hits = session.find("value2:moo");
+        assertEquals(1, hits.length());
+        hits = session.find("value3:moo");
+        assertEquals(0, hits.length());
 
         tr.commit();
         session.close();
