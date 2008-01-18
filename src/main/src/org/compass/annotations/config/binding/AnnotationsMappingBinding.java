@@ -777,6 +777,9 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         if (StringUtils.hasLength(searchableMetaData.analyzer())) {
             mdMapping.setAnalyzer(searchableMetaData.analyzer());
         }
+        if (StringUtils.hasLength(searchableMetaData.nullValue())) {
+            mdMapping.setNullValue(searchableMetaData.nullValue());
+        }
         mdMapping.setExcludeFromAll(AnnotationsBindingUtils.convert(searchableMetaData.excludeFromAll()));
 
         classMapping.addMapping(mdMapping);

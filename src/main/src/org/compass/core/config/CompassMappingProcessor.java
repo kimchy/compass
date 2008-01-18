@@ -33,6 +33,7 @@ public class CompassMappingProcessor implements MappingProcessor {
     public CompassMappingProcessor() {
         mappingProcessors.add(new ResolveExtendsMappingProcessor());
         mappingProcessors.add(new PropertyAccessorMappingProcessor());
+        mappingProcessors.add(new NullValueMappingProcessor());
         mappingProcessors.add(new ResolveRefAliasProcessor());
         mappingProcessors.add(new CollectionMappingProcessor());
         mappingProcessors.add(new ResolveLateAttributesMappingProcessor());

@@ -341,7 +341,7 @@ public class CompassConfiguration {
      * @param path The path of the resource
      */
     public CompassConfiguration addResource(String path) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addResource(path);
+        boolean hasAddedResource = mappingBinding.addResource(path, getClassLoader());
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match resource [" + path + "]");
         }

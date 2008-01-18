@@ -589,4 +589,21 @@ public class CompassEnvironment {
          */
         public static final String FILTER_TYPE = "compass.cascade.filter.type";
     }
+
+    public abstract class NullValue {
+
+        /**
+         * When setting the globabl null value, some mappings might require to disable
+         * handling of null values for them. In such a case they can set the null value
+         * for this specific mappings to this constant value (<code>$disable$</code>).
+         */
+        public static final String DISABLE_NULL_VALUE_FOR_MAPPING = "$disable$";
+
+        /**
+         * Allow to set a global null value that will be used. If this is set, the turning it off
+         * for specific mappings can be done by assiging them the value of
+         * {@link #DISABLE_NULL_VALUE_FOR_MAPPING}.
+         */
+        public static final String NULL_VALUE = "compass.nullvalue";
+    }
 }

@@ -57,7 +57,7 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
     }
 
     public boolean addResource(String path) throws ConfigurationException, MappingException {
-        return addResource(path, Thread.currentThread().getContextClassLoader());
+        return addResource(path, settings.getClassLoader());
     }
 
     public boolean addResource(String path, ClassLoader classLoader) throws ConfigurationException, MappingException {

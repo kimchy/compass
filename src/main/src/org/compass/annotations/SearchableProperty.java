@@ -216,7 +216,10 @@ public @interface SearchableProperty {
 
     /**
      * A null value to use to store in the index when the property has a <code>null</code>
-     * value. Defaults to not storing null values.
+     * value. Defaults to not storing null values if the globabl setting of
+     * <code>compass.mapping.nullvalue</code> is not set. If it set, disabling the null
+     * value can be done by setting it to {@link org.compass.core.config.CompassEnvironment.NullValue#DISABLE_NULL_VALUE_FOR_MAPPING}
+     * value (<code>$disable$</code>).
      */
     String nullValue() default "";
 }

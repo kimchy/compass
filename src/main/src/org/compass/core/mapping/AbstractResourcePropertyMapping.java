@@ -17,11 +17,12 @@
 package org.compass.core.mapping;
 
 import org.compass.core.Property;
+import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
-public abstract class AbstractResourcePropertyMapping extends AbstractMapping implements ResourcePropertyMapping {
+public abstract class AbstractResourcePropertyMapping extends AbstractMapping implements InternalResourcePropertyMapping {
 
     private String rootAlias;
 
