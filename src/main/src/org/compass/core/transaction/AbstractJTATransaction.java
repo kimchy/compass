@@ -69,7 +69,7 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
                 session.getSearchEngine().begin(transactionIsolation);
                 if (log.isDebugEnabled()) {
                     log.debug("Joining an existing JTA transaction, starting a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
+                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "] and status [" + ut.getStatus() + "]");
                 }
             }
             javax.transaction.Transaction tx = transactionManager.getTransaction();

@@ -45,7 +45,7 @@ public abstract class AbstractJTATransactionFactory extends AbstractTransactionF
 
     private static final String DEFAULT_USER_TRANSACTION_NAME = "java:comp/UserTransaction";
 
-    private transient Map currentSessionMap = new ConcurrentHashMap();
+    private transient Map<Transaction, CompassSession> currentSessionMap = new ConcurrentHashMap<Transaction, CompassSession>();
 
     private InitialContext context;
 
@@ -107,7 +107,7 @@ public abstract class AbstractJTATransactionFactory extends AbstractTransactionF
                 return null;
             }
             Transaction tr = transactionManager.getTransaction();
-            return (CompassSession) currentSessionMap.get(tr);
+            return currentSessionMap.get(tr);
         } catch (SystemException e) {
             throw new TransactionException("Failed to fetch transaction bound session", e);
         }
@@ -126,11 +126,11 @@ public abstract class AbstractJTATransactionFactory extends AbstractTransactionF
         currentSessionMap.remove(tx);
     }
 
-    protected TransactionManager getTransactionManager() {
+    public TransactionManager getTransactionManager() {
         return this.transactionManager;
     }
 
-    protected UserTransaction getUserTransaction() throws TransactionException {
+    public UserTransaction getUserTransaction() throws TransactionException {
         if (userTransaction != null) {
             return userTransaction;
         }

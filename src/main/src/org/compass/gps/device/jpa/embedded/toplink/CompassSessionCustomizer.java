@@ -42,10 +42,51 @@ import org.compass.core.transaction.JTASyncTransactionFactory;
 import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDevice;
+import org.compass.gps.device.jpa.JtaEntityManagerWrapper;
+import org.compass.gps.device.jpa.ResourceLocalEntityManagerWrapper;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.lifecycle.TopLinkEssentialsJpaEntityLifecycleInjector;
 
 /**
+ * A TopLink <code>SessionCustomizer</code> allowing to integrate in an "embedded" mode
+ * Compass with TopLink. The single required setting (for example, within the <code>persistence.xml</code>
+ * file) is the Compass connection property ({@link org.compass.core.config.CompassEnvironment#CONNECTION}
+ * and at least one Searchable class mapped out of the classes mapped in TopLink.
+ *
+ * <p>The embedded TopLink support uses Compass GPS and adds an "embedded" Compass, or adds a searchable
+ * feature to TopLink by registering a {@link org.compass.core.Compass} instance and a {@link org.compass.gps.device.jpa.JpaGpsDevice}
+ * instance with TopLink. It registers mirroring listeners (after delete/store/persist) to automatically
+ * mirror changes done through TopLink to the Compass index. It also registeres an event listener
+ * ({@link org.compass.gps.device.hibernate.embedded.CompassEventListener} to syncronize with transactions.
+ *
+ * <p>Use {@link TopLinkHelper} in order to access the <code>Compass</code> instance or the
+ * <code>JpaGpsDevice</code> instance attached to a given entity manager.
+ *
+ * <p>The Compass instnace used for mirroring can be configured by adding <code>compass</code> prefixed settings.
+ * Additional settings that only control the Compass instnace created for indexing should be set using
+ * <code>gps.index.compass.</code>. For more information on indexing and mirroring Compass please check
+ * {@link org.compass.gps.impl.SingleCompassGps}.
+ *
+ * <p>This customizer tries to find the persistence info in order to read the properties out of it. In order
+ * for it to find it, it uses the naming convention TopLink has at naming Sessions. Note, if you change the
+ * name of the Session using TopLink setting, this customizer will not be able to operate.
+ *
+ * <p>This session customizer will also identify if the persistence info is configured to work with JTA or
+ * with RESOURCE LOCAL transaction and adjust itsefl accordingly. If JTA is used, it will automatically
+ * use Compass {@link JTASyncTransactionFactory} and if RESOURCE LOCAL is used it will automatically use
+ * {@link LocalTransactionFactory}. Note, this is only set if the transaction factory is not explicitly set
+ * using Compass settings.
+ *
+ * <p>Specific properties that this plugin can use:
+ * <ul>
+ * <li>compass.toplink.indexQuery.[entity name/class]: Specific select query that will be used to perform the indexing
+ * for the mentioned specific entity name / class. Note, before calling {@link org.compass.gps.CompassGps#index()} there
+ * is an option the programmatically control this.</li>
+ * <li>compass.toplink.config: A classpath that points to Compass configuration.</li>
+ * <li>compass.toplink.session.customizer: If there is another TopLink <code>SessionCustomizer</code> that needs
+ * to be applied, its class FQN should be specified with this setting.</li>
+ * </ul>
+ *
  * @author kimchy
  */
 public class CompassSessionCustomizer implements SessionCustomizer {
@@ -56,11 +97,6 @@ public class CompassSessionCustomizer implements SessionCustomizer {
 
     private static final String COMPASS_GPS_INDEX_PREFIX = "gps.index.";
 
-
-    public static final String REINDEX_ON_STARTUP = "compass.toplink.reindexOnStartup";
-
-    public static final String REGISTER_REMOTE_COMMIT_LISTENER = "compass.toplink.registerRemoteCommitListener";
-
     public static final String INDEX_QUERY_PREFIX = "compass.toplink.indexQuery.";
 
     public static final String COMPASS_CONFIG_LOCATION = "compass.toplink.config";
@@ -68,8 +104,8 @@ public class CompassSessionCustomizer implements SessionCustomizer {
     public static final String COMPASS_SESSION_CUSTOMIZER = "compass.toplink.session.customizer";
 
     public void customize(Session session) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Compass embedded TopLink Essentials support enabled, initializing for session [" + session + "]");
+        if (log.isInfoEnabled()) {
+            log.info("Compass embedded TopLink Essentials support enabled, initializing for session [" + session + "]");
         }
         PersistenceUnitInfo persistenceUnitInfo = findPersistenceUnitInfo(session);
         if (persistenceUnitInfo == null) {
@@ -183,6 +219,14 @@ public class CompassSessionCustomizer implements SessionCustomizer {
         lifecycleInjector.setEventListener(new EmbeddedToplinkEventListener(jpaGpsDevice));
         jpaGpsDevice.setLifecycleInjector(lifecycleInjector);
 
+        // set explicitly the EntityManagerWrapper since Toplink rollback the transaction on EntityManager#getTransaction
+        // which makes it useless when using DefaultEntityManagerWrapper
+        if (persistenceUnitInfo.getTransactionType() == PersistenceUnitTransactionType.JTA) {
+            jpaGpsDevice.setEntityManagerWrapper(new JtaEntityManagerWrapper());
+        } else {
+            jpaGpsDevice.setEntityManagerWrapper(new ResourceLocalEntityManagerWrapper());
+        }
+
         DefaultJpaCompassGps jpaCompassGps = new DefaultJpaCompassGps();
         jpaCompassGps.setCompass(compass);
         jpaCompassGps.addGpsDevice(jpaGpsDevice);
@@ -191,13 +235,6 @@ public class CompassSessionCustomizer implements SessionCustomizer {
         emf.createEntityManager().close();
 
         jpaCompassGps.start();
-
-        String reindexOnStartup = (String) compassProperties.get(REINDEX_ON_STARTUP);
-        if ("true".equalsIgnoreCase(reindexOnStartup)) {
-            log.info("Indexing the database on startup...");
-            jpaCompassGps.index();
-            log.info("Finished the database on startup");
-        }
 
         session.getEventManager().addListener(new CompassSessionEventListener(compass, jpaCompassGps,
                 commitBeforeCompletion, toplinkControlledTransaction, indexProps));

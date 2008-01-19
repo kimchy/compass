@@ -27,6 +27,10 @@ import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 
 /**
+ * An event listener that mirrors changes done through toplink to Compass when using TopLink embedded support.
+ * Uses {@link org.compass.gps.device.jpa.embedded.toplink.TopLinkHelper#getCurrentCompassSession(oracle.toplink.essentials.sessions.Session)}
+ * in order to get the current {@link org.compass.core.CompassSession} and perform with it the relevant mirror operations.
+ *
  * @author kimchy
  */
 public class EmbeddedToplinkEventListener extends AbstractDeviceJpaEntityListener implements DescriptorEventListener {

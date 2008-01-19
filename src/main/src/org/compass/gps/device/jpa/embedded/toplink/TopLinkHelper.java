@@ -28,9 +28,10 @@ import org.compass.core.CompassSession;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
-import org.compass.gps.device.support.parallel.SameThreadParallelIndexExecutor;
 
 /**
+ * Helper class to get different Compass constructs embedded with TopLink.
+ *
  * @author kimchy
  */
 public abstract class TopLinkHelper {
@@ -39,6 +40,11 @@ public abstract class TopLinkHelper {
 
     }
 
+    /**
+     * Returns the Compass instance assoicated with the given TopLink {@link javax.persistence.EntityManagerFactory}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
+     * transaction (for performance reasons, mostly there is no need to start a DB transaction).
+     */
     public static Compass getCompass(EntityManagerFactory emf) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -48,10 +54,20 @@ public abstract class TopLinkHelper {
         }
     }
 
+    /**
+     * Returns the Compass instance assoicated with the given TopLink {@link javax.persistence.EntityManager}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
+     * transaction (for performance reasons, mostly there is no need to start a DB transaction).
+     */
     public static Compass getCompass(EntityManager em) {
         return findCompassSessionEventListener(em).getCompass();
     }
 
+    /**
+     * Returns the index settings that are configured within the {@link javax.persistence.EntityManagerFactory}
+     * configuration. Can be used to configure exteranally a {@link org.compass.gps.device.jpa.embedded.JpaCompassGps}
+     * instance.
+     */
     public static Properties getIndexSettings(EntityManagerFactory emf) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -61,20 +77,46 @@ public abstract class TopLinkHelper {
         }
     }
 
+    /**
+     * Returns the index settings that are configured within the {@link javax.persistence.EntityManager}
+     * configuration. Can be used to configure exteranally a {@link org.compass.gps.device.jpa.embedded.JpaCompassGps}
+     * instnace.
+     */
     public static Properties getIndexSettings(EntityManager em) {
         return findCompassSessionEventListener(em).getIndexSettings();
     }
 
+    /**
+     * Returns the current Compass session associated with the {@link javax.persistence.EntityManager}.
+     * Compass Session is associated with an Entity Manager when a transaction is started and removed when the
+     * transaction commits/rollsback.
+     *
+     * <p>The session can be used to perform searches that needs to take into account current transactional changes
+     * or to perform additional Compass operations that are not reflected by the mirroring feature.
+     */
     public static CompassSession getCurrentCompassSession(EntityManager em) {
         Session serverSession = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) em).getServerSession();
         Session session = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) em).getUnitOfWork();
         return findCompassSessionEventListener(serverSession).getCurrentCompassSession(session);
     }
 
+    /**
+     * Returns the current Compass session associated with the {@link javax.persistence.EntityManager}.
+     * Compass Session is associated with an Entity Manager when a transaction is started and removed when the
+     * transaction commits/rollsback.
+     *
+     * <p>The session can be used to perform searches that needs to take into account current transactional changes
+     * or to perform additional Compass operations that are not reflected by the mirroring feature.
+     */
     public static CompassSession getCurrentCompassSession(Session session) {
         return findCompassSessionEventListener(session).getCurrentCompassSession(session);
     }
 
+    /**
+     * Returns the Compass Gps instance associated with the given TopLink {@link javax.persistence.EntityManagerFactory}.
+     * Used in order to perform {@link org.compass.gps.device.jpa.embedded.JpaCompassGps#index()} operation. Note, the index
+     * operation should not be perfomed within a running transaction.
+     */
     public static JpaCompassGps getCompassGps(EntityManagerFactory emf) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -84,22 +126,23 @@ public abstract class TopLinkHelper {
         }
     }
 
+    /**
+     * Returns the Compass Gps instance associated with the given TopLink {@link javax.persistence.EntityManager}.
+     * Used in order to perform {@link org.compass.gps.device.jpa.embedded.JpaCompassGps#index()} operation. Note, the index
+     * operation should not be perfomed within a running transaction.
+     */
     public static JpaCompassGps getCompassGps(EntityManager em) {
         return findCompassSessionEventListener(em).getJpaCompassGps();
     }
 
-    public static JpaCompassGps createCompassGps(EntityManagerFactory emf) {
-        JpaGpsDevice device = new JpaGpsDevice("jpadevice", emf);
-        return createCompassGps(device);
-    }
-
+    /**
+     * A helper class to create the <code>JpaCompasGps</code> based on the passed device.
+     */
     public static JpaCompassGps createCompassGps(JpaGpsDevice device) {
         DefaultJpaCompassGps gps = new DefaultJpaCompassGps(getCompass(device.getEntityManagerFactory()));
         device.setMirrorDataChanges(false);
-        device.setParallelIndexExecutor(new SameThreadParallelIndexExecutor());
         gps.setIndexProperties(getIndexSettings(device.getEntityManagerFactory()));
         gps.addGpsDevice(device);
-        gps.start();
         return gps;
     }
 

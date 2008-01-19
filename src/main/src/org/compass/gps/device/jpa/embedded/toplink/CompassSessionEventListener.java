@@ -23,15 +23,22 @@ import oracle.toplink.essentials.sessions.Session;
 import oracle.toplink.essentials.sessions.SessionEvent;
 import oracle.toplink.essentials.sessions.SessionEventAdapter;
 import oracle.toplink.essentials.sessions.UnitOfWork;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
 
 /**
+ * A TopLink SessionEventListener that uses the transaction callback methods
+ * to sync between them and Compass transaction mechanism.
+ *
  * @author kimchy
  */
 public class CompassSessionEventListener extends SessionEventAdapter {
+
+    private static final Log log = LogFactory.getLog(CompassSessionEventListener.class);
 
     private Compass compass;
 
@@ -147,12 +154,15 @@ public class CompassSessionEventListener extends SessionEventAdapter {
     protected void finalize() throws Throwable {
         super.finalize();
         //TODO: is there a better place to close this?
+        if (log.isInfoEnabled()) {
+            log.info("Compass embedded TopLink shutting down");
+        }
         if (jpaCompassGps.isRunning()) {
             jpaCompassGps.stop();
         }
         compass.close();
     }
-    
+
     private class CompassSessionHolder {
 
         CompassSession session;

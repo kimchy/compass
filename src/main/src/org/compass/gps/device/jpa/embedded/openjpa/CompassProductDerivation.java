@@ -71,7 +71,7 @@ import org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector;
  * to synchronize between Compass transactions and Open JPA transactions.
  *
  * <p>Use {@link org.compass.gps.device.jpa.embedded.openjpa.OpenJPAHelper} in order to access the registered
- * {@link org.compass.core.Compass} instnace and {@link org.compass.gps.device.jpa.JpaGpsDevice} instnace assigned
+ * {@link org.compass.core.Compass} instnace and {@link org.compass.gps.device.jpa.JpaGpsDevice} instance assigned
  * to the {@link javax.persistence.EntityManagerFactory}. Also use it to get {@link org.compass.core.CompassSession}
  * assigned to an {@link javax.persistence.EntityManager}.
  *
