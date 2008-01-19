@@ -58,6 +58,7 @@ import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
+import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.transaction.TransactionFactoryFactory;
 
@@ -81,6 +82,8 @@ public class DefaultCompass implements InternalCompass {
     private SearchEngineFactory searchEngineFactory;
 
     private TransactionFactory transactionFactory;
+
+    private LocalTransactionFactory localTransactionFactory;
 
     private ConverterLookup converterLookup;
 
@@ -126,6 +129,7 @@ public class DefaultCompass implements InternalCompass {
 
         // build the transaction factory
         transactionFactory = TransactionFactoryFactory.createTransactionFactory(this, settings);
+        localTransactionFactory = TransactionFactoryFactory.createLocalTransactionFactory(this, settings);
 
         // wrap optimizer with transaction, and create scheduled one
         LuceneSearchEngineOptimizer optimizer = (LuceneSearchEngineOptimizer) searchEngineFactory.getOptimizer();
@@ -241,6 +245,10 @@ public class DefaultCompass implements InternalCompass {
 
     public TransactionFactory getTransactionFactory() {
         return transactionFactory;
+    }
+
+    public LocalTransactionFactory getLocalTransactionFactory() {
+        return this.localTransactionFactory;
     }
 
     public ConverterLookup getConverterLookup() {

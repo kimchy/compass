@@ -14,13 +14,13 @@ public class XATransactionFactory extends AbstractJTATransactionFactory {
 
     public InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
                                                          CompassTransaction.TransactionIsolation transactionIsolation) throws CompassException {
-        XATransaction tx = new XATransaction(getUserTransaction());
+        XATransaction tx = new XATransaction(getUserTransaction(), this);
         tx.begin(session, getTransactionManager(), transactionIsolation);
         return tx;
     }
 
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
-        XATransaction tx = new XATransaction(getUserTransaction());
+        XATransaction tx = new XATransaction(getUserTransaction(), this);
         tx.join();
         return tx;
     }

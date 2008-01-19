@@ -66,7 +66,7 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
     protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
                                                             TransactionIsolation transactionIsolation) throws CompassException {
-        SpringSyncTransaction tr = new SpringSyncTransaction();
+        SpringSyncTransaction tr = new SpringSyncTransaction(this);
         // transaction manager might be null, we rely then on the fact that the
         // transaction started before
         tr.begin(transactionManager, session, transactionIsolation, commitBeforeCompletion);
@@ -75,7 +75,7 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
             throws CompassException {
-        SpringSyncTransaction tr = new SpringSyncTransaction();
+        SpringSyncTransaction tr = new SpringSyncTransaction(this);
         tr.join();
         return tr;
     }

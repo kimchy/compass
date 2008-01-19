@@ -50,6 +50,7 @@ import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
+import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.transaction.TransactionFactory;
 
 /**
@@ -68,6 +69,8 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     private TransactionFactory transactionFactory;
 
+    private LocalTransactionFactory localTransactionFactory;
+
     private MarshallingStrategy marshallingStrategy;
 
     private FirstLevelCache firstLevelCache;
@@ -84,6 +87,7 @@ public class DefaultCompassSession implements InternalCompassSession {
         this.mapping = compass.getMapping();
         this.compassMetaData = compass.getMetaData();
         this.transactionFactory = compass.getTransactionFactory();
+        this.localTransactionFactory = compass.getLocalTransactionFactory();
         this.runtimeSettings = runtimeSettings;
         this.searchEngine = searchEngine;
         this.firstLevelCache = firstLevelCache;
@@ -164,6 +168,11 @@ public class DefaultCompassSession implements InternalCompassSession {
             firstLevelCache = new NullFirstLevelCache();
         }
         return transactionFactory.beginTransaction(this, transactionIsolation);
+    }
+
+    public CompassTransaction beginLocalTransaction() throws CompassException {
+        checkClosed();
+        return localTransactionFactory.beginTransaction(this, null);
     }
 
     public void flush() throws CompassException {

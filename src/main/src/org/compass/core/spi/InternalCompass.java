@@ -23,6 +23,7 @@ import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
+import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.transaction.TransactionFactory;
 
 public interface InternalCompass extends Compass {
@@ -38,6 +39,8 @@ public interface InternalCompass extends Compass {
     SearchEngineFactory getSearchEngineFactory();
 
     TransactionFactory getTransactionFactory();
+
+    LocalTransactionFactory getLocalTransactionFactory();
 
     ConverterLookup getConverterLookup();
 

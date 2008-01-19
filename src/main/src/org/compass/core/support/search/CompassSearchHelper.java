@@ -84,6 +84,17 @@ public class CompassSearchHelper {
         });
     }
 
+    public CompassSearchResults searchLocal(final CompassSearchCommand command) throws CompassException {
+        if (!StringUtils.hasText(command.getQuery()) && command.getCompassQuery() == null) {
+            return new CompassSearchResults(new CompassHit[0], 0, 0);
+        }
+        return (CompassSearchResults) compassTemplate.executeLocal(new CompassCallback() {
+            public Object doInCompass(CompassSession session) throws CompassException {
+                return performSearch(command, session);
+            }
+        });
+    }
+
     /**
      * Performs the actual search operation. If pageSize is set, will perform pagination using the
      * provided size, if not, will return all the hits. Also allows for several extensions points:
@@ -114,13 +125,13 @@ public class CompassSearchHelper {
             }
             int from = page * iPageSize;
             if (from > hits.getLength()) {
-	            // from can't be negative
+                // from can't be negative
                 from = Math.max(0, hits.getLength() - iPageSize);
-                doProcessBeforeDetach(searchCommand, session, hits, from, (hitsLength-from));
-                detachedHits = hits.detach(from, (hitsLength-from));
+                doProcessBeforeDetach(searchCommand, session, hits, from, (hitsLength - from));
+                detachedHits = hits.detach(from, (hitsLength - from));
             } else if ((from + iPageSize) > hitsLength) {
-                doProcessBeforeDetach(searchCommand, session, hits, from, (hitsLength-from));
-                detachedHits = hits.detach(from, (hitsLength-from));
+                doProcessBeforeDetach(searchCommand, session, hits, from, (hitsLength - from));
+                detachedHits = hits.detach(from, (hitsLength - from));
             } else {
                 doProcessBeforeDetach(searchCommand, session, hits, from, iPageSize);
                 detachedHits = hits.detach(from, iPageSize);

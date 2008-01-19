@@ -34,6 +34,14 @@ public class TransactionFactoryFactory {
     public static TransactionFactory createTransactionFactory(Compass compass, CompassSettings settings) {
         String factoryClassName = settings.getSetting(CompassEnvironment.Transaction.FACTORY,
                 LocalTransactionFactory.class.getName());
+        return createTransactionFactory(compass, factoryClassName, settings);
+    }
+
+    public static LocalTransactionFactory createLocalTransactionFactory(Compass compass, CompassSettings settings) {
+        return (LocalTransactionFactory) createTransactionFactory(compass, LocalTransactionFactory.class.getName(), settings);
+    }
+
+    public static TransactionFactory createTransactionFactory(Compass compass, String factoryClassName, CompassSettings settings) {
 
         if (log.isDebugEnabled()) {
             log.debug("Using transaction factory [" + factoryClassName + "]");

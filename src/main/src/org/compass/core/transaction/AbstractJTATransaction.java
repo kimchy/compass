@@ -47,7 +47,8 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
 
     private boolean commitFailed;
 
-    public AbstractJTATransaction(UserTransaction ut) {
+    public AbstractJTATransaction(UserTransaction ut, TransactionFactory transactionFactory) {
+        super(transactionFactory);
         this.ut = ut;
     }
 

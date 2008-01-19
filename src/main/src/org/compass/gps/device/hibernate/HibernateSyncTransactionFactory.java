@@ -78,14 +78,14 @@ public class HibernateSyncTransactionFactory extends AbstractTransactionFactory 
 
     protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
                                                             TransactionIsolation transactionIsolation) throws CompassException {
-        HibernateSyncTransaction tr = new HibernateSyncTransaction(sessionFactory, commitBeforeCompletion);
+        HibernateSyncTransaction tr = new HibernateSyncTransaction(sessionFactory, commitBeforeCompletion, this);
         tr.begin(session, transactionIsolation);
         return tr;
     }
 
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
             throws CompassException {
-        HibernateSyncTransaction tr = new HibernateSyncTransaction(sessionFactory, commitBeforeCompletion);
+        HibernateSyncTransaction tr = new HibernateSyncTransaction(sessionFactory, commitBeforeCompletion, this);
         tr.join();
         return tr;
     }

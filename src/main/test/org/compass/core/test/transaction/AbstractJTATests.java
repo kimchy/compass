@@ -68,6 +68,27 @@ public abstract class AbstractJTATests extends TestCase {
         jotm.stop();
     }
 
+    public void testJtaWithLocalTransaction() throws Exception {
+        CompassSession session = compass.openSession();
+        CompassTransaction tr = session.beginLocalTransaction();
+
+        A a = new A();
+        a.setId(1l);
+        session.save(a);
+
+        tr.commit();
+        session.close();
+
+        session = compass.openSession();
+        tr = session.beginLocalTransaction();
+
+        a = session.load(A.class, 1);
+        assertNotNull(a);
+
+        tr.commit();
+        session.close();
+    }
+
     public void testInnerUTManagement() throws Exception {
         CompassSession session = compass.openSession();
         CompassTransaction tr = session.beginTransaction();

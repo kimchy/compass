@@ -59,7 +59,7 @@ public interface CompassSession extends CompassOperations {
      * @see org.compass.core.lucene.RuntimeLuceneEnvironment
      */
     CompassSettings getSettings();
-    
+
     /**
      * Begin a unit of work and return the associated CompassTranscation object.
      * If a new underlying transaction is required, begin the transaction.
@@ -88,6 +88,14 @@ public interface CompassSession extends CompassOperations {
      * @see CompassTransaction
      */
     CompassTransaction beginTransaction(TransactionIsolation transactionIsolation) throws CompassException;
+
+    /**
+     * Begins a unit of work using a Compass local transaction. Very handy when using
+     * transaction strategy other than local transaction factory but still wish to use
+     * a local one for example to perform serach (which will be faster as it won't start
+     * and externa transaction).
+     */
+    CompassTransaction beginLocalTransaction() throws CompassException;
 
     /**
      * Creats a new query builder, used to build queries programmatically.

@@ -25,6 +25,7 @@ import org.compass.core.CompassException;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransaction;
 import org.compass.core.transaction.TransactionException;
+import org.compass.core.transaction.TransactionFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.engine.SessionImplementor;
@@ -54,7 +55,8 @@ public class HibernateSyncTransaction extends AbstractTransaction {
 
     private Transaction transaction;
 
-    public HibernateSyncTransaction(SessionFactory sessionFactory, boolean commitBeforeCompletion) {
+    public HibernateSyncTransaction(SessionFactory sessionFactory, boolean commitBeforeCompletion, TransactionFactory transactionFactory) {
+        super(transactionFactory);
         this.sessionFactory = sessionFactory;
         this.commitBeforeCompletion = commitBeforeCompletion;
     }
@@ -80,7 +82,7 @@ public class HibernateSyncTransaction extends AbstractTransaction {
                             + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
                 }
             }
-            transaction.registerSynchronization(new HibernateTransactionSynchronization(session, transaction, newTransaction, commitBeforeCompletion));
+            transaction.registerSynchronization(new HibernateTransactionSynchronization(session, transaction, newTransaction, commitBeforeCompletion, transactionFactory));
         } catch (Exception e) {
             throw new TransactionException("Begin failed with exception", e);
         }
@@ -179,8 +181,12 @@ public class HibernateSyncTransaction extends AbstractTransaction {
 
         private boolean commitBeforeCompletion;
 
+        private TransactionFactory transactionFactory;
+
         public HibernateTransactionSynchronization(InternalCompassSession session, Transaction tx,
-                                                   boolean compassControlledHibernateTransaction, boolean commitBeforeCompletion) {
+                                                   boolean compassControlledHibernateTransaction, boolean commitBeforeCompletion,
+                                                   TransactionFactory transactionFactory) {
+            this.transactionFactory = transactionFactory;
             this.session = session;
             this.tx = tx;
             this.compassControlledHibernateTransaction = compassControlledHibernateTransaction;
@@ -220,7 +226,7 @@ public class HibernateSyncTransaction extends AbstractTransaction {
                 log.error("Exception occured when sync with transaction", e);
             } finally {
                 session.evictAll();
-                ((HibernateSyncTransactionFactory) session.getCompass().getTransactionFactory()).unbindSessionFromTransaction(tx);
+                ((HibernateSyncTransactionFactory) transactionFactory).unbindSessionFromTransaction(tx);
                 // close the session AFTER we cleared it from the transaction,
                 // so it will be actually closed (and only if we are not
                 // controlling the trnasction)

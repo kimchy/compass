@@ -30,13 +30,13 @@ public class JTASyncTransactionFactory extends AbstractJTATransactionFactory {
 
     public InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
                                                          TransactionIsolation transactionIsolation) throws CompassException {
-        JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction(), commitBeforeCompletion);
+        JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction(), commitBeforeCompletion, this);
         tx.begin(session, getTransactionManager(), transactionIsolation);
         return tx;
     }
 
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
-        JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction(), commitBeforeCompletion);
+        JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction(), commitBeforeCompletion, this);
         tx.join();
         return tx;
     }

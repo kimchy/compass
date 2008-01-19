@@ -42,8 +42,8 @@ import org.compass.core.spi.InternalCompassSession;
  */
 public class XATransaction extends AbstractJTATransaction {
 
-    public XATransaction(UserTransaction ut) {
-        super(ut);
+    public XATransaction(UserTransaction ut, TransactionFactory transactionFactory) {
+        super(ut, transactionFactory);
     }
 
     protected void doBindToTransaction(Transaction tx, InternalCompassSession session, boolean newTransaction) throws Exception {

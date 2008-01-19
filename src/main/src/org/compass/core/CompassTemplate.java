@@ -156,6 +156,46 @@ public class CompassTemplate implements CompassOperations {
     }
 
     /**
+     * Executes the compass callback within a session and a <b>local</b> transaction context.
+     * Applies the given transaction isolation level.
+     *
+     * @param action The action to execute witin a compass transaction
+     * @return An object as the result of the compass action
+     * @throws CompassException
+     */
+    public <T> T executeLocal(CompassCallback<T> action) throws CompassException {
+        CompassSession session = compass.openSession();
+        session.getSettings().addSettings(globalSessionSettings);
+        CompassTransaction tx = null;
+        try {
+            tx = session.beginLocalTransaction();
+            T result = action.doInCompass(session);
+            tx.commit();
+            return result;
+        } catch (RuntimeException e) {
+            if (tx != null) {
+                try {
+                    tx.rollback();
+                } catch (Exception e1) {
+                    log.error("Failed to rollback transaction, ignoring", e1);
+                }
+            }
+            throw e;
+        } catch (Error err) {
+            if (tx != null) {
+                try {
+                    tx.rollback();
+                } catch (Exception e1) {
+                    log.error("Failed to rollback transaction, ignoring", e1);
+                }
+            }
+            throw err;
+        } finally {
+            session.close();
+        }
+    }
+
+    /**
      * A helper execute method for find operations.
      *
      * @param action the callback to execute.

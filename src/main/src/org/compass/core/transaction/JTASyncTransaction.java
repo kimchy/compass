@@ -37,14 +37,14 @@ public class JTASyncTransaction extends AbstractJTATransaction {
 
     private boolean commitBeforeCompletion;
 
-    public JTASyncTransaction(UserTransaction ut, boolean commitBeforeCompletion) {
-        super(ut);
+    public JTASyncTransaction(UserTransaction ut, boolean commitBeforeCompletion, TransactionFactory transactionFactory) {
+        super(ut, transactionFactory);
         this.commitBeforeCompletion = commitBeforeCompletion;
     }
 
 
     protected void doBindToTransaction(Transaction tx, InternalCompassSession session, boolean newTransaction) throws Exception {
-        tx.registerSynchronization(new JTATransactionSynchronization(session, tx, newTransaction, commitBeforeCompletion));
+        tx.registerSynchronization(new JTATransactionSynchronization(session, tx, newTransaction, commitBeforeCompletion, transactionFactory));
     }
 
     private static class JTATransactionSynchronization implements Synchronization {
@@ -59,12 +59,16 @@ public class JTASyncTransaction extends AbstractJTATransaction {
 
         private boolean commitBeforeCompletion;
 
+        private TransactionFactory transactionFactory;
+
         public JTATransactionSynchronization(InternalCompassSession session, Transaction tx,
-                                             boolean compassControlledJtaTransaction, boolean commitBeforeCompletion) {
+                                             boolean compassControlledJtaTransaction, boolean commitBeforeCompletion,
+                                             TransactionFactory transactionFactory) {
             this.session = session;
             this.tx = tx;
             this.compassControlledJtaTransaction = compassControlledJtaTransaction;
             this.commitBeforeCompletion = commitBeforeCompletion;
+            this.transactionFactory = transactionFactory;
         }
 
         public void beforeCompletion() {
@@ -100,7 +104,7 @@ public class JTASyncTransaction extends AbstractJTATransaction {
                 log.error("Exception occured when sync with transaction", e);
             } finally {
                 session.evictAll();
-                ((JTASyncTransactionFactory) session.getCompass().getTransactionFactory()).unbindSessionFromTransaction(tx);
+                ((JTASyncTransactionFactory) transactionFactory).unbindSessionFromTransaction(tx);
                 // close the session AFTER we cleared it from the transaction,
                 // so it will be actually closed (and only if we are not
                 // controlling the trnasction)

@@ -46,7 +46,9 @@ public class LocalTransaction extends AbstractTransaction {
 
     private TransactionIsolation transactionIsolation;
 
-    public LocalTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation) {
+    public LocalTransaction(InternalCompassSession session, TransactionFactory transactionFactory,
+                            TransactionIsolation transactionIsolation) {
+        super(transactionFactory);
         state = UNKNOWN;
         this.session = session;
         this.compass = session.getCompass();
@@ -89,7 +91,7 @@ public class LocalTransaction extends AbstractTransaction {
         }
 
         session.evictAll();
-        ((LocalTransactionFactory) compass.getTransactionFactory()).unbindSessionFromTransaction(this, session);
+        ((LocalTransactionFactory) transactionFactory).unbindSessionFromTransaction(this, session);
         session.getSearchEngine().commit(true);
         state = COMMIT;
     }
@@ -111,7 +113,7 @@ public class LocalTransaction extends AbstractTransaction {
                         "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
             }
 
-            ((LocalTransactionFactory) compass.getTransactionFactory()).unbindSessionFromTransaction(this, session);
+            ((LocalTransactionFactory) transactionFactory).unbindSessionFromTransaction(this, session);
         }
 
         state = ROLLBACK;

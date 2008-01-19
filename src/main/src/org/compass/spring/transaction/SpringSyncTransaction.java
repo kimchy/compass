@@ -22,6 +22,7 @@ import org.compass.core.CompassException;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransaction;
 import org.compass.core.transaction.TransactionException;
+import org.compass.core.transaction.TransactionFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -43,6 +44,10 @@ public class SpringSyncTransaction extends AbstractTransaction {
     private boolean commitFailed;
 
     private PlatformTransactionManager transactionManager;
+
+    public SpringSyncTransaction(TransactionFactory transactionFactory) {
+        super(transactionFactory);
+    }
 
     public void begin(PlatformTransactionManager transactionManager, InternalCompassSession session,
                       TransactionIsolation transactionIsolation, boolean commitBeforeCompletion) {
@@ -78,13 +83,13 @@ public class SpringSyncTransaction extends AbstractTransaction {
                             + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
                 }
             }
-            sync = new SpringTransactionSynchronization(session, status.isNewTransaction(), commitBeforeCompletion);
+            sync = new SpringTransactionSynchronization(session, status.isNewTransaction(), commitBeforeCompletion, transactionFactory);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Joining Spring transaction, and starting a new compass transaction on thread ["
                         + Thread.currentThread().getName() + "]");
             }
-            sync = new SpringTransactionSynchronization(session, false, commitBeforeCompletion);
+            sync = new SpringTransactionSynchronization(session, false, commitBeforeCompletion, transactionFactory);
         }
         TransactionSynchronizationManager.registerSynchronization(sync);
 
@@ -180,11 +185,14 @@ public class SpringSyncTransaction extends AbstractTransaction {
 
         private boolean commitBeforeCompletion;
 
+        private TransactionFactory transactionFactory;
+
         public SpringTransactionSynchronization(InternalCompassSession session, boolean compassControledTransaction,
-                                                boolean commitBeforeCompletion) {
+                                                boolean commitBeforeCompletion, TransactionFactory transactionFactory) {
             this.session = session;
             this.compassControledTransaction = compassControledTransaction;
             this.commitBeforeCompletion = commitBeforeCompletion;
+            this.transactionFactory = transactionFactory;
         }
 
         public InternalCompassSession getSession() {
@@ -237,7 +245,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
                 log.error("Exception occured when sync with transaction", e);
                 // TODO swallow??????
             } finally {
-                ((SpringSyncTransactionFactory) session.getCompass().getTransactionFactory()).unbindSessionFromTransaction(this);
+                ((SpringSyncTransactionFactory) transactionFactory).unbindSessionFromTransaction(this);
                 session.evictAll();
                 // close the session AFTER we cleared it from the transaction,
                 // so it will be actually closed. Also close it only if we do
