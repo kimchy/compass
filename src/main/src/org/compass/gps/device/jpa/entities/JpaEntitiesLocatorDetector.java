@@ -54,6 +54,9 @@ public abstract class JpaEntitiesLocatorDetector {
                         return "org.compass.gps.device.jpa.entities.TopLinkEssentialsJpaEntitiesLocator";
                     }
 
+                    public String onEclipseLink() {
+                        return "org.compass.gps.device.jpa.entities.EclipseLinkJpaEntitiesLocator";
+                    }
 
                     public String onOpenJPA() {
                         return "org.compass.gps.device.jpa.entities.OpenJPAJpaEntitiesLocator";

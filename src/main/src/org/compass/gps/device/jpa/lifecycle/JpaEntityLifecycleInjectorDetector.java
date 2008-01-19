@@ -51,6 +51,10 @@ public abstract class JpaEntityLifecycleInjectorDetector {
                         return "org.compass.gps.device.jpa.lifecycle.TopLinkEssentialsJpaEntityLifecycleInjector";
                     }
 
+                    public String onEclipseLink() {
+                        return "org.compass.gps.device.jpa.lifecycle.EclipseLinkJpaEntityLifecycleInjector";
+                    }
+
                     public String onOpenJPA() {
                         return "org.compass.gps.device.jpa.lifecycle.OpenJPAJpaEntityLifecycleInjector";
                     }

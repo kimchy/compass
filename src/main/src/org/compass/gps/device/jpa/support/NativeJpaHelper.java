@@ -22,6 +22,8 @@ public abstract class NativeJpaHelper {
 
         T onOpenJPA();
 
+        T onEclipseLink();
+
         T onUnknown();
     }
 
@@ -41,6 +43,9 @@ public abstract class NativeJpaHelper {
         } else
         if (interfacesAsStrings.contains("oracle.toplink.essentials.internal.ejb.cmp3.EntityManagerFactoryImpl")) {
             retVal = callback.onTopLinkEssentials();
+        } else
+        if (interfacesAsStrings.contains("org.eclipse.persistence.internal.jpa.EntityManagerFactoryImpl")) {
+            retVal = callback.onEclipseLink();
         } else if (interfacesAsStrings.contains("org.apache.openjpa.persistence.OpenJPAEntityManagerFactory")) {
             retVal = callback.onOpenJPA();
         } else {

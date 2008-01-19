@@ -41,6 +41,9 @@ public abstract class JpaIndexEntitiesIndexerDetector {
                         return DefaultJpaIndexEntitiesIndexer.class.getName();
                     }
 
+                    public String onEclipseLink() {
+                        return DefaultJpaIndexEntitiesIndexer.class.getName();
+                    }
 
                     public String onOpenJPA() {
                         return "org.compass.gps.device.jpa.indexer.OpenJPAJpaIndexEntitiesIndexer";

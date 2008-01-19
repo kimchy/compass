@@ -28,7 +28,7 @@ import org.compass.gps.device.jpa.AbstractSimpleJpaGpsDeviceTests;
 import org.compass.gps.device.jpa.model.Simple;
 
 /**
- * Performs JPA tests using OpenJPA specific support.
+ * Performs JPA tests using TopLink specific support.
  *
  * @author kimchy
  */

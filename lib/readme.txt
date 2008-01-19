@@ -236,6 +236,11 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 - required at runtime when using Compass Gps JPA support with Toplink Essentials
 
+* eclipselink/eclipselink
+- Eclipselink Reference implementation of JPA 1.0 M3
+- required for building compass
+- required at runtime when using Compass Gps JPA support with EclipseLink
+
 * xpp/pull-parser-2.1.10.jar
 - XPP2 (http://www.extreme.indiana.edu/xgws/xsoap/xpp/)
 - required at runtime when using XPP2 based xml parsing with XSEM

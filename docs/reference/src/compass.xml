@@ -28,6 +28,8 @@
 <!ENTITY gps-hibernate  SYSTEM "gps-hibernate.xml">
 <!ENTITY gps-jpa  SYSTEM "gps-jpa.xml">
 <!ENTITY gps-embeddedopenjpa  SYSTEM "gps-embeddedopenjpa.xml">
+<!ENTITY gps-embeddedtoplink  SYSTEM "gps-embeddedtoplink.xml">
+<!ENTITY gps-embeddedeclipselink  SYSTEM "gps-embeddedeclipselink.xml">
 <!ENTITY gps-jdo  SYSTEM "gps-jdo.xml">
 <!ENTITY gps-ojb  SYSTEM "gps-ojb.xml">
 <!ENTITY gps-ibatis  SYSTEM "gps-ibatis.xml">
@@ -118,6 +120,8 @@
     &gps-hibernate;
     &gps-jpa;
     &gps-embeddedopenjpa;
+    &gps-embeddedtoplink;
+    &gps-embeddedeclipselink;
     &gps-jdo;
     &gps-ojb;
     &gps-ibatis;

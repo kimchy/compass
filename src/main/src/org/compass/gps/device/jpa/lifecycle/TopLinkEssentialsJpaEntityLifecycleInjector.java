@@ -1,3 +1,19 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.compass.gps.device.jpa.lifecycle;
 
 import java.util.Map;
@@ -8,7 +24,6 @@ import oracle.toplink.essentials.descriptors.ClassDescriptor;
 import oracle.toplink.essentials.descriptors.DescriptorEvent;
 import oracle.toplink.essentials.descriptors.DescriptorEventListener;
 import oracle.toplink.essentials.ejb.cmp3.EntityManager;
-import oracle.toplink.essentials.internal.ejb.cmp3.base.EntityManagerFactoryImpl;
 import oracle.toplink.essentials.sessions.Session;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
@@ -132,8 +147,10 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
     public void removeLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();
 
-        EntityManagerFactoryImpl emf = (EntityManagerFactoryImpl) entityManagerFactory;
-        Session session = emf.getServerSession();
+        EntityManager entityManager = (EntityManager) entityManagerFactory.createEntityManager();
+        Session session = entityManager.getServerSession();
+        entityManager.close();
+        
         Map descriptors = session.getDescriptors();
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
