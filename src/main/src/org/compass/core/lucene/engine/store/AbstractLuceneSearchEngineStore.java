@@ -371,11 +371,36 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         return ret.toArray(new String[ret.size()]);
     }
 
+    public boolean isLocked() throws SearchEngineException {
+        for (String subIndex : getSubIndexes()) {
+            if (isLocked(subIndex)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isLocked(String subIndex) throws SearchEngineException {
         return (Boolean) template.executeForSubIndex(subIndex, false,
                 new LuceneStoreCallback() {
                     public Object doWithStore(Directory dir) throws IOException {
                         return IndexReader.isLocked(dir);
+                    }
+                });
+    }
+
+    public void releaseLocks() throws SearchEngineException {
+        for (String subIndex : getSubIndexes()) {
+            releaseLock(subIndex);
+        }
+    }
+
+    public void releaseLock(String subIndex) throws SearchEngineException {
+        template.executeForSubIndex(subIndex, false,
+                new LuceneStoreCallback() {
+                    public Object doWithStore(Directory dir) throws IOException {
+                        IndexReader.unlock(dir);
+                        return null;
                     }
                 });
     }

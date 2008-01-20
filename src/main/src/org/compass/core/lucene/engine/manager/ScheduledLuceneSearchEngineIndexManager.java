@@ -165,6 +165,26 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
         indexManager.unCompoundIndex();
     }
 
+    public String[] getSubIndexes() {
+        return indexManager.getSubIndexes();
+    }
+
+    public boolean isLocked() throws SearchEngineException {
+        return indexManager.isLocked();
+    }
+
+    public boolean isLocked(String subIndex) throws SearchEngineException {
+        return indexManager.isLocked(subIndex);
+    }
+
+    public void releaseLock(String subIndex) throws SearchEngineException {
+        indexManager.releaseLock(subIndex);
+    }
+
+    public void releaseLocks() throws SearchEngineException {
+        indexManager.releaseLocks();
+    }
+
     // methods from lucene search engine index manager
 
     public LuceneSettings getSettings() {

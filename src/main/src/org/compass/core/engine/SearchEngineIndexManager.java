@@ -170,4 +170,14 @@ public interface SearchEngineIndexManager {
      * Compass.
      */
     void performScheduledTasks() throws SearchEngineException;
+
+    String[] getSubIndexes();
+
+    void releaseLocks() throws SearchEngineException;
+
+    void releaseLock(String subIndex) throws SearchEngineException;
+
+    boolean isLocked() throws SearchEngineException;
+
+    boolean isLocked(String subIndex) throws SearchEngineException;
 }

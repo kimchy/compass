@@ -31,49 +31,54 @@ import org.compass.core.mapping.CompassMapping;
  * Manages the mapping between aliases and their repective sub indexes. A Acts
  * as an abstration layer on top of the actual Lucene <code>Directory</code>
  * creation.
- * 
+ *
  * @author kimchy
  */
 public interface LuceneSearchEngineStore {
 
-	public static interface LuceneStoreCallback {
-		Object doWithStore(Directory dir) throws IOException;
-	}
+    public static interface LuceneStoreCallback {
+        Object doWithStore(Directory dir) throws IOException;
+    }
 
-	/**
-	 * Configures the store.
-	 */
-	void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping);
+    /**
+     * Configures the store.
+     */
+    void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping);
 
-	/**
-	 * Closes the store.
-	 */
-	void close();
+    /**
+     * Closes the store.
+     */
+    void close();
 
-	/**
-	 * Performs any scheduled tasks, managed by the index manager.
-	 */
-	void performScheduledTasks();
+    /**
+     * Performs any scheduled tasks, managed by the index manager.
+     */
+    void performScheduledTasks();
 
-	/**
-	 * Returns all the sub indexes defined within the store.
-	 */
-	String[] getSubIndexes();
+    /**
+     * Returns all the sub indexes defined within the store.
+     */
+    String[] getSubIndexes();
 
-	/**
-	 * Returns the number of aliases that map to the given sub index.
-	 */
-	int getNumberOfAliasesBySubIndex(String subIndex);
+    /**
+     * Returns the number of aliases that map to the given sub index.
+     */
+    int getNumberOfAliasesBySubIndex(String subIndex);
 
-	/**
-	 * Closes the given directory.
-	 */
-	void closeDirectory(String subIndex, Directory dir) throws SearchEngineException;
+    /**
+     * Closes the given directory.
+     */
+    void closeDirectory(String subIndex, Directory dir) throws SearchEngineException;
 
-	/**
-	 * Returns the directory that match the given sub index.
-	 */
-	Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException;
+    /**
+     * Returns the directory that match the given sub index.
+     */
+    Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException;
+
+    /**
+     * Returns <code>true</code> if any sub index is locked.
+     */
+    boolean isLocked() throws SearchEngineException;
 
     /**
      * Returns <code>true</code> if the sub index is locked (both Lucene write and commit locks).
@@ -81,58 +86,65 @@ public interface LuceneSearchEngineStore {
     boolean isLocked(String subIndex) throws SearchEngineException;
 
     /**
-	 * Deletes the index.
-	 */
-	void deleteIndex() throws SearchEngineException;
+     * Releases all the locks on all the sub indexes.
+     */
+    void releaseLocks() throws SearchEngineException;
 
-	/**
-	 * Creates the index (if it is already exists, delets it first).
-	 */
-	void createIndex() throws SearchEngineException;
+    /**
+     * Releases the lock for the given sub index.
+     */
+    void releaseLock(String subIndex) throws SearchEngineException;
 
-	/**
-	 * Verify that the index exists. If the index exists, nothing happens, if it
-	 * does not, the index is created.
-	 */
-	boolean verifyIndex() throws SearchEngineException;
+    /**
+     * Deletes the index.
+     */
+    void deleteIndex() throws SearchEngineException;
 
-	/**
-	 * Returns <code>true</code> if one of the sub indexes index does not
-	 * exists.
-	 */
-	boolean indexExists() throws SearchEngineException;
+    /**
+     * Creates the index (if it is already exists, delets it first).
+     */
+    void createIndex() throws SearchEngineException;
 
-	/**
-	 * Returns the sub indexes that intersect with the given sub indexes and
-	 * aliases provided. If the sub indexes and aliases are <code>null</code>,
-	 * return all the sub indexes.
-	 */
-	String[] calcSubIndexes(String[] subIndexes, String[] aliases);
+    /**
+     * Verify that the index exists. If the index exists, nothing happens, if it
+     * does not, the index is created.
+     */
+    boolean verifyIndex() throws SearchEngineException;
 
-	/**
-	 * Copies the index from the given store into the current store.
-	 * 
-	 * @param searchEngineStore
-	 *            The store to copy from
-	 * @throws SearchEngineException
-	 */
-	void copyFrom(LuceneSearchEngineStore searchEngineStore) throws SearchEngineException;
+    /**
+     * Returns <code>true</code> if one of the sub indexes index does not
+     * exists.
+     */
+    boolean indexExists() throws SearchEngineException;
 
-	/**
-	 * A callback to register event listeners when a {@link SearchEngine} is
-	 * created.
-	 * 
-	 * @param searchEngine
-	 *            The search engine created
-	 * @param eventManager
-	 *            The event manager to register events with
-	 */
-	void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager);
+    /**
+     * Returns the sub indexes that intersect with the given sub indexes and
+     * aliases provided. If the sub indexes and aliases are <code>null</code>,
+     * return all the sub indexes.
+     */
+    String[] calcSubIndexes(String[] subIndexes, String[] aliases);
 
-	/**
-	 * Returns the lucene settings.
-	 */
-	LuceneSettings getLuceneSettings();
+    /**
+     * Copies the index from the given store into the current store.
+     *
+     * @param searchEngineStore The store to copy from
+     * @throws SearchEngineException
+     */
+    void copyFrom(LuceneSearchEngineStore searchEngineStore) throws SearchEngineException;
+
+    /**
+     * A callback to register event listeners when a {@link SearchEngine} is
+     * created.
+     *
+     * @param searchEngine The search engine created
+     * @param eventManager The event manager to register events with
+     */
+    void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager);
+
+    /**
+     * Returns the lucene settings.
+     */
+    LuceneSettings getLuceneSettings();
 
     /**
      * Return <code>true</code> if this store allows to perform concurrent commit (i.e. commit
