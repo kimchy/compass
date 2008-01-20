@@ -337,6 +337,27 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return searchEngineStore.getDirectoryBySubIndex(subIndex, false);
     }
 
+    public String[] getSubIndexes() {
+        return searchEngineStore.getSubIndexes();
+    }
+
+    public boolean isLocked() throws SearchEngineException {
+        return searchEngineStore.isLocked();
+    }
+
+    public boolean isLocked(String subIndex) throws SearchEngineException {
+        return searchEngineStore.isLocked(subIndex);
+    }
+
+    public void releaseLocks() throws SearchEngineException {
+        searchEngineStore.releaseLocks();
+    }
+
+    public void releaseLock(String subIndex) throws SearchEngineException {
+        searchEngineStore.releaseLock(subIndex);
+    }
+
+    
     public void start() {
         isRunning = true;
     }

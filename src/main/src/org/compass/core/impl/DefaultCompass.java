@@ -399,6 +399,38 @@ public class DefaultCompass implements InternalCompass {
             });
         }
 
+        public boolean isLocked() throws SearchEngineException {
+            return ((Boolean) template.execute(new CompassCallback() {
+                public Object doInCompass(CompassSession session) throws CompassException {
+                    return Boolean.valueOf(indexManager.isLocked());
+                }
+            })).booleanValue();
+        }
+
+        public boolean isLocked(final String subIndex) throws SearchEngineException {
+            return ((Boolean) template.execute(new CompassCallback() {
+                public Object doInCompass(CompassSession session) throws CompassException {
+                    return Boolean.valueOf(indexManager.isLocked(subIndex));
+                }
+            })).booleanValue();
+        }
+
+        public void releaseLock(final String subIndex) throws SearchEngineException {
+            template.execute(new CompassCallbackWithoutResult() {
+                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                    indexManager.releaseLock(subIndex);
+                }
+            });
+        }
+
+        public void releaseLocks() throws SearchEngineException {
+            template.execute(new CompassCallbackWithoutResult() {
+                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                    indexManager.releaseLocks();
+                }
+            });
+        }
+
         // lucene search engine Index manager
 
         public LuceneSettings getSettings() {

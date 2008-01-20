@@ -162,4 +162,24 @@ public interface SearchEngineIndexManager {
      * @throws SearchEngineException
      */
     void checkAndClearIfNotifiedAllToClearCache() throws SearchEngineException;
+
+    /**
+     * Returns <code>true</code> if any sub index is locked.
+     */
+    boolean isLocked() throws SearchEngineException;
+
+    /**
+     * Returns <code>true</code> if the sub index is locked (both Lucene write and commit locks).
+     */
+    boolean isLocked(String subIndex) throws SearchEngineException;
+
+    /**
+     * Releases all the locks on all the sub indexes.
+     */
+    void releaseLocks() throws SearchEngineException;
+
+    /**
+     * Releases the lock for the given sub index.
+     */
+    void releaseLock(String subIndex) throws SearchEngineException;
 }

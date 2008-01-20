@@ -378,14 +378,40 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         return (String[]) ret.toArray(new String[ret.size()]);
     }
 
+    public boolean isLocked() throws SearchEngineException {
+        String[] subIndexes = getSubIndexes();
+        for (int i = 0; i < subIndexes.length; i++) {
+            if (isLocked(subIndexes[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isLocked(String subIndex) throws SearchEngineException {
-        Boolean retVal = (Boolean) template.executeForSubIndex(subIndex, false,
+        return ((Boolean) template.executeForSubIndex(subIndex, false,
                 new LuceneStoreCallback() {
                     public Object doWithStore(Directory dir) throws IOException {
                         return Boolean.valueOf(IndexReader.isLocked(dir));
                     }
+                })).booleanValue();
+    }
+
+    public void releaseLocks() throws SearchEngineException {
+        String[] subIndexes = getSubIndexes();
+        for (int i = 0; i < subIndexes.length; i++) {
+            releaseLock(subIndexes[i]);
+        }
+    }
+
+    public void releaseLock(String subIndex) throws SearchEngineException {
+        template.executeForSubIndex(subIndex, false,
+                new LuceneStoreCallback() {
+                    public Object doWithStore(Directory dir) throws IOException {
+                        IndexReader.unlock(dir);
+                        return null;
+                    }
                 });
-        return retVal.booleanValue();
     }
 
     public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {
