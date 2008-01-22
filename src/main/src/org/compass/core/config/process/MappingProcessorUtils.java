@@ -60,7 +60,7 @@ public abstract class MappingProcessorUtils {
     }
 
     public static void lookupConverter(ConverterLookup converterLookup, ClassPropertyMetaDataMapping mdMapping,
-                                           ClassPropertyMapping classPropertyMapping) {
+                                       ClassPropertyMapping classPropertyMapping) {
         if (mdMapping.getConverter() == null) {
 
             if (mdMapping.getConverterName() != null) {
@@ -81,19 +81,20 @@ public abstract class MappingProcessorUtils {
     }
 
     public static void addInternalId(CompassSettings settings, ConverterLookup converterLookup,
-                                     ClassPropertyMapping classPropertyMapping) throws MappingException {
+                                     ClassPropertyMapping classPropertyMapping, boolean mustBeUntokenized) throws MappingException {
         ClassPropertyMetaDataMapping internalIdMapping = new ClassPropertyMetaDataMapping();
         internalIdMapping.setInternal(true);
         internalIdMapping.setName(classPropertyMapping.getName());
         internalIdMapping.setStore(Property.Store.YES);
         internalIdMapping.setOmitNorms(true);
-        Property.Index index = classPropertyMapping.getManagedIdIndex();
-        if (index == null) {
-            String indexSetting = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, "no");
-            index = Property.Index.fromString(indexSetting);
-            if (index == Property.Index.TOKENIZED) {
-                throw new ConfigurationException("Set the setting [" + CompassEnvironment.Osem.MANAGED_ID_INDEX
-                        + "] with value of [tokenized], must be either [no] or [un_tokenized]");
+        Property.Index index;
+        if (mustBeUntokenized) {
+            index = Property.Index.UN_TOKENIZED;
+        } else {
+            index = classPropertyMapping.getManagedIdIndex();
+            if (index == null) {
+                String indexSetting = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, "tokenized");
+                index = Property.Index.fromString(indexSetting);
             }
         }
         internalIdMapping.setIndex(index);
