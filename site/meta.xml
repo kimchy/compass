@@ -80,6 +80,17 @@
             </downloads>
         </release>
         <release>
+            <version>1.2.1</version>
+            <date>Tuesday, Jabuary 22, 2008</date>
+            <jiraId>10110</jiraId>
+            <downloads>
+                <download>
+                    <url>https://sourceforge.net/project/showfiles.php?group_id=121279&amp;package_id=132331&amp;release_id=570545</url>
+                    <name>Compass</name>
+                </download>
+            </downloads>
+        </release>
+        <release>
             <version>1.2</version>
             <date>Monday, October 15, 2007</date>
             <jiraId>10101</jiraId>
