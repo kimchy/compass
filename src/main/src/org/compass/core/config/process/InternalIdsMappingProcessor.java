@@ -71,7 +71,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
     private void buildInternalIdForIdProperties(ClassMapping classMapping) {
         List idMappings = classMapping.findClassPropertyIdMappings();
         for (Iterator it = idMappings.iterator(); it.hasNext();) {
-            MappingProcessorUtils.addInternalId(settings, converterLookup, (ClassPropertyMapping) it.next());
+            MappingProcessorUtils.addInternalId(settings, converterLookup, (ClassPropertyMapping) it.next(), true);
         }
     }
 
@@ -143,7 +143,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
                 continue;
             } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.TRUE
                     || classPropertyMapping.mappingsSize() == 0) {
-                MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping);
+                MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping, mustBeUnTokenized);
             } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.AUTO) {
                 autoAddIfRequiredInternalId(propertyMappingsMap, classPropertyMapping, mustBeUnTokenized);
             } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.NO_STORE) {
@@ -196,7 +196,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         }
 
         if (!foundPropertyId) {
-            MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping);
+            MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping, mustBeUnTokenized);
         }
     }
 

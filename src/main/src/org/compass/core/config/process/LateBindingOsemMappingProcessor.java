@@ -207,7 +207,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
                 ClassIdPropertyMapping idMapping = (ClassIdPropertyMapping) it.next();
                 idMapping.clearMappings();
                 // create the internal id
-                MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping);
+                MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping, true);
             }
             // since we create our own special ref class mapping that only holds the
             // ids, we need to call the post process here
