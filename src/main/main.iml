@@ -625,7 +625,9 @@
           <root url="jar://$MODULE_DIR$/../../lib/openjpa/openjpa-1.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="intellijad://intellijad" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">

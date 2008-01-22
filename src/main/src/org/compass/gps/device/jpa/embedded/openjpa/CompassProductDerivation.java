@@ -53,6 +53,7 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.transaction.JTASyncTransactionFactory;
 import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
@@ -216,21 +217,35 @@ public class CompassProductDerivation extends AbstractProductDerivation {
             compassConfiguration.tryAddClass(jpaClass);
         }
 
+        OpenJPAEntityManagerFactory emf = toEntityManagerFactory(factory);
+
         // create some default settings
 
         String transactionFactory = (String) compassProperties.get(CompassEnvironment.Transaction.FACTORY);
-        if (transactionFactory == null || LocalTransactionFactory.class.getName().equals(transactionFactory)) {
-            openJpaControlledTransaction = true;
-            // if the settings is configured to use local transaciton, disable thread bound setting since
-            // we are using OpenJPA to managed transaction scope (using user objects on the em) and not thread locals
-            if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
-                // if no emf is defined
-                settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
+        if (transactionFactory == null) {
+            OpenJPAEntityManager em = emf.createEntityManager();
+            boolean isJTA = em.isManaged();
+            em.close();
+            if (isJTA) {
+                transactionFactory = JTASyncTransactionFactory.class.getName();
+                openJpaControlledTransaction = false;
+            } else {
+                transactionFactory = LocalTransactionFactory.class.getName();
+                openJpaControlledTransaction = true;
             }
+            settings.setSetting(CompassEnvironment.Transaction.FACTORY, transactionFactory);
         } else {
             // JPA is not controlling the transaction (using JTA Sync or XA), don't commit/rollback
             // with OpenJPA transaction listeners
             openJpaControlledTransaction = false;
+        }
+
+        // if the settings is configured to use local transaciton, disable thread bound setting since
+        // we are using OpenJPA to managed transaction scope (using user objects on the em) and not thread locals
+        // will only be taken into account when using local transactions
+        if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
+            // if no emf is defined
+            settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
         }
 
         compass = compassConfiguration.buildCompass();
@@ -252,7 +267,6 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         factory.putUserObject(COMPASS_INDEX_SETTINGS_USER_OBJECT_KEY, indexProps);
 
         // start an internal JPA device and Gps for mirroring
-        OpenJPAEntityManagerFactory emf = toEntityManagerFactory(factory);
 
         JpaGpsDevice jpaGpsDevice = new JpaGpsDevice(DefaultJpaCompassGps.JPA_DEVICE_NAME, emf);
         jpaGpsDevice.setMirrorDataChanges(true);
