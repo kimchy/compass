@@ -1,7 +1,7 @@
 <chapter id="spring-hibernate">
   <title>Hibernate 3 Gps Device Support</title>
 
-  <sect1 id="spring-hibernate-introduction">
+  <sect1 id="spring-hibernate-introduction-dep">
    <title>Deprecation Note</title>
 
 	<para>

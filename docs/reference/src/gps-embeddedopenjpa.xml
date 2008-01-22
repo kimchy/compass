@@ -55,7 +55,7 @@
       
     </sect1>
 
-    <sect1 id="jpa-index">
+    <sect1 id="openjpa-index">
     	<title>Index Operation</title>
 
       	<para>
@@ -75,7 +75,7 @@
 
     </sect1>
 
-    <sect1 id="jpa-datamirroring">
+    <sect1 id="openjpa-datamirroring">
       	<title>Real Time Data Mirroring</title>
 
       	<para>
