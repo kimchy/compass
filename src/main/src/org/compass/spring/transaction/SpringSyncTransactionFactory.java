@@ -30,7 +30,6 @@ import org.compass.core.transaction.AbstractTransactionFactory;
 import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.TransactionException;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.ExistingSpringTxCompassHelper;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -61,7 +60,8 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
 
     protected boolean isWithinExistingTransaction(InternalCompassSession session) throws CompassException {
-        return ExistingSpringTxCompassHelper.isExistingTransaction(transactionManager);
+        return TransactionSynchronizationManager.isActualTransactionActive();
+//        return ExistingSpringTxCompassHelper.isExistingTransaction(transactionManager);
     }
 
     protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
