@@ -35,20 +35,20 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 
-    private static ThreadLocal transactionManagerHolder = new ThreadLocal();
+    private static ThreadLocal<PlatformTransactionManager> transactionManagerHolder = new ThreadLocal<PlatformTransactionManager>();
 
     private static String transactionManagerKey = SpringSyncTransactionFactory.class.getName();
 
     private PlatformTransactionManager transactionManager;
 
-    private transient Map currentSessionMap = new Hashtable();
+    private transient Map<TransactionSynchronization, CompassSession> currentSessionMap = new Hashtable<TransactionSynchronization, CompassSession>();
 
     public static void setTransactionManager(PlatformTransactionManager transactionManager) {
         transactionManagerHolder.set(transactionManager);
     }
 
     protected void doConfigure(CompassSettings settings) {
-        this.transactionManager = (PlatformTransactionManager) transactionManagerHolder.get();
+        this.transactionManager = transactionManagerHolder.get();
         if (transactionManager == null) {
             transactionManager = (PlatformTransactionManager) settings.getRegistry(transactionManagerKey);
         }
@@ -85,7 +85,7 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
         if (sync == null) {
             return null;
         }
-        return (CompassSession) currentSessionMap.get(sync);
+        return currentSessionMap.get(sync);
     }
 
     protected void doBindSessionToTransaction(CompassTransaction tr, CompassSession session) throws CompassException {
