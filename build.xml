@@ -641,6 +641,7 @@
                 <include name="lib/cglib/**"/>
                 <include name="lib/dom4j/**"/>
                 <include name="lib/groovy/**"/>
+                <include name="lib/eclipselink/**"/>
                 <include name="lib/ehcache/**"/>
                 <include name="lib/hibernate/**"/>
                 <include name="lib/hsqldb/**"/>
