@@ -1,8 +1,8 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.0 M1
-==============================
+VERSION 2.0 M1 (January 25, 2008)
+=================================
 
 1. New and improved "all" support.
     1.a all-analyzer mapping removed from resource and class mappings. Properties added to all will use their
