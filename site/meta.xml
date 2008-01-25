@@ -65,17 +65,28 @@
 
     <releases>
         <release>
-            <version>2.0M1-SNAPSHOT</version>
+            <version>2.0M2-SNAPSHOT</version>
             <date>Latest svn build</date>
-            <jiraId>10102</jiraId>
+            <jiraId>10112</jiraId>
             <downloads>
                 <download>
-                    <url>versions/2.0M1-SNAPSHOT/release/compass-2.0M1-SNAPSHOT.zip</url>
+                    <url>versions/2.0M2-SNAPSHOT/release/compass-2.0M2-SNAPSHOT.zip</url>
                     <name>Compass</name>
                 </download>
                 <download>
-                    <url>versions/2.0M1-SNAPSHOT/release/compass-2.0M1-SNAPSHOT-with-dependencies.zip</url>
+                    <url>versions/2.0M2-SNAPSHOT/release/compass-2.0M2-SNAPSHOT-with-dependencies.zip</url>
                     <name>With Dependencies</name>
+                </download>
+            </downloads>
+        </release>
+        <release>
+            <version>2.0 M1</version>
+            <date>Friday, Jabuary 25, 2008</date>
+            <jiraId>10102</jiraId>
+            <downloads>
+                <download>
+                    <url>https://sourceforge.net/project/showfiles.php?group_id=121279&amp;package_id=132331&amp;release_id=571297</url>
+                    <name>Compass</name>
                 </download>
             </downloads>
         </release>

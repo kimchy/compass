@@ -1,5 +1,5 @@
-COMPASS, Release 2.0 M1
------------------------
+COMPASS, Release 2.0 M2 SNAPSHOT
+--------------------------------
 http://www.opensymphony.com/compass
 
 
