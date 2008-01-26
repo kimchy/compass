@@ -14,7 +14,6 @@
 
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
-            <exclude name="ant/*.jar" />
         </fileset>
 
     </path>

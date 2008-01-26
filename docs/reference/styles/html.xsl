@@ -27,7 +27,8 @@
     <xsl:param name="tablecolumns.extension">0</xsl:param>
     <xsl:param name="callout.extensions">1</xsl:param>
     <xsl:param name="graphicsize.extension">0</xsl:param>
-
+    
+    
 <!--###################################################
                       Table Of Contents
     ################################################### -->   
@@ -96,5 +97,29 @@
 			<xsl:apply-templates mode="titlepage.mode" />
 		</div>
 	</xsl:template>
+
+  <xsl:template name="user.header.content">
+	  <div id="compassbanner">
+	    <a href="/"><img src="images/compassheader3.png" /></a>
+    </div>
+		<div id="compassnavcontainer">
+			<a class="navtabcurrent" href="http://www.compass-project.org">Main</a>
+			<a class="navtab" href="http://www.compass-project.org/overview.html">Overview</a>
+			<a class="navtab" href="http://wiki.compass-project.org">Wiki</a>
+			<a class="navtab" href="http://issues.compass-project.org">Issues</a>
+			<a class="navtab" href="http://forum.compass-project.org">Forum</a>
+			<a class="navtab" href="http://build.compass-project.org">Build</a>
+			<a class="navtab" href="http://fisheye.compass-project.org">Fisheye</a>
+		</div>
+    <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+    var pageTracker = _gat._getTracker("UA-3492838-1");
+    pageTracker._initData();
+    pageTracker._trackPageview();
+    </script>
+  </xsl:template>
   
 </xsl:stylesheet>
