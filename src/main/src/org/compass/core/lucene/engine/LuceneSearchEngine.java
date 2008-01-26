@@ -20,6 +20,7 @@ import java.io.Reader;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Field;
 import org.compass.core.CompassTransaction.TransactionIsolation;
@@ -343,19 +344,23 @@ public class LuceneSearchEngine implements SearchEngine {
         if (resource instanceof MultiResource) {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
-                Resource resource1 = multiResource.resource(i);
-                LuceneUtils.addExtendedProeprty(resource1, resourceMapping, this);
-                transaction.create((InternalResource) resource1);
-                if (log.isDebugEnabled()) {
-                    log.debug("RESOURCE CREATE " + resource1);
-                }
+                InternalResource resource1 = (InternalResource) multiResource.resource(i);
+                internalCreate(resourceMapping, resource1);
             }
         } else {
-            LuceneUtils.addExtendedProeprty(resource, resourceMapping, this);
-            transaction.create((InternalResource) resource);
-            if (log.isDebugEnabled()) {
-                log.debug("RESOURCE CREATE " + resource);
-            }
+            InternalResource resource1 = (InternalResource) resource;
+            internalCreate(resourceMapping, resource1);
+        }
+    }
+
+    private void internalCreate(ResourceMapping resourceMapping, InternalResource resource1) throws SearchEngineException {
+        LuceneUtils.addExtendedProeprty(resource1, resourceMapping, this);
+        LuceneUtils.applyBoostIfNeeded(resource1, this);
+        Analyzer analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerByResource(resource1);
+        analyzer = LuceneUtils.addAllProperty(resource1, analyzer, resource1.resourceKey().getResourceMapping(), this);
+        transaction.create(resource1, analyzer);
+        if (log.isDebugEnabled()) {
+            log.debug("RESOURCE CREATE " + resource1);
         }
     }
 

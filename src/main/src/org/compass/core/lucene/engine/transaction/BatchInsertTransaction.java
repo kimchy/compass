@@ -199,13 +199,10 @@ public class BatchInsertTransaction extends AbstractTransaction {
         }
     }
 
-    protected void doCreate(final InternalResource resource) throws SearchEngineException {
+    protected void doCreate(final InternalResource resource, Analyzer analyzer) throws SearchEngineException {
         // open the original index writer, so we lock it for changes
         String subIndex = resource.getSubIndex();
         WriterManager.IndexWriterWrapper wrapper = writerManager.openWriterBySubIndex(subIndex);
-        LuceneUtils.applyBoostIfNeeded(resource, searchEngine);
-        Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
-        analyzer = LuceneUtils.addAllProperty(resource, analyzer, resource.resourceKey().getResourceMapping(), searchEngine);
         LuceneUtils.createResource(wrapper.indexWriter, resource, analyzer);
     }
 

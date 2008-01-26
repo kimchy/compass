@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine.transaction;
 
 import java.util.ArrayList;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
@@ -104,12 +105,12 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
     protected abstract SearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases)
             throws SearchEngineException;
 
-    public void create(final InternalResource resource) throws SearchEngineException {
+    public void create(final InternalResource resource, Analyzer analyzer) throws SearchEngineException {
         dirty = true;
-        doCreate(resource);
+        doCreate(resource, analyzer);
     }
 
-    protected abstract void doCreate(final InternalResource resource) throws SearchEngineException;
+    protected abstract void doCreate(final InternalResource resource, Analyzer analyzer) throws SearchEngineException;
 
     public void delete(final ResourceKey resourceKey) throws SearchEngineException {
         dirty = true;

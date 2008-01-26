@@ -331,13 +331,10 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         // we might want to actually perform a flush if the Lucene store allows it (like jdbc).
     }
 
-    protected void doCreate(InternalResource resource) throws SearchEngineException {
+    protected void doCreate(InternalResource resource, Analyzer analyzer) throws SearchEngineException {
         String subIndex = resource.getSubIndex();
         TransIndexWrapper wrapper = transIndexManager.openTransIndexBySubIndex(subIndex);
         try {
-            LuceneUtils.applyBoostIfNeeded(resource, searchEngine);
-            Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
-            analyzer = LuceneUtils.addAllProperty(resource, analyzer, resource.resourceKey().getResourceMapping(), searchEngine);
             wrapper.transIndex.addResource(resource, analyzer);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()

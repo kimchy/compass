@@ -16,6 +16,7 @@
 
 package org.compass.core.lucene.engine.transaction;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
@@ -50,7 +51,7 @@ public interface LuceneSearchEngineTransaction {
      */
     void flush() throws SearchEngineException;
 
-    void create(final InternalResource resource) throws SearchEngineException;
+    void create(final InternalResource resource, Analyzer analyzer) throws SearchEngineException;
 
     void delete(final ResourceKey resourceKey) throws SearchEngineException;
 
