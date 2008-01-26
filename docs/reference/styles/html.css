@@ -312,6 +312,10 @@ div.note * td, div.tip * td, div.warning * td {
 	padding-right: 10px;
 }
 
+#compassbanner img {
+	border:0;
+}
+
 /* Tabs */
 #compassnavcontainer {
 	text-align: right;
