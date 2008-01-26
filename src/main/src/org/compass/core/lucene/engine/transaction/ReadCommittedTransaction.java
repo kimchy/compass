@@ -42,7 +42,6 @@ import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
-import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
@@ -333,7 +332,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     }
 
     protected void doCreate(InternalResource resource) throws SearchEngineException {
-        String subIndex = ResourceHelper.computeSubIndex(resource.resourceKey());
+        String subIndex = resource.getSubIndex();
         TransIndexWrapper wrapper = transIndexManager.openTransIndexBySubIndex(subIndex);
         try {
             LuceneUtils.applyBoostIfNeeded(resource, searchEngine);
@@ -347,7 +346,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     }
 
     protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
-        String subIndex = ResourceHelper.computeSubIndex(resourceKey);
+        String subIndex = resourceKey.getSubIndex();
         TransIndexWrapper wrapper = transIndexManager.openTransIndexBySubIndex(subIndex);
 
         // mark for deletion in the actual index
@@ -367,7 +366,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         Hits hits;
         LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = null;
         try {
-            String subIndex = ResourceHelper.computeSubIndex(resourceKey);
+            String subIndex = resourceKey.getSubIndex();
             TransIndexWrapper wrapper = transIndexManager.getTransIndexBySubIndex(subIndex);
             if (wrapper == null) {
                 indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
@@ -453,7 +452,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     private Hits findByIds(Searcher indexSearcher, String subIndex, ResourceKey resourceKey, Filter filter)
             throws SearchEngineException {
         Property[] ids = resourceKey.getIds();
-        Query query = LuceneUtils.buildResourceLoadQuery(searchEngine.getSearchEngineFactory(), subIndex, resourceKey);
+        Query query = LuceneUtils.buildResourceLoadQuery(indexManager, resourceKey);
         try {
             if (filter == null) {
                 return indexSearcher.search(query);

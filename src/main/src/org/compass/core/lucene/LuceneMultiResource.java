@@ -64,6 +64,10 @@ public class LuceneMultiResource implements MultiResource, Map<String, Property[
         return currentResource.resourceKey();
     }
 
+    public String getSubIndex() {
+        return currentResource.getSubIndex();
+    }
+
     public void addResource() {
         currentResource = new LuceneResource(alias, searchEngine);
         resources.add(currentResource);

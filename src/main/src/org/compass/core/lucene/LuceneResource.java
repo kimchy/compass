@@ -115,6 +115,10 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         return resourceKey;
     }
 
+    public String getSubIndex() {
+        return resourceKey().getSubIndex();
+    }
+
     public String getValue(String name) {
         return document.get(name);
     }

@@ -24,4 +24,6 @@ import org.compass.core.Resource;
 public interface InternalResource extends Resource {
 
     ResourceKey resourceKey();
+
+    String getSubIndex();
 }

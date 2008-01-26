@@ -38,13 +38,12 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.all.AllAnalyzer;
+import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalResource;
@@ -55,20 +54,16 @@ import org.compass.core.spi.ResourceKey;
  */
 public abstract class LuceneUtils {
 
-    public static Query buildResourceLoadQuery(LuceneSearchEngineFactory searchEngineFactory, ResourceKey resourceKey) {
-        return buildResourceLoadQuery(searchEngineFactory, ResourceHelper.computeSubIndex(resourceKey), resourceKey);
-    }
-
-    public static Query buildResourceLoadQuery(LuceneSearchEngineFactory searchEngineFactory, String subIndex, ResourceKey resourceKey) {
+    public static Query buildResourceLoadQuery(LuceneSearchEngineIndexManager indexManager, ResourceKey resourceKey) {
         Property[] ids = resourceKey.getIds();
-        int numberOfAliases = searchEngineFactory.getLuceneIndexManager().getStore().getNumberOfAliasesBySubIndex(subIndex);
+        int numberOfAliases = indexManager.getStore().getNumberOfAliasesBySubIndex(resourceKey.getSubIndex());
         Query query;
         if (numberOfAliases == 1 && ids.length == 1) {
             query = new TermQuery(new Term(ids[0].getName(), ids[0].getStringValue()));
         } else {
             BooleanQuery bQuery = new BooleanQuery();
             if (numberOfAliases > 1) {
-                String aliasProperty = searchEngineFactory.getLuceneSettings().getAliasProperty();
+                String aliasProperty = indexManager.getSettings().getAliasProperty();
                 Term t = new Term(aliasProperty, resourceKey.getAlias());
                 bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
             }

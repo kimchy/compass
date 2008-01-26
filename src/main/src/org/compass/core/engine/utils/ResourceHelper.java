@@ -20,11 +20,9 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -33,11 +31,6 @@ import org.compass.core.util.StringUtils;
 public abstract class ResourceHelper {
 
     private ResourceHelper() {
-    }
-
-    public static String computeSubIndex(ResourceKey resourceKey) throws SearchEngineException {
-        SubIndexHash subIndexHash = resourceKey.getResourceMapping().getSubIndexHash();
-        return subIndexHash.mapSubIndex(resourceKey.getAlias(), resourceKey.getIds());
     }
 
     public static Property[] toIds(Resource resource, CompassMapping mapping)

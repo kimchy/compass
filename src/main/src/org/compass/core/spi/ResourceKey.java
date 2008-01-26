@@ -18,6 +18,7 @@ package org.compass.core.spi;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.mapping.ResourceMapping;
 
@@ -29,6 +30,8 @@ import org.compass.core.mapping.ResourceMapping;
 public final class ResourceKey {
 
     private String alias;
+
+    private String subIndex;
 
     private Property[] ids;
 
@@ -77,6 +80,14 @@ public final class ResourceKey {
 
     public String getAlias() {
         return alias;
+    }
+
+    public String getSubIndex() {
+        if (subIndex == null) {
+            SubIndexHash subIndexHash = getResourceMapping().getSubIndexHash();
+            subIndex = subIndexHash.mapSubIndex(getAlias(), getIds());
+        }
+        return subIndex;
     }
 
     public Property[] getIds() {

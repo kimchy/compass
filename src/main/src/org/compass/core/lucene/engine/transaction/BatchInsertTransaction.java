@@ -27,7 +27,6 @@ import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
-import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -202,7 +201,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
 
     protected void doCreate(final InternalResource resource) throws SearchEngineException {
         // open the original index writer, so we lock it for changes
-        String subIndex = ResourceHelper.computeSubIndex(resource.resourceKey());
+        String subIndex = resource.getSubIndex();
         WriterManager.IndexWriterWrapper wrapper = writerManager.openWriterBySubIndex(subIndex);
         LuceneUtils.applyBoostIfNeeded(resource, searchEngine);
         Analyzer analyzer = analyzerManager.getAnalyzerByResource(resource);
