@@ -26,14 +26,14 @@ import org.compass.core.engine.SearchEngineOptimizer;
 /**
  * Creates a CompassSession. Usually an application has a single Compass object.
  * Threads servicing client requests obtain sessions from Compass.
- * <p/>
- * Implementors must be threadsafe.
- * <p/>
- * CompassSessions are immutable. The behaviour of a Compass is controlled by
+ *
+ * <p>Implementors must be threadsafe.
+ *
+ * <p>CompassSessions are immutable. The behaviour of a Compass is controlled by
  * settings supplied at configuration time through CompassConfiguration. These
  * settings are defined on the web site.
- * <p/>
- * Compass also provides operations that are on a higher level than a session,
+ *
+ * <p>Compass also provides operations that are on a higher level than a session,
  * like create/delete operations on index data files and manages the index
  * optimiser lifecycle.
  *
