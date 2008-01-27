@@ -298,7 +298,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settingsHolder.names.add(LuceneEnvironment.Analyzer.FILTERS);
             settingsHolder.values.add(getElementAttribute(analyzerEle, "filters"));
 
-            List stopWordsList = DomUtils.getChildElementsByTagName(analyzerEle, "stopWords", true);
+            List stopWordsList = DomUtils.getChildElementsByTagName(analyzerEle, "stopWords", false);
             if (stopWordsList.size() == 1) {
                 Element stopWordsEle = (Element) stopWordsList.get(0);
                 StringBuffer sb = new StringBuffer();

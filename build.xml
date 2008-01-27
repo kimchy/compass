@@ -26,6 +26,12 @@
          due to the lack of a greater-than comparator in Ant.
      -->
 
+    <tstamp>
+        <format property="daystamp" pattern="yyyyMMdd" />
+        <format property="timestamp" pattern="yyyyMMdd HH:mm" />
+    </tstamp>
+
+    
     <condition property="tiger.available">
         <not>
             <or>
@@ -176,6 +182,7 @@
                     <attribute name="Implementation-Title" value="${compass-title}"/>
                     <attribute name="Implementation-Version" value="${compass-version}"/>
                     <attribute name="Compass-Version" value="${compass-version}"/>
+                    <attribute name="Compass-Date" value="${timestamp}"/>
                 </manifest>
             </jar>
         </sequential>
@@ -863,6 +870,7 @@
                 <attribute name="Implementation-Title" value="${compass-title}"/>
                 <attribute name="Implementation-Version" value="${compass-version}"/>
                 <attribute name="Compass-Version" value="${compass-version}"/>
+                <attribute name="Compass-Date" value="${timestamp}"/>
             </manifest>
         </jar>
 
