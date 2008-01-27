@@ -14,6 +14,15 @@
 
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
+            <exclude name="ant/*.jar"/>
+        </fileset>
+
+    </path>
+
+    <path id="compile-libs">
+
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
         </fileset>
 
     </path>
@@ -81,7 +90,7 @@
         <javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
                deprecation="false" optimize="false" failonerror="true" excludes="**/coherence/**">
             <src path="${main.src.dir}"/>
-            <classpath refid="all-libs"/>
+            <classpath refid="compile-libs"/>
         </javac>
 
         <antcall target="buildcoherence"/>
@@ -104,7 +113,7 @@
         <javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
                deprecation="false" optimize="false" failonerror="true" includes="**/coherence/**">
             <src path="${main.src.dir}"/>
-            <classpath refid="all-libs"/>
+            <classpath refid="compile-libs"/>
         </javac>
     </target>
 
