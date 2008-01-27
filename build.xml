@@ -88,7 +88,7 @@
         <mkdir dir="${target.classes.dir}/META-INF"/>
 
         <javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true" excludes="**/coherence/**">
+               deprecation="false" optimize="false" failonerror="true" excludes="**/coherence/**" fork="${compile.fork}">
             <src path="${main.src.dir}"/>
             <classpath refid="compile-libs"/>
         </javac>
@@ -111,7 +111,7 @@
 
     <target name="buildcoherence" description="Compiles coherence code if jars exists" if="coherence.exists">
         <javac destdir="${target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true" includes="**/coherence/**">
+               deprecation="false" optimize="false" failonerror="true" includes="**/coherence/**" fork="${compile.fork}">
             <src path="${main.src.dir}"/>
             <classpath refid="compile-libs"/>
         </javac>
@@ -240,7 +240,7 @@
         <mkdir dir="${target.testclasses.dir}"/>
 
         <javac destdir="${target.testclasses.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true" excludes="**/coherence/**">
+               deprecation="false" optimize="false" failonerror="true" excludes="**/coherence/**" fork="${compile.fork}">
             <src path="${main.test.dir}"/>
             <classpath refid="all-libs"/>
             <classpath location="${target.classes.dir}"/>
@@ -277,7 +277,7 @@
             description="Compile coherence test source tree java files into class files" if="coherence.exists">
 
         <javac destdir="${target.testclasses.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true" includes="**/coherence/**">
+               deprecation="false" optimize="false" failonerror="true" includes="**/coherence/**" fork="${compile.fork}">
             <src path="${main.test.dir}"/>
             <classpath refid="all-libs"/>
             <classpath location="${target.classes.dir}"/>
@@ -385,7 +385,7 @@
         <mkdir dir="${target.clover.dir}"/>
 
         <javac destdir="${target.clover.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true">
+               deprecation="false" optimize="false" failonerror="true" fork="${compile.fork}">
             <src path="${main.src.dir}"/>
             <classpath refid="all-libs"/>
         </javac>
@@ -706,7 +706,7 @@
         <mkdir dir="${sandbox.target.classes.dir}/META-INF"/>
 
         <javac destdir="${sandbox.target.classes.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true">
+               deprecation="false" optimize="false" failonerror="true" fork="${compile.fork}">
             <src path="${sandbox.src.dir}"/>
             <classpath refid="all-libs"/>
             <classpath location="${target.classes.dir}"/>
@@ -762,7 +762,7 @@
         <mkdir dir="${sandbox.target.testclasses.dir}"/>
 
         <javac destdir="${sandbox.target.testclasses.dir}" source="1.5" target="1.5" debug="${debug}"
-               deprecation="false" optimize="false" failonerror="true">
+               deprecation="false" optimize="false" failonerror="true" fork="${compile.fork}">
             <src path="${sandbox.test.dir}"/>
             <classpath refid="all-libs"/>
             <classpath location="${target.classes.dir}"/>
