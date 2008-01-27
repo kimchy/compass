@@ -303,7 +303,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             if (stopWordsList.size() == 1) {
                 Element stopWordsEle = (Element) stopWordsList.get(0);
                 StringBuffer sb = new StringBuffer();
-                boolean replace = getElementAttributeAsBoolean(stopWordsEle, "replace", true);
+                boolean replace = getElementAttributeAsBoolean(stopWordsEle, "replace", false);
                 if (!replace) {
                     sb.append("+");
                 }
