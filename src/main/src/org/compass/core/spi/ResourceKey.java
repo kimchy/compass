@@ -120,8 +120,8 @@ public final class ResourceKey {
     
     private int getHashCode() {
         int result = alias.hashCode();
-        for (int i = 0; i < ids.length; i++) {
-            result = 29 * result + ids[i].getStringValue().hashCode();
+        for (Property id : ids) {
+            result = 29 * result + id.getStringValue().hashCode();
         }
         return result;
     }
