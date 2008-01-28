@@ -124,15 +124,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public boolean verifyIndex() throws SearchEngineException {
         clearCache();
-        boolean result = searchEngineStore.verifyIndex();
-        if (luceneSettings.isUseCompoundFile() && !isIndexCompound()) {
-            log.info("Setting using compound file, but the index is not in compound form, compounding the index...");
-            compoundIndex();
-        } else if (!luceneSettings.isUseCompoundFile() && !isIndexUnCompound()) {
-            log.info("Setting not using compound file, but the index is in compound form, un-compounding the index...");
-            unCompoundIndex();
-        }
-        return result;
+        return searchEngineStore.verifyIndex();
     }
 
     public boolean indexExists() throws SearchEngineException {
@@ -452,8 +444,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public boolean isIndexCompound() throws SearchEngineException {
         String[] subIndexes = searchEngineStore.getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
-            Directory dir = getDirectory(subIndexes[i]);
+        for (String subIndexe : subIndexes) {
+            Directory dir = getDirectory(subIndexe);
             try {
                 if (!org.apache.lucene.index.LuceneUtils.isCompound(dir)) {
                     return false;
@@ -467,8 +459,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public boolean isIndexUnCompound() throws SearchEngineException {
         String[] subIndexes = searchEngineStore.getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
-            Directory dir = getDirectory(subIndexes[i]);
+        for (String subIndex : subIndexes) {
+            Directory dir = getDirectory(subIndex);
             try {
                 if (!org.apache.lucene.index.LuceneUtils.isUnCompound(dir)) {
                     return false;
@@ -478,36 +470,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             }
         }
         return true;
-    }
-
-    public void compoundIndex() throws SearchEngineException {
-        if (log.isDebugEnabled()) {
-            log.debug("Compounding index " + searchEngineStore);
-        }
-        String[] subIndexes = searchEngineStore.getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
-            Directory dir = getDirectory(subIndexes[i]);
-            try {
-                org.apache.lucene.index.LuceneUtils.compoundDirectory(dir, luceneSettings.getTransactionLockTimout());
-            } catch (IOException e) {
-                throw new SearchEngineException("Failed to compound index", e);
-            }
-        }
-    }
-
-    public void unCompoundIndex() throws SearchEngineException {
-        if (log.isDebugEnabled()) {
-            log.debug("UnCompounding index " + searchEngineStore);
-        }
-        String[] subIndexes = searchEngineStore.getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
-            Directory dir = getDirectory(subIndexes[i]);
-            try {
-                org.apache.lucene.index.LuceneUtils.unCompoundDirectory(dir, luceneSettings.getTransactionLockTimout());
-            } catch (IOException e) {
-                throw new SearchEngineException("Failed to unCompuond index", e);
-            }
-        }
     }
 
     public void performScheduledTasks() throws SearchEngineException {

@@ -144,35 +144,5 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
      */
     void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis);
 
-    /**
-     * Returns <code>true</code> if the index is in a compound form. Will return <code>true</code>
-     * if the index is empty or it does not exists.
-     *
-     * @throws SearchEngineException
-     */
-    boolean isIndexCompound() throws SearchEngineException;
-
-    /**
-     * Returns <code>true</code> if the index is in a none compound form. Will return <code>true</code>
-     * if the index is empty or it does not exists.
-     *
-     * @throws SearchEngineException
-     */
-    boolean isIndexUnCompound() throws SearchEngineException;
-
-    /**
-     * Compounds the index.
-     *
-     * @throws SearchEngineException
-     */
-    void compoundIndex() throws SearchEngineException;
-
-    /**
-     * Uncompounds the index.
-     *
-     * @throws SearchEngineException
-     */
-    void unCompoundIndex() throws SearchEngineException;
-
     void executeCommit(Callable[] commits) throws SearchEngineException;
 }

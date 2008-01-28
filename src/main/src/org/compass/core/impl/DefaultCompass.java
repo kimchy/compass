@@ -390,38 +390,6 @@ public class DefaultCompass implements InternalCompass {
             });
         }
 
-        public boolean isIndexCompound() throws SearchEngineException {
-            return ((Boolean) template.execute(new CompassCallback() {
-                public Object doInCompass(CompassSession session) throws CompassException {
-                    return (indexManager.isIndexCompound()) ? Boolean.TRUE : Boolean.FALSE;
-                }
-            })).booleanValue();
-        }
-
-        public boolean isIndexUnCompound() throws SearchEngineException {
-            return ((Boolean) template.execute(new CompassCallback() {
-                public Object doInCompass(CompassSession session) throws CompassException {
-                    return (indexManager.isIndexUnCompound()) ? Boolean.TRUE : Boolean.FALSE;
-                }
-            })).booleanValue();
-        }
-
-        public void compoundIndex() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.compoundIndex();
-                }
-            });
-        }
-
-        public void unCompoundIndex() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.unCompoundIndex();
-                }
-            });
-        }
-
         public void performScheduledTasks() throws SearchEngineException {
             template.execute(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {

@@ -149,22 +149,6 @@ public class ScheduledLuceneSearchEngineIndexManager implements LuceneSearchEngi
         indexManager.checkAndClearIfNotifiedAllToClearCache();
     }
 
-    public boolean isIndexCompound() throws SearchEngineException {
-        return indexManager.isIndexCompound();
-    }
-
-    public boolean isIndexUnCompound() throws SearchEngineException {
-        return indexManager.isIndexUnCompound();
-    }
-
-    public void compoundIndex() throws SearchEngineException {
-        indexManager.compoundIndex();
-    }
-
-    public void unCompoundIndex() throws SearchEngineException {
-        indexManager.unCompoundIndex();
-    }
-
     public String[] getSubIndexes() {
         return indexManager.getSubIndexes();
     }

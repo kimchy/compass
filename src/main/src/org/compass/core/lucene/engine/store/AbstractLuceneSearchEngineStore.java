@@ -439,8 +439,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
                     public Object doWithStore(final Directory dest) {
                         srcTemplate.executeForSubIndex(subIndex, false, new LuceneStoreCallback() {
                             public Object doWithStore(Directory src) throws IOException {
-                                LuceneUtils.copy(src, searchEngineStore.getLuceneSettings().isUseCompoundFile(),
-                                        dest, luceneSettings.isUseCompoundFile(), buffer);
+                                LuceneUtils.copy(src, dest, buffer);
                                 return null;
                             }
                         });

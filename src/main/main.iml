@@ -285,17 +285,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/lucene/lucene-core.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../../opt/lucene/2.2/src/java" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/jotm/jotm-carol.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -825,6 +814,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/eclipselink/eclipselink.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/lucene/lucene-core.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

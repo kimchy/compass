@@ -78,33 +78,6 @@ public class LuceneUtilsTests extends TestCase {
         assertFalse(LuceneUtils.isUnCompound(directory));
     }
 
-    public void testCompoundDirectory() throws IOException {
-        createIndex();
-
-        addDocument(false);
-        assertDocumentExists();
-        assertFalse(LuceneUtils.isCompound(directory));
-        assertTrue(LuceneUtils.isUnCompound(directory));
-
-        LuceneUtils.compoundDirectory(directory, 1000);
-        assertDocumentExists();
-        assertTrue(LuceneUtils.isCompound(directory));
-        assertFalse(LuceneUtils.isUnCompound(directory));
-    }
-
-    public void testUnCompoundDirectory() throws IOException {
-        createIndex();
-
-        addDocument(true);
-        assertDocumentExists();
-        assertTrue(LuceneUtils.isCompound(directory));
-        assertFalse(LuceneUtils.isUnCompound(directory));
-
-        LuceneUtils.unCompoundDirectory(directory, 1000);
-        assertDocumentExists();
-        assertTrue(LuceneUtils.isUnCompound(directory));
-    }
-
     private void createIndex() throws IOException {
         IndexWriter indexWriter = new IndexWriter(directory, new SimpleAnalyzer(), true);
         indexWriter.close();
@@ -117,13 +90,5 @@ public class LuceneUtilsTests extends TestCase {
         doc.add(new Field("test", "test", Field.Store.YES, Field.Index.TOKENIZED));
         indexWriter.addDocument(doc);
         indexWriter.close();
-    }
-
-    private void assertDocumentExists() throws IOException {
-        IndexReader indexReader = IndexReader.open(directory);
-        assertEquals(1, indexReader.numDocs());
-        Document doc = indexReader.document(0);
-        assertEquals("test", doc.get("test"));
-        indexReader.close();
     }
 }
