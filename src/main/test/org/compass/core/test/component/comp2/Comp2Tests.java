@@ -60,7 +60,7 @@ public class Comp2Tests extends AbstractTestCase {
         assertEquals(1, person.names.size());
 
         Resource resource = session.loadResource(User.class, new Integer(1));
-        assertEquals(9, resource.getProperties().length);
+        assertEquals(10, resource.getProperties().length);
         assertEquals("user", resource.getValue("alias"));
         assertEquals(User.class.getName(), resource.getValue("$/user/class"));
         assertEquals("test user", resource.getValue("description2"));
@@ -103,7 +103,7 @@ public class Comp2Tests extends AbstractTestCase {
         assertEquals(1, person.names.size());
 
         Resource resource = session.loadResource(User.class, new Integer(1));
-        assertEquals(9, resource.getProperties().length);
+        assertEquals(10, resource.getProperties().length);
         assertEquals("user", resource.getValue("alias"));
         assertEquals(User.class.getName(), resource.getValue("$/user/class"));
         assertEquals("test user", resource.getValue("description2"));

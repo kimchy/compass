@@ -49,9 +49,11 @@ public interface MarshallingContext {
 
     Object removeAttribute(Object key);
 
-    Map removeAttributes();
+    boolean hasAttribute(Object key);
 
-    void restoreAttributes(Map attributes);
+    Map<Object, Object> removeAttributes();
+
+    void restoreAttributes(Map<Object, Object> attributes);
 
     /**
      * Sets an unmarshalled cache of objects already loaded during

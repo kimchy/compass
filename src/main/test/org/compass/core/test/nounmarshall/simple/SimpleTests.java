@@ -35,21 +35,21 @@ public class SimpleTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value = "value";
         a.value2 = "value2";
         session.save("a", a);
 
         Resource resource = session.loadResource("a", new Long(1));
         assertNotNull(resource);
-        assertEquals(4, resource.getProperties().length);
+        assertEquals(5, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(2, resource.getProperties("value").length);
         assertEquals("1", resource.getValue("$/a/id"));
 
         // when unmarshalling, only A with its id is set
         a = (A) session.load("a", new Long(1));
-        assertEquals(1, a.id.longValue());
+        assertEquals(1, a.id);
         assertNull(a.value);
         assertNull(a.value2);
 
@@ -62,21 +62,21 @@ public class SimpleTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value = "value";
         a.value2 = "value2";
         session.save("a1", a);
 
         Resource resource = session.loadResource("a1", new Long(1));
         assertNotNull(resource);
-        assertEquals(5, resource.getProperties().length);
+        assertEquals(6, resource.getProperties().length);
         assertEquals("a1", resource.getAlias());
         assertEquals(3, resource.getProperties("value").length);
         assertEquals("1", resource.getValue("$/a1/id"));
 
         // when unmarshalling, only A with its id is set
         a = (A) session.load("a1", new Long(1));
-        assertEquals(1, a.id.longValue());
+        assertEquals(1, a.id);
         assertNull(a.value);
         assertNull(a.value2);
 

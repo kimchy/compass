@@ -27,9 +27,8 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermEnum;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
@@ -43,7 +42,6 @@ import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.all.AllAnalyzer;
-import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalResource;
@@ -54,26 +52,16 @@ import org.compass.core.spi.ResourceKey;
  */
 public abstract class LuceneUtils {
 
-    public static Query buildResourceLoadQuery(LuceneSearchEngineIndexManager indexManager, ResourceKey resourceKey) {
-        Property[] ids = resourceKey.getIds();
-        int numberOfAliases = indexManager.getStore().getNumberOfAliasesBySubIndex(resourceKey.getSubIndex());
-        Query query;
-        if (numberOfAliases == 1 && ids.length == 1) {
-            query = new TermQuery(new Term(ids[0].getName(), ids[0].getStringValue()));
-        } else {
-            BooleanQuery bQuery = new BooleanQuery();
-            if (numberOfAliases > 1) {
-                String aliasProperty = indexManager.getSettings().getAliasProperty();
-                Term t = new Term(aliasProperty, resourceKey.getAlias());
-                bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
-            }
-            for (int i = 0; i < ids.length; i++) {
-                Term t = new Term(ids[i].getName(), ids[i].getStringValue());
-                bQuery.add(new TermQuery(t), BooleanClause.Occur.MUST);
-            }
-            query = bQuery;
+    public static Query buildResourceLoadQuery(ResourceKey resourceKey) {
+        return new TermQuery(new Term(resourceKey.getUIDPath(), resourceKey.buildUID()));
+    }
+
+    public static Resource[] hitsToResourceArray(final TermDocs termDocs, IndexReader indexReader, LuceneSearchEngine searchEngine) throws IOException {
+        ArrayList<Resource> list = new ArrayList<Resource>();
+        while (termDocs.next()) {
+            list.add(new LuceneResource(indexReader.document(termDocs.doc()), termDocs.doc(), searchEngine));
         }
-        return query;
+        return list.toArray(new Resource[list.size()]);
     }
 
     public static Resource[] hitsToResourceArray(final Hits hits, LuceneSearchEngine searchEngine) throws SearchEngineException {

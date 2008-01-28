@@ -31,6 +31,7 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.MultiResource;
 import org.compass.core.xml.RawXmlObject;
 import org.compass.core.xml.XmlObject;
@@ -65,11 +66,13 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
             boolean store = false;
             MultiResource multiResource = (MultiResource) resource;
             multiResource.clear();
-            for (int i = 0; i < xmlObjects.length; i++) {
+            for (XmlObject xmlObject : xmlObjects) {
                 multiResource.addResource();
                 for (Iterator it = xmlObjectMapping.mappingsIt(); it.hasNext();) {
                     Mapping m = (Mapping) it.next();
-                    store |= m.getConverter().marshall(multiResource.currentResource(), xmlObjects[i], m, context);
+                    InternalResource resource1 = (InternalResource) multiResource.currentResource();
+                    store |= m.getConverter().marshall(resource1, xmlObject, m, context);
+                    resource1.addUID();
                 }
             }
             return store;
@@ -79,6 +82,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
                 Mapping m = (Mapping) it.next();
                 store |= m.getConverter().marshall(resource, rootXmlObject, m, context);
             }
+            ((InternalResource) resource).addUID();
             return store;
         }
     }
@@ -107,21 +111,21 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
                 }
                 MultiResource multiResource = (MultiResource) idResource;
                 multiResource.clear();
-                for (int i = 0; i < xmlObjects.length; i++) {
+                for (XmlObject xmlObject : xmlObjects) {
                     multiResource.addResource();
-                    for (int j = 0; j < ids.length; j++) {
-                        ids[j].getConverter().marshall(multiResource.currentResource(), xmlObjects[i], ids[j], context);
+                    for (Mapping id1 : ids) {
+                        id1.getConverter().marshall(multiResource.currentResource(), xmlObject, id1, context);
                     }
                 }
             } else {
-                for (int i = 0; i < ids.length; i++) {
-                    ids[i].getConverter().marshall(idResource, rootXmlObject, ids[i], context);
+                for (Mapping id1 : ids) {
+                    id1.getConverter().marshall(idResource, rootXmlObject, id1, context);
                 }
             }
         } else if (id instanceof Resource) {
-            for (int i = 0; i < ids.length; i++) {
+            for (Mapping id1 : ids) {
                 Resource rId = (Resource) id;
-                idResource.addProperty(rId.getProperty(ids[i].getPath().getPath()));
+                idResource.addProperty(rId.getProperty(id1.getPath().getPath()));
             }
         } else if (id.getClass().isArray()) {
             if (Array.getLength(id) != ids.length) {
@@ -150,6 +154,9 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
                         Property.Index.UN_TOKENIZED));
             }
         }
+
+        ((InternalResource) idResource).addUID();
+
         return true;
     }
 

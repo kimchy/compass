@@ -88,6 +88,10 @@ public class LuceneMultiResource implements MultiResource, Map<String, Property[
         return currentResource.getAlias();
     }
 
+    public String getUID() {
+        return currentResource.getUID();
+    }
+
     public String getId() {
         return currentResource.getId();
     }
@@ -175,6 +179,10 @@ public class LuceneMultiResource implements MultiResource, Map<String, Property[
     public Resource setBoost(float boost) {
         currentResource.setBoost(boost);
         return this;
+    }
+
+    public void addUID() {
+        currentResource.addUID();
     }
 
     public void copy(Resource resource) {

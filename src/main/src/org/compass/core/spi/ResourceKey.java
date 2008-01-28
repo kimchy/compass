@@ -16,6 +16,7 @@
 
 package org.compass.core.spi;
 
+import org.compass.core.CompassException;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.subindex.SubIndexHash;
@@ -49,6 +50,45 @@ public final class ResourceKey {
         this.alias = resourceMapping.getAlias();
     }
 
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public String getSubIndex() {
+        if (subIndex == null) {
+            SubIndexHash subIndexHash = getResourceMapping().getSubIndexHash();
+            subIndex = subIndexHash.mapSubIndex(getAlias(), getIds());
+        }
+        return subIndex;
+    }
+
+    public Property[] getIds() {
+        return ids;
+    }
+
+    public String buildUID() throws CompassException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getAlias()).append("#");
+        for (Property idProp : getIds()) {
+            String idValue = idProp.getStringValue();
+            if (idValue == null) {
+                throw new CompassException("Missing id [" + idProp.getName() + "] for alias [" + getAlias() + "]");
+            }
+            sb.append(idValue);
+            sb.append("#");
+        }
+        return sb.toString();
+    }
+
+    public String getUIDPath() {
+        return this.resourceMapping.getUIDPath();
+    }
+
+    public ResourceMapping getResourceMapping() {
+        return this.resourceMapping;
+    }
+
     public boolean equals(Object other) {
         if (this == other)
             return true;
@@ -77,32 +117,19 @@ public final class ResourceKey {
         }
         return hashCode;
     }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public String getSubIndex() {
-        if (subIndex == null) {
-            SubIndexHash subIndexHash = getResourceMapping().getSubIndexHash();
-            subIndex = subIndexHash.mapSubIndex(getAlias(), getIds());
-        }
-        return subIndex;
-    }
-
-    public Property[] getIds() {
-        return ids;
-    }
-
-    public ResourceMapping getResourceMapping() {
-        return this.resourceMapping;
-    }
-
+    
     private int getHashCode() {
         int result = alias.hashCode();
         for (int i = 0; i < ids.length; i++) {
             result = 29 * result + ids[i].getStringValue().hashCode();
         }
         return result;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("alias [").append(getAlias()).append("]");
+        sb.append("uid [").append(buildUID()).append("]");
+        return sb.toString();
     }
 }

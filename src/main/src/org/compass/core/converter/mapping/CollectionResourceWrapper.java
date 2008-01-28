@@ -75,6 +75,10 @@ public class CollectionResourceWrapper implements Resource {
         throw new ConversionException("should not be called");
     }
 
+    public String getUID() {
+        throw new ConversionException("should not be called");
+    }
+
     public String[] getIds() {
         throw new ConversionException("should not be called");
     }

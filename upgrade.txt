@@ -4,7 +4,9 @@ COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log
 VERSION 2.0 M2
 =================================
 
-
+1. Compass now stores a UID for each root resource. This is a major step at some performance optimizations
+   that are scheduled for 2.0. Since there is now more data in the index, a complete rebuild of the index is
+   required.
 
 VERSION 2.0 M1 (January 25, 2008)
 =================================

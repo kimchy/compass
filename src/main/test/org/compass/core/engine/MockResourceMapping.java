@@ -27,14 +27,14 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceAnalyzerController;
 import org.compass.core.mapping.ResourceIdMappingProvider;
-import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.util.config.ConfigurationHelper;
 
 /**
  * @author kimchy
  */
-public class MockResourceMapping extends AbstractMultipleMapping implements ResourceMapping, AliasMapping {
+public class MockResourceMapping extends AbstractMultipleMapping implements InternalResourceMapping, AliasMapping {
     public String[] getExtendingAliases() {
         return extendingAliases;
     }
@@ -222,5 +222,13 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Reso
 
     public boolean isExcludeAliasFromAll() {
         return true;
+    }
+
+    public void setUIDPath(String uid) {
+        throw new IllegalStateException("Should not be called, just for testing");
+    }
+
+    public String getUIDPath() {
+        return "$uid";
     }
 }

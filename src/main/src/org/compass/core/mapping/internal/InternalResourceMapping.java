@@ -14,30 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.simple;
+package org.compass.core.mapping.internal;
+
+import org.compass.core.mapping.ResourceMapping;
 
 /**
  * @author kimchy
  */
-public class A {
+public interface InternalResourceMapping extends ResourceMapping {
 
-    private int id;
-
-    private String value;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    void setUIDPath(String uid);
 }

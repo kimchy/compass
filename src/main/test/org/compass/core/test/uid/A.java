@@ -14,30 +14,14 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.simple;
+package org.compass.core.test.uid;
 
 /**
  * @author kimchy
  */
 public class A {
 
-    private int id;
+    int id1;
 
-    private String value;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    int id2;
 }

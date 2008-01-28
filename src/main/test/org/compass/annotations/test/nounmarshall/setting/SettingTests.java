@@ -34,11 +34,12 @@ public class SettingTests extends AbstractAnnotationsTestCase {
 
         Resource resource = session.loadResource(A.class, 1);
         assertNotNull(resource);
-        assertEquals(4, resource.getProperties().length);
+        assertEquals(5, resource.getProperties().length);
         assertEquals("A", resource.getAlias());
         assertEquals(2, resource.getProperties("value").length);
+        assertEquals("A#1#", resource.getUID());
 
-        a = (A) session.load(A.class, 1);
+        a = session.load(A.class, 1);
         assertEquals(1, a.id.longValue());
         assertNull(a.value);
         assertNull(a.value2);

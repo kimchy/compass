@@ -45,7 +45,7 @@ public class ComponentInheritance1Tests extends AbstractTestCase {
         assertSame(father, ((DaughterImpl)father.getChildren().iterator().next()).getFather());
 
         Resource resource = session.loadResource("father", father.getId());
-        assertEquals(17, resource.getProperties().length);
+        assertEquals(18, resource.getProperties().length);
         assertEquals("father", resource.getValue("alias"));
         assertEquals("0", resource.getValue("$/father/id"));
         assertEquals("Sir Ivan", resource.getProperties("name")[0].getStringValue());

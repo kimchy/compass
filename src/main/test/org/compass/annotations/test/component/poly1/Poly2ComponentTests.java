@@ -89,7 +89,7 @@ public class Poly2ComponentTests extends AbstractTestCase {
 
         // verify resource "count" (so we don't create extra properties by mistake)
         Resource resource = session.loadResource(Address.class, "1");
-        assertEquals(12, resource.getProperties().length);
+        assertEquals(13, resource.getProperties().length);
 
         serviceAddress = session.load(Address.class, "2");
         assertEquals(2, serviceAddress.getAssignment().size());

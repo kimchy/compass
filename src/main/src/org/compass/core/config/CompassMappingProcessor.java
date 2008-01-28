@@ -47,6 +47,7 @@ public class CompassMappingProcessor implements MappingProcessor {
         mappingProcessors.add(new PostProcessorMappingProcessor());
         mappingProcessors.add(new RootAliasPostProcessor());
         mappingProcessors.add(new CompassMappingPostProcessor());
+        mappingProcessors.add(new UIDMappingProcessor());
         mappingProcessors.add(new ValidatorMappingProcessor());
     }
 

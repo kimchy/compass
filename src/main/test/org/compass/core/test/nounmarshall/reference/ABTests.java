@@ -59,7 +59,7 @@ public class ABTests extends AbstractTestCase {
 
         Resource resource = session.loadResource(A.class, new Long(1));
         assertNotNull(resource);
-        assertEquals(4, resource.getProperties().length);
+        assertEquals(5, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(1, resource.getProperties("value").length);
         assertEquals("1", resource.getValue("$/a/b/id"));
@@ -89,7 +89,7 @@ public class ABTests extends AbstractTestCase {
 
         Resource resource = session.loadResource(A.class, new Long(1));
         assertNotNull(resource);
-        assertEquals(4, resource.getProperties().length);
+        assertEquals(5, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(1, resource.getProperties("value").length);
         assertEquals("1", resource.getValue("$/a/b/id"));
@@ -127,7 +127,7 @@ public class ABTests extends AbstractTestCase {
 
         Resource resource = session.loadResource(A.class, new Long(1));
         assertNotNull(resource);
-        assertEquals(5, resource.getProperties().length);
+        assertEquals(6, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(1, resource.getProperties("value").length);
         assertEquals(2, resource.getProperties("$/a/bs/id").length);

@@ -30,9 +30,16 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public interface ResourceMappingConverter extends Converter {
 
+    /**
+     * Marshalls teh given <code>Object</code> id into the given resource. Returns <code>true</code>
+     * if anything was was stored in the resource.
+     */
     boolean marshallIds(Resource idResource, Object id, ResourceMapping resourceMapping, MarshallingContext context)
             throws ConversionException;
 
+    /**
+     * Unamrshalls the given id into its id properties values.
+     */
     Object[] unmarshallIds(Object id, ResourceMapping resourceMapping, MarshallingContext context)
             throws ConversionException;
 }

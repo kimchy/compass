@@ -39,6 +39,13 @@ public interface Resource extends AliasedObject, Serializable {
     String getAlias();
 
     /**
+     * Returns the unique id of the resource. Note, the ids must be
+     * set on this resource in order to get the uid, if not a
+     * <code>CompassException</code> will be thrown.
+     */
+    String getUID() throws CompassException;
+
+    /**
      * Returns the id of the resource. Used when there is only one id
      * for the resource.
      *

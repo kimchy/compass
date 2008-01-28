@@ -41,19 +41,19 @@ public class SettingTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value = "value";
         a.value2 = "value2";
         session.save(a);
 
         Resource resource = session.loadResource(A.class, new Long(1));
         assertNotNull(resource);
-        assertEquals(4, resource.getProperties().length);
+        assertEquals(5, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(2, resource.getProperties("value").length);
 
-        a = (A) session.load(A.class, new Long(1));
-        assertEquals(1, a.id.longValue());
+        a = session.load(A.class, 1);
+        assertEquals(1, a.id);
         assertNull(a.value);
         assertNull(a.value2);
 

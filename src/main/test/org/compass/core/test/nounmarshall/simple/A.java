@@ -21,7 +21,7 @@ package org.compass.core.test.nounmarshall.simple;
  */
 public class A {
 
-    Long id;
+    int id;
 
     String value;
 

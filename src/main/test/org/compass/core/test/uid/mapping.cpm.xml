@@ -1,0 +1,16 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 1.0//EN"
+    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.uid">
+
+    <class name="A" alias="a1">
+        <id name="id1" accessor="field" />
+    </class>
+
+    <class name="A" alias="a2">
+        <id name="id1" accessor="field" />
+        <id name="id2" accessor="field" />
+    </class>
+
+</compass-core-mapping>

@@ -46,13 +46,13 @@ public class DefaultMarshallingContext implements MarshallingContext {
 
     private PropertyNamingStrategy propertyNamingStrategy;
 
-    private Map attributes = new HashMap();
+    private Map<Object, Object> attributes = new HashMap<Object, Object>();
 
-    private Map nullValuesPath = new HashMap();
+    private Map<PropertyPath, Object> nullValuesPath = new HashMap<PropertyPath, Object>();
 
-    private Map unmarshalled = new HashMap();
+    private Map<ResourceKey, Object> unmarshalled = new HashMap<ResourceKey, Object>();
 
-    private Map marshalled = new HashMap();
+    private Map<Object, Object> marshalled = new HashMap<Object, Object>();
 
     public DefaultMarshallingContext(CompassMapping mapping, SearchEngine searchEngine,
                                      ConverterLookup converterLookup, InternalCompassSession session,
@@ -136,13 +136,17 @@ public class DefaultMarshallingContext implements MarshallingContext {
         return attributes.remove(key);
     }
 
-    public Map removeAttributes() {
-        Map retAttributes = attributes;
-        this.attributes = new HashMap();
-        return this.attributes;
+    public boolean hasAttribute(Object key) {
+        return attributes.containsKey(key);
     }
 
-    public void restoreAttributes(Map attributes) {
+    public Map<Object, Object> removeAttributes() {
+        Map<Object, Object> retAttributes = attributes;
+        this.attributes = new HashMap<Object, Object>();
+        return retAttributes;
+    }
+
+    public void restoreAttributes(Map<Object, Object> attributes) {
         this.attributes = attributes;
     }
 

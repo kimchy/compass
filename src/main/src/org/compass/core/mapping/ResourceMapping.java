@@ -112,6 +112,11 @@ public interface ResourceMapping extends AliasMapping {
     Mapping[] getIdMappings();
 
     /**
+     * Returns the uid property name.
+     */
+    String getUIDPath();
+
+    /**
      * Returns all the id mappigns for the low level resource mapping.
      */
     ResourcePropertyMapping[] getResourceIdMappings();

@@ -25,6 +25,7 @@ import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalResource;
 
 /**
  * @author kimchy
@@ -188,6 +189,7 @@ public abstract class AbstractEngineTests extends TestCase {
                 Property.Index.TOKENIZED));
         singleId.addProperty(searchEngine.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
                 Property.Index.TOKENIZED));
+        ((InternalResource) singleId).addUID();
         return singleId;
     }
 
@@ -199,6 +201,7 @@ public abstract class AbstractEngineTests extends TestCase {
                 Property.Index.TOKENIZED));
         singleId.addProperty(searchEngine.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
                 Property.Index.TOKENIZED));
+        ((InternalResource) singleId).addUID();
         return singleId;
     }
 
@@ -214,6 +217,7 @@ public abstract class AbstractEngineTests extends TestCase {
                 Property.Index.TOKENIZED));
         multiId.addProperty(searchEngine.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
                 Property.Index.TOKENIZED));
+        ((InternalResource) multiId).addUID();
         return multiId;
     }
 
@@ -229,6 +233,7 @@ public abstract class AbstractEngineTests extends TestCase {
                 Property.Index.TOKENIZED));
         multiId.addProperty(searchEngine.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
                 Property.Index.TOKENIZED));
+        ((InternalResource) multiId).addUID();
         return multiId;
     }
 

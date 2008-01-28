@@ -34,6 +34,8 @@ import org.compass.core.marshall.MarshallingEnvironment;
  */
 public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter {
 
+    private static final Object DISABLE_UID_MARK = new Object();
+
     protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping,
                                  ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
@@ -50,8 +52,8 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
             }
             Mapping[] ids = refMapping.getResourceIdMappings();
             boolean store = false;
-            for (int i = 0; i < ids.length; i++) {
-                store |= ids[i].getConverter().marshall(resource, context.getSearchEngine().getNullValue(), ids[i], context);
+            for (Mapping id : ids) {
+                store |= id.getConverter().marshall(resource, context.getSearchEngine().getNullValue(), id, context);
             }
             return store;
         }
@@ -68,7 +70,9 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
                 resource.addProperty(p);
             }
         }
+        context.setAttribute(ClassMappingConverter.DISABLE_UID_MARSHALLING, DISABLE_UID_MARK);
         boolean stored = context.getMarshallingStrategy().marshallIds(resource, refMapping, root, context);
+        context.removeAttribute(ClassMappingConverter.DISABLE_UID_MARSHALLING);
 
         if (referenceMapping.getRefCompMapping() != null) {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_PARENT, current);
@@ -84,7 +88,7 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
             // the reference was not marshalled
             return null;
         }
-        Map attributes = context.removeAttributes();
+        Map<Object, Object> attributes = context.removeAttributes();
         Object retVal = context.getSession().get(refMapping.getAlias(), ids, context);
         context.restoreAttributes(attributes);
         return retVal;

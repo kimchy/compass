@@ -49,7 +49,7 @@ public class CyclicTests extends AbstractTestCase {
         session.save(rootCyclic);
 
         Resource resource = session.loadResource(Cyclic.class, new Long(1));
-        assertEquals(4, resource.getProperties().length);
+        assertEquals(5, resource.getProperties().length);
         assertEquals(2, resource.getProperties("value").length);
         // this is our actual id
         assertEquals("1", resource.getValue("$/cyclic/id"));
@@ -83,7 +83,7 @@ public class CyclicTests extends AbstractTestCase {
         session.save(rootCyclic);
 
         Resource resource = session.loadResource(Cyclic.class, new Long(1));
-        assertEquals(5, resource.getProperties().length);
+        assertEquals(6, resource.getProperties().length);
         assertEquals(3, resource.getProperties("value").length);
         // this is our actual id
         assertEquals("1", resource.getValue("$/cyclic/id"));

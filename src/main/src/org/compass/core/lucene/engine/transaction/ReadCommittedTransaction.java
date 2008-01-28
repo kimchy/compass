@@ -233,7 +233,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             }
             if (e != null) {
                 if (e instanceof SearchEngineException) {
-                    throw(SearchEngineException) e;
+                    throw (SearchEngineException) e;
                 }
                 throw new SearchEngineException("Failed to close index writers", e);
             }
@@ -360,7 +360,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     public Resource[] find(ResourceKey resourceKey) throws SearchEngineException {
         Searcher indexSearcher;
-        Hits hits;
+        IndexReader indexReader;
         LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder = null;
         try {
             String subIndex = resourceKey.getSubIndex();
@@ -368,15 +368,37 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             if (wrapper == null) {
                 indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
                 indexSearcher = indexHolder.getIndexSearcher();
+                indexReader = indexHolder.getIndexReader();
             } else {
                 indexSearcher = wrapper.transIndex.getFullIndexSearcher();
+                indexReader = wrapper.transIndex.getFullIndexReader();
             }
-            Filter qFilter = null;
             if (filter.hasDeletes()) {
-                qFilter = filter;
+                Query query = LuceneUtils.buildResourceLoadQuery(resourceKey);
+                Hits hits = indexSearcher.search(query, filter);
+                return LuceneUtils.hitsToResourceArray(hits, searchEngine);
+            } else {
+                Term t = new Term(resourceKey.getUIDPath(), resourceKey.buildUID());
+                TermDocs termDocs = null;
+                try {
+                    termDocs = indexReader.termDocs(t);
+                    if (termDocs != null) {
+                        return LuceneUtils.hitsToResourceArray(termDocs, indexReader, searchEngine);
+                    } else {
+                        return new Resource[0];
+                    }
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to search for property [" + resourceKey + "]", e);
+                } finally {
+                    try {
+                        if (termDocs != null) {
+                            termDocs.close();
+                        }
+                    } catch (IOException e) {
+                        // swallow it
+                    }
+                }
             }
-            hits = findByIds(indexSearcher, subIndex, resourceKey, qFilter);
-            return LuceneUtils.hitsToResourceArray(hits, searchEngine);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to find for alias [" + resourceKey.getAlias() + "] and ids ["
                     + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]", e);
@@ -449,7 +471,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     private Hits findByIds(Searcher indexSearcher, String subIndex, ResourceKey resourceKey, Filter filter)
             throws SearchEngineException {
         Property[] ids = resourceKey.getIds();
-        Query query = LuceneUtils.buildResourceLoadQuery(indexManager, resourceKey);
+        Query query = LuceneUtils.buildResourceLoadQuery(resourceKey);
         try {
             if (filter == null) {
                 return indexSearcher.search(query);
@@ -488,49 +510,31 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     private void markDelete(TransIndexWrapper wrapper, String subIndex, ResourceKey resourceKey, BitSetByAliasFilter filter)
             throws SearchEngineException {
-        Property[] ids = resourceKey.getIds();
+
+        Term t = new Term(resourceKey.getUIDPath(), resourceKey.buildUID());
+        TermDocs termDocs = null;
         try {
-            boolean moreThanOneAliasPerSubIndex =
-                    indexManager.getStore().getNumberOfAliasesBySubIndex(subIndex) > 1;
-            if (ids.length == 1 && !moreThanOneAliasPerSubIndex) {
-                Property id = ids[0];
-                Term t = new Term(id.getName(), id.getStringValue());
-                TermDocs termDocs = null;
+            termDocs = wrapper.transIndex.getIndexReader().termDocs(t);
+            if (termDocs != null) {
+                int maxDoc = wrapper.transIndex.getIndexReader().maxDoc();
                 try {
-                    termDocs = wrapper.transIndex.getIndexReader().termDocs(t);
-                    if (termDocs != null) {
-                        int maxDoc = wrapper.transIndex.getIndexReader().maxDoc();
-                        try {
-                            while (termDocs.next()) {
-                                filter.markDeleteBySubIndex(subIndex, termDocs.doc(), maxDoc);
-                            }
-                        } catch (IOException e) {
-                            throw new SearchEngineException("Failed to iterate data in order to delete", e);
-                        }
+                    while (termDocs.next()) {
+                        filter.markDeleteBySubIndex(subIndex, termDocs.doc(), maxDoc);
                     }
                 } catch (IOException e) {
-                    throw new SearchEngineException("Failed to search for property [" + id + "]", e);
-                } finally {
-                    try {
-                        if (termDocs != null) {
-                            termDocs.close();
-                        }
-                    } catch (IOException e) {
-                        // swallow it
-                    }
-                }
-            } else {
-                Hits hits = findByIds(wrapper.transIndex.getIndexSearcher(), subIndex, resourceKey, null);
-                if (hits.length() != 0) {
-                    int maxDoc = wrapper.transIndex.getIndexSearcher().maxDoc();
-                    for (int i = 0; i < hits.length(); i++) {
-                        int docNum = hits.id(i);
-                        filter.markDeleteBySubIndex(subIndex, docNum, maxDoc);
-                    }
+                    throw new SearchEngineException("Failed to iterate data in order to delete", e);
                 }
             }
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to delete", e);
+            throw new SearchEngineException("Failed to search for property [" + resourceKey + "]", e);
+        } finally {
+            try {
+                if (termDocs != null) {
+                    termDocs.close();
+                }
+            } catch (IOException e) {
+                // swallow it
+            }
         }
     }
 

@@ -25,5 +25,14 @@ public interface InternalResource extends Resource {
 
     ResourceKey resourceKey();
 
+    /**
+     * Returns the sub index this resource is associated with.
+     */
     String getSubIndex();
+
+    /**
+     * Sets the UID for the resource based on the current ids existing withing
+     * the resource and the resource mapping associated with it.
+     */
+    void addUID();
 }

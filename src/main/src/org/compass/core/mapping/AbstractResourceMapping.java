@@ -24,11 +24,12 @@ import java.util.Map;
 import org.compass.core.Property;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.engine.subindex.SubIndexHash;
+import org.compass.core.mapping.internal.InternalResourceMapping;
 
 /**
  * @author kimchy
  */
-public abstract class AbstractResourceMapping extends AbstractMultipleMapping implements ResourceMapping,
+public abstract class AbstractResourceMapping extends AbstractMultipleMapping implements InternalResourceMapping,
         AliasMapping, PostProcessingMapping {
 
     private String alias;
@@ -54,6 +55,8 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     private Property.TermVector allTermVector = Property.TermVector.NO;
 
     private boolean allOmitNorms = false;
+
+    private String uidProperty;
 
     private Mapping[] idMappings;
 
@@ -108,6 +111,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         resourceMapping.setAllTermVector(getAllTermVector());
         resourceMapping.setAnalyzer(getAnalyzer());
         resourceMapping.setExcludeAliasFromAll(isExcludeAliasFromAll());
+        resourceMapping.setUIDPath(getUIDPath());
     }
 
     public void postProcess() throws MappingException {
@@ -245,6 +249,14 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     public void setExtendedAliases(String[] extendedMappings) {
         this.extendedAliases = extendedMappings;
+    }
+
+    public void setUIDPath(String uid) {
+        this.uidProperty = uid;
+    }
+
+    public String getUIDPath() {
+        return this.uidProperty;
     }
 
     public float getBoost() {

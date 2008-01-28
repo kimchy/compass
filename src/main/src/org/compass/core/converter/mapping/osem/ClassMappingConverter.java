@@ -61,6 +61,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
     private static final Object DISABLE_INTERNAL_MAPPINGS_MARK = new Object();
 
+    public static final String DISABLE_UID_MARSHALLING = "$disableUID";
+
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
 
@@ -161,6 +163,12 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             }
             store |= m.getConverter().marshall(resource, value, m, context);
         }
+
+        // marshall the uid last
+        if (classMapping.isRoot() && !context.hasAttribute(DISABLE_UID_MARSHALLING)) {
+            ((InternalResource) resource).addUID();
+        }
+
         return store;
     }
 
@@ -331,6 +339,12 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             throw new ConversionException("Cannot marshall ids, not supported id object type [" + type
                     + "] and value [" + id + "], or you have not defined ids in the mapping files");
         }
+
+        if (!context.hasAttribute(DISABLE_UID_MARSHALLING)) {
+            ((InternalResource) idResource).addUID();
+        }
+
+        
         return stored;
     }
 

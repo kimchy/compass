@@ -48,11 +48,11 @@ public class ABTests extends AbstractAnnotationsTestCase {
 
         Resource resource = session.loadResource(A.class, 1);
         assertNotNull(resource);
-        assertEquals(4, resource.getProperties().length);
+        assertEquals(5, resource.getProperties().length);
         assertEquals("A", resource.getAlias());
         assertEquals(2, resource.getProperties("value").length);
 
-        a = (A) session.load(A.class, 1);
+        a = session.load(A.class, 1);
         assertEquals(1, a.id.longValue());
         assertNull(a.value);
         assertNull(a.b);
@@ -76,7 +76,7 @@ public class ABTests extends AbstractAnnotationsTestCase {
 
         Resource resource = session.loadResource(A.class, 1);
         assertNotNull(resource);
-        assertEquals(5, resource.getProperties().length);
+        assertEquals(6, resource.getProperties().length);
         assertEquals("A", resource.getAlias());
         assertEquals(3, resource.getProperties("value").length);
 
@@ -109,7 +109,7 @@ public class ABTests extends AbstractAnnotationsTestCase {
 
         Resource resource = session.loadResource(A.class, 1);
         assertNotNull(resource);
-        assertEquals(6, resource.getProperties().length);
+        assertEquals(7, resource.getProperties().length);
         assertEquals("A", resource.getAlias());
         assertEquals(4, resource.getProperties("value").length);
 
@@ -137,7 +137,7 @@ public class ABTests extends AbstractAnnotationsTestCase {
 
         Resource resource = session.loadResource(A.class, 1);
         assertNotNull(resource);
-        assertEquals(5, resource.getProperties().length);
+        assertEquals(6, resource.getProperties().length);
         assertEquals("A", resource.getAlias());
         assertEquals(3, resource.getProperties("value").length);
 

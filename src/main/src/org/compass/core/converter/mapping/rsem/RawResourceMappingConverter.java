@@ -26,6 +26,7 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.marshall.MarshallingContext;
+import org.compass.core.spi.InternalResource;
 
 /**
  * @author kimchy
@@ -35,6 +36,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         Resource rootResource = (Resource) root;
         resource.copy(rootResource);
+        ((InternalResource) resource).addUID();
         return true;
     }
 
@@ -48,9 +50,9 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
 
         Mapping[] ids = resourceMapping.getIdMappings();
         if (id instanceof Resource) {
-            for (int i = 0; i < ids.length; i++) {
+            for (Mapping id1 : ids) {
                 Resource rId = (Resource) id;
-                idResource.addProperty(rId.getProperty(ids[i].getPath().getPath()));
+                idResource.addProperty(rId.getProperty(id1.getPath().getPath()));
             }
         } else if (id.getClass().isArray()) {
             if (Array.getLength(id) != ids.length) {
@@ -79,6 +81,9 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
                         Property.Index.UN_TOKENIZED));
             }
         }
+
+        ((InternalResource) idResource).addUID();
+
         return true;
     }
 
@@ -94,6 +99,6 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
         } else {
             throw new ConversionException("Object [" + id + "] not supported");
         }
-        return ids;
+        return idsValues;
     }
 }

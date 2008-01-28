@@ -34,7 +34,6 @@ import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.util.LuceneUtils;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.AliasedObject;
@@ -139,6 +138,10 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         return getValue(aliasProperty);
     }
 
+    public String getUID() {
+        return resourceKey().buildUID();
+    }
+
     public String getId() {
         String[] ids = getIds();
         return ids[0];
@@ -161,12 +164,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     }
 
     public Property[] getIdProperties() {
-        Mapping[] idMappings = resourceMapping.getResourceIdMappings();
-        Property[] idProperties = new Property[idMappings.length];
-        for (int i = 0; i < idMappings.length; i++) {
-            idProperties[i] = getProperty(idMappings[i].getPath().getPath());
-        }
-        return idProperties;
+        return resourceKey().getIds();
     }
 
     public Resource addProperty(String name, Object value) throws SearchEngineException {
@@ -301,6 +299,13 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
      */
     public int getDocNum() {
         return this.docNum;
+    }
+
+    public void addUID() {
+        Property uidProp = searchEngine.createProperty(resourceMapping.getUIDPath(), resourceKey().buildUID(),
+                Property.Store.YES, Property.Index.UN_TOKENIZED);
+        uidProp.setOmitNorms(true);
+        addProperty(uidProp);
     }
 
     private void verifyResourceMapping() throws SearchEngineException {

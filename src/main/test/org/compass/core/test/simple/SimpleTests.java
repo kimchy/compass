@@ -35,14 +35,14 @@ public class SimpleTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.setId(new Long(1));
+        a.setId(1);
         a.setValue("value");
         session.save(a);
 
-        a = (A) session.load(A.class, new Long(1));
+        a = session.load(A.class, 1);
         assertEquals("value", a.getValue());
 
-        Resource resource = session.loadResource(A.class, new Long(1));
+        Resource resource = session.loadResource(A.class, 1);
         assertEquals("value", resource.getValue("value"));
         assertEquals("1", resource.getId());
         assertEquals(1, resource.getIds().length);
@@ -60,7 +60,7 @@ public class SimpleTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
         for (int i = 0; i < 30; i++) {
             A a = new A();
-            a.setId(new Long(i));
+            a.setId(i);
             a.setValue("value");
             session.save(a);
         }
@@ -89,7 +89,7 @@ public class SimpleTests extends AbstractTestCase {
             // all is well
         }
         A a = new A();
-        a.setId(new Long(1));
+        a.setId(1);
         a.setValue("value");
         session.create(a);
         tr.commit();
