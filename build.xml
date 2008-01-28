@@ -9,7 +9,7 @@
     <property file="project.properties"/>
     <property file="build.properties"/>
 
-    <property name="clover.jar" location="${clover.home}/lib/clover.jar"/>
+    <property name="clover.jar" location="${lib.dir}/clover/clover.jar"/>
     <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
 
 
