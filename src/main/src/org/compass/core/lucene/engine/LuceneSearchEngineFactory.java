@@ -24,11 +24,11 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.engine.spi.InternalSearchEngineFactory;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
@@ -41,12 +41,13 @@ import org.compass.core.lucene.engine.queryparser.LuceneQueryParserManager;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStoreFactory;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.util.ClassUtils;
 
 /**
  * @author kimchy
  */
-public class LuceneSearchEngineFactory implements SearchEngineFactory {
+public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     static {
         // set the segment reader to be a compass class
@@ -64,6 +65,8 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
     private LuceneSearchEngineOptimizer searchEngineOptimizer;
 
     private LuceneSearchEngineIndexManager indexManager;
+
+    private TransactionContext transactionContext;
 
     private LuceneAnalyzerManager analyzerManager;
 
@@ -93,6 +96,14 @@ public class LuceneSearchEngineFactory implements SearchEngineFactory {
 
     public SearchEngine openSearchEngine(RuntimeCompassSettings runtimeSettings) {
         return new LuceneSearchEngine(runtimeSettings, this);
+    }
+
+    public TransactionContext getTransactionContext() {
+        return transactionContext;
+    }
+
+    public void setTransactionContext(TransactionContext transactionContext) {
+        this.transactionContext = transactionContext;
     }
 
     private void configure(CompassSettings settings, CompassMapping mapping) {

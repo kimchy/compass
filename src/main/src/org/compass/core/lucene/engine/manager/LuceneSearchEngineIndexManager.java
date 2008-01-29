@@ -144,5 +144,5 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
      */
     void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis);
 
-    void executeCommit(Callable[] commits) throws SearchEngineException;
+    void executeCommit(Callable<Object>[] commits) throws SearchEngineException;
 }

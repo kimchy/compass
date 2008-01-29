@@ -19,7 +19,6 @@ package org.compass.core.test.optimizer;
 import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.impl.DefaultCompass;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.optimizer.AbstractLuceneSearchEngineOptimizer;
 import org.compass.core.lucene.engine.optimizer.ScheduledLuceneSearchEngineOptimizer;
@@ -87,8 +86,8 @@ public class ScheduledOptimizerTests extends AbstractOptimizerTests {
     }
 
     public void testScheduledOptimizer() {
-        MockOptimizer optimizer = (MockOptimizer) ((DefaultCompass.TransactionalSearchEngineOptimizer) ((ScheduledLuceneSearchEngineOptimizer) getCompass()
-                .getSearchEngineOptimizer()).getWrappedOptimizer()).getWrappedOptimizer();
+        MockOptimizer optimizer = (MockOptimizer) ((ScheduledLuceneSearchEngineOptimizer) getCompass()
+                .getSearchEngineOptimizer()).getWrappedOptimizer();
         assertTrue(getCompass().getSearchEngineOptimizer().isRunning());
         optimizer.clear();
         try {

@@ -19,6 +19,7 @@ package org.compass.core.engine;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.transaction.context.TransactionContext;
 
 /**
  * A factory class that creates search engines and search engine optimizers.
@@ -60,6 +61,12 @@ public interface SearchEngineFactory {
     /**
      */
     SearchEngineEventManager getEventManager();
+
+    /**
+     * Returns a transactional context that operations that (usually) operate on a different
+     * thread or outside of a transactional context should use.
+     */
+    TransactionContext getTransactionContext();
 
     /**
      * Closes the factory.

@@ -21,9 +21,12 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.LuceneSubIndexInfo;
+import org.compass.core.CompassException;
+import org.compass.core.CompassTransaction;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
  * @author kimchy
@@ -73,64 +76,73 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
     public void optimize() throws SearchEngineException {
         LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
         String[] subIndexes = indexManager.getStore().getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
+        for (String subIndex : subIndexes) {
             // here we go indirectly since it might be wrapped in a transaction
-            searchEngineFactory.getOptimizer().optimize(subIndexes[i]);
+            optimize(subIndex);
         }
     }
 
-    public void optimize(String subIndex) throws SearchEngineException {
+    public void optimize(final String subIndex) throws SearchEngineException {
         if (!isRunning()) {
             return;
         }
-        LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
-        LuceneSubIndexInfo indexInfo;
-        try {
-            indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndex, indexManager);
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to read index info for sub index [" + subIndex + "]", e);
-        }
-        if (indexInfo == null) {
-            // no index data, simply continue
-            return;
-        }
-        boolean needOptimizing = doNeedOptimizing(subIndex, indexInfo);
-        if (!isRunning()) {
-            return;
-        }
-        if (needOptimizing) {
-            doOptimize(subIndex, indexInfo);
-            searchEngineFactory.getIndexManager().clearCache(subIndex);
-        }
+
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
+                LuceneSubIndexInfo indexInfo;
+                try {
+                    indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndex, indexManager);
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to read index info for sub index [" + subIndex + "]", e);
+                }
+                if (indexInfo == null) {
+                    // no index data, simply continue
+                    return null;
+                }
+                boolean needOptimizing = doNeedOptimizing(subIndex, indexInfo);
+                if (!isRunning()) {
+                    return null;
+                }
+                if (needOptimizing) {
+                    doOptimize(subIndex, indexInfo);
+                    searchEngineFactory.getIndexManager().clearCache(subIndex);
+                }
+                return null;
+            }
+        });
     }
 
     public boolean needOptimization() throws SearchEngineException {
         LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
         String[] subIndexes = indexManager.getStore().getSubIndexes();
         boolean needOptmization = false;
-        for (int i = 0; i < subIndexes.length; i++) {
-            // here we go indirectly since it might be wrapped in a transaction
-            needOptmization |= searchEngineFactory.getOptimizer().needOptimization(subIndexes[i]);
+        for (String subIndex : subIndexes) {
+            needOptmization |= needOptimization(subIndex);
         }
         return needOptmization;
     }
 
-    public boolean needOptimization(String subIndex) throws SearchEngineException {
-        LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
+    public boolean needOptimization(final String subIndex) throws SearchEngineException {
+        final LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
         if (!isRunning()) {
             return false;
         }
-        LuceneSubIndexInfo indexInfo;
-        try {
-            indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndex, indexManager);
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to read index info for sub index [" + subIndex + "]", e);
-        }
-        if (indexInfo == null) {
-            // no index data, simply continue
-            return false;
-        }
-        return doNeedOptimizing(subIndex, indexInfo);
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+                LuceneSubIndexInfo indexInfo;
+                try {
+                    indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndex, indexManager);
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to read index info for sub index [" + subIndex + "]", e);
+                }
+                if (indexInfo == null) {
+                    // no index data, simply continue
+                    return false;
+                }
+                return doNeedOptimizing(subIndex, indexInfo);
+            }
+        });
     }
 
     protected abstract void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;

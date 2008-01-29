@@ -16,30 +16,22 @@
 
 package org.compass.core.impl;
 
-import java.io.IOException;
-import java.util.concurrent.Callable;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.store.Directory;
 import org.compass.core.Compass;
-import org.compass.core.CompassCallback;
-import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.CompassTemplate;
+import org.compass.core.CompassTransaction;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.FirstLevelCacheFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.converter.ConverterLookup;
-import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.engine.SearchEngineOptimizer;
@@ -49,18 +41,19 @@ import org.compass.core.id.UUIDGenerator;
 import org.compass.core.jndi.CompassObjectFactory;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.ScheduledLuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
 import org.compass.core.lucene.engine.optimizer.ScheduledLuceneSearchEngineOptimizer;
-import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.transaction.LocalTransactionFactory;
+import org.compass.core.transaction.TransactionException;
 import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.transaction.TransactionFactoryFactory;
+import org.compass.core.transaction.context.TransactionContext;
+import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
  * @author kimchy
@@ -125,6 +118,7 @@ public class DefaultCompass implements InternalCompass {
             registerJndi();
         }
 
+        searchEngineFactory.setTransactionContext(new CompassTransactionContext(this));
         this.searchEngineFactory = searchEngineFactory;
 
         // build the transaction factory
@@ -133,7 +127,6 @@ public class DefaultCompass implements InternalCompass {
 
         // wrap optimizer with transaction, and create scheduled one
         LuceneSearchEngineOptimizer optimizer = (LuceneSearchEngineOptimizer) searchEngineFactory.getOptimizer();
-        optimizer = new TransactionalSearchEngineOptimizer(optimizer, this);
         if (optimizer.canBeScheduled()) {
             boolean scheduledOptimizer = settings.getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE, true);
             if (scheduledOptimizer) {
@@ -145,7 +138,6 @@ public class DefaultCompass implements InternalCompass {
 
         // wrap the index manager with a scheduled one and a transactional aspect
         LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
-        indexManager = new TransactionalSearchEngineIndexManager(indexManager, this);
         indexManager = new ScheduledLuceneSearchEngineIndexManager(indexManager);
         searchEngineFactory.setIndexManager(indexManager);
 
@@ -279,255 +271,43 @@ public class DefaultCompass implements InternalCompass {
         }
     }
 
-    private static class TransactionalSearchEngineIndexManager implements LuceneSearchEngineIndexManager {
+    private static class CompassTransactionContext implements TransactionContext {
 
-        private LuceneSearchEngineIndexManager indexManager;
+        private Compass compass;
 
-        private CompassTemplate template;
-
-        private TransactionalSearchEngineIndexManager(LuceneSearchEngineIndexManager indexManager, Compass compass) {
-            this.indexManager = indexManager;
-            this.template = new CompassTemplate(compass);
+        public CompassTransactionContext(Compass compass) {
+            this.compass = compass;
         }
 
-        public void start() {
-            indexManager.start();
-        }
-
-        public void stop() {
-            indexManager.stop();
-        }
-
-        public void close() {
-            indexManager.close();
-        }
-
-        public boolean isRunning() {
-            return indexManager.isRunning();
-        }
-
-        public void createIndex() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.createIndex();
+        public <T> T execute(TransactionContextCallback<T> callback) throws TransactionException {
+            CompassSession session = compass.openSession();
+            CompassTransaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                T result = callback.doInTransaction(tx);
+                tx.commit();
+                return result;
+            } catch (RuntimeException e) {
+                if (tx != null) {
+                    try {
+                        tx.rollback();
+                    } catch (Exception e1) {
+                        log.error("Failed to rollback transaction, ignoring", e1);
+                    }
                 }
-            });
-        }
-
-        public boolean verifyIndex() throws SearchEngineException {
-            return ((Boolean) template.execute(new CompassCallback() {
-                public Object doInCompass(CompassSession session) throws CompassException {
-                    return (indexManager.verifyIndex()) ? Boolean.TRUE : Boolean.FALSE;
+                throw e;
+            } catch (Error err) {
+                if (tx != null) {
+                    try {
+                        tx.rollback();
+                    } catch (Exception e1) {
+                        log.error("Failed to rollback transaction, ignoring", e1);
+                    }
                 }
-            })).booleanValue();
-        }
-
-        public void deleteIndex() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.deleteIndex();
-                }
-            });
-        }
-
-        public boolean indexExists() throws SearchEngineException {
-            return ((Boolean) template.execute(new CompassCallback() {
-                public Object doInCompass(CompassSession session) throws CompassException {
-                    return (indexManager.indexExists()) ? Boolean.TRUE : Boolean.FALSE;
-                }
-            })).booleanValue();
-        }
-
-        public void operate(final IndexOperationCallback callback) throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.operate(callback);
-                }
-            });
-        }
-
-        public void replaceIndex(final SearchEngineIndexManager innerIndexManager, final ReplaceIndexCallback callback) throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.replaceIndex(innerIndexManager, callback);
-                }
-            });
-        }
-
-        public boolean isCached(String subIndex) throws SearchEngineException {
-            return indexManager.isCached(subIndex);
-        }
-
-        public boolean isCached() throws SearchEngineException {
-            return indexManager.isCached();
-        }
-
-        public void clearCache(String subIndex) throws SearchEngineException {
-            indexManager.clearCache(subIndex);
-        }
-
-        public void clearCache() throws SearchEngineException {
-            indexManager.clearCache();
-        }
-
-        public void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException {
-            indexManager.refreshCache(subIndex, indexSearcher);
-        }
-
-        public void notifyAllToClearCache() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.notifyAllToClearCache();
-                }
-            });
-        }
-
-        public void checkAndClearIfNotifiedAllToClearCache() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.checkAndClearIfNotifiedAllToClearCache();
-                }
-            });
-        }
-
-        public void performScheduledTasks() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.performScheduledTasks();
-                }
-            });
-        }
-
-        public String[] getSubIndexes() {
-            return indexManager.getSubIndexes();
-        }
-
-        public boolean isLocked() throws SearchEngineException {
-            return (Boolean) template.execute(new CompassCallback() {
-                public Boolean doInCompass(CompassSession session) throws CompassException {
-                    return indexManager.isLocked();
-                }
-            });
-        }
-
-        public boolean isLocked(final String subIndex) throws SearchEngineException {
-            return (Boolean) template.execute(new CompassCallback() {
-                public Boolean doInCompass(CompassSession session) throws CompassException {
-                    return indexManager.isLocked(subIndex);
-                }
-            });
-        }
-
-        public void releaseLock(final String subIndex) throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.releaseLock(subIndex);
-                }
-            });
-        }
-
-        public void releaseLocks() throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    indexManager.releaseLocks();
-                }
-            });
-        }
-
-        // lucene search engine Index manager
-
-        public LuceneSettings getSettings() {
-            return indexManager.getSettings();
-        }
-
-        public LuceneSearchEngineStore getStore() {
-            return indexManager.getStore();
-        }
-
-        public IndexWriter openIndexWriter(Directory dir, boolean create) throws IOException {
-            return indexManager.openIndexWriter(dir, create);
-        }
-
-        public void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException {
-            indexManager.closeIndexWriter(subIndex, indexWriter, dir);
-        }
-
-        public LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
-            return indexManager.openIndexHolderBySubIndex(subIndex);
-        }
-
-        public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
-            indexManager.setWaitForCacheInvalidationBeforeSecondStep(timeToWaitInMillis);
-        }
-
-        public void executeCommit(Callable[] commits) throws SearchEngineException {
-            indexManager.executeCommit(commits);
-        }
-    }
-
-    public static class TransactionalSearchEngineOptimizer implements LuceneSearchEngineOptimizer {
-
-        private LuceneSearchEngineOptimizer searchEngineOptimizer;
-
-        private CompassTemplate template;
-
-        public TransactionalSearchEngineOptimizer(LuceneSearchEngineOptimizer searchEngineOptimizer, Compass compass) {
-            this.searchEngineOptimizer = searchEngineOptimizer;
-            this.template = new CompassTemplate(compass);
-        }
-
-        public LuceneSearchEngineOptimizer getWrappedOptimizer() {
-            return searchEngineOptimizer;
-        }
-
-        public void start() throws SearchEngineException {
-            searchEngineOptimizer.start();
-        }
-
-        public void stop() throws SearchEngineException {
-            searchEngineOptimizer.stop();
-        }
-
-        public boolean isRunning() {
-            return searchEngineOptimizer.isRunning();
-        }
-
-        public boolean needOptimization() throws SearchEngineException {
-            // no need to wrap it in a transaciton, since per sub index ones are wrapped
-            return searchEngineOptimizer.needOptimization();
-        }
-
-        public void optimize() throws SearchEngineException {
-            // no need to wrap it in a transaciton, since per sub index ones are wrapped
-            searchEngineOptimizer.optimize();
-        }
-
-        public void setSearchEngineFactory(LuceneSearchEngineFactory searchEngineFactory) {
-            searchEngineOptimizer.setSearchEngineFactory(searchEngineFactory);
-        }
-
-        public LuceneSearchEngineFactory getSearchEngineFactory() {
-            return searchEngineOptimizer.getSearchEngineFactory();
-        }
-
-        public boolean canBeScheduled() {
-            return searchEngineOptimizer.canBeScheduled();
-        }
-
-        public boolean needOptimization(final String subIndex) throws SearchEngineException {
-            return ((Boolean) template.execute(new CompassCallback() {
-                public Object doInCompass(CompassSession session) throws CompassException {
-                    return (searchEngineOptimizer.needOptimization(subIndex)) ? Boolean.TRUE : Boolean.FALSE;
-                }
-            })).booleanValue();
-        }
-
-        public void optimize(final String subIndex) throws SearchEngineException {
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    searchEngineOptimizer.optimize(subIndex);
-                }
-            });
+                throw err;
+            } finally {
+                session.close();
+            }
         }
     }
 }

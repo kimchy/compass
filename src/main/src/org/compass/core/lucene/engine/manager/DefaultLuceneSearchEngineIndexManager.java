@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -34,6 +33,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
+import org.compass.core.CompassException;
+import org.compass.core.CompassTransaction;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.LuceneEnvironment;
@@ -41,6 +42,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.transaction.context.TransactionContextCallback;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
@@ -59,9 +61,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     private LuceneSettings luceneSettings;
 
     // holds the index cache per sub index
-    private HashMap indexHolders = new HashMap();
+    private HashMap<String, LuceneIndexHolder> indexHolders = new HashMap<String, LuceneIndexHolder>();
 
-    private HashMap indexHoldersLocks = new HashMap();
+    private HashMap<String, Object> indexHoldersLocks = new HashMap<String, Object>();
 
     private long[] lastModifiled;
 
@@ -79,8 +81,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         this.searchEngineStore = searchEngineStore;
         this.luceneSettings = searchEngineFactory.getLuceneSettings();
         String[] subIndexes = searchEngineStore.getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
-            indexHoldersLocks.put(subIndexes[i], new Object());
+        for (String subIndex : subIndexes) {
+            indexHoldersLocks.put(subIndex, new Object());
         }
         if (searchEngineStore.allowConcurrentCommit() &&
                 searchEngineFactory.getSettings().getSettingAsBoolean(LuceneEnvironment.Transaction.ENABLE_CONCURRENT_COMMIT, true)) {
@@ -111,7 +113,12 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             log.debug("Creating index " + searchEngineStore);
         }
         clearCache();
-        searchEngineStore.createIndex();
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                searchEngineStore.createIndex();
+                return null;
+            }
+        });
     }
 
     public void deleteIndex() throws SearchEngineException {
@@ -119,19 +126,41 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             log.debug("Deleting index " + searchEngineStore);
         }
         clearCache();
-        searchEngineStore.deleteIndex();
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                searchEngineStore.deleteIndex();
+                return null;
+            }
+        });
     }
 
     public boolean verifyIndex() throws SearchEngineException {
         clearCache();
-        return searchEngineStore.verifyIndex();
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+                return searchEngineStore.verifyIndex();
+            }
+        });
     }
 
     public boolean indexExists() throws SearchEngineException {
-        return searchEngineStore.indexExists();
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+                return searchEngineStore.indexExists();
+            }
+        });
     }
 
     public void operate(final IndexOperationCallback callback) throws SearchEngineException {
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                doOperate(callback);
+                return null;
+            }
+        });
+    }
+
+    protected void doOperate(final IndexOperationCallback callback) throws SearchEngineException {
         // first aquire write lock for all the sub-indexes
         final String[] subIndexes = searchEngineStore.getSubIndexes();
         final Lock[] writerLocks = new Lock[subIndexes.length];
@@ -192,10 +221,20 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
-    public void replaceIndex(SearchEngineIndexManager indexManager, final ReplaceIndexCallback callback) throws SearchEngineException {
+
+    public void replaceIndex(final SearchEngineIndexManager indexManager, final ReplaceIndexCallback callback) throws SearchEngineException {
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                doReplaceIndex(indexManager, callback);
+                return null;
+            }
+        });
+    }
+
+    protected void doReplaceIndex(final SearchEngineIndexManager indexManager, final ReplaceIndexCallback callback) throws SearchEngineException {
         final LuceneSearchEngineIndexManager luceneIndexManager = (LuceneSearchEngineIndexManager) indexManager;
 
-        operate(new IndexOperationCallback() {
+        doOperate(new IndexOperationCallback() {
             public boolean firstStep() throws SearchEngineException {
                 callback.buildIndexIfNeeded();
                 return true;
@@ -220,20 +259,24 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (log.isDebugEnabled()) {
             log.debug("Global notification to clear cache");
         }
-        String[] subIndexes = searchEngineStore.getSubIndexes();
-        // just update the last modified time, others will see the change and update
-        for (int i = 0; i < subIndexes.length; i++) {
-            Directory dir = getDirectory(subIndexes[i]);
-            try {
-                if (!dir.fileExists(CLEAR_CACHE_NAME)) {
-                    dir.createOutput(CLEAR_CACHE_NAME).close();
-                } else {
-                    dir.touchFile(CLEAR_CACHE_NAME);
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                // just update the last modified time, others will see the change and update
+                for (String subIndex : searchEngineStore.getSubIndexes()) {
+                    Directory dir = getDirectory(subIndex);
+                    try {
+                        if (!dir.fileExists(CLEAR_CACHE_NAME)) {
+                            dir.createOutput(CLEAR_CACHE_NAME).close();
+                        } else {
+                            dir.touchFile(CLEAR_CACHE_NAME);
+                        }
+                    } catch (IOException e) {
+                        throw new SearchEngineException("Failed to update/generate global invalidation cahce", e);
+                    }
                 }
-            } catch (IOException e) {
-                throw new SearchEngineException("Failed to update/generate global invalidation cahce", e);
+                return null;
             }
-        }
+        });
     }
 
     public boolean isCached(String subIndex) throws SearchEngineException {
@@ -244,8 +287,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public boolean isCached() throws SearchEngineException {
         String[] subIndexes = searchEngineStore.getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
-            if (isCached(subIndexes[i])) {
+        for (String subIndex : subIndexes) {
+            if (isCached(subIndex)) {
                 return true;
             }
         }
@@ -254,14 +297,14 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void clearCache() throws SearchEngineException {
         String[] subIndexes = searchEngineStore.getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
-            clearCache(subIndexes[i]);
+        for (String subIndex : subIndexes) {
+            clearCache(subIndex);
         }
     }
 
     public void clearCache(String subIndex) throws SearchEngineException {
         synchronized (indexHoldersLocks.get(subIndex)) {
-            LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.remove(subIndex);
+            LuceneIndexHolder indexHolder = indexHolders.remove(subIndex);
             if (indexHolder != null) {
                 indexHolder.markForClose();
             }
@@ -270,7 +313,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException {
         synchronized (indexHoldersLocks.get(subIndex)) {
-            LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.remove(subIndex);
+            LuceneIndexHolder indexHolder = indexHolders.remove(subIndex);
             if (indexHolder != null) {
                 indexHolder.markForClose();
             }
@@ -283,7 +326,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         synchronized (indexHoldersLocks.get(subIndex)) {
             try {
                 Directory dir = getDirectory(subIndex);
-                LuceneIndexHolder indexHolder = (LuceneIndexHolder) indexHolders.get(subIndex);
+                LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
                 if (shouldInvalidateCache(dir, indexHolder)) {
                     clearCache(subIndex);
                     // get a new directory and put it in the cache
@@ -394,11 +437,20 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public synchronized void checkAndClearIfNotifiedAllToClearCache() throws SearchEngineException {
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                doCheckAndClearIfNotifiedAllToClearCache();
+                return null;
+            }
+        });
+    }
+
+    protected void doCheckAndClearIfNotifiedAllToClearCache() throws SearchEngineException {
         if (lastModifiled == null) {
             String[] subIndexes = searchEngineStore.getSubIndexes();
             // just update the last modified time, others will see the change and update
-            for (int i = 0; i < subIndexes.length; i++) {
-                Directory dir = getDirectory(subIndexes[i]);
+            for (String subIndex : subIndexes) {
+                Directory dir = getDirectory(subIndex);
                 try {
                     if (dir.fileExists(CLEAR_CACHE_NAME)) {
                         continue;
@@ -473,8 +525,13 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void performScheduledTasks() throws SearchEngineException {
-        checkAndClearIfNotifiedAllToClearCache();
-        getStore().performScheduledTasks();
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                doCheckAndClearIfNotifiedAllToClearCache();
+                getStore().performScheduledTasks();
+                return null;
+            }
+        });
     }
 
     public String[] getSubIndexes() {
@@ -482,38 +539,55 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public boolean isLocked() throws SearchEngineException {
-        return searchEngineStore.isLocked();
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+                return searchEngineStore.isLocked();
+            }
+        });
     }
 
-    public boolean isLocked(String subIndex) throws SearchEngineException {
-        return searchEngineStore.isLocked(subIndex);
+    public boolean isLocked(final String subIndex) throws SearchEngineException {
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+                return searchEngineStore.isLocked(subIndex);
+            }
+        });
     }
 
     public void releaseLocks() throws SearchEngineException {
-        searchEngineStore.releaseLocks();
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                searchEngineStore.releaseLocks();
+                return null;
+            }
+        });
     }
 
-    public void releaseLock(String subIndex) throws SearchEngineException {
-        searchEngineStore.releaseLock(subIndex);
+    public void releaseLock(final String subIndex) throws SearchEngineException {
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                searchEngineStore.releaseLock(subIndex);
+                return null;
+            }
+        });
     }
 
-    public void executeCommit(Callable[] commits) throws SearchEngineException {
+    public void executeCommit(Callable<Object>[] commits) throws SearchEngineException {
         if (commits.length == 0) {
             return;
         }
         // if the commit executor is created, we can do concurrent commits
         // if not, serialize it by callling it one after the other
         if (commitExecutorService != null && commits.length > concurrentCommitThreshold) {
-            List futures;
+            List<Future<Object>> futures;
             try {
-                Collection commitsCol = Arrays.asList(commits);
+                Collection<Callable<Object>> commitsCol = Arrays.asList(commits);
                 futures = commitExecutorService.invokeAll(commitsCol);
             } catch (InterruptedException e) {
                 throw new SearchEngineException("Failed to concurrent commit, interrupted", e);
             }
 
-            for (Iterator it = futures.iterator(); it.hasNext();) {
-                Future future = (Future) it.next();
+            for (Future<Object> future : futures) {
                 try {
                     future.get();
                 } catch (InterruptedException e) {
@@ -526,9 +600,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 }
             }
         } else {
-            for (int i = 0; i < commits.length; i++) {
+            for (Callable commit : commits) {
                 try {
-                    commits[i].call();
+                    commit.call();
                 } catch (Exception e) {
                     if (e instanceof SearchEngineException) {
                         throw (SearchEngineException) e;

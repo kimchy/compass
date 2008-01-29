@@ -825,7 +825,9 @@
           <root url="jar://$MODULE_DIR$/../../lib/lucene/lucene-core.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../../opt/lucene/2.2/src/java" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntryProperties />
