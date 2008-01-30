@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package org.compass.core.lucene.engine.optimizer;
+package org.compass.core.executor;
 
-import org.compass.core.engine.SearchEngineOptimizer;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.CompassException;
 
 /**
- * Responsible for optimizing the search engine.
+ * A general execution execption.
  *
  * @author kimchy
  */
-public interface LuceneSearchEngineOptimizer extends SearchEngineOptimizer {
+public class ExecutorException extends CompassException {
 
-    void setSearchEngineFactory(LuceneSearchEngineFactory searchEngineFactory);
+    public ExecutorException(String s) {
+        super(s);
+    }
 
-    LuceneSearchEngineFactory getSearchEngineFactory();
-
-    /**
-     * Can the optimizer be scheduled or not.
-     */
-    boolean canBeScheduled();
+    public ExecutorException(String string, Throwable root) {
+        super(string, root);
+    }
 }

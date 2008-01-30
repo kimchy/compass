@@ -36,15 +36,11 @@ import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.executor.ExecutorManager;
 import org.compass.core.id.IdentifierGenerator;
 import org.compass.core.id.UUIDGenerator;
 import org.compass.core.jndi.CompassObjectFactory;
-import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
-import org.compass.core.lucene.engine.manager.ScheduledLuceneSearchEngineIndexManager;
-import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
-import org.compass.core.lucene.engine.optimizer.ScheduledLuceneSearchEngineOptimizer;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
@@ -84,35 +80,49 @@ public class DefaultCompass implements InternalCompass {
 
     private PropertyNamingStrategy propertyNamingStrategy;
 
+    private ExecutorManager executorManager;
+
     protected CompassSettings settings;
 
     private FirstLevelCacheFactory firstLevelCacheFactory;
 
+    private boolean duplicate;
+
     private volatile boolean closed = false;
 
     public DefaultCompass(CompassMapping mapping, ConverterLookup converterLookup, CompassMetaData compassMetaData,
-                          PropertyNamingStrategy propertyNamingStrategy, CompassSettings settings) throws CompassException {
-        this(mapping, converterLookup, compassMetaData, propertyNamingStrategy, settings, false);
+                          PropertyNamingStrategy propertyNamingStrategy, ExecutorManager executorManager,
+                          CompassSettings settings) throws CompassException {
+        this(mapping, converterLookup, compassMetaData, propertyNamingStrategy, executorManager, settings, false);
+    }
+
+    public DefaultCompass(CompassMapping mapping, ConverterLookup converterLookup, CompassMetaData compassMetaData,
+                          PropertyNamingStrategy propertyNamingStrategy, ExecutorManager executorManager,
+                          CompassSettings settings, boolean duplicate) throws CompassException {
+
+        this(mapping, converterLookup, compassMetaData, propertyNamingStrategy, executorManager, settings, duplicate,
+                new LuceneSearchEngineFactory(propertyNamingStrategy, settings, mapping, executorManager));
     }
 
     public DefaultCompass(CompassMapping mapping, ConverterLookup converterLookup, CompassMetaData compassMetaData,
                           PropertyNamingStrategy propertyNamingStrategy, CompassSettings settings,
-                          boolean duplicate) throws CompassException {
-
-        this(mapping, converterLookup, compassMetaData, propertyNamingStrategy, settings, duplicate,
-                new LuceneSearchEngineFactory(propertyNamingStrategy, settings, mapping));
+                          LuceneSearchEngineFactory searchEngineFactory) throws CompassException {
+        this(mapping, converterLookup, compassMetaData, propertyNamingStrategy, searchEngineFactory.getExecutorManager(),
+                settings, false, searchEngineFactory);
     }
 
     public DefaultCompass(CompassMapping mapping, ConverterLookup converterLookup, CompassMetaData compassMetaData,
-                          PropertyNamingStrategy propertyNamingStrategy, CompassSettings settings,
-                          boolean duplicate, LuceneSearchEngineFactory searchEngineFactory) throws CompassException {
+                          PropertyNamingStrategy propertyNamingStrategy, ExecutorManager executorManager,
+                          CompassSettings settings, boolean duplicate, LuceneSearchEngineFactory searchEngineFactory) throws CompassException {
 
         this.mapping = mapping;
         this.converterLookup = converterLookup;
         this.compassMetaData = compassMetaData;
         this.propertyNamingStrategy = propertyNamingStrategy;
+        this.executorManager = executorManager;
         this.name = settings.getSetting(CompassEnvironment.NAME, "default");
         this.settings = settings;
+        this.duplicate = duplicate;
 
         if (!duplicate) {
             registerJndi();
@@ -125,29 +135,13 @@ public class DefaultCompass implements InternalCompass {
         transactionFactory = TransactionFactoryFactory.createTransactionFactory(this, settings);
         localTransactionFactory = TransactionFactoryFactory.createLocalTransactionFactory(this, settings);
 
-        // wrap optimizer with transaction, and create scheduled one
-        LuceneSearchEngineOptimizer optimizer = (LuceneSearchEngineOptimizer) searchEngineFactory.getOptimizer();
-        if (optimizer.canBeScheduled()) {
-            boolean scheduledOptimizer = settings.getSettingAsBoolean(LuceneEnvironment.Optimizer.SCHEDULE, true);
-            if (scheduledOptimizer) {
-                optimizer = new ScheduledLuceneSearchEngineOptimizer(optimizer);
-            }
-        }
-        optimizer.setSearchEngineFactory(searchEngineFactory);
-        searchEngineFactory.setOptimizer(optimizer);
-
-        // wrap the index manager with a scheduled one and a transactional aspect
-        LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
-        indexManager = new ScheduledLuceneSearchEngineIndexManager(indexManager);
-        searchEngineFactory.setIndexManager(indexManager);
-
         firstLevelCacheFactory = new FirstLevelCacheFactory();
         firstLevelCacheFactory.configure(settings);
 
-        indexManager.verifyIndex();
+        searchEngineFactory.getIndexManager().verifyIndex();
 
         if (!duplicate) {
-            indexManager.start();
+            searchEngineFactory.getIndexManager().start();
             searchEngineFactory.getOptimizer().start();
         }
     }
@@ -155,7 +149,7 @@ public class DefaultCompass implements InternalCompass {
     public Compass clone(CompassSettings addedSettings) {
         CompassSettings copySettings = settings.copy();
         copySettings.addSettings(addedSettings);
-        return new DefaultCompass(mapping, converterLookup, compassMetaData, propertyNamingStrategy, copySettings, true);
+        return new DefaultCompass(mapping, converterLookup, compassMetaData, propertyNamingStrategy, executorManager, copySettings, true);
     }
 
     public String getName() {
@@ -165,6 +159,10 @@ public class DefaultCompass implements InternalCompass {
     public CompassMapping getMapping() {
         checkClosed();
         return this.mapping;
+    }
+
+    public ExecutorManager getExecutorManager() {
+        return executorManager;
     }
 
     public CompassSession openSession() {
@@ -193,7 +191,7 @@ public class DefaultCompass implements InternalCompass {
             return;
         }
         log.info("Closing Compass [" + name + "]");
-        if (settings.getSettingAsBoolean(CompassEnvironment.Jndi.ENABLE, false)) {
+        if (settings.getSettingAsBoolean(CompassEnvironment.Jndi.ENABLE, false) && !duplicate) {
             CompassObjectFactory.removeInstance(uuid, name, settings);
         }
         try {
@@ -202,6 +200,11 @@ public class DefaultCompass implements InternalCompass {
             // swallow, thats ok if it is
         }
         searchEngineFactory.close();
+
+        if (!duplicate) {
+            executorManager.close();
+        }
+
         log.info("Closed Compass [" + name + "]");
     }
 

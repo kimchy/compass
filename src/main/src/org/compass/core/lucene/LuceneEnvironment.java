@@ -586,12 +586,6 @@ public class LuceneEnvironment {
          */
         public static final String SCHEDULE_PERIOD = "compass.engine.optimizer.schedule.period";
 
-        /**
-         * Determines if the optimizer schedule thread is a daemon or not
-         * (values are true or false) <p/> Defaults to <code>false</code>
-         */
-        public static final String SCHEDULE_DEAMON = "compass.engine.optimizer.schedule.daemon";
-
         public abstract class Aggressive {
 
             /**

@@ -26,6 +26,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,6 +76,8 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     private ExecutorService commitExecutorService;
 
     private int concurrentCommitThreshold;
+
+    private ScheduledFuture scheduledFuture;
 
     public DefaultLuceneSearchEngineIndexManager(LuceneSearchEngineFactory searchEngineFactory,
                                                  final LuceneSearchEngineStore searchEngineStore) {
@@ -425,11 +429,30 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void start() {
+        if (luceneSettings.getIndexManagerScheduleInterval() > 0) {
+            if (log.isInfoEnabled()) {
+                log.info("Starting scheduled index manager with period [" + luceneSettings.getIndexManagerScheduleInterval() + "ms]");
+            }
+            ScheduledIndexManagerRunnable scheduledIndexManagerRunnable = new ScheduledIndexManagerRunnable(this);
+            long period = luceneSettings.getIndexManagerScheduleInterval();
+            scheduledFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledIndexManagerRunnable, period, period, TimeUnit.MILLISECONDS);
+
+            // set the time to wait for clearing cache to 110% of the schedule time
+            setWaitForCacheInvalidationBeforeSecondStep((long) (luceneSettings.getIndexManagerScheduleInterval() * 1.1));
+        } else {
+            log.info("Not starting scheduled index manager");
+            return;
+        }
+
         isRunning = true;
     }
 
     public void stop() {
         isRunning = false;
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(true);
+            scheduledFuture = null;
+        }
     }
 
     public boolean isRunning() {
@@ -620,4 +643,25 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     public LuceneSettings getSettings() {
         return luceneSettings;
     }
+
+    private static class ScheduledIndexManagerRunnable implements Runnable {
+
+        private LuceneSearchEngineIndexManager indexManager;
+
+        public ScheduledIndexManagerRunnable(LuceneSearchEngineIndexManager indexManager) {
+            this.indexManager = indexManager;
+        }
+
+        public void run() {
+            try {
+                indexManager.performScheduledTasks();
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to perform schedule task", e);
+                }
+            }
+        }
+
+    }
+
 }

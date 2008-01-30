@@ -606,4 +606,89 @@ public class CompassEnvironment {
          */
         public static final String NULL_VALUE = "compass.nullvalue";
     }
+
+    /**
+     * A set of executor manager relevant settings.
+     */
+    public abstract class ExecutorManager {
+
+        private static final String EXECUTOR_MANAGER_PREFIX = "compass.executorManager.";
+
+        /**
+         * The type of the executor manager used. Can also be the FQN of the implementation.
+         * Defaults to the "concurrent" executor manager.
+         */
+        public static final String EXECUTOR_MANAGER_TYPE = EXECUTOR_MANAGER_PREFIX + "type";
+
+        /**
+         * A set of settings for the scheduled executor manager (based on java.util.concurrent).
+         */
+        public abstract class Scheduled {
+
+            /**
+             * The name (type) of the scheduled executor manager.
+             */
+            public static final String NAME = "scheduled";
+
+            private static final String PREFIX = EXECUTOR_MANAGER_PREFIX + NAME + ".";
+
+            /**
+             * The core pool size that is used with the scheduled executor service. Defaults to <code>10</code>.
+             */
+            public static final String CORE_POOL_SIZE = PREFIX + "corePoolSize";
+        }
+
+        /**
+         * A set of settings for the concurrent executor manager.
+         */
+        public abstract class Concurrent {
+
+            /**
+             * The name (type) of the concurrent executor manager.
+             */
+            public static final String NAME = "concurrent";
+
+            private static final String PREFIX = EXECUTOR_MANAGER_PREFIX + NAME + ".";
+
+            /**
+             * The core pool size of the scheduled executor service. Defaults to <code>1</code>.
+             */
+            public static final String SCHEDULED_CORE_POOL_SIZE = PREFIX + "scheduledCorePoolSize";
+
+            /**
+             * The core pool size of the executor service, defaults to <code>10</code>.
+             */
+            public static final String CORE_POOL_SIZE = PREFIX + "corePoolSize";
+
+            /**
+             * The maximum pool size of the executor service. Defaults to <code>20</code>.
+             */
+            public static final String MAXIMUM_POOL_SIZE = PREFIX + "maximumPoolSize";
+
+            /**
+             * The keep alive time of the executor service (in <b>milliseconds</b>).
+             * Defaults to <code>60000</code>, which is 60 seconds.
+             */
+            public static final String KEEP_ALIVE_TIME = PREFIX + "keepAliveTime";
+
+        }
+
+        /**
+         * A set of settings of the work manager based executor manager.
+         */
+        public abstract class WorkManager {
+
+            /**
+             * The name (type) of the work manager executor manager.
+             */
+            public static final String NAME = "workManager";
+
+            private static final String PREFIX = EXECUTOR_MANAGER_PREFIX + NAME + ".";
+
+            /**
+             * The JNDI to lookup the JNDI name from. Required.
+             */
+            public static final String JNDI_NAME = PREFIX + "jndiName";
+        }
+    }
 }

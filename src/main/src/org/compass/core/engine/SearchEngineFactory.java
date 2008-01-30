@@ -19,6 +19,7 @@ package org.compass.core.engine;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.executor.ExecutorManager;
 import org.compass.core.transaction.context.TransactionContext;
 
 /**
@@ -67,6 +68,12 @@ public interface SearchEngineFactory {
      * thread or outside of a transactional context should use.
      */
     TransactionContext getTransactionContext();
+
+    /**
+     * Returns an executor manager allowing to execute tasks in an async manner as well as
+     * schedule tasks.
+     */
+    ExecutorManager getExecutorManager();
 
     /**
      * Closes the factory.

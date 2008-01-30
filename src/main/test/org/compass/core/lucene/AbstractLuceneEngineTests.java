@@ -36,8 +36,8 @@ public abstract class AbstractLuceneEngineTests extends AbstractSearchEngineTest
         PropertyNamingStrategy propertyNamingStrategy = propertyNamingStrategyFactory
                 .createNamingStrategy(getSettings());
 
-        SearchEngineFactory searchEngineFactory = new LuceneSearchEngineFactory(propertyNamingStrategy, getSettings(),
-                getMapping());
+        SearchEngineFactory searchEngineFactory = new LuceneSearchEngineFactory(propertyNamingStrategy,
+                getSettings(), getMapping(), createExecutorManager());
         return searchEngineFactory;
     }
 

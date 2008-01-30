@@ -20,10 +20,11 @@ import org.compass.core.Compass;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.converter.DefaultConverterLookup;
 import org.compass.core.engine.naming.StaticPropertyNamingStrategy;
+import org.compass.core.executor.DefaultExecutorManager;
+import org.compass.core.executor.ExecutorManager;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
-import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
@@ -48,9 +49,9 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
     protected void setUp() throws Exception {
         super.setUp();
         this.searchEngineFactory = createSearchEngineFactory();
-        this.compass = new DefaultCompass(getMapping(), new DefaultConverterLookup(), new DefaultCompassMetaData(), new StaticPropertyNamingStrategy(),
-                getSettings(), false, (LuceneSearchEngineFactory) searchEngineFactory);
-        this.searchEngine = searchEngineFactory.openSearchEngine(new RuntimeCompassSettings(((InternalCompass) compass).getSettings()));
+        this.compass = new DefaultCompass(getMapping(), new DefaultConverterLookup(), new DefaultCompassMetaData(),
+                new StaticPropertyNamingStrategy(), getSettings(), (LuceneSearchEngineFactory) searchEngineFactory);
+        this.searchEngine = searchEngineFactory.openSearchEngine(new RuntimeCompassSettings(compass.getSettings()));
     }
 
     protected void tearDown() throws Exception {
@@ -62,4 +63,10 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
     }
 
     protected abstract SearchEngineFactory createSearchEngineFactory();
+
+    protected ExecutorManager createExecutorManager() {
+        DefaultExecutorManager executorManager = new DefaultExecutorManager();
+        executorManager.configure(getSettings());
+        return executorManager;
+    }
 }

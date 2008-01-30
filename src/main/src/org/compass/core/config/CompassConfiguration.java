@@ -39,6 +39,7 @@ import org.compass.core.converter.DefaultConverterLookup;
 import org.compass.core.engine.naming.DefaultPropertyNamingStrategyFactory;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.PropertyNamingStrategyFactory;
+import org.compass.core.executor.DefaultExecutorManager;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -226,8 +227,11 @@ public class CompassConfiguration {
 
         CompassMetaData copyMetaData = metaData.copy();
 
+        DefaultExecutorManager executorManager = new DefaultExecutorManager();
+        executorManager.configure(settings);
+
         return new DefaultCompass(copyCompassMapping, converterLookup, copyMetaData, propertyNamingStrategy,
-                copySettings);
+                executorManager, copySettings);
     }
 
     protected void registerExtraConverters(ConverterLookup converterLookup) {

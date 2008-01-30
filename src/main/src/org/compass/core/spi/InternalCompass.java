@@ -21,6 +21,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.executor.ExecutorManager;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.transaction.LocalTransactionFactory;
@@ -33,6 +34,8 @@ public interface InternalCompass extends Compass {
     CompassSettings getSettings();
 
     CompassMapping getMapping();
+
+    ExecutorManager getExecutorManager();
 
     CompassMetaData getMetaData();
 

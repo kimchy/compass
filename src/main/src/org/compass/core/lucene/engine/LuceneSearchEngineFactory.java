@@ -29,14 +29,14 @@ import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.spi.InternalSearchEngineFactory;
-import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.executor.ExecutorManager;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
 import org.compass.core.lucene.engine.indexdeletionpolicy.IndexDeletionPolicyFactory;
 import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
-import org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
+import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizerManager;
 import org.compass.core.lucene.engine.queryparser.LuceneQueryParserManager;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStoreFactory;
@@ -62,9 +62,11 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     private LuceneSettings luceneSettings;
 
-    private LuceneSearchEngineOptimizer searchEngineOptimizer;
+    private SearchEngineOptimizer searchEngineOptimizer;
 
     private LuceneSearchEngineIndexManager indexManager;
+
+    private ExecutorManager executorManager;
 
     private TransactionContext transactionContext;
 
@@ -81,9 +83,10 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
     private SearchEngineEventManager eventManager = new SearchEngineEventManager();
 
     public LuceneSearchEngineFactory(PropertyNamingStrategy propertyNamingStrategy, CompassSettings settings,
-                                     CompassMapping mapping) {
+                                     CompassMapping mapping, ExecutorManager executorManager) {
         this.propertyNamingStrategy = propertyNamingStrategy;
         this.mapping = mapping;
+        this.executorManager = executorManager;
         this.settings = settings;
         this.luceneSettings = new LuceneSettings();
         luceneSettings.configure(settings);
@@ -100,6 +103,10 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     public TransactionContext getTransactionContext() {
         return transactionContext;
+    }
+
+    public ExecutorManager getExecutorManager() {
+        return this.executorManager;
     }
 
     public void setTransactionContext(TransactionContext transactionContext) {
@@ -134,21 +141,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
             log.info("Not using highlighter - no highlighter jar included.");
         }
 
-        // build the optimizer and start it
-        String optimizerClassSetting = settings.getSetting(LuceneEnvironment.Optimizer.TYPE, AdaptiveOptimizer.class.getName());
-        if (log.isDebugEnabled()) {
-            log.debug("Using optimizer [" + optimizerClassSetting + "]");
-        }
-        try {
-            Class optimizerClass = ClassUtils.forName(optimizerClassSetting, settings.getClassLoader());
-            searchEngineOptimizer = (LuceneSearchEngineOptimizer) optimizerClass.newInstance();
-            if (searchEngineOptimizer instanceof CompassConfigurable) {
-                ((CompassConfigurable) searchEngineOptimizer).configure(settings);
-            }
-        } catch (Exception e) {
-            throw new SearchEngineException("Can't find optimizer class [" + optimizerClassSetting + "]", e);
-        }
-        searchEngineOptimizer.setSearchEngineFactory(this);
+        searchEngineOptimizer = new LuceneSearchEngineOptimizerManager(this);
+        ((CompassConfigurable) searchEngineOptimizer).configure(settings);
     }
 
     public String getAliasProperty() {
