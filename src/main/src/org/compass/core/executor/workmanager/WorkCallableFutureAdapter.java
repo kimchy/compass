@@ -53,7 +53,7 @@ public class WorkCallableFutureAdapter<T> implements Work, ScheduledFuture<T> {
         try {
             result = callable.call();
         } catch (Exception e) {
-            this.exception = exception;
+            this.exception = e;
         } finally {
             done = true;
             monitor.notifyAll();

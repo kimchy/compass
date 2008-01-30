@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+
+import org.compass.core.executor.spi.InternalExecutorManager;
 
 /**
  * An executor manager is an abstraction on top of async and scheduled execution
@@ -29,35 +29,13 @@ import java.util.concurrent.TimeUnit;
  *
  * @author kimchy
  */
-public interface ExecutorManager {
+public interface ExecutorManager extends InternalExecutorManager {
 
     /**
-     * @see java.util.concurrent.ExecutorService#submit(java.util.concurrent.Callable)
+     * Similar to {@link #invokeAll(java.util.Collection)}, but only uses it if the number of tasks passes
+     * the concurrent limit. Also, will check if any callable has an exception and will propagate it.
      */
-    <T> Future<T> submit(Callable<T> task);
+    <T> List<Future<T>> invokeAllWithLimit(Collection<Callable<T>> tasks, int concurrencyThreshold);
 
-    /**
-     * @see java.util.concurrent.ExecutorService#invokeAll(java.util.Collection)
-     */
-    <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks) throws InterruptedException;
-
-    /**
-     * @see java.util.concurrent.ScheduledExecutorService#schedule(java.util.concurrent.Callable, long, java.util.concurrent.TimeUnit)
-     */
-    <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit);
-
-    /**
-     * @see java.util.concurrent.ScheduledExecutorService#scheduleAtFixedRate(Runnable, long, long, java.util.concurrent.TimeUnit)
-     */
-    ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay,  long period, TimeUnit unit);
-
-    /**
-     * @see java.util.concurrent.ScheduledExecutorService#scheduleWithFixedDelay(Runnable, long, long, java.util.concurrent.TimeUnit)
-     */
-    ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay,  long delay, TimeUnit unit);
-
-    /**
-     * Shuts down this executor manager.
-     */
-    void close();
+    <T> List<Future<T>> invokeAllWithLimitBailOnException(Collection<Callable<T>> tasks, int concurrencyThreshold);
 }

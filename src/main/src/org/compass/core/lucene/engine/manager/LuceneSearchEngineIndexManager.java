@@ -17,7 +17,6 @@
 package org.compass.core.lucene.engine.manager;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -135,14 +134,10 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
      * need to be globally notified to invalidate the cache after the commit lock has been
      * obtained for the second step on the {@link #operate(org.compass.core.engine.SearchEngineIndexManager.IndexOperationCallback)}
      * or {@link #replaceIndex(org.compass.core.engine.SearchEngineIndexManager, org.compass.core.engine.SearchEngineIndexManager.ReplaceIndexCallback)}.
-     * <p/>
-     * If directly set to 0, will not wait.
-     * <p/>
-     * This one will default to the {@link ScheduledLuceneSearchEngineIndexManager} interval.
+     *
+     * <p>If directly set to 0, will not wait.
      *
      * @param timeToWaitInMillis
      */
     void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis);
-
-    void executeCommit(Callable<Object>[] commits) throws SearchEngineException;
 }

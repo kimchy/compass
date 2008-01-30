@@ -32,7 +32,7 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.executor.ExecutorManager;
+import org.compass.core.executor.spi.InternalExecutorManager;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
@@ -44,7 +44,7 @@ import org.compass.core.util.concurrent.SingleThreadThreadFactory;
  *
  * @author kimchy
  */
-public class ConcurrentExecutorManager implements ExecutorManager, CompassConfigurable {
+public class ConcurrentExecutorManager implements InternalExecutorManager, CompassConfigurable {
 
     private ExecutorService executorService;
 
@@ -60,6 +60,10 @@ public class ConcurrentExecutorManager implements ExecutorManager, CompassConfig
         int scheduledCorePoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.SCHEDULED_CORE_POOL_SIZE, 1);
         scheduledExecutorService = Executors.newScheduledThreadPool(scheduledCorePoolSize,
                 new SingleThreadThreadFactory("Compass Scheduled Executor Thread", true));
+    }
+
+    public void submit(Runnable task) {
+        executorService.submit(task);
     }
 
     public <T> Future<T> submit(Callable<T> task) {

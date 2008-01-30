@@ -20,7 +20,6 @@ package org.compass.core.lucene;
  * A set of settings constants that applies on the Compass session level.
  *
  * @author kimchy
- * @see org.compass.core.CompassOperations#getSettings()
  */
 public abstract class RuntimeLuceneEnvironment {
 

@@ -16,9 +16,11 @@
 
 package org.compass.core.executor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -30,6 +32,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.executor.concurrent.ConcurrentExecutorManager;
+import org.compass.core.executor.spi.InternalExecutorManager;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -41,7 +44,7 @@ import org.compass.core.util.ClassUtils;
  */
 public class DefaultExecutorManager implements ExecutorManager, CompassConfigurable {
 
-    private ExecutorManager executorManager;
+    private InternalExecutorManager executorManager;
 
     public void configure(CompassSettings settings) throws CompassException {
 
@@ -56,7 +59,7 @@ public class DefaultExecutorManager implements ExecutorManager, CompassConfigura
         }
 
         try {
-            executorManager = (ExecutorManager) ClassUtils.forName(executorManagerType, settings.getClassLoader()).newInstance();
+            executorManager = (InternalExecutorManager) ClassUtils.forName(executorManagerType, settings.getClassLoader()).newInstance();
         } catch (Exception e) {
             throw new ConfigurationException("Failed to create executor manager [" + executorManagerType + "]", e);
         }
@@ -66,8 +69,53 @@ public class DefaultExecutorManager implements ExecutorManager, CompassConfigura
         }
     }
 
+    public <T> List<Future<T>> invokeAllWithLimitBailOnException(Collection<Callable<T>> tasks, int concurrencyThreshold) {
+        List<Future<T>> futures = invokeAllWithLimit(tasks, concurrencyThreshold);
+        for (Future<T> future : futures) {
+            try {
+                future.get();
+            } catch (InterruptedException e) {
+                throw new ExecutorException("Failed to execute, interrupted", e);
+            } catch (ExecutionException e) {
+                if (e.getCause() instanceof CompassException) {
+                    throw (CompassException) e.getCause();
+                }
+                throw new ExecutorException("Failed to execute commit", e.getCause());
+            }
+        }
+        return futures;
+    }
+
+    public <T> List<Future<T>> invokeAllWithLimit(Collection<Callable<T>> tasks, int concurrencyThreshold) {
+        if (tasks.size() == 0) {
+            return new ArrayList<Future<T>>(0);
+        }
+        List<Future<T>> futures;
+        if (tasks.size() > concurrencyThreshold) {
+            try {
+                futures = invokeAll(tasks);
+            } catch (InterruptedException e) {
+                throw new ExecutorException("Interrupted while executing tasks", e);
+            }
+        } else {
+            futures = new ArrayList<Future<T>>();
+            for (Callable<T> commit : tasks) {
+                try {
+                    futures.add(new DummyFuture<T>(commit.call()));
+                } catch (Exception e) {
+                    futures.add(new DummyFuture<T>(e));
+                }
+            }
+        }
+        return futures;
+    }
+
     public void close() {
         executorManager.close();
+    }
+
+    public void submit(Runnable task) {
+        executorManager.submit(task);
     }
 
     public <T> Future<T> submit(Callable<T> task) {
@@ -89,4 +137,5 @@ public class DefaultExecutorManager implements ExecutorManager, CompassConfigura
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
         return executorManager.scheduleWithFixedDelay(command, initialDelay, delay, unit);
     }
+
 }

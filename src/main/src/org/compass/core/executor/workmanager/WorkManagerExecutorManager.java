@@ -33,13 +33,13 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
-import org.compass.core.executor.ExecutorManager;
+import org.compass.core.executor.spi.InternalExecutorManager;
 import org.compass.core.jndi.NamingHelper;
 
 /**
  * @author kimchy
  */
-public class WorkManagerExecutorManager implements ExecutorManager, CompassConfigurable {
+public class WorkManagerExecutorManager implements InternalExecutorManager, CompassConfigurable {
 
     private WorkManager workManager;
 
@@ -56,6 +56,10 @@ public class WorkManagerExecutorManager implements ExecutorManager, CompassConfi
             throw new ConfigurationException("Failed to lookup workmanager under [" + jndiName + "]");
         }
         executorService = Executors.newScheduledThreadPool(1);
+    }
+
+    public void submit(Runnable task) {
+        submit(new RunnableCallableAdapter(task));
     }
 
     public <T> Future<T> submit(Callable<T> task) {

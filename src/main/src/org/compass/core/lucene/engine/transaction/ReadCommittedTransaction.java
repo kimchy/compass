@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine.transaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
@@ -42,6 +43,7 @@ import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
@@ -184,21 +186,23 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         }
 
         public void firstPhase() throws SearchEngineException {
-            FirstPhaseCallable[] firstPhaseCallables = new FirstPhaseCallable[transIndexList.size()];
+            ArrayList<FirstPhaseCallable> firstPhaseCallables = new ArrayList<FirstPhaseCallable>(transIndexList.size());
             for (int i = 0; i < transIndexList.size(); i++) {
                 TransIndexWrapper wrapper = (TransIndexWrapper) transIndexList.get(i);
-                firstPhaseCallables[i] = new FirstPhaseCallable(wrapper);
+                firstPhaseCallables.add(new FirstPhaseCallable(wrapper));
             }
-            indexManager.executeCommit(firstPhaseCallables);
+            searchEngine.getSearchEngineFactory().getExecutorManager().invokeAllWithLimitBailOnException(
+                    (Collection) firstPhaseCallables, concurrentCommitThreshold);
         }
 
         public void secondPhaseAndClose() throws SearchEngineException {
-            SecondPhaseCallable[] secondPhaseCallables = new SecondPhaseCallable[transIndexList.size()];
+            ArrayList<SecondPhaseCallable> secondPhaseCallables = new ArrayList<SecondPhaseCallable>(transIndexList.size());
             for (int i = 0; i < transIndexList.size(); i++) {
                 TransIndexWrapper wrapper = (TransIndexWrapper) transIndexList.get(i);
-                secondPhaseCallables[i] = new SecondPhaseCallable(wrapper, indexManager);
+                secondPhaseCallables.add(new SecondPhaseCallable(wrapper, indexManager));
             }
-            indexManager.executeCommit(secondPhaseCallables);
+            searchEngine.getSearchEngineFactory().getExecutorManager().invokeAllWithLimitBailOnException(
+                    (Collection) secondPhaseCallables, concurrentCommitThreshold);
         }
 
         public void rollback() throws SearchEngineException {
@@ -260,11 +264,20 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     private BitSetByAliasFilter filter;
 
+    private int concurrentCommitThreshold;
+
     protected TransIndexManager transIndexManager;
 
     protected void doBegin() throws SearchEngineException {
         transIndexManager = new TransIndexManager(searchEngine.getSearchEngineFactory());
         filter = new BitSetByAliasFilter();
+
+        if (indexManager.getStore().allowConcurrentCommit() &&
+                searchEngine.getSearchEngineFactory().getSettings().getSettingAsBoolean(LuceneEnvironment.Transaction.ENABLE_CONCURRENT_COMMIT, true)) {
+            concurrentCommitThreshold = searchEngine.getSettings().getSettingAsInt(LuceneEnvironment.Transaction.CONCURRENT_COMMIT_THRESHOLD, 1);
+        } else {
+            concurrentCommitThreshold = Integer.MAX_VALUE;
+        }
     }
 
     protected void doPrepare() throws SearchEngineException {
