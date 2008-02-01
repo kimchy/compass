@@ -46,12 +46,12 @@ public interface Compass extends Referenceable, Serializable {
     /**
      * If there is a transaction bound session, will return it. Otherwise
      * returns a new session.
-     * <p/>
-     * A transactional bound session is bounded to the transaction when calling
+     *
+     * <p>A transactional bound session is bounded to the transaction when calling
      * the CompassSession.beginTransaction() or if Compass tries to automatically join
      * an already running transaction (see next paragraph).
-     * <p/>
-     * If creating a new session, will try to automatically join an existing
+     *
+     * <p>If creating a new session, will try to automatically join an existing
      * outer transaction. An outer transaction might be an already running Compass
      * local transaction, or an external transaciton (JTA or Spring for example). In
      * such cases, there is no need to perform any transaction managment code (begin
@@ -66,7 +66,10 @@ public interface Compass extends Referenceable, Serializable {
     CompassSession openSession() throws CompassException;
 
     /**
-     * Closes Compass
+     * Closes Compass and releases any resources that are assoicated with it. It is
+     * very importnat to close an unused Compass instance since it might hold resources
+     * (such as file descriptor when storing the index within the file system) that
+     * will not be released otherwise.
      *
      * @throws CompassException
      */
@@ -75,8 +78,8 @@ public interface Compass extends Referenceable, Serializable {
     /**
      * Clones the current <code>Compass</code> instance. The added settings will merged with the current
      * compass settings, and control the creation of the new Compass.
-     * <p/>
-     * Note, that the new instance will not be registered with JNDI, as well as not start the optimizer.
+     *
+     * <p>Note, that the new instance will not be registered with JNDI, as well as not start the optimizer.
      *
      * @param addedSettings The settings to be added.
      * @return the cloned compass instance.
