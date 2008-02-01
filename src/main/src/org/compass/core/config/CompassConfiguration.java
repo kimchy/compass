@@ -211,8 +211,7 @@ public class CompassConfiguration {
         ConverterLookup converterLookup = new DefaultConverterLookup();
         registerExtraConverters(converterLookup);
         converterLookup.configure(copySettings);
-        for (Iterator<String> it = temporaryConvertersByName.keySet().iterator(); it.hasNext();) {
-            String converterName = it.next();
+        for (String converterName : temporaryConvertersByName.keySet()) {
             Converter converter = temporaryConvertersByName.get(converterName);
             converterLookup.registerConverter(converterName, converter);
         }
@@ -308,7 +307,7 @@ public class CompassConfiguration {
      * Uses a class that implements the {@link InputStreamMappingResolver} for auto
      * generation of mapping definitions.
      *
-     * @param mappingResolver
+     * @param mappingResolver The mapping resolver
      */
     public CompassConfiguration addMappingResover(InputStreamMappingResolver mappingResolver) throws ConfigurationException {
         boolean hasAddedResource = mappingBinding.addMappingResolver(mappingResolver);
@@ -422,6 +421,13 @@ public class CompassConfiguration {
         return this;
     }
 
+    /**
+     * Tries to add a class and returns a boolean indicator if it was added or not.
+     *
+     * @param searchableClass The searchable class to add
+     * @return <code>true</code> if the class was added, <code>false</code> otherwise
+     * @throws ConfigurationException
+     */
     public boolean tryAddClass(Class searchableClass) throws ConfigurationException {
         boolean hasAddedResource = mappingBinding.addClass(searchableClass);
         if (log.isInfoEnabled() && hasAddedResource) {
@@ -491,7 +497,7 @@ public class CompassConfiguration {
             throws ConfigurationException {
         boolean hasAddedResource = mappingBinding.addInputStream(inputStream, resourceName);
         if (!hasAddedResource) {
-            throw new ConfigurationException("No mapping match input stream [" +resourceName + "]");
+            throw new ConfigurationException("No mapping match input stream [" + resourceName + "]");
         }
         if (log.isInfoEnabled()) {
             log.info("Mapping InputStream [" + resourceName + "]");

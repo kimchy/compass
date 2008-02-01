@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyPath;
@@ -32,11 +33,11 @@ import org.compass.core.mapping.rsem.RawResourceMapping;
  */
 public class CompassMapping {
 
-    private final HashMap mappings = new HashMap();
+    private final Map<String, AliasMapping> mappings = new HashMap<String, AliasMapping>();
 
-    private final HashMap rootMappingsByAlias = new HashMap();
+    private final Map<String, ResourceMapping> rootMappingsByAlias = new HashMap<String, ResourceMapping>();
 
-    private final HashMap nonRootMappingsByAlias = new HashMap();
+    private final Map<String, ResourceMapping> nonRootMappingsByAlias = new HashMap<String, ResourceMapping>();
 
     private final ResourceMappingsByNameHolder mappingsByClass = new ResourceMappingsByNameHolder();
 
@@ -67,8 +68,8 @@ public class CompassMapping {
         CompassMapping copy = new CompassMapping();
         copy.converterLookup = converterLookup;
         copy.setPath(getPath());
-        for (Iterator it = mappings.values().iterator(); it.hasNext();) {
-            AliasMapping copyMapping = (AliasMapping) ((AliasMapping) it.next()).copy();
+        for (AliasMapping aliasMapping : mappings.values()) {
+            AliasMapping copyMapping = (AliasMapping) (aliasMapping).copy();
             copy.addMapping(copyMapping);
         }
         return copy;
@@ -76,11 +77,10 @@ public class CompassMapping {
 
     public void postProcess() {
         ResourceMapping[] rootMappings = getRootMappings();
-        for (int i = 0; i < rootMappings.length; i++) {
+        for (ResourceMapping rootMapping : rootMappings) {
             // update the resource property mapping
-            ResourcePropertyMapping[] resourcePropertyMappings = rootMappings[i].getResourcePropertyMappings();
-            for (int j = 0; j < resourcePropertyMappings.length; j++) {
-                ResourcePropertyMapping rpm = resourcePropertyMappings[j];
+            ResourcePropertyMapping[] resourcePropertyMappings = rootMapping.getResourcePropertyMappings();
+            for (ResourcePropertyMapping rpm : resourcePropertyMappings) {
                 if (rpm.getPath() != null) {
                     String path = rpm.getPath().getPath();
                     ResourcePropertyMapping[] rpms = resourcePropertyMappingByPath.get(path);
@@ -99,11 +99,21 @@ public class CompassMapping {
 
     public void clearMappings() {
         mappings.clear();
+
         rootMappingsByAlias.clear();
-        rootMappingsByClass.clear();
-        rootMappingsArr = new ResourceMapping[0];
-        cachedRootMappingsByClass.clear();
+        nonRootMappingsByAlias.clear();
+
         mappingsByClass.clear();
+        cachedMappingsByClass.clear();
+
+        rootMappingsByClass.clear();
+        cachedRootMappingsByClass.clear();
+
+        nonRootMappingsByClass.clear();
+        cachedNonRootMappingsByClass.clear();
+
+        rootMappingsArr = new ResourceMapping[0];
+
         resourcePropertyMappingByPath.clear();
     }
 
@@ -115,7 +125,7 @@ public class CompassMapping {
         if (mapping instanceof ResourceMapping) {
             ResourceMapping resourceMapping = (ResourceMapping) mapping;
             if (resourceMapping.isRoot()) {
-                rootMappingsByAlias.put(mapping.getAlias(), mapping);
+                rootMappingsByAlias.put(mapping.getAlias(), resourceMapping);
                 if (resourceMapping instanceof ClassMapping) {
                     rootMappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
                     mappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
@@ -129,7 +139,7 @@ public class CompassMapping {
                 result[i] = resourceMapping;
                 rootMappingsArr = result;
             } else {
-                nonRootMappingsByAlias.put(mapping.getAlias(), mapping);
+                nonRootMappingsByAlias.put(mapping.getAlias(), resourceMapping);
                 if (resourceMapping instanceof ClassMapping) {
                     mappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
                     nonRootMappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
@@ -183,7 +193,7 @@ public class CompassMapping {
     public ResourcePropertyMapping[] getResourcePropertyMappingsByPath(String path) {
         int dotIndex = path.indexOf('.');
         if (dotIndex != -1) {
-            return new ResourcePropertyMapping[] {getResourcePropertyMappingByPath(path)};
+            return new ResourcePropertyMapping[]{getResourcePropertyMappingByPath(path)};
         }
         return resourcePropertyMappingByPath.get(path);
     }
@@ -199,7 +209,7 @@ public class CompassMapping {
      * Returns the alias mapping for the given alias (most if not all of the times, this will be a {@link org.compass.core.mapping.ResourceMapping}).
      */
     public AliasMapping getAliasMapping(String alias) {
-        return (AliasMapping) mappings.get(alias);
+        return mappings.get(alias);
     }
 
     /**
@@ -214,7 +224,7 @@ public class CompassMapping {
      * <code>null</code> if no root mapping (or no mapping) is associated with the alias.
      */
     public ResourceMapping getRootMappingByAlias(String alias) {
-        return (ResourceMapping) rootMappingsByAlias.get(alias);
+        return rootMappingsByAlias.get(alias);
     }
 
     /**
@@ -222,7 +232,7 @@ public class CompassMapping {
      * <code>null</code> if no non root mapping (or no mapping) is associated with the alias.
      */
     public ResourceMapping getNonRootMappingByAlias(String alias) {
-        return (ResourceMapping) nonRootMappingsByAlias.get(alias);
+        return nonRootMappingsByAlias.get(alias);
     }
 
     /**
@@ -361,9 +371,8 @@ public class CompassMapping {
         if (rm != null) {
             return rm;
         }
-        Class[] interfaces = clazz.getInterfaces();
-        for (int i = 0; i < interfaces.length; i++) {
-            rm = mappingByClass.getResourceMappingByName(interfaces[i].getName());
+        for (Class anInterface : clazz.getInterfaces()) {
+            rm = mappingByClass.getResourceMappingByName(anInterface.getName());
             if (rm != null) {
                 return rm;
             }

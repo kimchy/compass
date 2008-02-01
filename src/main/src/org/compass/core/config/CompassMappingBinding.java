@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import org.compass.core.config.binding.MappingBinding;
 import org.compass.core.mapping.CompassMapping;
@@ -29,11 +29,15 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 
 /**
+ * Compass {@link org.compass.core.config.binding.MappingBinding} is a mapping binding that holds
+ * a list of {@link org.compass.core.config.binding.MappingBinding}s (ordered) and when trying to
+ * add mappings, it will iterate through them and try and add it to each one.
+ *
  * @author kimchy
  */
 public class CompassMappingBinding implements MappingBinding {
 
-    private ArrayList mappingBindings = new ArrayList();
+    private List<MappingBinding> mappingBindings = new ArrayList<MappingBinding>();
 
     private CompassMapping mapping;
 
@@ -43,8 +47,8 @@ public class CompassMappingBinding implements MappingBinding {
 
     public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
         this.mapping = mapping;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            ((MappingBinding) it.next()).setUpBinding(mapping, metaData, settings);
+        for (MappingBinding mappingBinding : mappingBindings) {
+            (mappingBinding).setUpBinding(mapping, metaData, settings);
         }
     }
 
@@ -55,8 +59,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addResource(String path) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addResource(path);
             if (retVal) {
                 hasAddedResource = true;
@@ -67,8 +70,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addResource(String path, ClassLoader classLoader) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addResource(path, classLoader);
             if (retVal) {
                 hasAddedResource = true;
@@ -79,8 +81,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addURL(URL url) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addURL(url);
             if (retVal) {
                 hasAddedResource = true;
@@ -91,8 +92,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addDirectory(File dir) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addDirectory(dir);
             if (retVal) {
                 hasAddedResource = true;
@@ -103,8 +103,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addJar(File jar) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addJar(jar);
             if (retVal) {
                 hasAddedResource = true;
@@ -115,8 +114,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addFile(String filePath) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addFile(filePath);
             if (retVal) {
                 hasAddedResource = true;
@@ -127,8 +125,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addFile(File file) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addFile(file);
             if (retVal) {
                 hasAddedResource = true;
@@ -139,8 +136,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addPackage(packageName);
             if (retVal) {
                 hasAddedResource = true;
@@ -151,8 +147,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addClass(Class clazz) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addClass(clazz);
             if (retVal) {
                 hasAddedResource = true;
@@ -163,8 +158,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addMappingResolver(InputStreamMappingResolver mappingResolver) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addMappingResolver(mappingResolver);
             if (retVal) {
                 hasAddedResource = true;
@@ -175,8 +169,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addInputStream(InputStream is, String resourceName) throws ConfigurationException, MappingException {
         boolean hasAddedResource = false;
-        for (Iterator it = mappingBindings.iterator(); it.hasNext();) {
-            MappingBinding mappingBinding = (MappingBinding) it.next();
+        for (MappingBinding mappingBinding : mappingBindings) {
             boolean retVal = mappingBinding.addInputStream(is, resourceName);
             if (retVal) {
                 hasAddedResource = true;
