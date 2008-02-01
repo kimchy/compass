@@ -21,11 +21,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.lucene.store.Directory;
+import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
  * Provides information about the segments within a Lucene index and about the
@@ -128,28 +131,16 @@ public class LuceneSubIndexInfo {
     public static LuceneSubIndexInfo getIndexInfo(final String subIndex, final CompassSession session) throws IOException {
         LuceneSearchEngine searchEngine = (LuceneSearchEngine) ((InternalCompassSession) session).getSearchEngine();
         final LuceneSearchEngineIndexManager indexManager = (LuceneSearchEngineIndexManager) searchEngine.getSearchEngineFactory().getIndexManager();
-        CompassTransaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            LuceneSubIndexInfo info = getIndexInfo(subIndex, indexManager);
-            tx.commit();
-            return info;
-        } catch (Exception e) {
-            if (tx != null) {
+
+        return searchEngine.getSearchEngineFactory().getTransactionContext().execute(new TransactionContextCallback<LuceneSubIndexInfo>() {
+            public LuceneSubIndexInfo doInTransaction(CompassTransaction tr) throws CompassException {
                 try {
-                    tx.rollback();
-                } catch (Exception e1) {
-                    // do nothing
+                    return getIndexInfo(subIndex, indexManager);
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to open index info for sub index [" + subIndex + "]", e);
                 }
             }
-            if (e instanceof IOException) {
-                throw (IOException) e;
-            }
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new IOException(e.getMessage());
-        }
+        });
     }
 
     /**
