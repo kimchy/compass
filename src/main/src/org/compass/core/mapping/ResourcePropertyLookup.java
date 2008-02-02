@@ -192,7 +192,7 @@ public final class ResourcePropertyLookup {
      * index.
      *
      * <p>If {@link #hasSpecificConverter()} return <code>false</code> (note {@link #setConvertOnlyWithDotPath(boolean)})
-     * will simply return teh given value.
+     * will simply return the given value.
      *
      * <p>If the {@link org.compass.core.converter.ResourcePropertyConverter} states that it should not be used
      * for normalization ({@link org.compass.core.converter.ResourcePropertyConverter#canNormalize()} returns
