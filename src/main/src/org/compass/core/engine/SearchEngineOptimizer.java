@@ -59,25 +59,6 @@ public interface SearchEngineOptimizer {
     boolean isRunning();
 
     /**
-     * Returns <code>true</code> if the search engine index requires
-     * optimization (depends on the optimizer configured).
-     *
-     * @return <code>true</code> if the search engine index requires optimization
-     * @throws SearchEngineException
-     */
-    boolean needOptimization() throws SearchEngineException;
-
-    /**
-     * Returns <code>true</code> of the sub index requires optimization
-     * (depends on the optimizer configured).
-     *
-     * @param subIndex The sub index to check if needs optimization
-     * @return <code>true</code> if the sub index requires optimization
-     * @throws SearchEngineException
-     */
-    boolean needOptimization(String subIndex) throws SearchEngineException;
-
-    /**
      * Optimizes the search engine index if it requires optimization.
      *
      * @throws SearchEngineException

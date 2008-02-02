@@ -48,7 +48,6 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
 
         assertData(0, 8);
 
-        assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
 
         CompassSession session = openSession();
@@ -61,15 +60,11 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
 
 
     public void testOptimizerMergeFactorSingleAdds() throws IOException {
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(0, 1);
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
 
         addData(1, 2);
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
 
         addData(2, 3);
-        assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
 
         getCompass().getSearchEngineOptimizer().optimize();
 
@@ -80,7 +75,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
 
         session = openSession();
         CompassTransaction tr = session.beginTransaction();
-        A a = (A) session.load(A.class, new Long(0));
+        A a = session.load(A.class, (long) 0);
         assertNotNull(a);
         tr.commit();
         session.close();
@@ -88,13 +83,9 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
     }
 
     public void testOptimizerWithBigFirstSegment() throws IOException {
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(0, 20);
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(20, 21);
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(21, 22);
-        assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
@@ -115,13 +106,9 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
     }
 
     public void testCamelCaseSegmentsLeftWithTwoSegments() throws IOException {
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(0, 10);
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(10, 11);
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(11, 15);
-        assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
@@ -141,13 +128,9 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
     }
 
     public void testCamelCaseSegmentsLeftWithOneSegment() throws IOException {
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(0, 10);
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(10, 11);
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
         addData(11, 25);
-        assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);

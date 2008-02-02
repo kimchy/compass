@@ -42,16 +42,12 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
 
         addData(0, 1);
 
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
-
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         assertEquals(1, infos.size());
         session.close();
 
         addData(1, 2);
-
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
 
         session = openSession();
         infos = LuceneSubIndexInfo.getIndexInfo("a", session);
@@ -60,9 +56,7 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
 
         addData(2, 3);
 
-        assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
-        assertFalse(getCompass().getSearchEngineOptimizer().needOptimization());
 
         session = openSession();
         infos = LuceneSubIndexInfo.getIndexInfo("a", session);
@@ -72,7 +66,7 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
         session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        A a = (A) session.load(A.class, new Long(2));
+        A a = session.load(A.class, new Long(2));
         assertNotNull(a);
 
         tr.commit();
@@ -93,7 +87,6 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
         addData(7, 8);
         assertData(0, 8);
 
-        assertTrue(getCompass().getSearchEngineOptimizer().needOptimization());
         getCompass().getSearchEngineOptimizer().optimize();
 
         CompassSession session = openSession();

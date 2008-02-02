@@ -97,14 +97,6 @@ public class LuceneSearchEngineOptimizerManager implements CompassConfigurable, 
         return searchEngineOptimizer.isRunning();
     }
 
-    public boolean needOptimization() throws SearchEngineException {
-        return searchEngineOptimizer.needOptimization();
-    }
-
-    public boolean needOptimization(String subIndex) throws SearchEngineException {
-        return searchEngineOptimizer.needOptimization(subIndex);
-    }
-
     public void optimize() throws SearchEngineException {
         searchEngineOptimizer.optimize();
     }

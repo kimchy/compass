@@ -100,54 +100,17 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
                     // no index data, simply continue
                     return null;
                 }
-                boolean needOptimizing = doNeedOptimizing(subIndex, indexInfo);
                 if (!isRunning()) {
                     return null;
                 }
-                if (needOptimizing) {
-                    doOptimize(subIndex, indexInfo);
-                    searchEngineFactory.getIndexManager().clearCache(subIndex);
-                }
+                doOptimize(subIndex, indexInfo);
+                searchEngineFactory.getIndexManager().clearCache(subIndex);
                 return null;
             }
         });
     }
 
-    public boolean needOptimization() throws SearchEngineException {
-        LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
-        String[] subIndexes = indexManager.getStore().getSubIndexes();
-        boolean needOptmization = false;
-        for (String subIndex : subIndexes) {
-            needOptmization |= needOptimization(subIndex);
-        }
-        return needOptmization;
-    }
-
-    public boolean needOptimization(final String subIndex) throws SearchEngineException {
-        final LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
-        if (!isRunning()) {
-            return false;
-        }
-        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
-            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
-                LuceneSubIndexInfo indexInfo;
-                try {
-                    indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndex, indexManager);
-                } catch (IOException e) {
-                    throw new SearchEngineException("Failed to read index info for sub index [" + subIndex + "]", e);
-                }
-                if (indexInfo == null) {
-                    // no index data, simply continue
-                    return false;
-                }
-                return doNeedOptimizing(subIndex, indexInfo);
-            }
-        });
-    }
-
     protected abstract void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
-
-    protected abstract boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
 
     public LuceneSearchEngineFactory getSearchEngineFactory() {
         return searchEngineFactory;

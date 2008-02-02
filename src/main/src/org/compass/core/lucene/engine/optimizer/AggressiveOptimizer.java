@@ -47,7 +47,7 @@ public class AggressiveOptimizer extends AbstractLuceneSearchEngineOptimizer imp
         return true;
     }
 
-    public boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
+    protected boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) {
         if (indexInfo.size() >= mergeFactor) {
             if (log.isDebugEnabled()) {
                 log.debug("Need to optimize sub-index [" + subIndex + "]. Optimizing " + indexInfo.size()
@@ -59,6 +59,9 @@ public class AggressiveOptimizer extends AbstractLuceneSearchEngineOptimizer imp
     }
 
     protected void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException {
+        if (!doNeedOptimizing(subIndex, indexInfo)) {
+            return;
+        }
         LuceneSearchEngineIndexManager indexManager = getSearchEngineFactory().getLuceneIndexManager();
         IndexWriter indexWriter = null;
         Directory dir = null;
