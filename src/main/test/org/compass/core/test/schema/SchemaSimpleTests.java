@@ -208,15 +208,6 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals(DynamicPropertyNamingStrategy.class.getName(), settings.getSetting(CompassEnvironment.NamingStrategy.TYPE));
     }
 
-    public void testBatchInsertSchema() throws Exception {
-        CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/batchInsert.cfg.xml");
-
-        CompassSettings settings = conf.getSettings();
-        assertEquals("100", settings.getSetting(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS));
-        assertEquals("20", settings.getSetting(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR));
-    }
-
     public void testJtaSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/jta.cfg.xml");

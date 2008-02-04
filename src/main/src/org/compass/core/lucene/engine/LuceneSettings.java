@@ -68,6 +68,12 @@ public class LuceneSettings {
 
     private int maxBufferedDocs;
 
+    private int maxBufferedDeletedTerms;
+
+    private int termIndexInterval;
+
+    private double ramBufferSize;
+
     private long transactionLockTimout;
 
     private long cacheInvalidationInterval;
@@ -184,11 +190,14 @@ public class LuceneSettings {
             log.debug("Using clear cache on commit [" + clearCacheOnCommit + "]");
         }
         
-        // batch insert transaction settings
+        // pure lucene transaction settings
         mergeFactor = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, 10);
-        maxBufferedDocs = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, 10);
+        maxBufferedDocs = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, IndexWriter.DISABLE_AUTO_FLUSH);
+        maxBufferedDeletedTerms = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DELETED_TERMS, IndexWriter.DISABLE_AUTO_FLUSH);
+        termIndexInterval = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.TERM_INDEX_INTERVAL, IndexWriter.DEFAULT_TERM_INDEX_INTERVAL);
+        maxFieldLength = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_FIELD_LENGTH, IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
 
-        maxFieldLength = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_FIELD_LENGTH, 10000);
+        ramBufferSize = settings.getSettingAsDouble(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, IndexWriter.DEFAULT_RAM_BUFFER_SIZE_MB);
 
         // cach invalidation settings
         cacheInvalidationInterval = settings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, 5000);
@@ -214,10 +223,6 @@ public class LuceneSettings {
         return allProperty;
     }
 
-    public void setAllProperty(String allProperty) {
-        this.allProperty = allProperty;
-    }
-
     public String getAliasProperty() {
         return aliasProperty;
     }
@@ -226,104 +231,64 @@ public class LuceneSettings {
         return extendedAliasProperty;
     }
 
-    public void setAliasProperty(String aliasProperty) {
-        this.aliasProperty = aliasProperty;
-    }
-
     public TransactionIsolation getTransactionIsolation() {
         return transactionIsolation;
-    }
-
-    public void setTransactionIsolation(TransactionIsolation transactionIsolation) {
-        this.transactionIsolation = transactionIsolation;
     }
 
     public Class getTransactionIsolationClass() {
         return transactionIsolationClass;
     }
 
-    public void setTransactionIsolationClass(Class transactionIsolationClass) {
-        this.transactionIsolationClass = transactionIsolationClass;
-    }
-
     public int getMaxMergeDocs() {
         return maxMergeDocs;
-    }
-
-    public void setMaxMergeDocs(int maxMergeDocs) {
-        this.maxMergeDocs = maxMergeDocs;
     }
 
     public int getMergeFactor() {
         return mergeFactor;
     }
 
-    public void setMergeFactor(int mergeFactor) {
-        this.mergeFactor = mergeFactor;
-    }
-
     public boolean isUseCompoundFile() {
         return useCompoundFile;
-    }
-
-    public void setUseCompoundFile(boolean useCompoundFile) {
-        this.useCompoundFile = useCompoundFile;
     }
 
     public int getMaxFieldLength() {
         return maxFieldLength;
     }
 
-    public void setMaxFieldLength(int maxFieldLength) {
-        this.maxFieldLength = maxFieldLength;
-    }
-
     public int getMaxBufferedDocs() {
         return maxBufferedDocs;
     }
 
-    public void setMaxBufferedDocs(int maxBufferedDocs) {
-        this.maxBufferedDocs = maxBufferedDocs;
+    public int getMaxBufferedDeletedTerms() {
+        return maxBufferedDeletedTerms;
+    }
+
+    public int getTermIndexInterval() {
+        return termIndexInterval;
+    }
+
+    public double getRamBufferSize() {
+        return ramBufferSize;
     }
 
     public String getDefaultSearchPropery() {
         return defaultSearchPropery;
     }
 
-    public void setDefaultSearchPropery(String defaultSearchPropery) {
-        this.defaultSearchPropery = defaultSearchPropery;
-    }
-
     public String getConnection() {
         return connection;
-    }
-
-    public void setConnection(String connection) {
-        this.connection = connection;
     }
 
     public Property.TermVector getAllPropertyTermVector() {
         return allPropertyTermVector;
     }
 
-    public void setAllPropertyTermVector(Property.TermVector allPropertyTermVector) {
-        this.allPropertyTermVector = allPropertyTermVector;
-    }
-
     public long getTransactionLockTimout() {
         return transactionLockTimout;
     }
 
-    public void setTransactionLockTimout(long transactionLockTimout) {
-        this.transactionLockTimout = transactionLockTimout;
-    }
-
     public long getCacheInvalidationInterval() {
         return cacheInvalidationInterval;
-    }
-
-    public void setCacheInvalidationInterval(long cacheInvalidationInterval) {
-        this.cacheInvalidationInterval = cacheInvalidationInterval;
     }
 
     public String getLockDir() {

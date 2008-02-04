@@ -385,14 +385,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, getElementAttribute(ele, "lockTimeout"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, getElementAttribute(ele, "lockPollInterval"));
         settings.setSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, getElementAttribute(ele, "disableAutoJoinSession"));
-        List child = DomUtils.getChildElementsByTagName(ele, "batchInsertSettings", true);
-        if (child.size() == 1) {
-            Element batchInsertEle = (Element) child.get(0);
-            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, getElementAttribute(batchInsertEle, "maxMergeDocs"));
-            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, getElementAttribute(batchInsertEle, "mergeFactor"));
-            settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, getElementAttribute(batchInsertEle, "maxBufferedDocs"));
-        }
-        child = DomUtils.getChildElementsByTagName(ele, "jtaSettings", true);
+        List child = DomUtils.getChildElementsByTagName(ele, "jtaSettings", true);
         if (child.size() == 1) {
             Element jtaSettingsEle = (Element) child.get(0);
             settings.setSetting(CompassEnvironment.Transaction.USER_TRANSACTION, getElementAttribute(jtaSettingsEle, "userTransactionName"));

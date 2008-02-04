@@ -665,10 +665,6 @@
               <entry>The amount of time a transaction will wait in order to obtain it's specific lock (in seconds). Defaults to 10 seconds.</entry>
             </row>
             <row>
-              <entry>compass.transaction.commitTimeout</entry>
-              <entry>The amount of time a transaction will wait in order to commit it's data. Defaults to 10 seconds.</entry>
-            </row>
-            <row>
               <entry>compass.transaction.lockPollInterval</entry>
               <entry>The interval that the transaction will check to see if it can obtain the lock (in milliseconds). Defaults to 100 milliseconds. This is a JVM level proeprty.</entry>
             </row>
@@ -685,10 +681,6 @@
               <entry>The period that the optimizer will check if the index need optimization, and if it does, optimize it (in seconds, can be a float number). Defaults to 10 seconds. The setting applies if the optimizer is scheduled.</entry>
             </row>
             <row>
-              <entry>compass.engine.optimizer. schedule.daemon</entry>
-              <entry>Sets the optimizer thread to be a daemon (<literal>true</literal>) or not (<literal>false</literal>). Defaults to <literal>true</literal>. The setting applies if the optimizer is scheduled.</entry>
-            </row>
-            <row>
               <entry>compass.engine.optimizer. schedule.fixedRate</entry>
               <entry>Determines if the schedule will run in a fixed rate or not. If it is set to <literal>false</literal> each execution is scheduled relative to the actual execution of the previous execution. If it is set to <literal>true</literal> each execution is scheduled relative to the execution time of the initial execution.</entry>
             </row>
@@ -702,16 +694,31 @@
             </row>
             <row>
               <entry>compass.engine.mergeFactor</entry>
-              <entry>Applies only for <literal>batch_insert</literal> transaction. With smaller values, less RAM is used, but indexing is slower. With larger values, more RAM is used, and the indexing speed is faster. Defaults to 10.</entry>
+              <entry>With smaller values, less RAM is used, but indexing is slower. With larger values, more RAM is used, and the indexing speed is faster. Defaults to 10.</entry>
             </row>
             <row>
               <entry>compass.engine.maxBufferedDocs</entry>
-              <entry>Applies only for <literal>batch_insert</literal> transaction. Determines the minimal number of resources required before the buffered in-memory resources will be flushed to disk. Large values give faster indexing. At the same time, <literal>compass.engine.mergeFactor</literal> limits the number of files open.</entry>
+              <entry>Determines the minimal number of documents required before the buffered in-memory documents are flushed as a new Segment.  Large values generally gives faster indexing. When this is set, the writer will flush every maxBufferedDocs added documents.  Pass in -1 to prevent triggering a flush due to number of buffered documents.  Note that if flushing by RAM usage is also enabled, then the flush will be triggered by whichever comes first. Disabled by default (writer flushes by RAM usage).
+              </entry>
+            </row>
+            <row>
+              <entry>compass.engine.maxBufferedDeletedTerms</entry>
+              <entry>Determines the minimal number of delete terms required before the buffered in-memory delete terms are applied and flushed. If there are documents buffered in memory at the time, they are merged and a new segment is created. Disabled by default (writer flushes by RAM usage).              
+              </entry>
+            </row>
+            <row>
+              <entry>compass.engine.ramBufferSize</entry>
+              <entry>Determines the amount of RAM that may be used for buffering added documents before they are flushed as a new Segment.  Generally for faster indexing performance it's best to flush by RAM usage instead of document count and use as large a RAM buffer as you can. When this is set, the writer will flush whenever buffered documents use this much RAM.  Pass in -1 to prevent triggering a flush due to RAM usage.  Note that if flushing by document count is also enabled, then the flush will be triggered by whichever comes first. The default value is 16 (M).
+              </entry>
+            </row>
+            <row>
+              <entry>compass.engine.termIndexInterval</entry>
+              <entry>Expert: Set the interval between indexed terms.  Large values cause less memory to be used by IndexReader, but slow random-access to terms.  Small values cause more memory to be used by an IndexReader, and speed random-access to terms. This parameter determines the amount of computation required per query term, regardless of the number of documents that contain that term.  In particular, it is the maximum number of other terms that must be scanned before a term is located and its frequency and position information may be processed.  In a large index with user-entered query terms, query processing time is likely to be dominated not by term lookup but rather by the processing of frequency and positional data.  In a small index or when many uncommon query terms are generated (e.g., by wildcard queries) term lookup may become a dominant cost. In particular, numUniqueTerms/interval terms are read into memory by an IndexReader, and, on average, interval/2 terms must be scanned for each random term access.
+              </entry>
             </row>
             <row>
               <entry>compass.engine.maxFieldLength</entry>
-              <entry>The number of terms that will be indexed for a single property in a resource. This limits the amount of memory required for indexing, so that collections with very large resources will not crash the indexing process by running out of memory. Note, that this effectively truncates large
-              resources, excluding from the index terms that occur further in the resource. Defaults to 10,000 terms.</entry>
+              <entry>The number of terms that will be indexed for a single property in a resource. This limits the amount of memory required for indexing, so that collections with very large resources will not crash the indexing process by running out of memory. Note, that this effectively truncates large resources, excluding from the index terms that occur further in the resource. Defaults to 10,000 terms.</entry>
             </row>
             <row>
               <entry>compass.engine.useCompoundFile</entry>

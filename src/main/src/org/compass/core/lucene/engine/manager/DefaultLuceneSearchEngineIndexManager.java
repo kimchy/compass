@@ -386,6 +386,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setUseCompoundFile(luceneSettings.isUseCompoundFile());
         indexWriter.setMaxFieldLength(luceneSettings.getMaxFieldLength());
         indexWriter.setMaxBufferedDocs(luceneSettings.getMaxBufferedDocs());
+        indexWriter.setMaxBufferedDeleteTerms(luceneSettings.getMaxBufferedDeletedTerms());
+        indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
+        indexWriter.setRAMBufferSizeMB(luceneSettings.getRamBufferSize());
         return indexWriter;
     }
 

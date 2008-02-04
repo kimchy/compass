@@ -519,7 +519,7 @@ public class LuceneEnvironment {
          * reflected in the index). Defaults to <code>true</code>.
          */
         public static final String CLEAR_CACHE_ON_COMMIT = "compass.transaction.clearCacheOnCommit";
-        
+
         /**
          * Should concurrent commit be enabled (if allowed by the actual Lucene store). Default to
          * <code>true</code> if allows by store.
@@ -604,40 +604,99 @@ public class LuceneEnvironment {
     public static abstract class SearchEngineIndex {
 
         /**
-         * Determines the largest number of documents ever merged by addDocument().
-         * Small values (e.g., less than 10,000) are best for interactive indexing,
-         * as this limits the length of pauses while indexing to a few seconds.
-         * Larger values are best for batched indexing and speedier searches. <p/>
-         * The default value is {@link Integer#MAX_VALUE}. <p/> Applies for Lucene
-         * Batch transaction support.
+         * <p>Determines the largest segment (measured by
+         * document count) that may be merged with other segments.
+         * Small values (e.g., less than 10,000) are best for
+         * interactive indexing, as this limits the length of
+         * pauses while indexing to a few seconds.  Larger values
+         * are best for batched indexing and speedier
+         * searches.</p>
+         *
+         * <p>The default value is {@link Integer#MAX_VALUE}.</p>
          */
         public static final String MAX_MERGE_DOCS = "compass.engine.maxMergeDocs";
 
         /**
-         * Determines how often segment indices are merged by addDocument(). With
+         * Determines how often segment indices are merged by addDocument().  With
          * smaller values, less RAM is used while indexing, and searches on
-         * unoptimized indices are faster, but indexing speed is slower. With larger
-         * values, more RAM is used during indexing, and while searches on
-         * unoptimized indices are slower, indexing is faster. Thus larger values (>
-         * 10) are best for batch index creation, and smaller values ( < 10) for
-         * indices that are interactively maintained. <p/> This must never be less
-         * than 2. The default value is 10. <p/> Applies for Lucene Batch
-         * transaction support.
+         * unoptimized indices are faster, but indexing speed is slower.  With larger
+         * values, more RAM is used during indexing, and while searches on unoptimized
+         * indices are slower, indexing is faster.  Thus larger values (> 10) are best
+         * for batch index creation, and smaller values (< 10) for indices that are
+         * interactively maintained.
+         *
+         * <p>Defaults to <code>10</code>.
          */
         public static final String MERGE_FACTOR = "compass.engine.mergeFactor";
 
         /**
-         * Determines the minimal number of documents required before the buffered
-         * in-memory documents are merging and a new Segment is created. Since
-         * Documents are merged in a {@link org.apache.lucene.store.RAMDirectory},
-         * large value gives faster indexing. At the same time, mergeFactor limits
-         * the number of files open in a FSDirectory.
-         * <p/>
-         * The default value is 10.
-         * <p/>
-         * Applies for Lucene Batch transaction support.
+         * Determines the minimal number of documents required
+         * before the buffered in-memory documents are flushed as
+         * a new Segment.  Large values generally gives faster
+         * indexing.
+         *
+         * <p>When this is set, the writer will flush every
+         * maxBufferedDocs added documents.  Pass in {@link
+         * org.apache.lucene.index.IndexWriter#DISABLE_AUTO_FLUSH} to prevent triggering a flush due
+         * to number of buffered documents.  Note that if flushing
+         * by RAM usage is also enabled, then the flush will be
+         * triggered by whichever comes first.
+         *
+         * <p>Disabled by default (writer flushes by RAM usage).
          */
         public static final String MAX_BUFFERED_DOCS = "compass.engine.maxBufferedDocs";
+
+        /**
+         * <p>Determines the minimal number of delete terms required before the buffered
+         * in-memory delete terms are applied and flushed. If there are documents
+         * buffered in memory at the time, they are merged and a new segment is
+         * created.</p>
+         *
+         * <p>Disabled by default (writer flushes by RAM usage).</p>
+         */
+        public static final String MAX_BUFFERED_DELETED_TERMS = "compass.engine.maxBufferedDeletedTerms";
+
+        /**
+         * Expert: Set the interval between indexed terms.  Large values cause less
+         * memory to be used by IndexReader, but slow random-access to terms.  Small
+         * values cause more memory to be used by an IndexReader, and speed
+         * random-access to terms.
+         *
+         * This parameter determines the amount of computation required per query
+         * term, regardless of the number of documents that contain that term.  In
+         * particular, it is the maximum number of other terms that must be
+         * scanned before a term is located and its frequency and position information
+         * may be processed.  In a large index with user-entered query terms, query
+         * processing time is likely to be dominated not by term lookup but rather
+         * by the processing of frequency and positional data.  In a small index
+         * or when many uncommon query terms are generated (e.g., by wildcard
+         * queries) term lookup may become a dominant cost.
+         *
+         * In particular, <code>numUniqueTerms/interval</code> terms are read into
+         * memory by an IndexReader, and, on average, <code>interval/2</code> terms
+         * must be scanned for each random term access.
+         *
+         * @see org.apache.lucene.index.IndexWriter#DEFAULT_TERM_INDEX_INTERVAL
+         */
+        public static final String TERM_INDEX_INTERVAL = "compass.engine.termIndexInterval";
+
+        /**
+         * Determines the amount of RAM that may be used for
+         * buffering added documents before they are flushed as a
+         * new Segment.  Generally for faster indexing performance
+         * it's best to flush by RAM usage instead of document
+         * count and use as large a RAM buffer as you can.
+         *
+         * <p>When this is set, the writer will flush whenever
+         * buffered documents use this much RAM.  Pass in {@link
+         * org.apache.lucene.index.IndexWriter#DISABLE_AUTO_FLUSH} to prevent triggering a flush due
+         * to RAM usage.  Note that if flushing by document count
+         * is also enabled, then the flush will be triggered by
+         * whichever comes first.</p>
+         *
+         * <p> The default value is {@link org.apache.lucene.index.IndexWriter#DEFAULT_RAM_BUFFER_SIZE_MB}.</p>
+         */
+        public static final String RAM_BUFFER_SIZE = "compass.engine.ramBufferSize";
 
         /**
          * Setting to turn on usage of a compound file. When on, multiple files for
