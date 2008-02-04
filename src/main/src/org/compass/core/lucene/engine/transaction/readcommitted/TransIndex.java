@@ -22,6 +22,7 @@ import java.util.Random;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.KeepOnlyLastCommitDeletionPolicy;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
@@ -81,7 +82,7 @@ public class TransIndex implements CompassConfigurable {
                 // TODO we can improve the file system one by starting with a ram one and then switching
             }
             // create an index writer with autoCommit=true since we want it to be visible to readers (still need to flush)
-            indexWriter = new IndexWriter(directory, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(), true);
+            indexWriter = searchEngineFactory.getLuceneIndexManager().openIndexWriter(directory, true, true, new KeepOnlyLastCommitDeletionPolicy());
             optimize = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG, true);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open transactional index for sub index [" + subIndex + "]");

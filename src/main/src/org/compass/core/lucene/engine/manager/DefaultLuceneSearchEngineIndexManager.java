@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.IndexDeletionPolicy;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
@@ -377,10 +378,21 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return openIndexWriter(dir, true, create);
     }
 
+    public IndexWriter openIndexWriter(Directory dir, IndexDeletionPolicy deletionPolicy) throws IOException {
+        return openIndexWriter(dir, true, false, deletionPolicy);
+    }
+
     public IndexWriter openIndexWriter(Directory dir, boolean autoCommit, boolean create) throws IOException {
+        return openIndexWriter(dir, autoCommit, create, null);
+    }
+
+    public IndexWriter openIndexWriter(Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException {
         // TODO lucene23 add more specific 2.3 parameters
+        if (deletionPolicy == null) {
+            deletionPolicy = searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir);
+        }
         IndexWriter indexWriter = new IndexWriter(dir, autoCommit, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(),
-                create, searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir));
+                create, deletionPolicy);
         indexWriter.setMaxMergeDocs(luceneSettings.getMaxMergeDocs());
         indexWriter.setMergeFactor(luceneSettings.getMergeFactor());
         indexWriter.setUseCompoundFile(luceneSettings.isUseCompoundFile());
