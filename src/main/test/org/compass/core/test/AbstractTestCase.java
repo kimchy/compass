@@ -27,6 +27,7 @@ import org.compass.core.cache.first.NullFirstLevelCache;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.util.FileHandlerMonitor;
 
 /**
  * @author kimchy
@@ -35,14 +36,27 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     private static Compass compass;
 
+    private static FileHandlerMonitor fileHandlerMonitor;
+
     protected abstract String[] getMappings();
 
     protected void beforeTestCase() throws Exception {
         compass = buildCompass();
+        if (System.getProperty("compass.test.validateFileHandler", "false").equals("true")) {
+            String connection = compass.getSettings().getSetting(CompassEnvironment.CONNECTION);
+            if (connection.startsWith("file://") || connection.indexOf("://") == -1) {
+                if (connection.startsWith("file://")) {
+                    connection = connection.substring("file://".length());
+                }
+                fileHandlerMonitor = new FileHandlerMonitor(connection);
+            }
+        }
+        verifyNoHandlers();
     }
 
     protected void setUp() throws Exception {
         compass.getSearchEngineIndexManager().clearCache();
+        verifyNoHandlers();
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
@@ -53,6 +67,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     protected void tearDown() throws Exception {
         compass.getSearchEngineIndexManager().clearCache();
+        verifyNoHandlers();
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
@@ -63,6 +78,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     protected void afterTestCase() throws Exception {
         compass.close();
+        verifyNoHandlers();
     }
 
     protected Compass buildCompass() throws IOException {
@@ -74,9 +90,8 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
             testProps.load(new FileInputStream(testPropsFile));
             conf.getSettings().addSettings(testProps);
         }
-        String[] mappings = getMappings();
-        for (int i = 0; i < mappings.length; i++) {
-            conf.addResource(getPackagePrefix() + mappings[i], AbstractTestCase.class.getClassLoader());
+        for (String mapping : getMappings()) {
+            conf.addResource(getPackagePrefix() + mapping, AbstractTestCase.class.getClassLoader());
         }
         conf.getSettings().setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, NullFirstLevelCache.class.getName());
         addSettings(conf.getSettings());
@@ -108,4 +123,16 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
         return compass;
     }
 
+    private void verifyNoHandlers() throws Exception {
+        if (fileHandlerMonitor == null) {
+            return;
+        }
+        FileHandlerMonitor.FileHandlers handlers = fileHandlerMonitor.handlers();
+        if (handlers == null) {
+            return;
+        }
+        if (handlers.hasHandlers()) {
+            throw new Exception("File Handlers still exist \n" + handlers.getRawOutput());
+        }
+    }
 }
