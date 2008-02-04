@@ -292,7 +292,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       <title>Transaction Log</title>
       
       <para>
-        For <literal>read_committed</literal> and <literal>batch_insert</literal> transaction isolation Compass uses a transaction log of the current transaction data running. Compass provides the following transaction log implementations:
+        For <literal>read_committed</literal> and <literal>serializable</literal> transaction isolation Compass uses a transaction log of the current transaction data running. Compass provides the following transaction log implementations:
       </para>
       
       <sect3 id="core-searchengine-transaction-translog-ram">
@@ -309,12 +309,14 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       <file path="target/test-index" />
   </connection>
   <transaction isolation="read_committed">
-    <readCommittedSettings>
-        <ramTransLog/>
-    </readCommittedSettings>
+    <readCommittedSettings transLog="ram://" />
   </transaction>
 </compass>
 ]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.transaction.readcommitted.translog.connection=ram://
+]]></programlisting>
+
         </para>
       </sect3>
 
@@ -322,25 +324,22 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         <title>FS Transaction Log</title>
         
         <para>
-          The FS transaction log stores most of the transactional data on the file system. This allows for bigger transactions (bigger in terms of data) to be run when compared with the ram transaction log though on account of performance. The fs transaction log can be configured with a path where to store the transaction log (defaults to java.io.tmpdir system property). The path is then appended with <literal>compass/translog</literal> and for each transaction a new unique directory is created.
-        </para>
-        
-        <para>
-          The transaction log allows to configure its read buffer size and write buffer size. The read buffer size is a memory based buffer for read operations. This setting can greatly control the transaction log memory consumption and defaults to 64 (bytes). The write buffer size is a memory buffer for write operations (flushing data to disk). It is pooled on the transaction level and reused for better performance and defaults to 2048 (bytes).
+          The FS transaction log stores the transactional data on the file system. This allows for bigger transactions (bigger in terms of data) to be run when compared with the ram transaction log though on account of performance. The fs transaction log can be configured with a path where to store the transaction log (defaults to java.io.tmpdir system property). The path is then appended with <literal>compass/translog</literal> and for each transaction a new unique directory is created.
         </para>
         
         <para>
           Here is an example of how the fs transaction can be configured:
 <programlisting><![CDATA[<compass name="default">
-  <connection>
-      <file path="target/test-index" />
-  </connection>
-  <transaction isolation="read_committed">
-    <readCommittedSettings>
-      <fsTransLog path="/tmp" readBufferSize="32" writeBufferSize="4098" />
-    </readCommittedSettings>
-  </transaction>
+<connection>
+    <file path="target/test-index" />
+</connection>
+<transaction isolation="read_committed">
+  <readCommittedSettings transLog="file://" />
+</transaction>
 </compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.transaction.readcommitted.translog.connection=file://
 ]]></programlisting>
         </para>
       </sect3>
@@ -348,7 +347,8 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       <para>
         Transactional log settings are one of the session level settings that can be set. This allows to change how Compass would save the transaction log per session, and not globally on the Compass instance level configuration. Note, this only applies on the session that is responsible for creating the transaction. The following is an example of how it can be done:
 <programlisting><![CDATA[CompassSession session = compass.openSession();
-session.getSettings().setClassSetting(RuntimeLuceneEnvironment.Transaction.TransLog.TYPE, FSTransLog.class);
+session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, 
+                                 "file://tmp/");
 ]]></programlisting>
       </para>
     </sect2>

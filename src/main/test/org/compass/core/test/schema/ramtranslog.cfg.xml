@@ -9,9 +9,7 @@
         </connection>
 
         <transaction isolation="batch_insert">
-            <readCommittedSettings>
-                <ramTransLog/>
-            </readCommittedSettings>
+            <readCommittedSettings transLog="ram://" optimizeTransLog="true" />
         </transaction>
     </compass>
 

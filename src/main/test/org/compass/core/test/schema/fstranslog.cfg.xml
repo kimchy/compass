@@ -9,9 +9,7 @@
         </connection>
 
         <transaction isolation="batch_insert">
-            <readCommittedSettings>
-                <fsTransLog path="/tmp" readBufferSize="12" writeBufferSize="14" />
-            </readCommittedSettings>
+            <readCommittedSettings transLog="file://" optimizeTransLog="false" />
         </transaction>
     </compass>
 

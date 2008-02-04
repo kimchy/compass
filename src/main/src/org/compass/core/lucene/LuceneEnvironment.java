@@ -535,35 +535,19 @@ public class LuceneEnvironment {
         /**
          * Transaction log settings
          */
-        public static final class TransLog {
+        public static final class ReadCommittedTransLog {
 
             /**
-             * The fully qualified type of the {@link org.apache.lucene.index.TransLog}
-             * implementation.
+             * The connection type for the read committed transactional log. Can be either <code>ram://</code>
+             * or <code>file://</code>.
              */
-            public static final String TYPE = "compass.transaction.translog.type";
+            public static final String CONNECTION = "compass.transaction.readcommitted.translog.connection";
 
             /**
-             * Applies to tran logs that require a location like {@link org.apache.lucene.index.FSTransLog}.
+             * Should the transactional index be optimized before it is added to the actual index. Defaults to
+             * <code>true</code>.
              */
-            public static final String PATH = "compass.transaction.translog.path";
-
-            /**
-             * <p>Applies to tran logs that require a write buffer size like {@link org.apache.lucene.index.FSTransLog}.
-             * Defaults to 2048 (size is in bytes).
-             *
-             * <p>The bigger the value, the faster indexing will be perfomed though in expense of memory (the write
-             * buffers are pooled, so the memory overhead will not be noitceable as is the case with read buffer.
-             */
-            public static final String WRITE_BUFFER_SIZE = "compass.transaction.translog.writeBufferSize";
-
-            /**
-             * <p>Applies to tran logs that require a read buffer size like {@link org.apache.lucene.index.FSTransLog}.
-             * Defaults to 64 (size is in bytes).
-             *
-             * <p>The smaller the value, bigger transactions can be performed, though performance might suffer.
-             */
-            public static final String READ_BUFFER_SIZE = "compass.transaction.translog.readBufferSize";
+            public static final String OPTIMIZE_TRANS_LOG = "compass.transaction.readcommitted.translog.optimize";
         }
     }
 

@@ -766,17 +766,17 @@
             <xsd:element name="indexDeletionPolicy" minOccurs="0" maxOccurs="1">
                 <xsd:complexType>
                     <xsd:choice minOccurs="1" maxOccurs="1">
-                        <xsd:element name="keepLastCommit" />
-                        <xsd:element name="keepAll" />
+                        <xsd:element name="keepLastCommit"/>
+                        <xsd:element name="keepAll"/>
                         <xsd:element name="keepLastN">
                             <xsd:complexType>
-                                <xsd:attribute name="numToKeep" type="xsd:nonNegativeInteger" use="required" />
+                                <xsd:attribute name="numToKeep" type="xsd:nonNegativeInteger" use="required"/>
                             </xsd:complexType>
                         </xsd:element>
-                        <xsd:element name="keepNoneOnInit" />
+                        <xsd:element name="keepNoneOnInit"/>
                         <xsd:element name="expirationTime">
                             <xsd:complexType>
-                                <xsd:attribute name="expirationTimeSeconds" type="xsd:double" use="required" />
+                                <xsd:attribute name="expirationTimeSeconds" type="xsd:double" use="required"/>
                             </xsd:complexType>
                         </xsd:element>
                         <xsd:element name="custom">
@@ -784,7 +784,7 @@
                                 <xsd:sequence>
                                     <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
                                 </xsd:sequence>
-                                <xsd:attribute name="type" type="xsd:string" use="required" />
+                                <xsd:attribute name="type" type="xsd:string" use="required"/>
                             </xsd:complexType>
                         </xsd:element>
                     </xsd:choice>
@@ -1085,56 +1085,21 @@
                         </xsd:documentation>
                     </xsd:annotation>
                     <xsd:complexType>
-                        <xsd:sequence>
-                            <xsd:choice>
-                                <xsd:element name="ramTransLog">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            Transactional information is stored in memory. Enhances performance on
-                                            account of transaction log size (based on the application memory settings).
-                                            This is the default transaction log strategy.
-                                        </xsd:documentation>
-                                    </xsd:annotation>
-                                </xsd:element>
-                                <xsd:element name="fsTransLog">
-                                    <xsd:annotation>
-                                        <xsd:documentation>
-                                            Transactional information is stored in file system. Allows to have larger
-                                            transaction logs but have slower performance than storing the transaction
-                                            log in memory.
-                                        </xsd:documentation>
-                                    </xsd:annotation>
-                                    <xsd:complexType>
-                                        <xsd:attribute name="path" type="xsd:string" use="optional">
-                                            <xsd:annotation>
-                                                <xsd:documentation>
-                                                    The location the transaction log will be stored. Defaults to
-                                                    ${java.io.tmpdir}/compass/translog.
-                                                </xsd:documentation>
-                                            </xsd:annotation>
-                                        </xsd:attribute>
-                                        <xsd:attribute name="readBufferSize" type="xsd:positiveInteger" use="optional">
-                                            <xsd:annotation>
-                                                <xsd:documentation>
-                                                    Controlls the buffer size when reading data from the disk. Higher
-                                                    buffer size will affect the memory consumption and the size of the
-                                                    transaction (in terms of data). Defaults to 64 bytes.
-                                                </xsd:documentation>
-                                            </xsd:annotation>
-                                        </xsd:attribute>
-                                        <xsd:attribute name="writeBufferSize" type="xsd:positiveInteger" use="optional">
-                                            <xsd:annotation>
-                                                <xsd:documentation>
-                                                    Controlls the buffer size when writing data to disk. Higher values
-                                                    will consume more memory, though since they are cached, won't affect
-                                                    transaction size as readBufferSize would. Defaults to 2048 bytes.
-                                                </xsd:documentation>
-                                            </xsd:annotation>
-                                        </xsd:attribute>
-                                    </xsd:complexType>
-                                </xsd:element>
-                            </xsd:choice>
-                        </xsd:sequence>
+                        <xsd:attribute name="transLog" use="optional" default="ram://">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The transactional log connection. Can be either ram:// or file://.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="optimizeTransLog" use="optional" default="true">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Should the transactional log be optimized before added to the actual index. Defaults
+                                    to true.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
                     </xsd:complexType>
                 </xsd:element>
             </xsd:choice>
@@ -1358,8 +1323,8 @@
                     </xsd:documentation>
                 </xsd:annotation>
                 <xsd:complexType>
-                    <xsd:attribute name="type" type="xsd:string" use="required" />
-                    <xsd:attribute name="path" type="xsd:string" use="optional" />
+                    <xsd:attribute name="type" type="xsd:string" use="required"/>
+                    <xsd:attribute name="path" type="xsd:string" use="optional"/>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="directoryWrapperProvider" minOccurs="0" maxOccurs="unbounded">
@@ -1385,8 +1350,8 @@
             </xsd:element>
             <xsd:element name="localCache" minOccurs="0" maxOccurs="unbounded">
                 <xsd:complexType>
-                    <xsd:attribute name="subIndex" type="xsd:string" use="required" />
-                    <xsd:attribute name="connection" type="xsd:string" use="required" />
+                    <xsd:attribute name="subIndex" type="xsd:string" use="required"/>
+                    <xsd:attribute name="connection" type="xsd:string" use="required"/>
                 </xsd:complexType>
             </xsd:element>
         </xsd:sequence>

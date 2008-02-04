@@ -52,6 +52,9 @@ import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
 
 /**
+ * Read Committed transaction support. Allows to perform operations within a transaction and all
+ * operations will be "viewable" to the ongoing transaction, event search.
+ *
  * @author kimchy
  */
 public class ReadCommittedTransaction extends AbstractTransaction {
@@ -68,6 +71,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     protected void doBegin() throws SearchEngineException {
         this.transIndexManager = new TransIndexManager(searchEngine.getSearchEngineFactory());
+        this.transIndexManager.configure(searchEngine.getSettings());
         this.filter = new BitSetByAliasFilter();
     }
 

@@ -17,6 +17,7 @@
 package org.compass.core.lucene.engine.transaction.readcommitted;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
@@ -24,11 +25,13 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.spi.InternalResource;
@@ -38,6 +41,10 @@ import org.compass.core.spi.ResourceKey;
  * @author kimchy
  */
 public class TransIndex implements CompassConfigurable {
+
+    private static Random transId = new Random();
+
+    private static final String DEFAULT_LOCATION = System.getProperty("java.io.tmpdir") + "/compass/translog";
 
     private LuceneSearchEngineFactory searchEngineFactory;
 
@@ -53,6 +60,8 @@ public class TransIndex implements CompassConfigurable {
 
     private boolean flushRequired = false;
 
+    private boolean optimize;
+
     public TransIndex(LuceneSearchEngineFactory searchEngineFactory, String subIndex) {
         this.searchEngineFactory = searchEngineFactory;
         this.subIndex = subIndex;
@@ -60,9 +69,20 @@ public class TransIndex implements CompassConfigurable {
 
     public void configure(CompassSettings settings) throws CompassException {
         try {
-            this.directory = new RAMDirectory();
+            String transLogConnection = settings.getSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, "ram://");
+            if ("ram://".equals(transLogConnection)) {
+                directory = new RAMDirectory();
+            } else {
+                if (transLogConnection.equals("file://")) {
+                    transLogConnection = DEFAULT_LOCATION;
+                }
+                transLogConnection += "/" + transId.nextLong();
+                directory = FSDirectory.getDirectory(transLogConnection);
+                // TODO we can improve the file system one by starting with a ram one and then switching
+            }
             // create an index writer with autoCommit=true since we want it to be visible to readers (still need to flush)
             indexWriter = new IndexWriter(directory, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(), true);
+            optimize = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG, true);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open transactional index for sub index [" + subIndex + "]");
         }
@@ -105,8 +125,9 @@ public class TransIndex implements CompassConfigurable {
         if (indexReader != null) {
             indexReader.close();
         }
-        // TODO: lucene23 optimizing here, it should be optional
-        indexWriter.optimize();
+        if (optimize) {
+            indexWriter.optimize();
+        }
         indexWriter.close();
         indexWriter = null;
     }

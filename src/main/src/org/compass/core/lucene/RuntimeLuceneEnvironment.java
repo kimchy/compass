@@ -28,28 +28,19 @@ public abstract class RuntimeLuceneEnvironment {
         /**
          * Transaction log settings
          */
-        public static final class TransLog {
+        public static final class ReadCommittedTransLog {
 
             /**
-             * @see org.compass.core.lucene.LuceneEnvironment.Transaction.TransLog#TYPE
+             * The connection type for the read committed transactional log. Can be either <code>ram://</code>
+             * or <code>file://</code>.
              */
-            public static final String TYPE = LuceneEnvironment.Transaction.TransLog.TYPE;
+            public static final String CONNECTION = "compass.transaction.readcommitted.translog.connection";
 
             /**
-             * @see org.compass.core.lucene.LuceneEnvironment.Transaction.TransLog#PATH
+             * Should the transactional index be optimized before it is added to the actual index. Defaults to
+             * <code>true</code>.
              */
-            public static final String PATH = LuceneEnvironment.Transaction.TransLog.PATH;
-
-            /**
-             * @see org.compass.core.lucene.LuceneEnvironment.Transaction.TransLog#WRITE_BUFFER_SIZE
-             */
-            public static final String WRITE_BUFFER_SIZE = LuceneEnvironment.Transaction.TransLog.WRITE_BUFFER_SIZE;
-
-            /**
-             * @see org.compass.core.lucene.LuceneEnvironment.Transaction.TransLog#READ_BUFFER_SIZE
-             */
-            public static final String READ_BUFFER_SIZE = LuceneEnvironment.Transaction.TransLog.READ_BUFFER_SIZE;
+            public static final String OPTIMIZE_TRANS_LOG = "compass.transaction.readcommitted.translog.optimize";
         }
-
     }
 }

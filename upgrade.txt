@@ -11,6 +11,8 @@ VERSION 2.0 M2
    Lucene.
 3. Default all proeprty name changed from "all" to "zzz-all" since Lucene 2.3 introduced dependecy on lexi
    order of fields.
+4. New and improved read committed transaction support. Changed the way trans log is used and configured, please
+   read the reference documentation on how to configure it now.
 
 VERSION 2.0 M1 (January 25, 2008)
 =================================

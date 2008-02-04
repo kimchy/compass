@@ -403,19 +403,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "readCommittedSettings", true);
         if (child.size() == 1) {
             Element readCommittedSettingsEle = (Element) child.get(0);
-            // TODO lucene23 translog
-//            child = DomUtils.getChildElementsByTagName(readCommittedSettingsEle, "ramTransLog", true);
-//            if (child.size() == 1) {
-//                settings.setSetting(LuceneEnvironment.Transaction.TransLog.TYPE, RAMTransLog.class.getName());
-//            }
-//            child = DomUtils.getChildElementsByTagName(readCommittedSettingsEle, "fsTransLog", true);
-//            if (child.size() == 1) {
-//                Element fsTranLogSettingsEle = (Element) child.get(0);
-//                settings.setSetting(LuceneEnvironment.Transaction.TransLog.TYPE, FSTransLog.class.getName());
-//                settings.setSetting(LuceneEnvironment.Transaction.TransLog.PATH, getElementAttribute(fsTranLogSettingsEle, "path"));
-//                settings.setSetting(LuceneEnvironment.Transaction.TransLog.READ_BUFFER_SIZE, getElementAttribute(fsTranLogSettingsEle, "readBufferSize"));
-//                settings.setSetting(LuceneEnvironment.Transaction.TransLog.WRITE_BUFFER_SIZE, getElementAttribute(fsTranLogSettingsEle, "writeBufferSize"));
-//            }
+            settings.setSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, getElementAttribute(readCommittedSettingsEle, "transLog"));
+            settings.setSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG, getElementAttribute(readCommittedSettingsEle, "optimizeTransLog"));
         }
     }
 
