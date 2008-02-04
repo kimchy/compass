@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -94,13 +93,13 @@ public class DefaultConverterLookup implements ConverterLookup {
 
     // not synchronized since the assumption is that no changes are made after
     // theh constructor
-    private final HashMap convertersByClass = new HashMap();
+    private final HashMap<String, Converter> convertersByClass = new HashMap<String, Converter>();
 
-    private final HashMap cachedConvertersByClassType = new HashMap();
+    private final HashMap<Class, Converter> cachedConvertersByClassType = new HashMap<Class, Converter>();
 
-    private final HashMap convertersByName = new HashMap();
+    private final HashMap<String, Converter> convertersByName = new HashMap<String, Converter>();
 
-    private final HashMap defaultConveterTypes = new HashMap();
+    private final HashMap<String, Class> defaultConveterTypes = new HashMap<String, Class>();
 
     private CompassSettings settings;
 
@@ -139,7 +138,7 @@ public class DefaultConverterLookup implements ConverterLookup {
 
     public void configure(CompassSettings settings) throws CompassException {
         this.settings = settings;
-        Map converterGroups = settings.getSettingGroups(CompassEnvironment.Converter.PREFIX);
+        Map<String, CompassSettings> converterGroups = settings.getSettingGroups(CompassEnvironment.Converter.PREFIX);
         // add basic types
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.BIGDECIMAL,
                 BigDecimal.class, new BigDecimalConverter());
@@ -263,9 +262,8 @@ public class DefaultConverterLookup implements ConverterLookup {
                 XmlContentMapping.class, new XmlContentMappingConverter());
 
         // now configure all the none default converters
-        for (Iterator it = converterGroups.keySet().iterator(); it.hasNext();) {
-            String converterName = (String) it.next();
-            CompassSettings converterSettings = (CompassSettings) converterGroups.get(converterName);
+        for (String converterName : converterGroups.keySet()) {
+            CompassSettings converterSettings = converterGroups.get(converterName);
             if (log.isDebugEnabled()) {
                 log.debug("Conveter [" + converterName + "] building...");
             }
@@ -275,7 +273,7 @@ public class DefaultConverterLookup implements ConverterLookup {
             }
             Converter converter;
             try {
-                Class converterClass = (Class) defaultConveterTypes.get(converterClassType);
+                Class converterClass = defaultConveterTypes.get(converterClassType);
                 if (converterClass == null) {
                     converterClass = ClassUtils.forName(converterClassType, settings.getClassLoader());
                 }
@@ -311,12 +309,12 @@ public class DefaultConverterLookup implements ConverterLookup {
         }
     }
 
-    private void addDefaultConverter(Map converterGroups, String name, Class type, Converter converter) {
+    private void addDefaultConverter(Map<String, CompassSettings> converterGroups, String name, Class type, Converter converter) {
         addDefaultConverter(converterGroups, name, new Class[]{type}, converter);
     }
 
-    private void addDefaultConverter(Map converterGroups, String name, Class[] types, Converter converter) {
-        CompassSettings converterSettings = (CompassSettings) converterGroups.remove(name);
+    private void addDefaultConverter(Map<String, CompassSettings> converterGroups, String name, Class[] types, Converter converter) {
+        CompassSettings converterSettings = converterGroups.remove(name);
         if (converterSettings == null) {
             converterSettings = new CompassSettings(settings.getClassLoader());
         }
@@ -337,8 +335,7 @@ public class DefaultConverterLookup implements ConverterLookup {
             ((CompassConfigurable) converter).configure(converterSettings);
         }
         convertersByName.put(name, converter);
-        for (int i = 0; i < types.length; i++) {
-            Class type = types[i];
+        for (Class type : types) {
             convertersByClass.put(type.getName(), converter);
             cachedConvertersByClassType.put(type, converter);
         }
@@ -361,7 +358,7 @@ public class DefaultConverterLookup implements ConverterLookup {
     }
 
     public Converter lookupConverter(String name) {
-        Converter converter = (Converter) convertersByName.get(name);
+        Converter converter = convertersByName.get(name);
         if (converter == null) {
             throw new IllegalArgumentException("Failed to find converter by name [" + name + "]");
         }
@@ -376,7 +373,7 @@ public class DefaultConverterLookup implements ConverterLookup {
     public Converter lookupConverter(Class type) {
         // not the most thread safe caching, but good enough for us
         // so we don't need to create a thread safe collection.
-        Converter c = (Converter) cachedConvertersByClassType.get(type);
+        Converter c = cachedConvertersByClassType.get(type);
         if (c != null) {
             return c;
         }
@@ -388,13 +385,12 @@ public class DefaultConverterLookup implements ConverterLookup {
     }
 
     private Converter actualConverterLookup(Class type) {
-        Converter c = (Converter) convertersByClass.get(type.getName());
+        Converter c = convertersByClass.get(type.getName());
         if (c != null) {
             return c;
         }
-        Class[] interfaces = type.getInterfaces();
-        for (int i = 0; i < interfaces.length; i++) {
-            c = (Converter) convertersByClass.get(interfaces[i].getName());
+        for (Class anInterface : type.getInterfaces()) {
+            c = convertersByClass.get(anInterface.getName());
             if (c != null) {
                 return c;
             }
