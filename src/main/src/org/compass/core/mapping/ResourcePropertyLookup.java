@@ -160,10 +160,11 @@ public final class ResourcePropertyLookup {
         if (value instanceof String) {
             return normalizeString((String) value);
         }
-        ResourcePropertyConverter converter;
+        ResourcePropertyConverter converter = null;
         if (hasSpecificConverter()) {
             converter = (ResourcePropertyConverter) resourcePropertyMapping.getConverter();
-        } else {
+        }
+        if (converter == null) {
             converter = (ResourcePropertyConverter) compassMapping.getConverterLookup().lookupConverter(value.getClass());
         }
         return converter.toString(value, resourcePropertyMapping);
