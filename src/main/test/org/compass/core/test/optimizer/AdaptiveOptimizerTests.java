@@ -52,7 +52,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
 
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
-        assertEquals(1, infos.size());
+        assertEquals(3, infos.size());
         session.close();
 
         assertData(0, 8);
@@ -70,7 +70,7 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
 
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
-        assertEquals(1, infos.size());
+        assertEquals(3, infos.size());
         session.close();
 
         session = openSession();
@@ -90,9 +90,9 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         session.close();
-        assertEquals(2, infos.size());
+        assertEquals(3, infos.size());
         assertEquals(20, infos.info(0).docCount());
-        assertEquals(2, infos.info(1).docCount());
+        assertEquals(1, infos.info(1).docCount());
 
 
         session = openSession();
@@ -113,15 +113,16 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         session.close();
-        assertEquals(2, infos.size());
+        assertEquals(3, infos.size());
         assertEquals(10, infos.info(0).docCount());
-        assertEquals(5, infos.info(1).docCount());
+        assertEquals(1, infos.info(1).docCount());
+        assertEquals(4, infos.info(2).docCount());
 
         session = openSession();
         CompassTransaction tr = session.beginTransaction();
-        A a = (A) session.load(A.class, new Long(0));
+        A a = session.load(A.class, 0);
         assertNotNull(a);
-        a = (A) session.load(A.class, new Long(14));
+        a = session.load(A.class, 14);
         assertNotNull(a);
         tr.commit();
         session.close();
@@ -135,8 +136,8 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         CompassSession session = openSession();
         LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
         session.close();
-        assertEquals(1, infos.size());
-        assertEquals(25, infos.info(0).docCount());
+        assertEquals(3, infos.size());
+        assertEquals(10, infos.info(0).docCount());
 
         session = openSession();
         CompassTransaction tr = session.beginTransaction();

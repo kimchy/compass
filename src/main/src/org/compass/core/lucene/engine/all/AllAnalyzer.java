@@ -131,6 +131,23 @@ public class AllAnalyzer extends Analyzer {
 
     public TokenStream tokenStream(String fieldName, Reader reader) {
         TokenStream retVal = analyzer.tokenStream(fieldName, reader);
+        return wrapTokenStreamIfNeeded(fieldName, retVal);
+    }
+
+    public TokenStream reusableTokenStream(String fieldName, Reader reader) throws IOException {
+        TokenStream retVal = analyzer.reusableTokenStream(fieldName, reader);
+        return wrapTokenStreamIfNeeded(fieldName, retVal);
+    }
+
+    public int getPositionIncrementGap(String fieldName) {
+        return analyzer.getPositionIncrementGap(fieldName);
+    }
+
+    public TokenStream createAllTokenStream() {
+        return new AllTokenStream();
+    }
+
+    private TokenStream wrapTokenStreamIfNeeded(String fieldName, TokenStream retVal) {
         if (!resourceMapping.isAllSupported()) {
             return retVal;
         }
@@ -150,14 +167,6 @@ public class AllAnalyzer extends Analyzer {
         return retVal;
     }
 
-    public int getPositionIncrementGap(String fieldName) {
-        return analyzer.getPositionIncrementGap(fieldName);
-    }
-
-    public TokenStream createAllTokenStream() {
-        return new AllTokenStream();
-    }
-
     /**
      * The all token stream. To be used with the all property as its token stream. This stream will
      * return all the tokens created and collected by this analyzer.
@@ -171,20 +180,25 @@ public class AllAnalyzer extends Analyzer {
         private AllTokenStream() {
         }
 
-        public Token next() throws IOException {
+        /**
+         * Override the next with token so no unneeded token will be created. Also,
+         * no need to use the result, just return the token we saved where we just
+         * change offests.
+         */
+        public Token next(Token result) throws IOException {
             if (tokenIt == null) {
                 tokenIt = tokens.iterator();
             }
             if (tokenIt.hasNext()) {
                 Token token = tokenIt.next();
-                // TODO fix offset when upgrading to newer lucene version as it has setters for it (also uses char[])
                 int delta = token.endOffset() - token.startOffset();
-                Token retVal = new Token(token.termText(), offset, offset + delta, token.type());
-                retVal.setPositionIncrement(token.getPositionIncrement());
+                token.setStartOffset(offset);
                 offset += delta;
-                return retVal;
+                token.setEndOffset(offset);
+                return token;
             }
 
+            tokens.clear();
             return null;
         }
 
@@ -218,7 +232,6 @@ public class AllAnalyzer extends Analyzer {
         }
 
         public void close() throws IOException {
-            tokens.clear();
             tokenStream.close();
         }
     }

@@ -16,11 +16,8 @@
 
 package org.compass.core.lucene.engine.optimizer;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.compass.core.CompassException;
 import org.compass.core.CompassTransaction;
 import org.compass.core.engine.SearchEngineException;
@@ -31,7 +28,7 @@ import org.compass.core.transaction.context.TransactionContextCallback;
 /**
  * @author kimchy
  */
-public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearchEngineOptimizer {
+public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -89,28 +86,14 @@ public abstract class AbstractLuceneSearchEngineOptimizer implements LuceneSearc
 
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction(CompassTransaction tr) throws CompassException {
-                LuceneSearchEngineIndexManager indexManager = searchEngineFactory.getLuceneIndexManager();
-                LuceneSubIndexInfo indexInfo;
-                try {
-                    indexInfo = LuceneSubIndexInfo.getIndexInfo(subIndex, indexManager);
-                } catch (IOException e) {
-                    throw new SearchEngineException("Failed to read index info for sub index [" + subIndex + "]", e);
-                }
-                if (indexInfo == null) {
-                    // no index data, simply continue
-                    return null;
-                }
-                if (!isRunning()) {
-                    return null;
-                }
-                doOptimize(subIndex, indexInfo);
+                doOptimize(subIndex);
                 searchEngineFactory.getIndexManager().clearCache(subIndex);
                 return null;
             }
         });
     }
 
-    protected abstract void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
+    protected abstract void doOptimize(String subIndex) throws SearchEngineException;
 
     public LuceneSearchEngineFactory getSearchEngineFactory() {
         return searchEngineFactory;

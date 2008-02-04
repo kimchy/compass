@@ -335,8 +335,21 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         searchEngineStore.close();
     }
 
+    public IndexWriter openIndexWriter(String subIndex) throws IOException {
+        return openIndexWriter(searchEngineStore.getDirectoryBySubIndex(subIndex, false), false);
+    }
+
+    public IndexWriter openIndexWriter(String subIndex, boolean autoCommit) throws IOException {
+        return openIndexWriter(searchEngineStore.getDirectoryBySubIndex(subIndex, false), autoCommit, false);
+    }
+
     public IndexWriter openIndexWriter(Directory dir, boolean create) throws IOException {
-        IndexWriter indexWriter = new IndexWriter(dir, true, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(),
+        return openIndexWriter(dir, true, create);
+    }
+
+    public IndexWriter openIndexWriter(Directory dir, boolean autoCommit, boolean create) throws IOException {
+        // TODO lucene23 add more specific 2.3 parameters
+        IndexWriter indexWriter = new IndexWriter(dir, autoCommit, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(),
                 create, searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir));
         indexWriter.setMaxMergeDocs(luceneSettings.getMaxMergeDocs());
         indexWriter.setMergeFactor(luceneSettings.getMergeFactor());

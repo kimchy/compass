@@ -470,9 +470,9 @@ public class CompassEnvironment {
         public static final String NAME = "compass.property.all";
 
         /**
-         * The default name for the "all" property.
+         * The default name for the "all" property. Defaults to <code>zzz-all</code>.
          */
-        public static final String DEFAULT_NAME = "all";
+        public static final String DEFAULT_NAME = "zzz-all";
 
         /**
          * The term vector the will be used with the all property. Can be one out

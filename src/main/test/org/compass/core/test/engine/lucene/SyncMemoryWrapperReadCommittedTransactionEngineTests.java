@@ -20,7 +20,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.wrapper.SyncMemoryMirrorDirectoryWrapperProvider;
-import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
+import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransaction;
 
 /**
  * @author kimchy

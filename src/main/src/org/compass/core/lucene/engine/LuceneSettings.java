@@ -18,8 +18,6 @@ package org.compass.core.lucene.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.index.RAMTransLog;
-import org.apache.lucene.index.TransLog;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
@@ -79,6 +77,9 @@ public class LuceneSettings {
 
     private String lockDir;
 
+    private boolean clearCacheOnCommit;
+
+    
     public void configure(CompassSettings settings) throws SearchEngineException {
         this.settings = settings;
         connection = settings.getSetting(CompassEnvironment.CONNECTION);
@@ -175,6 +176,11 @@ public class LuceneSettings {
             log.debug("Using compound format [" + useCompoundFile + "]");
         }
 
+        clearCacheOnCommit = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, true);
+        if (log.isDebugEnabled()) {
+            log.debug("Using clear cache on commit [" + clearCacheOnCommit + "]");
+        }
+        
         // batch insert transaction settings
         mergeFactor = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, 10);
         maxBufferedDocs = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, 10);
@@ -195,24 +201,6 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Wait for cahce invalidation on index operatrion is set to [" + waitForCacheInvalidationOnIndexOperation + "]");
         }
-    }
-
-    public TransLog createTransLog(CompassSettings settings) {
-        if (settings == null) {
-            settings = this.settings;
-        }
-        TransLog transLog;
-        try {
-            Class transLogClass = settings.getSettingAsClass(LuceneEnvironment.Transaction.TransLog.TYPE, RAMTransLog.class);
-            if (log.isTraceEnabled()) {
-                log.trace("Using Trans Log [" + transLogClass.getName() + "]");
-            }
-            transLog = (TransLog) transLogClass.newInstance();
-        } catch (Exception e) {
-            throw new SearchEngineException("Failed to create transLog", e);
-        }
-        transLog.configure(settings);
-        return transLog;
     }
 
     public CompassSettings getSettings() {
@@ -347,6 +335,10 @@ public class LuceneSettings {
         return waitForCacheInvalidationOnIndexOperation;
     }
 
+    public boolean isClearCacheOnCommit() {
+        return this.clearCacheOnCommit;
+    }
+    
     public String getSubContext() {
         return subContext;
     }

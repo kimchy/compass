@@ -806,15 +806,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/coherence/coherence-hibernate.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/eclipselink/eclipselink.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -828,7 +819,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../../opt/lucene/2.2/src/java" />
+          <root url="file://$MODULE_DIR$/../../../../../opt/lucene/2.3.0/src/java" />
         </SOURCES>
       </library>
     </orderEntry>

@@ -227,7 +227,11 @@ public abstract class LuceneUtils {
         }
         for (int i = 0; i < locks.length; i++) {
             if (locks[i] != null) {
-                locks[i].release();
+                try {
+                    locks[i].release();
+                } catch (IOException e) {
+                    // ignore
+                }
             }
         }
     }

@@ -1,6 +1,5 @@
 package org.compass.core.lucene.engine;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.lucene.index.IndexReader;
@@ -11,7 +10,7 @@ import org.apache.lucene.search.Searchable;
 import org.apache.lucene.search.Searcher;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineInternalSearch;
-import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 
 /**
  * A Lucene specific search "internals", allowing for Lucene {@link IndexReader} and {@link Searcher}
@@ -25,7 +24,7 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
     protected MultiReader reader;
 
     private boolean closed;
-    private List indexHolders;
+    private List<LuceneIndexHolder> indexHoldersToClose;
 
     /**
      * Creates a new instance, with a searcher and index holders which will be used
@@ -34,9 +33,9 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
      * @param searcher     The searcher, which is also used to construct the reader
      * @param indexHolders Holders to be released when calling close.
      */
-    public LuceneSearchEngineInternalSearch(MultiSearcher searcher, List indexHolders) {
+    public LuceneSearchEngineInternalSearch(MultiSearcher searcher, List<LuceneIndexHolder> indexHolders) {
         this.searcher = searcher;
-        this.indexHolders = indexHolders;
+        this.indexHoldersToClose = indexHolders;
     }
 
     /**
@@ -66,11 +65,7 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
         for (int i = 0; i < searchables.length; i++) {
             readers[i] = ((IndexSearcher) searchables[i]).getIndexReader();
         }
-        try {
-            reader = new MultiReader(readers);
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to open readers", e);
-        }
+        reader = new MultiReader(readers, false);
         return this.reader;
     }
 
@@ -85,10 +80,8 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
         }
         closed = true;
 
-        if (indexHolders != null) {
-            for (int i = 0; i < indexHolders.size(); i++) {
-                LuceneSearchEngineIndexManager.LuceneIndexHolder indexHolder =
-                        (LuceneSearchEngineIndexManager.LuceneIndexHolder) indexHolders.get(i);
+        if (indexHoldersToClose != null) {
+            for (LuceneIndexHolder indexHolder : indexHoldersToClose) {
                 indexHolder.release();
             }
         }

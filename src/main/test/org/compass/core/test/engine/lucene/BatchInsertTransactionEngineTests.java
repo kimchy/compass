@@ -25,7 +25,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.AbstractLuceneEngineTests;
 import org.compass.core.lucene.engine.transaction.BatchInsertTransaction;
-import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
+import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransaction;
 import org.compass.core.spi.InternalCompass;
 
 public class BatchInsertTransactionEngineTests extends AbstractLuceneEngineTests {
@@ -53,8 +53,7 @@ public class BatchInsertTransactionEngineTests extends AbstractLuceneEngineTests
         getSearchEngine().create(multiId2);
         getSearchEngine().commit(true);
 
-        getSettings().setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS,
-                ReadCommittedTransaction.class.getName());
+        getSettings().setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, ReadCommittedTransaction.class.getName());
         SearchEngineFactory searchEngineFactory = createSearchEngineFactory();
         SearchEngine searchEngine = searchEngineFactory.openSearchEngine(new RuntimeCompassSettings(((InternalCompass) compass).getSettings()));
         searchEngine.begin();

@@ -116,4 +116,14 @@
         </property>
     </class>
 
+    <class name="A" alias="a10">
+        <id name="id" />
+        <property name="value1">
+            <meta-data term-vector="positions_offsets">value1</meta-data>
+        </property>
+        <property name="value2">
+            <meta-data term-vector="positions_offsets">value2</meta-data>
+        </property>
+    </class>
+
 </compass-core-mapping>

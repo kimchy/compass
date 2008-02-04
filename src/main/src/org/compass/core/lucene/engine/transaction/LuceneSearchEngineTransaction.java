@@ -53,6 +53,8 @@ public interface LuceneSearchEngineTransaction {
 
     void create(final InternalResource resource, Analyzer analyzer) throws SearchEngineException;
 
+    void update(final InternalResource resource, Analyzer analyzer) throws SearchEngineException;
+    
     void delete(final ResourceKey resourceKey) throws SearchEngineException;
 
     SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException;

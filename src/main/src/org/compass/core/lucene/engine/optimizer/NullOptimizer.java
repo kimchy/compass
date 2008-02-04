@@ -16,13 +16,12 @@
 
 package org.compass.core.lucene.engine.optimizer;
 
-import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.compass.core.engine.SearchEngineException;
 
 /**
  * @author kimchy
  */
-public class NullOptimizer extends AbstractLuceneSearchEngineOptimizer {
+public class NullOptimizer extends AbstractOptimizer {
 
     protected boolean isOptimizeOnlyIfIndexChanged() {
         return false;
@@ -32,11 +31,7 @@ public class NullOptimizer extends AbstractLuceneSearchEngineOptimizer {
         return false;
     }
 
-    protected void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException {
+    protected void doOptimize(String subIndex) throws SearchEngineException {
         // do nothing
-    }
-
-    protected boolean doNeedOptimizing(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException {
-        return false;
     }
 }

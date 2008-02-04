@@ -9,6 +9,8 @@ VERSION 2.0 M2
    required.
 2. Removed the needOptimization API from SearchEngineOptimizer. This will allow for simpler integration with
    Lucene.
+3. Default all proeprty name changed from "all" to "zzz-all" since Lucene 2.3 introduced dependecy on lexi
+   order of fields.
 
 VERSION 2.0 M1 (January 25, 2008)
 =================================

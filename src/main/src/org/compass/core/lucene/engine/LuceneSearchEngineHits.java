@@ -16,8 +16,8 @@
 
 package org.compass.core.lucene.engine;
 
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Hits;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 
@@ -27,7 +27,7 @@ import org.compass.core.engine.SearchEngineHits;
  *
  * @author kimchy
  */
-public interface LuceneSearchEngineHits extends SearchEngineHits {
+public interface LuceneSearchEngineHits extends SearchEngineHits, LuceneDelegatedClose {
 
     /**
      * Returns the actual Lucene hits.

@@ -16,11 +16,9 @@
 
 package org.compass.core.test.engine.lucene;
 
-import org.apache.lucene.index.RAMTransLog;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
+import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransaction;
 
 /**
  * @author kimchy
@@ -31,7 +29,8 @@ public class FSRamTransLuceneReadCommittedTransactionEngineTests extends Abstrac
         CompassSettings settings = super.buildCompassSettings();
         settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
         settings.setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, ReadCommittedTransaction.class.getName());
-        settings.setSetting(LuceneEnvironment.Transaction.TransLog.TYPE, RAMTransLog.class.getName());
+        // TODO lucene23 translog
+//        settings.setSetting(LuceneEnvironment.Transaction.TransLog.TYPE, RAMTransLog.class.getName());
         return settings;
     }
 

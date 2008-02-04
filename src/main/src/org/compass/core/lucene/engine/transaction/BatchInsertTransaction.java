@@ -25,8 +25,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineHits;
-import org.compass.core.engine.SearchEngineInternalSearch;
+import org.compass.core.lucene.engine.LuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -210,7 +210,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
         throw new SearchEngineException("Delete operation not supported for batch insert transaction");
     }
 
-    protected SearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
+    protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
         throw new SearchEngineException("Find operation not supported for batch insert transaction");
     }
 
@@ -218,7 +218,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
         throw new SearchEngineException("Find operation not supported for batch insert transaction");
     }
 
-    protected SearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+    protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         throw new SearchEngineException("Internal search operation not supported for batch insert transaction");
     }
 }

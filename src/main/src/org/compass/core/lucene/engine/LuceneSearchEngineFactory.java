@@ -49,11 +49,6 @@ import org.compass.core.util.ClassUtils;
  */
 public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
-    static {
-        // set the segment reader to be a compass class
-        System.setProperty("org.apache.lucene.SegmentReader.class", "org.apache.lucene.index.CompassSegmentReader");
-    }
-
     private static final Log log = LogFactory.getLog(LuceneSearchEngineFactory.class);
 
     private CompassMapping mapping;

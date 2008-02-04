@@ -127,6 +127,12 @@ public class HighlighterTests extends AbstractTestCase {
 
         setUpData(session, "a1");
 
+        tr.commit();
+        session.close();
+
+        session = openSession();
+        tr = session.beginTransaction();
+
         CompassHits hits = session.find("Kennedy");
 
         String fragment = hits.highlighter(1).setTextTokenizer(CompassHighlighter.TextTokenizer.ANALYZER)

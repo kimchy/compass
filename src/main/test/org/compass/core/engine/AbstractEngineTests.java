@@ -21,7 +21,6 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.naming.StaticPropertyPath;
-import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -70,10 +69,6 @@ public abstract class AbstractEngineTests extends TestCase {
 
     public static final String ALIAS_MUTLI = "multiid";
 
-    private ResourceMapping singleIdMapping;
-
-    private ResourceMapping multipleIdMapping;
-
     private CompassSettings settings;
 
     private CompassMapping mapping;
@@ -96,16 +91,16 @@ public abstract class AbstractEngineTests extends TestCase {
 //        PropertyMapping val3 = new MockPropertyMapping(PROPERTY_VAL3, PROPERTY_VAL3);
 //        PropertyMapping val4 = new MockPropertyMapping(PROPERTY_VAL4, PROPERTY_VAL4);
 
-        singleIdMapping = new MockResourceMapping(ALIAS_SINGLE);
+        ResourceMapping singleIdMapping = new MockResourceMapping(ALIAS_SINGLE);
         ((MockResourceMapping) singleIdMapping).addId(id1);
 
-        multipleIdMapping = new MockResourceMapping(ALIAS_MUTLI);
+        ResourceMapping multipleIdMapping = new MockResourceMapping(ALIAS_MUTLI);
         ((MockResourceMapping) multipleIdMapping).addId(id2);
         ((MockResourceMapping) multipleIdMapping).addId(id3);
 
         CompassMapping mapping = new CompassMapping();
-        mapping.addMapping((AliasMapping) singleIdMapping);
-        mapping.addMapping((AliasMapping) multipleIdMapping);
+        mapping.addMapping(singleIdMapping);
+        mapping.addMapping(multipleIdMapping);
 
         return mapping;
     }

@@ -31,7 +31,7 @@ public class LuceneToken implements CompassToken {
     }
 
     public String getTermText() {
-        return token.termText();
+        return new String(token.termBuffer(), 0, token.termLength());
     }
 
     public String getType() {

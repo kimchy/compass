@@ -310,10 +310,6 @@
         <junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
 
             <jvmarg line="-Djava.awt.headless=true -Xmx512m -XX:MaxPermSize=128m"/>
-            <!-- Needed since the order of the jar loading is unknown, and Lucene SegmentReader might -->
-            <!-- be loaded before compass (should not happen in actual apps)) -->
-            <sysproperty key="org.apache.lucene.SegmentReader.class"
-                         value="org.apache.lucene.index.CompassSegmentReader"/>
 
             <!-- Must go first to ensure any jndi.properties files etc take precedence  -->
             <classpath location="${target.testclasses.dir}"/>
@@ -356,10 +352,6 @@
         <junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="no" haltonerror="no">
 
             <jvmarg line="-Djava.awt.headless=true -Xmx512m -XX:MaxPermSize=128m"/>
-            <!-- Needed since the order of the jar loading is unknown, and Lucene SegmentReader might -->
-            <!-- be loaded before compass (should not happen in actual apps)) -->
-            <sysproperty key="org.apache.lucene.SegmentReader.class"
-                         value="org.apache.lucene.index.CompassSegmentReader"/>
 
             <!-- Must go first to ensure any jndi.properties files etc take precedence  -->
             <classpath location="${target.testclasses.dir}"/>
@@ -742,11 +734,6 @@
         <mkdir dir="${sandbox.reports.dir}"/>
 
         <junit forkmode="${junit.forkmode}" printsummary="yes" haltonfailure="yes" haltonerror="yes">
-
-            <!-- Needed since the order of the jar loading is unknown, and Lucene SegmentReader might -->
-            <!-- be loaded before compass (should not happen in actual apps)) -->
-            <sysproperty key="org.apache.lucene.SegmentReader.class"
-                         value="org.apache.lucene.index.CompassSegmentReader"/>
 
             <!-- Must go first to ensure any jndi.properties files etc take precedence  -->
             <classpath location="${sandbox.target.testclasses.dir}"/>

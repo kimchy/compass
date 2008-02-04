@@ -18,7 +18,6 @@ package org.compass.core.lucene.engine.manager;
 
 import java.io.IOException;
 
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
@@ -34,92 +33,13 @@ import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
  */
 public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager {
 
-    public static class LuceneIndexHolder {
-
-        private long lastCacheInvalidation = System.currentTimeMillis();
-
-        private IndexSearcher indexSearcher;
-
-        private int count = 0;
-
-        private boolean markForClose = false;
-
-        private Directory dir;
-
-        private String subIndex;
-
-        private boolean closeIndexReader = false;
-
-        public LuceneIndexHolder(String subIndex, Directory dir) throws IOException {
-            this.dir = dir;
-            this.indexSearcher = new IndexSearcher(dir);
-            this.subIndex = subIndex;
-        }
-
-        public LuceneIndexHolder(String subIndex, IndexSearcher indexSearcher, Directory dir) {
-            this.subIndex = subIndex;
-            this.indexSearcher = indexSearcher;
-            this.dir = dir;
-            this.closeIndexReader = true;
-        }
-
-        public IndexSearcher getIndexSearcher() {
-            return indexSearcher;
-        }
-
-        public IndexReader getIndexReader() {
-            return indexSearcher.getIndexReader();
-        }
-
-        public Directory getDirectory() {
-            return this.dir;
-        }
-
-        public String getSubIndex() {
-            return this.subIndex;
-        }
-
-        public synchronized void acquire() {
-            count++;
-        }
-
-        public synchronized void release() {
-            count--;
-            checkIfCanClose();
-        }
-
-        public synchronized void markForClose() {
-            markForClose = true;
-            checkIfCanClose();
-        }
-
-        private void checkIfCanClose() {
-            if (markForClose && count <= 0) {
-                try {
-                    indexSearcher.close();
-                } catch (Exception e) {
-                    // do nothing
-                }
-                try {
-                    indexSearcher.getIndexReader().close();
-                } catch (Exception e) {
-                    // do nothing
-                }
-            }
-        }
-
-        public long getLastCacheInvalidation() {
-            return lastCacheInvalidation;
-        }
-
-        public void setLastCacheInvalidation(long lastCacheInvalidation) {
-            this.lastCacheInvalidation = lastCacheInvalidation;
-        }
-    }
-
     LuceneSettings getSettings();
 
     LuceneSearchEngineStore getStore();
+
+    IndexWriter openIndexWriter(String subIndex) throws IOException;
+
+    IndexWriter openIndexWriter(String subIndex, boolean autoCommit) throws IOException;
 
     IndexWriter openIndexWriter(Directory dir, boolean create) throws IOException;
 

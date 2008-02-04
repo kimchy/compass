@@ -40,7 +40,7 @@ public class AllTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setValue1("test1");
@@ -55,6 +55,42 @@ public class AllTests extends AbstractTestCase {
 
         // verify that we can find the alias in the all property as well
         result = session.find("a1");
+        assertEquals(1, result.getLength());
+
+        result = session.find("test2");
+        assertEquals(1, result.getLength());
+        a = (A) result.data(0);
+        assertEquals("test1", a.getValue1());
+        assertEquals("test2", a.getValue2());
+
+        result = session.find(CompassEnvironment.All.DEFAULT_NAME + ":test2");
+        assertEquals(1, result.getLength());
+        a = (A) result.data(0);
+        assertEquals("test1", a.getValue1());
+        assertEquals("test2", a.getValue2());
+
+        tr.commit();
+    }
+
+    public void testAllWithTermVectorOnProperties() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = (long) 1;
+        A a = new A();
+        a.setId(id);
+        a.setValue1("test1");
+        a.setValue2("test2");
+        session.save("a10", a);
+
+        CompassHits result = session.find("test1");
+        assertEquals(1, result.getLength());
+        a = (A) result.data(0);
+        assertEquals("test1", a.getValue1());
+        assertEquals("test2", a.getValue2());
+
+        // verify that we can find the alias in the all property as well
+        result = session.find("a10");
         assertEquals(1, result.getLength());
 
         result = session.find("test2");
@@ -163,7 +199,7 @@ public class AllTests extends AbstractTestCase {
         session.save("a5", a);
 
         Resource r = session.loadResource("a5", id);
-        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "all");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, CompassEnvironment.All.DEFAULT_NAME);
         assertNotNull(termInfoVector);
         try {
             int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
@@ -195,7 +231,7 @@ public class AllTests extends AbstractTestCase {
         session.save("a6", a);
 
         Resource r = session.loadResource("a6", id);
-        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "all");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, CompassEnvironment.All.DEFAULT_NAME);
         assertNotNull(termInfoVector);
         int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNotNull(positions);
@@ -219,7 +255,7 @@ public class AllTests extends AbstractTestCase {
         session.save("a7", a);
 
         Resource r = session.loadResource("a7", id);
-        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "all");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, CompassEnvironment.All.DEFAULT_NAME);
         assertNotNull(termInfoVector);
         int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNull(positions);
@@ -243,7 +279,7 @@ public class AllTests extends AbstractTestCase {
         session.save("a8", a);
 
         Resource r = session.loadResource("a8", id);
-        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, "all");
+        TermFreqVector termInfoVector = LuceneHelper.getTermFreqVector(session, r, CompassEnvironment.All.DEFAULT_NAME);
         assertNotNull(termInfoVector);
         int[] positions = ((TermPositionVector) termInfoVector).getTermPositions(0);
         assertNotNull(positions);

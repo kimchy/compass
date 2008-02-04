@@ -18,7 +18,7 @@ package org.compass.core.test.engine.lucene;
 
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
+import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransaction;
 
 /**
  * @author kimchy

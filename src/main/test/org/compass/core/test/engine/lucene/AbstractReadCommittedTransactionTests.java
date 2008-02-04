@@ -306,4 +306,15 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         assertMulitIdResourceExists(getSearchEngine());
         getSearchEngine().rollback();
     }
+
+    public void testCreateAndFindWithinTransaction() {
+        getSearchEngine().begin();
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+
+        SearchEngineHits hits = getSearchEngine().queryBuilder().term(PROPERTY_VAL1, VALUE_VAL1).hits();
+        assertEquals(1, hits.getLength());
+
+        getSearchEngine().rollback();
+    }
 }

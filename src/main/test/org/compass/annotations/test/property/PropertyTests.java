@@ -47,8 +47,14 @@ public class PropertyTests extends AbstractAnnotationsTestCase {
 
         session.save(a);
 
-        a = (A) session.load(A.class, 1);
+        a = session.load(A.class, 1);
         assertEquals(values, a.values);
+
+        tr.commit();
+        session.close();
+
+        session = openSession();
+        tr = session.beginTransaction();
 
         CompassHits hits = session.find("test1");
         assertEquals(1, hits.length());
@@ -79,7 +85,7 @@ public class PropertyTests extends AbstractAnnotationsTestCase {
         b.convertedValues = convertedValues;
         session.save(b);
 
-        b = (B) session.load(B.class, 1);
+        b = session.load(B.class, 1);
         assertEquals("value1", b.converted1.value1);
         assertEquals("value2", b.converted1.value2);
         assertEquals("value3", b.converted2.value1);

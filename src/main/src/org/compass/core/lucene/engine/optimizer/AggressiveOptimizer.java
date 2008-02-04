@@ -31,7 +31,7 @@ import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 /**
  * @author kimchy
  */
-public class AggressiveOptimizer extends AbstractLuceneSearchEngineOptimizer implements CompassConfigurable {
+public class AggressiveOptimizer extends AbstractIndexInfoOptimizer implements CompassConfigurable {
 
     private long mergeFactor;
 

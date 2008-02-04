@@ -18,9 +18,10 @@ package org.compass.core.lucene.engine.optimizer;
 
 import java.io.IOException;
 
-import org.apache.lucene.index.LuceneSegmentsMerger;
-import org.apache.lucene.index.LuceneSubIndexInfo;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.LockObtainFailedException;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
@@ -31,9 +32,10 @@ import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 /**
  * @author kimchy
  */
-public class AdaptiveOptimizer extends AbstractLuceneSearchEngineOptimizer implements CompassConfigurable {
+public class AdaptiveOptimizer extends AbstractOptimizer implements CompassConfigurable {
 
     private int mergeFactor;
+    private LuceneSearchEngineIndexManager indexManager;
 
     public void configure(CompassSettings settings) throws CompassException {
         mergeFactor = settings.getSettingAsInt(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, 10);
@@ -47,69 +49,45 @@ public class AdaptiveOptimizer extends AbstractLuceneSearchEngineOptimizer imple
         return false;
     }
 
-    protected void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException {
-        if (indexInfo.size() < mergeFactor) {
-            return;
-        }
-        // find the number of segments to merge
-        int threshold = mergeFactor - 1;
-        long count = 0;
-        for (int i = indexInfo.size() - 1; i >= threshold; i--) {
-            count += indexInfo.info(i).docCount();
-        }
-        int mergeFromSegment = 0;
-        for (mergeFromSegment = threshold; mergeFromSegment > 0; mergeFromSegment--) {
-            LuceneSubIndexInfo.LuceneSegmentInfo segmentInfo = indexInfo.info(mergeFromSegment - 1);
-            if (count >= segmentInfo.docCount()) {
-                count += segmentInfo.docCount();
-            } else {
-                break;
-            }
-        }
+    protected void doOptimize(String subIndex) throws SearchEngineException {
         if (log.isDebugEnabled()) {
-            log.debug("Optimizing sub-index [" + subIndex + "] from [" + mergeFromSegment + "]");
+            log.debug("Optimizing sub-index [" + subIndex + "]");
         }
-        LuceneSearchEngineIndexManager indexManager = getSearchEngineFactory().getLuceneIndexManager();
-        LuceneSegmentsMerger segmentsMerger = null;
+        long time = System.currentTimeMillis();
+        indexManager = (LuceneSearchEngineIndexManager) getSearchEngineFactory().getIndexManager();
+        IndexWriter indexWriter;
         try {
-            long time = System.currentTimeMillis();
-            Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
-            segmentsMerger = new LuceneSegmentsMerger(dir, false, getSearchEngineFactory());
-            long lockTime = System.currentTimeMillis() - time;
-            time = System.currentTimeMillis();
-            segmentsMerger.mergeFromSegment(mergeFromSegment);
-            long mergeTime = System.currentTimeMillis() - time;
-            time = System.currentTimeMillis();
-            segmentsMerger.commit();
-            long commitTime = System.currentTimeMillis() - time;
-            indexManager.clearCache(subIndex);
-
-            if (log.isDebugEnabled()) {
-                log.debug("Optimization of sub-index [" + subIndex + "] took [" + (commitTime + mergeTime + lockTime)
-                        + "ms], Locking took [" + lockTime + "ms], merge took [" + mergeTime + "ms], commit took ["
-                        + commitTime + "ms].");
-            }
+            indexWriter = indexManager.openIndexWriter(subIndex);
+        } catch (LockObtainFailedException e) {
+            log.debug("Failed to obtain lock in order to optimizer, will try next time...");
+            return;
         } catch (IOException e) {
-            if (segmentsMerger != null) {
-                try {
-                    segmentsMerger.rollback();
-                } catch (IOException e1) {
-                    log.warn("Failed to rollback optimization for [" + subIndex + "], ignoring", e);
+            throw new SearchEngineException("Failed to open index writer for optimization for sub index [" + subIndex + "]", e);
+        }
+
+        try {
+            indexWriter.optimize(mergeFactor);
+        } catch (Exception e) {
+            try {
+                Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
+                if (IndexReader.isLocked(dir)) {
+                    IndexReader.unlock(dir);
                 }
-            }
-            if (e.getMessage().startsWith("Lock obtain")) {
-                log.warn("Failed to obtain lock on sub-index [" + subIndex + "], will do it next time.");
-            } else {
-                throw new SearchEngineException("Failed to optimize sub-index [" + subIndex + "]", e);
+            } catch (Exception e1) {
+                // do nothing
             }
         } finally {
-            if (segmentsMerger != null) {
-                try {
-                    segmentsMerger.close();
-                } catch (IOException e) {
-                    log.warn("Failed to close optimizer segment merger, ignoring", e);
-                }
+            try {
+                indexWriter.close();
+            } catch (Exception e) {
+                // ignore
             }
+        }
+        long optimizeTime = System.currentTimeMillis() - time;
+
+        if (log.isDebugEnabled()) {
+            log.debug("Optimization of sub-index [" + subIndex + "] took [" + (optimizeTime)
+                    + "ms]");
         }
     }
 }

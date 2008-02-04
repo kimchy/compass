@@ -45,8 +45,8 @@ import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.transaction.BatchInsertTransaction;
 import org.compass.core.lucene.engine.transaction.LuceneSearchEngineTransaction;
-import org.compass.core.lucene.engine.transaction.ReadCommittedTransaction;
-import org.compass.core.lucene.engine.transaction.SerialableTransaction;
+import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransaction;
+import org.compass.core.lucene.engine.transaction.serializable.SerializableTransaction;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -228,7 +228,7 @@ public class LuceneSearchEngine implements SearchEngine {
         } else if (transactionIsolation == TransactionIsolation.BATCH_INSERT) {
             transaction = new BatchInsertTransaction();
         } else if (transactionIsolation == TransactionIsolation.SERIALIZABLE) {
-            transaction = new SerialableTransaction();
+            transaction = new SerializableTransaction();
         }
         transaction.configure(this);
         eventManager.beforeBeginTransaction();
@@ -333,7 +333,17 @@ public class LuceneSearchEngine implements SearchEngine {
         }
     }
 
-    public void create(final Resource resource) throws SearchEngineException {
+    public void save(Resource resource) throws SearchEngineException {
+        readOnly = false;
+        createOrUpdate(resource, true);
+    }
+
+    public void create(Resource resource) throws SearchEngineException {
+        readOnly = false;
+        createOrUpdate(resource, false);
+    }
+
+    private void createOrUpdate(final Resource resource, boolean update) throws SearchEngineException {
         verifyWithinTransaction();
         readOnly = false;
         String alias = resource.getAlias();
@@ -345,29 +355,41 @@ public class LuceneSearchEngine implements SearchEngine {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
                 InternalResource resource1 = (InternalResource) multiResource.resource(i);
-                internalCreate(resourceMapping, resource1);
+                Analyzer analyzer = enhanceResource(resourceMapping, resource1);
+                if (update) {
+                    transaction.update(resource1, analyzer);
+                    if (log.isDebugEnabled()) {
+                        log.debug("RESOURCE SAVE " + resource1);
+                    }
+                } else {
+                    transaction.create(resource1, analyzer);
+                    if (log.isDebugEnabled()) {
+                        log.debug("RESOURCE CREATE " + resource1);
+                    }
+                }
             }
         } else {
             InternalResource resource1 = (InternalResource) resource;
-            internalCreate(resourceMapping, resource1);
+            Analyzer analyzer = enhanceResource(resourceMapping, resource1);
+            if (update) {
+                transaction.create(resource1, analyzer);
+                if (log.isDebugEnabled()) {
+                    log.debug("RESOURCE SAVE " + resource1);
+                }
+            } else {
+                transaction.create(resource1, analyzer);
+                if (log.isDebugEnabled()) {
+                    log.debug("RESOURCE CREATE " + resource1);
+                }
+            }
         }
     }
 
-    private void internalCreate(ResourceMapping resourceMapping, InternalResource resource1) throws SearchEngineException {
-        LuceneUtils.addExtendedProeprty(resource1, resourceMapping, this);
-        LuceneUtils.applyBoostIfNeeded(resource1, this);
-        Analyzer analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerByResource(resource1);
-        analyzer = LuceneUtils.addAllProperty(resource1, analyzer, resource1.resourceKey().getResourceMapping(), this);
-        transaction.create(resource1, analyzer);
-        if (log.isDebugEnabled()) {
-            log.debug("RESOURCE CREATE " + resource1);
-        }
-    }
-
-    public void save(Resource resource) throws SearchEngineException {
-        readOnly = true;
-        delete(resource);
-        create(resource);
+    private Analyzer enhanceResource(ResourceMapping resourceMapping, InternalResource resource) throws SearchEngineException {
+        LuceneUtils.addExtendedProeprty(resource, resourceMapping, this);
+        LuceneUtils.applyBoostIfNeeded(resource, this);
+        Analyzer analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerByResource(resource);
+        return LuceneUtils.addAllProperty(resource, analyzer, resource.resourceKey().getResourceMapping(), this);
     }
 
     public Resource get(Resource idResource) throws SearchEngineException {
