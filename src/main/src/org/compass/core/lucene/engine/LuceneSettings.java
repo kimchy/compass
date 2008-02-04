@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
@@ -159,6 +160,8 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Using transaction lock timeout [" + transactionLockTimout + "ms]");
         }
+        IndexWriter.setDefaultWriteLockTimeout(transactionLockTimout);
+
         Lock.LOCK_POLL_INTERVAL = settings.getSettingAsLong(LuceneEnvironment.Transaction.LOCK_POLL_INTERVAL, 100);
         if (log.isDebugEnabled()) {
             log.debug("Using lock poll interval [" + Lock.LOCK_POLL_INTERVAL + "ms]");

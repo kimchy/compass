@@ -35,20 +35,16 @@ public class LuceneIndexHolder {
 
     private boolean markForClose = false;
 
-    private Directory dir;
-
     private String subIndex;
 
     public LuceneIndexHolder(String subIndex, Directory dir) throws IOException {
-        this.dir = dir;
         this.indexSearcher = new IndexSearcher(dir);
         this.subIndex = subIndex;
     }
 
-    public LuceneIndexHolder(String subIndex, IndexSearcher indexSearcher, Directory dir) {
+    public LuceneIndexHolder(String subIndex, IndexSearcher indexSearcher) {
         this.subIndex = subIndex;
         this.indexSearcher = indexSearcher;
-        this.dir = dir;
     }
 
     public IndexSearcher getIndexSearcher() {
@@ -57,10 +53,6 @@ public class LuceneIndexHolder {
 
     public IndexReader getIndexReader() {
         return indexSearcher.getIndexReader();
-    }
-
-    public Directory getDirectory() {
-        return this.dir;
     }
 
     public String getSubIndex() {

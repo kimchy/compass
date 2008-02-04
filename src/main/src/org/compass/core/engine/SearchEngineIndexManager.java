@@ -149,6 +149,20 @@ public interface SearchEngineIndexManager {
     void clearCache() throws SearchEngineException;
 
     /**
+     * Refresh any internal caching done by the index for the specified sub-index.
+     *
+     * @throws SearchEngineException
+     */
+    void refreshCache(String subIndex) throws SearchEngineException;
+
+    /**
+     * Refresh any internal caching done by the index.
+     *
+     * @throws SearchEngineException
+     */
+    void refreshCache() throws SearchEngineException;
+
+    /**
      * Notifies all the compass instances that are working with the same index to
      * clear cache.
      *

@@ -19,7 +19,6 @@ package org.compass.core.lucene.engine.transaction.readcommitted;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -65,8 +64,6 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     private BitSetByAliasFilter filter;
 
-    private Map<String, List<Term>> deletesBySubIndex = new HashMap<String, List<Term>>();
-
     private Map<String, LuceneIndexHolder> indexHoldersBySubIndex = new HashMap<String, LuceneIndexHolder>();
 
     protected void doBegin() throws SearchEngineException {
@@ -99,15 +96,6 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     protected void doPrepare() throws SearchEngineException {
         releaseHolders();
-        // first, go over the index writeres and delete the terms
-        for (Map.Entry<String, List<Term>> entry : deletesBySubIndex.entrySet()) {
-            IndexWriter indexWriter = indexWriterBySubIndex.get(entry.getKey());
-            try {
-                indexWriter.deleteDocuments(entry.getValue().toArray(new Term[entry.getValue().size()]));
-            } catch (IOException e) {
-                throw new SearchEngineException("Failed to update deleted documents in sub index [" + entry.getKey() + "]", e);
-            }
-        }
         try {
             transIndexManager.commit();
         } catch (IOException e) {
@@ -144,7 +132,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 throw new SearchEngineException("Failed to close index writer", e);
             }
             if (indexManager.getSettings().isClearCacheOnCommit()) {
-                indexManager.clearCache(subIndex);
+                indexManager.refreshCache(subIndex);
             }
             try {
                 transIndexManager.close(subIndex);
@@ -225,7 +213,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 indexReader = new MultiReader(new IndexReader[]{indexHolder.getIndexReader(), transIndexManager.getReader(subIndex)}, false);
                 // note, we need to create a multi searcher here instead of a searcher ontop of the MultiReader
                 // since our filter relies on specific reader per searcher
-                indexSearcher = new MultiSearcher(new Searcher[] {new IndexSearcher(indexHolder.getIndexReader()), transIndexManager.getSearcher(subIndex)});
+                indexSearcher = new MultiSearcher(new Searcher[]{new IndexSearcher(indexHolder.getIndexReader()), transIndexManager.getSearcher(subIndex)});
             } else {
                 indexReader = indexHolder.getIndexReader();
                 indexSearcher = indexHolder.getIndexSearcher();
@@ -284,7 +272,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
             LuceneIndexHolder indexHolder = indexHoldersBySubIndex.get(resourceKey.getSubIndex());
             if (indexHolder == null) {
-                indexManager.clearCache(resourceKey.getSubIndex());
+                indexManager.refreshCache(resourceKey.getSubIndex());
                 indexHolder = indexManager.openIndexHolderBySubIndex(resourceKey.getSubIndex());
                 indexHoldersBySubIndex.put(resourceKey.getSubIndex(), indexHolder);
             }
@@ -316,13 +304,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 }
             }
 
-            // add the deleted term to the list of deleted terms
-            List<Term> subIndexDeletedTerms = deletesBySubIndex.get(resourceKey.getSubIndex());
-            if (subIndexDeletedTerms == null) {
-                subIndexDeletedTerms = new ArrayList<Term>();
-                deletesBySubIndex.put(resourceKey.getSubIndex(), subIndexDeletedTerms);
-            }
-            subIndexDeletedTerms.add(deleteTerm);
+            // delete from the original index (autoCommit is false, so won't be committed
+            indexWriterBySubIndex.get(resourceKey.getSubIndex()).deleteDocuments(deleteTerm);
 
             // and delete it (if there) from the transactional index
             transIndexManager.delete(resourceKey);

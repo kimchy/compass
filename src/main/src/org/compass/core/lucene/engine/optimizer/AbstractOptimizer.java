@@ -87,7 +87,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction(CompassTransaction tr) throws CompassException {
                 doOptimize(subIndex);
-                searchEngineFactory.getIndexManager().clearCache(subIndex);
+                searchEngineFactory.getIndexManager().refreshCache(subIndex);
                 return null;
             }
         });

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
@@ -264,8 +265,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void clearCache() throws SearchEngineException {
-        String[] subIndexes = searchEngineStore.getSubIndexes();
-        for (String subIndex : subIndexes) {
+        for (String subIndex : searchEngineStore.getSubIndexes()) {
             clearCache(subIndex);
         }
     }
@@ -279,13 +279,46 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
+    public void refreshCache() throws SearchEngineException {
+        for (String subIndex : searchEngineStore.getSubIndexes()) {
+            refreshCache(subIndex);
+        }
+    }
+
+    public void refreshCache(String subIndex) throws SearchEngineException {
+        synchronized (indexHoldersLocks.get(subIndex)) {
+            LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
+            if (indexHolder != null) {
+                IndexReader reader = null;
+                try {
+                    reader = indexHolder.getIndexReader().reopen();
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to refresh sub index cache [" + subIndex + "]");
+                }
+                if (reader != indexHolder.getIndexReader()) {
+                    // if the reader was refreshed, mark the old one to close and replace the holder
+                    indexHolder.markForClose();
+                    indexHolders.put(subIndex, new LuceneIndexHolder(subIndex, new IndexSearcher(reader)));
+                }
+            } else {
+                // do the same with index holder
+                try {
+                    indexHolder = new LuceneIndexHolder(subIndex, getDirectory(subIndex));
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to open sub index cache [" + subIndex + "]");
+                }
+                indexHolders.put(subIndex, indexHolder);
+            }
+        }
+    }
+
     public void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException {
         synchronized (indexHoldersLocks.get(subIndex)) {
             LuceneIndexHolder indexHolder = indexHolders.remove(subIndex);
             if (indexHolder != null) {
                 indexHolder.markForClose();
             }
-            indexHolder = new LuceneIndexHolder(subIndex, indexSearcher, getDirectory(subIndex));
+            indexHolder = new LuceneIndexHolder(subIndex, indexSearcher);
             indexHolders.put(subIndex, indexHolder);
         }
     }
@@ -296,12 +329,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 Directory dir = getDirectory(subIndex);
                 LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
                 if (shouldInvalidateCache(dir, indexHolder)) {
-                    clearCache(subIndex);
-                    // get a new directory and put it in the cache
-                    dir = getDirectory(subIndex);
-                    // do the same with index holder
-                    indexHolder = new LuceneIndexHolder(subIndex, dir);
-                    indexHolders.put(subIndex, indexHolder);
+                    refreshCache(subIndex);
+                    // get the holder again, since it was refreshed
+                    indexHolder = indexHolders.get(subIndex);
                 }
                 indexHolder.acquire();
                 return indexHolder;
