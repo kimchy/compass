@@ -27,6 +27,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NoLockFactory;
 import org.apache.lucene.store.RAMDirectory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
@@ -81,8 +82,11 @@ public class TransIndex implements CompassConfigurable {
                 directory = FSDirectory.getDirectory(transLogConnection);
                 // TODO we can improve the file system one by starting with a ram one and then switching
             }
+            // since this is single threaded access, there is no need to have locks
+            directory.setLockFactory(new NoLockFactory());
             // create an index writer with autoCommit=true since we want it to be visible to readers (still need to flush)
             indexWriter = searchEngineFactory.getLuceneIndexManager().openIndexWriter(directory, true, true, new KeepOnlyLastCommitDeletionPolicy());
+            // TODO lucene23 we probably want to set a merge policy that will perform no merges
             optimize = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG, true);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open transactional index for sub index [" + subIndex + "]");
