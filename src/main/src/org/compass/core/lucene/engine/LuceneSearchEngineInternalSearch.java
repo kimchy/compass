@@ -1,5 +1,6 @@
 package org.compass.core.lucene.engine;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.lucene.index.IndexReader;
@@ -79,6 +80,15 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
             return;
         }
         closed = true;
+
+        if (reader != null) {
+            // close the multi reader so we dec ref its count
+            try {
+                reader.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
 
         if (indexHoldersToClose != null) {
             for (LuceneIndexHolder indexHolder : indexHoldersToClose) {

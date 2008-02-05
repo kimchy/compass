@@ -290,7 +290,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         synchronized (indexHoldersLocks.get(subIndex)) {
             LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
             if (indexHolder != null) {
-                IndexReader reader = null;
+                IndexReader reader;
                 try {
                     reader = indexHolder.getIndexReader().reopen();
                 } catch (IOException e) {

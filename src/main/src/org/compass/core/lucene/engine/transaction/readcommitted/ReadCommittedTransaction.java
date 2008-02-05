@@ -114,15 +114,11 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             String subIndex = entry.getKey();
             // onlt add indexes if there is a transactional index
-            if (transIndexManager.hasTransIndex(subIndex)) {
-                Directory transDir = transIndexManager.getDirectory(subIndex);
-                try {
-                    entry.getValue().addIndexesNoOptimize(new Directory[]{transDir});
-                } catch (IOException e) {
-                    throw new SearchEngineException("Failed to add transctional index to actual index for sub index [" + subIndex + "]", e);
-                }
-            }
             try {
+                if (transIndexManager.hasTransIndex(subIndex)) {
+                    Directory transDir = transIndexManager.getDirectory(subIndex);
+                    entry.getValue().addIndexesNoOptimize(new Directory[]{transDir});
+                }
                 entry.getValue().close();
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
@@ -133,7 +129,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 } catch (Exception e1) {
                     log.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
                 }
-                throw new SearchEngineException("Failed to close index writer", e);
+                throw new SearchEngineException("Failed add transaction index to sub index [" + subIndex + "]", e);
             }
             if (indexManager.getSettings().isClearCacheOnCommit()) {
                 indexManager.refreshCache(subIndex);
@@ -200,10 +196,11 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     }
 
     public Resource[] find(ResourceKey resourceKey) throws SearchEngineException {
-        Searcher indexSearcher;
-        IndexReader indexReader;
+        Searcher indexSearcher = null;
+        IndexReader indexReader = null;
         LuceneIndexHolder indexHolder = null;
         boolean releaseHolder = false;
+        boolean closeReaderAndSearcher = false;
         try {
             String subIndex = resourceKey.getSubIndex();
             indexHolder = indexHoldersBySubIndex.get(subIndex);
@@ -214,6 +211,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 releaseHolder = false;
             }
             if (transIndexManager.hasTransIndex(subIndex)) {
+                closeReaderAndSearcher = true;
                 indexReader = new MultiReader(new IndexReader[]{indexHolder.getIndexReader(), transIndexManager.getReader(subIndex)}, false);
                 // note, we need to create a multi searcher here instead of a searcher ontop of the MultiReader
                 // since our filter relies on specific reader per searcher
@@ -255,6 +253,18 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         } finally {
             if (indexHolder != null && releaseHolder) {
                 indexHolder.release();
+            }
+            if (closeReaderAndSearcher) {
+                try {
+                    indexSearcher.close();
+                } catch (Exception e) {
+                    // ignore
+                }
+                try {
+                    indexReader.close();
+                } catch (Exception e) {
+                    // ignore
+                }
             }
         }
     }

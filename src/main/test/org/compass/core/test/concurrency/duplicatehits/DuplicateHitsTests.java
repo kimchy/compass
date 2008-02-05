@@ -59,8 +59,8 @@ public class DuplicateHitsTests extends TestCase {
     }
 
     protected void tearDown() throws Exception {
-        compass.getSearchEngineIndexManager().deleteIndex();
         compass.close();
+        compass.getSearchEngineIndexManager().deleteIndex();
     }
 
     public void testSearchingObjectsAtTheSameTimeAsChangingThemWontCauseTheSameObjectToBeReturnedTwiceInCompassHits() throws Exception {
