@@ -22,6 +22,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.store.Directory;
 import org.compass.core.Compass;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
@@ -42,6 +43,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
+import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalResource;
@@ -210,5 +212,12 @@ public abstract class LuceneHelper {
         } catch (IOException e) {
             throw new SearchEngineException("Failed to fetch term info for resource [" + resource + "]", e);
         }
+    }
+
+    /**
+     * Returns the lucene {@link org.apache.lucene.store.Directory} associated with the given sub index.
+     */
+    public static Directory getDirectory(Compass compass, String subIndex) {
+        return ((LuceneSearchEngineIndexManager) ((InternalCompass) compass).getSearchEngineIndexManager()).getStore().getDirectoryBySubIndex(subIndex, false);
     }
 }

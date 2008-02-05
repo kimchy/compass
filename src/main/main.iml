@@ -119,7 +119,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="intellijad://intellijad" />
+          <root url="intellija$MODULE_DIR$/../../../../..//intellijad" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -618,7 +618,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="intellijad://intellijad" />
+          <root url="intellija$MODULE_DIR$/../../../../..//intellijad" />
         </SOURCES>
       </library>
     </orderEntry>
