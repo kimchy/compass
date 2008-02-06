@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="JAVA_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="hibernate" name="Hibernate">
-      <configuration>
-        <setting name="validation-enabled" value="false" />
-        <datasource-map>
-          <unit-entry name="&lt;anonymous&gt;hibernate-nonjta.cfg.xml@199" />
-        </datasource-map>
-        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/test/org/compass/gps/device/hibernate/collection/hibernate-nonjta.cfg.xml" optional="false" version="3.0" />
-      </configuration>
-    </facet>
-  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_4" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/../../target/classes" />
     <exclude-output />
@@ -19,7 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="1.4" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="1.5" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>

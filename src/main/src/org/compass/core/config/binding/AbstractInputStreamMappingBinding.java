@@ -26,6 +26,8 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.InputStreamMappingResolver;
@@ -39,6 +41,8 @@ import org.compass.core.metadata.CompassMetaData;
  */
 public abstract class AbstractInputStreamMappingBinding implements MappingBinding {
 
+    private final Log log = LogFactory.getLog(getClass());
+    
     protected CompassMapping mapping;
 
     protected CompassMetaData metaData;
@@ -159,13 +163,14 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
     }
 
     public boolean addInputStream(InputStream is, String resourceName) throws ConfigurationException, MappingException {
-        if (resourceName.indexOf(getSuffix()) == -1) {
-            return false;
-        }
         try {
+            if (resourceName.indexOf(getSuffix()) == -1) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Resource name [" + resourceName + "] does not end with suffix [" + getSuffix() + "], ignoring");
+                }
+                return false;
+            }
             return doAddInputStream(is, resourceName);
-        } catch (ConfigurationException e) {
-            throw e;
         } finally {
             try {
                 is.close();
