@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +50,7 @@ import org.compass.core.lucene.util.ChainedFilter;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
+import org.compass.core.transaction.context.TransactionalCallable;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -100,46 +102,23 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     protected void doPrepare() throws SearchEngineException {
         releaseHolders();
-        try {
-            transIndexManager.commit();
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to prepare transactional index", e);
+        ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
+        for (String subIndex : indexWriterBySubIndex.keySet()) {
+            if (!transIndexManager.hasTransIndex(subIndex)) {
+                continue;
+            }
+            prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new PrepareCallable(subIndex)));
         }
+        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
     }
 
     protected void doCommit(boolean onePhase) throws SearchEngineException {
-        if (onePhase) {
-            doPrepare();
-        }
+        releaseHolders();
+        ArrayList<Callable<Object>> commitCallables = new ArrayList<Callable<Object>>();
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
-            String subIndex = entry.getKey();
-            // onlt add indexes if there is a transactional index
-            try {
-                if (transIndexManager.hasTransIndex(subIndex)) {
-                    Directory transDir = transIndexManager.getDirectory(subIndex);
-                    entry.getValue().addIndexesNoOptimize(new Directory[]{transDir});
-                }
-                entry.getValue().close();
-            } catch (IOException e) {
-                Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
-                try {
-                    if (IndexReader.isLocked(dir)) {
-                        IndexReader.unlock(dir);
-                    }
-                } catch (Exception e1) {
-                    log.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
-                }
-                throw new SearchEngineException("Failed add transaction index to sub index [" + subIndex + "]", e);
-            }
-            if (indexManager.getSettings().isClearCacheOnCommit()) {
-                indexManager.refreshCache(subIndex);
-            }
-            try {
-                transIndexManager.close(subIndex);
-            } catch (IOException e) {
-                log.warn("Failed to close transactional index for sub index [" + subIndex + "], ignoring", e);
-            }
+            commitCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue(), onePhase)));
         }
+        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(commitCallables, 1);
     }
 
     protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
@@ -346,5 +325,71 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             indexHolder.release();
         }
         indexHoldersBySubIndex.clear();
+    }
+
+    private class PrepareCallable implements Callable {
+
+        private String subIndex;
+
+        private PrepareCallable(String subIndex) {
+            this.subIndex = subIndex;
+        }
+
+        public Object call() throws Exception {
+            if (transIndexManager.hasTransIndex(subIndex)) {
+                transIndexManager.commit(subIndex);
+            }
+            return null;
+        }
+    }
+
+    private class CommitCallable implements Callable {
+
+        private String subIndex;
+
+        private IndexWriter indexWriter;
+
+        private PrepareCallable prepareCallable;
+
+        public CommitCallable(String subIndex, IndexWriter indexWriter, boolean onePhase) {
+            this.subIndex = subIndex;
+            this.indexWriter = indexWriter;
+            if (onePhase) {
+                prepareCallable = new PrepareCallable(subIndex);
+            }
+        }
+
+        public Object call() throws Exception {
+            if (prepareCallable != null) {
+                prepareCallable.call();
+            }
+            // onlt add indexes if there is a transactional index
+            try {
+                if (transIndexManager.hasTransIndex(subIndex)) {
+                    Directory transDir = transIndexManager.getDirectory(subIndex);
+                    indexWriter.addIndexesNoOptimize(new Directory[]{transDir});
+                }
+                indexWriter.close();
+            } catch (IOException e) {
+                Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
+                try {
+                    if (IndexReader.isLocked(dir)) {
+                        IndexReader.unlock(dir);
+                    }
+                } catch (Exception e1) {
+                    log.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
+                }
+                throw new SearchEngineException("Failed add transaction index to sub index [" + subIndex + "]", e);
+            }
+            if (indexManager.getSettings().isClearCacheOnCommit()) {
+                indexManager.refreshCache(subIndex);
+            }
+            try {
+                transIndexManager.close(subIndex);
+            } catch (IOException e) {
+                log.warn("Failed to close transactional index for sub index [" + subIndex + "], ignoring", e);
+            }
+            return null;
+        }
     }
 }

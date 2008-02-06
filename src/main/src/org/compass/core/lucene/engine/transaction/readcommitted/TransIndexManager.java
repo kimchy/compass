@@ -88,6 +88,10 @@ public class TransIndexManager implements CompassConfigurable {
         }
     }
 
+    public void commit(String subIndex) throws IOException {
+        transIndexMap.get(subIndex).commit();
+    }
+
     public void close(String subIndex) throws IOException {
         TransIndex transIndex = transIndexMap.remove(subIndex);
         if (transIndex != null) {
