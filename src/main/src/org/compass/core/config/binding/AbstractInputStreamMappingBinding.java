@@ -42,7 +42,7 @@ import org.compass.core.metadata.CompassMetaData;
 public abstract class AbstractInputStreamMappingBinding implements MappingBinding {
 
     private final Log log = LogFactory.getLog(getClass());
-    
+
     protected CompassMapping mapping;
 
     protected CompassMetaData metaData;
@@ -66,15 +66,12 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
 
     public boolean addResource(String path, ClassLoader classLoader) throws ConfigurationException, MappingException {
         InputStream rsrc = classLoader.getResourceAsStream(path);
-        if (rsrc == null) {
-            return false;
-        }
-        return addInputStream(rsrc, path);
+        return rsrc != null && internalAddInputStream(rsrc, path, true);
     }
 
     public boolean addURL(URL url) throws ConfigurationException, MappingException {
         try {
-            return addInputStream(url.openStream(), url.toExternalForm());
+            return internalAddInputStream(url.openStream(), url.toExternalForm(), true);
         } catch (IOException e) {
             throw new ConfigurationException("Failed to open url [" + url.toExternalForm() + "]");
         }
@@ -84,13 +81,14 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
         boolean addedAtLeastOne = false;
         File[] files = dir.listFiles();
         for (int i = 0; i < files.length; i++) {
-            if (files[i].isDirectory()) {
-                boolean retVal = addDirectory(files[i]);
+            File file = files[i];
+            if (file.isDirectory()) {
+                boolean retVal = addDirectory(file);
                 if (retVal) {
                     addedAtLeastOne = true;
                 }
-            } else if (files[i].getName().endsWith(getSuffix())) {
-                boolean retVal = addFile(files[i]);
+            } else if (file.getName().endsWith(getSuffix())) {
+                boolean retVal = addFile(file);
                 if (retVal) {
                     addedAtLeastOne = true;
                 }
@@ -113,7 +111,7 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
             ZipEntry ze = (ZipEntry) jarEntries.nextElement();
             if (ze.getName().endsWith(getSuffix())) {
                 try {
-                    boolean retVal = addInputStream(jarFile.getInputStream(ze), ze.getName());
+                    boolean retVal = internalAddInputStream(jarFile.getInputStream(ze), ze.getName(), true);
                     if (retVal) {
                         addedAtLeastOne = true;
                     }
@@ -133,7 +131,7 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
 
     public boolean addFile(File file) throws ConfigurationException, MappingException {
         try {
-            return addInputStream(new FileInputStream(file), file.getAbsolutePath());
+            return internalAddInputStream(new FileInputStream(file), file.getAbsolutePath(), true);
         } catch (FileNotFoundException e) {
             throw new ConfigurationException("Could not configure mapping from file, file not found ["
                     + file.getAbsolutePath() + "]", e);
@@ -152,17 +150,21 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
             return false;
         }
         try {
-            return addInputStream(rsrc, fileName);
+            return internalAddInputStream(rsrc, fileName, true);
         } catch (ConfigurationException me) {
             throw new ConfigurationException("Error reading resource [" + fileName + "]", me);
         }
     }
 
     public boolean addMappingResolver(InputStreamMappingResolver mappingResolver) throws ConfigurationException, MappingException {
-        return addInputStream(mappingResolver.getMappingAsInputStream(), mappingResolver.getName());
+        return internalAddInputStream(mappingResolver.getMappingAsInputStream(), mappingResolver.getName(), true);
     }
 
     public boolean addInputStream(InputStream is, String resourceName) throws ConfigurationException, MappingException {
+        return internalAddInputStream(is, resourceName, false);
+    }
+
+    private boolean internalAddInputStream(InputStream is, String resourceName, boolean closeStream) throws ConfigurationException, MappingException {
         try {
             if (resourceName.indexOf(getSuffix()) == -1) {
                 if (log.isTraceEnabled()) {
@@ -172,10 +174,12 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
             }
             return doAddInputStream(is, resourceName);
         } finally {
-            try {
-                is.close();
-            } catch (IOException ioe) {
-                // ignore
+            if (closeStream) {
+                try {
+                    is.close();
+                } catch (IOException ioe) {
+                    // ignore
+                }
             }
         }
     }
