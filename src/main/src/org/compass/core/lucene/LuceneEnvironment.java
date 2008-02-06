@@ -1000,6 +1000,73 @@ public class LuceneEnvironment {
     }
 
     /**
+     * Controls Lucene {@link org.compass.core.lucene.LuceneEnvironment.MergeScheduler} configuration.
+     */
+    public static abstract class MergeScheduler {
+
+        /**
+         * The prefix setting for merge scheduler.
+         */
+        public static final String PREFIX = "compass.engine.merge.scheduler";
+
+        /**
+         * The type of the {@link org.compass.core.lucene.engine.merge.scheduler.MergeSchedulerProvider} that
+         * will be created. Can be one of the constant names of specific types (inner classes) or the
+         * FQN of a merge scheduler provider.
+         */
+        public static final String TYPE = PREFIX + ".type";
+
+        /**
+         * Allows to cofnigure {@link org.apache.lucene.index.SerialMergeScheduler}.
+         */
+        public abstract class Serial {
+
+            /**
+             * The name of the serial merge scheduler to be used as the merge scheduler type.
+             */
+            public static final String NAME = "serial";
+        }
+
+        /**
+         * Allows to configure {@link org.apache.lucene.index.ConcurrentMergeScheduler}.
+         */
+        public abstract class Concurrent {
+
+            /**
+             * The name of the concurrent merge scheduler to be used as the merge scheduler type.
+             */
+            public static final String NAME = "concurrent";
+
+            /**
+             * The maximum thread count that can be created for merges.
+             */
+            public static final String MAX_THREAD_COUNT = "maxThreadCount";
+
+            /**
+             * The thread priority of merge threads.
+             */
+            public static final String THREAD_PRIORITY = "threadPriority";
+        }
+
+        /**
+         * Allows to configure Compass {@link org.apache.lucene.index.ExecutorMergeScheduler}.
+         */
+        public abstract class Executor {
+
+            /**
+             * The name of the executor merge scheduler to be used as the merge scheduler type.
+             */
+            public static final String NAME = "executor";
+
+            /**
+             * The maximum concurrent merges that are allowed to be executed.
+             */
+            public static final String MAX_CONCURRENT_MERGE = "maxConcurrentMerge";
+
+        }
+    }
+
+    /**
      * Controls Lucene {@link org.apache.lucene.index.MergePolicy} configuration.
      */
     public static abstract class MergePolicy {

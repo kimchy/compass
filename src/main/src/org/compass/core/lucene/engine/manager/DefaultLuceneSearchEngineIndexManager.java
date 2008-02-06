@@ -34,11 +34,14 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
+import org.compass.core.executor.ExecutorManager;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.merge.policy.MergePolicyFactory;
+import org.compass.core.lucene.engine.merge.scheduler.MergeSchedulerFactory;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
@@ -408,6 +411,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
         indexWriter.setRAMBufferSizeMB(luceneSettings.getRamBufferSize());
         indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));
+        indexWriter.setMergeScheduler(MergeSchedulerFactory.create(this, settings));
         return indexWriter;
     }
 
@@ -627,6 +631,14 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public LuceneSettings getSettings() {
         return luceneSettings;
+    }
+
+    public ExecutorManager getExecutorManager() {
+        return searchEngineFactory.getExecutorManager();
+    }
+
+    public TransactionContext getTransactionContext() {
+        return searchEngineFactory.getTransactionContext();
     }
 
     private static class ScheduledIndexManagerRunnable implements Runnable {

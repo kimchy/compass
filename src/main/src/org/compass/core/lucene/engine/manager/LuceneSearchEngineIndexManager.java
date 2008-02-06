@@ -25,8 +25,10 @@ import org.apache.lucene.store.Directory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
+import org.compass.core.executor.ExecutorManager;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
+import org.compass.core.transaction.context.TransactionContext;
 
 /**
  * Specialized Lucene index manager extension.
@@ -68,4 +70,8 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
      * @param timeToWaitInMillis
      */
     void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis);
+
+    ExecutorManager getExecutorManager();
+
+    TransactionContext getTransactionContext();
 }
