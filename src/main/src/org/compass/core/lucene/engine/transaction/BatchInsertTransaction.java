@@ -214,7 +214,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
         throw new SearchEngineException("Find operation not supported for batch insert transaction");
     }
 
-    public Resource[] find(ResourceKey resourceKey) throws SearchEngineException {
+    public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
         throw new SearchEngineException("Find operation not supported for batch insert transaction");
     }
 

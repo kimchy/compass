@@ -195,7 +195,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
     }
 
-    public Resource[] find(ResourceKey resourceKey) throws SearchEngineException {
+    public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
         Searcher indexSearcher = null;
         IndexReader indexReader = null;
         LuceneIndexHolder indexHolder = null;

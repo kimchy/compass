@@ -59,7 +59,7 @@ public interface LuceneSearchEngineTransaction {
 
     SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException;
 
-    Resource[] find(ResourceKey resourceKey) throws SearchEngineException;
+    Resource[] get(ResourceKey resourceKey) throws SearchEngineException;
 
     SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
 }

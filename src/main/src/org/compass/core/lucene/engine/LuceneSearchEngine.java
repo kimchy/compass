@@ -398,7 +398,7 @@ public class LuceneSearchEngine implements SearchEngine {
         if (resourceKey.getIds().length == 0) {
             throw new SearchEngineException("Cannot load a resource with no ids");
         }
-        Resource[] result = transaction.find(resourceKey);
+        Resource[] result = transaction.get(resourceKey);
         if (result.length == 0) {
             return null;
         } else if (result.length > 1) {
