@@ -31,10 +31,12 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassException;
 import org.compass.core.CompassTransaction;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
+import org.compass.core.lucene.engine.merge.policy.MergePolicyFactory;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.transaction.context.TransactionContextCallback;
@@ -370,27 +372,27 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         searchEngineStore.close();
     }
 
-    public IndexWriter openIndexWriter(String subIndex) throws IOException {
-        return openIndexWriter(searchEngineStore.getDirectoryBySubIndex(subIndex, false), false);
+    public IndexWriter openIndexWriter(CompassSettings settings, String subIndex) throws IOException {
+        return openIndexWriter(settings, searchEngineStore.getDirectoryBySubIndex(subIndex, false), false);
     }
 
-    public IndexWriter openIndexWriter(String subIndex, boolean autoCommit) throws IOException {
-        return openIndexWriter(searchEngineStore.getDirectoryBySubIndex(subIndex, false), autoCommit, false);
+    public IndexWriter openIndexWriter(CompassSettings settings, String subIndex, boolean autoCommit) throws IOException {
+        return openIndexWriter(settings, searchEngineStore.getDirectoryBySubIndex(subIndex, false), autoCommit, false);
     }
 
-    public IndexWriter openIndexWriter(Directory dir, boolean create) throws IOException {
-        return openIndexWriter(dir, true, create);
+    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean create) throws IOException {
+        return openIndexWriter(settings, dir, true, create);
     }
 
-    public IndexWriter openIndexWriter(Directory dir, IndexDeletionPolicy deletionPolicy) throws IOException {
-        return openIndexWriter(dir, true, false, deletionPolicy);
+    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, IndexDeletionPolicy deletionPolicy) throws IOException {
+        return openIndexWriter(settings, dir, true, false, deletionPolicy);
     }
 
-    public IndexWriter openIndexWriter(Directory dir, boolean autoCommit, boolean create) throws IOException {
-        return openIndexWriter(dir, autoCommit, create, null);
+    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create) throws IOException {
+        return openIndexWriter(settings, dir, autoCommit, create, null);
     }
 
-    public IndexWriter openIndexWriter(Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException {
+    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException {
         // TODO lucene23 add more specific 2.3 parameters
         if (deletionPolicy == null) {
             deletionPolicy = searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir);
@@ -405,6 +407,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setMaxBufferedDeleteTerms(luceneSettings.getMaxBufferedDeletedTerms());
         indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
         indexWriter.setRAMBufferSizeMB(luceneSettings.getRamBufferSize());
+        indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));
         return indexWriter;
     }
 

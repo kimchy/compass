@@ -57,7 +57,7 @@ public class AdaptiveOptimizer extends AbstractOptimizer implements CompassConfi
         indexManager = (LuceneSearchEngineIndexManager) getSearchEngineFactory().getIndexManager();
         IndexWriter indexWriter;
         try {
-            indexWriter = indexManager.openIndexWriter(subIndex);
+            indexWriter = indexManager.openIndexWriter(indexManager.getSettings().getSettings(), subIndex);
         } catch (LockObtainFailedException e) {
             log.debug("Failed to obtain lock in order to optimizer, will try next time...");
             return;

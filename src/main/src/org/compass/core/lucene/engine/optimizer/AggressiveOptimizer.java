@@ -71,7 +71,7 @@ public class AggressiveOptimizer extends AbstractIndexInfoOptimizer implements C
             }
             long time = System.currentTimeMillis();
             dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
-            indexWriter = indexManager.openIndexWriter(dir, false);
+            indexWriter = indexManager.openIndexWriter(indexManager.getSettings().getSettings(), dir, false);
             long lockTime = System.currentTimeMillis() - time;
             time = System.currentTimeMillis();
             indexWriter.optimize();

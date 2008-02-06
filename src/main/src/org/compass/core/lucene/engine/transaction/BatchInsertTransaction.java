@@ -49,9 +49,9 @@ import org.compass.core.spi.ResourceKey;
  */
 public class BatchInsertTransaction extends AbstractTransaction {
 
-    public static class WriterManager {
+    public class WriterManager {
 
-        public static class IndexWriterWrapper {
+        public class IndexWriterWrapper {
             public String subIndex;
 
             public IndexWriter indexWriter = null;
@@ -95,7 +95,7 @@ public class BatchInsertTransaction extends AbstractTransaction {
                 writers.add(wrapper);
                 writersMap.put(subIndex, wrapper);
                 try {
-                    wrapper.indexWriter = indexManager.openIndexWriter(wrapper.dir, false);
+                    wrapper.indexWriter = indexManager.openIndexWriter(searchEngine.getSettings(), wrapper.dir, false);
                 } catch (IOException e) {
                     throw new SearchEngineException("Failed to open index writer for sub-index [" + subIndex + "]", e);
                 }

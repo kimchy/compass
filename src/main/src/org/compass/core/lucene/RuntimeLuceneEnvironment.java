@@ -43,4 +43,64 @@ public abstract class RuntimeLuceneEnvironment {
             public static final String OPTIMIZE_TRANS_LOG = "compass.transaction.readcommitted.translog.optimize";
         }
     }
+
+    /**
+     * Controls Lucene {@link org.apache.lucene.index.MergePolicy} configuration.
+     */
+    public static abstract class MergePolicy {
+
+        /**
+         * The prefix setting for merge policy.
+         */
+        public static final String PREFIX = "compass.engine.merge.policy";
+
+        /**
+         * The type of the {@link org.compass.core.lucene.engine.merge.policy.MergePolicyProvider} that
+         * will be created. Can be one of the constant names of specific types (inner classes) or the
+         * FQN of a merge policy provider.
+         */
+        public static final String TYPE = PREFIX + ".type";
+
+        /**
+         * Allows to cofnigure {@link org.apache.lucene.index.LogByteSizeMergePolicy}.
+         */
+        public abstract class LogByteSize {
+
+            /**
+             * The name of the merge policy to be used with the merge policy type.
+             */
+            public static final String NAME = "logbytesize";
+
+            /**
+             * @see {@link org.apache.lucene.index.LogByteSizeMergePolicy#setMaxMergeMB(double)}.
+             */
+            public static final String MAX_MERGE_MB = PREFIX + ".maxMergeMB";
+
+            /**
+             * @see {@link org.apache.lucene.index.LogByteSizeMergePolicy#setMinMergeMB(double)}.
+             */
+            public static final String MIN_MERGE_MB = PREFIX + ".minMergeMB";
+        }
+
+        /**
+         * Allows to configure {@link org.apache.lucene.index.LogDocMergePolicy}.
+         */
+        public abstract class LogDoc {
+
+            /**
+             * The name of the merge policy to be used with the merge policy type.
+             */
+            public static final String NAME = "logdoc";
+
+            /**
+             * @see {@link org.apache.lucene.index.LogDocMergePolicy#setMaxMergeDocs(int)}.
+             */
+            public static final String MAX_MERGE_DOCS = PREFIX + ".maxMergeDocs";
+
+            /**
+             * @see {@link org.apache.lucene.index.LogDocMergePolicy#setMinMergeDocs(int)}.
+             */
+            public static final String MIN_MERGE_DOCS = PREFIX + ".minMergeDocs";
+        }
+    }
 }

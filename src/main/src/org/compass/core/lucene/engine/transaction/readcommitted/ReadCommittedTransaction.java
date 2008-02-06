@@ -337,7 +337,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         if (indexWriterBySubIndex.containsKey(subIndex)) {
             return;
         }
-        IndexWriter indexWriter = indexManager.openIndexWriter(subIndex, false);
+        IndexWriter indexWriter = indexManager.openIndexWriter(searchEngine.getSettings(), subIndex, false);
         indexWriterBySubIndex.put(subIndex, indexWriter);
     }
 
