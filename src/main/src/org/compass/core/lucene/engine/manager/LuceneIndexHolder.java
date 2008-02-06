@@ -21,15 +21,28 @@ import java.io.IOException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
+import org.compass.core.util.FieldInvoker;
 
 /**
  * @author kimchy
  */
 public class LuceneIndexHolder {
 
+    private static FieldInvoker fieldInvoker;
+
+    static {
+        try {
+            fieldInvoker = new FieldInvoker(IndexReader.class, "refCount").prepare();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
     private long lastCacheInvalidation = System.currentTimeMillis();
 
     private IndexSearcher indexSearcher;
+
+    private IndexReader indexReader;
 
     private int count = 0;
 
@@ -38,13 +51,25 @@ public class LuceneIndexHolder {
     private String subIndex;
 
     public LuceneIndexHolder(String subIndex, Directory dir) throws IOException {
-        this.indexSearcher = new IndexSearcher(dir);
+        this.indexReader = IndexReader.open(dir);
+        this.indexSearcher = new IndexSearcher(indexReader);
         this.subIndex = subIndex;
     }
 
     public LuceneIndexHolder(String subIndex, IndexSearcher indexSearcher) {
         this.subIndex = subIndex;
         this.indexSearcher = indexSearcher;
+        this.indexReader = indexSearcher.getIndexReader();
+    }
+
+    public void refresh(IndexReader indexReader) {
+        try {
+            indexSearcher.close();
+        } catch (IOException e) {
+            // do nothing
+        }
+        this.indexReader = indexReader;
+        indexSearcher = new IndexSearcher(indexReader);
     }
 
     public IndexSearcher getIndexSearcher() {
@@ -52,7 +77,7 @@ public class LuceneIndexHolder {
     }
 
     public IndexReader getIndexReader() {
-        return indexSearcher.getIndexReader();
+        return indexReader;
     }
 
     public String getSubIndex() {
@@ -81,7 +106,7 @@ public class LuceneIndexHolder {
                 // do nothing
             }
             try {
-                indexSearcher.getIndexReader().close();
+                indexReader.close();
             } catch (Exception e) {
                 // do nothing
             }

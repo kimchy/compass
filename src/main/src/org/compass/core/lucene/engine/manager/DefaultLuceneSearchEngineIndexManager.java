@@ -95,9 +95,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (log.isDebugEnabled()) {
             log.debug("Deleting index " + searchEngineStore);
         }
-        clearCache();
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction(CompassTransaction tr) throws CompassException {
+                clearCache();
                 searchEngineStore.deleteIndex();
                 return null;
             }
@@ -105,9 +105,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public boolean verifyIndex() throws SearchEngineException {
-        clearCache();
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
             public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+                clearCache();
                 return searchEngineStore.verifyIndex();
             }
         });
@@ -288,29 +288,35 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void refreshCache(String subIndex) throws SearchEngineException {
         synchronized (indexHoldersLocks.get(subIndex)) {
-            LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
-            if (indexHolder != null) {
-                IndexReader reader;
-                try {
-                    reader = indexHolder.getIndexReader().reopen();
-                } catch (IOException e) {
-                    throw new SearchEngineException("Failed to refresh sub index cache [" + subIndex + "]");
-                }
-                if (reader != indexHolder.getIndexReader()) {
-                    // if the reader was refreshed, mark the old one to close and replace the holder
-                    indexHolder.markForClose();
-                    indexHolders.put(subIndex, new LuceneIndexHolder(subIndex, new IndexSearcher(reader)));
-                }
-            } else {
-                // do the same with index holder
-                try {
-                    indexHolder = new LuceneIndexHolder(subIndex, getDirectory(subIndex));
-                } catch (IOException e) {
-                    throw new SearchEngineException("Failed to open sub index cache [" + subIndex + "]");
-                }
+            internalRefreshCache(subIndex);
+        }
+    }
+
+    // should be called within a lock
+    private LuceneIndexHolder internalRefreshCache(String subIndex) throws SearchEngineException {
+        LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
+        if (indexHolder != null) {
+            IndexReader reader;
+            try {
+                reader = indexHolder.getIndexReader().reopen();
+            } catch (IOException e) {
+                throw new SearchEngineException("Failed to refresh sub index cache [" + subIndex + "]");
+            }
+            if (reader != indexHolder.getIndexReader()) {
+                // if the reader was refreshed, mark the old one to close and replace the holder
+                indexHolder.markForClose();
+                indexHolder = new LuceneIndexHolder(subIndex, new IndexSearcher(reader));
                 indexHolders.put(subIndex, indexHolder);
             }
+        } else {
+            try {
+                indexHolder = new LuceneIndexHolder(subIndex, getDirectory(subIndex));
+            } catch (IOException e) {
+                throw new SearchEngineException("Failed to open sub index cache [" + subIndex + "]");
+            }
+            indexHolders.put(subIndex, indexHolder);
         }
+        return indexHolder;
     }
 
     public void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException {
@@ -327,12 +333,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     public LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException {
         synchronized (indexHoldersLocks.get(subIndex)) {
             try {
-                Directory dir = getDirectory(subIndex);
                 LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
-                if (shouldInvalidateCache(dir, indexHolder)) {
-                    refreshCache(subIndex);
-                    // get the holder again, since it was refreshed
-                    indexHolder = indexHolders.get(subIndex);
+                if (shouldInvalidateCache(indexHolder)) {
+                    indexHolder = internalRefreshCache(subIndex);
                 }
                 indexHolder.acquire();
                 return indexHolder;
@@ -342,7 +345,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
-    protected boolean shouldInvalidateCache(Directory dir, LuceneIndexHolder indexHolder) throws IOException, IllegalAccessException {
+    protected boolean shouldInvalidateCache(LuceneIndexHolder indexHolder) throws IOException, IllegalAccessException {
         long currentTime = System.currentTimeMillis();
         // we have not created an index holder, invalidated by default
         if (indexHolder == null) {
@@ -362,6 +365,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public synchronized void close() {
+        stop();
         clearCache();
         searchEngineStore.close();
     }

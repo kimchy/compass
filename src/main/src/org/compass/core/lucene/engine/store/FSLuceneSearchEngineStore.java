@@ -67,7 +67,19 @@ public class FSLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore {
     protected void doDeleteIndex() throws SearchEngineException {
         File indexPathFile = new File(indexPath);
         if (indexPathFile.exists()) {
-            boolean deleted = LuceneUtils.deleteDir(indexPathFile);
+            boolean deleted = false;
+            // do this retries for windows...
+            for (int i = 0; i < 5; i++) {
+                deleted = LuceneUtils.deleteDir(indexPathFile);
+                if (deleted) {
+                    break;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // no matter
+                }
+            }
             if (!deleted) {
                 throw new SearchEngineException("Failed to delete index directory [" + indexPath + "]");
             }
