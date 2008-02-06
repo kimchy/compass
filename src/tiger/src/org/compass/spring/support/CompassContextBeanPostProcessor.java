@@ -35,6 +35,7 @@ import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.support.session.CompassSessionTransactionalProxy;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
 import org.springframework.context.ApplicationContext;
@@ -74,16 +75,16 @@ public class CompassContextBeanPostProcessor extends InstantiationAwareBeanPostP
         if (this.compassesByName == null) {
             this.compassesByName = new HashMap<String, Compass>();
             // Look for named Compasses
-            for (String emfName : this.applicationContext.getBeanNamesForType(Compass.class)) {
+            // Look for named Compasses
+            String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, Compass.class);
+            for (String emfName : beanNames) {
                 Compass compass = (Compass) this.applicationContext.getBean(emfName);
                 compassesByName.put(((InternalCompass) compass).getName(), compass);
             }
 
             if (this.compassesByName.isEmpty()) {
-                // Try to find a unique EntityManagerFactory.
-                String[] compassesNames = this.applicationContext.getBeanNamesForType(Compass.class);
-                if (compassesNames.length == 1) {
-                    this.uniqueCompass = (Compass) this.applicationContext.getBean(compassesNames[0]);
+                if (beanNames.length == 1) {
+                    this.uniqueCompass = (Compass) this.applicationContext.getBean(beanNames[0]);
                 }
             } else if (this.compassesByName.size() == 1) {
                 this.uniqueCompass = this.compassesByName.values().iterator().next();
