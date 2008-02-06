@@ -53,7 +53,7 @@ import org.compass.core.util.StringUtils;
 
 /**
  * Read Committed transaction support. Allows to perform operations within a transaction and all
- * operations will be "viewable" to the ongoing transaction, event search.
+ * operations will be "viewable" to the ongoing transaction, even search.
  *
  * @author kimchy
  */
