@@ -436,13 +436,17 @@ public class CompassEnvironment {
         public static final String ISOLATION_SERIALIZABLE = "serializable";
 
         /**
-         * Used as the value for the TRANSACTION_ISOLATION setting. Configures the
-         * transaction isolation level to have a batch insert support for
-         * transactions. Highly fast transaction for inserting new data into the
-         * index (like rebuilding an index).
+         * @deprecated Use LUCENE transaction isolation instead, defaults to it
          */
         public static final String ISOLATION_BATCH_INSERT = "batch_insert";
 
+        /**
+         * Used as the value for the TRANSACTION_ISOLATION setting. Configures the
+         * transaction isolation level to have a lucene isolation level allowing for
+         * fast Create/Update/Delete operations whild read/search operations won't
+         * "see" the operations done during the transaction.
+         */
+        public static final String ISOLATION_LUCENE = "lucene";
         /**
          * When opening a session, Compass tries to automatically start a transaction
          * and join it. This might mean that transaction settings when running within

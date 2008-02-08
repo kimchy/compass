@@ -77,23 +77,4 @@ public class SimpleTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
-
-    public void testSimpleBatchInsert() {
-        CompassSession session = openSession();
-
-        CompassTransaction tr = session.beginTransaction(CompassTransaction.TransactionIsolation.BATCH_INSERT);
-        try {
-            session.find("test");
-            fail("we should not be able to perform find with batch insert transaction isolation");
-        } catch (Exception e) {
-            // all is well
-        }
-        A a = new A();
-        a.setId(1);
-        a.setValue("value");
-        session.create(a);
-        tr.commit();
-        session.close();
-    }
-
 }

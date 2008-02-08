@@ -14,33 +14,25 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.batch;
+package org.compass.core.test.transactionisolation.lucene;
 
 /**
  * @author kimchy
  */
-public class Cyclic2 {
+public class Cyclic1 {
 
     private Long id;
 
     private String value;
 
-    private Cyclic1 cyclic1;
+    private Cyclic2 cyclic2;
 
-    public Cyclic1 getCyclic1() {
-        return cyclic1;
+    public Cyclic2 getCyclic2() {
+        return cyclic2;
     }
 
-    public void setCyclic1(Cyclic1 cyclic1) {
-        this.cyclic1 = cyclic1;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public void setCyclic2(Cyclic2 cyclic2) {
+        this.cyclic2 = cyclic2;
     }
 
     public Long getId() {
@@ -49,5 +41,13 @@ public class Cyclic2 {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

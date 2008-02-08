@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.batch;
+package org.compass.core.test.transactionisolation.lucene;
 
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassEnvironment;
@@ -29,16 +30,15 @@ import org.compass.core.test.AbstractTestCase;
  * @author kimchy
  * 
  */
-public class BatchTests extends AbstractTestCase {
+public class LuceneTransactionIsolationTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "batch/batch.cpm.xml" };
+        return new String[] { "transactionisolation/lucene/mapping.cpm.xml" };
     }
 
     protected void addSettings(CompassSettings settings) {
         super.addSettings(settings);
-        settings.setSetting(CompassEnvironment.Transaction.ISOLATION,
-                CompassEnvironment.Transaction.ISOLATION_BATCH_INSERT);
+        settings.setSetting(CompassEnvironment.Transaction.ISOLATION, CompassEnvironment.Transaction.ISOLATION_LUCENE);
     }
 
     public void testBatch() {
@@ -74,34 +74,34 @@ public class BatchTests extends AbstractTestCase {
 
         tr = session.beginTransaction();
 
-        try {
-            session.find("test");
-            fail();
-        } catch (Exception e) {
+        CompassHits hits = session.find("value:cyclic1");
+        assertEquals(1, hits.length());
+        hits = session.find("value:cyclic2");
+        assertEquals(1, hits.length());
 
-        }
+        cyclic2.setValue("updated");
+        session.save(cyclic2);
+        tr.commit();
 
-        try {
-            session.save(cyclic2);
-            fail();
-        } catch (Exception e) {
+        tr = session.beginTransaction();
+        hits = session.find("value:cyclic2");
+        assertEquals(0, hits.length());
+        hits = session.find("value:updated");
+        assertEquals(1, hits.length());
+        tr.commit();
 
-        }
+        tr = session.beginTransaction();
+        cyclic2 = session.load(Cyclic2.class, 1);
+        assertNotNull(cyclic2);
+        tr.commit();
 
-        try {
-            session.delete(cyclic2);
-            fail();
-        } catch (Exception e) {
+        tr = session.beginTransaction();
+        session.delete(cyclic2);
+        tr.commit();
 
-        }
-
-        try {
-            session.get(Cyclic2.class, id);
-            fail();
-        } catch (Exception e) {
-
-        }
-
+        tr = session.beginTransaction();
+        cyclic2 = session.get(Cyclic2.class, 1);
+        assertNull(cyclic2);
         tr.commit();
     }
 }

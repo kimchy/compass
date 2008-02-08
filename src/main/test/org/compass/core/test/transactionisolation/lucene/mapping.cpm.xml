@@ -2,7 +2,7 @@
     "-//Compass/Compass Core Mapping DTD 1.0//EN"
     "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
 
-<compass-core-mapping package="org.compass.core.test.batch">
+<compass-core-mapping package="org.compass.core.test.transactionisolation.lucene">
 
     <class name="Cyclic1" alias="cyclic1">
     

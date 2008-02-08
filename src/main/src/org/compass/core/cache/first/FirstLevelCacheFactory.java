@@ -23,7 +23,7 @@ public class FirstLevelCacheFactory implements CompassConfigurable {
         String transIsolationSetting = settings.getSetting(CompassEnvironment.Transaction.ISOLATION, null);
 
         if (transIsolationSetting != null
-                && transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_BATCH_INSERT)) {
+                && (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_BATCH_INSERT) || transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_LUCENE))) {
             firstLevelCacheClass = NullFirstLevelCache.class;
         } else {
             String firstLevelCacheSetting = settings.getSetting(CompassEnvironment.Cache.FirstLevel.TYPE,

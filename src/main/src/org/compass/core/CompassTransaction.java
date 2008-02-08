@@ -44,7 +44,12 @@ public interface CompassTransaction {
 
 		public static final TransactionIsolation SERIALIZABLE = new TransactionIsolation("SERIALIZABLE");
 
-		public static final TransactionIsolation BATCH_INSERT = new TransactionIsolation("BATCH_INSERT");
+        /**
+         * @deprecated use lucene transaction instead
+         */
+        public static final TransactionIsolation BATCH_INSERT = new TransactionIsolation("BATCH_INSERT");
+
+        public static final TransactionIsolation LUCENE = new TransactionIsolation("LUCENE");
 	}
 
 	/**

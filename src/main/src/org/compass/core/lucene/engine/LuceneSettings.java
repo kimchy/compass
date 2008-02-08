@@ -152,6 +152,8 @@ public class LuceneSettings {
             transactionIsolation = TransactionIsolation.SERIALIZABLE;
         } else if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_BATCH_INSERT)) {
             transactionIsolation = TransactionIsolation.BATCH_INSERT;
+        } else if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_LUCENE)) {
+            transactionIsolation = TransactionIsolation.LUCENE;
         }
         String transIsolationClassSetting = settings.getSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, null);
         if (transIsolationClassSetting != null) {

@@ -43,8 +43,8 @@ import org.compass.core.lucene.LuceneMultiResource;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
-import org.compass.core.lucene.engine.transaction.BatchInsertTransaction;
 import org.compass.core.lucene.engine.transaction.LuceneSearchEngineTransaction;
+import org.compass.core.lucene.engine.transaction.lucene.LuceneTransaction;
 import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransaction;
 import org.compass.core.lucene.engine.transaction.serializable.SerializableTransaction;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -226,7 +226,9 @@ public class LuceneSearchEngine implements SearchEngine {
         } else if (transactionIsolation == TransactionIsolation.READ_ONLY_READ_COMMITTED) {
             transaction = new ReadCommittedTransaction();
         } else if (transactionIsolation == TransactionIsolation.BATCH_INSERT) {
-            transaction = new BatchInsertTransaction();
+            transaction = new LuceneTransaction();
+        } else if (transactionIsolation == TransactionIsolation.LUCENE) {
+            transaction = new LuceneTransaction();
         } else if (transactionIsolation == TransactionIsolation.SERIALIZABLE) {
             transaction = new SerializableTransaction();
         }

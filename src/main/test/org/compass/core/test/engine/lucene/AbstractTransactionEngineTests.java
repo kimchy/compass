@@ -32,7 +32,9 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().create(singleId);
         Resource multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         assertSingleIdResourceExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
         getSearchEngine().rollback();
@@ -46,25 +48,42 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().create(singleId);
         Resource multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         assertSingleIdResourceExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
         getSearchEngine().delete(singleId);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         getSearchEngine().delete(multiId);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceNotExists(getSearchEngine());
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
-        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
+        assertMulitIdResourceExists(getSearchEngine());
         getSearchEngine().delete(multiId);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceNotExists(getSearchEngine());
-        getSearchEngine().rollback();
+        getSearchEngine().commit(true);
     }
 
     public void testMultiIdDoubleEntries() throws Exception {
@@ -74,19 +93,31 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
 
         Resource multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertMulitIdResourceExists(getSearchEngine());
         assertMulitId2ResourceNotExists(getSearchEngine());
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         Resource multiId2 = createMultiIdResource2(getSearchEngine());
         getSearchEngine().create(multiId2);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertMulitIdResourceExists(getSearchEngine());
         assertMulitId2ResourceExists(getSearchEngine());
-
         getSearchEngine().delete(multiId2);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertMulitIdResourceExists(getSearchEngine());
         assertMulitId2ResourceNotExists(getSearchEngine());
-
         getSearchEngine().delete(multiId);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertMulitIdResourceNotExists(getSearchEngine());
         assertMulitId2ResourceNotExists(getSearchEngine());
         getSearchEngine().rollback();
@@ -100,17 +131,19 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().create(singleId);
         Resource multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         SearchEngineQuery query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
         SearchEngineHits hits = query.hits();
         assertEquals(1, hits.getLength());
-        Resource r = (Resource) hits.getResource(0);
+        Resource r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
         hits = query.hits();
         assertEquals(1, hits.getLength());
-        r = (Resource) hits.getResource(0);
+        r = hits.getResource(0);
         assertEquals(VALUE_ID2, r.getProperty(PROPERTY_ID2).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL4 + ":" + VALUE_VAL4).toQuery();
@@ -118,6 +151,9 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         assertEquals(2, hits.getLength());
 
         getSearchEngine().delete(r);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
         hits = query.hits();
         assertEquals(0, hits.getLength());
@@ -169,13 +205,17 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().create(singleId);
         Resource multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         assertSingleIdResourceExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
         getSearchEngine().delete(singleId);
+        getSearchEngine().commit(true);
+        
+        getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
-
         getSearchEngine().commit(true);
 
         getSearchEngine().begin();
@@ -185,6 +225,9 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
 
         getSearchEngine().begin();
         getSearchEngine().delete(multiId);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceNotExists(getSearchEngine());
         getSearchEngine().commit(true);
@@ -232,18 +275,25 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().create(singleId2);
         Resource multiId2 = createMultiIdResource2(getSearchEngine());
         getSearchEngine().create(multiId2);
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         assertSingleIdResourceExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
         assertSingleId2ResourceExists(getSearchEngine());
         assertMulitId2ResourceExists(getSearchEngine());
 
         getSearchEngine().delete(singleId);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
         assertSingleId2ResourceExists(getSearchEngine());
-
         getSearchEngine().delete(singleId2);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
         assertSingleId2ResourceNotExists(getSearchEngine());
@@ -260,13 +310,17 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().create(singleId);
         Resource multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         assertSingleIdResourceExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
         getSearchEngine().delete(singleId);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
-
         getSearchEngine().commit(true);
 
         getSearchEngine().begin();
@@ -276,8 +330,6 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
 
         getSearchEngine().begin();
         getSearchEngine().delete(multiId);
-        assertSingleIdResourceNotExists(getSearchEngine());
-        assertMulitIdResourceNotExists(getSearchEngine());
         getSearchEngine().rollback();
 
         getSearchEngine().begin();
@@ -294,34 +346,40 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         getSearchEngine().create(singleId);
         Resource multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         SearchEngineQuery query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
         SearchEngineHits hits = query.hits();
         assertEquals(1, hits.getLength());
-        Resource r = (Resource) hits.getResource(0);
+        Resource r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
-
         getSearchEngine().commit(true);
 
         getSearchEngine().begin();
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
         hits = query.hits();
         assertEquals(1, hits.getLength());
-        r = (Resource) hits.getResource(0);
+        r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
 
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
         hits = query.hits();
         assertEquals(1, hits.getLength());
-        r = (Resource) hits.getResource(0);
+        r = hits.getResource(0);
         assertEquals(VALUE_ID2, r.getProperty(PROPERTY_ID2).getStringValue());
+        getSearchEngine().commit(true);
 
+        getSearchEngine().begin();
         getSearchEngine().delete(r);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
         assertMulitIdResourceNotExists(getSearchEngine());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
         hits = query.hits();
         assertEquals(1, hits.getLength());
-        r = (Resource) hits.getResource(0);
+        r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
         hits = query.hits();
@@ -333,7 +391,7 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL1 + ":" + VALUE_VAL1).toQuery();
         hits = query.hits();
         assertEquals(1, hits.getLength());
-        r = (Resource) hits.getResource(0);
+        r = hits.getResource(0);
         assertEquals(VALUE_ID1, r.getProperty(PROPERTY_ID1).getStringValue());
         query = getSearchEngine().queryBuilder().queryString(PROPERTY_VAL2 + ":" + VALUE_VAL2).toQuery();
         hits = query.hits();
