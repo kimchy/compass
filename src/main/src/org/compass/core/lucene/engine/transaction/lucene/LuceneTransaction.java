@@ -92,6 +92,9 @@ public class LuceneTransaction extends AbstractTransaction {
     }
 
     protected void doCommit(boolean onePhase) throws SearchEngineException {
+        if (indexWriterBySubIndex.isEmpty()) {
+            return;
+        }
         ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue())));
@@ -100,6 +103,9 @@ public class LuceneTransaction extends AbstractTransaction {
     }
 
     public void flush() throws SearchEngineException {
+        if (indexWriterBySubIndex.isEmpty()) {
+            return;
+        }
         ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new FlushCallable(entry.getKey(), entry.getValue())));
