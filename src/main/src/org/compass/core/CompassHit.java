@@ -20,8 +20,7 @@ import java.io.Serializable;
 
 /**
  * Wrapper that provides a lazily loaded hit from
- * {@link CompassHitsOperations}. It is also used as
- * the iterator value for {@link CompassHitIterator}.
+ * {@link CompassHitsOperations}.
  *
  * @author kimchy
  */
@@ -36,6 +35,11 @@ public interface CompassHit extends Serializable {
     String getAlias() throws CompassException;
 
     /**
+     * Same as {@link #getAlias()}.
+     */
+    String alias() throws CompassException;
+
+    /**
      * Returns the object for this hit.
      *
      * @return The object data of the hit.
@@ -43,6 +47,11 @@ public interface CompassHit extends Serializable {
      * @see CompassHits#data(int)
      */
     Object getData() throws CompassException;
+
+    /**
+     * Same as {@link #getData()} just shorter.
+     */
+    Object data() throws CompassException;
 
     /**
      * Returns the {@link Resource} for this hit.
@@ -54,6 +63,11 @@ public interface CompassHit extends Serializable {
     Resource getResource() throws CompassException;
 
     /**
+     * Same as {@link #getResource()}.
+     */
+    Resource resource() throws CompassException;
+
+    /**
      * Returns the score for this hit.
      *
      * @return The score of the hit.
@@ -61,6 +75,11 @@ public interface CompassHit extends Serializable {
      * @see CompassHits#score(int)
      */
     float getScore() throws CompassException;
+
+    /**
+     * Same as {@link #getScore()}.
+     */
+    float score() throws CompassException;
 
     /**
      * Returns a cached highlighted text the maps to the hit.
@@ -72,4 +91,9 @@ public interface CompassHit extends Serializable {
      * @throws CompassException
      */
     CompassHighlightedText getHighlightedText() throws CompassException;
+
+    /**
+     * Same as {@link #getHighlightedText()}.
+     */
+    CompassHighlightedText highlightedText() throws CompassException;
 }

@@ -16,6 +16,10 @@
 
 package org.compass.core.impl;
 
+import java.util.Iterator;
+
+import org.compass.core.CompassException;
+import org.compass.core.CompassHit;
 import org.compass.core.CompassHitsOperations;
 
 /**
@@ -26,4 +30,9 @@ public abstract class AbstractCompassHits implements CompassHitsOperations {
     public int length() {
         return getLength();
     }
+
+    public Iterator<CompassHit> iterator() throws CompassException {
+        return new DefaultCompassHitIterator(this);
+    }
+    
 }

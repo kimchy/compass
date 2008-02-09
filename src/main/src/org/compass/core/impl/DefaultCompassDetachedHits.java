@@ -20,7 +20,6 @@ import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHighlightedText;
 import org.compass.core.CompassHit;
-import org.compass.core.CompassHitIterator;
 import org.compass.core.Resource;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -91,10 +90,6 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
 
     public CompassHighlightedText highlightedText(int n) throws CompassException {
         return highlightedText[n];
-    }
-
-    public CompassHitIterator iterator() throws CompassException {
-        return new DefaultCompassHitIterator(this);
     }
 
     public CompassHit hit(int n) throws CompassException {

@@ -40,14 +40,6 @@ public interface CompassDetachedHits extends CompassHitsOperations {
     int totalLength();
 
     /**
-     * Returns a lazily loaded iterator over the hits.
-     * 
-     * @return A lazily loaded iterator.
-     * @throws CompassException
-     */
-    CompassHitIterator iterator() throws CompassException;
-
-    /**
      * Returns all the <code>Resource</code>s as an array.
      * 
      * @return All the <code>Resource</code>s as an array

@@ -23,7 +23,7 @@ import java.io.Serializable;
  *
  * @author kimchy
  */
-public interface CompassHitsOperations extends Serializable {
+public interface CompassHitsOperations extends Serializable, Iterable<CompassHit> {
 
     /**
      * Returns the number of hits,

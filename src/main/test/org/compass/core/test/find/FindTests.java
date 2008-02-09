@@ -16,12 +16,12 @@
 
 package org.compass.core.test.find;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.apache.lucene.search.Explanation;
 import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassHit;
-import org.compass.core.CompassHitIterator;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -54,13 +54,17 @@ public class FindTests extends AbstractTestCase {
         a2.setValue("value 2");
         session.save(a2);
 
-        CompassHitIterator it = session.find("value 1").detach().iterator();
-        assertEquals(id1, ((A) it.nextHit().getData()).getId());
+        Iterator<CompassHit> it = session.find("value 1").detach().iterator();
+        assertEquals(id1, ((A) it.next().getData()).getId());
         try {
-            it.nextHit();
+            it.next();
             fail();
         } catch (NoSuchElementException e) {
 
+        }
+
+        for (CompassHit hit : session.find("value 1")) {
+            assertEquals(id1, ((A) hit.getData()).getId());
         }
 
         tr.commit();

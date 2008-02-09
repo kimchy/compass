@@ -53,9 +53,17 @@ public class DefaultCompassHit implements CompassHit {
         return data;
     }
 
+    public Object data() throws CompassException {
+        return getData();
+    }
+
     public Resource getResource() throws CompassException {
         fetchTheResource();
         return resource;
+    }
+
+    public Resource resource() throws CompassException {
+        return getResource();
     }
 
     public float getScore() throws CompassException {
@@ -63,13 +71,25 @@ public class DefaultCompassHit implements CompassHit {
         return score;
     }
 
+    public float score() throws CompassException {
+        return getScore();
+    }
+
     public CompassHighlightedText getHighlightedText() throws CompassException {
         return compassHits.highlightedText(hitNumber);
+    }
+
+    public CompassHighlightedText highlightedText() throws CompassException {
+        return getHighlightedText();
     }
 
     public String getAlias() throws CompassException {
         fetchTheResource();
         return resource.getAlias();
+    }
+
+    public String alias() throws CompassException {
+        return getAlias();
     }
 
     private void fetchTheData() throws CompassException {

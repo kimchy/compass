@@ -40,7 +40,7 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
 
     private InternalCompassSession session;
 
-    private HashMap highlightedTextHolder;
+    private HashMap<Integer, InternalCompassHighlightedText> highlightedTextHolder;
 
     public DefaultCompassHits(SearchEngineHits hits, InternalCompassSession session) {
         this.hits = hits;
@@ -95,19 +95,18 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
         if (highlightedTextHolder == null) {
             return null;
         }
-        return (CompassHighlightedText) highlightedTextHolder.get(new Integer(n));
+        return highlightedTextHolder.get(new Integer(n));
     }
 
     public void setHighlightedText(int n, String propertyName, String highlihgtedText) {
         if (highlightedTextHolder == null) {
-            highlightedTextHolder = new HashMap();
+            highlightedTextHolder = new HashMap<Integer, InternalCompassHighlightedText>();
         }
 
-        Integer hitNumber = new Integer(n);
-        InternalCompassHighlightedText hitHighlightedText = (InternalCompassHighlightedText) highlightedTextHolder.get(hitNumber);
+        InternalCompassHighlightedText hitHighlightedText = highlightedTextHolder.get(n);
         if (hitHighlightedText == null) {
             hitHighlightedText = new DefaultCompassHighlightedText();
-            highlightedTextHolder.put(hitNumber, hitHighlightedText);
+            highlightedTextHolder.put(n, hitHighlightedText);
         }
 
         hitHighlightedText.setHighlightedText(propertyName, highlihgtedText);

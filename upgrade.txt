@@ -13,6 +13,8 @@ VERSION 2.0 M2
    order of fields.
 4. New and improved read committed transaction support. Changed the way trans log is used and configured, please
    read the reference documentation on how to configure it now.
+5. Removed CopmassHitIterator. Changed CompassHits and CompassDetachedHits to support Iteratable<CompassHit>. Please
+   be careful with iterating over all the result set.
 
 VERSION 2.0 M1 (January 25, 2008)
 =================================

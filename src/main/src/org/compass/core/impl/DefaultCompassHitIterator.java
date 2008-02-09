@@ -16,22 +16,22 @@
 
 package org.compass.core.impl;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassHit;
-import org.compass.core.CompassHitIterator;
+import org.compass.core.CompassHitsOperations;
 
 /**
  * @author kimchy
  */
-public class DefaultCompassHitIterator implements CompassHitIterator {
+public class DefaultCompassHitIterator implements Iterator<CompassHit> {
 
-    private CompassDetachedHits compassHits;
+    private CompassHitsOperations compassHits;
 
     private int hitNumber = 0;
 
-    DefaultCompassHitIterator(CompassDetachedHits compassHits) {
+    DefaultCompassHitIterator(CompassHitsOperations compassHits) {
         this.compassHits = compassHits;
     }
 
@@ -39,11 +39,7 @@ public class DefaultCompassHitIterator implements CompassHitIterator {
         return hitNumber < compassHits.getLength();
     }
 
-    public Object next() {
-        return nextHit();
-    }
-
-    public CompassHit nextHit() {
+    public CompassHit next() {
         if (hitNumber == compassHits.getLength()) {
             throw new NoSuchElementException();
         }
