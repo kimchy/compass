@@ -185,13 +185,28 @@ public interface SearchEngineIndexManager {
      */
     void performScheduledTasks() throws SearchEngineException;
 
+    /**
+     * Returns the sub indexes that Compass handles.
+     */
     String[] getSubIndexes();
 
+    /**
+     * Releases all the locks held over all the possbile sub indexes.
+     */
     void releaseLocks() throws SearchEngineException;
 
+    /**
+     * Releases a lock for the given sub index.
+     */
     void releaseLock(String subIndex) throws SearchEngineException;
 
+    /**
+     * Returns <code>true</code> if one of the sub indexes is locked.
+     */
     boolean isLocked() throws SearchEngineException;
 
+    /**
+     * Returns <code>true</code> if the given sub index is locked.
+     */
     boolean isLocked(String subIndex) throws SearchEngineException;
 }
