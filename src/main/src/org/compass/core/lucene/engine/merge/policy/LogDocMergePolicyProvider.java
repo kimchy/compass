@@ -17,7 +17,7 @@
 package org.compass.core.lucene.engine.merge.policy;
 
 import org.apache.lucene.index.LogDocMergePolicy;
-import org.apache.lucene.index.LogMergePolicy;
+import org.apache.lucene.index.MergePolicy;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
@@ -30,7 +30,7 @@ import org.compass.core.lucene.LuceneEnvironment;
  */
 public class LogDocMergePolicyProvider implements MergePolicyProvider {
 
-    public LogMergePolicy create(CompassSettings settings) throws SearchEngineException {
+    public MergePolicy create(CompassSettings settings) throws SearchEngineException {
         LogDocMergePolicy mergePolicy = new LogDocMergePolicy();
         mergePolicy.setMaxMergeDocs(settings.getSettingAsInt(LuceneEnvironment.MergePolicy.LogDoc.MAX_MERGE_DOCS, LogDocMergePolicy.DEFAULT_MAX_MERGE_DOCS));
         mergePolicy.setMinMergeDocs(settings.getSettingAsInt(LuceneEnvironment.MergePolicy.LogDoc.MIN_MERGE_DOCS, LogDocMergePolicy.DEFAULT_MIN_MERGE_DOCS));

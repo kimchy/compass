@@ -16,14 +16,16 @@
 
 package org.compass.core.lucene.engine.merge.policy;
 
-import org.apache.lucene.index.LogMergePolicy;
+import org.apache.lucene.index.MergePolicy;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 
 /**
+ * Porivdes an implementation of {@link org.apache.lucene.index.MergePolicy}.
+ *
  * @author kimchy
  */
 public interface MergePolicyProvider {
 
-    LogMergePolicy create(CompassSettings settings) throws SearchEngineException;
+    MergePolicy create(CompassSettings settings) throws SearchEngineException;
 }

@@ -171,7 +171,7 @@ public class LuceneTransaction extends AbstractTransaction {
                     if (termDocs != null) {
                         termDocs.close();
                     }
-                } catch (IOException e) {
+             } catch (IOException e) {
                     // swallow it
                 }
             }
@@ -197,6 +197,16 @@ public class LuceneTransaction extends AbstractTransaction {
         } catch (IOException e) {
             throw new SearchEngineException("Failed to delete alias [" + resourceKey.getAlias() + "] and ids ["
                     + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]", e);
+        }
+    }
+
+    protected void doUpdate(InternalResource resource, Analyzer analyzer) throws SearchEngineException {
+        try {
+            IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
+            indexWriter.updateDocument(new Term(resource.resourceKey().getUIDPath(), resource.resourceKey().buildUID()), ((LuceneResource) resource).getDocument(), analyzer);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to update resource for alias [" + resource.getAlias()
+                    + "] and resource " + resource, e);
         }
     }
 

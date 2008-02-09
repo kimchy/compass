@@ -262,11 +262,15 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         <title>read_committed</title>
   
         <para>
-          Compass provides support for <literal>read_committed</literal> transaction level. When starting a <literal>read_committed</literal> transaction, no locks are obtained. Read operation will not obtain a lock either. A lock will be obtained only when a dirty operation is performed. The lock is obtained only on the index of the alias / searchable content that is associated with the dirty operation, i.e the sub-index, and will lock all other aliases / searchable content that map to that sub-index. In Compass, every transaction that performed one or more <literal>save</literal> or <literal>create</literal> operation, and committed successfully, creates another segment in the respective index (different than how Lucene manages it's index), which helps in implementing quick transaction commits, fast updates, as well as paving the way for a two phase commit support (and the reason behind having optimizers).
+			Read committed transaction isolation level allows to isolate changes done during a transaction from other transactions until commit. It also allows for load/get/find operations to take into account changes done during the current transaction. This means that a delete that occurs during a transaction will be filtered out if a search is executed within the same transaction just after the delete.
+		</para>
+  
+        <para>
+          When starting a <literal>read_committed</literal> transaction, no locks are obtained. Read operation will not obtain a lock either. A lock will be obtained only when a dirty operation is performed. The lock is obtained only on the index of the alias / searchable content that is associated with the dirty operation, i.e the sub-index, and will lock all other aliases / searchable content that map to that sub-index. In Compass, every transaction that performed one or more <literal>save</literal> or <literal>create</literal> operation, and committed successfully, creates another segment in the respective index (different than how Lucene manages it's index), which helps in implementing quick transaction commits, fast updates, as well as paving the way for a two phase commit support (and the reason behind having optimizers).
         </para>
 
 		<para>
-			The read committed transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. This is only supported on some of the index storage (not supported for Jdbc) and can reduce the commit time of a large transaction. By default, concurrent commit is enabled for index storage that supports it, but it can be disabled by setting the following setting <literal>compass.transaction.enableConcurrentCommit</literal> to <literal>false</literal>. The number of threads that will be created to support concurrent commits is configurable using <literal>compass.transaction.maxConcurrentCommitThreads</literal> setting, and defaults to <literal>10</literal> (or a lower value if there are less sub indexes). The threshold when to execute a commit concurrently also can be configured using <literal>compass.transaction.concurrentCommitThreshold</literal> and defaults to 1 (i.e., if there are commits pending on more than 1 sub index, it will be executed concurrently).
+			The read committed transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. It uses Compass internal Execution Manager where the number of threads as well as the type of the execution manager (concurrent or work manager) can be configured.
 		</para>
       </sect3>
   
@@ -278,12 +282,42 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         </para>
       </sect3>
   
-      <sect3 id="core-searchengine-transaction-batch_insert">
-        <title>batch_insert</title>
+      <sect3 id="core-searchengine-transaction-lucene">
+        <title>lucene</title>
   
         <para>
-            A special transaction level, <literal>batch_insert</literal> utilizes the extremely fast batch indexing provided by Lucene. The transaction supports only <literal>create</literal> operation, but note that if another <literal>Resource</literal> with the same alias and ids already exists in the system, you will have two instances of it in the index (in other words, <literal>create</literal> doesn't delete the old <literal>Resource</literal>). You can control the <literal>batch_insert</literal> transaction using several settings which are explained in the Configuration section. An important note is that the transaction is not a transaction which can be rolled back, since Lucene commits the changes during the batch indexing process, which means that a <literal>rollback</literal> operation won't rollback the changes. The index is optimized when the transaction is committed, which means that all the segments are merged to one segment, in order to provide fast searching. The transaction is mainly used for background batch indexing.
+            A special transaction level, <literal>lucene</literal> (previously known as <literal>batch_insert</literal>) isolation level is similar to the <literal>read_committed</literal> isolation level except dirty operations done during a transaction are not visible to get/load/find operations that occur within the same transaction. This isolation level is very handy for long running batch dirty operations and can be faster than <literal>read_committed</literal>. Most usage patterns of Compass (such as integratino with ORM tools) can work perfectly well with the <literal>lucene</literal> isolation level.
         </para>
+		
+		<para>
+			It is important to understand this transaction isolation level in terms of merging done during commit time. Lucene might perform some merges during commit time depending on the merge factor configured using <literal>compass.engine.mergeFactor</literal>. This is different from the <literal>read_committed</literal> isolation level where no merges are perfomed during commit time. Possible merges can cause commits to take some time, so one option is to configure a large merge factor and let the optimizer do its magic (you can configure a different merge factor for the optimizer).
+		</para>
+		
+		<para>
+			Another important parameter when using this transaction isolation level is <literal>compass.engine.ramBufferSize</literal> (defaults to 16.0 Mb) which replaces the max buffered docs parameter and controls the amount of transactional data stored in memory. Larger values will yield better performance and it is best to allocate as much as possible.
+		</para>
+		
+		<para>
+			Most of the parameters can also be configured on a per session/transaction level. Please refere to <classname>RuntimeLuceneEnvironment</classname> for more information.
+		</para>
+		
+		<para>
+			The lucene transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. It uses Compass internal Execution Manager where the number of threads as well as the type of the execution manager (concurrent or work manager) can be configured.
+		</para>
+		
+		<para>
+			Here is how the transaction isolation level can be configured:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+  <transaction isolation="lucene" />
+</compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.transaction.isolation=lucene
+]]></programlisting>			
+		</para>
       </sect3>
       
     </sect2>
@@ -544,6 +578,38 @@ session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommit
       </para>
 
     </sect2>
+  </sect1>
+
+  <sect1 id="core-searchengine-merge">
+    <title>Merge</title>
+	
+	<para>
+		Lucene perfoms merges of different segments after certain operaitons are done on the index. The less merges you have, the faster the searching is. The more merges you do, the slower certain operations will be. Compass allows for fine control over when merges will occur. This depends greatly on the transaction isolation level and the optimizer used and how they are configured.
+	</para>
+	
+	<sect2 id="core-searchengine-merge-policy">
+		<title>Merge Policy</title>
+		
+		<para>
+			Merge policy controls which merges are supposed to happen for a ceratin index. Compass allows to simply configure the two merge policies that come with Lucene, the <literal>LogByteSize</literal> (the default) and <literal>LogDoc</literal>, as well as configure custom implementations. Configuring the type can be done usign <literal>compass.engine.merge.policy.type</literal> and has possible values of <literal>logbytesize</literal>, <literal>logdoc</literal>, or the fully qualified class name of a <classname>MergePolicyProvider</classname>.
+		</para>
+		
+		<para>
+			The <literal>LogByteSize</literal> can be further configured using <literal>compass.engine.merge.policy.maxMergeMB</literal> and <literal>compass.engine.merge.policy.minMergeMB</literal>.
+		</para>
+	</sect2>
+	
+	<sect2 id="core-searchengine-merge-scheduler">
+		<title>Merge Scheduler</title>
+		
+		<para>
+			Merge scheduler controls how merge operations happen once a merge is needed. Lucene comes with built in <literal>ConcurrentMergeSchduler</literal> (executes merges concurrently on newly created threads) and <literal>SerialMergeScheduler</literal> that executes the merge operations on the same therad. Compass extends Lucene and provide <literal>ExecutorMergeScheduler</literal> allowing to utlize Compass internal exdecutor pool (either concurrent or work manager backed) with no overhead of creating new threads. This is the default merge scheduler that comes with Compass.
+		</para>
+		
+		<para>
+			Configuring the type of the merge scheduler can be done using <literal>compass.engine.merge.scheduler.type</literal> with the following possible values: <literal>executor</literal> (the default), <literal>concurrent</literal> (Lucene Concurrent merge scheduler), and <literal>serial</literal> (Lucene serial merge scheduler). It can also have a fully qualified name of an implementation of <classname>MergeSchedulerProvider</classname>.
+		</para>
+	</sect2>
   </sect1>
   
   <sect1 id="core-searchengine-indexdeletionpolicy">

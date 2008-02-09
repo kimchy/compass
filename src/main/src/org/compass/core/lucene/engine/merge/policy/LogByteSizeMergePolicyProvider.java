@@ -17,7 +17,7 @@
 package org.compass.core.lucene.engine.merge.policy;
 
 import org.apache.lucene.index.LogByteSizeMergePolicy;
-import org.apache.lucene.index.LogMergePolicy;
+import org.apache.lucene.index.MergePolicy;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
@@ -30,7 +30,7 @@ import org.compass.core.lucene.LuceneEnvironment;
  */
 public class LogByteSizeMergePolicyProvider implements MergePolicyProvider {
 
-    public LogMergePolicy create(CompassSettings settings) throws SearchEngineException {
+    public MergePolicy create(CompassSettings settings) throws SearchEngineException {
         LogByteSizeMergePolicy mergePolicy = new LogByteSizeMergePolicy();
         mergePolicy.setMaxMergeMB(settings.getSettingAsDouble(LuceneEnvironment.MergePolicy.LogByteSize.MAX_MERGE_MB, LogByteSizeMergePolicy.DEFAULT_MAX_MERGE_MB));
         mergePolicy.setMinMergeMB(settings.getSettingAsDouble(LuceneEnvironment.MergePolicy.LogByteSize.MIN_MERGE_MB, LogByteSizeMergePolicy.DEFAULT_MIN_MERGE_MB));
