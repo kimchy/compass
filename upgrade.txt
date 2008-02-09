@@ -9,11 +9,12 @@ VERSION 2.0 M2
    required.
 2. Removed the needOptimization API from SearchEngineOptimizer. This will allow for simpler integration with
    Lucene.
-3. Default all proeprty name changed from "all" to "zzz-all" since Lucene 2.3 introduced dependecy on lexi
+3. Upgraded Compass to Lucene 2.3. Please update the lucene jar files and reindex your data.
+4. Default all proeprty name changed from "all" to "zzz-all" since Lucene 2.3 introduced dependecy on lexi
    order of fields.
-4. New and improved read committed transaction support. Changed the way trans log is used and configured, please
+5. New and improved read committed transaction support. Changed the way trans log is used and configured, please
    read the reference documentation on how to configure it now.
-5. Removed CopmassHitIterator. Changed CompassHits and CompassDetachedHits to support Iteratable<CompassHit>. Please
+6. Removed CopmassHitIterator. Changed CompassHits and CompassDetachedHits to support Iteratable<CompassHit>. Please
    be careful with iterating over all the result set.
 
 VERSION 2.0 M1 (January 25, 2008)
