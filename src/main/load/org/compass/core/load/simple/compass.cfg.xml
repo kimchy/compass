@@ -56,6 +56,8 @@
             <!--<localCache subIndex="__default__" connection="ram://" />-->
         </connection>
 
+        <transaction isolation="read_committed" />
+
         <cache>
             <firstLevel type="org.compass.core.cache.first.DefaultFirstLevelCache" />
         </cache>
