@@ -319,10 +319,6 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         }
     }
 
-    public boolean allowConcurrentCommit() {
-        return false;
-    }
-
     private class ManagedEventListeners implements SearchEngineLifecycleEventListener {
 
         public void beforeBeginTransaction() throws SearchEngineException {

@@ -84,10 +84,6 @@ public class GigaSpaceLuceneSearchEngineStore extends AbstractLuceneSearchEngine
         return new GigaSpaceDirectory(space, indexName + "X" + subIndex, bucketSize);
     }
 
-    public boolean allowConcurrentCommit() {
-        return true;
-    }
-
     protected CopyFromHolder doBeforeCopyFrom() throws SearchEngineException {
         for (int i = 0; i < getSubIndexes().length; i++) {
             final String subIndex = getSubIndexes()[i];

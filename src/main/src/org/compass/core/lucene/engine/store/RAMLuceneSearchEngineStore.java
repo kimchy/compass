@@ -56,8 +56,4 @@ public class RAMLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore 
             ramIndexes = null;
         }
     }
-
-    public boolean allowConcurrentCommit() {
-        return true;
-    }
 }

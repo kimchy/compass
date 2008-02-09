@@ -84,10 +84,6 @@ public abstract class AbstractCoherenceLuceneSearchEngineStore extends AbstractL
         }
     }
 
-    public boolean allowConcurrentCommit() {
-        return true;
-    }
-
     protected void doClose() {
         // TODO Do we release here or destroy here?
         cache.release();
