@@ -17,7 +17,6 @@
 package org.compass.gps.impl;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,14 +32,14 @@ import org.compass.gps.spi.CompassGpsInterfaceDevice;
 /**
  * A simple base class for {@link org.compass.gps.CompassGps}
  * implementations.
- * 
+ *
  * @author kimchy
  */
 public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
 
     protected Log log = LogFactory.getLog(getClass());
 
-    protected HashMap devices = new HashMap();
+    protected HashMap<String, CompassGpsDevice> devices = new HashMap<String, CompassGpsDevice>();
 
     private boolean started = false;
 
@@ -54,15 +53,15 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
 
     public void setGpsDevices(CompassGpsDevice[] devices) {
         this.devices.clear();
-        for (int i = 0; i < devices.length; i++) {
-            checkDeviceValidity(devices[i]);
-            devices[i].injectGps(this);
-            this.devices.put(devices[i].getName(), devices[i]);
+        for (CompassGpsDevice device : devices) {
+            checkDeviceValidity(device);
+            device.injectGps(this);
+            this.devices.put(device.getName(), device);
         }
     }
 
     protected CompassGpsDevice getGpsDevice(String name) {
-        return (CompassGpsDevice) devices.get(name);
+        return devices.get(name);
     }
 
     private void checkDeviceValidity(CompassGpsDevice device) {
@@ -85,10 +84,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
             return true;
         }
         resourceMapping = ((InternalCompass) checkedCompass).getMapping().getNonRootMappingByClass(clazz);
-        if (resourceMapping == null) {
-            return false;
-        }
-        return resourceMapping.operationAllowed(cascade);
+        return resourceMapping != null && resourceMapping.operationAllowed(cascade);
     }
 
     protected boolean hasMappingForEntity(String name, Compass checkedCompass, CascadeMapping.Cascade cascade) {
@@ -97,16 +93,13 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
             return true;
         }
         resourceMapping = ((InternalCompass) checkedCompass).getMapping().getNonRootMappingByAlias(name);
-        if (resourceMapping == null) {
-            return false;
-        }
-        return resourceMapping.operationAllowed(cascade);
+        return resourceMapping != null && resourceMapping.operationAllowed(cascade);
     }
 
     protected ResourceMapping getRootMappingForEntity(Class clazz, Compass checkedCompass) {
         return ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz);
     }
-    
+
     protected boolean hasRootMappingForEntity(String name, Compass checkedCompass) {
         return getRootMappingForEntity(name, checkedCompass) != null;
     }
@@ -165,8 +158,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
     public synchronized void start() throws CompassGpsException {
         doStart();
         if (!started) {
-            for (Iterator it = devices.values().iterator(); it.hasNext();) {
-                CompassGpsDevice device = (CompassGpsDevice) it.next();
+            for (CompassGpsDevice device : devices.values()) {
                 device.start();
             }
             started = true;
@@ -179,8 +171,7 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
 
     public synchronized void stop() throws CompassGpsException {
         if (started) {
-            for (Iterator it = devices.values().iterator(); it.hasNext();) {
-                CompassGpsDevice device = (CompassGpsDevice) it.next();
+            for (CompassGpsDevice device : devices.values()) {
                 device.stop();
             }
             started = false;

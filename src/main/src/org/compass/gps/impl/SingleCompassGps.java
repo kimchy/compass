@@ -16,7 +16,6 @@
 
 package org.compass.gps.impl;
 
-import java.util.Iterator;
 import java.util.Properties;
 
 import org.compass.core.Compass;
@@ -45,7 +44,7 @@ import org.compass.gps.CompassGpsException;
  * <p>When executing the mirror operation, the implementation will not use the
  * configured transaction isolation, but will use the
  * {@link #setIndexTransactionIsolation(CompassTransaction.TransactionIsolation)}
- * transaction isolation, which defaults to <code>batch_insert</code>. Cascading
+ * transaction isolation, which defaults to <code>lucene</code>. Cascading
  * will also be disabled.
  *
  * @author kimchy
@@ -60,7 +59,7 @@ public class SingleCompassGps extends AbstractCompassGps {
 
     private CompassTemplate indexCompassTemplate;
 
-    private CompassTransaction.TransactionIsolation indexTransactionIsolation = CompassTransaction.TransactionIsolation.BATCH_INSERT;
+    private CompassTransaction.TransactionIsolation indexTransactionIsolation = CompassTransaction.TransactionIsolation.LUCENE;
 
     private Properties indexSettings;
 
@@ -131,8 +130,7 @@ public class SingleCompassGps extends AbstractCompassGps {
         compass.getSearchEngineIndexManager().replaceIndex(indexCompass.getSearchEngineIndexManager(),
                 new SearchEngineIndexManager.ReplaceIndexCallback() {
                     public void buildIndexIfNeeded() throws SearchEngineException {
-                        for (Iterator it = devices.values().iterator(); it.hasNext();) {
-                            CompassGpsDevice device = (CompassGpsDevice) it.next();
+                        for (CompassGpsDevice device : devices.values()) {
                             device.index();
                         }
                     }
