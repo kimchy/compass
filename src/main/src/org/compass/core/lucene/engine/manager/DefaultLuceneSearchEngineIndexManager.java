@@ -35,6 +35,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.executor.ExecutorManager;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.merge.policy.MergePolicyFactory;
@@ -402,14 +403,14 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
         IndexWriter indexWriter = new IndexWriter(dir, autoCommit, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(),
                 create, deletionPolicy);
-        indexWriter.setMaxMergeDocs(luceneSettings.getMaxMergeDocs());
-        indexWriter.setMergeFactor(luceneSettings.getMergeFactor());
+        indexWriter.setMaxMergeDocs(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, luceneSettings.getMaxMergeDocs()));
+        indexWriter.setMergeFactor(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, luceneSettings.getMergeFactor()));
+        indexWriter.setRAMBufferSizeMB(settings.getSettingAsDouble(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, luceneSettings.getRamBufferSize()));
+        indexWriter.setMaxBufferedDocs(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, luceneSettings.getMaxBufferedDocs()));
+        indexWriter.setMaxBufferedDeleteTerms(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DELETED_TERMS, luceneSettings.getMaxBufferedDeletedTerms()));
         indexWriter.setUseCompoundFile(luceneSettings.isUseCompoundFile());
         indexWriter.setMaxFieldLength(luceneSettings.getMaxFieldLength());
-        indexWriter.setMaxBufferedDocs(luceneSettings.getMaxBufferedDocs());
-        indexWriter.setMaxBufferedDeleteTerms(luceneSettings.getMaxBufferedDeletedTerms());
         indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
-        indexWriter.setRAMBufferSizeMB(luceneSettings.getRamBufferSize());
         indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));
         indexWriter.setMergeScheduler(MergeSchedulerFactory.create(this, settings));
         return indexWriter;
