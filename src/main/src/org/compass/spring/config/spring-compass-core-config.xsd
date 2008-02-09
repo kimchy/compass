@@ -1211,11 +1211,16 @@
                     <xsd:enumeration value="batch_insert">
                         <xsd:annotation>
                             <xsd:documentation>
-                                Specialized transaction level, mainly used for batch indexing. Note that it does not
-                                support queries, delete and save actions. Only the create operation is supported (If a
-                                resources with the same id and alias is in the index, you will have two after the create
-                                operation). Extremely fast for batch indexing, especially when tweaked with
-                                batchInsertSettings.
+                                Same as Lucene transaction isolation level.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="lucene">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                An isolation level allowing for faster indexing at the expense of transactional
+                                sematics. Operations done during a transaction will not be visible to find/load/get
+                                operations within that transaction.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:enumeration>
