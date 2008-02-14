@@ -91,9 +91,9 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
 
     private HibernateIndexEntitiesIndexer entitiesIndexer;
 
-    private Map queryProviderByClass = new HashMap();
+    private Map<Class, HibernateQueryProvider> queryProviderByClass = new HashMap<Class, HibernateQueryProvider>();
 
-    private Map queryProviderByName = new HashMap();
+    private Map<String, HibernateQueryProvider> queryProviderByName = new HashMap<String, HibernateQueryProvider>();
 
 
     private SessionFactory nativeSessionFactory;
@@ -160,10 +160,10 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
         // apply specific select statements
         for (EntityInformation entityInformation : entitiesInformation) {
             if (queryProviderByClass.get(entityInformation.getEntityClass()) != null) {
-                entityInformation.setQueryProvider((HibernateQueryProvider) queryProviderByClass.get(entityInformation.getEntityClass()));
+                entityInformation.setQueryProvider(queryProviderByClass.get(entityInformation.getEntityClass()));
             }
             if (queryProviderByName.get(entityInformation.getName()) != null) {
-                entityInformation.setQueryProvider((HibernateQueryProvider) queryProviderByName.get(entityInformation.getName()));
+                entityInformation.setQueryProvider(queryProviderByName.get(entityInformation.getName()));
             }
         }
         return entitiesInformation;
