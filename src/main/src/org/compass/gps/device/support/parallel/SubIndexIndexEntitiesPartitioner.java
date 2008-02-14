@@ -17,7 +17,6 @@
 package org.compass.gps.device.support.parallel;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -35,13 +34,12 @@ import org.compass.gps.CompassGpsException;
 public class SubIndexIndexEntitiesPartitioner implements IndexEntitiesPartitioner {
 
     public IndexEntity[][] partition(IndexEntity[] entities) throws CompassGpsException {
-        LinkedList list = new LinkedList();
-        for (int i = 0; i < entities.length; i++) {
+        LinkedList<Holder> list = new LinkedList<Holder>();
+        for (IndexEntity entity : entities) {
             Holder holder = new Holder();
-            IndexEntity indexEntity = entities[i];
-            holder.indexEntities.add(indexEntity);
-            for (int j = 0; j < indexEntity.getSubIndexes().length; j++) {
-                holder.subIndexes.add(indexEntity.getSubIndexes()[j]);
+            holder.indexEntities.add(entity);
+            for (int j = 0; j < entity.getSubIndexes().length; j++) {
+                holder.subIndexes.add(entity.getSubIndexes()[j]);
             }
             list.add(holder);
         }
@@ -49,9 +47,9 @@ public class SubIndexIndexEntitiesPartitioner implements IndexEntitiesPartitione
         do {
             merged = false;
             for (int i = 0; i < list.size(); i++) {
-                Holder holder = (Holder) list.get(i);
+                Holder holder = list.get(i);
                 for (int j = i + 1; j < list.size(); j++) {
-                    Holder tempHolder = (Holder) list.get(j);
+                    Holder tempHolder = list.get(j);
                     if (holder.containsSubIndex(tempHolder.subIndexes)) {
                         list.remove(j);
                         holder.subIndexes.addAll(tempHolder.subIndexes);
@@ -63,19 +61,19 @@ public class SubIndexIndexEntitiesPartitioner implements IndexEntitiesPartitione
         } while (merged);
         IndexEntity[][] returnEntities = new IndexEntity[list.size()][];
         for (int i = 0; i < returnEntities.length; i++) {
-            Holder holder = (Holder) list.get(i);
-            returnEntities[i] = (IndexEntity[]) holder.indexEntities.toArray(new IndexEntity[holder.indexEntities.size()]);
+            Holder holder = list.get(i);
+            returnEntities[i] = holder.indexEntities.toArray(new IndexEntity[holder.indexEntities.size()]);
         }
         return returnEntities;
     }
 
     private class Holder {
-        Set subIndexes = new HashSet();
-        Set indexEntities = new HashSet();
+        Set<String> subIndexes = new HashSet<String>();
+        Set<IndexEntity> indexEntities = new HashSet<IndexEntity>();
 
-        public boolean containsSubIndex(Set checkSubIndexes) {
-            for (Iterator it = checkSubIndexes.iterator(); it.hasNext();) {
-                if (subIndexes.contains(it.next())) {
+        public boolean containsSubIndex(Set<String> checkSubIndexes) {
+            for (String checkSubIndex : checkSubIndexes) {
+                if (subIndexes.contains(checkSubIndex)) {
                     return true;
                 }
             }
