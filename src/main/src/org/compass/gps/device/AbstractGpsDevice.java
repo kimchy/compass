@@ -47,7 +47,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
 
     protected CompassGpsInterfaceDevice compassGps;
 
-    private boolean started = false;
+    private volatile boolean started = false;
 
     private boolean internalMirrorDataChanges = false;
 

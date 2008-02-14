@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
@@ -139,6 +140,9 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
         try {
             IndexExecution[] indexExecutions = doGetIndexExecutions(connection);
             for (int i = 0; i < indexExecutions.length; i++) {
+                if (!isRunning()) {
+                    return;
+                }
                 IndexExecution indexExecution = indexExecutions[i];
                 ps = indexExecution.getStatement();
                 if (ps == null) {
@@ -208,6 +212,9 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
      */
     protected void processRow(Object description, ResultSet rs, CompassSession session) throws SQLException,
             CompassException {
+        if (!isRunning()) {
+            return;
+        }
         Object value = processRowValue(description, rs, session);
         if (value != null) {
             if (value.getClass().isArray()) {
