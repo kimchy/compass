@@ -172,12 +172,24 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
         // do nothing
     }
 
-    public void closeDirectory(String subIndex, Directory dir) throws SearchEngineException {
-        // do nothing since we cache directories
+    public void closeDirectory(String subIndex) throws SearchEngineException {
+        Directory dir = dirs.remove(subIndex);
+        if (dir == null) {
+            return;
+        }
+        try {
+            dir.close();
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to close direcotry for sub index [" + subIndex + "]", e);
+        }
     }
 
     public int getNumberOfAliasesBySubIndex(String subIndex) {
         return (aliasesBySubIndex.get(subIndex)).size();
+    }
+
+    public Directory getDirectoryBySubIndex(String subIndex) throws SearchEngineException {
+        return getDirectoryBySubIndex(subIndex, false);
     }
 
     public Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
@@ -274,7 +286,7 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
 
     protected abstract Directory doOpenDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException;
 
-    private void createIndex(final String subIndex) throws SearchEngineException {
+    protected void createIndex(final String subIndex) throws SearchEngineException {
         template.executeForSubIndex(subIndex, true, new LuceneStoreCallback() {
             public Object doWithStore(Directory dir) throws IOException {
                 IndexWriter indexWriter = new IndexWriter(dir, new StandardAnalyzer(), true);
@@ -283,6 +295,13 @@ public abstract class AbstractLuceneSearchEngineStore implements LuceneSearchEng
             }
         });
     }
+
+    public void cleanIndex(String subIndex) throws SearchEngineException {
+        doCleanIndex(subIndex);
+        createIndex(subIndex);
+    }
+
+    protected abstract void doCleanIndex(String subIndex) throws SearchEngineException;
 
     protected boolean indexExists(final String subIndex) throws SearchEngineException {
         try {

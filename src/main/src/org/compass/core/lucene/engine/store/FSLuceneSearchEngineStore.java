@@ -86,6 +86,28 @@ public class FSLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore {
         }
     }
 
+    protected void doCleanIndex(String subIndex) throws SearchEngineException {
+        File subIndexPathFile = new File(indexPath + "/" + subIndex);
+        if (subIndexPathFile.exists()) {
+            boolean deleted = false;
+            // do this retries for windows...
+            for (int i = 0; i < 5; i++) {
+                deleted = LuceneUtils.deleteDir(subIndexPathFile);
+                if (deleted) {
+                    break;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // no matter
+                }
+            }
+            if (!deleted) {
+                throw new SearchEngineException("Failed to delete index directory [" + indexPath + "]");
+            }
+        }
+    }
+
     protected CopyFromHolder doBeforeCopyFrom() throws SearchEngineException {
         // first rename the current index directory
         File indexPathFile = new File(indexPath);

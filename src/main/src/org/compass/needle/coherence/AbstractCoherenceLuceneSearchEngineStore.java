@@ -84,6 +84,18 @@ public abstract class AbstractCoherenceLuceneSearchEngineStore extends AbstractL
         }
     }
 
+    protected void doCleanIndex(final String subIndex) throws SearchEngineException {
+        template.executeForSubIndex(subIndex, new LuceneStoreCallback() {
+            public Object doWithStore(Directory dest) {
+                if (dest instanceof DirectoryWrapper) {
+                    dest = ((DirectoryWrapper) dest).getWrappedDirectory();
+                }
+                ((CoherenceDirectory) dest).deleteContent();
+                return null;
+            }
+        });
+    }
+
     protected void doClose() {
         // TODO Do we release here or destroy here?
         cache.release();

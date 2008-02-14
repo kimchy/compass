@@ -87,7 +87,13 @@ public class AggressiveOptimizer extends AbstractIndexInfoOptimizer implements C
                 throw new SearchEngineException("Failed to optimize sub-index [" + subIndex + "]", e);
             }
         } finally {
-            indexManager.closeIndexWriter(subIndex, indexWriter, dir);
+            try {
+                if (indexWriter != null) {
+                    indexWriter.close();
+                }
+            } catch (IOException e) {
+                log.warn("Failed to close index writer for sub index [" + subIndex + "]", e);
+            }
         }
     }
 }

@@ -53,8 +53,6 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
 
     IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException;
 
-    void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException;
-
     LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException;
 
     void refreshCache(String subIndex, IndexSearcher indexSearcher) throws SearchEngineException;

@@ -31,6 +31,12 @@ public class LuceneStoreTemplate {
         this.searchEngineStore = searchEngineStore;
     }
 
+    public Object executeForSubIndex(String subIndex, LuceneSearchEngineStore.LuceneStoreCallback callback)
+            throws SearchEngineException {
+        Directory dir = searchEngineStore.getDirectoryBySubIndex(subIndex, false);
+        return execute(subIndex, dir, callback);
+    }
+
     public Object executeForSubIndex(String subIndex, boolean create, LuceneSearchEngineStore.LuceneStoreCallback callback)
             throws SearchEngineException {
         Directory dir = searchEngineStore.getDirectoryBySubIndex(subIndex, create);
@@ -38,30 +44,12 @@ public class LuceneStoreTemplate {
     }
 
     public Object execute(String subIndex, Directory dir, LuceneSearchEngineStore.LuceneStoreCallback callback) throws SearchEngineException {
-        Exception ex;
         try {
             return callback.doWithStore(dir);
+        } catch (SearchEngineException e) {
+            throw e;
         } catch (Exception e) {
-            ex = e;
+            throw new SearchEngineException("Failed while executing a lucene directory based operation on sub index [" + subIndex + "]", e);
         }
-        try {
-            if (dir != null) {
-                searchEngineStore.closeDirectory(subIndex, dir);
-            }
-        } catch (Exception e) {
-            if (ex == null) {
-                ex = e;
-            } else {
-                log.warn("Caught an exception trying to close the lucene directory "
-                        + "with other exception pending, logging and ignoring", e);
-            }
-        }
-        if (ex != null) {
-            if (ex instanceof SearchEngineException) {
-                throw (SearchEngineException) ex;
-            }
-            throw new SearchEngineException("Failed while executing a lucene directory based operation", ex);
-        }
-        return null;
     }
 }

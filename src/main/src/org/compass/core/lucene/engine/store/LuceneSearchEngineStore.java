@@ -68,12 +68,17 @@ public interface LuceneSearchEngineStore {
     /**
      * Closes the given directory.
      */
-    void closeDirectory(String subIndex, Directory dir) throws SearchEngineException;
+    void closeDirectory(String subIndex) throws SearchEngineException;
 
     /**
      * Returns the directory that match the given sub index.
      */
     Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException;
+
+    /**
+     * Returns the directory that match the given sub index. Not creating one if one does not exists.
+     */
+    Directory getDirectoryBySubIndex(String subIndex) throws SearchEngineException;
 
     /**
      * Returns <code>true</code> if any sub index is locked.
@@ -99,6 +104,11 @@ public interface LuceneSearchEngineStore {
      * Deletes the index.
      */
     void deleteIndex() throws SearchEngineException;
+
+    /**
+     * Cleans the sub index.
+     */
+    void cleanIndex(String subIndex) throws SearchEngineException;
 
     /**
      * Creates the index (if it is already exists, delets it first).

@@ -110,6 +110,24 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         });
     }
 
+    public void cleanIndex() throws SearchEngineException {
+        for (String subIndex : getSubIndexes()) {
+            cleanIndex(subIndex);
+        }
+    }
+
+    public void cleanIndex(final String subIndex) throws SearchEngineException {
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+                synchronized (indexHoldersLocks.get(subIndex)) {
+                    clearCache(subIndex);
+                    searchEngineStore.cleanIndex(subIndex);
+                    return null;
+                }
+            }
+        });
+    }
+
     public boolean verifyIndex() throws SearchEngineException {
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
             public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
@@ -414,41 +432,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));
         indexWriter.setMergeScheduler(MergeSchedulerFactory.create(this, settings));
         return indexWriter;
-    }
-
-    public void closeIndexWriter(String subIndex, IndexWriter indexWriter, Directory dir) throws SearchEngineException {
-        Exception ex = null;
-        try {
-            closeIndexWriter(indexWriter);
-        } catch (Exception e) {
-            ex = e;
-        }
-        try {
-            searchEngineStore.closeDirectory(subIndex, dir);
-        } catch (Exception e) {
-            if (ex == null) {
-                ex = e;
-            } else {
-                log.warn("Caught an exception trying to close the lucene directory "
-                        + "with other exception pending, logging and ignoring", e);
-            }
-        }
-        if (ex != null) {
-            if (ex instanceof SearchEngineException) {
-                throw (SearchEngineException) ex;
-            }
-            throw new SearchEngineException("Failed while executing a lucene directory based operation", ex);
-        }
-    }
-
-    protected void closeIndexWriter(IndexWriter indexWriter) throws SearchEngineException {
-        try {
-            if (indexWriter != null) {
-                indexWriter.close();
-            }
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to close index reader", e);
-        }
     }
 
     public LuceneSearchEngineStore getStore() {

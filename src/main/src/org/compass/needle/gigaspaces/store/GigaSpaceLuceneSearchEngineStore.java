@@ -84,10 +84,27 @@ public class GigaSpaceLuceneSearchEngineStore extends AbstractLuceneSearchEngine
         return new GigaSpaceDirectory(space, indexName + "X" + subIndex, bucketSize);
     }
 
+    protected void doCleanIndex(final String subIndex) throws SearchEngineException {
+        template.executeForSubIndex(subIndex, new LuceneStoreCallback() {
+            public Object doWithStore(Directory dest) {
+                if (dest instanceof DirectoryWrapper) {
+                    dest = ((DirectoryWrapper) dest).getWrappedDirectory();
+                }
+                GigaSpaceDirectory gigaDir = (GigaSpaceDirectory) dest;
+                try {
+                    gigaDir.deleteContent();
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to delete content of [" + subIndex + "]", e);
+                }
+                return null;
+            }
+        });
+    }
+
     protected CopyFromHolder doBeforeCopyFrom() throws SearchEngineException {
         for (int i = 0; i < getSubIndexes().length; i++) {
             final String subIndex = getSubIndexes()[i];
-            template.executeForSubIndex(subIndex, false, new LuceneStoreCallback() {
+            template.executeForSubIndex(subIndex, new LuceneStoreCallback() {
                 public Object doWithStore(Directory dest) {
                     if (dest instanceof DirectoryWrapper) {
                         dest = ((DirectoryWrapper) dest).getWrappedDirectory();

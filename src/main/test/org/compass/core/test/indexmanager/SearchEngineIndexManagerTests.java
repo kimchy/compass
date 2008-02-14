@@ -37,6 +37,28 @@ public class SearchEngineIndexManagerTests extends AbstractTestCase {
                 0.2f);
     }
 
+    public void testCleanIndex() {
+        SearchEngineIndexManager indexManager = getCompass().getSearchEngineIndexManager();
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+        A a = new A();
+        a.setId(1l);
+        a.setValue("test");
+        session.save("a1", a);
+        tr.commit();
+        session.close();
+
+        indexManager.cleanIndex();
+
+        session = openSession();
+        tr = session.beginTransaction();
+        Object o = session.get("a1", 1);
+        assertNull(o);
+        tr.commit();
+        session.close();
+    }
+
     public void testIsCached() throws Exception {
         SearchEngineIndexManager indexManager = getCompass().getSearchEngineIndexManager();
         assertFalse(indexManager.isCached());

@@ -273,6 +273,23 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         return super.indexExists(dir);
     }
 
+    protected void doCleanIndex(final String subIndex) throws SearchEngineException {
+        template.executeForSubIndex(subIndex, new LuceneStoreCallback() {
+            public Object doWithStore(Directory dest) {
+                if (dest instanceof DirectoryWrapper) {
+                    dest = ((DirectoryWrapper) dest).getWrappedDirectory();
+                }
+                JdbcDirectory jdbcDirectory = (JdbcDirectory) dest;
+                try {
+                    jdbcDirectory.deleteContent();
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to delete content of [" + subIndex + "]", e);
+                }
+                return null;
+            }
+        });
+    }
+
     public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {
         if (managed) {
             eventManager.registerLifecycleListener(new ManagedEventListeners());

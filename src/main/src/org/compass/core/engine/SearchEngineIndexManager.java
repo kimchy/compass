@@ -97,11 +97,21 @@ public interface SearchEngineIndexManager {
     boolean verifyIndex() throws SearchEngineException;
 
     /**
-     * Deletes the index data.
+     * Deletes the index.
      *
      * @throws SearchEngineException
      */
     void deleteIndex() throws SearchEngineException;
+
+    /**
+     * Cleans the index from data (by deleting and creating an empty one).
+     */
+    void cleanIndex() throws SearchEngineException;
+
+    /**
+     * Cleans the index from data (by deleting and creating an empty one).
+     */
+    void cleanIndex(String subIndex) throws SearchEngineException;
 
     /**
      * Returns <code>true</code> if the index exists.

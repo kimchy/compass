@@ -28,7 +28,7 @@ import org.compass.core.engine.SearchEngineException;
  */
 public class RAMLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore {
 
-    private Map ramIndexes = new HashMap();
+    private Map<String, RAMDirectory> ramIndexes = new HashMap<String, RAMDirectory>();
 
     public RAMLuceneSearchEngineStore(String path, String subContext) {
         super(path, subContext);
@@ -36,12 +36,17 @@ public class RAMLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore 
     }
 
     protected synchronized Directory doOpenDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
-        RAMDirectory directory = (RAMDirectory) ramIndexes.get(subIndex);
+        RAMDirectory directory = ramIndexes.get(subIndex);
         if (directory == null && create) {
             directory = new RAMDirectory();
             ramIndexes.put(subIndex, directory);
         }
         return directory;
+    }
+
+    protected void doCleanIndex(String subIndex) throws SearchEngineException {
+        ramIndexes.remove(subIndex);
+        ramIndexes.put(subIndex, new RAMDirectory());
     }
 
     protected synchronized void doDeleteIndex() throws SearchEngineException {
