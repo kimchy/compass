@@ -57,7 +57,7 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
 
     private boolean performOrderById = true;
 
-    private Map performOrderByPerEntity = new HashMap();
+    private Map<String, Boolean> performOrderByPerEntity = new HashMap<String, Boolean>();
 
     public void setHibernateGpsDevice(HibernateGpsDevice device) {
         this.device = device;
@@ -76,12 +76,12 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
      * the given entity. Defaults to {@link #setPerformOrderById(boolean)}.
      */
     public void setPerformOrderById(String entity, boolean performOrderById) {
-        performOrderByPerEntity.put(entity, new Boolean(performOrderById));
+        performOrderByPerEntity.put(entity, performOrderById);
     }
 
     public void performIndex(CompassSession session, IndexEntity[] entities) {
-        for (int i = 0; i < entities.length; i++) {
-            EntityInformation entityInformation = (EntityInformation) entities[i];
+        for (IndexEntity entity : entities) {
+            EntityInformation entityInformation = (EntityInformation) entity;
             if (device.isFilteredForIndex(entityInformation.getName())) {
                 continue;
             }
@@ -101,8 +101,8 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
                 Criteria criteria = entityInformation.getQueryProvider().createCriteria(hibernateSession, entityInformation);
                 if (criteria != null) {
                     if (performOrderById) {
-                        Boolean performOrder = (Boolean) performOrderByPerEntity.get(entityInformation.getName());
-                        if (performOrder == null || performOrder.booleanValue()) {
+                        Boolean performOrder = performOrderByPerEntity.get(entityInformation.getName());
+                        if (performOrder == null || performOrder) {
                             ClassMetadata metadata = hibernateSession.getSessionFactory().getClassMetadata(entityInformation.getName());
                             criteria.addOrder(Order.asc(metadata.getIdentifierPropertyName()));
                         }

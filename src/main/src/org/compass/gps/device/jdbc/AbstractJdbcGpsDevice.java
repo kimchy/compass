@@ -22,11 +22,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.Resource;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.device.AbstractGpsDevice;
 import org.compass.gps.device.jdbc.dialect.DefaultJdbcDialect;
@@ -138,8 +138,10 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
         ResultSet rs = null;
         try {
             IndexExecution[] indexExecutions = doGetIndexExecutions(connection);
-            for (int i = 0; i < indexExecutions.length; i++) {
-                IndexExecution indexExecution = indexExecutions[i];
+            for (IndexExecution indexExecution : indexExecutions) {
+                if (!isRunning()) {
+                    return;
+                }
                 ps = indexExecution.getStatement();
                 if (ps == null) {
                     if (log.isDebugEnabled()) {
@@ -177,12 +179,6 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
      * Can be override by derived classes, if not override, than iterates threw
      * the <code>ResultSet</code> and calls
      * {@link #processRow(Object, ResultSet, CompassSession)} for each row.
-     *
-     * @param description
-     * @param rs
-     * @param session
-     * @throws SQLException
-     * @throws CompassException
      */
     protected void processResultSet(Object description, ResultSet rs, CompassSession session) throws SQLException,
             CompassException {
@@ -199,33 +195,22 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
      * return value to save it in the <code>CompassSession</code>. The return
      * value can be an OSEM enables object, a <code>Resource</code>, or an
      * array of one of them.
-     *
-     * @param description
-     * @param rs
-     * @param session
-     * @throws SQLException
-     * @throws CompassException
      */
     protected void processRow(Object description, ResultSet rs, CompassSession session) throws SQLException,
             CompassException {
+        if (!isRunning()) {
+            return;
+        }
         Object value = processRowValue(description, rs, session);
         if (value != null) {
             if (value.getClass().isArray()) {
                 int length = Array.getLength(value);
                 for (int i = 0; i < length; i++) {
                     Object value1 = Array.get(value, i);
-                    if (value1 instanceof Resource) {
-                        session.create((Resource) value1);
-                    } else {
-                        session.create(value1);
-                    }
+                    session.create(value1);
                 }
             } else {
-                if (value instanceof Resource) {
-                    session.create((Resource) value);
-                } else {
-                    session.create(value);
-                }
+                session.create(value);
             }
         }
     }

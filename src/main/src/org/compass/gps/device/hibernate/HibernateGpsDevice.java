@@ -158,8 +158,7 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
     protected IndexEntity[] doGetIndexEntities() throws CompassGpsException {
         EntityInformation[] entitiesInformation = entitiesLocator.locate(nativeSessionFactory, this);
         // apply specific select statements
-        for (int i = 0; i < entitiesInformation.length; i++) {
-            EntityInformation entityInformation = entitiesInformation[i];
+        for (EntityInformation entityInformation : entitiesInformation) {
             if (queryProviderByClass.get(entityInformation.getEntityClass()) != null) {
                 entityInformation.setQueryProvider((HibernateQueryProvider) queryProviderByClass.get(entityInformation.getEntityClass()));
             }
