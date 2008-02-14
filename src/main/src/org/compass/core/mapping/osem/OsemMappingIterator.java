@@ -19,6 +19,7 @@ package org.compass.core.mapping.osem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -73,21 +74,21 @@ public abstract class OsemMappingIterator {
      */
     public static class ClassPropertyAndResourcePropertyGatherer implements ClassMappingCallback {
 
-        private ArrayList classPropertyMappings = new ArrayList();
+        private ArrayList<ClassPropertyMapping> classPropertyMappings = new ArrayList<ClassPropertyMapping>();
 
-        private ArrayList resourcePropertyMappings = new ArrayList();
+        private ArrayList<ResourcePropertyMapping> resourcePropertyMappings = new ArrayList<ResourcePropertyMapping>();
 
-        private HashMap ignoreInheritedDuplicatesClassMappings = new HashMap();
+        private HashMap<Integer, HashMap<Object, HashMap<Object, ObjectMapping>>> ignoreInheritedDuplicatesClassMappings = new HashMap<Integer, HashMap<Object, HashMap<Object, ObjectMapping>>>();
 
         public ClassPropertyAndResourcePropertyGatherer() {
 
         }
 
-        public ArrayList getClassPropertyMappings() {
+        public List<ClassPropertyMapping> getClassPropertyMappings() {
             return classPropertyMappings;
         }
 
-        public ArrayList getResourcePropertyMappings() {
+        public List<ResourcePropertyMapping> getResourcePropertyMappings() {
             return resourcePropertyMappings;
         }
 
@@ -103,26 +104,26 @@ public abstract class OsemMappingIterator {
             if (mapping instanceof HasRefAliasMapping) {
                 ClassMapping[] classMappings = ((HasRefAliasMapping) mapping).getRefClassMappings();
                 if (classMappings.length > 1) {
-                    HashMap byAlias = new HashMap();
-                    for (int i = 0; i < classMappings.length; i++) {
-                        ignoreInheritedDuplicatesClassMappings.put(new Integer(System.identityHashCode(classMappings[i])), byAlias);
+                    HashMap<Object, HashMap<Object, ObjectMapping>> byAlias = new HashMap<Object, HashMap<Object, ObjectMapping>>();
+                    for (ClassMapping classMapping1 : classMappings) {
+                        ignoreInheritedDuplicatesClassMappings.put(System.identityHashCode(classMapping1), byAlias);
                     }
                 }
             }
             // check if the class mapping is in the inherited duplicates checking
             // if so, only traverse the first one, and the rest of the duplicates
             // just ignore by returning false for drilling down
-            HashMap byAlias = (HashMap) ignoreInheritedDuplicatesClassMappings.get(new Integer(System.identityHashCode(classMapping)));
+            HashMap<Object, HashMap<Object, ObjectMapping>> byAlias = ignoreInheritedDuplicatesClassMappings.get(new Integer(System.identityHashCode(classMapping)));
             if (byAlias != null && (mapping instanceof ObjectMapping)) {
                 ObjectMapping objectMapping = (ObjectMapping) mapping;
                 Assert.notNull(objectMapping.getDefinedInAlias(), "Internal Compass Error, Defined in Alias not found for [" +
                         objectMapping.getPropertyName() + "] in alias [" + classMapping.getAlias() + "]");
-                HashMap propByAlias = (HashMap) byAlias.get(objectMapping.getDefinedInAlias());
+                HashMap<Object, ObjectMapping> propByAlias = byAlias.get(objectMapping.getDefinedInAlias());
                 if (propByAlias == null) {
-                    propByAlias = new HashMap();
+                    propByAlias = new HashMap<Object, ObjectMapping>();
                     byAlias.put(objectMapping.getDefinedInAlias(), propByAlias);
                 }
-                ObjectMapping actualObjectMapping = (ObjectMapping) propByAlias.get(objectMapping.getPropertyName());
+                ObjectMapping actualObjectMapping = propByAlias.get(objectMapping.getPropertyName());
                 if (actualObjectMapping != null) {
                     onDuplicateMapping(classMapping, actualObjectMapping, objectMapping);
                     return false;
@@ -235,8 +236,8 @@ public abstract class OsemMappingIterator {
 
             if (recursive) {
                 ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
-                for (int i = 0; i < refMappings.length; i++) {
-                    iterateMappings(callback, refMappings[i]);
+                for (ClassMapping refMapping : refMappings) {
+                    iterateMappings(callback, refMapping);
                 }
 
                 if (referenceMapping.getRefCompMapping() != null) {
@@ -254,8 +255,8 @@ public abstract class OsemMappingIterator {
             callback.onComponentMapping(classMapping, componentMapping);
             if (recursive) {
                 ClassMapping[] refMappings = componentMapping.getRefClassMappings();
-                for (int i = 0; i < refMappings.length; i++) {
-                    iterateMappings(callback, refMappings[i]);
+                for (ClassMapping refMapping : refMappings) {
+                    iterateMappings(callback, refMapping);
                 }
             }
         }

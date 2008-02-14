@@ -57,7 +57,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private ClassIdPropertyMapping[] classIdPropertyMappings;
 
-    private HashMap pathMappings;
+    private HashMap<String, ResourcePropertyMapping> pathMappings;
 
     private Constructor constructor;
 
@@ -99,13 +99,10 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
     protected void doPostProcess() throws MappingException {
         PostProcessMappingCallback callback = new PostProcessMappingCallback();
         OsemMappingIterator.iterateMappings(callback, this, true);
-        List findList = callback.getResourcePropertyMappings();
-        resourcePropertyMappings = (ResourcePropertyMapping[])
-                findList.toArray(new ResourcePropertyMapping[findList.size()]);
-        findList = callback.getClassPropertyMappings();
-        classPropertyMappings = (ClassPropertyMapping[]) findList.toArray(new ClassPropertyMapping[findList.size()]);
-        findList = findClassPropertyIdMappings();
-        classIdPropertyMappings = (ClassIdPropertyMapping[]) findList.toArray(new ClassIdPropertyMapping[findList.size()]);
+        resourcePropertyMappings = callback.getResourcePropertyMappings().toArray(new ResourcePropertyMapping[callback.getResourcePropertyMappings().size()]);
+        classPropertyMappings = callback.getClassPropertyMappings().toArray(new ClassPropertyMapping[callback.getClassPropertyMappings().size()]);
+        List<ClassIdPropertyMapping> idMappings = findClassPropertyIdMappings();
+        classIdPropertyMappings = idMappings.toArray(new ClassIdPropertyMapping[idMappings.size()]);
         pathMappings = callback.getPathMappings();
     }
 
@@ -157,7 +154,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
     }
 
     public ResourcePropertyMapping getResourcePropertyMappingByDotPath(String path) {
-        return (ResourcePropertyMapping) pathMappings.get(path);
+        return pathMappings.get(path);
     }
 
     public boolean isIncludePropertiesWithNoMappingsInAll() {
@@ -211,11 +208,11 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public boolean isSupportUnmarshall() {
         // possible NPE, will take care of it in setting it
-        return supportUnmarshall.booleanValue();
+        return supportUnmarshall;
     }
 
     public void setSupportUnmarshall(boolean supportUnmarshall) {
-        this.supportUnmarshall = Boolean.valueOf(supportUnmarshall);
+        this.supportUnmarshall = supportUnmarshall;
     }
 
     public boolean isSupportUnmarshallSet() {
@@ -240,13 +237,13 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public class PostProcessMappingCallback extends OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer {
 
-        private HashMap pathMappings = new HashMap();
+        private HashMap<String, ResourcePropertyMapping> pathMappings = new HashMap<String, ResourcePropertyMapping>();
 
-        private ArrayList pathSteps = new ArrayList();
+        private ArrayList<String> pathSteps = new ArrayList<String>();
 
         private StringBuffer sb = new StringBuffer();
 
-        private Set cyclicNoUnmarshallRefAliasMappings = new HashSet();
+        private Set<String> cyclicNoUnmarshallRefAliasMappings = new HashSet<String>();
 
         /**
          * <p>Since we did not process duplicate mappings, we need to replace them with the original mappings that
@@ -313,11 +310,11 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
                 if (mapping instanceof HasRefAliasMapping) {
                     ClassMapping[] refMappings = ((HasRefAliasMapping) mapping).getRefClassMappings();
                     if (refMappings != null) {
-                        for (int i = 0; i < refMappings.length; i++) {
-                            if (cyclicNoUnmarshallRefAliasMappings.contains(refMappings[i].getAlias())) {
+                        for (ClassMapping refMapping : refMappings) {
+                            if (cyclicNoUnmarshallRefAliasMappings.contains(refMapping.getAlias())) {
                                 return false;
                             }
-                            cyclicNoUnmarshallRefAliasMappings.add(refMappings[i].getAlias());
+                            cyclicNoUnmarshallRefAliasMappings.add(refMapping.getAlias());
                         }
                     }
                 }
@@ -347,7 +344,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
             }
         }
 
-        public HashMap getPathMappings() {
+        public HashMap<String, ResourcePropertyMapping> getPathMappings() {
             return pathMappings;
         }
 
