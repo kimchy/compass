@@ -122,8 +122,7 @@ public class SingleCompassGps extends AbstractCompassGps {
         }
         // create the temp compass index, and clean it
         indexCompass = compass.clone(indexCompassSettings);
-        indexCompass.getSearchEngineIndexManager().deleteIndex();
-        indexCompass.getSearchEngineIndexManager().createIndex();
+        indexCompass.getSearchEngineIndexManager().cleanIndex();
         indexCompassTemplate = new CompassTemplate(indexCompass);
 
         indexCompass.getSearchEngineIndexManager().clearCache();
