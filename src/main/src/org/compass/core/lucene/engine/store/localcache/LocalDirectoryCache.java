@@ -35,7 +35,6 @@ package org.compass.core.lucene.engine.store.localcache;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -97,8 +96,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
             monitors[i] = new Object();
         }
 
-        cleanupTaskFuture = localDirectoryCacheManager.getExecutorService().scheduleWithFixedDelay(new CleanupTask(),
-                10, 10, TimeUnit.SECONDS);
+        cleanupTaskFuture = localDirectoryCacheManager.getSearchEngineFactory().getExecutorManager().scheduleWithFixedDelay(new CleanupTask(), 10, 10, TimeUnit.SECONDS);
     }
 
     public Directory getWrappedDirectory() {
@@ -259,8 +257,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
             log.trace(logMessage("Clearing local cache"));
         }
         String[] list = localCacheDir.list();
-        for (int i = 0; i < list.length; i++) {
-            String name = list[i];
+        for (String name : list) {
             synchronized (monitors[Math.abs(name.hashCode()) % monitors.length]) {
                 if (localCacheDir.fileExists(name)) {
                     localCacheDir.deleteFile(name);
@@ -291,15 +288,14 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
                 return;
             }
 
-            HashSet filesToCleanUp = new HashSet();
+            HashSet<String> filesToCleanUp = new HashSet<String>();
             filesToCleanUp.addAll(Arrays.asList(currentList));
 
-            for (int i = 0; i < remoteList.length; i++) {
-                filesToCleanUp.remove(remoteList[i]);
+            for (String aRemoteList : remoteList) {
+                filesToCleanUp.remove(aRemoteList);
             }
 
-            for (Iterator it = filesToCleanUp.iterator(); it.hasNext();) {
-                String name = (String) it.next();
+            for (String name : filesToCleanUp) {
                 synchronized (monitors[Math.abs(name.hashCode()) % monitors.length]) {
                     try {
                         // don't do anything with a cfs file since it will not be in the actual directory
