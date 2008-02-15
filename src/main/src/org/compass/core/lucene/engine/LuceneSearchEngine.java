@@ -254,6 +254,8 @@ public class LuceneSearchEngine implements SearchEngine {
             transaction.commit(onePhase);
             eventManager.afterCommit(onePhase);
         }
+        transaction = null;
+        transactionState = COMMIT;
     }
 
     public void rollback() throws SearchEngineException {
