@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.nounmarshall.component.simple2;
+package org.compass.core.test.nounmarshall.component.simple1;
+
+import java.util.ArrayList;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -27,16 +29,16 @@ import org.compass.core.test.AbstractTestCase;
 /**
  * @author kimchy
  */
-public class ABTests extends AbstractTestCase {
+public class SimpleNoUnmarshallComonentTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[]{"nounmarshall/component/simple2/mapping.cpm.xml"};
+        return new String[]{"nounmarshall/component/simple1/mapping.cpm.xml"};
     }
 
     public void testMappingsA() {
         ResourceMapping aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a");
         ResourcePropertyMapping[] aPropertyMappings = aMapping.getResourcePropertyMappings();
-        assertEquals(5, aPropertyMappings.length);
+        assertEquals(8, aPropertyMappings.length);
         assertNotNull(aMapping.getResourcePropertyMapping("value"));
         assertNotNull(aMapping.getResourcePropertyMapping("value2"));
         assertNotNull(aMapping.getResourcePropertyMapping("id"));
@@ -92,6 +94,62 @@ public class ABTests extends AbstractTestCase {
         a = (A) session.load("a", 1);
         assertEquals(1, a.id);
         assertNull(a.b);
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testBCollection() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        a.value = "value";
+        a.bs = new ArrayList<B>();
+        B b = new B();
+        b.value = "bvalue11";
+        b.value2 = "bvalue12";
+        a.bs.add(b);
+        b = new B();
+        b.value = "bvalue21";
+        b.value = "bvalue22";
+        a.bs.add(b);
+        session.save("a", a);
+
+        Resource resource = session.loadResource("a", 1);
+        assertNotNull(resource);
+        assertEquals(8, resource.getProperties().length);
+        assertEquals("a", resource.getAlias());
+        assertEquals(4, resource.getProperties("value").length);
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testBCollectionWithNullValue() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        a.value = "value";
+        a.bs = new ArrayList<B>();
+        B b = new B();
+        b.value = null;
+        b.value2 = "bvalue12";
+        a.bs.add(b);
+        b = new B();
+        b.value = "bvalue21";
+        b.value = "bvalue22";
+        a.bs.add(b);
+        session.save("a", a);
+
+        Resource resource = session.loadResource("a", new Long(1));
+        assertNotNull(resource);
+        assertEquals(7, resource.getProperties().length);
+        assertEquals("a", resource.getAlias());
+        assertEquals(3, resource.getProperties("value").length);
 
         tr.commit();
         session.close();
