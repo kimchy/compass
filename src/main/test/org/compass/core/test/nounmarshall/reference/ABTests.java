@@ -38,7 +38,7 @@ public class ABTests extends AbstractTestCase {
     public void testMappings() {
         ResourceMapping aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a");
         ResourcePropertyMapping[] aPropertyMappings = aMapping.getResourcePropertyMappings();
-        assertEquals(3, aPropertyMappings.length);
+        assertEquals(4, aPropertyMappings.length);
         assertNotNull(aMapping.getResourcePropertyMapping("value"));
         assertNotNull(aMapping.getResourcePropertyMapping("id"));
     }

@@ -243,7 +243,45 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
         private StringBuffer sb = new StringBuffer();
 
-        private Set<String> cyclicNoUnmarshallRefAliasMappings = new HashSet<String>();
+        private Set<NoUnmarshallHolder> cyclicNoUnmarshallRefAliasMappings = new HashSet<NoUnmarshallHolder>();
+
+        private Set<String> cyclicClassMappings = new HashSet<String>();
+
+        class NoUnmarshallHolder {
+            ClassMapping parent;
+            ClassMapping classMapping;
+
+            NoUnmarshallHolder(ClassMapping parent, ClassMapping classMapping) {
+                this.parent = parent;
+                this.classMapping = classMapping;
+            }
+        }
+
+        /**
+         * In case we do not need to support unmarshalling, we need to perform simple cyclic detection
+         * and return <code>false</code> (won't iterate into this class mapping) if we already passed
+         * this class mapping. We will remove the marker in the {@link #onEndClassMapping(ClassMapping)}.
+         */
+        public boolean onBeginClassMapping(ClassMapping classMapping) {
+            if (classMapping.isSupportUnmarshall()) {
+                return true;
+            }
+            if (cyclicClassMappings.contains(classMapping.getAlias())) {
+                return false;
+            }
+            cyclicClassMappings.add(classMapping.getAlias());
+            return true;
+        }
+
+        /**
+         * If we do not support unmarshalling, we need to clean up our marker for this class mapping.
+         */
+        public void onEndClassMapping(ClassMapping classMapping) {
+            if (classMapping.isSupportUnmarshall()) {
+                return;
+            }
+            cyclicClassMappings.remove(classMapping.getAlias());
+        }
 
         /**
          * <p>Since we did not process duplicate mappings, we need to replace them with the original mappings that
@@ -291,34 +329,10 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         }
 
         /**
-         * We iterate through (multiple) mappings. If they are of type that has ref aliases (such as
-         * component and refrence) we take into account the <code>isSupportUnmarshall</code> flag.
-         *
-         * If it is set to true, we do support unmarshalling, and we continue as usual (since we already
-         * taken care to build the correct mappings tree with discrete mappings for components and references
-         * with special care for cyclic ones using max depth)
-         *
-         * If the flag is set to false, we do not support unmarshalling. We still want to have all the mapped
-         * resource properties / meta data, so we perfrom very simply cyclic check (return false if we have
-         * encountered an alias that is referenced) which is perfectly fine for our needs (we *dont* support
-         * unmarshalling).
          */
         public boolean onBeginMultipleMapping(ClassMapping classMapping, Mapping mapping) {
             boolean retVal = super.onBeginMultipleMapping(classMapping, mapping);
             addToPath(mapping);
-            if (retVal && !isSupportUnmarshall()) {
-                if (mapping instanceof HasRefAliasMapping) {
-                    ClassMapping[] refMappings = ((HasRefAliasMapping) mapping).getRefClassMappings();
-                    if (refMappings != null) {
-                        for (ClassMapping refMapping : refMappings) {
-                            if (cyclicNoUnmarshallRefAliasMappings.contains(refMapping.getAlias())) {
-                                return false;
-                            }
-                            cyclicNoUnmarshallRefAliasMappings.add(refMapping.getAlias());
-                        }
-                    }
-                }
-            }
             return retVal;
         }
 

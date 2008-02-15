@@ -125,7 +125,12 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
         // check if we already marshalled this objecy under this alias
         // if we did, there is no need to completly marhsall it again
-        // Note, this is only applicable for class with ids
+
+        // When we support *do* unmarshall, it is important that theses will have ids, since based
+        // on them we will unmarshall correctly
+
+        // When we *do not* support unmarshall, we don't care about ids. Therefore, we can also mark
+        // marshalled based on object identity and support cyclic support for components without ids.
         if (classMapping.getIdMappings().length > 0) {
             IdsAliasesObjectKey idObjKey = new IdsAliasesObjectKey(classMapping, root);
             if (!idObjKey.hasNullId) {
@@ -145,8 +150,18 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 } else {
                     // we did not marshall this object, cache it for later checks
                     context.setMarshalled(idObjKey, root);
+                    if (!classMapping.isSupportUnmarshall()) {
+                        context.setMarshalled(new IdentityAliasedObjectKey(classMapping.getAlias(), root), root);
+                    }
                 }
             }
+        } else if (!classMapping.isSupportUnmarshall()) {
+            IdentityAliasedObjectKey key = new IdentityAliasedObjectKey(classMapping.getAlias(), root);
+            Object marshalled = context.getMarshalled(key);
+            if (marshalled != null) {
+                return true;
+            }
+            context.setMarshalled(key, root);
         }
 
         // perform full marshalling of the object into the resource

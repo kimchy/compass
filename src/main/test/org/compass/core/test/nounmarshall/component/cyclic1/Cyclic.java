@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.nounmarshall.component;
+package org.compass.core.test.nounmarshall.component.cyclic1;
 
 import java.util.List;
 

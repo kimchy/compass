@@ -19,6 +19,9 @@ package org.compass.core.test.nounmarshall.simple;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -28,6 +31,17 @@ public class SimpleTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"nounmarshall/simple/A.cpm.xml"};
+    }
+
+    public void testMappings() {
+        ResourceMapping aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a");
+        ResourcePropertyMapping[] aPropertyMappings = aMapping.getResourcePropertyMappings();
+        assertEquals(3, aPropertyMappings.length);
+
+        aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a1");
+        aPropertyMappings = aMapping.getResourcePropertyMappings();
+        // including the internal id
+        assertEquals(4, aPropertyMappings.length);
     }
 
     public void testNoUnmarshall() throws Exception {

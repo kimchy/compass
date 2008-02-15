@@ -130,8 +130,8 @@ public abstract class LuceneUtils {
         return allAnalyzer;
     }
 
-    public static List findPropertyValues(IndexReader indexReader, String propertyName) throws SearchEngineException {
-        ArrayList list = new ArrayList();
+    public static List<String> findPropertyValues(IndexReader indexReader, String propertyName) throws SearchEngineException {
+        ArrayList<String> list = new ArrayList<String>();
         try {
             TermEnum te = indexReader.terms(new Term(propertyName, ""));
             while (propertyName.equals(te.term().field())) {
@@ -207,10 +207,12 @@ public abstract class LuceneUtils {
         boolean globalSuccess = true;
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    globalSuccess = false;
+            if (children != null) {
+                for (String aChildren : children) {
+                    boolean success = deleteDir(new File(dir, aChildren));
+                    if (!success) {
+                        globalSuccess = false;
+                    }
                 }
             }
         }
@@ -225,10 +227,10 @@ public abstract class LuceneUtils {
         if (locks == null) {
             return;
         }
-        for (int i = 0; i < locks.length; i++) {
-            if (locks[i] != null) {
+        for (Lock lock : locks) {
+            if (lock != null) {
                 try {
-                    locks[i].release();
+                    lock.release();
                 } catch (IOException e) {
                     // ignore
                 }

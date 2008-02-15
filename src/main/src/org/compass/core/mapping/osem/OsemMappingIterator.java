@@ -32,7 +32,7 @@ public abstract class OsemMappingIterator {
 
     public static interface ClassMappingCallback {
 
-        void onBeginClassMapping(ClassMapping classMapping);
+        boolean onBeginClassMapping(ClassMapping classMapping);
 
         void onEndClassMapping(ClassMapping classMapping);
 
@@ -92,7 +92,8 @@ public abstract class OsemMappingIterator {
             return resourcePropertyMappings;
         }
 
-        public void onBeginClassMapping(ClassMapping classMapping) {
+        public boolean onBeginClassMapping(ClassMapping classMapping) {
+            return true;
         }
 
         public void onEndClassMapping(ClassMapping classMapping) {
@@ -179,7 +180,9 @@ public abstract class OsemMappingIterator {
     }
 
     public static void iterateMappings(ClassMappingCallback callback, ClassMapping classMapping, boolean recursive) {
-        callback.onBeginClassMapping(classMapping);
+        if (!callback.onBeginClassMapping(classMapping)) {
+            return;
+        }
         for (Iterator mappingsIt = classMapping.mappingsIt(); mappingsIt.hasNext();) {
             Mapping m = (Mapping) mappingsIt.next();
             if (m instanceof ClassPropertyMapping) {

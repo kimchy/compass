@@ -93,7 +93,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
     private void secondPassNoUnmarshalling(ClassMapping classMapping) {
         classMapping.setPath(namingStrategy.buildPath(compassMapping.getPath(), classMapping.getAlias()));
         classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(), MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
-        OsemMappingIterator.iterateMappings(new NoUnmarshallingCallback(classMapping), classMapping, false);
+        OsemMappingIterator.iterateMappings(new NoUnmarshallingCallback(), classMapping, false);
     }
 
     private void secondPass(ClassMapping classMapping, CompassMapping fatherMapping) {
@@ -286,13 +286,11 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
         private ClassPropertyMapping classPropertyMapping;
 
-        private ClassMapping classMapping;
-
-        public NoUnmarshallingCallback(ClassMapping classMapping) {
-            this.classMapping = classMapping;
+        public NoUnmarshallingCallback() {
         }
 
-        public void onBeginClassMapping(ClassMapping classMapping) {
+        public boolean onBeginClassMapping(ClassMapping classMapping) {
+            return true;
         }
 
         public void onEndClassMapping(ClassMapping classMapping) {

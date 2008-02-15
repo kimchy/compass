@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.nounmarshall.component;
+package org.compass.core.test.nounmarshall.component.cyclic1;
 
 import java.util.ArrayList;
 
@@ -26,10 +26,10 @@ import org.compass.core.test.AbstractTestCase;
 /**
  * @author kimchy
  */
-public class CyclicTests extends AbstractTestCase {
+public class Cyclic1Tests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[]{"nounmarshall/component/Cyclic.cpm.xml"};
+        return new String[]{"nounmarshall/component/cyclic1/Cyclic.cpm.xml"};
     }
 
     public void testSingleLevelCyclic() throws Exception {

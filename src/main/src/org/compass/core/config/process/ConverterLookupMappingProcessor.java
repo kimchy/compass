@@ -90,7 +90,8 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
 
         private ClassPropertyMapping classPropertyMapping;
 
-        public void onBeginClassMapping(ClassMapping classMapping) {
+        public boolean onBeginClassMapping(ClassMapping classMapping) {
+            return true;
         }
 
         public void onEndClassMapping(ClassMapping classMapping) {
