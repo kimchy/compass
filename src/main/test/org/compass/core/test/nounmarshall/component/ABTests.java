@@ -35,7 +35,16 @@ public class ABTests extends AbstractTestCase {
         return new String[]{"nounmarshall/component/AB.cpm.xml"};
     }
 
-    public void testMappings() {
+    public void testMappingsA1() {
+        ResourceMapping aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a1");
+        ResourcePropertyMapping[] aPropertyMappings = aMapping.getResourcePropertyMappings();
+        assertEquals(5, aPropertyMappings.length);
+        assertNotNull(aMapping.getResourcePropertyMapping("value"));
+        assertNotNull(aMapping.getResourcePropertyMapping("value2"));
+        assertNotNull(aMapping.getResourcePropertyMapping("id"));
+    }
+
+    public void testMappingsA() {
         ResourceMapping aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a");
         ResourcePropertyMapping[] aPropertyMappings = aMapping.getResourcePropertyMappings();
         assertEquals(8, aPropertyMappings.length);
@@ -49,22 +58,22 @@ public class ABTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value = "value";
         B b = new B();
         b.value = "bvalue";
         a.b = b;
-        session.save(a);
+        session.save("a", a);
 
-        Resource resource = session.loadResource(A.class, new Long(1));
+        Resource resource = session.loadResource("a", new Long(1));
         assertNotNull(resource);
         assertEquals(5, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(2, resource.getProperties("value").length);
 
         // make sure no unmarshall returns A only with its ids set
-        a = (A) session.load(A.class, new Long(1));
-        assertEquals(1, a.id.longValue());
+        a = (A) session.load("a", 1);
+        assertEquals(1, a.id);
         assertNull(a.b);
 
         tr.commit();
@@ -76,23 +85,23 @@ public class ABTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value = "value";
         B b = new B();
         b.value = "bvalue";
         b.value2 = "bvalue2";
         a.b = b;
-        session.save(a);
+        session.save("a", a);
 
-        Resource resource = session.loadResource(A.class, new Long(1));
+        Resource resource = session.loadResource("a", new Long(1));
         assertNotNull(resource);
         assertEquals(7, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
         assertEquals(3, resource.getProperties("value").length);
 
         // make sure no unmarshall returns A only with its ids set
-        a = (A) session.load(A.class, new Long(1));
-        assertEquals(1, a.id.longValue());
+        a = (A) session.load("a", 1);
+        assertEquals(1, a.id);
         assertNull(a.b);
 
         tr.commit();
@@ -104,9 +113,9 @@ public class ABTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value = "value";
-        a.bs = new ArrayList();
+        a.bs = new ArrayList<B>();
         B b = new B();
         b.value = "bvalue11";
         b.value2 = "bvalue12";
@@ -115,9 +124,9 @@ public class ABTests extends AbstractTestCase {
         b.value = "bvalue21";
         b.value = "bvalue22";
         a.bs.add(b);
-        session.save(a);
+        session.save("a", a);
 
-        Resource resource = session.loadResource(A.class, new Long(1));
+        Resource resource = session.loadResource("a", 1);
         assertNotNull(resource);
         assertEquals(8, resource.getProperties().length);
         assertEquals("a", resource.getAlias());
@@ -132,9 +141,9 @@ public class ABTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value = "value";
-        a.bs = new ArrayList();
+        a.bs = new ArrayList<B>();
         B b = new B();
         b.value = null;
         b.value2 = "bvalue12";
@@ -143,9 +152,9 @@ public class ABTests extends AbstractTestCase {
         b.value = "bvalue21";
         b.value = "bvalue22";
         a.bs.add(b);
-        session.save(a);
+        session.save("a", a);
 
-        Resource resource = session.loadResource(A.class, new Long(1));
+        Resource resource = session.loadResource("a", new Long(1));
         assertNotNull(resource);
         assertEquals(7, resource.getProperties().length);
         assertEquals("a", resource.getAlias());

@@ -23,11 +23,11 @@ import java.util.List;
  */
 public class A {
 
-    Long id;
+    int id;
 
     String value;
 
     B b;
 
-    List bs;
+    List<B> bs;
 }
