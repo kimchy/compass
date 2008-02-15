@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.nounmarshall.component;
+package org.compass.core.test.nounmarshall.component.simple1;
 
 import java.util.ArrayList;
 
@@ -32,16 +32,7 @@ import org.compass.core.test.AbstractTestCase;
 public class ABTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[]{"nounmarshall/component/AB.cpm.xml"};
-    }
-
-    public void testMappingsA1() {
-        ResourceMapping aMapping = ((InternalCompass) getCompass()).getMapping().getRootMappingByAlias("a1");
-        ResourcePropertyMapping[] aPropertyMappings = aMapping.getResourcePropertyMappings();
-        assertEquals(5, aPropertyMappings.length);
-        assertNotNull(aMapping.getResourcePropertyMapping("value"));
-        assertNotNull(aMapping.getResourcePropertyMapping("value2"));
-        assertNotNull(aMapping.getResourcePropertyMapping("id"));
+        return new String[]{"nounmarshall/component/simple1/mapping.cpm.xml"};
     }
 
     public void testMappingsA() {

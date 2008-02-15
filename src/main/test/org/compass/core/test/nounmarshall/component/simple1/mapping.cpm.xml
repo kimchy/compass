@@ -1,0 +1,29 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+<compass-core-mapping package="org.compass.core.test.nounmarshall.component.simple1">
+
+    <class name="A" alias="a" support-unmarshall="false">
+
+        <id name="id" accessor="field"/>
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="b" accessor="field" />
+
+        <component name="bs" accessor="field" ref-alias="b" />
+    </class>
+
+    <class name="B" alias="b" root="false">
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+        <property name="value2" accessor="field">
+            <meta-data>value</meta-data>
+            <meta-data>value2</meta-data>
+        </property>
+    </class>
+</compass-core-mapping>

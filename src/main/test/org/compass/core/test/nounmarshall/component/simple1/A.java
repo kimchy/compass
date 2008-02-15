@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.nounmarshall.component;
+package org.compass.core.test.nounmarshall.component.simple1;
+
+import java.util.List;
 
 /**
  * @author kimchy
  */
-public class B {
+public class A {
+
+    int id;
 
     String value;
 
-    String value2;
+    B b;
+
+    List<B> bs;
 }
