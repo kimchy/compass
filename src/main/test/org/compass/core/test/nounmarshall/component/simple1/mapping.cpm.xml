@@ -17,7 +17,7 @@
         <component name="bs" accessor="field" ref-alias="b" />
     </class>
 
-    <class name="B" alias="b" root="false">
+    <class name="B" alias="b" root="false" support-unmarshall="false">
         <property name="value" accessor="field">
             <meta-data>value</meta-data>
         </property>
