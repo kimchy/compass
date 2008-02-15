@@ -75,11 +75,6 @@ public final class ResourcePropertyLookup {
                 return resourcePropertyMapping.getAnalyzer();
             }
         }
-        if (resourcePropertyMapping != null) {
-            if (resourcePropertyMapping.getAnalyzer() != null) {
-                return resourcePropertyMapping.getAnalyzer();
-            }
-        }
         return null;
     }
 
