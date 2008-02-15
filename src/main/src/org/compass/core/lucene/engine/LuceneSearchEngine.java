@@ -250,14 +250,9 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void commit(boolean onePhase) throws SearchEngineException {
         verifyWithinTransaction();
-        try {
-            if (transaction != null) {
-                transaction.commit(onePhase);
-                eventManager.afterCommit(onePhase);
-            }
-        } finally {
-            transaction = null;
-            transactionState = COMMIT;
+        if (transaction != null) {
+            transaction.commit(onePhase);
+            eventManager.afterCommit(onePhase);
         }
     }
 
