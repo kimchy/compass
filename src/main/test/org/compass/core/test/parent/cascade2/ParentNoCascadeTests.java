@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.parent.cascade1;
+package org.compass.core.test.parent.cascade2;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.marshall.MarshallingException;
 import org.compass.core.test.AbstractTestCase;
 
 /**
  * @author kimchy
  */
-public class ParentCascadeTests extends AbstractTestCase {
+public class ParentNoCascadeTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[]{"parent/cascade1/mapping.cpm.xml"};
+        return new String[]{"parent/cascade2/mapping.cpm.xml"};
     }
 
-    public void testCascadeAllWithDeleteByAlias() {
+    public void testNoCascades() {
+
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
@@ -40,14 +42,12 @@ public class ParentCascadeTests extends AbstractTestCase {
         a.b = b;
         b.a = a;
 
-        session.save("b1", b);
+        try {
+            session.save("b1", b);
+            fail("no cascading is defined, should throw an exception");
+        } catch (MarshallingException e) {
 
-        a = (A) session.load("a1", "1");
-        assertEquals("test", a.b.value);
-
-        session.delete("b1", b);
-        a = (A) session.get("a1", "1");
-        assertNull(a);
+        }
 
         tr.commit();
         session.close();

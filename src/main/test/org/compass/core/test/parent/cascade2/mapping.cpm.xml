@@ -5,16 +5,17 @@
 <compass-core-mapping package="org.compass.core.test.parent.cascade1">
 
     <class name="A" alias="a1">
-
+    
         <id name="id" accessor="field" />
 
         <component name="b" accessor="field" ref-alias="b1" />
     </class>
 
     <class name="B" alias="b1" root="false">
-        <parent name="a" accessor="field" cascade="all" />
+        <parent name="a" accessor="field" />
         <property name="value" accessor="field">
             <meta-data>value</meta-data>
         </property>
     </class>
+
 </compass-core-mapping>
