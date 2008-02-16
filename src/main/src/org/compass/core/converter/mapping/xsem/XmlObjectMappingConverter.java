@@ -127,7 +127,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
                 Resource rId = (Resource) id;
                 idResource.addProperty(rId.getProperty(id1.getPath().getPath()));
             }
-        } else if (id.getClass().isArray()) {
+        } else if (id instanceof Object[]) {
             if (Array.getLength(id) != ids.length) {
                 throw new ConversionException("Trying to load resource with [" + Array.getLength(id)
                         + "] while has ids mappings of [" + ids.length + "]");

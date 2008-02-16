@@ -339,7 +339,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 ObjectMapping objectMapping = (ObjectMapping) rpId;
                 stored |= convertId(idResource, objectMapping.getGetter().get(id), rpId, context);
             }
-        } else if (id.getClass().isArray()) {
+        } else if (id instanceof Object[]) {
             if (Array.getLength(id) != ids.length) {
                 throw new ConversionException("Trying to load class with [" + Array.getLength(id)
                         + "] mappings while has ids mappings of [" + ids.length + "]");
@@ -390,7 +390,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 ObjectMapping objectMapping = (ObjectMapping) ids[i];
                 idsValues[i] = objectMapping.getGetter().get(id);
             }
-        } else if (id.getClass().isArray()) {
+        } else if (id instanceof Object[]) {
             if (Array.getLength(id) != ids.length) {
                 throw new ConversionException("Trying to load class with [" + Array.getLength(id)
                         + "] while has ids mappings of [" + ids.length + "]");

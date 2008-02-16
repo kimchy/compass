@@ -102,7 +102,7 @@ public class CascadingManager implements CompassConfigurable {
                 if (value == null) {
                     continue;
                 }
-                if (value.getClass().isArray()) {
+                if (value instanceof Object[]) {
                     int length = Array.getLength(value);
                     for (int j = 0; j < length; j++) {
                         cascadeOperation(cascade, Array.get(value, j));

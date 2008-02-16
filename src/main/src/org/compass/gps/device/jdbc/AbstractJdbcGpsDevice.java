@@ -203,7 +203,7 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
         }
         Object value = processRowValue(description, rs, session);
         if (value != null) {
-            if (value.getClass().isArray()) {
+            if (value instanceof Object[]) {
                 int length = Array.getLength(value);
                 for (int i = 0; i < length; i++) {
                     Object value1 = Array.get(value, i);
