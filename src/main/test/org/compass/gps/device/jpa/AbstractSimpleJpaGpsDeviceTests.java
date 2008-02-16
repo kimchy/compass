@@ -78,9 +78,9 @@ public abstract class AbstractSimpleJpaGpsDeviceTests extends AbstractJpaGpsDevi
         CompassSession sess = compass.openSession();
         CompassTransaction tr = sess.beginTransaction();
 
-        Simple simple = (Simple) sess.load(Simple.class, 1);
+        Simple simple = sess.load(Simple.class, 1);
         assertEquals("value1", simple.getValue());
-        simple = (Simple) sess.load(Simple.class, 2);
+        simple = sess.load(Simple.class, 2);
         assertEquals("value2", simple.getValue());
 
         CompassHits hits = sess.find("value1");
@@ -120,13 +120,13 @@ public abstract class AbstractSimpleJpaGpsDeviceTests extends AbstractJpaGpsDevi
         CompassSession sess = compass.openSession();
         CompassTransaction tr = sess.beginTransaction();
 
-        simple = (Simple) sess.load(Simple.class, 4);
+        simple = sess.load(Simple.class, 4);
         assertEquals("value4", simple.getValue());
 
-        simple = (Simple) sess.get(Simple.class, 2);
+        simple = sess.get(Simple.class, 2);
         assertNull(simple);
 
-        simple = (Simple) sess.load(Simple.class, 1);
+        simple = sess.load(Simple.class, 1);
         assertEquals("updatedValue1", simple.getValue());
 
         tr.commit();
@@ -139,9 +139,9 @@ public abstract class AbstractSimpleJpaGpsDeviceTests extends AbstractJpaGpsDevi
         CompassSession sess = compass.openSession();
         CompassTransaction tr = sess.beginTransaction();
 
-        SimpleBase simpleBase = (SimpleBase) sess.load(SimpleBase.class, 1);
+        SimpleBase simpleBase = sess.load(SimpleBase.class, 1);
         assertEquals("value", simpleBase.getValue());
-        SimpleExtend simpleExtend = (SimpleExtend) sess.load(SimpleExtend.class, 2);
+        SimpleExtend simpleExtend = sess.load(SimpleExtend.class, 2);
         assertEquals("value", simpleExtend.getValue());
         assertEquals("valueExtended", simpleExtend.getValueExtend());
 
