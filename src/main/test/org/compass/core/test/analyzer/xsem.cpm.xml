@@ -7,17 +7,17 @@
 
     <xml-object alias="a" xpath="/data">
         <xml-id name="id" xpath="id" />
-        <xml-property xpath="value" />
+        <xml-property name="value" xpath="value" />
     </xml-object>
 
     <xml-object alias="b" xpath="/data" analyzer="simple">
         <xml-id name="id" xpath="id" />
-        <xml-property xpath="value" />
+        <xml-property name="value" xpath="value" />
     </xml-object>
 
     <xml-object alias="c" xpath="/data">
         <xml-id name="id" xpath="id" analyzer="simple" />
-        <xml-property xpath="value" />
+        <xml-property name="value" xpath="value" />
     </xml-object>
 
     <xml-object alias="d" xpath="/data">

@@ -616,6 +616,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
             if (StringUtils.hasLength(searchableProp.analyzer())) {
                 mdMapping.setAnalyzer(searchableProp.analyzer());
+            } else {
+                mdMapping.setAnalyzer(classMapping.getAnalyzer());
             }
             mdMapping.setExcludeFromAll(AnnotationsBindingUtils.convert(searchableProp.excludeFromAll()));
 
@@ -692,6 +694,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
             if (StringUtils.hasLength(searchableProp.analyzer())) {
                 mdMapping.setAnalyzer(searchableProp.analyzer());
+            } else {
+                mdMapping.setAnalyzer(classMapping.getAnalyzer());
             }
             if (StringUtils.hasLength(searchableProp.nullValue())) {
                 mdMapping.setNullValue(searchableProp.nullValue());
@@ -741,6 +745,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         if (StringUtils.hasLength(searchableMetaData.analyzer())) {
             mdMapping.setAnalyzer(searchableMetaData.analyzer());
+        } else {
+            mdMapping.setAnalyzer(classMapping.getAnalyzer());
         }
         if (StringUtils.hasLength(searchableMetaData.nullValue())) {
             mdMapping.setNullValue(searchableMetaData.nullValue());
@@ -776,6 +782,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         if (StringUtils.hasLength(searchableMetaData.analyzer())) {
             mdMapping.setAnalyzer(searchableMetaData.analyzer());
+        } else {
+            mdMapping.setAnalyzer(classMapping.getAnalyzer());
         }
         if (StringUtils.hasLength(searchableMetaData.nullValue())) {
             mdMapping.setNullValue(searchableMetaData.nullValue());
@@ -795,6 +803,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         constantMapping.setOmitNorms(searchableConstant.omitNorms());
         if (StringUtils.hasLength(searchableConstant.analyzer())) {
             constantMapping.setAnalyzer(searchableConstant.analyzer());
+        } else {
+            constantMapping.setAnalyzer(classMapping.getAnalyzer());
         }
         constantMapping.setExcludeFromAll(AnnotationsBindingUtils.convert(searchableConstant.excludeFromAll()));
         constantMapping.setOverrideByName(searchableConstant.override());

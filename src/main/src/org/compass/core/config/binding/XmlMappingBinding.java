@@ -103,20 +103,19 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             defaultPackage = "";
         }
         ConfigurationHelper[] contractArr = doc.getChildren("contract");
-        for (int i = 0; i < contractArr.length; i++) {
+        for (ConfigurationHelper aContractArr : contractArr) {
             ContractMapping contractMapping = new ContractMapping();
-            bindContract(contractArr[i], contractMapping);
+            bindContract(aContractArr, contractMapping);
             mapping.addMapping(contractMapping);
         }
         ConfigurationHelper[] resourceContractArr = doc.getChildren("resource-contract");
-        for (int i = 0; i < resourceContractArr.length; i++) {
+        for (ConfigurationHelper aResourceContractArr : resourceContractArr) {
             ContractMapping contractMapping = new ContractMapping();
-            bindResourceContract(resourceContractArr[i], contractMapping);
+            bindResourceContract(aResourceContractArr, contractMapping);
             mapping.addMapping(contractMapping);
         }
         ConfigurationHelper[] classArr = doc.getChildren("class");
-        for (int i = 0; i < classArr.length; i++) {
-            ConfigurationHelper classConf = classArr[i];
+        for (ConfigurationHelper classConf : classArr) {
             String alias = classConf.getAttribute("alias");
             boolean newClassMapping = false;
             ClassMapping classMapping;
@@ -131,21 +130,21 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                 classMapping = new ClassMapping();
                 newClassMapping = true;
             }
-            bindClass(classArr[i], classMapping, defaultPackage);
+            bindClass(classConf, classMapping, defaultPackage);
             if (newClassMapping) {
                 mapping.addMapping(classMapping);
             }
         }
         ConfigurationHelper[] resourceArr = doc.getChildren("resource");
-        for (int i = 0; i < resourceArr.length; i++) {
+        for (ConfigurationHelper aResourceArr : resourceArr) {
             RawResourceMapping rawResourceMapping = new RawResourceMapping();
-            bindResource(resourceArr[i], rawResourceMapping);
+            bindResource(aResourceArr, rawResourceMapping);
             mapping.addMapping(rawResourceMapping);
         }
         ConfigurationHelper[] xmlObjectArr = doc.getChildren("xml-object");
-        for (int i = 0; i < xmlObjectArr.length; i++) {
+        for (ConfigurationHelper aXmlObjectArr : xmlObjectArr) {
             XmlObjectMapping xmlObjectMapping = new XmlObjectMapping();
-            bindXmlObject(xmlObjectArr[i], xmlObjectMapping);
+            bindXmlObject(aXmlObjectArr, xmlObjectMapping);
             mapping.addMapping(xmlObjectMapping);
         }
 
@@ -200,16 +199,16 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
     private void bindXmlObjectChildren(ConfigurationHelper resourceConf, AliasMapping resourceMapping) {
         ConfigurationHelper[] ids = resourceConf.getChildren("xml-id");
-        for (int i = 0; i < ids.length; i++) {
+        for (ConfigurationHelper id : ids) {
             XmlIdMapping xmlIdMapping = new XmlIdMapping();
-            bindXmlProperty(ids[i], xmlIdMapping);
+            bindXmlProperty(id, xmlIdMapping, resourceMapping);
             resourceMapping.addMapping(xmlIdMapping);
         }
 
         ConfigurationHelper[] properties = resourceConf.getChildren("xml-property");
-        for (int i = 0; i < properties.length; i++) {
+        for (ConfigurationHelper property : properties) {
             XmlPropertyMapping xmlPropertyMapping = new XmlPropertyMapping();
-            bindXmlProperty(properties[i], xmlPropertyMapping);
+            bindXmlProperty(property, xmlPropertyMapping, resourceMapping);
             resourceMapping.addMapping(xmlPropertyMapping);
         }
 
@@ -223,7 +222,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         ConfigurationHelper analyzerConf = resourceConf.getChild("xml-analyzer", false);
         if (analyzerConf != null) {
             XmlPropertyAnalyzerController analyzerController = new XmlPropertyAnalyzerController();
-            bindXmlProperty(analyzerConf, analyzerController);
+            bindXmlProperty(analyzerConf, analyzerController, resourceMapping);
             analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
             resourceMapping.addMapping(analyzerController);
         }
@@ -231,7 +230,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         ConfigurationHelper boostConf = resourceConf.getChild("xml-boost", false);
         if (boostConf != null) {
             XmlBoostPropertyMapping boostPropertyMapping = new XmlBoostPropertyMapping();
-            bindXmlProperty(boostConf, boostPropertyMapping);
+            bindXmlProperty(boostConf, boostPropertyMapping, resourceMapping);
             String defaultBoost = boostConf.getAttribute("default", null);
             if (defaultBoost != null) {
                 boostPropertyMapping.setDefaultBoost(Float.parseFloat(defaultBoost));
@@ -254,7 +253,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         xmlContentMapping.setInternal(true);
     }
 
-    private void bindXmlProperty(ConfigurationHelper xmlPropConf, XmlPropertyMapping xmlPropertyMapping) {
+    private void bindXmlProperty(ConfigurationHelper xmlPropConf, XmlPropertyMapping xmlPropertyMapping,
+                                 AliasMapping aliasMapping) {
         String name = xmlPropConf.getAttribute("name", null);
         if (name != null) {
             name = valueLookup.lookupMetaDataName(name);
@@ -274,7 +274,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String reverseType = xmlPropConf.getAttribute("reverse", "no");
         xmlPropertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         xmlPropertyMapping.setInternal(false);
-        xmlPropertyMapping.setAnalyzer(xmlPropConf.getAttribute("analyzer", null));
+        xmlPropertyMapping.setAnalyzer(xmlPropConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
         xmlPropertyMapping.setNullValue(xmlPropConf.getAttribute("null-value", null));
         String excludeFromAll = xmlPropConf.getAttribute("exclude-from-all", "no");
         xmlPropertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
@@ -501,39 +501,39 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
     private void bindClassMappingChildren(ConfigurationHelper classConf, AliasMapping classMapping) {
         ConfigurationHelper[] ids = classConf.getChildren("id");
-        for (int i = 0; i < ids.length; i++) {
+        for (ConfigurationHelper id : ids) {
             ClassIdPropertyMapping idMapping = new ClassIdPropertyMapping();
-            bindClassProperty(ids[i], classMapping, idMapping);
+            bindClassProperty(id, classMapping, idMapping);
             classMapping.addMapping(idMapping);
         }
         ConfigurationHelper[] idComponents = classConf.getChildren("id-component");
-        for (int i = 0; i < idComponents.length; i++) {
+        for (ConfigurationHelper idComponent : idComponents) {
             IdComponentMapping idMapping = new IdComponentMapping();
-            bindComponent(idComponents[i], classMapping, idMapping);
+            bindComponent(idComponent, classMapping, idMapping);
             classMapping.addMapping(idMapping);
         }
         ConfigurationHelper[] properties = classConf.getChildren("property");
-        for (int i = 0; i < properties.length; i++) {
+        for (ConfigurationHelper property : properties) {
             ClassPropertyMapping classPropertyMapping = new ClassPropertyMapping();
-            bindClassProperty(properties[i], classMapping, classPropertyMapping);
+            bindClassProperty(property, classMapping, classPropertyMapping);
             classMapping.addMapping(classPropertyMapping);
         }
         ConfigurationHelper[] components = classConf.getChildren("component");
-        for (int i = 0; i < components.length; i++) {
+        for (ConfigurationHelper component : components) {
             ComponentMapping compMapping = new ComponentMapping();
-            bindComponent(components[i], classMapping, compMapping);
+            bindComponent(component, classMapping, compMapping);
             classMapping.addMapping(compMapping);
         }
         ConfigurationHelper[] references = classConf.getChildren("reference");
-        for (int i = 0; i < references.length; i++) {
+        for (ConfigurationHelper reference : references) {
             ReferenceMapping referenceMapping = new ReferenceMapping();
-            bindReference(references[i], classMapping, referenceMapping);
+            bindReference(reference, classMapping, referenceMapping);
             classMapping.addMapping(referenceMapping);
         }
         ConfigurationHelper[] constants = classConf.getChildren("constant");
-        for (int i = 0; i < constants.length; i++) {
+        for (ConfigurationHelper constant : constants) {
             ConstantMetaDataMapping constantMapping = new ConstantMetaDataMapping();
-            bindConstant(constants[i], classMapping, constantMapping);
+            bindConstant(constant, classMapping, constantMapping);
             classMapping.addMapping(constantMapping);
         }
         ConfigurationHelper parentConf = classConf.getChild("parent", false);
@@ -563,9 +563,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         ConfigurationHelper[] dynamicConfs = classConf.getChildren("dynamic-meta-data");
-        for (int i = 0; i < dynamicConfs.length; i++) {
+        for (ConfigurationHelper dynamicConf : dynamicConfs) {
             DynamicMetaDataMapping dynamicMetaDataMapping = new DynamicMetaDataMapping();
-            bindDynamicMetaData(dynamicConfs[i], classMapping, dynamicMetaDataMapping);
+            bindDynamicMetaData(dynamicConf, classMapping, dynamicMetaDataMapping);
             classMapping.addMapping(dynamicMetaDataMapping);
         }
     }
@@ -605,7 +605,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String reverseType = dynamicConf.getAttribute("reverse", "no");
         dynamicMetaDataMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         dynamicMetaDataMapping.setInternal(false);
-        dynamicMetaDataMapping.setAnalyzer(dynamicConf.getAttribute("analyzer", null));
+        dynamicMetaDataMapping.setAnalyzer(dynamicConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
         dynamicMetaDataMapping.setNullValue(dynamicConf.getAttribute("null-value", null));
         String excludeFromAll = dynamicConf.getAttribute("exclude-from-all", "no");
         dynamicMetaDataMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
@@ -660,14 +660,14 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         if (commaSeparatedCascades == null) {
             return;
         }
-        ArrayList cascades = new ArrayList();
+        ArrayList<CascadeMapping.Cascade> cascades = new ArrayList<CascadeMapping.Cascade>();
         StringTokenizer st = new StringTokenizer(commaSeparatedCascades, ",");
         while (st.hasMoreTokens()) {
             String cascade = st.nextToken().trim();
             cascades.add(CascadeMapping.Cascade.fromString(cascade));
         }
         if (cascades.size() > 0) {
-            cascadeMapping.setCascades((CascadeMapping.Cascade[]) cascades.toArray(new CascadeMapping.Cascade[cascades.size()]));
+            cascadeMapping.setCascades(cascades.toArray(new CascadeMapping.Cascade[cascades.size()]));
         }
     }
 
@@ -699,7 +699,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         classPropertyMapping.setAccessor(classPropertyConf.getAttribute("accessor", null));
         classPropertyMapping.setPropertyName(name);
 
-        classPropertyMapping.setAnalyzer(classPropertyConf.getAttribute("analyzer", null));
+        classPropertyMapping.setAnalyzer(classPropertyConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
 
         String excludeFromAll = classPropertyConf.getAttribute("exclude-from-all", "no");
         classPropertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
@@ -721,9 +721,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         bindConverter(classPropertyConf, classPropertyMapping);
 
         ConfigurationHelper[] metadatas = classPropertyConf.getChildren("meta-data");
-        for (int i = 0; i < metadatas.length; i++) {
+        for (ConfigurationHelper metadata : metadatas) {
             ClassPropertyMetaDataMapping mdMapping = new ClassPropertyMetaDataMapping();
-            bindMetaData(metadatas[i], aliasMapping, classPropertyMapping, mdMapping);
+            bindMetaData(metadata, aliasMapping, classPropertyMapping, mdMapping);
             classPropertyMapping.addMapping(mdMapping);
         }
     }
@@ -746,7 +746,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         boolean omitNorms = metadataConf.getAttributeAsBoolean("omit-norms", false);
         constantMapping.setOmitNorms(omitNorms);
 
-        constantMapping.setAnalyzer(constantConf.getAttribute("analyzer", null));
+        constantMapping.setAnalyzer(constantConf.getAttribute("analyzer", classMapping.getAnalyzer()));
 
         String excludeFromAll = constantConf.getAttribute("exclude-from-all", "no");
         constantMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
@@ -755,8 +755,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         constantMapping.setOverrideByName(override);
 
         ConfigurationHelper[] values = constantConf.getChildren("meta-data-value");
-        for (int i = 0; i < values.length; i++) {
-            String metaDataValueValue = values[i].getValue().trim();
+        for (ConfigurationHelper value : values) {
+            String metaDataValueValue = value.getValue().trim();
             constantMapping.addMetaDataValue(valueLookup.lookupMetaDataValue(metaDataValueValue));
         }
     }
@@ -824,7 +824,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         if (commaSeparatedAliases == null) {
             return null;
         }
-        ArrayList aliases = new ArrayList();
+        ArrayList<String> aliases = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(commaSeparatedAliases, ",");
         while (st.hasMoreTokens()) {
             String extendedAlias = st.nextToken().trim();
@@ -835,7 +835,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                 aliases.add(alias.getName());
             }
         }
-        return (String[]) aliases.toArray(new String[aliases.size()]);
+        return aliases.toArray(new String[aliases.size()]);
     }
 
     private void bindConverter(ConfigurationHelper conf, Mapping mapping) {
@@ -864,8 +864,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         CompassSettings settings = this.settings.copy().clear();
         ConfigurationHelper[] settingsConf = subIndexHashConf.getChildren("setting");
         if (subIndexHash instanceof CompassConfigurable) {
-            for (int i = 0; i < settingsConf.length; i++) {
-                settings.setSetting(settingsConf[i].getAttribute("name"), settingsConf[i].getAttribute("value"));
+            for (ConfigurationHelper aSettingsConf : settingsConf) {
+                settings.setSetting(aSettingsConf.getAttribute("name"), aSettingsConf.getAttribute("value"));
             }
             ((CompassConfigurable) subIndexHash).configure(settings);
         } else {

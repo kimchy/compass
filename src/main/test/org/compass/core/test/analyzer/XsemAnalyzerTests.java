@@ -44,7 +44,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         session.save(buildAliasedXmlObject("a"));
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("a.value:the");
         assertEquals(0, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -77,7 +77,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         session.save(buildAliasedXmlObject("b"));
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("b.value:the");
         assertEquals(1, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -92,21 +92,21 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         session.save(buildAliasedXmlObject("b"));
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("b.value:the");
         assertEquals(1, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
         assertEquals(1, hits.length());
 
         // this will only work if we force the analyzer so it won't take into account mappings
-        CompassQuery query = session.queryBuilder().queryString("value:the").setAnalyzer("default").forceAnalyzer().toQuery();
+        CompassQuery query = session.queryBuilder().queryString("b.value:the").setAnalyzer("default").forceAnalyzer().toQuery();
         assertEquals(0, query.hits().getLength());
 
         // here we don't force so we will get it
-        query = session.queryBuilder().queryString("value:the").setAnalyzer("default").toQuery();
+        query = session.queryBuilder().queryString("b.value:the").setAnalyzer("default").toQuery();
         assertEquals(1, query.hits().getLength());
 
-        query = session.queryBuilder().queryString("value:the").setAnalyzer("simple").toQuery();
+        query = session.queryBuilder().queryString("b.value:the").setAnalyzer("simple").toQuery();
         assertEquals(1, query.hits().length());
 
         tr.commit();
@@ -118,9 +118,9 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         session.save(buildAliasedXmlObject("d"));
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("d.value:the");
         assertEquals(1, hits.getLength());
-        hits = session.find("value2:the");
+        hits = session.find("d.value2:the");
         assertEquals(0, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -149,7 +149,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         session.save(buildAliasedXmlObject("g", XML_DATA_SIMPLE_ANALYZER));
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("g.value:the");
         assertEquals(1, hits.getLength());
 
         try {
@@ -172,7 +172,10 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(1, hits.getLength());
 
         session.save(buildAliasedXmlObject("h"));
-        hits = session.find("value:the");
+
+        // analyzer controller can't affect query string (since we don't have the resource), just for simple and
+        // check that both h and i were saved
+        hits = session.queryBuilder().queryString("value:the").setAnalyzer("simple").forceAnalyzer().toQuery().hits();
         assertEquals(2, hits.getLength());
 
         tr.commit();
@@ -184,7 +187,7 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         session.save(buildAliasedXmlObject("i", XML_DATA_SIMPLE_ANALYZER));
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.queryBuilder().queryString("value:the").setAnalyzer("simple").forceAnalyzer().toQuery().hits();
         assertEquals(0, hits.getLength());
 
         tr.commit();

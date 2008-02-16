@@ -206,7 +206,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         r.addProperty("analyzer", "simple");
         session.save(r);
 
-        CompassHits hits = session.find("i.value:the");
+        CompassHits hits = session.queryBuilder().queryString("value:the").setAnalyzer("simple").forceAnalyzer().toQuery().hits();
         assertEquals(0, hits.getLength());
 
         tr.commit();

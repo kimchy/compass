@@ -34,13 +34,13 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setValue(TEXT);
         session.save("a1", a);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("a1.value:the");
         assertEquals(0, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -53,13 +53,13 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setValue(TEXT);
         session.save("a2", a);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("a2.value:the");
         assertEquals(1, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -72,16 +72,16 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setValue(TEXT);
         a.setValue2(TEXT);
         session.save("a3", a);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("a3.value:the");
         assertEquals(1, hits.getLength());
-        hits = session.find("value2:the");
+        hits = session.find("a3.value2:the");
         assertEquals(0, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -94,16 +94,16 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setValue(TEXT);
         a.setValue2(TEXT);
         session.save("a4", a);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("a4.value:the");
         assertEquals(0, hits.getLength());
-        hits = session.find("value2:the");
+        hits = session.find("a4.value2:the");
         assertEquals(1, hits.getLength());
 
         tr.commit();
@@ -113,7 +113,7 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setValue(TEXT);
@@ -125,7 +125,7 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(1, hits.getLength());
 
         a = new A();
-        a.setId(new Long(2));
+        a.setId((long) 2);
         a.setValue(TEXT);
         a.setValue2(TEXT);
         a.setAnalyzer(null);
@@ -143,7 +143,7 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setValue(TEXT);
@@ -155,7 +155,7 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         assertEquals(1, hits.getLength());
 
         a = new A();
-        a.setId(new Long(2));
+        a.setId((long) 2);
         a.setValue(TEXT);
         a.setValue2(TEXT);
         a.setAnalyzer(null);
