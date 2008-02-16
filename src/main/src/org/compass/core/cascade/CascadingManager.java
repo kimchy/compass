@@ -18,7 +18,6 @@ package org.compass.core.cascade;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
@@ -72,19 +71,13 @@ public class CascadingManager implements CompassConfigurable {
     public boolean cascade(String alias, Object root, CascadeMapping.Cascade cascade) throws CompassException {
         if (cascadingDisabled()) return false;
         ResourceMapping resourceMapping = mapping.getMappingByAlias(alias);
-        if (resourceMapping == null) {
-            return false;
-        }
-        return cascade(resourceMapping, root, cascade);
+        return resourceMapping != null && cascade(resourceMapping, root, cascade);
     }
 
     public boolean cascade(Class clazz, Object root, CascadeMapping.Cascade cascade) throws CompassException {
         if (cascadingDisabled()) return false;
         ResourceMapping resourceMapping = mapping.getMappingByClass(clazz);
-        if (resourceMapping == null) {
-            return false;
-        }
-        return cascade(resourceMapping, root, cascade);
+        return resourceMapping != null && cascade(resourceMapping, root, cascade);
     }
 
     private boolean cascade(ResourceMapping resourceMapping, Object root, CascadeMapping.Cascade cascade) throws CompassException {
@@ -94,8 +87,7 @@ public class CascadingManager implements CompassConfigurable {
             return false;
         }
         boolean retVal = false;
-        for (int i = 0; i < cascadeMappings.length; i++) {
-            CascadeMapping cascadeMapping = cascadeMappings[i];
+        for (CascadeMapping cascadeMapping : cascadeMappings) {
             if (cascadeMapping.shouldCascade(cascade)) {
                 retVal = true;
                 Object value = cascadeMapping.getCascadeValue(root);
@@ -108,8 +100,8 @@ public class CascadingManager implements CompassConfigurable {
                         cascadeOperation(cascade, Array.get(value, j));
                     }
                 } else if (value instanceof Collection) {
-                    for (Iterator it = ((Collection) value).iterator(); it.hasNext();) {
-                        cascadeOperation(cascade, it.next());
+                    for (Object o : ((Collection) value)) {
+                        cascadeOperation(cascade, o);
                     }
                 } else {
                     cascadeOperation(cascade, value);
