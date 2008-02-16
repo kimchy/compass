@@ -25,11 +25,11 @@ import org.compass.core.engine.SearchEngineException;
  */
 public class SearchEngineEventManager implements SearchEngineLifecycleEventListener {
 
-    private ArrayList lifecycleListeners;
+    private ArrayList<SearchEngineLifecycleEventListener> lifecycleListeners;
 
     public void registerLifecycleListener(SearchEngineLifecycleEventListener lifecycleEventListener) {
         if (lifecycleListeners == null) {
-            lifecycleListeners = new ArrayList();
+            lifecycleListeners = new ArrayList<SearchEngineLifecycleEventListener>();
         }
         lifecycleListeners.add(lifecycleEventListener);
     }
@@ -45,8 +45,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (int i = 0; i < lifecycleListeners.size(); i++) {
-            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).beforeBeginTransaction();
+        for (SearchEngineLifecycleEventListener lifecycleListener : lifecycleListeners) {
+            lifecycleListener.beforeBeginTransaction();
         }
     }
 
@@ -54,8 +54,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (int i = 0; i < lifecycleListeners.size(); i++) {
-            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).afterBeginTransaction();
+        for (SearchEngineLifecycleEventListener lifecycleListener : lifecycleListeners) {
+            lifecycleListener.afterBeginTransaction();
         }
     }
 
@@ -63,8 +63,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (int i = 0; i < lifecycleListeners.size(); i++) {
-            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).afterPrepare();
+        for (SearchEngineLifecycleEventListener lifecycleListener : lifecycleListeners) {
+            lifecycleListener.afterPrepare();
         }
     }
 
@@ -72,8 +72,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (int i = 0; i < lifecycleListeners.size(); i++) {
-            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).afterCommit(onePhase);
+        for (SearchEngineLifecycleEventListener lifecycleListener : lifecycleListeners) {
+            lifecycleListener.afterCommit(onePhase);
         }
     }
 
@@ -81,8 +81,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (int i = 0; i < lifecycleListeners.size(); i++) {
-            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).afterRollback();
+        for (SearchEngineLifecycleEventListener lifecycleListener : lifecycleListeners) {
+            lifecycleListener.afterRollback();
         }
     }
 
@@ -90,8 +90,8 @@ public class SearchEngineEventManager implements SearchEngineLifecycleEventListe
         if (lifecycleListeners == null) {
             return;
         }
-        for (int i = 0; i < lifecycleListeners.size(); i++) {
-            ((SearchEngineLifecycleEventListener) lifecycleListeners.get(i)).close();
+        for (SearchEngineLifecycleEventListener lifecycleListener : lifecycleListeners) {
+            lifecycleListener.close();
         }
     }
 }

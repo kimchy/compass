@@ -272,8 +272,11 @@ public class LuceneSearchEngine implements SearchEngine {
         verifyWithinTransaction();
         try {
             if (transaction != null) {
-                transaction.rollback();
-                eventManager.afterRollback();
+                try {
+                    transaction.rollback();
+                } finally {
+                    eventManager.afterRollback();
+                }
             }
         } finally {
             transaction = null;
