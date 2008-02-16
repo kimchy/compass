@@ -17,9 +17,11 @@
 package org.apache.lucene.queryParser;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
+import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.queryparser.QueryParserUtils;
@@ -35,6 +37,8 @@ import org.compass.core.mapping.ResourcePropertyLookup;
  * @author kimchy
  */
 public class CompassQueryParser extends QueryParser {
+
+    private static final KeywordAnalyzer KEYWORD_ANALYZER = new KeywordAnalyzer();
 
     private CompassMapping mapping;
 
@@ -91,12 +95,15 @@ public class CompassQueryParser extends QueryParser {
             queryText = lookup.normalizeString(queryText);
 
         }
-        Analyzer origAnalyzer = null;
+        Analyzer origAnalyzer = analyzer;
         if (!forceAnalyzer) {
             String analyzerName = lookup.getAnalyzer();
             if (analyzerName != null) {
-                origAnalyzer = analyzer;
                 analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerMustExist(analyzerName);
+            } else {
+                if (lookup.getResourcePropertyMapping() != null && lookup.getResourcePropertyMapping().getIndex() == Property.Index.UN_TOKENIZED) {
+                    analyzer = KEYWORD_ANALYZER;
+                }
             }
         }
         Query q = QueryParserUtils.andAliasQueryIfNeeded(super.getFieldQuery(lookup.getPath(), queryText), lookup, addAliasQueryWithDotPath, searchEngineFactory);
