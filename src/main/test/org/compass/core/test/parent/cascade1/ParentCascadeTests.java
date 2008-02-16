@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.parent.cascade;
+package org.compass.core.test.parent.cascade1;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
