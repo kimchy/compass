@@ -132,6 +132,12 @@ public class LuceneEnvironment {
              */
             public static final String STOP = "stop";
 
+            /**
+             * Lucene Keyword analyzer.
+             *
+             * @see org.apache.lucene.analysis.KeywordAnalyzer
+             */
+            public static final String KEYWORD = "keyword";
         }
 
         public abstract class Snowball {

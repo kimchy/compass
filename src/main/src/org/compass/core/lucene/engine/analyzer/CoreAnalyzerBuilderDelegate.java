@@ -17,6 +17,7 @@
 package org.compass.core.lucene.engine.analyzer;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.KeywordAnalyzer;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
@@ -50,6 +51,8 @@ public class CoreAnalyzerBuilderDelegate implements AnalyzerBuilderDelegate {
         } else if (LuceneEnvironment.Analyzer.CoreTypes.STOP.equalsIgnoreCase(analyzerSetting)) {
             analyzer = new StopAnalyzer(analyzerFactory.parseStopWords(analyzerName, settings,
                     StopAnalyzer.ENGLISH_STOP_WORDS));
+        } else if (LuceneEnvironment.Analyzer.CoreTypes.KEYWORD.equalsIgnoreCase(analyzerSetting)) {
+            analyzer = new KeywordAnalyzer();
         }
         
         return analyzer;
