@@ -27,6 +27,8 @@ public class ContractMapping extends AbstractMultipleMapping implements AliasMap
 
     private String[] extendingAliases = new String[0];
 
+    private String analyzer;
+
     public Mapping copy() {
         AliasMapping contractMapping = shallowCopy();
         super.copy(contractMapping);
@@ -63,5 +65,13 @@ public class ContractMapping extends AbstractMultipleMapping implements AliasMap
 
     public void setExtendingAliases(String[] extendingAliases) {
         this.extendingAliases = extendingAliases;
+    }
+
+    public String getAnalyzer() {
+        return analyzer;
+    }
+
+    public void setAnalyzer(String analyzer) {
+        this.analyzer = analyzer;
     }
 }

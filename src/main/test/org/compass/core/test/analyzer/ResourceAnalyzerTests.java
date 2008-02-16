@@ -21,13 +21,13 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         Resource r = session.createResource("a");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         session.save(r);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("a.value:the");
         assertEquals(0, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -56,13 +56,13 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         Resource r = session.createResource("b");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         session.save(r);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("b.value:the");
         assertEquals(1, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -75,26 +75,26 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         Resource r = session.createResource("b");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         session.save(r);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("b.value:the");
         assertEquals(1, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
         assertEquals(1, hits.length());
 
         // this won't take into account without forcing the analyzer
-        CompassQuery query = session.queryBuilder().queryString("value:the").setAnalyzer("default").toQuery();
+        CompassQuery query = session.queryBuilder().queryString("b.value:the").setAnalyzer("default").toQuery();
         assertEquals(1, query.hits().getLength());
 
-        query = session.queryBuilder().queryString("value:the").setAnalyzer("default").forceAnalyzer().toQuery();
+        query = session.queryBuilder().queryString("b.value:the").setAnalyzer("default").forceAnalyzer().toQuery();
         assertEquals(0, query.hits().getLength());
 
-        query = session.queryBuilder().queryString("value:the").setAnalyzer("simple").forceAnalyzer().toQuery();
+        query = session.queryBuilder().queryString("b.value:the").setAnalyzer("simple").forceAnalyzer().toQuery();
         assertEquals(1, query.hits().length());
 
         tr.commit();
@@ -104,16 +104,16 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         Resource r = session.createResource("d");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("value2", TEXT);
         session.save(r);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("d.value:the");
         assertEquals(1, hits.getLength());
-        hits = session.find("value2:the");
+        hits = session.find("d.value2:the");
         assertEquals(0, hits.getLength());
         // test for the all property as well
         hits = session.find("the");
@@ -126,16 +126,16 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         Resource r = session.createResource("e");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("value2", TEXT);
         session.save(r);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("e.value:the");
         assertEquals(0, hits.getLength());
-        hits = session.find("value2:the");
+        hits = session.find("e.value2:the");
         assertEquals(1, hits.getLength());
 
         tr.commit();
@@ -145,14 +145,14 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         Resource r = session.createResource("g");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("analyzer", "simple");
         session.save(r);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("g.value:the");
         assertEquals(1, hits.getLength());
 
         r = session.createResource("g");
@@ -172,21 +172,24 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         Resource r = session.createResource("g");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("analyzer", "simple");
         session.save(r);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("g.value:the");
         assertEquals(1, hits.getLength());
 
         r = session.createResource("h");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         session.save(r);
-        hits = session.find("value:the");
+
+        // analyzer controller can't affect query string (since we don't have the resource), just for simple and
+        // check that both h and i were saved
+        hits = session.queryBuilder().queryString("value:the").setAnalyzer("simple").forceAnalyzer().toQuery().hits();
         assertEquals(2, hits.getLength());
 
         tr.commit();
@@ -196,14 +199,14 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         Resource r = session.createResource("i");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("analyzer", "simple");
         session.save(r);
 
-        CompassHits hits = session.find("value:the");
+        CompassHits hits = session.find("i.value:the");
         assertEquals(0, hits.getLength());
 
         tr.commit();

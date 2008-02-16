@@ -344,23 +344,23 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
     private void bindResourceMappingChildren(ConfigurationHelper resourceConf, AliasMapping resourceMapping) {
         ConfigurationHelper[] ids = resourceConf.getChildren("resource-id");
-        for (int i = 0; i < ids.length; i++) {
+        for (ConfigurationHelper id : ids) {
             RawResourcePropertyIdMapping rawIdPropertyMapping = new RawResourcePropertyIdMapping();
-            bindResourceProperty(ids[i], rawIdPropertyMapping);
+            bindResourceProperty(id, rawIdPropertyMapping, resourceMapping);
             resourceMapping.addMapping(rawIdPropertyMapping);
         }
 
         ConfigurationHelper[] properties = resourceConf.getChildren("resource-property");
-        for (int i = 0; i < properties.length; i++) {
+        for (ConfigurationHelper property : properties) {
             RawResourcePropertyMapping rawPropertyMapping = new RawResourcePropertyMapping();
-            bindResourceProperty(properties[i], rawPropertyMapping);
+            bindResourceProperty(property, rawPropertyMapping, resourceMapping);
             resourceMapping.addMapping(rawPropertyMapping);
         }
 
         ConfigurationHelper analyzerConf = resourceConf.getChild("resource-analyzer", false);
         if (analyzerConf != null) {
             RawResourcePropertyAnalyzerController analyzerController = new RawResourcePropertyAnalyzerController();
-            bindResourceProperty(analyzerConf, analyzerController);
+            bindResourceProperty(analyzerConf, analyzerController, resourceMapping);
             analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
             resourceMapping.addMapping(analyzerController);
         }
@@ -368,7 +368,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         ConfigurationHelper boostConf = resourceConf.getChild("resource-boost", false);
         if (boostConf != null) {
             RawBoostPropertyMapping boostPropertyMapping = new RawBoostPropertyMapping();
-            bindResourceProperty(boostConf, boostPropertyMapping);
+            bindResourceProperty(boostConf, boostPropertyMapping, resourceMapping);
             String defaultBoost = boostConf.getAttribute("default", null);
             if (defaultBoost != null) {
                 boostPropertyMapping.setDefaultBoost(Float.parseFloat(defaultBoost));
@@ -377,7 +377,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
     }
 
-    private void bindResourceProperty(ConfigurationHelper resourcePropConf, RawResourcePropertyMapping propertyMapping) {
+    private void bindResourceProperty(ConfigurationHelper resourcePropConf, RawResourcePropertyMapping propertyMapping,
+                                      AliasMapping aliasMapping) {
         String name = valueLookup.lookupMetaDataName(resourcePropConf.getAttribute("name"));
         propertyMapping.setBoost(getBoost(resourcePropConf));
         propertyMapping.setName(name);
@@ -394,7 +395,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String reverseType = resourcePropConf.getAttribute("reverse", "no");
         propertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
         propertyMapping.setInternal(false);
-        propertyMapping.setAnalyzer(resourcePropConf.getAttribute("analyzer", null));
+        propertyMapping.setAnalyzer(resourcePropConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
         propertyMapping.setNullValue(resourcePropConf.getAttribute("null-value", null));
         String excludeFromAll = resourcePropConf.getAttribute("exclude-from-all", "no");
         propertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));

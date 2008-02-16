@@ -17,6 +17,7 @@
 package org.compass.core.mapping;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -64,9 +65,9 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private CascadeMapping[] cascades;
 
-    private Map resourcePropertyMappingsByNameMap;
+    private Map<String, ResourcePropertyMapping[]> resourcePropertyMappingsByNameMap;
 
-    private Map resourcePropertyMappingsByPathMap;
+    private Map<PropertyPath, ResourcePropertyMapping> resourcePropertyMappingsByPathMap;
 
     private String[] resourcePropertyNames;
 
@@ -130,13 +131,9 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
             Mapping mapping = (Mapping) it.next();
             if (mapping instanceof ResourceIdMappingProvider) {
                 Mapping[] tempIds = ((ResourceIdMappingProvider) mapping).getIdMappings();
-                for (int i = 0; i < tempIds.length; i++) {
-                    resourceIds.add(tempIds[i]);
-                }
+                resourceIds.addAll(Arrays.asList(tempIds));
                 ResourcePropertyMapping[] tempPropertyIds = ((ResourceIdMappingProvider) mapping).getResourceIdMappings();
-                for (int i = 0; i < tempPropertyIds.length; i++) {
-                    resourceIdPropertyMappings.add(tempPropertyIds[i]);
-                }
+                resourceIdPropertyMappings.addAll(Arrays.asList(tempPropertyIds));
             }
         }
         idMappings = resourceIds.toArray(new Mapping[resourceIds.size()]);
@@ -144,44 +141,43 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     }
 
     private void buildResourcePropertyMap() {
-        resourcePropertyMappingsByPathMap = new HashMap();
-        HashMap tempMap = new HashMap();
-        ResourcePropertyMapping[] resourcePropertyMappings = getResourcePropertyMappings();
-        for (int i = 0; i < resourcePropertyMappings.length; i++) {
-            ResourcePropertyMapping resourcePropertyMapping = resourcePropertyMappings[i];
+        resourcePropertyMappingsByPathMap = new HashMap<PropertyPath, ResourcePropertyMapping>();
+        HashMap<String, ArrayList<ResourcePropertyMapping>> tempMap = new HashMap<String, ArrayList<ResourcePropertyMapping>>();
 
+        ResourcePropertyMapping[] resourcePropertyMappings = getResourcePropertyMappings();
+        for (ResourcePropertyMapping resourcePropertyMapping : resourcePropertyMappings) {
             resourcePropertyMappingsByPathMap.put(resourcePropertyMapping.getPath(), resourcePropertyMapping);
 
-            ArrayList propertyList = (ArrayList) tempMap.get(resourcePropertyMapping.getName());
+            ArrayList<ResourcePropertyMapping> propertyList = tempMap.get(resourcePropertyMapping.getName());
             if (propertyList == null) {
-                propertyList = new ArrayList();
+                propertyList = new ArrayList<ResourcePropertyMapping>();
                 tempMap.put(resourcePropertyMapping.getName(), propertyList);
             }
             propertyList.add(resourcePropertyMapping);
         }
         resourcePropertyNames = new String[tempMap.size()];
         int i = 0;
-        resourcePropertyMappingsByNameMap = new HashMap();
-        for (Iterator it = tempMap.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String propertyName = (String) entry.getKey();
+        resourcePropertyMappingsByNameMap = new HashMap<String, ResourcePropertyMapping[]>();
+        for (Map.Entry<String, ArrayList<ResourcePropertyMapping>> entry : tempMap.entrySet()) {
+            String propertyName = entry.getKey();
             resourcePropertyNames[i++] = propertyName;
-            ArrayList propertyList = (ArrayList) entry.getValue();
+            ArrayList<ResourcePropertyMapping> propertyList = entry.getValue();
             resourcePropertyMappingsByNameMap.put(propertyName,
                     propertyList.toArray(new ResourcePropertyMapping[propertyList.size()]));
         }
     }
 
     private void buildAnalyzerSpecificFlag() {
-        for (Iterator it = resourcePropertyMappingsByNameMap.keySet().iterator(); it.hasNext();) {
-            String propertyName = (String) it.next();
-            ResourcePropertyMapping[] mappings = (ResourcePropertyMapping[]) resourcePropertyMappingsByNameMap
-                    .get(propertyName);
+        for (String propertyName : resourcePropertyMappingsByNameMap.keySet()) {
+            ResourcePropertyMapping[] mappings = resourcePropertyMappingsByNameMap.get(propertyName);
             // the system will validate in the mappings if there are different
             // analyzers (or null) set to the same property mapping, here we can
             // just use the first one
             if (mappings[0].getAnalyzer() != null) {
-                hasSpecificAnalyzerPerResourceProperty = true;
+                // no need to say we have a specific analyzer if it is the same as the one set on the resource
+                if (analyzer == null || !analyzer.equals(mappings[0].getAnalyzer())) {
+                    hasSpecificAnalyzerPerResourceProperty = true;
+                }
             }
         }
     }
@@ -201,7 +197,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     }
 
     public ResourcePropertyMapping[] getResourcePropertyMappings(String propertyName) {
-        return (ResourcePropertyMapping[]) resourcePropertyMappingsByNameMap.get(propertyName);
+        return resourcePropertyMappingsByNameMap.get(propertyName);
     }
 
     public ResourcePropertyMapping getResourcePropertyMapping(String propertyName) {
@@ -213,7 +209,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
     }
 
     public ResourcePropertyMapping getResourcePropertyMappingByPath(PropertyPath path) {
-        return (ResourcePropertyMapping) resourcePropertyMappingsByPathMap.get(path);
+        return resourcePropertyMappingsByPathMap.get(path);
     }
 
     public CascadeMapping[] getCascadeMappings() {
@@ -227,8 +223,8 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         if (cascades == null || cascades.length == 0) {
             return false;
         }
-        for (int i = 0; i < cascades.length; i++) {
-            if (cascades[i].shouldCascade(cascade)) {
+        for (CascadeMapping cascade1 : cascades) {
+            if (cascade1.shouldCascade(cascade)) {
                 return true;
             }
         }

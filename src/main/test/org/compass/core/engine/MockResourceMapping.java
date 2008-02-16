@@ -231,4 +231,7 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Inte
     public String getUIDPath() {
         return "$uid";
     }
+
+    public void setAnalyzer(String analyzer) {
+    }
 }

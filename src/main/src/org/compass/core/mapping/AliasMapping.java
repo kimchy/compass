@@ -62,4 +62,8 @@ public interface AliasMapping extends MultipleMapping {
      * first ones.
      */
     void setExtendingAliases(String[] extendingAliases);
+
+    String getAnalyzer();
+
+    void setAnalyzer(String analyzer);
 }

@@ -21,6 +21,9 @@ public abstract class QueryParserUtils {
      */
     public static Query andAliasQueryIfNeeded(Query query, ResourcePropertyLookup lookup, boolean addAliasQueryWithDotPath,
                                               SearchEngineFactory searchEngineFactory) {
+        if (query == null) {
+            return query;
+        }
         if (!addAliasQueryWithDotPath) {
             return query;
         }
