@@ -82,5 +82,18 @@
 	<classpathentry kind="lib" path="lib/lucene/lucene-queries.jar"/>
 	<classpathentry kind="lib" path="lib/openjpa/openjpa-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/openjpa/serp-1.13.1.jar"/>
+	<classpathentry kind="lib" path="lib/coherence/coherence.jar"/>
+	<classpathentry kind="lib" path="lib/coherence/tangosol.jar"/>
+	<classpathentry kind="lib" path="lib/eclipselink/eclipselink.jar"/>
+	<classpathentry kind="lib" path="lib/gigaspaces/gs-boot.jar"/>
+	<classpathentry kind="lib" path="lib/gigaspaces/gs-lib.jar"/>
+	<classpathentry kind="lib" path="lib/gigaspaces/jsk-lib.jar"/>
+	<classpathentry kind="lib" path="lib/gigaspaces/jsk-platform.jar"/>
+	<classpathentry kind="lib" path="lib/gigaspaces/JSpaces.jar"/>
+	<classpathentry kind="lib" path="lib/gigaspaces/openspaces.jar"/>
+	<classpathentry kind="lib" path="lib/gigaspaces/reggie.jar"/>
+	<classpathentry kind="lib" path="lib/gigaspaces/start.jar"/>
+	<classpathentry kind="lib" path="lib/jgroups/jgroups-all.jar"/>
+	<classpathentry kind="lib" path="lib/mina/mina-core-1.1.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
