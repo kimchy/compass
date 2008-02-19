@@ -106,11 +106,13 @@ public class CompassQueryParser extends QueryParser {
                 }
             }
         }
-        Query q = QueryParserUtils.andAliasQueryIfNeeded(super.getFieldQuery(lookup.getPath(), queryText), lookup, addAliasQueryWithDotPath, searchEngineFactory);
-        if (origAnalyzer != null) {
-            analyzer = origAnalyzer;
+        try {
+            return QueryParserUtils.andAliasQueryIfNeeded(super.getFieldQuery(lookup.getPath(), queryText), lookup, addAliasQueryWithDotPath, searchEngineFactory);
+        } finally {
+            if (origAnalyzer != null) {
+                analyzer = origAnalyzer;
+            }
         }
-        return q;
     }
 
     /**
