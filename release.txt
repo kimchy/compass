@@ -1,10 +1,9 @@
 Release Process:
 
 * Run svn update
-* Change project.properties compass-version to the actual version number
-   (for example from x.y-SNAPSHOT to x.y)
-* Change docs/reference/src/compass.xml releaseInfo to the actual version number
-* Change readme.txt to the version number
+* Change project.properties compass-version to the actual version number (it should probably already be set)
+* Change docs/reference/src/compass.xml releaseInfo to the actual version number  (it should probably already be set)
+* Change readme.txt to the version number (it should probably already be set)
 * update upgrade.txt
 * Run ant clean
 * Run ant release
@@ -13,13 +12,11 @@ Release Process:
   - Run ant tests
 * Run svn commit
 * Tag using svn copy, branch if required
-* Build the project with open symphony ci (documentation will be created under the actual version number)
-* Change compass.version to the next version
-* Change project.properties compass-version to the next version with SNAPSHOT
-* Change docs/reference/src/compass.xml releaseInfo to the next version with SNAPSHOT
-* Change readme.txt to the next version with SNAPSHOT
-* Upload the two compass distributions to java.net
+* Upload the release files (zip files) to sourceforge.
+* Upload the new documentation to compass-project site.
+* Update the Compass homepage with links to the new release.
+* Change project.properties compass-version to the next version
+* Change docs/reference/src/compass.xml releaseInfo to the next version
+* Change readme.txt to the next version
 * Release the actual version in Jira
-* Update site/meta.xml and documentation.html with both the new actual version, and the new SNAPSHOT
 * Run svn commit
-* Build the project with open symphony ci (documentation will be created under the SNAPSHOT version number)
