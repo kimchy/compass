@@ -104,7 +104,10 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
                         Boolean performOrder = performOrderByPerEntity.get(entityInformation.getName());
                         if (performOrder == null || performOrder) {
                             ClassMetadata metadata = hibernateSession.getSessionFactory().getClassMetadata(entityInformation.getName());
-                            criteria.addOrder(Order.asc(metadata.getIdentifierPropertyName()));
+                            String idPropName = metadata.getIdentifierPropertyName();
+                            if (idPropName != null) {
+                                criteria.addOrder(Order.asc(idPropName));
+                            }
                         }
                     }
                     criteria.setFetchSize(device.getFetchCount());
