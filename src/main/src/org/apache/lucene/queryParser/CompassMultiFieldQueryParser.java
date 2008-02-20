@@ -16,17 +16,26 @@
 
 package org.apache.lucene.queryParser;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ConstantScoreRangeQuery;
+import org.apache.lucene.search.MultiPhraseQuery;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.lucene.engine.all.AllBoostingTermQuery;
 import org.compass.core.lucene.engine.queryparser.QueryParserUtils;
 import org.compass.core.lucene.search.ConstantScorePrefixQuery;
 import org.compass.core.mapping.CompassMapping;
@@ -109,7 +118,13 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
             }
         }
         try {
-            return QueryParserUtils.andAliasQueryIfNeeded(super.getFieldQuery(lookup.getPath(), queryText), lookup, addAliasQueryWithDotPath, searchEngineFactory);
+            Query query;
+            if (field.equals(searchEngineFactory.getLuceneSettings().getAllProperty())) {
+                query = getAllBoostQuery(field, queryText);
+            } else {
+                query = super.getFieldQuery(lookup.getPath(), queryText);
+            }
+            return QueryParserUtils.andAliasQueryIfNeeded(query, lookup, addAliasQueryWithDotPath, searchEngineFactory);
         } finally {
             if (origAnalyzer != null) {
                 analyzer = origAnalyzer;
@@ -183,5 +198,99 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
 
         Term t = new Term(lookup.getPath(), termStr);
         return QueryParserUtils.andAliasQueryIfNeeded(new ConstantScorePrefixQuery(t), lookup, addAliasQueryWithDotPath, searchEngineFactory);
+    }
+
+    // MONITOR AGAIN LUCENE QUERY PARSER (only changed TermQuery to AllBoostingTermQuery)
+    protected Query getAllBoostQuery(String field, String queryText) throws ParseException {
+        // Use the analyzer to get all the tokens, and then build a TermQuery,
+        // PhraseQuery, or nothing based on the term count
+
+        TokenStream source = analyzer.tokenStream(field, new StringReader(queryText));
+        Vector v = new Vector();
+        org.apache.lucene.analysis.Token t;
+        int positionCount = 0;
+        boolean severalTokensAtSamePosition = false;
+
+        while (true) {
+            try {
+                t = source.next();
+            }
+            catch (IOException e) {
+                t = null;
+            }
+            if (t == null)
+                break;
+            v.addElement(t);
+            if (t.getPositionIncrement() != 0)
+                positionCount += t.getPositionIncrement();
+            else
+                severalTokensAtSamePosition = true;
+        }
+        try {
+            source.close();
+        }
+        catch (IOException e) {
+            // ignore
+        }
+
+        if (v.size() == 0)
+            return null;
+        else if (v.size() == 1) {
+            t = (org.apache.lucene.analysis.Token) v.elementAt(0);
+            return new AllBoostingTermQuery(new Term(field, t.termText()));
+        } else {
+            if (severalTokensAtSamePosition) {
+                if (positionCount == 1) {
+                    // no phrase query:
+                    BooleanQuery q = new BooleanQuery(true);
+                    for (int i = 0; i < v.size(); i++) {
+                        t = (org.apache.lucene.analysis.Token) v.elementAt(i);
+                        AllBoostingTermQuery currentQuery = new AllBoostingTermQuery(
+                                new Term(field, t.termText()));
+                        q.add(currentQuery, BooleanClause.Occur.SHOULD);
+                    }
+                    return q;
+                } else {
+                    // phrase query:
+                    MultiPhraseQuery mpq = new MultiPhraseQuery();
+                    mpq.setSlop(phraseSlop);
+                    List multiTerms = new ArrayList();
+                    int position = -1;
+                    for (int i = 0; i < v.size(); i++) {
+                        t = (org.apache.lucene.analysis.Token) v.elementAt(i);
+                        if (t.getPositionIncrement() > 0 && multiTerms.size() > 0) {
+                            if (enablePositionIncrements) {
+                                mpq.add((Term[]) multiTerms.toArray(new Term[0]), position);
+                            } else {
+                                mpq.add((Term[]) multiTerms.toArray(new Term[0]));
+                            }
+                            multiTerms.clear();
+                        }
+                        position += t.getPositionIncrement();
+                        multiTerms.add(new Term(field, t.termText()));
+                    }
+                    if (enablePositionIncrements) {
+                        mpq.add((Term[]) multiTerms.toArray(new Term[0]), position);
+                    } else {
+                        mpq.add((Term[]) multiTerms.toArray(new Term[0]));
+                    }
+                    return mpq;
+                }
+            } else {
+                PhraseQuery pq = new PhraseQuery();
+                pq.setSlop(phraseSlop);
+                int position = -1;
+                for (int i = 0; i < v.size(); i++) {
+                    t = (org.apache.lucene.analysis.Token) v.elementAt(i);
+                    if (enablePositionIncrements) {
+                        position += t.getPositionIncrement();
+                        pq.add(new Term(field, t.termText()), position);
+                    } else {
+                        pq.add(new Term(field, t.termText()));
+                    }
+                }
+                return pq;
+            }
+        }
     }
 }

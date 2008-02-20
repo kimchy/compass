@@ -184,9 +184,6 @@ public class CompassQueryParser extends QueryParser {
     }
 
 
-    /**
-     *
-     */
     // MONITOR AGAIN LUCENE QUERY PARSER (only changed TermQuery to AllBoostingTermQuery)
     protected Query getAllBoostQuery(String field, String queryText) throws ParseException {
         // Use the analyzer to get all the tokens, and then build a TermQuery,
