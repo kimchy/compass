@@ -119,7 +119,8 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         }
         try {
             Query query;
-            if (field.equals(searchEngineFactory.getLuceneSettings().getAllProperty())) {
+            if (searchEngineFactory.getLuceneSettings().isAllPropertyBoostSupport() &&
+                    field.equals(searchEngineFactory.getLuceneSettings().getAllProperty())) {
                 query = getAllBoostQuery(field, queryText);
             } else {
                 query = super.getFieldQuery(lookup.getPath(), queryText);

@@ -193,18 +193,18 @@
                             </xsd:restriction>
                         </xsd:simpleType>
                     </xsd:attribute>
-                    <xsd:attribute name="analyzer" type="xsd:string" use="optional">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                The lookup name of the anayzer that will be use to analyzer the all property content. If
-                                not set, will default to Compass default analyzer.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:attribute>
                     <xsd:attribute name="enable" type="booleanType" use="optional">
                         <xsd:annotation>
                             <xsd:documentation>
                                 If all should be enabled globally or not. Defaults to true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="boostSupport" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Should the all property honor boost settings on sepecific proeprties when searching.
+                                Defaults to true.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>

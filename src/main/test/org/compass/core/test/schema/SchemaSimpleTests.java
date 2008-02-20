@@ -197,7 +197,6 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("alias1", settings.getSetting(CompassEnvironment.Alias.NAME));
         assertEquals("all1", settings.getSetting(CompassEnvironment.All.NAME));
         assertEquals("yes", settings.getSetting(CompassEnvironment.All.TERM_VECTOR));
-        assertEquals("analyzer1", settings.getSetting(LuceneEnvironment.ALL_ANALYZER));
     }
 
     public void testPropertyNamingStrategySchema() throws Exception {

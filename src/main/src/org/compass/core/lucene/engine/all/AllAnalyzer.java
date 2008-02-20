@@ -59,10 +59,13 @@ public class AllAnalyzer extends Analyzer {
 
     private AllTokenStreamCollector allTokenStreamCollector = new AllTokenStreamCollector();
 
+    private boolean boostSupport;
+
     public AllAnalyzer(Analyzer analyzer, InternalResource resource, LuceneSearchEngine searchEngine) {
         this.analyzer = analyzer;
         this.resourceMapping = resource.resourceKey().getResourceMapping();
         this.searchEngine = searchEngine;
+        this.boostSupport = searchEngine.getSearchEngineFactory().getLuceneSettings().isAllPropertyBoostSupport();
 
         if (!resourceMapping.isAllSupported()) {
             return;
@@ -100,10 +103,12 @@ public class AllAnalyzer extends Analyzer {
             }
             if (resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED) {
                 Payload payload = null;
-                if (resourcePropertyMapping.getBoost() != -1) {
-                    payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
-                } else if (resourceMapping.getBoost() != -1) {
-                    payload = AllBoostUtils.writeFloat(resourceMapping.getBoost());
+                if (boostSupport) {
+                    if (resourcePropertyMapping.getBoost() != -1) {
+                        payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
+                    } else if (resourceMapping.getBoost() != -1) {
+                        payload = AllBoostUtils.writeFloat(resourceMapping.getBoost());
+                    }
                 }
                 String value = property.getStringValue();
                 if (value != null) {
@@ -240,12 +245,14 @@ public class AllAnalyzer extends Analyzer {
                 lastToken.setPayload(payload);
                 lastToken = null;
             }
-            if (resourcePropertyMapping != null && resourcePropertyMapping.getBoost() != 1.0f) {
-                payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
-            } else if (resourceMapping.getBoost() != 1.0f) {
-                payload = AllBoostUtils.writeFloat(resourceMapping.getBoost());
-            } else {
-                payload = null;
+            if (boostSupport) {
+                if (resourcePropertyMapping != null && resourcePropertyMapping.getBoost() != 1.0f) {
+                    payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
+                } else if (resourceMapping.getBoost() != 1.0f) {
+                    payload = AllBoostUtils.writeFloat(resourceMapping.getBoost());
+                } else {
+                    payload = null;
+                }
             }
         }
 

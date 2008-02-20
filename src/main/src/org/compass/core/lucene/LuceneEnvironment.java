@@ -27,12 +27,6 @@ import org.apache.lucene.store.jdbc.index.RAMAndFileJdbcIndexOutput;
 public class LuceneEnvironment {
 
     /**
-     * The analyzer that will be used for the all property. Optional and will
-     * default to the default analyzer.
-     */
-    public static final String ALL_ANALYZER = "compass.engine.all.analyzer";
-
-    /**
      * The default search that will be used for non prefixed query values.
      * Defaults to the value of the "all" property.
      */

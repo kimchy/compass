@@ -50,6 +50,8 @@ public class LuceneSettings {
 
     private Property.TermVector allPropertyTermVector;
 
+    private boolean allPropertyBoostSupport;
+
     private String aliasProperty;
 
     private String extendedAliasProperty;
@@ -117,6 +119,10 @@ public class LuceneSettings {
         String allPropertyTermVectorSettings = settings.getSetting(CompassEnvironment.All.TERM_VECTOR, "no");
         if (log.isDebugEnabled()) {
             log.debug("Using all property term vector [" + allPropertyTermVectorSettings + "]");
+        }
+        allPropertyBoostSupport = settings.getSettingAsBoolean(CompassEnvironment.All.BOOST_SUPPORT, true);
+        if (log.isDebugEnabled()) {
+            log.debug("All property boost support is [" + allPropertyBoostSupport + "]");
         }
         if ("no".equals(allPropertyTermVectorSettings)) {
             allPropertyTermVector = Property.TermVector.NO;
@@ -283,6 +289,10 @@ public class LuceneSettings {
 
     public Property.TermVector getAllPropertyTermVector() {
         return allPropertyTermVector;
+    }
+
+    public boolean isAllPropertyBoostSupport() {
+        return allPropertyBoostSupport;
     }
 
     public long getTransactionLockTimout() {

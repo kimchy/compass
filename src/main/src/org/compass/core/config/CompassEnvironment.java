@@ -493,6 +493,15 @@ public class CompassEnvironment {
          * setting.
          */
         public static final String ENABLED = "compass.property.all.enabled";
+
+        /**
+         * Should the all property honor boost settings on sepecific proeprties when searching.
+         * Defaults to <code>true</code>.
+         *
+         * <p>If set to <code>true</code>, more data will be saved in the index in case of a
+         * specific boost value, but searching experiance will be much improved.
+         */
+        public static final String BOOST_SUPPORT = "compass.property.all.boostSupport";
     }
 
     /**
