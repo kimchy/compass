@@ -16,10 +16,10 @@
 
 package org.compass.core.test.boost;
 
-import org.compass.core.test.AbstractTestCase;
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.CompassHits;
+import org.compass.core.test.AbstractTestCase;
 
 /**
  * @author kimchy
@@ -38,13 +38,13 @@ public class BoostTests extends AbstractTestCase {
         // check the order for the search so we can then use the boost
         // test to check that the order was reversed
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value1 = "match";
         a.value2 = "nomatch";
         session.save("a1", a);
 
         a = new A();
-        a.id = new Long(2);
+        a.id = 2;
         a.value1 = "nomatch";
         a.value2 = "match";
         session.save("a1", a);
@@ -53,16 +53,16 @@ public class BoostTests extends AbstractTestCase {
             CompassHits hits = session.find("value1:match OR value2:match");
             assertEquals(2, hits.length());
             assertTrue(hits.score(0) == hits.score(1));
-            assertEquals(1, ((A) hits.data(0)).id.longValue());
-            assertEquals(2, ((A) hits.data(1)).id.longValue());
+            assertEquals(1, ((A) hits.data(0)).id);
+            assertEquals(2, ((A) hits.data(1)).id);
         }
 
         // check the order when we use the all proeprty
         CompassHits hits = session.find("match");
         assertEquals(2, hits.length());
         assertTrue(hits.score(0) == hits.score(1));
-        assertEquals(1, ((A) hits.data(0)).id.longValue());
-        assertEquals(2, ((A) hits.data(1)).id.longValue());
+        assertEquals(1, ((A) hits.data(0)).id);
+        assertEquals(2, ((A) hits.data(1)).id);
 
         tr.commit();
         session.close();
@@ -76,13 +76,13 @@ public class BoostTests extends AbstractTestCase {
         // under a2, that boosts value2, which means that a match
         // on it will result in the hits having higher score
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value1 = "match";
         a.value2 = "nomatch";
         session.save("a2", a);
 
         a = new A();
-        a.id = new Long(2);
+        a.id = 2;
         a.value1 = "nomatch";
         a.value2 = "match";
         session.save("a2", a);
@@ -91,17 +91,16 @@ public class BoostTests extends AbstractTestCase {
             CompassHits hits = session.find("value1:match OR value2:match");
             assertEquals(2, hits.length());
             assertTrue(hits.score(0) > hits.score(1));
-            assertEquals(2, ((A) hits.data(0)).id.longValue());
-            assertEquals(1, ((A) hits.data(1)).id.longValue());
+            assertEquals(2, ((A) hits.data(0)).id);
+            assertEquals(1, ((A) hits.data(1)).id);
         }
 
         // check the order when we use the all proeprty
-        // note, that the boost does not affect the all property
+        // note, we now support order in the all property as well
         CompassHits hits = session.find("match");
         assertEquals(2, hits.length());
-        assertTrue(hits.score(0) == hits.score(1));
-        assertEquals(1, ((A) hits.data(0)).id.longValue());
-        assertEquals(2, ((A) hits.data(1)).id.longValue());
+        assertEquals(2, ((A) hits.data(0)).id);
+        assertEquals(1, ((A) hits.data(1)).id);
 
         tr.commit();
         session.close();
@@ -114,13 +113,13 @@ public class BoostTests extends AbstractTestCase {
         // we save exact same A values, one under a3, and one
         // under a4, where a4 has a higher boost level
         A a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value1 = "match";
         a.value2 = "nomatch";
         session.save("a3", a);
 
         a = new A();
-        a.id = new Long(1);
+        a.id = 1;
         a.value1 = "match";
         a.value2 = "nomatch";
         session.save("a4", a);
@@ -142,12 +141,12 @@ public class BoostTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         Parent parent = new Parent();
-        parent.id = new Long(1);
+        parent.id = 1;
         parent.value = "match";
         session.save("parent11", parent);
 
         parent = new Parent();
-        parent.id = new Long(2);
+        parent.id = 2;
         parent.value = "match";
         parent.child = new Child();
         parent.child.value = "nomatch";

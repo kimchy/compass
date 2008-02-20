@@ -21,7 +21,7 @@ package org.compass.core.test.boost;
  */
 public class Child {
 
-    Long id;
+    int id;
 
     String value;
 }

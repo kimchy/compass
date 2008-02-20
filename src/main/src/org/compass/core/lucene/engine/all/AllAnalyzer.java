@@ -25,6 +25,7 @@ import java.util.Iterator;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.index.Payload;
 import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
@@ -98,12 +99,20 @@ public class AllAnalyzer extends Analyzer {
                 continue;
             }
             if (resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED) {
+                Payload payload = null;
+                if (resourcePropertyMapping.getBoost() != -1) {
+                    payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
+                } else if (resourceMapping.getBoost() != -1) {
+                    payload = AllBoostUtils.writeFloat(resourceMapping.getBoost());
+                }
                 String value = property.getStringValue();
                 if (value != null) {
                     // if NO exclude from all, just add it
                     // if NO_ANALYZED, will analyze it as well
                     if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.NO) {
-                        tokens.add(new Token(value, 0, value.length()));
+                        Token t = new Token(value, 0, value.length());
+                        t.setPayload(payload);
+                        tokens.add(t);
                     } else
                     if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.NO_ANALYZED) {
                         Analyzer propAnalyzer;
@@ -117,6 +126,7 @@ public class AllAnalyzer extends Analyzer {
                         try {
                             Token token = ts.next();
                             while (token != null) {
+                                token.setPayload(payload);
                                 tokens.add(token);
                                 token = ts.next();
                             }
@@ -156,12 +166,14 @@ public class AllAnalyzer extends Analyzer {
             if (!searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(fieldName)) {
                 if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {
                     allTokenStreamCollector.setTokenStream(retVal);
+                    allTokenStreamCollector.updateMapping(resourceMapping, resourcePropertyMapping);
                     retVal = allTokenStreamCollector;
                 }
             }
         } else if (!(resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.YES)
                 && !resourcePropertyMapping.isInternal()) {
             allTokenStreamCollector.setTokenStream(retVal);
+            allTokenStreamCollector.updateMapping(resourceMapping, resourcePropertyMapping);
             retVal = allTokenStreamCollector;
         }
         return retVal;
@@ -215,16 +227,43 @@ public class AllAnalyzer extends Analyzer {
 
         private TokenStream tokenStream;
 
+        private Payload payload;
+
+        private Token lastToken;
+
+        public AllTokenStreamCollector() {
+
+        }
+
+        public void updateMapping(ResourceMapping resourceMapping, ResourcePropertyMapping resourcePropertyMapping) {
+            if (lastToken != null && payload != null) {
+                lastToken.setPayload(payload);
+                lastToken = null;
+            }
+            if (resourcePropertyMapping != null && resourcePropertyMapping.getBoost() != 1.0f) {
+                payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
+            } else if (resourceMapping.getBoost() != 1.0f) {
+                payload = AllBoostUtils.writeFloat(resourceMapping.getBoost());
+            } else {
+                payload = null;
+            }
+        }
+
         public void setTokenStream(TokenStream tokenStream) {
             this.tokenStream = tokenStream;
         }
 
         public Token next() throws IOException {
-            Token token = tokenStream.next();
-            if (token != null) {
-                tokens.add(token);
+            // we put the payload on the last token. It has already been indexed
+            // and it will be used on the all property later on
+            if (lastToken != null && payload != null) {
+                lastToken.setPayload(payload);
             }
-            return token;
+            lastToken = tokenStream.next();
+            if (lastToken != null) {
+                tokens.add(lastToken);
+            }
+            return lastToken;
         }
 
         public void reset() throws IOException {
@@ -232,6 +271,9 @@ public class AllAnalyzer extends Analyzer {
         }
 
         public void close() throws IOException {
+            if (lastToken != null && payload != null) {
+                lastToken.setPayload(payload);
+            }
             tokenStream.close();
         }
     }

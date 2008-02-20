@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.boost;
+package org.compass.core.test.all.boost;
 
 /**
  * @author kimchy
  */
-public class Parent {
+public class A {
 
     int id;
 
-    String value;
+    String value1;
 
-    Child child;
+    String value2;
 }
