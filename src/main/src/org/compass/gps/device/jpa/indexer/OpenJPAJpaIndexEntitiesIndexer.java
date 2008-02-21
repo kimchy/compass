@@ -67,6 +67,7 @@ public class OpenJPAJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer {
             try {
                 wrapper.open();
                 OpenJPAEntityManager entityManager = OpenJPAPersistence.cast(wrapper.getEntityManager());
+                entityManager.setPopulateStoreCache(false);
                 if (log.isDebugEnabled()) {
                     log.debug(jpaGpsDevice.buildMessage("Indexing entities [" + entityInformation.getName() + "] using query ["
                             + entityInformation.getQueryProvider() + "]"));
