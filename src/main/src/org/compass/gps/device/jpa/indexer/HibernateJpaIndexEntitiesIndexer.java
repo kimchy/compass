@@ -28,6 +28,7 @@ import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.entities.EntityInformation;
 import org.compass.gps.device.jpa.queryprovider.HibernateJpaQueryProvider;
 import org.compass.gps.device.support.parallel.IndexEntity;
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -98,6 +99,7 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
             try {
                 wrapper.open();
                 HibernateEntityManager entityManager = (HibernateEntityManager) wrapper.getEntityManager();
+                entityManager.getSession().setCacheMode(CacheMode.IGNORE);
                 if (log.isDebugEnabled()) {
                     log.debug(jpaGpsDevice.buildMessage("Indexing entities [" + entityInformation.getName() + "] using query ["
                             + entityInformation.getQueryProvider() + "]"));

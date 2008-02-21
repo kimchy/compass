@@ -26,6 +26,7 @@ import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.device.hibernate.entities.EntityInformation;
 import org.compass.gps.device.support.parallel.IndexEntity;
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
@@ -90,6 +91,7 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
             }
             ScrollableResults cursor = null;
             Session hibernateSession = device.getSessionFactory().openSession();
+            hibernateSession.setCacheMode(CacheMode.IGNORE);
             Transaction hibernateTransaction = null;
             try {
                 hibernateTransaction = hibernateSession.beginTransaction();

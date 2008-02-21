@@ -16,7 +16,6 @@
 
 package org.compass.gps.device.hibernate.indexer;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -26,6 +25,7 @@ import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.device.hibernate.entities.EntityInformation;
 import org.compass.gps.device.support.parallel.IndexEntity;
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -48,8 +48,8 @@ public class PaginationHibernateIndexEntitiesIndexer implements HibernateIndexEn
     }
 
     public void performIndex(CompassSession session, IndexEntity[] entities) {
-        for (int i = 0; i < entities.length; i++) {
-            EntityInformation entityInfo = (EntityInformation) entities[i];
+        for (IndexEntity entity : entities) {
+            EntityInformation entityInfo = (EntityInformation) entity;
             int fetchCount = device.getFetchCount();
             int current = 0;
             while (true) {
@@ -57,6 +57,7 @@ public class PaginationHibernateIndexEntitiesIndexer implements HibernateIndexEn
                     return;
                 }
                 Session hibernateSession = device.getSessionFactory().openSession();
+                hibernateSession.setCacheMode(CacheMode.IGNORE);
                 Transaction hibernateTransaction = null;
                 try {
                     hibernateTransaction = hibernateSession.beginTransaction();
@@ -72,8 +73,8 @@ public class PaginationHibernateIndexEntitiesIndexer implements HibernateIndexEn
                         Query query = entityInfo.getQueryProvider().createQuery(hibernateSession, entityInfo).setFirstResult(current).setMaxResults(fetchCount);
                         values = query.list();
                     }
-                    for (Iterator it = values.iterator(); it.hasNext();) {
-                        session.create(it.next());
+                    for (Object value : values) {
+                        session.create(value);
                     }
                     session.evictAll();
                     hibernateTransaction.commit();
