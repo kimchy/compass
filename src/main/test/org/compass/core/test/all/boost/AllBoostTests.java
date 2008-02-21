@@ -61,4 +61,33 @@ public class AllBoostTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testValue1BoostLevel2WithSeveralTokens() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        a.value1 = "moo test2";
+        a.value2 = "moo test1";
+        session.save("anoboost", a);
+        session.save("a1", a);
+
+        a = new A();
+        a.id = 2;
+        a.value1 = "moo test1";
+        a.value2 = "moo test2";
+        session.save("anoboost", a);
+        session.save("a1", a);
+
+        CompassHits hits = session.queryBuilder().queryString("test1").toQuery().setAliases("anoboost").hits();
+        assertEquals(1, ((A) hits.data(0)).id);
+        assertEquals(2, ((A) hits.data(1)).id);
+        hits = session.queryBuilder().queryString("test1").toQuery().setAliases("a1").hits();
+        assertEquals(2, ((A) hits.data(0)).id);
+        assertEquals(1, ((A) hits.data(1)).id);
+
+        tr.commit();
+        session.close();
+    }
 }
