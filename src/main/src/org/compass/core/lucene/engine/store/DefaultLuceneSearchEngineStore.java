@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -85,7 +86,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
         this.connectionString = settings.getSetting(CompassEnvironment.CONNECTION);
-        this.dirs = new HashMap<String, Map<String, Directory>>();
+        this.dirs = new ConcurrentHashMap<String, Map<String, Directory>>();
         this.luceneSettings = searchEngineFactory.getLuceneSettings();
 
         this.defaultSubContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "index");
@@ -192,11 +193,13 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private void closeDirectories() {
         for (Map<String, Directory> subIndexsDirs : dirs.values()) {
-            for (Directory dir : subIndexsDirs.values()) {
-                try {
-                    dir.close();
-                } catch (IOException e) {
-                    log.debug("Failed to close directory while shutting down, ignoring", e);
+            synchronized (subIndexsDirs) {
+                for (Directory dir : subIndexsDirs.values()) {
+                    try {
+                        dir.close();
+                    } catch (IOException e) {
+                        log.debug("Failed to close directory while shutting down, ignoring", e);
+                    }
                 }
             }
         }
@@ -206,10 +209,12 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     public void performScheduledTasks() {
         for (Map.Entry<String, Map<String, Directory>> entry : dirs.entrySet()) {
             String subContext = entry.getKey();
-            for (Map.Entry<String, Directory> entry2 : entry.getValue().entrySet()) {
-                String subIndex = entry2.getKey();
-                Directory dir = entry2.getValue();
-                directoryStore.performScheduledTasks(unwrapDir(dir), subContext, subIndex);
+            synchronized (entry.getValue()) {
+                for (Map.Entry<String, Directory> entry2 : entry.getValue().entrySet()) {
+                    String subIndex = entry2.getKey();
+                    Directory dir = entry2.getValue();
+                    directoryStore.performScheduledTasks(unwrapDir(dir), subContext, subIndex);
+                }
             }
         }
     }
@@ -252,11 +257,18 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     public Directory openDirectory(String subContext, String subIndex) throws SearchEngineException {
         Map<String, Directory> subContextDirs = dirs.get(defaultSubContext);
         if (subContextDirs == null) {
-            subContextDirs = new HashMap<String, Directory>();
+            subContextDirs = new ConcurrentHashMap<String, Directory>();
             dirs.put(subContext, subContextDirs);
         }
         Directory dir = subContextDirs.get(subIndex);
-        if (dir == null) {
+        if (dir != null) {
+            return dir;
+        }
+        synchronized (subContextDirs) {
+            dir = subContextDirs.get(subIndex);
+            if (dir != null) {
+                return dir;
+            }
             dir = directoryStore.open(subContext, subIndex);
             String lockFactoryType = luceneSettings.getSettings().getSetting(LuceneEnvironment.LockFactory.TYPE);
             if (lockFactoryType != null) {
