@@ -70,7 +70,7 @@ public class LuceneTransaction extends AbstractTransaction {
             try {
                 entry.getValue().abort();
             } catch (IOException e) {
-                Directory dir = indexManager.getStore().getDirectoryBySubIndex(entry.getKey(), false);
+                Directory dir = indexManager.getStore().openDirectory(entry.getKey());
                 try {
                     if (IndexReader.isLocked(dir)) {
                         IndexReader.unlock(dir);
@@ -252,7 +252,7 @@ public class LuceneTransaction extends AbstractTransaction {
             try {
                 indexWriter.close();
             } catch (IOException e) {
-                Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
+                Directory dir = indexManager.getStore().openDirectory(subIndex);
                 try {
                     if (IndexReader.isLocked(dir)) {
                         IndexReader.unlock(dir);

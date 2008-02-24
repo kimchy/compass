@@ -28,12 +28,13 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SingleInstanceLockFactory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
-import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.store.LuceneSearchEngineStoreFactory;
+import org.compass.core.lucene.engine.store.FSDirectoryStore;
+import org.compass.core.lucene.engine.store.MMapDirectoryStore;
+import org.compass.core.lucene.engine.store.RAMDirectoryStore;
 import org.compass.core.lucene.util.LuceneUtils;
 
 /**
@@ -49,8 +50,6 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
 
     private LuceneSearchEngineFactory searchEngineFactory;
 
-    private String subContext;
-
     public LocalDirectoryCacheManager(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
     }
@@ -60,20 +59,19 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
     }
 
     public void configure(CompassSettings settings) throws CompassException {
-        subContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "index");
         disableLocalCache = settings.getSettingAsBoolean(LuceneEnvironment.LocalCache.DISABLE_LOCAL_CACHE, false);
         this.subIndexLocalCacheGroups = settings.getSettingGroups(LuceneEnvironment.LocalCache.PREFIX);
 
         // just iterate through this to print out our cache
         for (Map.Entry<String, CompassSettings> entry : subIndexLocalCacheGroups.entrySet()) {
-            String connection = entry.getValue().getSetting(LuceneEnvironment.LocalCache.CONNECTION, LuceneSearchEngineStoreFactory.MEM_PREFIX);
+            String connection = entry.getValue().getSetting(LuceneEnvironment.LocalCache.CONNECTION, RAMDirectoryStore.PROTOCOL);
             if (log.isDebugEnabled()) {
                 log.debug("Local Cache for [" + entry.getKey() + "] configured with connection [" + connection + "]");
             }
         }
     }
 
-    public Directory createLocalCache(String subIndex, Directory dir) throws SearchEngineException {
+    public Directory createLocalCache(String subContext, String subIndex, Directory dir) throws SearchEngineException {
         if (disableLocalCache) {
             return dir;
         }
@@ -84,16 +82,16 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
                 return dir;
             }
         }
-        String connection = settings.getSetting(LuceneEnvironment.LocalCache.CONNECTION, LuceneSearchEngineStoreFactory.MEM_PREFIX);
+        String connection = settings.getSetting(LuceneEnvironment.LocalCache.CONNECTION, RAMDirectoryStore.PROTOCOL);
         Directory localCacheDirectory;
-        if (connection.startsWith(LuceneSearchEngineStoreFactory.MEM_PREFIX)) {
+        if (connection.startsWith(RAMDirectoryStore.PROTOCOL)) {
             localCacheDirectory = new RAMDirectory();
-        } else if (connection.startsWith(LuceneSearchEngineStoreFactory.FILE_PREFIX) ||
-                connection.startsWith(LuceneSearchEngineStoreFactory.MMAP_PREFIX) ||
+        } else if (connection.startsWith(FSDirectoryStore.PROTOCOL) ||
+                connection.startsWith(MMapDirectoryStore.PROTOCOL) ||
                 connection.indexOf("://") == -1) {
             String path;
             if (connection.indexOf("://") != -1) {
-                path = connection.substring(LuceneSearchEngineStoreFactory.FILE_PREFIX.length(), connection.length());
+                path = connection.substring(FSDirectoryStore.PROTOCOL.length());
             } else {
                 path = connection;
             }

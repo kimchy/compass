@@ -16,6 +16,11 @@
 
 package org.compass.gps.device.hibernate.simple;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 import junit.framework.TestCase;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
@@ -58,9 +63,15 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
 
     protected abstract void setUpCoreCompass(CompassConfiguration conf);
 
-    protected void setUpCompass() {
+    protected void setUpCompass() throws IOException {
         CompassConfiguration cpConf = new CompassConfiguration()
                 .setConnection("target/test-index");
+        File testPropsFile = new File("compass.test.properties");
+        if (testPropsFile.exists()) {
+            Properties testProps = new Properties();
+            testProps.load(new FileInputStream(testPropsFile));
+            cpConf.getSettings().addSettings(testProps);
+        }
         setUpCoreCompass(cpConf);
         compass = cpConf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
@@ -77,7 +88,7 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
         hibernateGpsDevice.setName("jdoDevice");
         hibernateGpsDevice.setSessionFactory(sessionFactory);
         addDeviceSettings(hibernateGpsDevice);
-        ((SingleCompassGps) compassGps).addGpsDevice(hibernateGpsDevice);
+        compassGps.addGpsDevice(hibernateGpsDevice);
     }
 
     protected void addDeviceSettings(HibernateGpsDevice device) {

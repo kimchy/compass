@@ -154,7 +154,7 @@ public class LuceneSubIndexInfo {
      */
     public static LuceneSubIndexInfo getIndexInfo(String subIndex, LuceneSearchEngineIndexManager indexManager)
             throws IOException {
-        final Directory directory = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
+        final Directory directory = indexManager.getStore().openDirectory(subIndex);
         try {
             final SegmentInfos segmentInfos = new SegmentInfos();
             segmentInfos.read(directory);

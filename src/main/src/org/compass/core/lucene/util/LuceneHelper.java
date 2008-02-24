@@ -218,6 +218,6 @@ public abstract class LuceneHelper {
      * Returns the lucene {@link org.apache.lucene.store.Directory} associated with the given sub index.
      */
     public static Directory getDirectory(Compass compass, String subIndex) {
-        return ((LuceneSearchEngineIndexManager) ((InternalCompass) compass).getSearchEngineIndexManager()).getStore().getDirectoryBySubIndex(subIndex, false);
+        return ((LuceneSearchEngineIndexManager) ((InternalCompass) compass).getSearchEngineIndexManager()).getStore().openDirectory(subIndex);
     }
 }

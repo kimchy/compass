@@ -18,13 +18,14 @@ package org.compass.core.lucene.engine.store;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.sql.DataSource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.DirectoryWrapper;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcDirectorySettings;
 import org.apache.lucene.store.jdbc.JdbcFileEntrySettings;
@@ -36,6 +37,8 @@ import org.apache.lucene.store.jdbc.dialect.DialectResolver;
 import org.apache.lucene.store.jdbc.index.FetchPerTransactionJdbcIndexInput;
 import org.apache.lucene.store.jdbc.support.JdbcTable;
 import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.engine.SearchEngine;
@@ -43,18 +46,18 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.event.SearchEngineLifecycleEventListener;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.store.jdbc.DataSourceProvider;
 import org.compass.core.lucene.engine.store.jdbc.DriverManagerDataSourceProvider;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.util.ClassUtils;
 
 /**
  * @author kimchy
  */
-public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore {
+public class JdbcDirectoryStore extends AbstractDirectoryStore implements CompassConfigurable {
 
-    private String url;
+    private static final Log log = LogFactory.getLog(JdbcDirectoryStore.class);
+
+    public static final String PROTOCOL = "jdbc://";
 
     private JdbcDirectorySettings jdbcSettings;
 
@@ -68,14 +71,13 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
 
     private boolean disableSchemaOperation;
 
-    private Map cachedJdbcTables = new HashMap();
+    private Map<String, JdbcTable> cachedJdbcTables = new ConcurrentHashMap<String, JdbcTable>();
 
-    public JdbcLuceneSearchEngineStore(String url, String subContext) {
-        super(url, subContext);
-        this.url = url;
-    }
 
-    public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) throws CompassException {
+    public void configure(CompassSettings settings) throws CompassException {
+        String connection = settings.getSetting(CompassEnvironment.CONNECTION);
+        String url = connection.substring(PROTOCOL.length());
+
         String dataSourceProviderClassName = settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
                 DriverManagerDataSourceProvider.class.getName());
         try {
@@ -182,44 +184,19 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
             }
             jdbcSettings.registerFileEntrySettings(fileEntryName, jdbcFileEntrySettings);
         }
-
-        super.configure(searchEngineFactory, settings, mapping);
     }
 
-    protected void doClose() {
-        this.dataSourceProvider.closeDataSource();
-    }
-
-    public void performScheduledTasks() throws SearchEngineException {
-        String[] subIndexes = getSubIndexes();
-        Exception last = null;
-        for (int i = 0; i < subIndexes.length; i++) {
-            try {
-                Directory dir = getDirectoryBySubIndex(subIndexes[i], false);
-                if (dir instanceof DirectoryWrapper) {
-                    dir = ((DirectoryWrapper) dir).getWrappedDirectory();
-                }
-                ((JdbcDirectory) dir).deleteMarkDeleted();
-            } catch (Exception e) {
-                last = e;
-            }
-        }
-        if (last != null) {
-            throw new SearchEngineException("Failed to clear mark deleted", last);
-        }
-    }
-
-    protected Directory doOpenDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException {
+    public Directory open(String subContext, String subIndex) throws SearchEngineException {
         String totalPath = subContext + "_" + subIndex;
-        JdbcTable jdbcTable = (JdbcTable) cachedJdbcTables.get(totalPath);
+        JdbcTable jdbcTable = cachedJdbcTables.get(totalPath);
         if (jdbcTable == null) {
             jdbcTable = new JdbcTable(jdbcSettings, dialect, totalPath);
             cachedJdbcTables.put(totalPath, jdbcTable);
         }
         JdbcDirectory dir = new JdbcDirectory(dataSource, jdbcTable);
-        if (create) {
+        if (!disableSchemaOperation) {
             try {
-                createDirectory(dir);
+                dir.create();
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to create dir [" + totalPath + "]", e);
             }
@@ -227,37 +204,8 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         return dir;
     }
 
-    public void createIndex() throws SearchEngineException {
+    public Boolean indexExists(Directory dir) throws SearchEngineException {
         try {
-            deleteIndex();
-        } catch (Exception e) {
-            // do nothing
-        }
-        super.createIndex();
-    }
-
-    protected void doDeleteIndex() throws SearchEngineException {
-        String[] subIndexes = getSubIndexes();
-        for (int i = 0; i < subIndexes.length; i++) {
-            template.executeForSubIndex(subIndexes[i], false,
-                    new LuceneStoreCallback() {
-                        public Object doWithStore(Directory dir) throws IOException {
-                            if (dir instanceof DirectoryWrapper) {
-                                dir = ((DirectoryWrapper) dir).getWrappedDirectory();
-                            }
-                            deleteDirectory((JdbcDirectory) dir);
-                            return null;
-                        }
-                    });
-
-        }
-    }
-
-    protected Boolean indexExists(Directory dir) throws IOException {
-        try {
-            if (dir instanceof DirectoryWrapper) {
-                dir = ((DirectoryWrapper) dir).getWrappedDirectory();
-            }
             // for databases that fail if there is no table (like postgres)
             if (dialect.supportsTableExists()) {
                 boolean tableExists = ((JdbcDirectory) dir).tableExists();
@@ -270,24 +218,47 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         } catch (UnsupportedOperationException e) {
             // do nothing, let the base class check for it
         }
-        return super.indexExists(dir);
+        return null;
     }
 
-    protected void doCleanIndex(final String subIndex) throws SearchEngineException {
-        template.executeForSubIndex(subIndex, new LuceneStoreCallback() {
-            public Object doWithStore(Directory dest) {
-                if (dest instanceof DirectoryWrapper) {
-                    dest = ((DirectoryWrapper) dest).getWrappedDirectory();
-                }
-                JdbcDirectory jdbcDirectory = (JdbcDirectory) dest;
-                try {
-                    jdbcDirectory.deleteContent();
-                } catch (IOException e) {
-                    throw new SearchEngineException("Failed to delete content of [" + subIndex + "]", e);
-                }
-                return null;
+    public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
+        try {
+            if (disableSchemaOperation) {
+                ((JdbcDirectory) dir).deleteContent();
+            } else {
+                ((JdbcDirectory) dir).delete();
             }
-        });
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to delete index [" + subIndex + "]", e);
+        }
+    }
+
+    public void cleanIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
+        JdbcDirectory jdbcDirectory = (JdbcDirectory) dir;
+        try {
+            jdbcDirectory.deleteContent();
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to delete content of [" + subIndex + "]", e);
+        }
+    }
+
+    public void performScheduledTasks(Directory dir, String subContext, String subIndex) throws SearchEngineException {
+        try {
+            ((JdbcDirectory) dir).deleteMarkDeleted();
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to delete mark deleted with jdbc for [" + subIndex + "]", e);
+        }
+    }
+
+    public CopyFromHolder beforeCopyFrom(String subContext, Directory[] dirs) throws SearchEngineException {
+        for (Directory dir : dirs) {
+            try {
+                ((JdbcDirectory) dir).deleteContent();
+            } catch (IOException e) {
+                throw new SearchEngineException("Failed to delete index content");
+            }
+        }
+        return new CopyFromHolder();
     }
 
     public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {
@@ -298,42 +269,8 @@ public class JdbcLuceneSearchEngineStore extends AbstractLuceneSearchEngineStore
         }
     }
 
-    protected CopyFromHolder doBeforeCopyFrom() throws SearchEngineException {
-        for (int i = 0; i < getSubIndexes().length; i++) {
-            final String subIndex = getSubIndexes()[i];
-            template.executeForSubIndex(subIndex, false, new LuceneStoreCallback() {
-                public Object doWithStore(Directory dest) {
-                    if (dest instanceof DirectoryWrapper) {
-                        dest = ((DirectoryWrapper) dest).getWrappedDirectory();
-                    }
-                    JdbcDirectory jdbcDirectory = (JdbcDirectory) dest;
-                    try {
-                        jdbcDirectory.deleteContent();
-                    } catch (IOException e) {
-                        throw new SearchEngineException("Failed to delete content of [" + subIndex + "]", e);
-                    }
-                    return null;
-                }
-            });
-        }
-        CopyFromHolder holder = new CopyFromHolder();
-        holder.createOriginalDirectory = false;
-        return holder;
-    }
-
-    private void createDirectory(JdbcDirectory dir) throws IOException {
-        if (disableSchemaOperation) {
-            return;
-        }
-        dir.create();
-    }
-
-    private void deleteDirectory(JdbcDirectory dir) throws IOException {
-        if (disableSchemaOperation) {
-            dir.deleteContent();
-        } else {
-            dir.delete();
-        }
+    public void close() {
+        this.dataSourceProvider.closeDataSource();
     }
 
     private class ManagedEventListeners implements SearchEngineLifecycleEventListener {

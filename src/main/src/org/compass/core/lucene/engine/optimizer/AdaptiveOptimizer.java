@@ -69,7 +69,7 @@ public class AdaptiveOptimizer extends AbstractOptimizer implements CompassConfi
             indexWriter.optimize(mergeFactor);
         } catch (Exception e) {
             try {
-                Directory dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
+                Directory dir = indexManager.getStore().openDirectory(subIndex);
                 if (IndexReader.isLocked(dir)) {
                     IndexReader.unlock(dir);
                 }

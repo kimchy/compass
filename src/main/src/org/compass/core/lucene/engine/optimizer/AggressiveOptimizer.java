@@ -70,7 +70,7 @@ public class AggressiveOptimizer extends AbstractIndexInfoOptimizer implements C
                 log.debug("Optimizing sub-index [" + subIndex + "]");
             }
             long time = System.currentTimeMillis();
-            dir = indexManager.getStore().getDirectoryBySubIndex(subIndex, false);
+            dir = indexManager.getStore().openDirectory(subIndex);
             indexWriter = indexManager.openIndexWriter(indexManager.getSettings().getSettings(), dir, false);
             long lockTime = System.currentTimeMillis() - time;
             time = System.currentTimeMillis();

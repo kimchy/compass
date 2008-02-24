@@ -66,19 +66,14 @@ public interface LuceneSearchEngineStore {
     int getNumberOfAliasesBySubIndex(String subIndex);
 
     /**
-     * Closes the given directory.
+     * Returns the directory that match the given sub index.
      */
-    void closeDirectory(String subIndex) throws SearchEngineException;
+    Directory openDirectory(String subIndex) throws SearchEngineException;
 
     /**
      * Returns the directory that match the given sub index.
      */
-    Directory getDirectoryBySubIndex(String subIndex, boolean create) throws SearchEngineException;
-
-    /**
-     * Returns the directory that match the given sub index. Not creating one if one does not exists.
-     */
-    Directory getDirectoryBySubIndex(String subIndex) throws SearchEngineException;
+    Directory openDirectory(String subContext, String subIndex) throws SearchEngineException;
 
     /**
      * Returns <code>true</code> if any sub index is locked.
@@ -141,6 +136,11 @@ public interface LuceneSearchEngineStore {
      * @throws SearchEngineException
      */
     void copyFrom(LuceneSearchEngineStore searchEngineStore) throws SearchEngineException;
+
+    /**
+     * Returns the default sub context associated with this store.
+     */
+    String getDefaultSubContext();
 
     /**
      * A callback to register event listeners when a {@link SearchEngine} is

@@ -336,7 +336,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             try {
                 indexHolder = new LuceneIndexHolder(subIndex, getDirectory(subIndex));
             } catch (IOException e) {
-                throw new SearchEngineException("Failed to open sub index cache [" + subIndex + "]");
+                throw new SearchEngineException("Failed to open sub index cache [" + subIndex + "]", e);
             }
             indexHolders.put(subIndex, indexHolder);
         }
@@ -395,11 +395,11 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public IndexWriter openIndexWriter(CompassSettings settings, String subIndex) throws IOException {
-        return openIndexWriter(settings, searchEngineStore.getDirectoryBySubIndex(subIndex, false), false);
+        return openIndexWriter(settings, searchEngineStore.openDirectory(subIndex), false);
     }
 
     public IndexWriter openIndexWriter(CompassSettings settings, String subIndex, boolean autoCommit) throws IOException {
-        return openIndexWriter(settings, searchEngineStore.getDirectoryBySubIndex(subIndex, false), autoCommit, false);
+        return openIndexWriter(settings, searchEngineStore.openDirectory(subIndex), autoCommit, false);
     }
 
     public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean create) throws IOException {
@@ -439,7 +439,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     protected Directory getDirectory(String subIndex) {
-        return searchEngineStore.getDirectoryBySubIndex(subIndex, false);
+        return searchEngineStore.openDirectory(subIndex);
     }
 
     public void start() {

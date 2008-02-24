@@ -37,12 +37,11 @@ public abstract class LuceneUtils {
      * @throws IOException
      */
     public static void copy(final Directory src, final Directory dest, final byte[] buffer) throws IOException {
-        if (!IndexReader.indexExists(src)) {
-            return;
-        }
-
-        for (String name : src.list()) {
-            copy(src, dest, name, buffer);
+        String[] files = src.list();
+        if (files != null) {
+            for (String name : files) {
+                copy(src, dest, name, buffer);
+            }
         }
     }
 

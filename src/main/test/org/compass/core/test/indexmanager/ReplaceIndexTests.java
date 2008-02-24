@@ -110,6 +110,19 @@ public class ReplaceIndexTests extends TestCase {
         }
     }
 
+    public void testReplaceRAMWithRAM() throws Exception {
+        CompassSettings actualSettings = new CompassSettings().setSetting(CompassEnvironment.CONNECTION,
+                "ram://target/test-index");
+        CompassSettings fromSettings = new CompassSettings().setSetting(CompassEnvironment.CONNECTION,
+                "ram://target/test-index-temp");
+        setUpOrigCompass(actualSettings);
+        try {
+            innerTestReplaceIndex(fromSettings);
+        } finally {
+            tearDownOrigCompass();
+        }
+    }
+
     public void testReplaceJdbcWithFS() throws Exception {
         CompassSettings actualSettings = new CompassSettings().setSetting(CompassEnvironment.CONNECTION,
                 "jdbc://jdbc:hsqldb:mem:test").setSetting(LuceneEnvironment.JdbcStore.DIALECT,
@@ -119,6 +132,27 @@ public class ReplaceIndexTests extends TestCase {
                 LuceneEnvironment.JdbcStore.Connection.PASSWORD, "");
         CompassSettings fromSettings = new CompassSettings().setSetting(CompassEnvironment.CONNECTION,
                 "target/test-index-temp");
+        setUpOrigCompass(actualSettings);
+        try {
+            innerTestReplaceIndex(fromSettings);
+        } finally {
+            tearDownOrigCompass();
+        }
+    }
+
+    public void testReplaceJdbcWithJdbc() throws Exception {
+        CompassSettings actualSettings = new CompassSettings().setSetting(CompassEnvironment.CONNECTION,
+                "jdbc://jdbc:hsqldb:mem:test1").setSetting(LuceneEnvironment.JdbcStore.DIALECT,
+                "org.apache.lucene.store.jdbc.dialect.HSQLDialect").setSetting(
+                LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, "org.hsqldb.jdbcDriver").setSetting(
+                LuceneEnvironment.JdbcStore.Connection.USERNAME, "sa").setSetting(
+                LuceneEnvironment.JdbcStore.Connection.PASSWORD, "");
+        CompassSettings fromSettings = new CompassSettings().setSetting(CompassEnvironment.CONNECTION,
+                "jdbc://jdbc:hsqldb:mem:test2").setSetting(LuceneEnvironment.JdbcStore.DIALECT,
+                "org.apache.lucene.store.jdbc.dialect.HSQLDialect").setSetting(
+                LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, "org.hsqldb.jdbcDriver").setSetting(
+                LuceneEnvironment.JdbcStore.Connection.USERNAME, "sa").setSetting(
+                LuceneEnvironment.JdbcStore.Connection.PASSWORD, "");
         setUpOrigCompass(actualSettings);
         try {
             innerTestReplaceIndex(fromSettings);

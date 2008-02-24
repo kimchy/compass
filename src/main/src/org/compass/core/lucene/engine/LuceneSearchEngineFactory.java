@@ -38,8 +38,8 @@ import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizerManager;
 import org.compass.core.lucene.engine.queryparser.LuceneQueryParserManager;
+import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
-import org.compass.core.lucene.engine.store.LuceneSearchEngineStoreFactory;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.util.ClassUtils;
@@ -123,8 +123,7 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
         // build the search engine store
         String subContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "index");
-        LuceneSearchEngineStore searchEngineStore =
-                LuceneSearchEngineStoreFactory.createStore(luceneSettings.getConnection(), subContext, settings);
+        LuceneSearchEngineStore searchEngineStore = new DefaultLuceneSearchEngineStore();
         searchEngineStore.configure(this, settings, mapping);
         indexManager = new DefaultLuceneSearchEngineIndexManager(this, searchEngineStore);
 
