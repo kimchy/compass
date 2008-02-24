@@ -28,6 +28,7 @@ import org.compass.gps.device.hibernate.entities.EntityInformation;
 import org.compass.gps.device.support.parallel.IndexEntity;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -122,7 +123,14 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
                 // store things in row buffer to allow using batch fetching in Hibernate
                 RowBuffer buffer = new RowBuffer(session, hibernateSession, device.getFetchCount());
                 Object prev = null;
-                while (cursor.next()) {
+                while (true) {
+                    try {
+                        if (!cursor.next()) {
+                            break;
+                        }
+                    } catch (ObjectNotFoundException e) {
+                        continue;
+                    }
                     Object item = cursor.get(0);
                     if (item != prev && prev != null) {
                         buffer.put(prev);
