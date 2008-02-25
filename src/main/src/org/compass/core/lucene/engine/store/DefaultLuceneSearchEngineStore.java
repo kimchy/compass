@@ -282,6 +282,9 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                     String lockDir = path;
                     if (lockDir == null) {
                         lockDir = connectionString + "/" + subContext + "/" + subIndex;
+                        if (lockDir.startsWith(FSDirectoryStore.PROTOCOL)) {
+                            lockDir = lockDir.substring(FSDirectoryStore.PROTOCOL.length());
+                        }
                     }
                     try {
                         lockFactory = new NativeFSLockFactory(lockDir);
@@ -295,6 +298,9 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                     String lockDir = path;
                     if (lockDir == null) {
                         lockDir = connectionString + "/" + subContext + "/" + subIndex;
+                        if (lockDir.startsWith(FSDirectoryStore.PROTOCOL)) {
+                            lockDir = lockDir.substring(FSDirectoryStore.PROTOCOL.length());
+                        }
                     }
                     try {
                         lockFactory = new SimpleFSLockFactory(lockDir);
