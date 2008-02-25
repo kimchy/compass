@@ -90,4 +90,35 @@ public class AllBoostTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testBoostMapping() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        B b = new B();
+        b.id = 1;
+        b.boost = 1;
+        b.value1 = "test2";
+        b.value2 = "test1";
+        session.save("bnoboost", b);
+        session.save("b1", b);
+
+        b = new B();
+        b.id = 2;
+        b.boost = 2;
+        b.value1 = "test1";
+        b.value2 = "test2";
+        session.save("bnoboost", b);
+        session.save("b1", b);
+
+        CompassHits hits = session.queryBuilder().queryString("test1").toQuery().setAliases("bnoboost").hits();
+        assertEquals(1, ((B) hits.data(0)).id);
+        assertEquals(2, ((B) hits.data(1)).id);
+        hits = session.queryBuilder().queryString("test1").toQuery().setAliases("b1").hits();
+        assertEquals(2, ((B) hits.data(0)).id);
+        assertEquals(1, ((B) hits.data(1)).id);
+
+        tr.commit();
+        session.close();
+    }
 }

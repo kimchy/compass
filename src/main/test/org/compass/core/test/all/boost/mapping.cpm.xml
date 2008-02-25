@@ -24,4 +24,25 @@
         </property>
     </class>
 
+    <class name="B" alias="bnoboost">
+        <id name="id" accessor="field" />
+        <property name="value1" accessor="field">
+            <meta-data>value1</meta-data>
+        </property>
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+    </class>
+
+    <class name="B" alias="b1">
+        <id name="id" accessor="field" />
+        <boost name="boost" accessor="field" />
+        <property name="value1" accessor="field">
+            <meta-data>value1</meta-data>
+        </property>
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+    </class>
+
 </compass-core-mapping>
