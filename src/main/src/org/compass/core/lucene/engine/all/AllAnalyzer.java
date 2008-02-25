@@ -51,6 +51,8 @@ public class AllAnalyzer extends Analyzer {
 
     private Analyzer analyzer;
 
+    private InternalResource resource;
+
     private ResourceMapping resourceMapping;
 
     private LuceneSearchEngine searchEngine;
@@ -63,6 +65,7 @@ public class AllAnalyzer extends Analyzer {
 
     public AllAnalyzer(Analyzer analyzer, InternalResource resource, LuceneSearchEngine searchEngine) {
         this.analyzer = analyzer;
+        this.resource = resource;
         this.resourceMapping = resource.resourceKey().getResourceMapping();
         this.searchEngine = searchEngine;
         this.boostSupport = searchEngine.getSearchEngineFactory().getLuceneSettings().isAllPropertyBoostSupport();
@@ -106,8 +109,10 @@ public class AllAnalyzer extends Analyzer {
                 if (boostSupport) {
                     if (resourcePropertyMapping.getBoost() != -1) {
                         payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
-                    } else if (resourceMapping.getBoost() != -1) {
-                        payload = AllBoostUtils.writeFloat(resourceMapping.getBoost());
+                    } else if (resource.getBoost() != -1) {
+                        // we get the boost from the resource thus taking into account any resource property mapping
+                        // and/or resource mapping boost level
+                        payload = AllBoostUtils.writeFloat(resource.getBoost());
                     }
                 }
                 String value = property.getStringValue();
@@ -171,14 +176,14 @@ public class AllAnalyzer extends Analyzer {
             if (!searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(fieldName)) {
                 if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {
                     allTokenStreamCollector.setTokenStream(retVal);
-                    allTokenStreamCollector.updateMapping(resourceMapping, resourcePropertyMapping);
+                    allTokenStreamCollector.updateMapping(resource, resourcePropertyMapping);
                     retVal = allTokenStreamCollector;
                 }
             }
         } else if (!(resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.YES)
                 && !resourcePropertyMapping.isInternal()) {
             allTokenStreamCollector.setTokenStream(retVal);
-            allTokenStreamCollector.updateMapping(resourceMapping, resourcePropertyMapping);
+            allTokenStreamCollector.updateMapping(resource, resourcePropertyMapping);
             retVal = allTokenStreamCollector;
         }
         return retVal;
@@ -240,7 +245,7 @@ public class AllAnalyzer extends Analyzer {
 
         }
 
-        public void updateMapping(ResourceMapping resourceMapping, ResourcePropertyMapping resourcePropertyMapping) {
+        public void updateMapping(InternalResource resource, ResourcePropertyMapping resourcePropertyMapping) {
             if (lastToken != null && payload != null) {
                 lastToken.setPayload(payload);
                 lastToken = null;
@@ -248,8 +253,10 @@ public class AllAnalyzer extends Analyzer {
             if (boostSupport) {
                 if (resourcePropertyMapping != null && resourcePropertyMapping.getBoost() != 1.0f) {
                     payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
-                } else if (resourceMapping.getBoost() != 1.0f) {
-                    payload = AllBoostUtils.writeFloat(resourceMapping.getBoost());
+                } else if (resource.getBoost() != 1.0f) {
+                    // we get the boost from the resource thus taking into account any resource property mapping
+                    // and/or resource mapping boost level
+                    payload = AllBoostUtils.writeFloat(resource.getBoost());
                 } else {
                     payload = null;
                 }
