@@ -32,6 +32,7 @@ import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.MultiPhraseQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
@@ -118,14 +119,7 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
             }
         }
         try {
-            Query query;
-            if (searchEngineFactory.getLuceneSettings().isAllPropertyBoostSupport() &&
-                    field.equals(searchEngineFactory.getLuceneSettings().getAllProperty())) {
-                query = getAllBoostQuery(field, queryText);
-            } else {
-                query = super.getFieldQuery(lookup.getPath(), queryText);
-            }
-            return QueryParserUtils.andAliasQueryIfNeeded(query, lookup, addAliasQueryWithDotPath, searchEngineFactory);
+            return QueryParserUtils.andAliasQueryIfNeeded(getInternalFieldQuery(lookup.getPath(), queryText), lookup, addAliasQueryWithDotPath, searchEngineFactory);
         } finally {
             if (origAnalyzer != null) {
                 analyzer = origAnalyzer;
@@ -201,8 +195,18 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         return QueryParserUtils.andAliasQueryIfNeeded(new ConstantScorePrefixQuery(t), lookup, addAliasQueryWithDotPath, searchEngineFactory);
     }
 
-    // MONITOR AGAIN LUCENE QUERY PARSER (only changed TermQuery to AllBoostingTermQuery)
-    protected Query getAllBoostQuery(String field, String queryText) throws ParseException {
+    /**
+     * @throws ParseException throw in overridden method to disallow
+     */
+    // MONITOR AGAINST LUCENE
+    // Changed: Added boostAll flag
+    // Extracted the creation of Terms to allow for overrides
+    protected Query getInternalFieldQuery(String field, String queryText) throws ParseException {
+        boolean boostAll = false;
+        if (searchEngineFactory.getLuceneSettings().isAllPropertyBoostSupport() &&
+                field.equals(searchEngineFactory.getLuceneSettings().getAllProperty())) {
+            boostAll = true;
+        }
         // Use the analyzer to get all the tokens, and then build a TermQuery,
         // PhraseQuery, or nothing based on the term count
 
@@ -238,7 +242,11 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
             return null;
         else if (v.size() == 1) {
             t = (org.apache.lucene.analysis.Token) v.elementAt(0);
-            return new AllBoostingTermQuery(new Term(field, t.termText()));
+            if (boostAll) {
+                return new AllBoostingTermQuery(getTerm(field, t.termText()));
+            } else {
+                return new TermQuery(getTerm(field, t.termText()));
+            }
         } else {
             if (severalTokensAtSamePosition) {
                 if (positionCount == 1) {
@@ -246,9 +254,15 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
                     BooleanQuery q = new BooleanQuery(true);
                     for (int i = 0; i < v.size(); i++) {
                         t = (org.apache.lucene.analysis.Token) v.elementAt(i);
-                        AllBoostingTermQuery currentQuery = new AllBoostingTermQuery(
-                                new Term(field, t.termText()));
-                        q.add(currentQuery, BooleanClause.Occur.SHOULD);
+                        if (boostAll) {
+                            AllBoostingTermQuery currentQuery = new AllBoostingTermQuery(
+                                    getTerm(field, t.termText()));
+                            q.add(currentQuery, BooleanClause.Occur.SHOULD);
+                        } else {
+                            TermQuery currentQuery = new TermQuery(
+                                    getTerm(field, t.termText()));
+                            q.add(currentQuery, BooleanClause.Occur.SHOULD);
+                        }
                     }
                     return q;
                 } else {
@@ -268,7 +282,7 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
                             multiTerms.clear();
                         }
                         position += t.getPositionIncrement();
-                        multiTerms.add(new Term(field, t.termText()));
+                        multiTerms.add(getTerm(field, t.termText()));
                     }
                     if (enablePositionIncrements) {
                         mpq.add((Term[]) multiTerms.toArray(new Term[0]), position);
@@ -285,13 +299,17 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
                     t = (org.apache.lucene.analysis.Token) v.elementAt(i);
                     if (enablePositionIncrements) {
                         position += t.getPositionIncrement();
-                        pq.add(new Term(field, t.termText()), position);
+                        pq.add(getTerm(field, t.termText()), position);
                     } else {
-                        pq.add(new Term(field, t.termText()));
+                        pq.add(getTerm(field, t.termText()));
                     }
                 }
                 return pq;
             }
         }
+    }
+
+    protected Term getTerm(String field, String text) {
+        return new Term(field, text);
     }
 }
