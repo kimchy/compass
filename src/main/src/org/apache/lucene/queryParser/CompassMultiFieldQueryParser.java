@@ -53,9 +53,9 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
 
     private static final KeywordAnalyzer KEYWORD_ANALYZER = new KeywordAnalyzer();
 
-    private LuceneSearchEngineFactory searchEngineFactory;
+    protected final LuceneSearchEngineFactory searchEngineFactory;
 
-    private CompassMapping mapping;
+    protected final CompassMapping mapping;
 
     private boolean allowConstantScorePrefixQuery;
 
@@ -309,7 +309,11 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         }
     }
 
-    protected Term getTerm(String field, String text) {
+    public void close() {
+        
+    }
+
+    protected Term getTerm(String field, String text) throws ParseException {
         return new Term(field, text);
     }
 }

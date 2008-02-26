@@ -380,42 +380,45 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     public <T> T execute(final String[] subIndexes, final String[] aliases, final SpellCheckerCallback<T> callback) {
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<T>() {
             public T doInTransaction(InternalCompassTransaction tr) throws CompassException {
-                String[] calcSubIndexes = indexStore.calcSubIndexes(subIndexes, aliases);
-                ArrayList<Searchable> searchers = new ArrayList<Searchable>(calcSubIndexes.length);
-                ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
-                for (String subIndex : calcSubIndexes) {
-                    synchronized (indexLocks.get(subIndex)) {
-                        IndexSearcher searcher = searcherMap.get(subIndex);
-                        if (searcher != null) {
-                            searchers.add(searcher);
-                            readers.add(searcher.getIndexReader());
-                        }
-                    }
-                }
-                MultiSearcher searcher;
-                try {
-                    searcher = new MultiSearcher(searchers.toArray(new Searchable[searchers.size()]));
-                } catch (IOException e) {
-                    throw new SearchEngineException("Failed to open searcher for spell check", e);
-                }
-
-                if (searchers.isEmpty()) {
+                CompassSpellChecker spellChecker = createSpellChecker(subIndexes, aliases);
+                if (spellChecker == null) {
                     return callback.execute(null, null);
                 }
-
-                MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
-                CompassSpellChecker spellChecker = new CompassSpellChecker(searcher, reader);
                 try {
                     LuceneSearchEngineInternalSearch search = (LuceneSearchEngineInternalSearch) tr.getSearchEngine().internalSearch(subIndexes, aliases);
                     return callback.execute(spellChecker, search.getReader());
                 } finally {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        // do nothing here
-                    }
+                    spellChecker.close();
                 }
             }
         });
+    }
+
+    public CompassSpellChecker createSpellChecker(final String[] subIndexes, final String[] aliases) {
+        String[] calcSubIndexes = indexStore.calcSubIndexes(subIndexes, aliases);
+        ArrayList<Searchable> searchers = new ArrayList<Searchable>(calcSubIndexes.length);
+        ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
+        for (String subIndex : calcSubIndexes) {
+            synchronized (indexLocks.get(subIndex)) {
+                IndexSearcher searcher = searcherMap.get(subIndex);
+                if (searcher != null) {
+                    searchers.add(searcher);
+                    readers.add(searcher.getIndexReader());
+                }
+            }
+        }
+        MultiSearcher searcher;
+        try {
+            searcher = new MultiSearcher(searchers.toArray(new Searchable[searchers.size()]));
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to open searcher for spell check", e);
+        }
+
+        if (searchers.isEmpty()) {
+            return null;
+        }
+
+        MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
+        return new CompassSpellChecker(searcher, reader);
     }
 }

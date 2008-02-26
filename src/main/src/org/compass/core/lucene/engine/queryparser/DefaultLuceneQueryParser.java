@@ -78,6 +78,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
             throw new SearchEngineQueryParseException(queryString, e);
         } catch (IllegalArgumentException e) {
             throw new SearchEngineQueryParseException(queryString, e);
+        } finally {
+            queryParser.close();
         }
     }
 
@@ -92,6 +94,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
             throw new SearchEngineQueryParseException(queryString, e);
         } catch (IllegalArgumentException e) {
             throw new SearchEngineQueryParseException(queryString, e);
+        } finally {
+            queryParser.close();
         }
     }
 

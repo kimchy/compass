@@ -63,6 +63,7 @@ import org.apache.lucene.store.Directory;
 
 // 1. Added a constructor that accepts a searcher and reader ("searching" spell checker)
 // 2. Changed searcher type from IndexSearcher to Searcher
+// 3. Added close method
 // 4. In indexDictioanry, if the searcher is null, don't reopen it
 // 5. Added a constructor that won't open an index searcher ("indexing" spell checker)
 // 6. Added indexDictionary that accepts a dictionary and IndexWriter so we can configure it
@@ -115,6 +116,20 @@ public class CompassSpellChecker {
       } else {
           setSpellIndex(spellIndex);
       }
+    }
+
+    public void close() {
+        try {
+            searcher.close();
+        } catch (IOException e) {
+            // do nothing
+        }
+
+        try {
+            reader.close();
+        } catch (IOException e) {
+            // do nothing
+        }
     }
 
   /**
