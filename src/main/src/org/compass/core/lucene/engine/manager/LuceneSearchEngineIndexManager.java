@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine.manager;
 
 import java.io.IOException;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexDeletionPolicy;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
@@ -52,6 +53,8 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
     IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create) throws IOException;
 
     IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException;
+
+    IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy, Analyzer analyzer) throws IOException;
 
     LuceneIndexHolder openIndexHolderBySubIndex(String subIndex) throws SearchEngineException;
 

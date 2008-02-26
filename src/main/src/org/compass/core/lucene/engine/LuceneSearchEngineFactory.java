@@ -19,7 +19,6 @@ package org.compass.core.lucene.engine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassConfigurable;
-import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
@@ -28,16 +27,19 @@ import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.engine.spi.InternalSearchEngineFactory;
 import org.compass.core.executor.ExecutorManager;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
 import org.compass.core.lucene.engine.indexdeletionpolicy.IndexDeletionPolicyFactory;
 import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
-import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizerManager;
 import org.compass.core.lucene.engine.queryparser.LuceneQueryParserManager;
+import org.compass.core.lucene.engine.spellcheck.DefaultLuceneSpellCheckManager;
+import org.compass.core.lucene.engine.spellcheck.InternalLuceneSearchEngineSpellCheckManager;
 import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
@@ -58,6 +60,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
     private LuceneSettings luceneSettings;
 
     private SearchEngineOptimizer searchEngineOptimizer;
+
+    private InternalLuceneSearchEngineSpellCheckManager spellCheckManager;
 
     private LuceneSearchEngineIndexManager indexManager;
 
@@ -89,6 +93,9 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
     }
 
     public void close() throws SearchEngineException {
+        if (spellCheckManager != null) {
+            spellCheckManager.close();
+        }
         indexManager.close();
     }
 
@@ -122,7 +129,6 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         queryParserManager.configure(settings);
 
         // build the search engine store
-        String subContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "index");
         LuceneSearchEngineStore searchEngineStore = new DefaultLuceneSearchEngineStore();
         searchEngineStore.configure(this, settings, mapping);
         indexManager = new DefaultLuceneSearchEngineIndexManager(this, searchEngineStore);
@@ -137,6 +143,34 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
         searchEngineOptimizer = new LuceneSearchEngineOptimizerManager(this);
         ((CompassConfigurable) searchEngineOptimizer).configure(settings);
+
+        if (settings.getSettingAsBoolean(LuceneEnvironment.SpellCheck.ENABLE, false)) {
+            try {
+                ClassUtils.forName("org.apache.lucene.search.spell.SpellChecker", settings.getClassLoader());
+                spellCheckManager = new DefaultLuceneSpellCheckManager();
+                spellCheckManager.configure(this, settings, mapping);
+            } catch (ClassNotFoundException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("No spell checker jar file found in classpath, disabling spell checker");
+                }
+            }
+        }
+    }
+
+    public void start() {
+        searchEngineOptimizer.start();
+        indexManager.start();
+        if (spellCheckManager != null) {
+            spellCheckManager.start();
+        }
+    }
+
+    public void stop() {
+        searchEngineOptimizer.stop();
+        indexManager.stop();
+        if (spellCheckManager != null) {
+            spellCheckManager.stop();
+        }
     }
 
     public String getAliasProperty() {
@@ -163,16 +197,12 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         return searchEngineOptimizer;
     }
 
-    public void setOptimizer(LuceneSearchEngineOptimizer searchEngineOptimizer) {
-        this.searchEngineOptimizer = searchEngineOptimizer;
+    public SearchEngineSpellCheckManager getSpellCheckManager() {
+        return this.spellCheckManager;
     }
 
     public SearchEngineIndexManager getIndexManager() {
         return indexManager;
-    }
-
-    public void setIndexManager(LuceneSearchEngineIndexManager indexManager) {
-        this.indexManager = indexManager;
     }
 
     public LuceneSearchEngineIndexManager getLuceneIndexManager() {

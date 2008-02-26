@@ -23,11 +23,12 @@ import java.util.ArrayList;
 import org.apache.lucene.store.Directory;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.CompassTransaction;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.spi.InternalCompassSession;
+import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
@@ -133,7 +134,7 @@ public class LuceneSubIndexInfo {
         final LuceneSearchEngineIndexManager indexManager = (LuceneSearchEngineIndexManager) searchEngine.getSearchEngineFactory().getIndexManager();
 
         return searchEngine.getSearchEngineFactory().getTransactionContext().execute(new TransactionContextCallback<LuceneSubIndexInfo>() {
-            public LuceneSubIndexInfo doInTransaction(CompassTransaction tr) throws CompassException {
+            public LuceneSubIndexInfo doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 try {
                     return getIndexInfo(subIndex, indexManager);
                 } catch (IOException e) {
@@ -143,18 +144,18 @@ public class LuceneSubIndexInfo {
         });
     }
 
+    public static LuceneSubIndexInfo getIndexInfo(String subIndex, LuceneSearchEngineIndexManager indexManager)
+            throws IOException {
+        return getIndexInfo(subIndex, indexManager.getStore());
+    }
+
     /**
      * Returns low level Lucene index sub index information. Note, this method must
      * be called within a transactional context.
-     *
-     * @param subIndex     The sub index to get the info for
-     * @param indexManager An index manager used to get compass index informations
-     * @return The sub index info
-     * @throws IOException Failed to read the segments from the directory
      */
-    public static LuceneSubIndexInfo getIndexInfo(String subIndex, LuceneSearchEngineIndexManager indexManager)
+    public static LuceneSubIndexInfo getIndexInfo(String subIndex, LuceneSearchEngineStore store)
             throws IOException {
-        final Directory directory = indexManager.getStore().openDirectory(subIndex);
+        final Directory directory = store.openDirectory(subIndex);
         try {
             final SegmentInfos segmentInfos = new SegmentInfos();
             segmentInfos.read(directory);

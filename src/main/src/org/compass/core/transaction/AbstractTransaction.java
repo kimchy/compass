@@ -17,6 +17,8 @@
 package org.compass.core.transaction;
 
 import org.compass.core.CompassException;
+import org.compass.core.engine.SearchEngine;
+import org.compass.core.spi.InternalCompassSession;
 
 public abstract class AbstractTransaction implements InternalCompassTransaction {
 
@@ -50,6 +52,10 @@ public abstract class AbstractTransaction implements InternalCompassTransaction 
         }
 
         doRollback();
+    }
+
+    public SearchEngine getSearchEngine() {
+        return ((InternalCompassSession) getSession()).getSearchEngine();
     }
 
     protected abstract void doCommit() throws CompassException;

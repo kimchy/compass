@@ -22,6 +22,7 @@ import javax.naming.Referenceable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.engine.SearchEngineOptimizer;
+import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 
 /**
  * Creates a CompassSession. Usually an application has a single Compass object.
@@ -102,6 +103,12 @@ public interface Compass extends Referenceable, Serializable {
      * @return the search engine index manager
      */
     SearchEngineIndexManager getSearchEngineIndexManager();
+
+    /**
+     * Returns the spell check manager. Returns <code>null</code> if the spell check is not
+     * enabled.
+     */
+    SearchEngineSpellCheckManager getSpellCheckManager();
 
     /**
      * Returns the settings Compass was started with.

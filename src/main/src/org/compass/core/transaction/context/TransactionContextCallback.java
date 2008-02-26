@@ -17,7 +17,7 @@
 package org.compass.core.transaction.context;
 
 import org.compass.core.CompassException;
-import org.compass.core.CompassTransaction;
+import org.compass.core.transaction.InternalCompassTransaction;
 
 /**
  * @author kimchy
@@ -26,5 +26,5 @@ public interface TransactionContextCallback<T> {
 
     /**
      */
-    T doInTransaction(CompassTransaction tr) throws CompassException;
+    T doInTransaction(InternalCompassTransaction tr) throws CompassException;
 }

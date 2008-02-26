@@ -43,6 +43,8 @@ public class LuceneSearchEngineOptimizerManager implements CompassConfigurable, 
 
     private ScheduledFuture scheduledFuture;
 
+    private volatile boolean started = false;
+
     public LuceneSearchEngineOptimizerManager(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
     }
@@ -66,6 +68,10 @@ public class LuceneSearchEngineOptimizerManager implements CompassConfigurable, 
     }
 
     public void start() throws SearchEngineException {
+        if (started) {
+            return;
+        }
+        started = true;
         searchEngineOptimizer.start();
 
         CompassSettings settings = searchEngineFactory.getSettings();
@@ -86,6 +92,10 @@ public class LuceneSearchEngineOptimizerManager implements CompassConfigurable, 
     }
 
     public void stop() throws SearchEngineException {
+        if (!started) {
+            return;
+        }
+        started = false;
         if (scheduledFuture != null) {
             scheduledFuture.cancel(true);
             scheduledFuture = null;

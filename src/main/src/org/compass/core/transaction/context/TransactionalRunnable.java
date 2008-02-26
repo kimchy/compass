@@ -17,7 +17,7 @@
 package org.compass.core.transaction.context;
 
 import org.compass.core.CompassException;
-import org.compass.core.CompassTransaction;
+import org.compass.core.transaction.InternalCompassTransaction;
 
 /**
  * A wrapper around a delegate runnable that will execute it within a transactional context.
@@ -37,7 +37,7 @@ public class TransactionalRunnable implements Runnable {
 
     public void run() {
         transactionContext.execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 delegate.run();
                 return null;
             }

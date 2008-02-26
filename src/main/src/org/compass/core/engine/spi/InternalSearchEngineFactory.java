@@ -13,4 +13,8 @@ public interface InternalSearchEngineFactory extends SearchEngineFactory {
      * search engine factory.
      */
     void setTransactionContext(TransactionContext transactionContext);
+
+    void start();
+    
+    void stop();
 }

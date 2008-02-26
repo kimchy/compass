@@ -85,4 +85,8 @@ public interface CompassTransaction {
 	 */
 	boolean wasCommitted() throws CompassException;
 
+    /**
+     * Returns the current Compass transaction associated with this transaction.
+     */
+    CompassSession getSession();
 }

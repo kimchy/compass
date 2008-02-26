@@ -586,6 +586,39 @@ public class LuceneEnvironment {
 
     }
 
+    public static abstract class SpellCheck {
+
+        public static final String PREFIX = "compass.engine.spellcheck.";
+
+        /**
+         * Should the spell check module be enabled or not. Defaults to <code>false</code>.
+         */
+        public static final String ENABLE = PREFIX + "enable";
+
+        /**
+         * The default accuracy that will be used. Defaults to <code>0.5</code>.
+         */
+        public static final String ACCURACY = PREFIX + "accuracy";
+
+        /**
+         * Sets the dictionary threshold, which controls the minimum
+         * number of documents (of the total) where a term should appear. Defaults to <code>0.0f</code>.
+         */
+        public static final String DICTIONARY_THRESHOLD = PREFIX + "dictionaryThreshold";
+
+        /**
+         * Set to <code>true</code> in order to have a scheduled task that rebuilds the spell index
+         * if needed.
+         */
+        public static final String SCHEDULE = PREFIX + "schedule";
+
+        /**
+         * Set <b>in seconds</b> the interval at which a check and a possible rebuild of the spell check
+         * index will occur. Defaults to <b>10</b> minutes.
+         */
+        public static final String SCHEDULE_INTERVAL = PREFIX + "scheduleInterval";
+    }
+
     /**
      * Specific environment settings for the <code>batch_insert</code> settings.
      */

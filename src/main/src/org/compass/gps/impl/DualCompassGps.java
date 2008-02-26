@@ -26,6 +26,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
 
@@ -73,21 +74,10 @@ public class DualCompassGps extends AbstractCompassGps {
     }
 
     protected void doIndex() throws CompassGpsException {
-        boolean stoppedMirrorCompassOptimizer = false;
-        boolean stoppedIndexCompassOptimizer = false;
-        boolean stoppedIndexCompassIndexManager = false;
-        if (mirrorCompass != null && mirrorCompass.getSearchEngineOptimizer().isRunning()) {
-            mirrorCompass.getSearchEngineOptimizer().stop();
-            stoppedMirrorCompassOptimizer = true;
+        if (mirrorCompass != null) {
+            ((InternalCompass) mirrorCompass).stop();
         }
-        if (indexCompass.getSearchEngineOptimizer().isRunning()) {
-            indexCompass.getSearchEngineOptimizer().stop();
-            stoppedIndexCompassOptimizer = true;
-        }
-        if (indexCompass.getSearchEngineIndexManager().isRunning()) {
-            indexCompass.getSearchEngineIndexManager().stop();
-            stoppedIndexCompassIndexManager = true;
-        }
+        ((InternalCompass) indexCompass).stop();
 
         indexCompass.getSearchEngineIndexManager().clearCache();
         indexCompass.getSearchEngineIndexManager().deleteIndex();
@@ -103,15 +93,10 @@ public class DualCompassGps extends AbstractCompassGps {
             }
         });
 
-        if (stoppedMirrorCompassOptimizer) {
-            mirrorCompass.getSearchEngineOptimizer().start();
+        if (mirrorCompass != null) {
+            ((InternalCompass) mirrorCompass).start();
         }
-        if (stoppedIndexCompassOptimizer) {
-            indexCompass.getSearchEngineOptimizer().start();
-        }
-        if (stoppedIndexCompassIndexManager) {
-            indexCompass.getSearchEngineIndexManager().start();
-        }
+        ((InternalCompass) indexCompass).start();
     }
 
     public void executeForIndex(CompassCallback callback) throws CompassException {

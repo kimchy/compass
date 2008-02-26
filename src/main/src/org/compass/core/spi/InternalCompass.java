@@ -29,6 +29,10 @@ import org.compass.core.transaction.TransactionFactory;
 
 public interface InternalCompass extends Compass {
 
+    void start();
+
+    void stop();
+
     String getName();
 
     CompassSettings getSettings();

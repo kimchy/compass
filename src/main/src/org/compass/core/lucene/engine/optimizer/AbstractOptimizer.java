@@ -19,10 +19,10 @@ package org.compass.core.lucene.engine.optimizer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
-import org.compass.core.CompassTransaction;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
@@ -34,11 +34,11 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
 
     private LuceneSearchEngineFactory searchEngineFactory;
 
-    private boolean isRunning = false;
+    private volatile boolean isRunning = false;
 
     public void start() throws SearchEngineException {
         if (isRunning) {
-            throw new IllegalStateException("Optimizer is already running");
+            return;
         }
         if (log.isDebugEnabled()) {
             log.debug("Starting Optimizer");
@@ -53,7 +53,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
 
     public void stop() throws SearchEngineException {
         if (!isRunning) {
-            throw new IllegalStateException("Optimizer is is not running");
+            return;
         }
         if (log.isDebugEnabled()) {
             log.debug("Stopping Optimizer");
@@ -85,7 +85,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
         }
 
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 doOptimize(subIndex);
                 searchEngineFactory.getIndexManager().refreshCache(subIndex);
                 return null;

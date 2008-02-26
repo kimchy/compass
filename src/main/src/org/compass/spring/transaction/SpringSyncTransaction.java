@@ -19,6 +19,7 @@ package org.compass.spring.transaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
+import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransaction;
 import org.compass.core.transaction.TransactionException;
@@ -45,6 +46,8 @@ public class SpringSyncTransaction extends AbstractTransaction {
 
     private PlatformTransactionManager transactionManager;
 
+    private InternalCompassSession session;
+
     public SpringSyncTransaction(TransactionFactory transactionFactory) {
         super(transactionFactory);
     }
@@ -52,6 +55,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
     public void begin(PlatformTransactionManager transactionManager, InternalCompassSession session,
                       TransactionIsolation transactionIsolation, boolean commitBeforeCompletion) {
 
+        this.session = session;
         this.transactionManager = transactionManager;
 
         // the factory called begin, so we are in charge, if we were not, than
@@ -99,7 +103,8 @@ public class SpringSyncTransaction extends AbstractTransaction {
     /**
      * Called by factory when already in a running compass transaction
      */
-    public void join() throws CompassException {
+    public void join(InternalCompassSession session) throws CompassException {
+        this.session = session;
         controllingNewTransaction = false;
         if (log.isDebugEnabled()) {
             log.debug("Joining an existing compass transcation on thread [" + Thread.currentThread().getName() + "]");
@@ -175,6 +180,10 @@ public class SpringSyncTransaction extends AbstractTransaction {
 
     public boolean wasCommitted() throws CompassException {
         throw new TransactionException("Not supported");
+    }
+
+    public CompassSession getSession() {
+        return this.session;
     }
 
     public static class SpringTransactionSynchronization implements TransactionSynchronization {

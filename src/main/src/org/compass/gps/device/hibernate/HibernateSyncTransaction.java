@@ -22,6 +22,7 @@ import javax.transaction.Synchronization;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
+import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransaction;
 import org.compass.core.transaction.TransactionException;
@@ -49,6 +50,8 @@ public class HibernateSyncTransaction extends AbstractTransaction {
      */
     private boolean controllingNewTransaction = false;
 
+    private InternalCompassSession session;
+
     private boolean commitFailed;
 
     private boolean commitBeforeCompletion;
@@ -62,7 +65,7 @@ public class HibernateSyncTransaction extends AbstractTransaction {
     }
 
     public void begin(InternalCompassSession session, TransactionIsolation transactionIsolation) throws CompassException {
-
+        this.session = session;
         try {
             controllingNewTransaction = true;
             newTransaction = !((SessionImplementor) sessionFactory.getCurrentSession()).isTransactionInProgress();
@@ -92,7 +95,8 @@ public class HibernateSyncTransaction extends AbstractTransaction {
     /**
      * Called by the factory when joining an already running compass transaction
      */
-    public void join() throws CompassException {
+    public void join(InternalCompassSession session) throws CompassException {
+        this.session = session;
         controllingNewTransaction = false;
         if (log.isDebugEnabled()) {
             log.debug("Joining an existing compass transcation on thread [" + Thread.currentThread().getName() + "]");
@@ -167,6 +171,10 @@ public class HibernateSyncTransaction extends AbstractTransaction {
             return false;
 
         return transaction.wasCommitted();
+    }
+
+    public CompassSession getSession() {
+        return this.session;
     }
 
     private static class HibernateTransactionSynchronization implements Synchronization {

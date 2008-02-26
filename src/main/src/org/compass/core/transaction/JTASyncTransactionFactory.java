@@ -37,7 +37,7 @@ public class JTASyncTransactionFactory extends AbstractJTATransactionFactory {
 
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
         JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction(), commitBeforeCompletion, this);
-        tx.join();
+        tx.join(session);
         return tx;
     }
 

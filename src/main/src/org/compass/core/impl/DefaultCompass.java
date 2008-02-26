@@ -36,6 +36,8 @@ import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
+import org.compass.core.engine.spi.InternalSearchEngineFactory;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.id.IdentifierGenerator;
 import org.compass.core.id.UUIDGenerator;
@@ -44,6 +46,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.spi.InternalCompass;
+import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.transaction.TransactionException;
 import org.compass.core.transaction.TransactionFactory;
@@ -68,7 +71,7 @@ public class DefaultCompass implements InternalCompass {
 
     private CompassMapping mapping;
 
-    private SearchEngineFactory searchEngineFactory;
+    private InternalSearchEngineFactory searchEngineFactory;
 
     private TransactionFactory transactionFactory;
 
@@ -141,8 +144,7 @@ public class DefaultCompass implements InternalCompass {
         searchEngineFactory.getIndexManager().verifyIndex();
 
         if (!duplicate) {
-            searchEngineFactory.getIndexManager().start();
-            searchEngineFactory.getOptimizer().start();
+            start();
         }
     }
 
@@ -186,6 +188,14 @@ public class DefaultCompass implements InternalCompass {
         return new DefaultCompassSession(runtimeSettings, this, searchEngineFactory.openSearchEngine(runtimeSettings), firstLevelCache);
     }
 
+    public void start() {
+        searchEngineFactory.start();
+    }
+
+    public void stop() {
+        searchEngineFactory.stop();
+    }
+
     public void close() {
         if (closed) {
             return;
@@ -193,11 +203,6 @@ public class DefaultCompass implements InternalCompass {
         log.info("Closing Compass [" + name + "]");
         if (settings.getSettingAsBoolean(CompassEnvironment.Jndi.ENABLE, false) && !duplicate) {
             CompassObjectFactory.removeInstance(uuid, name, settings);
-        }
-        try {
-            searchEngineFactory.getOptimizer().stop();
-        } catch (IllegalStateException e) {
-            // swallow, thats ok if it is
         }
         searchEngineFactory.close();
 
@@ -228,6 +233,10 @@ public class DefaultCompass implements InternalCompass {
 
     public SearchEngineIndexManager getSearchEngineIndexManager() {
         return searchEngineFactory.getIndexManager();
+    }
+
+    public SearchEngineSpellCheckManager getSpellCheckManager() {
+        return searchEngineFactory.getSpellCheckManager();
     }
 
     public SearchEngineFactory getSearchEngineFactory() {
@@ -287,7 +296,7 @@ public class DefaultCompass implements InternalCompass {
             CompassTransaction tx = null;
             try {
                 tx = session.beginTransaction();
-                T result = callback.doInTransaction(tx);
+                T result = callback.doInTransaction((InternalCompassTransaction) tx);
                 tx.commit();
                 return result;
             } catch (RuntimeException e) {

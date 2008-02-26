@@ -17,7 +17,6 @@
 package org.compass.spring.test;
 
 import junit.framework.TestCase;
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CompassDaoSupportTests extends TestCase {
@@ -30,6 +29,7 @@ public class CompassDaoSupportTests extends TestCase {
         applicationContext = new ClassPathXmlApplicationContext(
                 "org/compass/spring/test/applicationContext.xml");
         dao = (TestCompassDao) applicationContext.getBean("testDAO");
+        dao.getCompass().getSearchEngineIndexManager().cleanIndex();
     }
 
     protected void tearDown() throws Exception {

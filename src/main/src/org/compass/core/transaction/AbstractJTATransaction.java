@@ -24,6 +24,7 @@ import javax.transaction.UserTransaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
+import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
@@ -47,6 +48,8 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
 
     private boolean commitFailed;
 
+    private InternalCompassSession session;
+
     public AbstractJTATransaction(UserTransaction ut, TransactionFactory transactionFactory) {
         super(transactionFactory);
         this.ut = ut;
@@ -56,6 +59,7 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
                       TransactionIsolation transactionIsolation) throws CompassException {
 
         try {
+            this.session = session;
             controllingNewTransaction = true;
             newTransaction = ut.getStatus() == Status.STATUS_NO_TRANSACTION;
             if (newTransaction) {
@@ -87,7 +91,8 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
     /**
      * Called by the factory when joining an already running compass transaction
      */
-    public void join() throws CompassException {
+    public void join(InternalCompassSession session) throws CompassException {
+        this.session = session;
         controllingNewTransaction = false;
         if (log.isDebugEnabled()) {
             log.debug("Joining an existing compass transcation on thread [" + Thread.currentThread().getName() + "]");
@@ -182,5 +187,9 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
         } else {
             return status == Status.STATUS_COMMITTED;
         }
+    }
+
+    public CompassSession getSession() {
+        return this.session;
     }
 }

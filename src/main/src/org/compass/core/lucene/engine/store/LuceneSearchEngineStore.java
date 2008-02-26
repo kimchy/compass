@@ -16,15 +16,12 @@
 
 package org.compass.core.lucene.engine.store;
 
-import java.io.IOException;
-
 import org.apache.lucene.store.Directory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.mapping.CompassMapping;
 
 /**
@@ -35,10 +32,6 @@ import org.compass.core.mapping.CompassMapping;
  * @author kimchy
  */
 public interface LuceneSearchEngineStore {
-
-    public static interface LuceneStoreCallback {
-        Object doWithStore(Directory dir) throws IOException;
-    }
 
     /**
      * Configures the store.
@@ -101,6 +94,16 @@ public interface LuceneSearchEngineStore {
     void deleteIndex() throws SearchEngineException;
 
     /**
+     * Deletes the index for the given sub index.
+     */
+    void deleteIndex(String subIndex) throws SearchEngineException;
+
+    /**
+     * Deletes the index for the given sub context and sub index.
+     */
+    void deleteIndex(String subContext, String subIndex) throws SearchEngineException;
+
+    /**
      * Cleans the sub index.
      */
     void cleanIndex(String subIndex) throws SearchEngineException;
@@ -150,9 +153,4 @@ public interface LuceneSearchEngineStore {
      * @param eventManager The event manager to register events with
      */
     void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager);
-
-    /**
-     * Returns the lucene settings.
-     */
-    LuceneSettings getLuceneSettings();
 }

@@ -76,7 +76,7 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
             throws CompassException {
         SpringSyncTransaction tr = new SpringSyncTransaction(this);
-        tr.join();
+        tr.join(session);
         return tr;
     }
 

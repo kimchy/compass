@@ -49,7 +49,6 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.store.localcache.LocalDirectoryCacheManager;
 import org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider;
 import org.compass.core.mapping.CompassMapping;
@@ -64,6 +63,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private static Log log = LogFactory.getLog(DefaultLuceneSearchEngineStore.class);
 
+    private CompassSettings settings;
+
     private DirectoryStore directoryStore;
 
     private Map<String, List<String>> aliasesBySubIndex = new HashMap<String, List<String>>();
@@ -76,8 +77,6 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private String connectionString;
 
-    private LuceneSettings luceneSettings;
-
     private DirectoryWrapperProvider[] directoryWrapperProviders;
 
     private LocalDirectoryCacheManager localDirectoryCacheManager;
@@ -85,9 +84,9 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     private Map<String, Map<String, Directory>> dirs;
 
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
+        this.settings = settings;
         this.connectionString = settings.getSetting(CompassEnvironment.CONNECTION);
         this.dirs = new ConcurrentHashMap<String, Map<String, Directory>>();
-        this.luceneSettings = searchEngineFactory.getLuceneSettings();
 
         this.defaultSubContext = settings.getSetting(CompassEnvironment.CONNECTION_SUB_CONTEXT, "index");
 
@@ -255,7 +254,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     }
 
     public Directory openDirectory(String subContext, String subIndex) throws SearchEngineException {
-        Map<String, Directory> subContextDirs = dirs.get(defaultSubContext);
+        Map<String, Directory> subContextDirs = dirs.get(subContext);
         if (subContextDirs == null) {
             subContextDirs = new ConcurrentHashMap<String, Directory>();
             dirs.put(subContext, subContextDirs);
@@ -270,9 +269,9 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                 return dir;
             }
             dir = directoryStore.open(subContext, subIndex);
-            String lockFactoryType = luceneSettings.getSettings().getSetting(LuceneEnvironment.LockFactory.TYPE);
+            String lockFactoryType = settings.getSetting(LuceneEnvironment.LockFactory.TYPE);
             if (lockFactoryType != null) {
-                String path = luceneSettings.getSettings().getSetting(LuceneEnvironment.LockFactory.PATH);
+                String path = settings.getSetting(LuceneEnvironment.LockFactory.PATH);
                 if (path != null) {
                     path = StringUtils.replace(path, "#subindex#", subIndex);
                     path = StringUtils.replace(path, "#subContext#", subContext);
@@ -318,20 +317,20 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                 } else {
                     Object temp;
                     try {
-                        temp = ClassUtils.forName(lockFactoryType, luceneSettings.getSettings().getClassLoader()).newInstance();
+                        temp = ClassUtils.forName(lockFactoryType, settings.getClassLoader()).newInstance();
                     } catch (Exception e) {
                         throw new SearchEngineException("Failed to create lock type [" + lockFactoryType + "]", e);
                     }
                     if (temp instanceof LockFactory) {
                         lockFactory = (LockFactory) temp;
                     } else if (temp instanceof LockFactoryProvider) {
-                        lockFactory = ((LockFactoryProvider) temp).createLockFactory(path, subIndex, luceneSettings.getSettings());
+                        lockFactory = ((LockFactoryProvider) temp).createLockFactory(path, subIndex, settings);
                     } else {
                         throw new SearchEngineException("No specific type of lock factory");
                     }
 
                     if (lockFactory instanceof CompassConfigurable) {
-                        ((CompassConfigurable) lockFactory).configure(luceneSettings.getSettings());
+                        ((CompassConfigurable) lockFactory).configure(settings);
                     }
                 }
                 dir.setLockFactory(lockFactory);
@@ -394,12 +393,11 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
             IndexWriter indexWriter = new IndexWriter(dir, new StandardAnalyzer(), true);
             indexWriter.close();
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to create index for sub index [" + subIndex + "]");
+            throw new SearchEngineException("Failed to create index for sub index [" + subIndex + "]", e);
         }
     }
 
     public void deleteIndex() throws SearchEngineException {
-        closeDirectories();
         for (String subIndex : subIndexes) {
             deleteIndex(subIndex);
         }
@@ -410,12 +408,9 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     }
 
     public void deleteIndex(String subContext, String subIndex) throws SearchEngineException {
-        boolean closeDir = !directoryExists(subContext, subIndex);
         Directory dir = openDirectory(subContext, subIndex);
         directoryStore.deleteIndex(unwrapDir(dir), subContext, subIndex);
-        if (closeDir) {
-            closeDirectory(dir, subContext, subIndex);
-        }
+        closeDirectory(dir, subContext, subIndex);
     }
 
     public boolean verifyIndex() throws SearchEngineException {
@@ -532,10 +527,6 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     public String getDefaultSubContext() {
         return this.defaultSubContext;
-    }
-
-    public LuceneSettings getLuceneSettings() {
-        return this.luceneSettings;
     }
 
     private boolean directoryExists(String subContext, String subIndex) throws SearchEngineException {

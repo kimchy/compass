@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexDeletionPolicy;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -30,7 +31,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassException;
-import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineIndexManager;
@@ -42,6 +42,7 @@ import org.compass.core.lucene.engine.merge.policy.MergePolicyFactory;
 import org.compass.core.lucene.engine.merge.scheduler.MergeSchedulerFactory;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.transaction.context.TransactionContextCallback;
 
@@ -69,7 +70,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     private long waitForCacheInvalidationBeforeSecondStep = 0;
 
-    private boolean isRunning = false;
+    private volatile boolean isRunning = false;
 
     private ScheduledFuture scheduledFuture;
 
@@ -90,7 +91,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
         clearCache();
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 searchEngineStore.createIndex();
                 return null;
             }
@@ -102,7 +103,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             log.debug("Deleting index " + searchEngineStore);
         }
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 clearCache();
                 searchEngineStore.deleteIndex();
                 return null;
@@ -118,7 +119,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void cleanIndex(final String subIndex) throws SearchEngineException {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
-            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+            public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 synchronized (indexHoldersLocks.get(subIndex)) {
                     clearCache(subIndex);
                     searchEngineStore.cleanIndex(subIndex);
@@ -130,7 +131,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public boolean verifyIndex() throws SearchEngineException {
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
-            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+            public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 clearCache();
                 return searchEngineStore.verifyIndex();
             }
@@ -139,7 +140,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public boolean indexExists() throws SearchEngineException {
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
-            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+            public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 return searchEngineStore.indexExists();
             }
         });
@@ -147,7 +148,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void operate(final IndexOperationCallback callback) throws SearchEngineException {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 doOperate(callback);
                 return null;
             }
@@ -218,7 +219,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void replaceIndex(final SearchEngineIndexManager indexManager, final ReplaceIndexCallback callback) throws SearchEngineException {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 doReplaceIndex(indexManager, callback);
                 return null;
             }
@@ -254,7 +255,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             log.debug("Global notification to clear cache");
         }
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 // just update the last modified time, others will see the change and update
                 for (String subIndex : searchEngineStore.getSubIndexes()) {
                     Directory dir = getDirectory(subIndex);
@@ -415,12 +416,17 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy) throws IOException {
-        // TODO lucene23 add more specific 2.3 parameters
+        return openIndexWriter(settings, dir, autoCommit, create, deletionPolicy, null);
+    }
+
+    public IndexWriter openIndexWriter(CompassSettings settings, Directory dir, boolean autoCommit, boolean create, IndexDeletionPolicy deletionPolicy, Analyzer analyzer) throws IOException {
         if (deletionPolicy == null) {
             deletionPolicy = searchEngineFactory.getIndexDeletionPolicyManager().createIndexDeletionPolicy(dir);
         }
-        IndexWriter indexWriter = new IndexWriter(dir, autoCommit, searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer(),
-                create, deletionPolicy);
+        if (analyzer == null) {
+            analyzer = searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer();
+        }
+        IndexWriter indexWriter = new IndexWriter(dir, autoCommit, analyzer, create, deletionPolicy);
         indexWriter.setMaxMergeDocs(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, luceneSettings.getMaxMergeDocs()));
         indexWriter.setMergeFactor(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, luceneSettings.getMergeFactor()));
         indexWriter.setRAMBufferSizeMB(settings.getSettingAsDouble(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, luceneSettings.getRamBufferSize()));
@@ -443,6 +449,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void start() {
+        if (isRunning) {
+            return;
+        }
         if (luceneSettings.getIndexManagerScheduleInterval() > 0) {
             if (log.isInfoEnabled()) {
                 log.info("Starting scheduled index manager with period [" + luceneSettings.getIndexManagerScheduleInterval() + "ms]");
@@ -462,6 +471,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     }
 
     public void stop() {
+        if (!isRunning) {
+            return;
+        }
         isRunning = false;
         if (scheduledFuture != null) {
             scheduledFuture.cancel(true);
@@ -475,7 +487,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public synchronized void checkAndClearIfNotifiedAllToClearCache() throws SearchEngineException {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 doCheckAndClearIfNotifiedAllToClearCache();
                 return null;
             }
@@ -563,7 +575,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void performScheduledTasks() throws SearchEngineException {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 doCheckAndClearIfNotifiedAllToClearCache();
                 getStore().performScheduledTasks();
                 return null;
@@ -577,7 +589,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public boolean isLocked() throws SearchEngineException {
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
-            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+            public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 return searchEngineStore.isLocked();
             }
         });
@@ -585,7 +597,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public boolean isLocked(final String subIndex) throws SearchEngineException {
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
-            public Boolean doInTransaction(CompassTransaction tr) throws CompassException {
+            public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 return searchEngineStore.isLocked(subIndex);
             }
         });
@@ -593,7 +605,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void releaseLocks() throws SearchEngineException {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 searchEngineStore.releaseLocks();
                 return null;
             }
@@ -602,7 +614,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     public void releaseLock(final String subIndex) throws SearchEngineException {
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(CompassTransaction tr) throws CompassException {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 searchEngineStore.releaseLock(subIndex);
                 return null;
             }

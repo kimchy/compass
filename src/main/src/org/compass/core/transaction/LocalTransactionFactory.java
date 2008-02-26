@@ -59,7 +59,7 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
 
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
         LocalTransaction tx = new LocalTransaction(session, this, null);
-        tx.join();
+        tx.join(session);
         return tx;
     }
 

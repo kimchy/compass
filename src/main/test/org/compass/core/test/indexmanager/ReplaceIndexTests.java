@@ -191,7 +191,7 @@ public class ReplaceIndexTests extends TestCase {
         try {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
-            // do nothing
+            e.printStackTrace();
         }
         compass.getSearchEngineIndexManager().verifyIndex();
     }

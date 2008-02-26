@@ -20,6 +20,7 @@ import org.compass.core.Compass;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.test.AbstractTestCase;
@@ -41,6 +42,11 @@ public class CacheTests extends AbstractTestCase {
     }
 
     public void testSimpleCacheInvalidation() throws Exception {
+
+        if (getCompass().getSettings().getSetting(CompassEnvironment.CONNECTION).startsWith("ram://")) {
+            // since we open two compass instances, this test won't work with ram based index
+            return;
+        }
 
         Long id = new Long(1);
 

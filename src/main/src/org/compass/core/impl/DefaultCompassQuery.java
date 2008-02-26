@@ -109,6 +109,7 @@ public class DefaultCompassQuery implements CompassQuery {
     public CompassQuery setTypes(Class[] types) {
         if (types == null) {
             setAliases(null);
+            return this;
         }
         String[] aliases = new String[types.length];
         for (int i = 0; i < types.length; i++) {

@@ -19,6 +19,7 @@ package org.compass.core.transaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
+import org.compass.core.CompassSession;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 
@@ -55,7 +56,8 @@ public class LocalTransaction extends AbstractTransaction {
         this.transactionIsolation = transactionIsolation;
     }
 
-    public void join() throws CompassException {
+    public void join(InternalCompassSession session) throws CompassException {
+        this.session = session;
         if (log.isDebugEnabled()) {
             log.debug("Joining an existing local transcation on thread [" + Thread.currentThread().getName() +
                     "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
@@ -127,5 +129,9 @@ public class LocalTransaction extends AbstractTransaction {
 
     public boolean wasCommitted() throws CompassException {
         return session.getSearchEngine().wasCommitted();
+    }
+
+    public CompassSession getSession() {
+        return this.session;
     }
 }

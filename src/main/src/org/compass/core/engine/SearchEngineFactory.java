@@ -19,6 +19,7 @@ package org.compass.core.engine;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.transaction.context.TransactionContext;
 
@@ -58,6 +59,11 @@ public interface SearchEngineFactory {
      * @return The search engine optimizer
      */
     SearchEngineOptimizer getOptimizer();
+
+    /**
+     * Rerturns the specll checker manager (if enabled).
+     */
+    SearchEngineSpellCheckManager getSpellCheckManager();
 
     /**
      */

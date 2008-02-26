@@ -37,7 +37,7 @@ public class XATransactionFactory extends AbstractJTATransactionFactory {
 
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
         XATransaction tx = new XATransaction(getUserTransaction(), this);
-        tx.join();
+        tx.join(session);
         return tx;
     }
 

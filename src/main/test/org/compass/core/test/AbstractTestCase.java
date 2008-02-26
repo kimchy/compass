@@ -62,6 +62,13 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (compass.getSpellCheckManager() != null) {
+            try {
+                compass.getSpellCheckManager().deleteIndex();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         compass.getSearchEngineIndexManager().verifyIndex();
     }
 
@@ -72,6 +79,13 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
             compass.getSearchEngineIndexManager().deleteIndex();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (compass.getSpellCheckManager() != null) {
+            try {
+                compass.getSpellCheckManager().deleteIndex();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
