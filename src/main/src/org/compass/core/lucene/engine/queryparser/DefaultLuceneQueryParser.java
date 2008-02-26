@@ -68,7 +68,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     }
 
     public Query parse(String property, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
-        CompassQueryParser queryParser = new CompassQueryParser(property, analyzer, mapping, searchEngineFactory, forceAnalyzer);
+        CompassQueryParser queryParser = createQueryParser(property, analyzer, forceAnalyzer);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
@@ -82,7 +82,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     }
 
     public Query parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
-        CompassMultiFieldQueryParser queryParser = new CompassMultiFieldQueryParser(properties, analyzer, mapping, searchEngineFactory, forceAnalyzer);
+        CompassMultiFieldQueryParser queryParser = createMultiQueryParser(properties, analyzer, forceAnalyzer);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
@@ -94,4 +94,13 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
             throw new SearchEngineQueryParseException(queryString, e);
         }
     }
+
+    protected CompassQueryParser createQueryParser(String property, Analyzer analyzer, boolean forceAnalyzer) {
+        return new CompassQueryParser(property, analyzer, mapping, searchEngineFactory, forceAnalyzer);
+    }
+
+    protected CompassMultiFieldQueryParser createMultiQueryParser(String[] properties, Analyzer analyzer, boolean forceAnalyzer) {
+        return new CompassMultiFieldQueryParser(properties, analyzer, mapping, searchEngineFactory, forceAnalyzer);
+    }
+
 }
