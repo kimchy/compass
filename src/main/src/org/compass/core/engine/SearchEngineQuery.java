@@ -56,4 +56,6 @@ public interface SearchEngineQuery {
     boolean isSuggested();
 
     SearchEngineHits hits() throws SearchEngineException;
+
+    Object clone() throws CloneNotSupportedException;
 }

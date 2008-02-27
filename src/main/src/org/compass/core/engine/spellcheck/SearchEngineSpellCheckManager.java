@@ -16,6 +16,7 @@
 
 package org.compass.core.engine.spellcheck;
 
+import org.compass.core.CompassQuery;
 import org.compass.core.engine.SearchEngineException;
 
 /**
@@ -67,7 +68,7 @@ public interface SearchEngineSpellCheckManager {
      * Deletes the spell check index.
      */
     void deleteIndex() throws SearchEngineException;
-    
+
     /**
      * Deletes the spell check index for the given sub index.
      */
@@ -77,4 +78,11 @@ public interface SearchEngineSpellCheckManager {
      * Creates a suggest builder allowing to suggest words for the given word.
      */
     SearchEngineSpellCheckSuggestBuilder suggestBuilder(String word);
+
+    /**
+     * Suggests a query based on the given query. Note, if the query was replaced/sugested
+     * then the {@link org.compass.core.CompassQuery#isSuggested()} flag will be set to
+     * <code>true</code>.
+     */
+    CompassQuery suggest(CompassQuery query);
 }

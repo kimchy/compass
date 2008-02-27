@@ -37,7 +37,7 @@ import org.compass.core.lucene.engine.queryparser.QueryHolder;
 /**
  * @author kimchy
  */
-public class LuceneSearchEngineQuery implements SearchEngineQuery {
+public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
 
     public static class LuceneSearchEngineSpanQuery extends LuceneSearchEngineQuery implements SearchEngineSpanQuery {
 
@@ -238,5 +238,20 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
         }
         // remove the "zzz-all:" prefix
         return query.toString().replace(defaultSearchProperty + ":", "");
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    // breaks encapsulation, but we need it
+
+    public void setQuery(Query query) {
+        this.query = query;
+        this.origQuery = query;
+    }
+
+    public void setSuggested(boolean suggested) {
+        this.suggested = suggested;
     }
 }

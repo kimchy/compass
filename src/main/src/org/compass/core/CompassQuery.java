@@ -287,4 +287,6 @@ public interface CompassQuery {
      * Performs the search and returns the hits that match the qeury.
      */
     CompassHits hits() throws CompassException;
+
+    Object clone() throws CloneNotSupportedException;
 }

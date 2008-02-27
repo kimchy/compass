@@ -30,7 +30,7 @@ import org.compass.core.spi.InternalCompassSession;
 /**
  * @author kimchy
  */
-public class DefaultCompassQuery implements CompassQuery {
+public class DefaultCompassQuery implements CompassQuery, Cloneable {
 
     public static class DefaultCompassSpanQuey extends DefaultCompassQuery implements CompassSpanQuery {
 
@@ -150,5 +150,11 @@ public class DefaultCompassQuery implements CompassQuery {
 
     public String toString() {
         return searchEngineQuery.toString();
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        DefaultCompassQuery clone = (DefaultCompassQuery) super.clone();
+        clone.searchEngineQuery = (SearchEngineQuery) searchEngineQuery.clone();
+        return clone;
     }
 }

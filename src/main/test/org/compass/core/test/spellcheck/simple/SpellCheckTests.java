@@ -16,6 +16,7 @@
 
 package org.compass.core.test.spellcheck.simple;
 
+import org.compass.core.CompassQuery;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassSettings;
@@ -129,6 +130,26 @@ public class SpellCheckTests extends AbstractTestCase {
         assertEquals(0, session.queryBuilder().queryString("fiv blak").toQuery().hits().length());
         assertEquals("five black", session.queryBuilder().queryString("fiv blak").useSpellCheck().toQuery().toString());
         assertEquals(2, session.queryBuilder().queryString("fiv blak").useSpellCheck().toQuery().hits().length());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testSuggestedQuery() {
+        setUpData();
+        SearchEngineSpellCheckManager spellCheckManager = getCompass().getSpellCheckManager();
+        spellCheckManager.rebuild();
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        CompassQuery query = session.queryBuilder().queryString("fiv").toQuery();
+        CompassQuery suggeted = spellCheckManager.suggest(query);
+        assertEquals(true, suggeted.isSuggested());
+        assertEquals("five", suggeted.toString());
+
+        assertFalse(query.isSuggested());
+        assertEquals("fiv", query.toString());
 
         tr.commit();
         session.close();

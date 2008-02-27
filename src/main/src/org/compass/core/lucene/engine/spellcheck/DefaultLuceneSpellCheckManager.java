@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,21 +32,27 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.LuceneSubIndexInfo;
 import org.apache.lucene.index.MultiReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searchable;
 import org.apache.lucene.search.spell.CompassSpellChecker;
 import org.apache.lucene.search.spell.HighFrequencyDictionary;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.compass.core.CompassException;
+import org.compass.core.CompassQuery;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.spellcheck.SearchEngineSpellCheckSuggestBuilder;
+import org.compass.core.impl.DefaultCompassQuery;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
+import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
+import org.compass.core.lucene.engine.queryparser.QueryParserUtils;
 import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
@@ -375,6 +382,44 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     public SearchEngineSpellCheckSuggestBuilder suggestBuilder(String word) {
         return new DefaultLuceneSearchEngineSpellCheckSuggestBuilder(word, this);
+    }
+
+    public CompassQuery suggest(CompassQuery query) {
+        CompassQuery suggested;
+        try {
+            suggested = (CompassQuery) query.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new SearchEngineException("Failed to clone query", e);
+        }
+        DefaultCompassQuery defaultCompassQuery = (DefaultCompassQuery) query;
+        LuceneSearchEngineQuery searchEngineQuery = (LuceneSearchEngineQuery) defaultCompassQuery.getSearchEngineQuery();
+        final CompassSpellChecker spellChecker = createSpellChecker(searchEngineQuery.getSubIndexes(), searchEngineQuery.getAliases());
+        final AtomicBoolean suggestedQuery = new AtomicBoolean(false);
+        try {
+            Query replacedQ = QueryParserUtils.visit(searchEngineQuery.getQuery(), new QueryParserUtils.QueryTermVisitor() {
+                public Term replaceTerm(Term term) throws SearchEngineException {
+                    try {
+                        if (spellChecker.exist(term.text())) {
+                            return term;
+                        }
+                        String[] similarWords = spellChecker.suggestSimilar(term.text(), 1);
+                        if (similarWords.length == 0) {
+                            return term;
+                        }
+                        suggestedQuery.set(true);
+                        return term.createTerm(similarWords[0]);
+                    } catch (IOException e) {
+                        throw new SearchEngineException("Failed to suggest for query", e);
+                    }
+                }
+            });
+            LuceneSearchEngineQuery suggestedSEQ = (LuceneSearchEngineQuery) ((DefaultCompassQuery) suggested).getSearchEngineQuery();
+            suggestedSEQ.setQuery(replacedQ);
+            suggestedSEQ.setSuggested(suggestedQuery.get());
+            return suggested;
+        } finally {
+            spellChecker.close();
+        }
     }
 
     public <T> T execute(final String[] subIndexes, final String[] aliases, final SpellCheckerCallback<T> callback) {
