@@ -52,7 +52,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
     private boolean allowConstantScorePrefixQuery;
 
     public void configure(CompassSettings settings) throws CompassException {
-        allowLeadingWildcard = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_LEADING_WILDCARD, false);
+        allowLeadingWildcard = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_LEADING_WILDCARD, true);
         allowConstantScorePrefixQuery = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY, true);
         if (log.isDebugEnabled()) {
             log.debug("Query Parser configured with allowLeadingWildcard [" + allowLeadingWildcard + "] and allowConstantScorePrefixQuery [" + allowConstantScorePrefixQuery + "]");

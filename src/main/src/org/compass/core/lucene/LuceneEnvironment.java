@@ -1234,7 +1234,7 @@ public class LuceneEnvironment {
 
         /**
          * The default parsers implementation allows to set if leading wildcards
-         * are allowed or not. Boolen value defaults to <code>false</code>.
+         * are allowed or not. Boolen value defaults to <code>true</code>.
          */
         public static final String DEFAULT_PARSER_ALLOW_LEADING_WILDCARD = "allowLeadingWildcard";
 
