@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -224,13 +225,21 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         }
     }
 
-    private void refresh() throws SearchEngineException {
+    public void concurrentRefresh() throws SearchEngineException {
+        ArrayList<Callable<Object>> rebuildTasks = new ArrayList<Callable<Object>>();
+        for (String subIndex : indexStore.getSubIndexes()) {
+            rebuildTasks.add(new RefreshTask(subIndex));
+        }
+        searchEngineFactory.getExecutorManager().invokeAllWithLimitBailOnException(rebuildTasks, Integer.MAX_VALUE);
+    }
+    
+    public void refresh() throws SearchEngineException {
         for (String subIndex : indexStore.getSubIndexes()) {
             refresh(subIndex);
         }
     }
 
-    private void refresh(String subIndex) throws SearchEngineException {
+    public void refresh(String subIndex) throws SearchEngineException {
         synchronized (indexLocks.get(subIndex)) {
             IndexReader reader = readerMap.get(subIndex);
             if (reader != null) {
@@ -293,7 +302,13 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         return version != indexVersion;
     }
 
-    // TODO add concurrent rebuild
+    public void concurrentRebuild() throws SearchEngineException {
+        ArrayList<Callable<Object>> rebuildTasks = new ArrayList<Callable<Object>>();
+        for (String subIndex : indexStore.getSubIndexes()) {
+            rebuildTasks.add(new RebuildTask(subIndex));
+        }
+        searchEngineFactory.getExecutorManager().invokeAllWithLimitBailOnException(rebuildTasks, Integer.MAX_VALUE);
+    }
 
     public void rebuild() throws SearchEngineException {
         for (String subIndex : indexStore.getSubIndexes()) {
@@ -467,5 +482,33 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
         MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
         return new CompassSpellChecker(searcher, reader);
+    }
+
+    private class RebuildTask implements Callable<Object> {
+
+        private String subIndex;
+
+        public RebuildTask(String subIndex) {
+            this.subIndex = subIndex;
+        }
+
+        public Object call() throws Exception {
+            rebuild(subIndex);
+            return null;
+        }
+    }
+
+    private class RefreshTask implements Callable<Object> {
+
+        private String subIndex;
+
+        public RefreshTask(String subIndex) {
+            this.subIndex = subIndex;
+        }
+
+        public Object call() throws Exception {
+            refresh(subIndex);
+            return null;
+        }
     }
 }

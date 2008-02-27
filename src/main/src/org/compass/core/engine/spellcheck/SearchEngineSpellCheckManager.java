@@ -55,6 +55,12 @@ public interface SearchEngineSpellCheckManager {
     boolean isRebuildNeeded(String subIndex) throws SearchEngineException;
 
     /**
+     * Same as {@link #rebuild()} but executes the rebuild of each sub index using Compass
+     * built in thread pool
+     */
+    void concurrentRebuild() throws SearchEngineException;
+
+    /**
      * Rebuilds the spell check index. Won't rebuild specific sub indexes if it is not needed.
      */
     void rebuild() throws SearchEngineException;
@@ -63,6 +69,22 @@ public interface SearchEngineSpellCheckManager {
      * Rebuilds the spell check index for the given sub index. Won't rebuild if it is not needed.
      */
     void rebuild(String subIndex) throws SearchEngineException;
+
+    /**
+     * Same as {@link #refresh()} but executes the refresh of each sub index using Compass
+     * built in thread pool.
+     */
+    void concurrentRefresh() throws SearchEngineException;
+
+    /**
+     * Refresh the internal readers and searches that work with the spell index.
+     */
+    void refresh() throws SearchEngineException;
+
+    /**
+     * Refresh the internal readers and searches for the given sub index that work with the spell index.
+     */
+    void refresh(String subIndex) throws SearchEngineException;
 
     /**
      * Deletes the spell check index.

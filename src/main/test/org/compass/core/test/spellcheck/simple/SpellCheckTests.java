@@ -49,6 +49,17 @@ public class SpellCheckTests extends AbstractTestCase {
         assertTrue(spellCheckManager.suggestBuilder("five").suggest().isExists());
     }
 
+    public void testSimpleSpellCheckConcurrentRebuild() {
+        setUpData();
+        SearchEngineSpellCheckManager spellCheckManager = getCompass().getSpellCheckManager();
+        spellCheckManager.concurrentRebuild();
+
+        String[] suggestions = spellCheckManager.suggestBuilder("fiv").suggest().getSuggestions();
+        assertEquals(1, suggestions.length);
+        assertEquals("five", suggestions[0]);
+        assertTrue(spellCheckManager.suggestBuilder("five").suggest().isExists());
+    }
+
     public void testSubIndexNarrowing() {
         setUpData();
 
