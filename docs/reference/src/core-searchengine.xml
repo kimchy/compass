@@ -698,7 +698,7 @@ compass.engine.spellcheck.engine.ramBufferSize=40
           <para>
               In the above example we also configure the indexing process of the spell check index to use more memory (40) so the indexing process will be faster. As seen here, settings that control the index can be used (<literal>compass.engine.</literal> settings) can apply to the spell check index by prepending the <literal>compass.engine.spellcheck</literal> setting.
           </para>
-      <sect2>
+      </sect2>
   </sect1>
 
   <sect1 id="core-searchengine-directlucene">
