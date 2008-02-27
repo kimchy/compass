@@ -67,13 +67,14 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         this.searchEngineFactory = searchEngineFactory;
     }
 
-    public Query parse(String property, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
+    public QueryHolder parse(String property, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
         CompassQueryParser queryParser = createQueryParser(property, analyzer, forceAnalyzer);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
         try {
-            return queryParser.parse(queryString);
+            Query query = queryParser.parse(queryString);
+            return new QueryHolder(query, queryParser.isSuggestedQuery());
         } catch (ParseException e) {
             throw new SearchEngineQueryParseException(queryString, e);
         } catch (IllegalArgumentException e) {
@@ -83,13 +84,14 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         }
     }
 
-    public Query parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
+    public QueryHolder parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
         CompassMultiFieldQueryParser queryParser = createMultiQueryParser(properties, analyzer, forceAnalyzer);
         queryParser.setDefaultOperator(operator);
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
         try {
-            return queryParser.parse(queryString);
+            Query query = queryParser.parse(queryString);
+            return new QueryHolder(query, queryParser.isSuggestedQuery());
         } catch (ParseException e) {
             throw new SearchEngineQueryParseException(queryString, e);
         } catch (IllegalArgumentException e) {
@@ -97,6 +99,14 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         } finally {
             queryParser.close();
         }
+    }
+
+    protected CompassMapping getMapping() {
+        return mapping;
+    }
+
+    protected SearchEngineFactory getSearchEngineFactory() {
+        return searchEngineFactory;
     }
 
     protected CompassQueryParser createQueryParser(String property, Analyzer analyzer, boolean forceAnalyzer) {

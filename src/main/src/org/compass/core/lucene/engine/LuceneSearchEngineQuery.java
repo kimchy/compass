@@ -32,11 +32,10 @@ import org.compass.core.CompassQuery.SortPropertyType;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryFilter;
+import org.compass.core.lucene.engine.queryparser.QueryHolder;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class LuceneSearchEngineQuery implements SearchEngineQuery {
 
@@ -56,7 +55,7 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
 
     private LuceneSearchEngine searchEngine;
 
-    private ArrayList sortFields = new ArrayList();
+    private ArrayList<SortField> sortFields = new ArrayList<SortField>();
 
     private String[] subIndexes;
 
@@ -68,12 +67,26 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
 
     private Query query;
 
+    private String defaultSearchProperty;
+
     private boolean rewrite;
 
+    private boolean suggested;
+
     public LuceneSearchEngineQuery(LuceneSearchEngine searchEngine, Query query) {
+        this(searchEngine, new QueryHolder(query), searchEngine.getSearchEngineFactory().getLuceneSettings().getDefaultSearchPropery());
+    }
+
+    public LuceneSearchEngineQuery(LuceneSearchEngine searchEngine, QueryHolder query) {
+        this(searchEngine, query, searchEngine.getSearchEngineFactory().getLuceneSettings().getDefaultSearchPropery());
+    }
+
+    public LuceneSearchEngineQuery(LuceneSearchEngine searchEngine, QueryHolder query, String defualtSearchProperty) {
         this.searchEngine = searchEngine;
-        this.query = query;
-        this.origQuery = query;
+        this.query = query.getQuery();
+        this.origQuery = query.getQuery();
+        this.suggested = query.isSuggested();
+        this.defaultSearchProperty = defualtSearchProperty;
     }
 
     public SearchEngineQuery addSort(String propertyName) {
@@ -115,7 +128,7 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
         if (sortFields.size() == 0) {
             return null;
         }
-        SortField[] sortFieldsArr = (SortField[]) sortFields.toArray(new SortField[sortFields.size()]);
+        SortField[] sortFieldsArr = sortFields.toArray(new SortField[sortFields.size()]);
         return new Sort(sortFieldsArr);
     }
 
@@ -175,8 +188,8 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
 
         String aliasProperty = searchEngine.getSearchEngineFactory().getLuceneSettings().getAliasProperty();
         BooleanQuery boolQuery2 = new BooleanQuery();
-        for (int i = 0; i < aliases.length; i++) {
-            boolQuery2.add(new TermQuery(new Term(aliasProperty, aliases[i])), BooleanClause.Occur.SHOULD);
+        for (String alias : aliases) {
+            boolQuery2.add(new TermQuery(new Term(aliasProperty, alias)), BooleanClause.Occur.SHOULD);
         }
 
         BooleanQuery boolQuery = new BooleanQuery();
@@ -211,6 +224,10 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
         return this.rewrite;
     }
 
+    public boolean isSuggested() {
+        return suggested;
+    }
+
     public Query getQuery() {
         return query;
     }
@@ -219,6 +236,7 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery {
         if (query == null) {
             return "<null>";
         }
-        return query.toString();
+        // remove the "zzz-all:" prefix
+        return query.toString().replace(defaultSearchProperty + ":", "");
     }
 }

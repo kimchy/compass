@@ -63,6 +63,8 @@ public class CompassQueryParser extends QueryParser {
 
     private boolean forceAnalyzer;
 
+    protected boolean suggestedQuery = false;
+
     public CompassQueryParser(String f, Analyzer a, CompassMapping mapping, SearchEngineFactory searchEngineFactory, boolean forceAnalyzer) {
         super(f, a);
         this.mapping = mapping;
@@ -299,5 +301,9 @@ public class CompassQueryParser extends QueryParser {
 
     public void close() {
         
+    }
+
+    public boolean isSuggestedQuery() {
+        return suggestedQuery;
     }
 }

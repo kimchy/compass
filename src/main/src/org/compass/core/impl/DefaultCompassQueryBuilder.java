@@ -156,6 +156,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
             return this;
         }
 
+        public CompassQueryStringBuilder useSpellCheck() throws CompassException {
+            queryBuilder.useSpellCheck();
+            return this;
+        }
+
         public CompassQueryStringBuilder setDefaultSearchProperty(String defaultSearchProperty) {
             queryBuilder.setDefaultSearchProperty(defaultSearchProperty);
             return this;
@@ -207,6 +212,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
 
         public CompassMultiPropertyQueryStringBuilder setQueryParser(String queryParser) throws CompassException {
             queryBuilder.setQueryParser(queryParser);
+            return this;
+        }
+
+        public CompassMultiPropertyQueryStringBuilder useSpellCheck() {
+            queryBuilder.useSpellCheck();
             return this;
         }
 

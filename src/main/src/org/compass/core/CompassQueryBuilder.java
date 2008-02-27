@@ -152,6 +152,11 @@ public interface CompassQueryBuilder {
         CompassQueryStringBuilder setQueryParser(String queryParser) throws CompassException;
 
         /**
+         * Uses the spell check for suggesting a query based on the query string.
+         */
+        CompassQueryStringBuilder useSpellCheck() throws CompassException ;
+
+        /**
          * Sets the analyzer that will be used to analyzer the query string. The
          * analyzer will be built based on analyzer settings for the mapping definitions
          * the define the alias. It means that if a certain property is associated with
@@ -216,6 +221,11 @@ public interface CompassQueryBuilder {
          * Sets te query parser lookup name that will be used to parse the query string.
          */
         CompassMultiPropertyQueryStringBuilder setQueryParser(String queryParser) throws CompassException;
+
+        /**
+         * Uses the spell check for suggesting a query based on the query string.
+         */
+        CompassMultiPropertyQueryStringBuilder useSpellCheck();
 
         /**
          * Adds another resource property name / meta-data that the query string will be executed against.

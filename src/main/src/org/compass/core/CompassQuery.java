@@ -277,6 +277,13 @@ public interface CompassQuery {
     CompassQuery rewrite();
 
     /**
+     * Returns <code>true</code> if this is a suggested query. For example, when performing
+     * a search query with spell check enabled, then it will return <code>true</code> if the
+     * query was modified to correct some spelling mistakes.
+     */
+    boolean isSuggested();
+
+    /**
      * Performs the search and returns the hits that match the qeury.
      */
     CompassHits hits() throws CompassException;

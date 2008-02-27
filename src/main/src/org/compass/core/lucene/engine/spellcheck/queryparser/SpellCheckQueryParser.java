@@ -34,8 +34,6 @@ public class SpellCheckQueryParser extends CompassQueryParser {
 
     private CompassSpellChecker spellChecker;
 
-    private boolean suggestedQuery = false;
-
     public SpellCheckQueryParser(String f, Analyzer a, CompassMapping mapping, SearchEngineFactory searchEngineFactory, boolean forceAnalyzer) {
         super(f, a, mapping, searchEngineFactory, forceAnalyzer);
         InternalLuceneSearchEngineSpellCheckManager spellCheckManager = (InternalLuceneSearchEngineSpellCheckManager) searchEngineFactory.getSpellCheckManager();
@@ -61,9 +59,5 @@ public class SpellCheckQueryParser extends CompassQueryParser {
     public void close() {
         spellChecker.close();
         super.close();
-    }
-
-    public boolean isSuggestedQuery() {
-        return suggestedQuery;
     }
 }

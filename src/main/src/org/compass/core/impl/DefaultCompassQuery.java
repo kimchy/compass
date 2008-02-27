@@ -135,6 +135,10 @@ public class DefaultCompassQuery implements CompassQuery {
         return this;
     }
 
+    public boolean isSuggested() {
+        return searchEngineQuery.isSuggested();
+    }
+
     public CompassHits hits() throws CompassException {
         SearchEngineHits searchEngineHits = searchEngineQuery.hits();
         return new DefaultCompassHits(searchEngineHits, session);

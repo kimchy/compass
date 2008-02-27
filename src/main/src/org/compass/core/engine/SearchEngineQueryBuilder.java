@@ -68,6 +68,8 @@ public interface SearchEngineQueryBuilder {
         SearchEngineQueryStringBuilder forceAnalyzer();
 
         SearchEngineQueryStringBuilder setQueryParser(String queryParser);
+
+        SearchEngineQueryStringBuilder useSpellCheck();
     }
 
     public static interface SearchEngineMultiPropertyQueryStringBuilder extends SearchEngineToQuery {
@@ -83,6 +85,8 @@ public interface SearchEngineQueryBuilder {
         SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder forceAnalyzer();
 
         SearchEngineMultiPropertyQueryStringBuilder setQueryParser(String queryParser);
+
+        SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder useSpellCheck();
     }
 
     public static interface SearchEngineQuerySpanNearBuilder {

@@ -16,19 +16,31 @@
 
 package org.compass.core.lucene.engine.queryparser;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.queryParser.QueryParser;
-import org.compass.core.engine.SearchEngineQueryParseException;
+import org.apache.lucene.search.Query;
 
 /**
- * A Lucene query parsers allows to plug in different parsers responsible
- * for parsing a query string into a Lucene {@link org.apache.lucene.search.Query}.
- *
  * @author kimchy
  */
-public interface LuceneQueryParser {
+public class QueryHolder {
 
-    QueryHolder parse(String property, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException;
+    private final Query query;
 
-    QueryHolder parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException;
+    private final boolean suggested;
+
+    public QueryHolder(Query query) {
+        this(query, false);
+    }
+
+    public QueryHolder(Query query, boolean suggested) {
+        this.query = query;
+        this.suggested = suggested;
+    }
+
+    public Query getQuery() {
+        return query;
+    }
+
+    public boolean isSuggested() {
+        return suggested;
+    }
 }

@@ -29,6 +29,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.SearchEngineFactoryAware;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.lucene.engine.spellcheck.queryparser.SpellCheckLuceneQueryParser;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -85,6 +86,18 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             queryParser.setCompassMapping(searchEngineFactory.getMapping());
             queryParser.setSearchEngineFactory(searchEngineFactory);
             queryParsers.put(LuceneEnvironment.QueryParser.DEFAULT_GROUP, queryParser);
+        }
+        if (searchEngineFactory.getSpellCheckManager() != null) {
+            if (queryParsers.get(LuceneEnvironment.QueryParser.SPELLCHECK_GROUP) == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("No spellcheck query parser found (under groupd [spellcheck]), registering a default one");
+                }
+                SpellCheckLuceneQueryParser queryParser = new SpellCheckLuceneQueryParser();
+                queryParser.configure(new CompassSettings(settings.getClassLoader()));
+                queryParser.setCompassMapping(searchEngineFactory.getMapping());
+                queryParser.setSearchEngineFactory(searchEngineFactory);
+                queryParsers.put(LuceneEnvironment.QueryParser.SPELLCHECK_GROUP, queryParser);
+            }
         }
     }
 

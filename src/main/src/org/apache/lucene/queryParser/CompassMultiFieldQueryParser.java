@@ -63,6 +63,8 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
 
     private boolean forceAnalyzer;
 
+    protected boolean suggestedQuery = false;
+
     public CompassMultiFieldQueryParser(String[] fields, Analyzer analyzer, CompassMapping mapping, SearchEngineFactory searchEngineFactory, boolean forceAnalyzer) {
         super(fields, analyzer);
         this.mapping = mapping;
@@ -315,5 +317,9 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
 
     protected Term getTerm(String field, String text) throws ParseException {
         return new Term(field, text);
+    }
+
+    public boolean isSuggestedQuery() {
+        return suggestedQuery;
     }
 }

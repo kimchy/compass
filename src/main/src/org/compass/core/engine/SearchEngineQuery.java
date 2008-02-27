@@ -53,5 +53,7 @@ public interface SearchEngineQuery {
 
     SearchEngineQuery rewrite();
 
+    boolean isSuggested();
+
     SearchEngineHits hits() throws SearchEngineException;
 }

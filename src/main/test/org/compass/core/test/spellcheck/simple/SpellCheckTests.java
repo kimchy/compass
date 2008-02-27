@@ -108,6 +108,32 @@ public class SpellCheckTests extends AbstractTestCase {
         assertFalse(spellCheckManager.isRebuildNeeded());
     }
 
+    public void testSuggestQueryString() {
+        setUpData();
+        SearchEngineSpellCheckManager spellCheckManager = getCompass().getSpellCheckManager();
+        spellCheckManager.rebuild();
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        assertEquals("fiv", session.queryBuilder().queryString("fiv").toQuery().toString());
+        assertFalse("fiv", session.queryBuilder().queryString("fiv").toQuery().isSuggested());
+        assertEquals(0, session.queryBuilder().queryString("fiv").toQuery().hits().length());
+        assertEquals("five", session.queryBuilder().queryString("fiv").useSpellCheck().toQuery().toString());
+        assertTrue(session.queryBuilder().queryString("fiv").useSpellCheck().toQuery().isSuggested());
+        assertEquals(1, session.queryBuilder().queryString("fiv").useSpellCheck().toQuery().hits().length());
+
+        assertFalse(session.queryBuilder().queryString("five").useSpellCheck().toQuery().isSuggested());
+
+        assertEquals("fiv blak", session.queryBuilder().queryString("fiv blak").toQuery().toString());
+        assertEquals(0, session.queryBuilder().queryString("fiv blak").toQuery().hits().length());
+        assertEquals("five black", session.queryBuilder().queryString("fiv blak").useSpellCheck().toQuery().toString());
+        assertEquals(2, session.queryBuilder().queryString("fiv blak").useSpellCheck().toQuery().hits().length());
+
+        tr.commit();
+        session.close();
+    }
+
     protected void setUpData() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();

@@ -1228,6 +1228,11 @@ public class LuceneEnvironment {
         public static final String DEFAULT_GROUP = "default";
 
         /**
+         * The spell check group.
+         */
+        public static final String SPELLCHECK_GROUP = "spellcheck";
+
+        /**
          * The default parsers implementation allows to set if leading wildcards
          * are allowed or not. Boolen value defaults to <code>false</code>.
          */

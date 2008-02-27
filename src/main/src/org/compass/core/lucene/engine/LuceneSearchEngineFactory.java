@@ -124,10 +124,6 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         indexDeletionPolicyManager = new IndexDeletionPolicyFactory();
         indexDeletionPolicyManager.configure(settings);
 
-        // build the query parsers
-        queryParserManager = new LuceneQueryParserManager(this);
-        queryParserManager.configure(settings);
-
         // build the search engine store
         LuceneSearchEngineStore searchEngineStore = new DefaultLuceneSearchEngineStore();
         searchEngineStore.configure(this, settings, mapping);
@@ -155,6 +151,10 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
                 }
             }
         }
+
+        // build the query parsers
+        queryParserManager = new LuceneQueryParserManager(this);
+        queryParserManager.configure(settings);
     }
 
     public void start() {

@@ -18,12 +18,13 @@ package org.compass.core.lucene.engine.query;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.Query;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryBuilder;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.queryparser.LuceneQueryParser;
+import org.compass.core.lucene.engine.queryparser.QueryHolder;
 
 /**
  * @author kimchy
@@ -86,12 +87,16 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
         return this;
     }
 
+    public SearchEngineQueryBuilder.SearchEngineQueryStringBuilder useSpellCheck() {
+        return setQueryParser(LuceneEnvironment.QueryParser.SPELLCHECK_GROUP);
+    }
+
     public SearchEngineQuery toQuery() {
         String defaultSearch = defaultSearchProperty;
         if (defaultSearch == null) {
             defaultSearch = searchEngine.getSearchEngineFactory().getLuceneSettings().getDefaultSearchPropery();
         }
-        Query qQuery = queryParser.parse(defaultSearch, operator, analyzer, forceAnalyzer, queryString);
-        return new LuceneSearchEngineQuery(searchEngine, qQuery);
+        QueryHolder qQuery = queryParser.parse(defaultSearch, operator, analyzer, forceAnalyzer, queryString);
+        return new LuceneSearchEngineQuery(searchEngine, qQuery, defaultSearch);
     }
 }
