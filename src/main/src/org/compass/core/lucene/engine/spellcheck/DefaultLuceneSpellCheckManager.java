@@ -174,7 +174,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 public void run() {
                     rebuild();
                 }
-            }, 0, spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INTERVAL, 10), TimeUnit.SECONDS);
+            }, 0, spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INTERVAL, 10) * 60, TimeUnit.SECONDS);
         }
 
         started = true;
@@ -292,6 +292,8 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         });
         return version != indexVersion;
     }
+
+    // TODO add concurrent rebuild
 
     public void rebuild() throws SearchEngineException {
         for (String subIndex : indexStore.getSubIndexes()) {
