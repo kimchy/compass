@@ -48,6 +48,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
     }
 
     public void configure(CompassSettings settings) throws CompassException {
+        CompassSettings defaultGroupSettings = null;
         Map<String, CompassSettings> queryParserSettingGroups = settings.getSettingGroups(LuceneEnvironment.QueryParser.PREFIX);
         for (Map.Entry<String, CompassSettings> entry : queryParserSettingGroups.entrySet()) {
             String queryParserName = entry.getKey();
@@ -56,8 +57,17 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             if (log.isDebugEnabled()) {
                 log.debug("Building query parser [" + queryParserName + "] with settings " + queryParserSettings);
             }
+
+            if (queryParserName.equals(LuceneEnvironment.QueryParser.DEFAULT_GROUP)) {
+                defaultGroupSettings = queryParserSettings;
+            }
+
             String queryParserType = queryParserSettings.getSetting(LuceneEnvironment.QueryParser.TYPE);
             if (queryParserType == null) {
+                if (queryParserName.equals(LuceneEnvironment.QueryParser.DEFAULT_GROUP)) {
+                    // no problem, continue here and we will create the default one ourself using the provided settings
+                    continue;
+                }
                 throw new ConfigurationException("Failed to locate query parser [" + queryParserName + "] type, it must be set");
             }
             LuceneQueryParser queryParser;
@@ -77,12 +87,15 @@ public class LuceneQueryParserManager implements CompassConfigurable {
             }
             queryParsers.put(queryParserName, queryParser);
         }
+        if (defaultGroupSettings == null) {
+            defaultGroupSettings = new CompassSettings(settings.getClassLoader());
+        }
         if (queryParsers.get(LuceneEnvironment.QueryParser.DEFAULT_GROUP) == null) {
             if (log.isDebugEnabled()) {
                 log.debug("No default query parser found (under groupd [default]), registering a default one");
             }
             DefaultLuceneQueryParser queryParser = new DefaultLuceneQueryParser();
-            queryParser.configure(new CompassSettings(settings.getClassLoader()));
+            queryParser.configure(defaultGroupSettings);
             queryParser.setCompassMapping(searchEngineFactory.getMapping());
             queryParser.setSearchEngineFactory(searchEngineFactory);
             queryParsers.put(LuceneEnvironment.QueryParser.DEFAULT_GROUP, queryParser);
@@ -93,7 +106,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
                     log.debug("No spellcheck query parser found (under groupd [spellcheck]), registering a default one");
                 }
                 SpellCheckLuceneQueryParser queryParser = new SpellCheckLuceneQueryParser();
-                queryParser.configure(new CompassSettings(settings.getClassLoader()));
+                queryParser.configure(defaultGroupSettings);
                 queryParser.setCompassMapping(searchEngineFactory.getMapping());
                 queryParser.setSearchEngineFactory(searchEngineFactory);
                 queryParsers.put(LuceneEnvironment.QueryParser.SPELLCHECK_GROUP, queryParser);
