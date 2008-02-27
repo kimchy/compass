@@ -144,7 +144,7 @@ public class SpellCheckTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         CompassQuery query = session.queryBuilder().queryString("fiv").toQuery();
-        CompassQuery suggeted = spellCheckManager.suggest(query);
+        CompassQuery suggeted = query.getSuggestedQuery();
         assertEquals(true, suggeted.isSuggested());
         assertEquals("five", suggeted.toString());
 

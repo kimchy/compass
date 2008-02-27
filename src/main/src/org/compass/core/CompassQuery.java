@@ -234,7 +234,7 @@ public interface CompassQuery {
      * @param subIndexes sub indexes the query will be executed against
      * @return The query
      */
-    CompassQuery setSubIndexes(String ... subIndexes);
+    CompassQuery setSubIndexes(String... subIndexes);
 
     /**
      * Narrows down the query to be executed only against the given aliases.
@@ -243,7 +243,7 @@ public interface CompassQuery {
      * @param aliases aliases the query will be executed against
      * @return th query
      */
-    CompassQuery setAliases(String ... aliases);
+    CompassQuery setAliases(String... aliases);
 
     /**
      * Narrows down the query to be executed only against the given types.
@@ -253,7 +253,7 @@ public interface CompassQuery {
      * @param types class types the query will be executed against
      * @return the query
      */
-    CompassQuery setTypes(Class ... types);
+    CompassQuery setTypes(Class... types);
 
     /**
      * Sets a filter to the query. Please see {@link CompassQueryFilterBuilder}.
@@ -275,6 +275,15 @@ public interface CompassQuery {
      * Causes the query to be rewritten before executed to search.
      */
     CompassQuery rewrite();
+
+    /**
+     * Returns the suggested query (based on spell check). If spell check is disabled
+     * the same query is returned.
+     *
+     * <p>In order to know if the query was actually replaced with a suggested one, call
+     * {@link CompassQuery#isSuggested()}.
+     */
+    CompassQuery getSuggestedQuery();
 
     /**
      * Returns <code>true</code> if this is a suggested query. For example, when performing

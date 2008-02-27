@@ -135,6 +135,13 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
         return this;
     }
 
+    public CompassQuery getSuggestedQuery() {
+        if (session.getCompass().getSpellCheckManager() == null) {
+            return this;
+        }
+        return session.getCompass().getSpellCheckManager().suggest(this);
+    }
+
     public boolean isSuggested() {
         return searchEngineQuery.isSuggested();
     }
