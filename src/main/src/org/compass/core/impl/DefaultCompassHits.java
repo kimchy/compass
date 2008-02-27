@@ -45,6 +45,8 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
 
     private CompassQuery query;
 
+    private CompassQuery suggestedQuery;
+
     public DefaultCompassHits(SearchEngineHits hits, InternalCompassSession session, CompassQuery query) {
         this.hits = hits;
         this.session = session;
@@ -80,7 +82,10 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
     }
 
     public CompassQuery getSuggestedQuery() {
-        return getQuery().getSuggestedQuery();
+        if (suggestedQuery == null) {
+            suggestedQuery = getQuery().getSuggestedQuery();
+        }
+        return suggestedQuery;
     }
 
     public int getLength() {

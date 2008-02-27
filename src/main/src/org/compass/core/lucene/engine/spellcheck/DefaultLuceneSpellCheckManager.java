@@ -132,7 +132,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             }
         }
 
-        this.defaultProperty = CompassEnvironment.All.DEFAULT_NAME;
+        this.defaultProperty = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.PROPERTY, CompassEnvironment.All.DEFAULT_NAME);
         this.defaultAccuracy = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.ACCURACY, 0.5f);
         this.defaultDictionaryThreshold = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.DICTIONARY_THRESHOLD, 0.0f);
     }

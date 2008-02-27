@@ -649,6 +649,57 @@ session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommit
     
     <para>Compass comes built in with several additional deletion policies including: <literal>keepall</literal> which keeps all commit points. <literal>keeplastn</literal> which keeps the last N commit points. <literal>expirationtime</literal> which keeps commit points for X number of seconds.</para>
   </sect1>
+  
+  <sect1 id="core-searchengine-spellcheck">
+      <title>Spell Check / Did You Mean</title>
+      
+      <para>
+          Compass comes with built in support for spell check support. It allows to suggest queries (did you mean feature) as well as allow to get possible suggestions for given words. By default, the spell check support is disabled. In other to enable it, the following property need to be set:
+<programlisting><![CDATA[compass.engine.spellcheck.enable=true
+]]></programlisting>      
+      </para>
+      
+      <para>
+          Once spell check is enabled, a special spell check index will be built based on the "all" property (more on that later). It can then be used in the following simple manner:
+<programlisting><![CDATA[CompassQuery query = session.queryBuilder().queryString("jack london").toQuery();
+CompassHits hits = query.hits();
+System.out.println("Original Query: " + hits.getQuery());
+if (hits.getSuggestedQuery().isSuggested()) {
+    System.out.println("Did You Mean: " + hits.getSuggestedQuery());
+}
+]]></programlisting>      
+      </para>
+      
+      <para>
+          In order to perform spell index level operations, <classname>Compass</classname> exposes now a <literal>getSpellCheckManager()</literal> in order to perform them. Note, this method will return <literal>null</literal> in case spell check is disabled. The spell check manager also allows to get suggestions for a given word.
+      </para>
+      
+      <sect2 id="core-searchengine-spellcheck-index">
+          <title>Spell Index</title>
+          
+          <para>
+              Compass by default will build a spell index using the same configured index storage simply under a different "sub context" name called <literal>spellcheck</literal> (the compass index is built under sub context <literal>index</literal>). For each sub index in Compass, a spell check sub index will be created. By default, a scheduler will kick in (by default each 10 minutes) and will check if the spell index needs to be rebuilt, and if it does, it will rebuild it. The spell check manager also exposes API in order to perform the rebuild operations as well as checking if the spell index needs to be rebuilt. Here is an example of how the scheduler can be configured:
+<programlisting><![CDATA[compass.engine.spellcheck.enable=true
+# the default it true, just showing the setting
+compass.engine.spellcheck.schedule=true
+# the schedule, in minutes (defaults to 10)
+compass.engine.spellcheck.scheduleInterval=10
+]]></programlisting>      
+          </para>
+          
+          <para>
+              The spell check index can be configured to be stored on a different location than the Compass index. Any index related parameters can be set as well. Here is an example (for example, if the index is stored in the database, and spell index should be stored on the file system):
+<programlisting><![CDATA[compass.engine.spellcheck.enable=true
+compass.engine.spellcheck.engine.connection=file://target/spellindex
+compass.engine.spellcheck.engine.ramBufferSize=40
+]]></programlisting>      
+          </para>
+          
+          <para>
+              In the above example we also configure the indexing process of the spell check index to use more memory (40) so the indexing process will be faster. As seen here, settings that control the index can be used (<literal>compass.engine.</literal> settings) can apply to the spell check index by prepending the <literal>compass.engine.spellcheck</literal> setting.
+          </para>
+      <sect2>
+  </sect1>
 
   <sect1 id="core-searchengine-directlucene">
     <title>Direct Lucene</title>
