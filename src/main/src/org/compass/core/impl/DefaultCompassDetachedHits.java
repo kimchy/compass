@@ -20,6 +20,7 @@ import org.compass.core.CompassDetachedHits;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHighlightedText;
 import org.compass.core.CompassHit;
+import org.compass.core.CompassQuery;
 import org.compass.core.Resource;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -45,8 +46,15 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
 
     private CompassHighlightedText[] highlightedText;
 
-    public DefaultCompassDetachedHits(InternalCompassHits hits, InternalCompassSession session, int from, int size)
+    private CompassQuery query;
+
+    private CompassQuery suggestedQuery;
+
+    public DefaultCompassDetachedHits(InternalCompassHits hits, InternalCompassSession session, int from, int size,
+                                      CompassQuery query, CompassQuery suggestedQuery)
             throws CompassException, IllegalArgumentException {
+        this.query = query;
+        this.suggestedQuery = suggestedQuery;
         this.length = size;
         if (from < 0) {
             throw new IllegalArgumentException("Can't preload with negative from [" + from + "]");
@@ -74,6 +82,14 @@ public class DefaultCompassDetachedHits extends AbstractCompassHits implements C
                 datas[i] = session.getByResource(resources[i]);
             }
         }
+    }
+
+    public CompassQuery getQuery() {
+        return this.query;
+    }
+
+    public CompassQuery getSuggestedQuery() {
+        return this.suggestedQuery;
     }
 
     public float score(int n) throws CompassException, IllegalArgumentException {

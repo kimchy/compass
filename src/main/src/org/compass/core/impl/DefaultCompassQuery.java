@@ -148,7 +148,7 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
 
     public CompassHits hits() throws CompassException {
         SearchEngineHits searchEngineHits = searchEngineQuery.hits();
-        return new DefaultCompassHits(searchEngineHits, session);
+        return new DefaultCompassHits(searchEngineHits, session, this);
     }
 
     public SearchEngineQuery getSearchEngineQuery() {

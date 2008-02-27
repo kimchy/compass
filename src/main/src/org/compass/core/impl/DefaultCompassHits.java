@@ -23,6 +23,7 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassHighlightedText;
 import org.compass.core.CompassHighlighter;
 import org.compass.core.CompassHit;
+import org.compass.core.CompassQuery;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.spi.InternalCompassHighlightedText;
@@ -42,9 +43,12 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
 
     private HashMap<Integer, InternalCompassHighlightedText> highlightedTextHolder;
 
-    public DefaultCompassHits(SearchEngineHits hits, InternalCompassSession session) {
+    private CompassQuery query;
+
+    public DefaultCompassHits(SearchEngineHits hits, InternalCompassSession session, CompassQuery query) {
         this.hits = hits;
         this.session = session;
+        this.query = query;
     }
 
     public SearchEngineHits getSearchEngineHits() {
@@ -71,6 +75,14 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
         return resource;
     }
 
+    public CompassQuery getQuery() {
+        return this.query;
+    }
+
+    public CompassQuery getSuggestedQuery() {
+        return getQuery().getSuggestedQuery();
+    }
+
     public int getLength() {
         return hits.getLength();
     }
@@ -88,7 +100,7 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
     }
 
     public CompassDetachedHits detach(int from, int size) throws CompassException, IllegalArgumentException {
-        return new DefaultCompassDetachedHits(this, session, from, size);
+        return new DefaultCompassDetachedHits(this, session, from, size, getQuery(), getSuggestedQuery());
     }
 
     public CompassHighlightedText highlightedText(int n) throws CompassException {
