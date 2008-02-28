@@ -529,7 +529,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     private void checkClosed() throws IllegalStateException {
         if (closed) {
-            throw new IllegalStateException("CompsesSession already closed");
+            throw new IllegalStateException("CompassSession already closed");
         }
     }
 }

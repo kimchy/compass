@@ -160,10 +160,10 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                     } catch (IOException e) {
                         throw new SearchEngineException("Failed to verify spell index for sub index [" + subIndex + "]", e);
                     }
+                    closeAndRefresh(subIndex);
                     return null;
                 }
             });
-            closeAndRefresh(subIndex);
         }
         
         // schedule a refresh task
