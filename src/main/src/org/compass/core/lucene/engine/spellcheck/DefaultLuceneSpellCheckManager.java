@@ -152,6 +152,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
                 public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                     Directory dir = spellCheckStore.openDirectory(spellIndexSubContext, subIndex);
+                    close(subIndex);
                     try {
                         if (!IndexReader.indexExists(dir)) {
                             IndexWriter writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true);
@@ -160,7 +161,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                     } catch (IOException e) {
                         throw new SearchEngineException("Failed to verify spell index for sub index [" + subIndex + "]", e);
                     }
-                    closeAndRefresh(subIndex);
+                    refresh(subIndex);
                     return null;
                 }
             });
