@@ -135,16 +135,20 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         this.defaultProperty = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.PROPERTY, CompassEnvironment.All.DEFAULT_NAME);
         this.defaultAccuracy = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.ACCURACY, 0.5f);
         this.defaultDictionaryThreshold = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.DICTIONARY_THRESHOLD, 0.0f);
+
+        for (final String subIndex : indexStore.getSubIndexes()) {
+            versionMap.put(subIndex, -1l);
+            indexLocks.put(subIndex, new Object());
+        }        
     }
 
     public void start() {
         if (started) {
             return;
         }
-        // fill in the version table
+        started = true;
+
         for (final String subIndex : indexStore.getSubIndexes()) {
-            versionMap.put(subIndex, -1l);
-            indexLocks.put(subIndex, new Object());
             searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
                 public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
                     Directory dir = spellCheckStore.openDirectory(spellIndexSubContext, subIndex);
@@ -156,12 +160,12 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                     } catch (IOException e) {
                         throw new SearchEngineException("Failed to verify spell index for sub index [" + subIndex + "]", e);
                     }
-                    closeAndRefresh(subIndex);
                     return null;
                 }
             });
+            closeAndRefresh(subIndex);
         }
-
+        
         // schedule a refresh task
         long cacheRefreshInterval = spellCheckSettings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, 5000);
         refreshCacheFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(new TransactionalRunnable(searchEngineFactory.getTransactionContext(), new Runnable() {
@@ -177,8 +181,6 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 }
             }, 0, spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INTERVAL, 10) * 60, TimeUnit.SECONDS);
         }
-
-        started = true;
     }
 
     public void stop() {
@@ -225,7 +227,20 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         }
     }
 
+    public String getDefaultProperty() {
+        return this.defaultProperty;
+    }
+
+    public float getDefaultAccuracy() {
+        return defaultAccuracy;
+    }
+
+    public CompassMapping getMapping() {
+        return searchEngineFactory.getMapping();
+    }
+
     public void concurrentRefresh() throws SearchEngineException {
+        checkIfStarted();
         ArrayList<Callable<Object>> rebuildTasks = new ArrayList<Callable<Object>>();
         for (String subIndex : indexStore.getSubIndexes()) {
             rebuildTasks.add(new RefreshTask(subIndex));
@@ -234,12 +249,14 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
     
     public void refresh() throws SearchEngineException {
+        checkIfStarted();
         for (String subIndex : indexStore.getSubIndexes()) {
             refresh(subIndex);
         }
     }
 
     public void refresh(String subIndex) throws SearchEngineException {
+        checkIfStarted();
         synchronized (indexLocks.get(subIndex)) {
             IndexReader reader = readerMap.get(subIndex);
             if (reader != null) {
@@ -261,26 +278,8 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         }
     }
 
-    private void closeAndRefresh(String subIndex) {
-        synchronized (indexLocks.get(subIndex)) {
-            close(subIndex);
-            refresh(subIndex);
-        }
-    }
-
-    public String getDefaultProperty() {
-        return this.defaultProperty;
-    }
-
-    public float getDefaultAccuracy() {
-        return defaultAccuracy;
-    }
-
-    public CompassMapping getMapping() {
-        return searchEngineFactory.getMapping();
-    }
-
     public boolean isRebuildNeeded() throws SearchEngineException {
+        checkIfStarted();
         boolean rebulidRequired = false;
         for (String subIndex : indexStore.getSubIndexes()) {
             rebulidRequired |= isRebuildNeeded(subIndex);
@@ -289,6 +288,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public boolean isRebuildNeeded(final String subIndex) throws SearchEngineException {
+        checkIfStarted();
         long version = versionMap.get(subIndex);
         long indexVersion = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
             public Long doInTransaction(InternalCompassTransaction tr) throws CompassException {
@@ -303,6 +303,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public void concurrentRebuild() throws SearchEngineException {
+        checkIfStarted();
         ArrayList<Callable<Object>> rebuildTasks = new ArrayList<Callable<Object>>();
         for (String subIndex : indexStore.getSubIndexes()) {
             rebuildTasks.add(new RebuildTask(subIndex));
@@ -311,12 +312,14 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public void rebuild() throws SearchEngineException {
+        checkIfStarted();
         for (String subIndex : indexStore.getSubIndexes()) {
             rebuild(subIndex);
         }
     }
 
     public void rebuild(final String subIndex) throws SearchEngineException {
+        checkIfStarted();
         long version = versionMap.get(subIndex);
         long indexVersion = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
             public Long doInTransaction(InternalCompassTransaction tr) throws CompassException {
@@ -387,21 +390,25 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public void deleteIndex() throws SearchEngineException {
+        checkIfStarted();
         for (String subIndex : indexStore.getSubIndexes()) {
             deleteIndex(subIndex);
         }
     }
 
     public void deleteIndex(String subIndex) throws SearchEngineException {
+        checkIfStarted();
         close(subIndex);
         spellCheckStore.deleteIndex(spellIndexSubContext, subIndex);
     }
 
     public SearchEngineSpellCheckSuggestBuilder suggestBuilder(String word) {
+        checkIfStarted();
         return new DefaultLuceneSearchEngineSpellCheckSuggestBuilder(word, this);
     }
 
     public CompassQuery suggest(CompassQuery query) {
+        checkIfStarted();
         CompassQuery suggested;
         try {
             suggested = (CompassQuery) query.clone();
@@ -440,6 +447,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public <T> T execute(final String[] subIndexes, final String[] aliases, final SpellCheckerCallback<T> callback) {
+        checkIfStarted();
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<T>() {
             public T doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 CompassSpellChecker spellChecker = createSpellChecker(subIndexes, aliases);
@@ -457,6 +465,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public CompassSpellChecker createSpellChecker(final String[] subIndexes, final String[] aliases) {
+        checkIfStarted();
         String[] calcSubIndexes = indexStore.calcSubIndexes(subIndexes, aliases);
         ArrayList<Searchable> searchers = new ArrayList<Searchable>(calcSubIndexes.length);
         ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
@@ -482,6 +491,19 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
         MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
         return new CompassSpellChecker(searcher, reader);
+    }
+
+    private void closeAndRefresh(String subIndex) {
+        synchronized (indexLocks.get(subIndex)) {
+            close(subIndex);
+            refresh(subIndex);
+        }
+    }
+    
+    private void checkIfStarted() throws java.lang.IllegalStateException {
+        if (!started) {
+            throw new IllegalStateException("Spell check manager must be started to perform this operation");
+        }
     }
 
     private class RebuildTask implements Callable<Object> {
