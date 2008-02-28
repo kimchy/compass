@@ -56,8 +56,8 @@ public class SpellCheckSimpleHibernateGpsDeviceTests extends ScrollableSimpleHib
         assertNotNull(hits.getQuery());
         assertFalse(hits.getQuery().isSuggested());
         assertNotNull(hits.getSuggestedQuery());
-        assertEquals("value", hits.getSuggestedQuery().toString());
         assertTrue(hits.getSuggestedQuery().isSuggested());
+        assertEquals("value", hits.getSuggestedQuery().toString());
 
         tr.commit();
         sess.close();

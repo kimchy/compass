@@ -319,7 +319,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         }
     }
 
-    public void rebuild(final String subIndex) throws SearchEngineException {
+    public synchronized void rebuild(final String subIndex) throws SearchEngineException {
         checkIfStarted();
         long version = versionMap.get(subIndex);
         long indexVersion = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
@@ -391,14 +391,12 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public void deleteIndex() throws SearchEngineException {
-        checkIfStarted();
         for (String subIndex : indexStore.getSubIndexes()) {
             deleteIndex(subIndex);
         }
     }
 
     public void deleteIndex(String subIndex) throws SearchEngineException {
-        checkIfStarted();
         close(subIndex);
         spellCheckStore.deleteIndex(spellIndexSubContext, subIndex);
     }
