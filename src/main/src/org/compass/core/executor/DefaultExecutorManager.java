@@ -80,7 +80,7 @@ public class DefaultExecutorManager implements ExecutorManager, CompassConfigura
                 if (e.getCause() instanceof CompassException) {
                     throw (CompassException) e.getCause();
                 }
-                throw new ExecutorException("Failed to execute commit", e.getCause());
+                throw new ExecutorException("Failed to execute", e.getCause());
             }
         }
         return futures;

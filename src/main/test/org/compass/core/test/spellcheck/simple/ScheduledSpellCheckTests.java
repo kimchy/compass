@@ -36,6 +36,7 @@ public class ScheduledSpellCheckTests extends AbstractTestCase {
     protected void addSettings(CompassSettings settings) {
         settings.setBooleanSetting(LuceneEnvironment.SpellCheck.ENABLE, true);
         settings.setBooleanSetting(LuceneEnvironment.SpellCheck.SCHEDULE, true);
+        settings.setIntSetting(LuceneEnvironment.SpellCheck.SCHEDULE_INITIAL_DELAY, 0);
     }
 
     /**
@@ -46,7 +47,7 @@ public class ScheduledSpellCheckTests extends AbstractTestCase {
         getCompass().close();
 
         Compass compass = buildCompass();
-        Thread.sleep(1000);
+        Thread.sleep(500);
 
         SearchEngineSpellCheckManager spellCheckManager = compass.getSpellCheckManager();
 

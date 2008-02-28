@@ -617,6 +617,12 @@ public class LuceneEnvironment {
          */
         public static final String SCHEDULE = PREFIX + "schedule";
 
+
+        /**
+         * The initial delay of the scheduled rebuild. In seconds.
+         */
+        public static final String SCHEDULE_INITIAL_DELAY = PREFIX + "scheduleInitialDelay";
+
         /**
          * Set <b>in seconds</b> the interval at which a check and a possible rebuild of the spell check
          * index will occur. Defaults to <b>10</b> minutes.

@@ -37,14 +37,14 @@ import org.compass.core.spi.ResourceKey;
  */
 public class DefaultCompassHits extends AbstractCompassHits implements InternalCompassHits {
 
-    private SearchEngineHits hits;
+    private final SearchEngineHits hits;
 
-    private InternalCompassSession session;
+    private final InternalCompassSession session;
+
+    private final CompassQuery query;
 
     private HashMap<Integer, InternalCompassHighlightedText> highlightedTextHolder;
-
-    private CompassQuery query;
-
+    
     private CompassQuery suggestedQuery;
 
     public DefaultCompassHits(SearchEngineHits hits, InternalCompassSession session, CompassQuery query) {

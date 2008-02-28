@@ -180,7 +180,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 public void run() {
                     rebuild();
                 }
-            }, 0, spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INTERVAL, 10) * 60, TimeUnit.SECONDS);
+            }, spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INITIAL_DELAY, 10), spellCheckSettings.getSettingAsLong(LuceneEnvironment.SpellCheck.SCHEDULE_INTERVAL, 10) * 60, TimeUnit.SECONDS);
         }
     }
 
@@ -373,7 +373,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                         try {
                             writer.close();
                         } catch (IOException e) {
-                            // do nothing
+                            log.warn("Failed to close specll check index writer for sub index [" + subIndex + "]", e);
                         }
                     }
                 }
@@ -391,12 +391,14 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public void deleteIndex() throws SearchEngineException {
+        // no need to check if started
         for (String subIndex : indexStore.getSubIndexes()) {
             deleteIndex(subIndex);
         }
     }
 
     public void deleteIndex(String subIndex) throws SearchEngineException {
+        // no need to check if started
         close(subIndex);
         spellCheckStore.deleteIndex(spellIndexSubContext, subIndex);
     }
@@ -409,7 +411,6 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     public CompassQuery suggest(CompassQuery query) {
         checkIfStarted();
 
-
         DefaultCompassQuery defaultCompassQuery = (DefaultCompassQuery) query;
         LuceneSearchEngineQuery searchEngineQuery = (LuceneSearchEngineQuery) defaultCompassQuery.getSearchEngineQuery();
         final CompassSpellChecker spellChecker = createSpellChecker(searchEngineQuery.getSubIndexes(), searchEngineQuery.getAliases());
@@ -418,12 +419,6 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             return query;
         }
 
-        CompassQuery suggested;
-        try {
-            suggested = (CompassQuery) query.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new SearchEngineException("Failed to clone query", e);
-        }
         final AtomicBoolean suggestedQuery = new AtomicBoolean(false);
         try {
             Query replacedQ = QueryParserUtils.visit(searchEngineQuery.getQuery(), new QueryParserUtils.QueryTermVisitor() {
@@ -443,10 +438,21 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                     }
                 }
             });
-            LuceneSearchEngineQuery suggestedSEQ = (LuceneSearchEngineQuery) ((DefaultCompassQuery) suggested).getSearchEngineQuery();
-            suggestedSEQ.setQuery(replacedQ);
-            suggestedSEQ.setSuggested(suggestedQuery.get());
-            return suggested;
+
+            if (!suggestedQuery.get()) {
+                return query;
+            }
+
+            try {
+                CompassQuery suggested = (CompassQuery) query.clone();
+                LuceneSearchEngineQuery suggestedSEQ = (LuceneSearchEngineQuery) ((DefaultCompassQuery) suggested).getSearchEngineQuery();
+                suggestedSEQ.setQuery(replacedQ);
+                suggestedSEQ.setSuggested(suggestedQuery.get());
+                return suggested;
+            } catch (CloneNotSupportedException e) {
+                throw new SearchEngineException("Failed to clone query", e);
+            }
+
         } finally {
             spellChecker.close();
         }
@@ -484,19 +490,26 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 }
             }
         }
+
+        if (searchers.isEmpty()) {
+            return null;
+        }
+
         MultiSearcher searcher;
         try {
             searcher = new MultiSearcher(searchers.toArray(new Searchable[searchers.size()]));
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open searcher for spell check", e);
         }
-
-        if (searchers.isEmpty()) {
-            return null;
-        }
-
         MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
+        
         return new CompassSpellChecker(searcher, reader);
+    }
+
+    private void closeAndRefresh() {
+        for (String subIndex : indexStore.getSubIndexes()) {
+            closeAndRefresh(subIndex);
+        }
     }
 
     private void closeAndRefresh(String subIndex) {

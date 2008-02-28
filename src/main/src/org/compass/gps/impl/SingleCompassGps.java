@@ -126,7 +126,7 @@ public class SingleCompassGps extends AbstractCompassGps {
                         }
                     }
                 });
-
+        compass.getSearchEngineIndexManager().clearCache();
         indexCompass.getSearchEngineIndexManager().clearCache();
         try {
             indexCompass.getSearchEngineIndexManager().deleteIndex();
@@ -140,14 +140,12 @@ public class SingleCompassGps extends AbstractCompassGps {
         ((InternalCompass) compass).start();
 
         if (compass.getSpellCheckManager() != null) {
-            if (log.isInfoEnabled()) {
-                log.info("Rebulding spell check index ...");
-                try {
-                    compass.getSpellCheckManager().concurrentRebuild();
-                    log.info("Spell check index rebuilt");
-                } catch (Exception e) {
-                    log.info("Spell check index failed, will rebuilt it next time", e);
-                }
+            log.info("Rebulding spell check index ...");
+            try {
+                compass.getSpellCheckManager().concurrentRebuild();
+                log.info("Spell check index rebuilt");
+            } catch (Exception e) {
+                log.info("Spell check index failed, will rebuilt it next time", e);
             }
         }
     }
