@@ -59,6 +59,10 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
         sessionFactory.close();
     }
 
+    protected void doTearDown() throws Exception {
+        
+    }
+
     protected abstract SessionFactory doSetUpSessionFactory();
 
     protected abstract void setUpCoreCompass(CompassConfiguration conf);

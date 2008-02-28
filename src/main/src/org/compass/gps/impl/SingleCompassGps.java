@@ -138,6 +138,18 @@ public class SingleCompassGps extends AbstractCompassGps {
         indexCompassTemplate = null;
 
         ((InternalCompass) compass).start();
+
+        if (compass.getSpellCheckManager() != null) {
+            if (log.isInfoEnabled()) {
+                log.info("Rebulding spell check index ...");
+                try {
+                    compass.getSpellCheckManager().concurrentRebuild();
+                    log.info("Spell check index rebuilt");
+                } catch (Exception e) {
+                    log.info("Spell check index failed, will rebuilt it next time", e);
+                }
+            }
+        }
     }
 
     public void executeForIndex(CompassCallback callback) throws CompassException {

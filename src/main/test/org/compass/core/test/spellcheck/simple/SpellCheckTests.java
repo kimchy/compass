@@ -16,6 +16,7 @@
 
 package org.compass.core.test.spellcheck.simple;
 
+import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
@@ -109,6 +110,45 @@ public class SpellCheckTests extends AbstractTestCase {
         String[] suggestions = spellCheckManager.suggestBuilder("fiv").suggest().getSuggestions();
         assertEquals(0, suggestions.length);
         assertFalse(spellCheckManager.suggestBuilder("five").suggest().isExists());
+    }
+
+    public void testNoRebuildQuery() {
+        setUpData();
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        CompassQuery query = session.queryBuilder().queryString("fiv").toQuery();
+        CompassQuery suggeted = query.getSuggestedQuery();
+
+        assertEquals(false, suggeted.isSuggested());
+        assertEquals("fiv", suggeted.toString());
+
+        assertFalse(query.isSuggested());
+        assertEquals("fiv", query.toString());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testNoRebuildHits() {
+        setUpData();
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        CompassHits hits = session.queryBuilder().queryString("fiv").toQuery().hits();
+        CompassQuery query = hits.getQuery();
+        CompassQuery suggeted = hits.getSuggestedQuery();
+
+        assertEquals(false, suggeted.isSuggested());
+        assertEquals("fiv", suggeted.toString());
+
+        assertFalse(query.isSuggested());
+        assertEquals("fiv", query.toString());
+
+        tr.commit();
+        session.close();
     }
 
     public void testRebuildNeeded() {

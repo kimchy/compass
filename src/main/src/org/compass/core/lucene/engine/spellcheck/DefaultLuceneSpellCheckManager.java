@@ -409,15 +409,22 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     public CompassQuery suggest(CompassQuery query) {
         checkIfStarted();
+
+
+        DefaultCompassQuery defaultCompassQuery = (DefaultCompassQuery) query;
+        LuceneSearchEngineQuery searchEngineQuery = (LuceneSearchEngineQuery) defaultCompassQuery.getSearchEngineQuery();
+        final CompassSpellChecker spellChecker = createSpellChecker(searchEngineQuery.getSubIndexes(), searchEngineQuery.getAliases());
+
+        if (spellChecker == null) {
+            return query;
+        }
+
         CompassQuery suggested;
         try {
             suggested = (CompassQuery) query.clone();
         } catch (CloneNotSupportedException e) {
             throw new SearchEngineException("Failed to clone query", e);
         }
-        DefaultCompassQuery defaultCompassQuery = (DefaultCompassQuery) query;
-        LuceneSearchEngineQuery searchEngineQuery = (LuceneSearchEngineQuery) defaultCompassQuery.getSearchEngineQuery();
-        final CompassSpellChecker spellChecker = createSpellChecker(searchEngineQuery.getSubIndexes(), searchEngineQuery.getAliases());
         final AtomicBoolean suggestedQuery = new AtomicBoolean(false);
         try {
             Query replacedQ = QueryParserUtils.visit(searchEngineQuery.getQuery(), new QueryParserUtils.QueryTermVisitor() {

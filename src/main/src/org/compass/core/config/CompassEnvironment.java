@@ -674,7 +674,7 @@ public class CompassEnvironment {
             public static final String CORE_POOL_SIZE = PREFIX + "corePoolSize";
 
             /**
-             * The maximum pool size of the executor service. Defaults to <code>20</code>.
+             * The maximum pool size of the executor service. Defaults to <code>30</code>.
              */
             public static final String MAXIMUM_POOL_SIZE = PREFIX + "maximumPoolSize";
 

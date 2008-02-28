@@ -97,6 +97,18 @@ public class DualCompassGps extends AbstractCompassGps {
             ((InternalCompass) mirrorCompass).start();
         }
         ((InternalCompass) indexCompass).start();
+
+        if (mirrorCompass.getSpellCheckManager() != null) {
+            if (log.isInfoEnabled()) {
+                log.info("Rebulding spell check index ...");
+                try {
+                    mirrorCompass.getSpellCheckManager().concurrentRebuild();
+                    log.info("Spell check index rebuilt");
+                } catch (Exception e) {
+                    log.info("Spell check index failed, will rebuilt it next time", e);
+                }
+            }
+        }
     }
 
     public void executeForIndex(CompassCallback callback) throws CompassException {
