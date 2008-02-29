@@ -30,6 +30,7 @@ import org.compass.gps.device.jpa.queryprovider.HibernateJpaQueryProvider;
 import org.compass.gps.device.support.parallel.IndexEntity;
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -130,7 +131,14 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
                 // store things in row buffer to allow using batch fetching in Hibernate
                 RowBuffer buffer = new RowBuffer(session, entityManager.getSession(), fetchCount);
                 Object prev = null;
-                while (cursor.next()) {
+                while (true) {
+                    try {
+                        if (!cursor.next()) {
+                            break;
+                        }
+                    } catch (ObjectNotFoundException e) {
+                        continue;
+                    }
                     Object item = cursor.get(0);
                     if (item != prev && prev != null) {
                         buffer.put(prev);
