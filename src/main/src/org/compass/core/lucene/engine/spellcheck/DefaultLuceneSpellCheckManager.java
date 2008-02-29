@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -41,6 +40,8 @@ import org.apache.lucene.search.Searchable;
 import org.apache.lucene.search.spell.CompassSpellChecker;
 import org.apache.lucene.search.spell.HighFrequencyDictionary;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.compass.core.CompassException;
 import org.compass.core.CompassQuery;
@@ -85,8 +86,6 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     private Map<String, IndexSearcher> searcherMap = new HashMap<String, IndexSearcher>();
 
-    private Map<String, Long> versionMap = new ConcurrentHashMap<String, Long>();
-
     private Map<String, Object> indexLocks = new HashMap<String, Object>();
 
     private String defaultProperty;
@@ -94,6 +93,8 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     private float defaultAccuracy = 0.5f;
 
     private float defaultDictionaryThreshold;
+
+    private String spellCheckVersionFileName = "spellcheck.version";
 
     private volatile boolean started = false;
 
@@ -137,9 +138,8 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         this.defaultDictionaryThreshold = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.DICTIONARY_THRESHOLD, 0.0f);
 
         for (final String subIndex : indexStore.getSubIndexes()) {
-            versionMap.put(subIndex, -1l);
             indexLocks.put(subIndex, new Object());
-        }        
+        }
     }
 
     public void start() {
@@ -166,7 +166,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 }
             });
         }
-        
+
         // schedule a refresh task
         long cacheRefreshInterval = spellCheckSettings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, 5000);
         refreshCacheFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(new TransactionalRunnable(searchEngineFactory.getTransactionContext(), new Runnable() {
@@ -248,7 +248,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         }
         searchEngineFactory.getExecutorManager().invokeAllWithLimitBailOnException(rebuildTasks, Integer.MAX_VALUE);
     }
-    
+
     public void refresh() throws SearchEngineException {
         checkIfStarted();
         for (String subIndex : indexStore.getSubIndexes()) {
@@ -290,17 +290,17 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     public boolean isRebuildNeeded(final String subIndex) throws SearchEngineException {
         checkIfStarted();
-        long version = versionMap.get(subIndex);
-        long indexVersion = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
-            public Long doInTransaction(InternalCompassTransaction tr) throws CompassException {
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+            public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 try {
-                    return LuceneSubIndexInfo.getIndexInfo(subIndex, indexStore).version();
+                    long spellCheckVersion = readSpellCheckIndexVersion(subIndex);
+                    long indexVerion = LuceneSubIndexInfo.getIndexInfo(subIndex, indexStore).version();
+                    return indexVerion != spellCheckVersion;
                 } catch (IOException e) {
                     throw new SearchEngineException("Failed to read index version for sub index [" + subIndex + "]");
                 }
             }
         });
-        return version != indexVersion;
     }
 
     public void concurrentRebuild() throws SearchEngineException {
@@ -321,8 +321,12 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     public synchronized void rebuild(final String subIndex) throws SearchEngineException {
         checkIfStarted();
-        long version = versionMap.get(subIndex);
-        long indexVersion = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
+        final long version = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
+            public Long doInTransaction(InternalCompassTransaction tr) throws CompassException {
+                return readSpellCheckIndexVersion(subIndex);
+            }
+        });
+        final long indexVersion = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
             public Long doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 try {
                     return LuceneSubIndexInfo.getIndexInfo(subIndex, indexStore).version();
@@ -387,7 +391,12 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             }
         });
         // mark the last version we indexed
-        versionMap.put(subIndex, indexVersion);
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
+                writeSpellCheckIndexVersion(subIndex, indexVersion);
+                return null;
+            }
+        });
     }
 
     public void deleteIndex() throws SearchEngineException {
@@ -502,8 +511,44 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             throw new SearchEngineException("Failed to open searcher for spell check", e);
         }
         MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
-        
+
         return new CompassSpellChecker(searcher, reader);
+    }
+
+    private void writeSpellCheckIndexVersion(String subIndex, long version) {
+        Directory dir = spellCheckStore.openDirectory(spellIndexSubContext, subIndex);
+        try {
+            if (dir.fileExists(spellCheckVersionFileName)) {
+                dir.deleteFile(spellCheckVersionFileName);
+            }
+            IndexOutput indexOutput = dir.createOutput(spellCheckVersionFileName);
+            indexOutput.writeLong(version);
+            indexOutput.close();
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to write spell check index version for sub index [" + subIndex + "]", e);
+        }
+    }
+
+    private long readSpellCheckIndexVersion(String subIndex) {
+        Directory dir = spellCheckStore.openDirectory(spellIndexSubContext, subIndex);
+        IndexInput input = null;
+        try {
+            if (!dir.fileExists(spellCheckVersionFileName)) {
+                return -1;
+            }
+            input = dir.openInput(spellCheckVersionFileName);
+            return input.readLong();
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to read spell check index version for sub index [" + subIndex + "]", e);
+        } finally {
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e) {
+                // ignore
+            }
+        }
     }
 
     private void closeAndRefresh() {
@@ -518,7 +563,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             refresh(subIndex);
         }
     }
-    
+
     private void checkIfStarted() throws java.lang.IllegalStateException {
         if (!started) {
             throw new IllegalStateException("Spell check manager must be started to perform this operation");
