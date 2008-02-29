@@ -19,8 +19,10 @@ package org.compass.core.lucene.engine.spellcheck;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -303,50 +305,54 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         });
     }
 
-    public void concurrentRebuild() throws SearchEngineException {
+    public boolean concurrentRebuild() throws SearchEngineException {
         checkIfStarted();
-        ArrayList<Callable<Object>> rebuildTasks = new ArrayList<Callable<Object>>();
+        ArrayList<Callable<Boolean>> rebuildTasks = new ArrayList<Callable<Boolean>>();
         for (String subIndex : indexStore.getSubIndexes()) {
             rebuildTasks.add(new RebuildTask(subIndex));
         }
-        searchEngineFactory.getExecutorManager().invokeAllWithLimitBailOnException(rebuildTasks, Integer.MAX_VALUE);
+        List<Future<Boolean>> rebuildResults = searchEngineFactory.getExecutorManager().invokeAllWithLimitBailOnException(rebuildTasks, Integer.MAX_VALUE);
+        boolean rebuilt = false;
+        for (Future<Boolean> rebuildResult : rebuildResults) {
+            try {
+                rebuilt |= rebuildResult.get();
+            } catch (Exception e) {
+                // will not happen
+            }
+        }
+        return rebuilt;
     }
 
-    public void rebuild() throws SearchEngineException {
+    public boolean rebuild() throws SearchEngineException {
         checkIfStarted();
+        boolean rebuilt = false;
         for (String subIndex : indexStore.getSubIndexes()) {
-            rebuild(subIndex);
+            rebuilt |= rebuild(subIndex);
         }
+        return rebuilt;
     }
 
-    public synchronized void rebuild(final String subIndex) throws SearchEngineException {
+    public synchronized boolean rebuild(final String subIndex) throws SearchEngineException {
         checkIfStarted();
-        final long version = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
-            public Long doInTransaction(InternalCompassTransaction tr) throws CompassException {
-                return readSpellCheckIndexVersion(subIndex);
-            }
-        });
-        final long indexVersion = searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Long>() {
-            public Long doInTransaction(InternalCompassTransaction tr) throws CompassException {
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+            public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
+                long version = readSpellCheckIndexVersion(subIndex);
+                long indexVersion = 0;
                 try {
-                    return LuceneSubIndexInfo.getIndexInfo(subIndex, indexStore).version();
+                    indexVersion = LuceneSubIndexInfo.getIndexInfo(subIndex, indexStore).version();
                 } catch (IOException e) {
-                    throw new SearchEngineException("Failed to read index version for sub index [" + subIndex + "]");
+                    throw new SearchEngineException("Failed to read actual index version for sub index [" + subIndex + "]", e);
                 }
-            }
-        });
-        if (version == indexVersion) {
-            if (log.isDebugEnabled()) {
-                log.debug("No need to rebuild spell check index, sub index [" + subIndex + "] has not changed");
-            }
-            return;
-        }
+                if (version == indexVersion) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("No need to rebuild spell check index, sub index [" + subIndex + "] has not changed");
+                    }
+                    return false;
+                }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Rebuilding spell index for sub index [" + subIndex + "]");
-        }
-        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
+                if (log.isDebugEnabled()) {
+                    log.debug("Rebuilding spell index for sub index [" + subIndex + "]");
+                }
                 Directory dir = spellCheckStore.openDirectory(spellIndexSubContext, subIndex);
                 CompassSpellChecker spellChecker;
                 try {
@@ -383,18 +389,12 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 }
                 // refresh the readers and searchers
                 closeAndRefresh(subIndex);
+                writeSpellCheckIndexVersion(subIndex, indexVersion);
 
                 if (log.isDebugEnabled()) {
                     log.debug("Finished rebuilding spell index for sub index [" + subIndex + "]");
                 }
-                return null;
-            }
-        });
-        // mark the last version we indexed
-        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
-                writeSpellCheckIndexVersion(subIndex, indexVersion);
-                return null;
+                return true;
             }
         });
     }
@@ -570,7 +570,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         }
     }
 
-    private class RebuildTask implements Callable<Object> {
+    private class RebuildTask implements Callable<Boolean> {
 
         private String subIndex;
 
@@ -578,9 +578,8 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             this.subIndex = subIndex;
         }
 
-        public Object call() throws Exception {
-            rebuild(subIndex);
-            return null;
+        public Boolean call() throws Exception {
+            return rebuild(subIndex);
         }
     }
 

@@ -58,17 +58,17 @@ public interface SearchEngineSpellCheckManager {
      * Same as {@link #rebuild()} but executes the rebuild of each sub index using Compass
      * built in thread pool
      */
-    void concurrentRebuild() throws SearchEngineException;
+    boolean concurrentRebuild() throws SearchEngineException;
 
     /**
      * Rebuilds the spell check index. Won't rebuild specific sub indexes if it is not needed.
      */
-    void rebuild() throws SearchEngineException;
+    boolean rebuild() throws SearchEngineException;
 
     /**
      * Rebuilds the spell check index for the given sub index. Won't rebuild if it is not needed.
      */
-    void rebuild(String subIndex) throws SearchEngineException;
+    boolean rebuild(String subIndex) throws SearchEngineException;
 
     /**
      * Same as {@link #refresh()} but executes the refresh of each sub index using Compass

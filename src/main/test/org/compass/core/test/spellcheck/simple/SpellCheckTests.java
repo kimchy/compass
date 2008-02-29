@@ -16,7 +16,6 @@
 
 package org.compass.core.test.spellcheck.simple;
 
-import org.compass.core.Compass;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassSession;
@@ -43,7 +42,7 @@ public class SpellCheckTests extends AbstractTestCase {
     public void testSimpleSpellCheck() {
         setUpData();
         SearchEngineSpellCheckManager spellCheckManager = getCompass().getSpellCheckManager();
-        spellCheckManager.rebuild();
+        assertTrue(spellCheckManager.rebuild());
 
         String[] suggestions = spellCheckManager.suggestBuilder("fiv").suggest().getSuggestions();
         assertEquals(1, suggestions.length);
@@ -54,7 +53,7 @@ public class SpellCheckTests extends AbstractTestCase {
     public void testSimpleSpellCheckConcurrentRebuild() {
         setUpData();
         SearchEngineSpellCheckManager spellCheckManager = getCompass().getSpellCheckManager();
-        spellCheckManager.concurrentRebuild();
+        assertTrue(spellCheckManager.concurrentRebuild());
 
         String[] suggestions = spellCheckManager.suggestBuilder("fiv").suggest().getSuggestions();
         assertEquals(1, suggestions.length);
@@ -159,11 +158,6 @@ public class SpellCheckTests extends AbstractTestCase {
         assertTrue(spellCheckManager.isRebuildNeeded());
         spellCheckManager.rebuild();
         assertFalse(spellCheckManager.isRebuildNeeded());
-
-        getCompass().close();
-
-        Compass compass = buildCompass();
-        assertFalse(compass.getSpellCheckManager().isRebuildNeeded());
     }
 
     public void testSuggestQueryString() {
