@@ -69,8 +69,7 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
 
     private CompassHighlighter.TextTokenizer textTokenizer;
 
-    public LuceneSearchEngineHighlighter(LuceneSearchEngineQuery searchEngineQuery,
-                                         IndexReader indexReader, LuceneSearchEngine searchEngine) throws SearchEngineException {
+    public LuceneSearchEngineHighlighter(Query query, IndexReader indexReader, LuceneSearchEngine searchEngine) throws SearchEngineException {
         this.indexReader = indexReader;
         this.highlighterManager = searchEngine.getSearchEngineFactory().getHighlighterManager();
         this.highlighterSettings = highlighterManager.getDefaultHighlighterSettings();
@@ -79,7 +78,7 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
 
         if (highlighterSettings.isRewriteQuery()) {
             try {
-                this.query = searchEngineQuery.getQuery().rewrite(indexReader);
+                this.query = query.rewrite(indexReader);
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to rewrite query [" + query + "] for highlighter", e);
             }

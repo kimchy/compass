@@ -225,11 +225,15 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
     }
 
     public boolean isSuggested() {
-        return suggested;
+        return this.suggested;
+    }
+
+    public Query getOriginalQuery() {
+        return this.origQuery;
     }
 
     public Query getQuery() {
-        return query;
+        return this.query;
     }
 
     public String toString() {

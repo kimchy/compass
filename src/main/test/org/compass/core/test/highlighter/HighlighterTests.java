@@ -54,7 +54,7 @@ public class HighlighterTests extends AbstractTestCase {
                 new String[]{LuceneEnvironment.Highlighter.SEPARATOR}, new String[]{","});
         settings.setGroupSettings(LuceneEnvironment.QueryParser.PREFIX, "noConstantScorePrefix",
                 new String[]{LuceneEnvironment.QueryParser.TYPE, LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY},
-                new String[] {DefaultLuceneQueryParser.class.getName(), "false"});
+                new String[]{DefaultLuceneQueryParser.class.getName(), "false"});
     }
 
     public void testSimpleHighlighting() {
@@ -166,6 +166,20 @@ public class HighlighterTests extends AbstractTestCase {
                 .setHighlighter("commaSeparator")
                 .multiResourceFragmentWithSeparator("text");
         assertEquals("<b>Lucene</b>,<b>Luke</b>", fragment);
+
+        tr.commit();
+    }
+
+    public void testSimpleHighlightingWithAlias() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        setUpMultiPropertyData(session, new String[]{"parent bla"});
+
+        CompassHits hits = session.queryBuilder().queryString("bla")
+                .setQueryParser("noConstantScorePrefix").toQuery().setAliases("parent").hits();
+        String fragment = hits.highlighter(0).fragment("text");
+        assertEquals("parent <b>bla</b>", fragment);
 
         tr.commit();
     }

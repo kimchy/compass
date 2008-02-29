@@ -80,7 +80,7 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
     public SearchEngineHighlighter getHighlighter() throws SearchEngineException {
         verifyWithinTransaction();
         if (highlighter == null) {
-            highlighter = new LuceneSearchEngineHighlighter(query, internalSearch.getReader(), searchEngine);
+            highlighter = new LuceneSearchEngineHighlighter(query.getOriginalQuery(), internalSearch.getReader(), searchEngine);
         }
         return highlighter.clear();
     }
