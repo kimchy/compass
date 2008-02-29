@@ -41,6 +41,8 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
 
     private boolean registerPostCommitListeneres = false;
 
+    private boolean marshallIds = false;
+
     public DefaultHibernateEntityLifecycleInjector() {
         this(false);
     }
@@ -57,13 +59,22 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
         this.registerPostCommitListeneres = registerPostCommitListeneres;
     }
 
+    /**
+     * Should the listener try and marshall ids for the event listener of post insert. Some
+     * Hibernate versions won't put the generated ids in the object that is inserted. Defaults
+     * to <code>false</code>.
+     */
+    public void setMarshallIds(boolean marshallIds) {
+        this.marshallIds = marshallIds;
+    }
+
     public void injectLifecycle(SessionFactory sessionFactory, HibernateGpsDevice device) throws HibernateGpsDeviceException {
 
         SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) sessionFactory;
         EventListeners eventListeners = sessionFactoryImpl.getEventListeners();
 
         // TODO add the ability to extend the system and register your own event listener (which maybe performs filtering)
-        HibernateEventListener hibernateEventListener = new HibernateEventListener(device);
+        HibernateEventListener hibernateEventListener = new HibernateEventListener(device, marshallIds);
 
         PostInsertEventListener[] postInsertEventListeners;
         if (registerPostCommitListeneres) {

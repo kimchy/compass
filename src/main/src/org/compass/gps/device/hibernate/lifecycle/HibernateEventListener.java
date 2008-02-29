@@ -47,9 +47,12 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
 
     private HibernateMirrorFilter mirrorFilter;
 
-    public HibernateEventListener(HibernateGpsDevice device) {
+    private boolean marshallIds;
+
+    public HibernateEventListener(HibernateGpsDevice device, boolean marshallIds) {
         this.device = device;
         this.mirrorFilter = device.getMirrorFilter();
+        this.marshallIds = marshallIds;
     }
 
     public void onPostInsert(final PostInsertEvent postInsertEvent) {
@@ -76,8 +79,10 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             }
             compassGps.executeForMirror(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    ((InternalCompassSession) session).getMarshallingStrategy().marshallIds(entity,
-                            postInsertEvent.getId());
+                    if (marshallIds) {
+                        ((InternalCompassSession) session).getMarshallingStrategy().marshallIds(entity,
+                                postInsertEvent.getId());
+                    }
                     session.create(entity);
                 }
             });

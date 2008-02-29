@@ -46,6 +46,8 @@ public abstract class AbstractCompassJpaEntityListener {
 
     protected abstract Compass getCompass();
 
+    private CompassTemplate compassTemplate;
+
     /**
      * Should exception be thrown during the mirroring operation, or just logged.
      * Defaults to <code>true</code>.
@@ -103,7 +105,7 @@ public abstract class AbstractCompassJpaEntityListener {
             if (log.isDebugEnabled()) {
                 log.debug("Creating [" + entity + "]");
             }
-            new CompassTemplate(getCompass()).execute(new CompassCallbackWithoutResult() {
+            getCompassTemplate().execute(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
                     session.create(entity);
                 }
@@ -129,7 +131,7 @@ public abstract class AbstractCompassJpaEntityListener {
             if (log.isDebugEnabled()) {
                 log.debug("Updating [" + entity + "]");
             }
-            new CompassTemplate(getCompass()).execute(new CompassCallbackWithoutResult() {
+            getCompassTemplate().execute(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
                     session.save(entity);
                 }
@@ -155,7 +157,7 @@ public abstract class AbstractCompassJpaEntityListener {
             if (log.isDebugEnabled()) {
                 log.debug("Removing [" + entity + "]");
             }
-            new CompassTemplate(getCompass()).execute(new CompassCallbackWithoutResult() {
+            getCompassTemplate().execute(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
                     session.delete(entity);
                 }
@@ -166,6 +168,13 @@ public abstract class AbstractCompassJpaEntityListener {
                 throw new JpaGpsDeviceException("Failed while removing [" + entity + "]", e);
             }
         }
+    }
+
+    private CompassTemplate getCompassTemplate() {
+        if (compassTemplate == null) {
+            compassTemplate = new CompassTemplate(getCompass());
+        }
+        return compassTemplate;
     }
 
 }
