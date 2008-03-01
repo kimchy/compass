@@ -413,13 +413,10 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public SearchEngineSpellCheckSuggestBuilder suggestBuilder(String word) {
-        checkIfStarted();
         return new DefaultLuceneSearchEngineSpellCheckSuggestBuilder(word, this);
     }
 
     public CompassQuery suggest(CompassQuery query) {
-        checkIfStarted();
-
         DefaultCompassQuery defaultCompassQuery = (DefaultCompassQuery) query;
         LuceneSearchEngineQuery searchEngineQuery = (LuceneSearchEngineQuery) defaultCompassQuery.getSearchEngineQuery();
         final CompassSpellChecker spellChecker = createSpellChecker(searchEngineQuery.getSubIndexes(), searchEngineQuery.getAliases());
@@ -468,7 +465,6 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public <T> T execute(final String[] subIndexes, final String[] aliases, final SpellCheckerCallback<T> callback) {
-        checkIfStarted();
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<T>() {
             public T doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 CompassSpellChecker spellChecker = createSpellChecker(subIndexes, aliases);
@@ -486,7 +482,6 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public CompassSpellChecker createSpellChecker(final String[] subIndexes, final String[] aliases) {
-        checkIfStarted();
         String[] calcSubIndexes = indexStore.calcSubIndexes(subIndexes, aliases);
         ArrayList<Searchable> searchers = new ArrayList<Searchable>(calcSubIndexes.length);
         ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
