@@ -378,5 +378,315 @@
       </value>
     </option>
   </component>
+  <component name="libraryTable">
+    <library name="Lucene">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/lucene/lucene-queries.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/lucene/lucene-analyzers.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/lucene/lucene-spellchecker.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/lucene/lucene-core.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/lucene/lucene-highlighter.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/lucene/lucene-snowball.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="Ant">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/ant/ant-launcher.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ant/ant-junit.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ant/ant.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="c3p0">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/c3p0/c3p0-0.9.0.2.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="antlr">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/antlr/antlr-2.7.6.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="cglib">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/cglib/cglib-nodep-2.1_3.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="clover">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/clover/clover.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="coherence">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/coherence/coherence.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/coherence/tangosol.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="dom4j">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/dom4j/jaxen-1.1-beta-7.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/dom4j/dom4j-1.6.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="eclipselink">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/eclipselink/eclipselink.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="ehcache">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/ehcache/ehcache-1.2.3.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="gigaspaces">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/gigaspaces/gs-lib.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gigaspaces/start.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gigaspaces/openspaces.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gigaspaces/jsk-platform.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gigaspaces/gs-boot.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gigaspaces/reggie.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gigaspaces/JSpaces.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/gigaspaces/jsk-lib.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="groovy">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/groovy/groovy-all-1.0-JSR-06.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="hibernate">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/hibernate/javassist.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-validator.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-annotations.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-commons-annotations.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/hibernate/jboss-archive-browsing.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-entitymanager.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="hsqldb">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/hsqldb/hsqldb.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="ibatis">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/ibatis/ibatis-common-2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ibatis/ibatis-sqlmap-2.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jee">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/jta.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/jaxrpc.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/rowset.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/jstl.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/connector.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/jms.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/activation.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/jdbc2_0-stdext.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/jsp-api.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/xml-apis.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/ejb.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/servlet-api.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/j2ee/mail.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jakarta-commons">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-dbcp.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-el.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-collections.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-pool.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-jexl-1.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-lang.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-commons/commons-logging.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jakarta-taglibs">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jakarta-taglibs/standard.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jboss">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jboss/jboss-ejb3.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jdo">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jdo/jdo2.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jgroups">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jgroups/jgroups-all.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jotm">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jotm/jotm-carol.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jotm/jotm.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jotm/jotm-jrmp-stub.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jpa">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jpa/persistence.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jpox">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jpox/bcel-5.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jpox/jpox.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jpox/jpox-enhancer.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="junit">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/junit/junit.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="log4j">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/log4j/log4j-1.2.13.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="mina">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/mina/mina-core-1.1.5.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="odmg">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/odmg/odmg-3.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="ognl">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/ognl/ognl-2.6.5.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="ojb">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/ojb/db-ojb-1.0.4.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="openjpa">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/openjpa/serp-1.13.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/openjpa/openjpa-1.0.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="spring">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/spring/spring.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/spring/spring-jpa.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/spring/spring-ojb.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/spring/spring-hibernate2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/spring/spring-hibernate3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/spring/spring-mock.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/spring/spring-jdo.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="sunfsjndi">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/sunfsjndi/providerutil-1.2.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/sunfsjndi/fscontext-1.2.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="toplink">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/toplink/toplink-essentials-agent.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/toplink/toplink-essentials.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="velocity">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/velocity/velocity-1.4.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="xpp">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/xpp/xpp3-1.1.3_8.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/xpp/pull-parser-2.1.10.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+  </component>
 </project>
 
