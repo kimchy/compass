@@ -1255,6 +1255,12 @@ public class LuceneEnvironment {
          * Boolen value. Defaults to <code>true</code>.
          */
         public static final String DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY = "allowConstantScorePrefixQuery";
+
+        /**
+         * The default operator when parsing query strings. Defaults to <code>AND</code>. Can be either
+         * <code>AND</code> or <code>OR</code>.
+         */
+        public static final String DEFAULT_PARSER_DEFAULT_OPERATOR = "defaultOperator";
     }
 
     public static abstract class LocalCache {

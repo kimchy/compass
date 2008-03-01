@@ -39,7 +39,7 @@ public class LuceneSearchEngineQueryStringBuilder implements SearchEngineQueryBu
 
     private String queryString;
 
-    private QueryParser.Operator operator = QueryParser.Operator.OR;
+    private QueryParser.Operator operator;
 
     private LuceneQueryParser queryParser;
 

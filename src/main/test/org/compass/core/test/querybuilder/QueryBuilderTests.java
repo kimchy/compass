@@ -106,7 +106,7 @@ public class QueryBuilderTests extends AbstractTestCase {
         setUpData(session);
 
         CompassQueryBuilder queryBuilder = session.queryBuilder();
-        CompassHits hits = queryBuilder.multiPropertyQueryString("test1 0002").add("mvalue1")
+        CompassHits hits = queryBuilder.multiPropertyQueryString("test1 OR 0002").add("mvalue1")
                 .add("mvalue2").toQuery().hits();
         assertEquals(2, hits.length());
 

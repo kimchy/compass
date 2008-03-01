@@ -28,6 +28,7 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassMappingAware;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.SearchEngineFactoryAware;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.SearchEngineQueryParseException;
@@ -51,9 +52,19 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
 
     private boolean allowConstantScorePrefixQuery;
 
+    private QueryParser.Operator defaultOperator;
+
     public void configure(CompassSettings settings) throws CompassException {
         allowLeadingWildcard = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_LEADING_WILDCARD, true);
         allowConstantScorePrefixQuery = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY, true);
+        String sDefaultOperator = settings.getSetting(LuceneEnvironment.QueryParser.DEFAULT_PARSER_DEFAULT_OPERATOR, "AND");
+        if ("and".equalsIgnoreCase(sDefaultOperator)) {
+            defaultOperator = QueryParser.Operator.AND;
+        } else if ("or".equalsIgnoreCase(sDefaultOperator)) {
+            defaultOperator = QueryParser.Operator.OR;
+        } else {
+            throw new ConfigurationException("Defualt query string operator [" + sDefaultOperator + "] not recognized.");
+        }
         if (log.isDebugEnabled()) {
             log.debug("Query Parser configured with allowLeadingWildcard [" + allowLeadingWildcard + "] and allowConstantScorePrefixQuery [" + allowConstantScorePrefixQuery + "]");
         }
@@ -69,7 +80,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
 
     public QueryHolder parse(String property, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
         CompassQueryParser queryParser = createQueryParser(property, analyzer, forceAnalyzer);
-        queryParser.setDefaultOperator(operator);
+        queryParser.setDefaultOperator(getOperator(operator));
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
         try {
@@ -86,7 +97,7 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
 
     public QueryHolder parse(String[] properties, QueryParser.Operator operator, Analyzer analyzer, boolean forceAnalyzer, String queryString) throws SearchEngineQueryParseException {
         CompassMultiFieldQueryParser queryParser = createMultiQueryParser(properties, analyzer, forceAnalyzer);
-        queryParser.setDefaultOperator(operator);
+        queryParser.setDefaultOperator(getOperator(operator));
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
         try {
@@ -99,6 +110,13 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         } finally {
             queryParser.close();
         }
+    }
+
+    private QueryParser.Operator getOperator(QueryParser.Operator operator) {
+        if (operator == null) {
+            return defaultOperator;
+        }
+        return operator;
     }
 
     protected CompassMapping getMapping() {

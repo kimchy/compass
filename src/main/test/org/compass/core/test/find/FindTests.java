@@ -54,7 +54,7 @@ public class FindTests extends AbstractTestCase {
         a2.setValue("value 2");
         session.save(a2);
 
-        Iterator<CompassHit> it = session.find("value 1").detach().iterator();
+        Iterator<CompassHit> it = session.find("mvalue:\"value 1\"").detach().iterator();
         assertEquals(id1, ((A) it.next().getData()).getId());
         try {
             it.next();
@@ -63,7 +63,7 @@ public class FindTests extends AbstractTestCase {
 
         }
 
-        for (CompassHit hit : session.find("value 1")) {
+        for (CompassHit hit : session.find("mvalue:\"value 1\"")) {
             assertEquals(id1, ((A) hit.getData()).getId());
         }
 
@@ -132,18 +132,18 @@ public class FindTests extends AbstractTestCase {
 
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
-        CompassHits hits = session.find("alias:a1 or alias:b1");
+        CompassHits hits = session.find("alias:a1 OR alias:b1");
         assertEquals(20, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setAliases(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setSubIndexes(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setSubIndexes(new String[]{"a1"})
                 .setAliases(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());
@@ -158,18 +158,18 @@ public class FindTests extends AbstractTestCase {
 
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
-        CompassHits hits = session.find("alias:a1 or alias:b1");
+        CompassHits hits = session.find("alias:a1 OR alias:b1");
         assertEquals(20, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setTypes(new Class[]{A.class}).hits();
         assertEquals(10, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setSubIndexes(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setSubIndexes(new String[]{"a1"})
                 .setTypes(new Class[]{A.class}).hits();
         assertEquals(10, hits.getLength());
@@ -183,7 +183,7 @@ public class FindTests extends AbstractTestCase {
 
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
-        CompassHits hits = session.find("alias:a1 or alias:b1");
+        CompassHits hits = session.find("alias:a1 OR alias:b1");
         assertEquals(10, hits.getLength());
 
         Explanation explanation = LuceneHelper.getLuceneSearchEngineHits(hits).explain(0);
@@ -197,10 +197,10 @@ public class FindTests extends AbstractTestCase {
     public void testExceptionOutsideOfATransaction() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
-        CompassHits hits = session.find("alias:a1 or alias:b1");
+        CompassHits hits = session.find("alias:a1 OR alias:b1");
         tr.commit();
         try {
-            session.find("alias:a1 or alias:b1");
+            session.find("alias:a1 OR alias:b1");
             fail();
         } catch (SearchEngineException e) {
             // all is well

@@ -41,7 +41,7 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
 
     private String queryString;
 
-    private QueryParser.Operator operator = QueryParser.Operator.OR;
+    private QueryParser.Operator operator;
 
     private ArrayList<String> propertyNames = new ArrayList<String>();
 

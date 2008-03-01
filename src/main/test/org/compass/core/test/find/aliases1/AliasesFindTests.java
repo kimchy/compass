@@ -36,18 +36,18 @@ public class AliasesFindTests extends AbstractTestCase {
 
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
-        CompassHits hits = session.find("alias:a1 or alias:b1");
+        CompassHits hits = session.find("alias:a1 OR alias:b1");
         assertEquals(20, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setAliases(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setSubIndexes(new String[]{"ab"}).hits();
         assertEquals(20, hits.getLength());
 
-        hits = session.queryBuilder().queryString("alias:a1 or alias:b1").toQuery()
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setSubIndexes(new String[]{"ab"})
                 .setAliases(new String[]{"a1"}).hits();
         assertEquals(10, hits.getLength());

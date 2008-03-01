@@ -177,10 +177,10 @@ public class SpellCheckTests extends AbstractTestCase {
 
         assertFalse(session.queryBuilder().queryString("five").useSpellCheck().toQuery().isSuggested());
 
-        assertEquals("fiv blak", session.queryBuilder().queryString("fiv blak").toQuery().toString());
+        assertEquals("+fiv +blak", session.queryBuilder().queryString("fiv blak").toQuery().toString());
         assertEquals(0, session.queryBuilder().queryString("fiv blak").toQuery().hits().length());
-        assertEquals("five black", session.queryBuilder().queryString("fiv blak").useSpellCheck().toQuery().toString());
-        assertEquals(2, session.queryBuilder().queryString("fiv blak").useSpellCheck().toQuery().hits().length());
+        assertEquals("+five +black", session.queryBuilder().queryString("fiv blak").useSpellCheck().toQuery().toString());
+        assertEquals(0, session.queryBuilder().queryString("fiv blak").useSpellCheck().toQuery().hits().length());
 
         tr.commit();
         session.close();
@@ -201,6 +201,14 @@ public class SpellCheckTests extends AbstractTestCase {
 
         assertFalse(query.isSuggested());
         assertEquals("fiv", query.toString());
+
+        query = session.queryBuilder().queryString("fiv blak").toQuery();
+        suggeted = query.getSuggestedQuery();
+        assertEquals(true, suggeted.isSuggested());
+        assertEquals("+five +black", suggeted.toString());
+
+        assertFalse(query.isSuggested());
+        assertEquals("+fiv +blak", query.toString());
 
         tr.commit();
         session.close();

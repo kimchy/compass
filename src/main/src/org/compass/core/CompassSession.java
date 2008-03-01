@@ -120,7 +120,7 @@ public interface CompassSession extends CompassOperations {
      * @return A term freqs builder
      * @throws CompassException
      */
-    CompassTermFreqsBuilder termFreqsBuilder(String[] names) throws CompassException;
+    CompassTermFreqsBuilder termFreqsBuilder(String ... names) throws CompassException;
 
     /**
      * Returns an Analyzer helper. Can be used to help analyze given texts.
