@@ -25,6 +25,7 @@ import org.compass.core.CompassTermFreq;
 import org.compass.core.CompassTermFreqsBuilder;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineTermFrequencies;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyLookup;
 import org.compass.core.spi.InternalCompassSession;
 
@@ -66,6 +67,20 @@ public class DefaultCompassTermFreqsBuilder implements CompassTermFreqsBuilder {
 
     public CompassTermFreqsBuilder setAliases(String[] aliases) {
         this.aliases = aliases;
+        return this;
+    }
+
+    public CompassTermFreqsBuilder setTypes(Class[] types) {
+        if (types == null) {
+            setAliases(null);
+            return this;
+        }
+        String[] aliases = new String[types.length];
+        for (int i = 0; i < types.length; i++) {
+            ResourceMapping resourceMapping = session.getMapping().getRootMappingByClass(types[i]);
+            aliases[i] = resourceMapping.getAlias();
+        }
+        setAliases(aliases);
         return this;
     }
 

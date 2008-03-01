@@ -69,6 +69,11 @@ public interface CompassTermFreqsBuilder {
     CompassTermFreqsBuilder setAliases(String[] aliases);
 
     /**
+     * Narrow down teh terms to specific classes (which map to aliases).
+     */
+    CompassTermFreqsBuilder setTypes(Class[] types);
+
+    /**
      * Narrow down the terms to specific sub indexes.
      */
     CompassTermFreqsBuilder setSubIndexes(String[] subIndexes);
