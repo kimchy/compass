@@ -297,5 +297,14 @@ public interface CompassQuery {
      */
     CompassHits hits() throws CompassException;
 
+    /**
+     * Returns the count of hits that match this query. Note, this will be faster than
+     * {@link CompassHitsOperations#length()}.
+     */
+    long count();
+
+    /**
+     * Clones the given query.
+     */
     Object clone() throws CloneNotSupportedException;
 }

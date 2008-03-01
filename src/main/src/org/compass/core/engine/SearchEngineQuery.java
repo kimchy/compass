@@ -57,5 +57,7 @@ public interface SearchEngineQuery {
 
     SearchEngineHits hits() throws SearchEngineException;
 
+    long count();
+
     Object clone() throws CloneNotSupportedException;
 }

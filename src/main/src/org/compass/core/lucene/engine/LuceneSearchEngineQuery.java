@@ -16,11 +16,13 @@
 
 package org.compass.core.lucene.engine;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -29,10 +31,12 @@ import org.apache.lucene.search.spans.SpanQuery;
 import org.compass.core.CompassQuery.SortDirection;
 import org.compass.core.CompassQuery.SortImplicitType;
 import org.compass.core.CompassQuery.SortPropertyType;
+import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryFilter;
 import org.compass.core.lucene.engine.queryparser.QueryHolder;
+import org.compass.core.lucene.search.CountHitCollector;
 
 /**
  * @author kimchy
@@ -162,6 +166,17 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
         throw new IllegalArgumentException("Faile to create lucene sort property type for [" + type + "]");
     }
 
+    public long count() {
+        LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(getSubIndexes(), getAliases());
+        CountHitCollector countHitCollector = new CountHitCollector();
+        try {
+            internalSearch.getSearcher().search(getQuery(), getLuceneFilter(), countHitCollector);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to count query [" + query + "]", e);
+        }
+        return countHitCollector.getTotalHits();
+    }
+
     public SearchEngineHits hits() {
         return this.searchEngine.find(this);
     }
@@ -213,6 +228,13 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
 
     public LuceneSearchEngineQueryFilter getFilter() {
         return this.filter;
+    }
+
+    public Filter getLuceneFilter() {
+        if (filter == null) {
+            return null;
+        }
+        return filter.getFilter();
     }
 
     public SearchEngineQuery rewrite() {

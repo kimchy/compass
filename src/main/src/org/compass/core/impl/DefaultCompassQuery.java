@@ -146,6 +146,10 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
         return searchEngineQuery.isSuggested();
     }
 
+    public long count() {
+        return searchEngineQuery.count();
+    }
+
     public CompassHits hits() throws CompassException {
         SearchEngineHits searchEngineHits = searchEngineQuery.hits();
         return new DefaultCompassHits(searchEngineHits, session, this);
