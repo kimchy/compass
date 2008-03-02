@@ -17,17 +17,21 @@
 package org.compass.core.engine;
 
 import org.compass.core.Property;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AbstractMultipleMapping;
 import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceAnalyzerController;
 import org.compass.core.mapping.ResourceIdMappingProvider;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.InternalAllMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.util.config.ConfigurationHelper;
 
@@ -35,6 +39,7 @@ import org.compass.core.util.config.ConfigurationHelper;
  * @author kimchy
  */
 public class MockResourceMapping extends AbstractMultipleMapping implements InternalResourceMapping, AliasMapping {
+
     public String[] getExtendingAliases() {
         return extendingAliases;
     }
@@ -74,10 +79,17 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Inte
 
     private SubIndexHash subIndexHash;
 
+    private AllMapping allMapping = new DefaultAllMapping();
+
     private MockResourceIdMapping idMapping = new MockResourceIdMapping();
 
     public MockResourceMapping(String alias) {
         this.alias = alias;
+        ((InternalAllMapping) allMapping).setExcludeAlias(false);
+        ((InternalAllMapping) allMapping).setOmitNorms(false);
+        ((InternalAllMapping) allMapping).setSupported(true);
+        ((InternalAllMapping) allMapping).setProperty(CompassEnvironment.All.DEFAULT_NAME);
+        ((InternalAllMapping) allMapping).setTermVector(Property.TermVector.NO);
     }
 
     public AliasMapping shallowCopy() {
@@ -203,10 +215,6 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Inte
         return null;
     }
 
-    public void setConfiguration(ConfigurationHelper configuration) {
-    }
-
-
     public CascadeMapping[] getCascadeMappings() {
         return null;
     }
@@ -233,5 +241,13 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Inte
     }
 
     public void setAnalyzer(String analyzer) {
+    }
+
+    public AllMapping getAllMapping() {
+        return allMapping;
+    }
+
+    public void setAllMapping(AllMapping allMapping) {
+        this.allMapping = allMapping;
     }
 }

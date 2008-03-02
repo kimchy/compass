@@ -387,6 +387,27 @@ session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommit
       </para>
     </sect2>
   </sect1>
+  
+  <sect1 id="core-searchengine-all">
+      <title>All Support</title>
+      
+      <para>When indexing an Object, XML, or a plain Resource, their respective properties are added to the index. These properties can later be searched explicitly, for example: <literal>title:fang</literal>. Most times users wish to search on all the different properties. For this reason, Compass, by default, supports the notion of an "all" property. The property is actually a combination of the different properties mapped to the search engine.</para>
+      
+      <para>The all property provides advance features such using declared mappings of given properties. For example, if a property is marked with a certain analyzer, that analyzer will be usde to add the property to the all property. If it is untokenized, it will be added without analyzing it. If it is configured with a certain boost value, that part of the all property, when "hit", will result in higher ranking of the result.</para>
+      
+      <para>
+          The all property allows for global configuration and per mapping configuration. The global configuration allows to disable the all feature completely (<literal>compass.property.all.enabled=false</literal>). It allows to exclude the alias from the all proeprty (<literal>compass.property.all.excludeAlias=true</literal>), and can set the term vector for the all property (<literal>compass.property.all.termVector=yes</literal> for example).
+      </para>
+      
+      <para>
+          The per mapping definitions allow to configure the above settings on a mapping level (they override the global ones). They are included in an <literal>all</literal> tag that should be the first one within the different mappings. Here is an example for OSEM:
+<programlisting><![CDATA[<compass-core-mapping>
+<[mapping] alias="test-alias">
+  <all enable="true" exclude-alias="true" term-vector="yes" omit-norms="yes" />
+</[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+  </sect1>
 
   <sect1 id="core-searchengine-subindexhash">
     <title>Sub Index Hashing</title>

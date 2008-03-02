@@ -4,8 +4,8 @@
 
 <compass-core-mapping package="org.compass.core.test.querybuilder.morelikethis">
 
-    <class name="A" alias="a" all-term-vector="yes">
-
+    <class name="A" alias="a">
+        <all term-vector="yes" />
         <id name="id" accessor="field"/>
 
         <property name="value" accessor="field">

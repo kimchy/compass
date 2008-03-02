@@ -29,6 +29,7 @@ import org.apache.lucene.index.Payload;
 import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.InternalProperty;
@@ -55,6 +56,8 @@ public class AllAnalyzer extends Analyzer {
 
     private ResourceMapping resourceMapping;
 
+    private AllMapping allMapping;
+
     private LuceneSearchEngine searchEngine;
 
     private ArrayList<Token> tokens = new ArrayList<Token>();
@@ -68,13 +71,14 @@ public class AllAnalyzer extends Analyzer {
         this.resource = resource;
         this.resourceMapping = resource.resourceKey().getResourceMapping();
         this.searchEngine = searchEngine;
+        this.allMapping = resourceMapping.getAllMapping();
         this.boostSupport = searchEngine.getSearchEngineFactory().getLuceneSettings().isAllPropertyBoostSupport();
 
-        if (!resourceMapping.isAllSupported()) {
+        if (!allMapping.isSupported()) {
             return;
         }
 
-        if (!resourceMapping.isExcludeAliasFromAll()) {
+        if (!allMapping.isExcludeAlias()) {
             // add the alias to all prpoerty (lowecased, so finding it will be simple)
             tokens.add(new Token(resource.getAlias().toLowerCase(), 0, resource.getAlias().length()));
             // add the extended property
@@ -168,13 +172,13 @@ public class AllAnalyzer extends Analyzer {
     }
 
     private TokenStream wrapTokenStreamIfNeeded(String fieldName, TokenStream retVal) {
-        if (!resourceMapping.isAllSupported()) {
+        if (!allMapping.isSupported()) {
             return retVal;
         }
         ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(fieldName);
         if (resourcePropertyMapping == null) {
             if (!searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(fieldName)) {
-                if (resourceMapping.isIncludePropertiesWithNoMappingsInAll()) {
+                if (allMapping.isIncludePropertiesWithNoMappings()) {
                     allTokenStreamCollector.setTokenStream(retVal);
                     allTokenStreamCollector.updateMapping(resource, resourcePropertyMapping);
                     retVal = allTokenStreamCollector;

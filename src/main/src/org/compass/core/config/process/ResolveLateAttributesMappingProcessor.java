@@ -18,14 +18,16 @@ package org.compass.core.config.process;
 
 import java.util.Iterator;
 
+import org.compass.core.Property;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
-import org.compass.core.mapping.AbstractResourceMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.internal.InternalAllMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 
 /**
@@ -49,10 +51,23 @@ public class ResolveLateAttributesMappingProcessor implements MappingProcessor {
                     classMapping.setSupportUnmarshall(settings.getSettingAsBoolean(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, true));
                 }
             }
-            if (m instanceof AbstractResourceMapping) {
-                AbstractResourceMapping resourceMapping = (AbstractResourceMapping) m;
-                if (resourceMapping.isAllSupported() == null) {
-                    resourceMapping.setAllSupported(settings.getSettingAsBoolean(CompassEnvironment.All.ENABLED, true));
+            if (m instanceof ResourceMapping) {
+                ResourceMapping resourceMapping = (ResourceMapping) m;
+                if (resourceMapping.getAllMapping().isSupported() == null) {
+                    ((InternalAllMapping) resourceMapping.getAllMapping()).setSupported(settings.getSettingAsBoolean(CompassEnvironment.All.ENABLED, true));
+                }
+                if (resourceMapping.getAllMapping().isExcludeAlias() == null) {
+                    ((InternalAllMapping) resourceMapping.getAllMapping()).setExcludeAlias(settings.getSettingAsBoolean(CompassEnvironment.All.EXCLUDE_ALIAS, false));
+                }
+                if (resourceMapping.getAllMapping().isOmitNorms() == null) {
+                    ((InternalAllMapping) resourceMapping.getAllMapping()).setOmitNorms(settings.getSettingAsBoolean(CompassEnvironment.All.OMIT_NORMS, false));
+                }
+                if (resourceMapping.getAllMapping().getProperty() == null) {
+                    ((InternalAllMapping) resourceMapping.getAllMapping()).setProperty(settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
+                }
+                if (resourceMapping.getAllMapping().getTermVector() == null) {
+                    ((InternalAllMapping) resourceMapping.getAllMapping()).setTermVector(Property.TermVector.fromString(
+                            settings.getSetting(CompassEnvironment.All.TERM_VECTOR, Property.TermVector.NO.toString())));
                 }
             }
         }

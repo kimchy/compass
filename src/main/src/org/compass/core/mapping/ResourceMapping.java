@@ -16,7 +16,6 @@
 
 package org.compass.core.mapping;
 
-import org.compass.core.Property;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.engine.subindex.SubIndexHash;
 
@@ -71,40 +70,9 @@ public interface ResourceMapping extends AliasMapping {
     boolean isRoot();
 
     /**
-     * Returns <code>true</code> if the "all" property will be created for the resource. The
-     * all property is a special property that have all the other resource values in it to be
-     * searchable.
+     * Returns a set of settings associated with the all mappings.
      */
-    Boolean isAllSupported();
-
-    /**
-     * Should the alias be excluded from the "all" property. Default should be <code>false</code>.
-     */
-    boolean isExcludeAliasFromAll();
-
-    /**
-     * Returns <code>true</code> if when adding the different {@link org.compass.core.Resource} properties,
-     * properties with no mappings will be added to the "all" property. A resoruce can have property with no
-     * mappings if it was added programtically to the resource.
-     */
-    boolean isIncludePropertiesWithNoMappingsInAll();
-
-    /**
-     * Returns the name of the all property for the given resoruce.
-     */
-    String getAllProperty();
-
-    /**
-     * Returns the term vector configuration for the given all proeprty.
-     */
-    Property.TermVector getAllTermVector();
-
-    /**
-     * Expert:
-     * If set, omit normalization factors associated with this indexed field.
-     * This effectively disables indexing boosts and length normalization for this field.
-     */
-    boolean isAllOmitNorms();
+    AllMapping getAllMapping();
 
     /**
      * Returns all mappings that represent ids of a resource.

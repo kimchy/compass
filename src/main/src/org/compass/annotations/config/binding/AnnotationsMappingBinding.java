@@ -47,6 +47,7 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -261,20 +262,28 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             log.trace("Alias [" + classMapping.getAlias() + "] is mapped to sub index hash [" + classMapping.getSubIndexHash() + "]");
         }
 
-        if (searchable.enableAll() == EnableAll.TRUE) {
-            classMapping.setAllSupported(true);
-        } else if (searchable.enableAll() == EnableAll.FALSE) {
-            classMapping.setAllSupported(false);
-        }
-        classMapping.setExcludeAliasFromAll(searchable.excludeAliasFromAll());
+        DefaultAllMapping allMapping = new DefaultAllMapping();
         SearchableAllMetaData allMetaData = annotationClass.getAnnotation(SearchableAllMetaData.class);
         if (allMetaData != null) {
-            if (StringUtils.hasLength(allMetaData.name())) {
-                classMapping.setAllProperty(allMetaData.name());
+            if (allMetaData.enable() == EnableAll.TRUE) {
+                allMapping.setSupported(true);
+            } else if (allMetaData.enable() == EnableAll.FALSE) {
+                allMapping.setSupported(false);
             }
-            classMapping.setAllTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
-            classMapping.setAllOmitNorms(allMetaData.omitNorms());
+            if (allMetaData.excludeAlias() == ExcludeAlias.TRUE) {
+                allMapping.setExcludeAlias(true);
+            } else if (allMetaData.excludeAlias() == ExcludeAlias.FALSE) {
+                allMapping.setExcludeAlias(false);
+            }
+            if (StringUtils.hasLength(allMetaData.name())) {
+                allMapping.setProperty(allMetaData.name());
+            }
+            if (allMetaData.termVector() != TermVector.NA) {
+                allMapping.setTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
+            }
+            allMapping.setOmitNorms(allMetaData.omitNorms());
         }
+        classMapping.setAllMapping(allMapping);
 
         classMapping.setBoost(searchable.boost());
         classMapping.setRoot(searchable.root());

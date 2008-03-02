@@ -16,15 +16,21 @@
 
 package org.compass.core.mapping.internal;
 
+import org.compass.core.Property;
 import org.compass.core.mapping.AllMapping;
-import org.compass.core.mapping.ResourceMapping;
 
 /**
  * @author kimchy
  */
-public interface InternalResourceMapping extends ResourceMapping {
+public interface InternalAllMapping extends AllMapping {
 
-    void setUIDPath(String uid);
+    void setSupported(Boolean supported);
 
-    void setAllMapping(AllMapping allMapping);
+    void setProperty(String property);
+
+    void setOmitNorms(Boolean omitNorms);
+
+    void setExcludeAlias(Boolean excludeAlias);
+
+    void setTermVector(Property.TermVector termVector);
 }

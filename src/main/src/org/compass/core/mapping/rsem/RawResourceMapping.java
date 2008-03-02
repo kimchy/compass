@@ -16,9 +16,16 @@
 
 package org.compass.core.mapping.rsem;
 
-import org.compass.core.mapping.*;
-
 import java.util.Iterator;
+
+import org.compass.core.mapping.AbstractResourceMapping;
+import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.InvalidMappingException;
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.PostProcessingMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
@@ -37,10 +44,6 @@ public class RawResourceMapping extends AbstractResourceMapping implements PostP
         RawResourceMapping copy = new RawResourceMapping();
         shallowCopy(copy);
         return copy;
-    }
-
-    public boolean isIncludePropertiesWithNoMappingsInAll() {
-        return true;
     }
 
     public int addMapping(Mapping mapping) {

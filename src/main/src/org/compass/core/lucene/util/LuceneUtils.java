@@ -40,8 +40,8 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
-import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.all.AllAnalyzer;
+import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalResource;
@@ -114,18 +114,9 @@ public abstract class LuceneUtils {
 
     public static Analyzer addAllProperty(InternalResource resource, Analyzer analyzer, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) throws SearchEngineException {
         AllAnalyzer allAnalyzer = new AllAnalyzer(analyzer, resource, searchEngine);
-        LuceneSettings luceneSettings = searchEngine.getSearchEngineFactory().getLuceneSettings();
-        String allP = resourceMapping.getAllProperty();
-        if (allP == null) {
-            allP = luceneSettings.getAllProperty();
-        }
-        Property.TermVector allTermVector = resourceMapping.getAllTermVector();
-        if (allTermVector == null) {
-            allTermVector = luceneSettings.getAllPropertyTermVector();
-        }
-
-        Property property = searchEngine.createProperty(allP, allAnalyzer.createAllTokenStream(), allTermVector);
-        property.setOmitNorms(resourceMapping.isAllOmitNorms());
+        AllMapping allMapping = resourceMapping.getAllMapping();
+        Property property = searchEngine.createProperty(allMapping.getProperty(), allAnalyzer.createAllTokenStream(), allMapping.getTermVector());
+        property.setOmitNorms(allMapping.isOmitNorms());
         resource.addProperty(property);
         return allAnalyzer;
     }

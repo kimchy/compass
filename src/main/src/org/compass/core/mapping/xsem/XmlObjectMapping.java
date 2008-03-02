@@ -54,10 +54,6 @@ public class XmlObjectMapping extends AbstractResourceMapping implements XPathEn
         return copy;
     }
 
-    public boolean isIncludePropertiesWithNoMappingsInAll() {
-        return true;
-    }
-
     public int addMapping(Mapping mapping) {
         // no duplicate mapping names are allowed
         if (mapping instanceof ResourcePropertyMapping) {

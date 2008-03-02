@@ -157,10 +157,6 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         return pathMappings.get(path);
     }
 
-    public boolean isIncludePropertiesWithNoMappingsInAll() {
-        return true;
-    }
-
     public ClassPropertyMapping.ManagedId getManagedId() {
         return managedId;
     }

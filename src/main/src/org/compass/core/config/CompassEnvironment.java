@@ -495,6 +495,22 @@ public class CompassEnvironment {
         public static final String ENABLED = "compass.property.all.enabled";
 
         /**
+         * Should the all property exclude the alias from all. Defaults to <code>false</code>.
+         *
+         * <p>Note, this can be explicitly set on the mapping level, which will then be used
+         * instead of this global setting.
+         */
+        public static final String EXCLUDE_ALIAS = "compass.property.all.excludeAlias";
+
+        /**
+         * Should the all property omit norms. Defaults to <code>false</code>.
+         *
+         * <p>Note, this can be explicitly set on the mapping level, which will then be used
+         * instead of this global setting.
+         */
+        public static final String OMIT_NORMS = "compass.property.all.omitNorms";
+
+        /**
          * Should the all property honor boost settings on sepecific proeprties when searching.
          * Defaults to <code>true</code>.
          *

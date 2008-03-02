@@ -7,6 +7,10 @@ VERSION 2.0 M3
 1. Updated Lucene to version 2.3.1. Please update also Lucene jars.
 2. The default operator when searching changed from OR to AND (which makes much more sense). Changing back to OR
    can be done by setting: compass.engine.queryParser.default.defaultOperator=OR.
+3. Moved @Searchable#enableAll to @SearchableAllMetaData#enable annotation.
+4. Moved @Searchable#exlcudeAliasFromAll to @SearchableAllMetaData#excludeAlias
+5. Moved related all attributes (prefixed with all) from resource/class/xml-object mappings to an internal all
+   attribute (sorry ...).
 
 VERSION 2.0 M2 (February 19, 2008)
 ==================================

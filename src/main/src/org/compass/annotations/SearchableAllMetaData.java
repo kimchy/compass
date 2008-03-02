@@ -24,15 +24,13 @@ import java.lang.annotation.Target;
 /**
  * For {@link Searchable} classes, allows to control the "all" meta-data
  * definitions per searchable class.
- * <p/>
- * The "all" meta-data is an internal meta-data, which holds
+ *
+ * <p>The "all" meta-data is an internal meta-data, which holds
  * searchable information of all the class searchable content.
- * <p/>
- * The definitions here are per searchable class definitions. For global
+ *
+ * <p>The definitions here are per searchable class definitions. For global
  * control of the "all" meta-data see {@link org.compass.core.config.CompassEnvironment.All}
  * settings.
- * <p/>
- * To enable or disable the "all" meta-data, see {@link Searchable#enableAll}.
  *
  * @author kimchy
  * @see Searchable
@@ -48,10 +46,25 @@ public @interface SearchableAllMetaData {
     String name() default "";
 
     /**
+     * Controls if the searchable class will create it's own internal "all"
+     * meta-data. The "all" meta-data holds searchable information of all
+     * the class searchable content.
+     *
+     * <p>If using the "all" meta-data, it can be controlled using the
+     * {@link SearchableAllMetaData} annotation.
+     */
+    EnableAll enable() default EnableAll.NA;
+
+    /**
      * The term vector for the "all" meta-data.
      */
     TermVector termVector() default TermVector.NO;
 
+    /**
+     * Controls is the alias will be stored within the "all" proeprty or not.
+     */
+    ExcludeAlias excludeAlias() default ExcludeAlias.NA;
+    
     /**
      * Expert:
      * If set, omit normalization factors associated with this indexed field.

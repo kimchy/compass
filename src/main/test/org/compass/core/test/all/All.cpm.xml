@@ -14,7 +14,8 @@
         </property>
     </class>
 
-    <class name="A" alias="a2" all="true" all-metadata="everything">
+    <class name="A" alias="a2">
+        <all enable="true" name="everything" />
         <id name="id" />
         <property name="value1">
             <meta-data>mvalue1</meta-data>
@@ -24,7 +25,8 @@
         </property>
     </class>
 
-    <class name="A" alias="a3" all="false">
+    <class name="A" alias="a3">
+        <all enable="false" />
         <id name="id" />
         <property name="value1">
             <meta-data>mvalue1</meta-data>
@@ -34,7 +36,8 @@
         </property>
     </class>
 
-    <class name="A" alias="a4" all="true">
+    <class name="A" alias="a4">
+        <all enable="true" />
         <id name="id" />
         <constant exclude-from-all="true">
             <meta-data>cvalue1</meta-data>
@@ -56,7 +59,8 @@
         </property>
     </class>
 
-    <class name="A" alias="a5" all="true" all-term-vector="yes">
+    <class name="A" alias="a5">
+        <all enable="true" term-vector="yes" />
         <id name="id" />
         <property name="value1">
             <meta-data>mvalue1</meta-data>
@@ -66,7 +70,8 @@
         </property>
     </class>
 
-    <class name="A" alias="a6" all="true" all-term-vector="positions">
+    <class name="A" alias="a6">
+        <all enable="true" term-vector="positions" />
         <id name="id" />
         <property name="value1">
             <meta-data>mvalue1</meta-data>
@@ -76,7 +81,8 @@
         </property>
     </class>
 
-    <class name="A" alias="a7" all="true" all-term-vector="offsets">
+    <class name="A" alias="a7">
+        <all enable="true" term-vector="offsets" />
         <id name="id" />
         <property name="value1">
             <meta-data>mvalue1</meta-data>
@@ -86,7 +92,8 @@
         </property>
     </class>
 
-    <class name="A" alias="a8" all="true" all-term-vector="positions_offsets">
+    <class name="A" alias="a8">
+        <all enable="true" term-vector="positions_offsets" />
         <id name="id" />
         <property name="value1">
             <meta-data>mvalue1</meta-data>
@@ -106,7 +113,8 @@
         </property>
     </class>
 
-    <class name="A" alias="a9" exclude-alias-from-all="true">
+    <class name="A" alias="a9">
+        <all exclude-alias="true" />
         <id name="id" />
         <property name="value1">
             <meta-data>value1</meta-data>

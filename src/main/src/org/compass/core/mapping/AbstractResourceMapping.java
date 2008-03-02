@@ -22,9 +22,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.compass.core.Property;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.engine.subindex.SubIndexHash;
+import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 
 /**
@@ -47,15 +47,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private boolean isRoot = true;
 
-    private Boolean isAllSupported;
-
-    private boolean excludeAliasFromAll = false;
-
-    private String allProperty;
-
-    private Property.TermVector allTermVector = Property.TermVector.NO;
-
-    private boolean allOmitNorms = false;
+    private AllMapping allMapping = new DefaultAllMapping();
 
     private String uidProperty;
 
@@ -87,6 +79,14 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         return idMappings;
     }
 
+    public AllMapping getAllMapping() {
+        return allMapping;
+    }
+
+    public void setAllMapping(AllMapping allMapping) {
+        this.allMapping = allMapping;
+    }
+
     public ResourcePropertyMapping[] getResourceIdMappings() {
         if (idPropertyMappings == null) {
             buildResourceIds();
@@ -105,14 +105,11 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         resourceMapping.setSubIndexHash(getSubIndexHash());
         resourceMapping.setExtendedAliases(getExtendedAliases());
         resourceMapping.setExtendingAliases(getExtendingAliases());
-        resourceMapping.setAllProperty(getAllProperty());
-        resourceMapping.setAllSupported(isAllSupported());
         resourceMapping.setRoot(isRoot());
         resourceMapping.setBoost(getBoost());
-        resourceMapping.setAllTermVector(getAllTermVector());
         resourceMapping.setAnalyzer(getAnalyzer());
-        resourceMapping.setExcludeAliasFromAll(isExcludeAliasFromAll());
         resourceMapping.setUIDPath(getUIDPath());
+        resourceMapping.setAllMapping(getAllMapping().copy());
     }
 
     public void postProcess() throws MappingException {
@@ -279,44 +276,12 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         this.isRoot = isRoot;
     }
 
-    public String getAllProperty() {
-        return allProperty;
-    }
-
-    public void setAllProperty(String allProperty) {
-        this.allProperty = allProperty;
-    }
-
-    public Boolean isAllSupported() {
-        return isAllSupported;
-    }
-
-    public void setAllSupported(Boolean isAllSupported) {
-        this.isAllSupported = isAllSupported;
-    }
-
     public SubIndexHash getSubIndexHash() {
         return subIndexHash;
     }
 
     public void setSubIndexHash(SubIndexHash subIndexHash) {
         this.subIndexHash = subIndexHash;
-    }
-
-    public Property.TermVector getAllTermVector() {
-        return allTermVector;
-    }
-
-    public void setAllTermVector(Property.TermVector allTermVector) {
-        this.allTermVector = allTermVector;
-    }
-
-    public boolean isAllOmitNorms() {
-        return allOmitNorms;
-    }
-
-    public void setAllOmitNorms(boolean allOmitNorms) {
-        this.allOmitNorms = allOmitNorms;
     }
 
     public boolean hasSpecificAnalyzerPerResourceProperty() {
@@ -353,13 +318,5 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     public void setCascades(CascadeMapping[] cascades) {
         this.cascades = cascades;
-    }
-
-    public boolean isExcludeAliasFromAll() {
-        return excludeAliasFromAll;
-    }
-
-    public void setExcludeAliasFromAll(boolean excludeAliasFromAll) {
-        this.excludeAliasFromAll = excludeAliasFromAll;
     }
 }

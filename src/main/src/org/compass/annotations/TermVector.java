@@ -23,6 +23,11 @@ package org.compass.annotations;
  */
 public enum TermVector {
     /**
+     * Not applicable. Where possible, will use a global setting for this.
+     */
+    NA,
+
+    /**
      * Do not store term vectors.
      */
     NO,

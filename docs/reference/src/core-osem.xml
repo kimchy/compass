@@ -872,11 +872,10 @@ public class Daughter extends Child {
         extends="a comma separated list of aliases to extend"
         support-unmarshall="true|false"
         boost="boost value for the class"
-        all="true|false"
-        all-term-vector="no|yes|positions|offsets|positions_offsets"
-        all-metadata="all meta-data"
         converter="converter lookup name"
 >
+    all?,
+    sub-index-hash?.
     (id)*,
     parent?,
     (analyzer?),
@@ -932,18 +931,6 @@ public class Daughter extends Child {
             <row>
               <entry>boost (optional, defaults to <literal>1.0</literal>)</entry>
               <entry>Specifies the boost level for the class.</entry>
-            </row>
-            <row>
-              <entry>all (optional, defaults to <literal>true</literal>)</entry>
-              <entry>Controls if the searchable class will create it's own internal "all" meta-data. The "all" meta-data holds searchable information of all the class searchable content.</entry>
-            </row>
-            <row>
-              <entry>all-term-vector (optional, defaults to configuration setting <literal>compass.property.all.termVector</literal>)</entry>
-              <entry>The term vector value of the all property.</entry>
-            </row>
-            <row>
-              <entry>all-metadata (optional, defaults to configuration setting <literal>compass.property.all</literal>)</entry>
-              <entry>The name of the all property.</entry>
             </row>
             <row>
               <entry>converter (optional)</entry>

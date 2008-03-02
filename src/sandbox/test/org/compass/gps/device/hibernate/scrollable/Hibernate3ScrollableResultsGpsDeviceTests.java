@@ -156,8 +156,12 @@ public class Hibernate3ScrollableResultsGpsDeviceTests extends TestCase {
 
     protected void tearDown() throws Exception {
         sessionFactory.close();
-        gps.stop();
-        compass.close();
+        if (gps != null) {
+            gps.stop();
+        }
+        if (compass != null) {
+            compass.close();
+        }
         jotm.stop();
         super.tearDown();
     }

@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.internal;
+package org.compass.annotations.test.all;
 
-import org.compass.core.mapping.AllMapping;
-import org.compass.core.mapping.ResourceMapping;
+import org.compass.annotations.EnableAll;
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableAllMetaData;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
  */
-public interface InternalResourceMapping extends ResourceMapping {
+@Searchable
+@SearchableAllMetaData(enable = EnableAll.FALSE)
+public class A1 {
 
-    void setUIDPath(String uid);
+    @SearchableId
+    int id;
 
-    void setAllMapping(AllMapping allMapping);
+    @SearchableProperty
+    String value;
 }

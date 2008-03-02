@@ -3,7 +3,7 @@
 
 <compass-core-mapping package="org.compass.core.test.component.inheritance1">
 
-    <class name="FatherImpl" alias="father" root="true" all="true">
+    <class name="FatherImpl" alias="father" root="true">
         <id name="id" accessor="field"/>
         <property name="name" accessor="field">
             <meta-data>name</meta-data>

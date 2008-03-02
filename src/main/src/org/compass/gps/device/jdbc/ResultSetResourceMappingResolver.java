@@ -25,10 +25,10 @@ import org.compass.core.CompassException;
 import org.compass.core.Property;
 import org.compass.core.config.InputStreamMappingResolver;
 import org.compass.gps.device.jdbc.mapping.AutoGenerateMapping;
-import org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping;
-import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
 import org.compass.gps.device.jdbc.mapping.ColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping;
+import org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping;
+import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
 
 /**
  * A Compass::Core <code>MappingResolver</code>, which can generate compass
@@ -102,14 +102,17 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
         if (subIndex != null) {
             sb.append(" sub-index=\"").append(subIndex).append("\"");
         }
-        sb.append(" all=\"").append(all).append("\"");
+        sb.append(" >");
+
+        sb.append("<all enable=\"").append(all).append("\" ");
         if (allMetaData != null) {
-            sb.append(" all-metadata=\"").append(allMetaData).append("\"");
+            sb.append(" name=\"").append(allMetaData).append("\"");
         }
         if (allTermVector != null) {
-            sb.append(" all-term-vector=\"").append(Property.TermVector.toString(allTermVector)).append("\"");
+            sb.append(" term-vector=\"").append(Property.TermVector.toString(allTermVector)).append("\"");
         }
-        sb.append(" >");
+        sb.append(" />");
+
         if (mapping.idMappingsSize() == 0) {
             if (mapping instanceof AutoGenerateMapping) {
                 ((AutoGenerateMapping) mapping).generateMappings(this.dataSource);

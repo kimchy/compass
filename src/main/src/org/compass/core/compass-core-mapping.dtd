@@ -11,6 +11,7 @@
     <!ATTLIST compass-core-mapping package CDATA #IMPLIED>
 
 <!ELEMENT xml-object (
+    all?,
     sub-index-hash?,
     xml-id*,
     (xml-analyzer?),
@@ -22,11 +23,6 @@
     <!ATTLIST xml-object sub-index CDATA #IMPLIED>
     <!ATTLIST xml-object xpath CDATA #IMPLIED>
     <!ATTLIST xml-object analyzer CDATA #IMPLIED>
-    <!ATTLIST xml-object all (true|false) "true">
-    <!ATTLIST xml-object all-metadata CDATA #IMPLIED>
-    <!ATTLIST xml-object all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
-    <!ATTLIST xml-object all-omit-norms (true|false) "false">
-    <!ATTLIST xml-object exclude-alias-from-all (true|false) "false">
     <!ATTLIST xml-object boost CDATA #IMPLIED>
 
 <!ELEMENT xml-id EMPTY
@@ -87,7 +83,8 @@
     <!ATTLIST resource-contract extends CDATA #IMPLIED>
     <!ATTLIST resource-contract analyzer CDATA #IMPLIED>
 
-<!ELEMENT resource ( 
+<!ELEMENT resource (
+    all?,
     sub-index-hash?,
     resource-id*,
     (resource-analyzer?),
@@ -98,11 +95,6 @@
     <!ATTLIST resource sub-index CDATA #IMPLIED>
     <!ATTLIST resource extends CDATA #IMPLIED>
     <!ATTLIST resource analyzer CDATA #IMPLIED>
-    <!ATTLIST resource all (true|false) "true">
-    <!ATTLIST resource all-metadata CDATA #IMPLIED>
-    <!ATTLIST resource all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
-    <!ATTLIST resource all-omit-norms (true|false) "false">
-    <!ATTLIST resource exclude-alias-from-all (true|false) "false">
     <!ATTLIST resource boost CDATA #IMPLIED>
 
 <!ELEMENT resource-id EMPTY
@@ -161,6 +153,7 @@
     mapped properties/fields.
 -->
 <!ELEMENT class (
+    all?,
     sub-index-hash?,
     (id|id-component)*,
     parent?,
@@ -223,30 +216,6 @@
         If not set, the actual class will be persisted to the index.
     -->
     <!ATTLIST class poly-class CDATA #IMPLIED>
-    <!--
-        Controls if the searchable class will create it's own internal "all" meta-data.
-        The "all" meta-data holds searchable information of all the class searchable content.
-
-        Defaults to true.
-    -->
-    <!ATTLIST class all (true|false) "true">
-    <!--
-        The name of the all meta-data.
-
-        Defaults to configuration setting compass.property.all .
-    -->
-    <!ATTLIST class all-metadata CDATA #IMPLIED>
-    <!--
-        The term vector value of the all meta-data.
-
-        Defaults to configuration setting compass.property.all.termVector .
-    -->
-    <!ATTLIST class all-term-vector (no|yes|positions|offsets|positions_offsets)  #IMPLIED>
-    
-    <!ATTLIST class all-omit-norms (true|false) "false">
-
-    <!ATTLIST class exclude-alias-from-all (true|false) "false">
-
     <!--
         The global converter lookup name registered with the configuration. Responsible for converting
         the ClassMapping definition.
@@ -398,6 +367,15 @@
     setting*
 )>
     <!ATTLIST sub-index-hash type CDATA #REQUIRED>
+
+<!ELEMENT all EMPTY
+>
+    <!ATTLIST all enable (true|false) #IMPLIED>
+    <!ATTLIST all name CDATA  #IMPLIED>
+    <!ATTLIST all term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
+    <!ATTLIST all omit-norms (true|false) #IMPLIED>
+    <!ATTLIST all exclude-alias (true|false) #IMPLIED>
+
 
 <!ELEMENT setting EMPTY
 >

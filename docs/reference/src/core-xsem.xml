@@ -253,10 +253,9 @@ session.save(xmlObject);
        sub-index="sub index name"
        xpath="optional xpath expression"
        analyzer="name of the analyzer"
-       all="true|false"
-       all-term-vector="no|yes|positions|offsets|positios_offsets"
-       all-metadata="name of all metadata"
  />
+     all?,
+     sub-index-hash?,
      xml-id*,
      (xml-analyzer?),
      (xml-boost?),
@@ -290,18 +289,6 @@ session.save(xmlObject);
                     <row>
                       <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
                       <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>xml-analyzer</literal> mapping (a child mapping of xml object mapping) (for an xml element that controls the analyzer), the analyzer attribute will have no effects.</entry>
-                    </row>
-                    <row>
-                      <entry>all (optional, defaults to <literal>true</literal>)</entry>
-                      <entry>Specifies if when persisting the <literal>XmlObject</literal>, Compass::Core will create the all property (which represents all the properties/meta-data values).</entry>
-                    </row>
-                    <row>
-                      <entry>all-term-vector (optional, defaults to configuration setting <literal>compass.property.all.termVector</literal>)</entry>
-                      <entry>The term vector value of the all property.</entry>
-                    </row>
-                    <row>
-                      <entry>all-metadata (optional, defaults to the setting)</entry>
-                      <entry>The name of the all meta-data (property).</entry>
                     </row>
                   </tbody>
                 </tgroup>

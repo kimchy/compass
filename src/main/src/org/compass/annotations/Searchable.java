@@ -124,21 +124,6 @@ public @interface Searchable {
     float boost() default 1.0f;
 
     /**
-     * Controls if the searchable class will create it's own internal "all"
-     * meta-data. The "all" meta-data holds searchable information of all
-     * the class searchable content.
-     *
-     * <p>If using the "all" meta-data, it can be controlled using the
-     * {@link SearchableAllMetaData} annotation.
-     */
-    EnableAll enableAll() default EnableAll.NA;
-
-    /**
-     * Controls is the alias will be stored within the "all" proeprty or not.
-     */
-    boolean excludeAliasFromAll() default false;
-
-    /**
      * Defines if the searchable class is a root class. A root class is a top
      * level searchable class. You should define the searchable class with <code>false</code>
      * if it only acts as mapping definitions for a {@link SearchableComponent}.

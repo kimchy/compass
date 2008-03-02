@@ -38,6 +38,7 @@ import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -165,28 +166,11 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         bindExtends(xmlObjectConf, xmlObjectMapping);
 
+        bindAll(xmlObjectConf, xmlObjectMapping);
+
         String analyzer = xmlObjectConf.getAttribute("analyzer", null);
         xmlObjectMapping.setAnalyzer(analyzer);
 
-        String sAllSupported = xmlObjectConf.getAttribute("all", null);
-        if (sAllSupported != null) {
-            xmlObjectMapping.setAllSupported(sAllSupported.equalsIgnoreCase("true"));
-        }
-
-        String termVectorType = xmlObjectConf.getAttribute("all-term-vector", null);
-        if (termVectorType == null) {
-            xmlObjectMapping.setAllTermVector(null);
-        } else {
-            xmlObjectMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
-        }
-
-        xmlObjectMapping.setAllOmitNorms(xmlObjectConf.getAttributeAsBoolean("all-omit-norms", false));
-        xmlObjectMapping.setExcludeAliasFromAll(xmlObjectConf.getAttributeAsBoolean("exclude-alias-from-all", false));
-
-        if (xmlObjectMapping.isAllSupported()) {
-            String allProperty = xmlObjectConf.getAttribute("all-metadata", null);
-            xmlObjectMapping.setAllProperty(allProperty);
-        }
         xmlObjectMapping.setRoot(true);
         xmlObjectMapping.setBoost(getBoost(xmlObjectConf));
 
@@ -317,25 +301,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String analyzer = resourceConf.getAttribute("analyzer", null);
         rawResourceMapping.setAnalyzer(analyzer);
 
-        String sAllSupported = resourceConf.getAttribute("all", null);
-        if (sAllSupported != null) {
-            rawResourceMapping.setAllSupported(sAllSupported.equalsIgnoreCase("true"));
-        }
+        bindAll(resourceConf, rawResourceMapping);
 
-        String termVectorType = resourceConf.getAttribute("all-term-vector", null);
-        if (termVectorType == null) {
-            rawResourceMapping.setAllTermVector(null);
-        } else {
-            rawResourceMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
-        }
-
-        rawResourceMapping.setAllOmitNorms(resourceConf.getAttributeAsBoolean("all-omit-norms", false));
-        rawResourceMapping.setExcludeAliasFromAll(resourceConf.getAttributeAsBoolean("exclude-alias-from-all", false));
-
-        if (rawResourceMapping.isAllSupported()) {
-            String allProperty = resourceConf.getAttribute("all-metadata", null);
-            rawResourceMapping.setAllProperty(allProperty);
-        }
         rawResourceMapping.setRoot(true);
         rawResourceMapping.setBoost(getBoost(resourceConf));
 
@@ -443,25 +410,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String analyzer = classConf.getAttribute("analyzer", null);
         classMapping.setAnalyzer(analyzer);
 
-        String sAllSupported = classConf.getAttribute("all", null);
-        if (sAllSupported != null) {
-            classMapping.setAllSupported(sAllSupported.equalsIgnoreCase("true"));
-        }
-
-        if (classMapping.isAllSupported()) {
-            String allProperty = classConf.getAttribute("all-metadata", null);
-            classMapping.setAllProperty(allProperty);
-        }
-
-        String termVectorType = classConf.getAttribute("all-term-vector", null);
-        if (termVectorType == null) {
-            classMapping.setAllTermVector(null);
-        } else {
-            classMapping.setAllTermVector(Property.TermVector.fromString(termVectorType));
-        }
-
-        classMapping.setAllOmitNorms(classConf.getAttributeAsBoolean("all-omit-norms", false));
-        classMapping.setExcludeAliasFromAll(classConf.getAttributeAsBoolean("exclude-alias-from-all", false));
+        bindAll(classConf, classMapping);
 
         boolean poly = classConf.getAttributeAsBoolean("poly", false);
         classMapping.setPoly(poly);
@@ -841,6 +790,31 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     private void bindConverter(ConfigurationHelper conf, Mapping mapping) {
         String converterName = conf.getAttribute("converter", null);
         mapping.setConverterName(converterName);
+    }
+
+    private void bindAll(ConfigurationHelper conf, AbstractResourceMapping resourceMapping) {
+        ConfigurationHelper allConf = conf.getChild("all", false);
+        DefaultAllMapping allMapping = new DefaultAllMapping();
+        if (allConf != null) {
+            String sAllSupported = allConf.getAttribute("enable", null);
+            if (sAllSupported != null) {
+                allMapping.setSupported(sAllSupported.equalsIgnoreCase("true"));
+            }
+            String termVectorType = allConf.getAttribute("term-vector", null);
+            if (termVectorType != null) {
+                allMapping.setTermVector(Property.TermVector.fromString(termVectorType));
+            }
+            String sOmitNorms = allConf.getAttribute("omit-norms", null);
+            if (sOmitNorms != null) {
+                allMapping.setOmitNorms(sOmitNorms.equalsIgnoreCase("true"));
+            }
+            String sExcludeAlias = allConf.getAttribute("exclude-alias", null);
+            if (sExcludeAlias != null) {
+                allMapping.setExcludeAlias(sExcludeAlias.equalsIgnoreCase("true"));
+            }
+            allMapping.setProperty(allConf.getAttribute("name", null));
+        }
+        resourceMapping.setAllMapping(allMapping);
     }
 
     private void bindSubIndexHash(ConfigurationHelper conf, AbstractResourceMapping resourceMapping) {
