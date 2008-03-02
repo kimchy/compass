@@ -126,7 +126,6 @@ public class SingleCompassGps extends AbstractCompassGps {
                         }
                     }
                 });
-        compass.getSearchEngineIndexManager().clearCache();
         indexCompass.getSearchEngineIndexManager().clearCache();
         try {
             indexCompass.getSearchEngineIndexManager().deleteIndex();
@@ -136,6 +135,8 @@ public class SingleCompassGps extends AbstractCompassGps {
         indexCompass.close();
         indexCompass = null;
         indexCompassTemplate = null;
+
+        compass.getSearchEngineIndexManager().refreshCache();
 
         ((InternalCompass) compass).start();
 
