@@ -92,6 +92,8 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     private String defaultProperty;
 
+    private String[] properties;
+
     private float defaultAccuracy = 0.5f;
 
     private float defaultDictionaryThreshold;
@@ -135,7 +137,12 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             }
         }
 
-        this.defaultProperty = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.PROPERTY, CompassEnvironment.All.DEFAULT_NAME);
+        properties = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.PROPERTY, CompassEnvironment.All.DEFAULT_NAME).split(",");
+        for (int i = 0; i < properties.length; i++) {
+            properties[i] = properties[i].trim();
+        }
+        defaultProperty = properties[0];
+
         this.defaultAccuracy = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.ACCURACY, 0.5f);
         this.defaultDictionaryThreshold = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.DICTIONARY_THRESHOLD, 0.0f);
 
@@ -337,7 +344,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
             public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 long version = readSpellCheckIndexVersion(subIndex);
-                long indexVersion = 0;
+                long indexVersion;
                 try {
                     indexVersion = LuceneSubIndexInfo.getIndexInfo(subIndex, indexStore).version();
                 } catch (IOException e) {
@@ -367,7 +374,10 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                     if (search.getSearcher() != null) {
                         writer = searchEngineFactory.getLuceneIndexManager().openIndexWriter(spellCheckSettings, dir,
                                 true, true, null, new WhitespaceAnalyzer());
-                        spellChecker.indexDictionary(writer, new HighFrequencyDictionary(search.getReader(), defaultProperty, defaultDictionaryThreshold));
+                        for (String property : properties) {
+                            spellChecker.indexDictionary(writer, new HighFrequencyDictionary(search.getReader(), property, defaultDictionaryThreshold));
+                        }
+                        writer.optimize();
                     } else {
                         if (log.isDebugEnabled()) {
                             log.debug("No data found in sub index [" + subIndex + "], skipping building spell index");

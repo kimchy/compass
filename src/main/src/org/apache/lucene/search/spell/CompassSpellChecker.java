@@ -382,9 +382,9 @@ public class CompassSpellChecker {
       Document doc = createDocument(word, getMin(len), getMax(len));
       writer.addDocument(doc);
     }
-    // close writer
-    writer.optimize();
-    writer.close();
+    // close writer (REMOVED IN COMPASS), will do it on close
+//    writer.optimize();
+//    writer.close();
     // close reader so it will be re-opened (and see the new content) when exist()
     // is called the next time:
     if (reader != null) {

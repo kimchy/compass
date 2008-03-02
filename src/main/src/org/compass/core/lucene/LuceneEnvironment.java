@@ -596,7 +596,8 @@ public class LuceneEnvironment {
         public static final String ENABLE = PREFIX + "enable";
 
         /**
-         * The property that will be used to build from the spell check index. Defaults to the all property.
+         * The property that will be used to build from the spell check index. Defaults to the all property. Note,
+         * this can be a list of comma separated strings representing different proeprties.
          */
         public static final String PROPERTY = PREFIX + "property";
 
