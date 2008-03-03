@@ -57,6 +57,19 @@ public abstract class AbstractHibernateGpsDeviceTests extends TestCase {
         compassGps.stop();
         compass.close();
         sessionFactory.close();
+
+        try {
+            compass.getSearchEngineIndexManager().deleteIndex();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (compass.getSpellCheckManager() != null) {
+            try {
+                compass.getSpellCheckManager().deleteIndex();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     protected void doTearDown() throws Exception {

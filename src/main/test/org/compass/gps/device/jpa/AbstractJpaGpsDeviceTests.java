@@ -53,6 +53,19 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
         compassGps.stop();
         compass.close();
         entityManagerFactory.close();
+
+        try {
+            compass.getSearchEngineIndexManager().deleteIndex();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (compass.getSpellCheckManager() != null) {
+            try {
+                compass.getSpellCheckManager().deleteIndex();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     protected abstract EntityManagerFactory doSetUpEntityManagerFactory();

@@ -243,6 +243,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 for (String subIndex : searchEngineStore.getSubIndexes()) {
                     synchronized (indexHoldersLocks.get(subIndex)) {
                         clearCache(subIndex);
+                        indexManager.clearCache(subIndex);
                         searchEngineStore.copyFrom(subIndex, luceneIndexManager.getStore());
                         refreshCache(subIndex);
                     }

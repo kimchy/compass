@@ -78,19 +78,19 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         if (indexPathFile.exists()) {
             boolean deleted = false;
             // do this retries for windows...
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 deleted = LuceneUtils.deleteDir(indexPathFile);
                 if (deleted) {
                     break;
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     // no matter
                 }
             }
             if (!deleted) {
-                throw new SearchEngineException("Failed to delete index directory [" + indexPath + "]");
+                throw new SearchEngineException("Failed to delete index directory [" + buildPath(subContext, subIndex) + "]");
             }
         }
     }
@@ -106,17 +106,17 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         int count = 0;
         File renameToIndexPathFile;
         while (true) {
-            renameToIndexPathFile = new File(path + "copy" + count++);
+            renameToIndexPathFile = new File(path + "-copy" + count++);
             if (!renameToIndexPathFile.exists()) {
                 break;
             }
         }
         boolean renamed = false;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             renamed = indexPathFile.renameTo(renameToIndexPathFile);
             if (!renamed) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     // do nothing
                 }

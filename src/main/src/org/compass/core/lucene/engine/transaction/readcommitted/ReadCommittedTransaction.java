@@ -92,7 +92,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 } catch (Exception e1) {
                     log.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
                 }
-                lastException = new SearchEngineException("Failed to rollbacl sub index [" + entry.getKey() + "]", e);
+                lastException = new SearchEngineException("Failed to rollback sub index [" + entry.getKey() + "]", e);
             }
         }
         if (lastException != null) {
