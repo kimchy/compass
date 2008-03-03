@@ -26,5 +26,6 @@ public class ScrollableSimpleHibernateGpsDeviceTests extends AbstractSimpleHiber
 
     protected void addDeviceSettings(HibernateGpsDevice device) {
         device.setEntitiesIndexer(new ScrollableHibernateIndexEntitiesIndexer());
+        device.setFetchCount(1);
     }
 }

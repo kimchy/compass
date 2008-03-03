@@ -16,6 +16,7 @@
 
 package org.compass.gps.device.hibernate.indexer;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,10 +133,17 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
                         continue;
                     }
                     Object item = cursor.get(0);
-                    if (item != prev && prev != null) {
+                    if (prev != null && item != prev) {
                         buffer.put(prev);
                     }
                     prev = item;
+                    if (buffer.shouldFlush()) {
+                        // put also the item/prev since we are clearing the session
+                        // in the flush process
+                        buffer.put(prev);
+                        buffer.flush();
+                        prev = null;
+                    }
                 }
                 if (prev != null) {
                     buffer.put(prev);
@@ -173,6 +181,7 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
 
     private class RowBuffer {
         private Object[] buffer;
+        private int fetchCount;
         private int index = 0;
         private CompassSession compassSession;
         private Session hibernateSession;
@@ -180,15 +189,17 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
         RowBuffer(CompassSession compassSession, Session hibernateSession, int fetchCount) {
             this.compassSession = compassSession;
             this.hibernateSession = hibernateSession;
-            this.buffer = new Object[fetchCount];
+            this.fetchCount = fetchCount;
+            this.buffer = new Object[fetchCount + 1];
         }
 
         public void put(Object row) {
-            if (index >= buffer.length) {
-                flush();
-            }
             buffer[index] = row;
             index++;
+        }
+
+        public boolean shouldFlush() {
+            return index >= fetchCount;
         }
 
         public void close() {
@@ -201,7 +212,7 @@ public class ScrollableHibernateIndexEntitiesIndexer implements HibernateIndexEn
                 compassSession.create(buffer[i]);
             }
             // clear buffer and sessions to allow for GC
-            buffer = new Object[buffer.length];
+            Arrays.fill(buffer, null);
             compassSession.evictAll();
             hibernateSession.clear();
             index = 0;
