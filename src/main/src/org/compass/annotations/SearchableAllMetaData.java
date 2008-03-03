@@ -71,4 +71,12 @@ public @interface SearchableAllMetaData {
      * This effectively disables indexing boosts and length normalization for this field.
      */
     boolean omitNorms() default false;
+
+    /**
+     * Should this propety be included in the spell check index.
+     *
+     * <p>Note, most times this is not requried to be configured, since by default, the
+     * spell check index uses the "all" property.
+     */
+    SpellCheck spellCheck() default SpellCheck.EXCLUDE;
 }

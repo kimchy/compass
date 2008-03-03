@@ -36,6 +36,8 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
 
     private boolean isInternal = false;
 
+    private SpellCheckType spellCheck = SpellCheckType.EXCLUDE;
+
     public MockPropertyMapping(String name, PropertyPath path) {
         this.name = name;
         this.path = path;
@@ -166,5 +168,13 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
 
     public boolean hasNullValue() {
         return false;
+    }
+
+    public SpellCheckType getSpellCheck() {
+        return spellCheck;
+    }
+
+    public void setSpellCheck(SpellCheckType spellCheck) {
+        this.spellCheck = spellCheck;
     }
 }

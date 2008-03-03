@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.internal;
-
-import org.compass.core.mapping.ResourcePropertyMapping;
+package org.compass.core.test.spellcheck.mapping;
 
 /**
  * @author kimchy
  */
-public interface InternalResourcePropertyMapping extends ResourcePropertyMapping {
+public class A {
 
-    /**
-     * Allows to set the resource property mapping null value.
-     */
-    void setNullValue(String nullValue);
+    int id;
 
-    void setSpellCheck(ResourcePropertyMapping.SpellCheckType spellCheck);
+    String value1;
+
+    String value2;
+
+    String value3;
 }

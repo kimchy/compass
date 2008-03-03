@@ -62,6 +62,11 @@ public interface AllMapping {
     Boolean isOmitNorms();
 
     /**
+     * 
+     */
+    ResourcePropertyMapping.SpellCheckType getSpellCheck();
+
+    /**
      * Returns a copy of the All mapping settings.
      */
     AllMapping copy();

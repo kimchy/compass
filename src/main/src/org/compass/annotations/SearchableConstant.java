@@ -87,7 +87,7 @@ public @interface SearchableConstant {
      * Specifies if this meta-data should be excluded from the generated
      * "all" meta-data.
      *
-     * @see Searchable#enableAll
+     * @see SearchableAllMetaData#enable()
      */
     ExcludeFromAll excludeFromAll() default ExcludeFromAll.NO;
 
@@ -96,6 +96,14 @@ public @interface SearchableConstant {
      * elsewhere for the same searchable class.
      */
     boolean override() default true;
+
+    /**
+     * Should this propety be included in the spell check index.
+     *
+     * <p>Note, most times this is not requried to be configured, since by default, the
+     * spell check index uses the "all" property.
+     */
+    SpellCheck spellCheck() default SpellCheck.EXCLUDE;
 
     /**
      * Converter for the Constant meta-data mapping.

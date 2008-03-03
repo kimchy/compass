@@ -18,6 +18,7 @@ package org.compass.core.mapping.internal;
 
 import org.compass.core.Property;
 import org.compass.core.mapping.AllMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
@@ -33,4 +34,6 @@ public interface InternalAllMapping extends AllMapping {
     void setExcludeAlias(Boolean excludeAlias);
 
     void setTermVector(Property.TermVector termVector);
+
+    void setSpellCheck(ResourcePropertyMapping.SpellCheckType spellCheck);
 }

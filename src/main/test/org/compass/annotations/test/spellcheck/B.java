@@ -14,19 +14,25 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.internal;
+package org.compass.annotations.test.spellcheck;
 
-import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
+import org.compass.annotations.SpellCheck;
 
 /**
  * @author kimchy
  */
-public interface InternalResourcePropertyMapping extends ResourcePropertyMapping {
+@Searchable
+public class B {
 
-    /**
-     * Allows to set the resource property mapping null value.
-     */
-    void setNullValue(String nullValue);
+    @SearchableId
+    int id;
 
-    void setSpellCheck(ResourcePropertyMapping.SpellCheckType spellCheck);
+    @SearchableProperty(spellCheck = SpellCheck.INCLUDE)
+    String bvalue1;
+
+    @SearchableProperty(spellCheck = SpellCheck.EXCLUDE)
+    String bvalue2;
 }

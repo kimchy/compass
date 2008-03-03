@@ -218,6 +218,11 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         }
     }
 
+    public String[] getAliasesBySubIndex(String subIndex) {
+        List<String> aliasesPerSubIndex = aliasesBySubIndex.get(subIndex);
+        return aliasesPerSubIndex.toArray(new String[aliasesPerSubIndex.size()]);
+    }
+
     public int getNumberOfAliasesBySubIndex(String subIndex) {
         return (aliasesBySubIndex.get(subIndex)).size();
     }

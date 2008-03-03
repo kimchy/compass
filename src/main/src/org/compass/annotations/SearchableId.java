@@ -182,4 +182,12 @@ public @interface SearchableId {
      * generated).
      */
     String format() default "";
+
+    /**
+     * Should this propety be included in the spell check index.
+     *
+     * <p>Note, most times this is not requried to be configured, since by default, the
+     * spell check index uses the "all" property.
+     */
+    SpellCheck spellCheck() default SpellCheck.EXCLUDE;
 }

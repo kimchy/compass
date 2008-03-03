@@ -109,7 +109,7 @@ public @interface SearchableMetaData {
      * Specifies if this meta-data should be excluded from the generated
      * "all" meta-data.
      *
-     * @see Searchable#enableAll
+     * @see SearchableAllMetaData#enable() 
      */
     ExcludeFromAll excludeFromAll() default ExcludeFromAll.NO;
 
@@ -134,4 +134,12 @@ public @interface SearchableMetaData {
      * value (<code>$disable$</code>).
      */
     String nullValue() default "";
+
+    /**
+     * Should this propety be included in the spell check index.
+     *
+     * <p>Note, most times this is not requried to be configured, since by default, the
+     * spell check index uses the "all" property.
+     */
+    SpellCheck spellCheck() default SpellCheck.EXCLUDE;
 }

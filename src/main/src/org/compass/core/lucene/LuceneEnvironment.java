@@ -598,8 +598,16 @@ public class LuceneEnvironment {
         /**
          * The property that will be used to build from the spell check index. Defaults to the all property. Note,
          * this can be a list of comma separated strings representing different proeprties.
+         *
+         * <p>If using mappings to include certain properties in the spell check index, this list of properties will
+         * be added as shared properties to all the different sub indexes.
          */
         public static final String PROPERTY = PREFIX + "property";
+
+        /**
+         * The default property for the spell check.
+         */
+        public static final String DEFAULT_PROPERTY = PREFIX + "defaultProperty";
 
         /**
          * The default accuracy that will be used. Defaults to <code>0.5</code>.

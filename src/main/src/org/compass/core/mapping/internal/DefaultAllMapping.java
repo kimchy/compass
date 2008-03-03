@@ -18,6 +18,7 @@ package org.compass.core.mapping.internal;
 
 import org.compass.core.Property;
 import org.compass.core.mapping.AllMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * A set of settings configuring the all mapping.
@@ -36,6 +37,8 @@ public class DefaultAllMapping implements InternalAllMapping {
 
     private Boolean omitNorms;
 
+    private ResourcePropertyMapping.SpellCheckType spellCheck;
+
     private boolean includePropertiesWithNoMappings = true;
 
     public AllMapping copy() {
@@ -46,6 +49,7 @@ public class DefaultAllMapping implements InternalAllMapping {
         allMapping.setProperty(getProperty());
         allMapping.setSupported(isSupported());
         allMapping.setTermVector(getTermVector());
+        allMapping.setSpellCheck(getSpellCheck());
         return allMapping;
     }
 
@@ -95,5 +99,13 @@ public class DefaultAllMapping implements InternalAllMapping {
 
     public void setIncludePropertiesWithNoMappings(Boolean includePropertiesWithNoMappings) {
         this.includePropertiesWithNoMappings = includePropertiesWithNoMappings;
+    }
+
+    public ResourcePropertyMapping.SpellCheckType getSpellCheck() {
+        return spellCheck;
+    }
+
+    public void setSpellCheck(ResourcePropertyMapping.SpellCheckType spellCheck) {
+        this.spellCheck = spellCheck;
     }
 }

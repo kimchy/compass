@@ -204,7 +204,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
     }
 
     private boolean shouldPerformOperationOnActualDirectory(String name) {
-        if ("segments.gen".equals(name)) {
+        if ("segments.gen".equals(name) || "spellcheck.version".equals(name)) {
             return true;
         }
         if (DefaultLuceneSearchEngineIndexManager.CLEAR_CACHE_NAME.equals(name)) {

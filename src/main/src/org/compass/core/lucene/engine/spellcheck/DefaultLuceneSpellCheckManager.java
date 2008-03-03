@@ -18,9 +18,12 @@ package org.compass.core.lucene.engine.spellcheck;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -60,9 +63,12 @@ import org.compass.core.lucene.engine.queryparser.QueryParserUtils;
 import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContextCallback;
 import org.compass.core.transaction.context.TransactionalRunnable;
+import org.compass.core.util.StringUtils;
 
 /**
  * The default implementation of the search engine spell check manager. Uses Lucene (modified) spell check
@@ -92,7 +98,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     private String defaultProperty;
 
-    private String[] properties;
+    private Map<String, Set<String>> properties = new HashMap<String, Set<String>>();
 
     private float defaultAccuracy = 0.5f;
 
@@ -137,11 +143,41 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             }
         }
 
-        properties = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.PROPERTY, CompassEnvironment.All.DEFAULT_NAME).split(",");
-        for (int i = 0; i < properties.length; i++) {
-            properties[i] = properties[i].trim();
+        String[] sharedProps = new String[0];
+        String sSharedProps = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.PROPERTY);
+        if (sSharedProps != null) {
+            sharedProps = StringUtils.tokenizeToStringArray(sSharedProps, ",");
         }
-        defaultProperty = properties[0];
+        for (String subIndex : indexStore.getSubIndexes()) {
+            Set<String> subIndexProps = properties.get(subIndex);
+            if (subIndexProps == null) {
+                subIndexProps = new HashSet<String>();
+                properties.put(subIndex,  subIndexProps);
+            }
+            
+            subIndexProps.addAll(Arrays.asList(sharedProps));
+            
+            for (String alias : spellCheckStore.getAliasesBySubIndex(subIndex)) {
+                ResourceMapping resourceMapping = searchEngineFactory.getMapping().getMappingByAlias(alias);
+                for (ResourcePropertyMapping resourcePropertyMapping : resourceMapping.getResourcePropertyMappings()) {
+                    if (resourcePropertyMapping.getSpellCheck() == ResourcePropertyMapping.SpellCheckType.INCLUDE &&
+                            !resourcePropertyMapping.isInternal()) {
+                        subIndexProps.add(resourcePropertyMapping.getPath().getPath());
+                    }
+                }
+                if (resourceMapping.getAllMapping().getSpellCheck() == ResourcePropertyMapping.SpellCheckType.INCLUDE) {
+                    subIndexProps.add(resourceMapping.getAllMapping().getProperty());
+                }
+            }
+
+            if (subIndexProps.size() == 0) {
+                subIndexProps.add(settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Sub index [" + subIndex + "] includes the following properties " + subIndexProps);
+            }
+        }
+        defaultProperty = settings.getSetting(LuceneEnvironment.SpellCheck.DEFAULT_PROPERTY, settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
 
         this.defaultAccuracy = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.ACCURACY, 0.5f);
         this.defaultDictionaryThreshold = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.DICTIONARY_THRESHOLD, 0.0f);
@@ -374,7 +410,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                     if (search.getSearcher() != null) {
                         writer = searchEngineFactory.getLuceneIndexManager().openIndexWriter(spellCheckSettings, dir,
                                 true, true, null, new WhitespaceAnalyzer());
-                        for (String property : properties) {
+                        for (String property : properties.get(subIndex)) {
                             spellChecker.indexDictionary(writer, new HighFrequencyDictionary(search.getReader(), property, defaultDictionaryThreshold));
                         }
                         writer.optimize();

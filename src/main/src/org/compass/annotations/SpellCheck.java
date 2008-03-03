@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.internal;
-
-import org.compass.core.mapping.ResourcePropertyMapping;
+package org.compass.annotations;
 
 /**
+ * Specifies if a certain property should be included in the spell check index.
+ *
+ * <p>Note, most times this is not requried to be configured, since by default, the
+ * spell check index uses the "all" property.
+ *
  * @author kimchy
  */
-public interface InternalResourcePropertyMapping extends ResourcePropertyMapping {
-
+public enum SpellCheck {
     /**
-     * Allows to set the resource property mapping null value.
+     * Should this property mapping be included in the spell check index.
      */
-    void setNullValue(String nullValue);
-
-    void setSpellCheck(ResourcePropertyMapping.SpellCheckType spellCheck);
+    INCLUDE,
+    /**
+     * Should this proeprty mapping be excluded from the spell check index.
+     */
+    EXCLUDE
 }

@@ -39,6 +39,7 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -268,6 +269,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         xmlPropertyMapping.setXPath(xmlPropConf.getAttribute("xpath"));
 
         xmlPropertyMapping.setValueConverterName(xmlPropConf.getAttribute("value-converter", null));
+
+        bindSpellCheck(xmlPropConf, xmlPropertyMapping);
     }
 
     private void bindResourceContract(ConfigurationHelper contractConf, ContractMapping contractMapping)
@@ -368,6 +371,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         propertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
         boolean override = resourcePropConf.getAttributeAsBoolean("override", true);
         propertyMapping.setOverrideByName(override);
+
+        bindSpellCheck(resourcePropConf, propertyMapping);
     }
 
     private void bindContract(ConfigurationHelper contractConf, ContractMapping contractMapping)
@@ -539,6 +544,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         bindConverter(dynamicConf, dynamicMetaDataMapping);
+        bindSpellCheck(dynamicConf, dynamicMetaDataMapping);
 
         boolean override = dynamicConf.getAttributeAsBoolean("override", true);
         dynamicMetaDataMapping.setOverrideByName(override);
@@ -703,6 +709,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         boolean override = constantConf.getAttributeAsBoolean("override", true);
         constantMapping.setOverrideByName(override);
 
+        bindSpellCheck(constantConf, constantMapping);
+
         ConfigurationHelper[] values = constantConf.getChildren("meta-data-value");
         for (ConfigurationHelper value : values) {
             String metaDataValueValue = value.getValue().trim();
@@ -757,6 +765,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         mdMapping.setNullValue(metadataConf.getAttribute("null-value", null));
         String excludeFromAll = metadataConf.getAttribute("exclude-from-all", ResourcePropertyMapping.ExcludeFromAllType.toString(classPropertyMapping.getExcludeFromAll()));
         mdMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
+
+        bindSpellCheck(metadataConf, mdMapping);
     }
 
     private void bindExtends(ConfigurationHelper conf, AliasMapping mapping) throws ConfigurationException {
@@ -813,8 +823,18 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                 allMapping.setExcludeAlias(sExcludeAlias.equalsIgnoreCase("true"));
             }
             allMapping.setProperty(allConf.getAttribute("name", null));
+            allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(allConf.getAttribute("spell-check", "exclude")));
         }
         resourceMapping.setAllMapping(allMapping);
+    }
+
+    private void bindSpellCheck(ConfigurationHelper conf, InternalResourcePropertyMapping mapping) {
+        mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(conf.getAttribute("spell-check", "exclude")));
+    }
+
+    
+    private void bindSpellCheck(ConfigurationHelper conf, InternalResourcePropertyMapping mapping, ResourcePropertyMapping.SpellCheckType defaultType) {
+        mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(conf.getAttribute("spell-check", defaultType.toString())));
     }
 
     private void bindSubIndexHash(ConfigurationHelper conf, AbstractResourceMapping resourceMapping) {

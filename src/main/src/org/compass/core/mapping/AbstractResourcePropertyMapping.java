@@ -40,6 +40,8 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private ExcludeFromAllType excludeFromAll = ExcludeFromAllType.NO;
 
+    private SpellCheckType spellCheck = SpellCheckType.EXCLUDE;
+
     private boolean omitNorms = false;
 
     private ReverseType reverse = ReverseType.NO;
@@ -61,6 +63,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         copy.setOmitNorms(isOmitNorms());
         copy.setRootAlias(getRootAlias());
         copy.setNullValue(getNullValue());
+        copy.setSpellCheck(getSpellCheck());
     }
 
     public String getRootAlias() {
@@ -157,5 +160,13 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     public boolean hasNullValue() {
         return nullValue.length() > 0;
+    }
+
+    public SpellCheckType getSpellCheck() {
+        return spellCheck;
+    }
+
+    public void setSpellCheck(SpellCheckType spellCheck) {
+        this.spellCheck = spellCheck;
     }
 }

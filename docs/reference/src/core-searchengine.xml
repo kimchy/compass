@@ -719,6 +719,10 @@ compass.engine.spellcheck.engine.ramBufferSize=40
           <para>
               In the above example we also configure the indexing process of the spell check index to use more memory (40) so the indexing process will be faster. As seen here, settings that control the index can be used (<literal>compass.engine.</literal> settings) can apply to the spell check index by prepending the <literal>compass.engine.spellcheck</literal> setting.
           </para>
+          
+          <para>
+              By default, the spell check index will use the "all" property in order to index its contents into the spell check index. There are several ways to configure what should be indexed if the "all" property is not desired. The first option is to use the following setting: <literal>compass.engine.spellcheck.property</literal>, which accepts a comma list separated string of property names. Another option is to use the <literal>spell-check</literal> option within the mapping of different properties and set it to <literal>include</literal>.
+          </para>
       </sect2>
   </sect1>
 

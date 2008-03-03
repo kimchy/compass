@@ -59,6 +59,11 @@ public interface LuceneSearchEngineStore {
     int getNumberOfAliasesBySubIndex(String subIndex);
 
     /**
+     * Returns the list of aliases that are mapped for a given sub index.
+     */
+    String[] getAliasesBySubIndex(String subIndex);
+
+    /**
      * Returns the directory that match the given sub index.
      */
     Directory openDirectory(String subIndex) throws SearchEngineException;

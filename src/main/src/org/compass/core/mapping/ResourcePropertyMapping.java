@@ -87,6 +87,36 @@ public interface ResourcePropertyMapping extends Mapping {
         }
     }
 
+    public static class SpellCheckType extends Parameter {
+
+        protected SpellCheckType(String name) {
+            super(name);
+        }
+
+        public static final SpellCheckType INCLUDE = new SpellCheckType("INCLUDE");
+
+        public static final SpellCheckType EXCLUDE = new SpellCheckType("EXCLUDE");
+
+        public static SpellCheckType fromString(String spellCheckType) {
+            if ("include".equalsIgnoreCase(spellCheckType)) {
+                return SpellCheckType.INCLUDE;
+            } else if ("exclude".equalsIgnoreCase(spellCheckType)) {
+                return SpellCheckType.EXCLUDE;
+            }
+            throw new IllegalArgumentException("Can't find spell check type for [" + spellCheckType + "]");
+        }
+
+        public static String toString(SpellCheckType spellCheckType) {
+            if (spellCheckType == INCLUDE) {
+                return "include";
+            }
+            if (spellCheckType == EXCLUDE) {
+                return "exlcude";
+            }
+            return "exclude";
+        }
+    }
+
     /**
      * Returns the anayzer name that is associated with the property.
      * Can be <code>null</code> (i.e. not set).
@@ -108,6 +138,8 @@ public interface ResourcePropertyMapping extends Mapping {
     boolean isOmitNorms();
 
     ExcludeFromAllType getExcludeFromAll();
+
+    SpellCheckType getSpellCheck();
 
     Property.Store getStore();
 

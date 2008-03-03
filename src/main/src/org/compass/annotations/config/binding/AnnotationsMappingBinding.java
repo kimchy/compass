@@ -47,7 +47,9 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -280,6 +282,11 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             }
             if (allMetaData.termVector() != TermVector.NA) {
                 allMapping.setTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
+            }
+            if (allMetaData.spellCheck() == SpellCheck.EXCLUDE) {
+                allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.EXCLUDE);
+            } else if (allMetaData.spellCheck() == SpellCheck.INCLUDE) {
+                allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.INCLUDE);
             }
             allMapping.setOmitNorms(allMetaData.omitNorms());
         }
@@ -614,6 +621,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
 
             bindConverter(mdMapping, searchableProp.converter(), clazz, type);
+            bindSpellCheck(mdMapping, searchableProp.spellCheck());
 
             mdMapping.setStore(AnnotationsBindingUtils.convert(searchableProp.store()));
             mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableProp.index()));
@@ -687,6 +695,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setBoost(classPropertyMapping.getBoost());
 
             bindConverter(mdMapping, searchableProp.converter(), clazz, type);
+            bindSpellCheck(mdMapping, searchableProp.spellCheck());
 
             mdMapping.setAccessor(classPropertyMapping.getAccessor());
             mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
@@ -738,6 +747,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         }
 
         bindConverter(mdMapping, searchableMetaData.converter(), clazz, type);
+        bindSpellCheck(mdMapping, searchableMetaData.spellCheck());
 
         mdMapping.setAccessor(classPropertyMapping.getAccessor());
         mdMapping.setPropertyName(classPropertyMapping.getPropertyName());
@@ -789,6 +799,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         mdMapping.setInternal(false);
 
+        bindSpellCheck(mdMapping, searchableMetaData.spellCheck());
+
         if (StringUtils.hasLength(searchableMetaData.analyzer())) {
             mdMapping.setAnalyzer(searchableMetaData.analyzer());
         } else {
@@ -820,11 +832,20 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         for (String value : searchableConstant.values()) {
             constantMapping.addMetaDataValue(valueLookup.lookupMetaDataValue(value));
         }
+        bindSpellCheck(constantMapping, searchableConstant.spellCheck());
         classMapping.addMapping(constantMapping);
     }
 
     private void bindConverter(Mapping mapping, String converterName) {
         bindConverter(mapping, converterName, null, null);
+    }
+
+    private void bindSpellCheck(InternalResourcePropertyMapping mapping, SpellCheck spellCheck) {
+        if (spellCheck == SpellCheck.EXCLUDE) {
+            mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.EXCLUDE);
+        } else if (spellCheck == SpellCheck.INCLUDE) {
+            mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.INCLUDE);
+        }
     }
 
     private void bindConverter(Mapping mapping, String converterName, Class<?> clazz, Type type) {
