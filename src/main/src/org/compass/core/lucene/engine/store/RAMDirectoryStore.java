@@ -25,7 +25,7 @@ import org.compass.core.engine.SearchEngineException;
 /**
  * A directory store implemented using memory. Uses Lucene {@link org.apache.lucene.store.RAMDirectory}.
  *
-  * @author kimchy
+ * @author kimchy
  */
 public class RAMDirectoryStore extends AbstractDirectoryStore {
 
@@ -35,13 +35,11 @@ public class RAMDirectoryStore extends AbstractDirectoryStore {
         return new RAMDirectory();
     }
 
-    public CopyFromHolder beforeCopyFrom(String subContext, Directory[] dirs) throws SearchEngineException {
+    public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
         try {
-            for (Directory dir : dirs) {
-                String[] files = dir.list();
-                for (String file : files) {
-                    dir.deleteFile(file);
-                }
+            String[] files = dir.list();
+            for (String file : files) {
+                dir.deleteFile(file);
             }
         } catch (IOException e) {
             throw new SearchEngineException("Faield to delete ram directory before copy", e);

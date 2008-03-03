@@ -92,7 +92,6 @@ public class DualCompassGps extends AbstractCompassGps {
                 }
             }
         });
-        mirrorCompass.getSearchEngineIndexManager().refreshCache();
 
         if (mirrorCompass != null) {
             ((InternalCompass) mirrorCompass).start();

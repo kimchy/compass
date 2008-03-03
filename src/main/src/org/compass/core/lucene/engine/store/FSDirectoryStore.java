@@ -99,9 +99,9 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         deleteIndex(dir, subContext, subIndex);
     }
 
-    public CopyFromHolder beforeCopyFrom(String subContext, Directory[] dirs) throws SearchEngineException {
+    public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
         // first rename the current index directory
-        String path = indexPath + "/" + subContext;
+        String path = buildPath(subContext, subIndex);
         File indexPathFile = new File(path);
         int count = 0;
         File renameToIndexPathFile;
@@ -129,16 +129,14 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
                     + "] to [" + renameToIndexPathFile.getPath() + "]");
         }
 
-        for (Directory dir : dirs) {
-            ((FSDirectory) dir).getFile().mkdirs();
-        }
+        ((FSDirectory) dir).getFile().mkdirs();
 
         CopyFromHolder holder = new CopyFromHolder();
         holder.data = renameToIndexPathFile;
         return holder;
     }
 
-    public void afterSuccessfulCopyFrom(String subContext, CopyFromHolder holder) throws SearchEngineException {
+    public void afterSuccessfulCopyFrom(String subContext, String subIndex, CopyFromHolder holder) throws SearchEngineException {
         File renameToIndexPathFile = (File) holder.data;
         try {
             LuceneUtils.deleteDir(renameToIndexPathFile);

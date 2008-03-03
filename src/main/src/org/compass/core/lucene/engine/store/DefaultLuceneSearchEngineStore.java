@@ -489,36 +489,44 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         }
     }
 
-    public void copyFrom(LuceneSearchEngineStore searchEngineStore) throws SearchEngineException {
+    public void copyFrom(String subIndex, LuceneSearchEngineStore searchEngineStore) throws SearchEngineException {
+        copyFrom(defaultSubContext, subIndex, searchEngineStore);
+    }
+
+    public void copyFrom(String subContext, String subIndex, LuceneSearchEngineStore searchEngineStore) throws SearchEngineException {
         // clear any possible wrappers
-        ArrayList<Directory> subIndexDirs = new ArrayList<Directory>();
-        for (String subIndex : subIndexes) {
-            Directory dir = openDirectory(subIndex);
-            subIndexDirs.add(unwrapDir(dir));
-            if (dir instanceof DirectoryWrapper) {
-                try {
-                    ((DirectoryWrapper) dir).clearWrapper();
-                } catch (IOException e) {
-                    throw new SearchEngineException("Failed to clear wrapper for sub index [" + subIndex + "]", e);
-                }
+        Directory dir = openDirectory(subContext, subIndex);
+        Directory unwrappedDir = unwrapDir(dir);
+        if (dir instanceof DirectoryWrapper) {
+            try {
+                ((DirectoryWrapper) dir).clearWrapper();
+            } catch (IOException e) {
+                throw new SearchEngineException("Failed to clear wrapper for sub index [" + subIndex + "]", e);
             }
         }
-        CopyFromHolder holder = directoryStore.beforeCopyFrom(defaultSubContext, subIndexDirs.toArray(new Directory[subIndexDirs.size()]));
+        CopyFromHolder holder = directoryStore.beforeCopyFrom(subContext, subIndex, unwrappedDir);
         final byte[] buffer = new byte[32768];
         try {
-            for (String subIndex : subIndexes) {
-                Directory dest = openDirectory(subIndex);
-                Directory src = searchEngineStore.openDirectory(subIndex);
-                LuceneUtils.copy(src, dest, buffer);
+            Directory dest = openDirectory(subContext, subIndex);
+            // no need to pass the sub context to the given search engine store, it has its own sub context
+            Directory src = searchEngineStore.openDirectory(subIndex);
+            LuceneUtils.copy(src, dest, buffer);
+            // in case the index does not container anything, create an empty index
+            if (!IndexReader.indexExists(dest)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Copy From sub context [" + subContext + "] and sub index [" + subIndex + "] does not contain data, creating empty index");
+                }
+                IndexWriter writer = new IndexWriter(dest, new StandardAnalyzer(), true);
+                writer.close();
             }
         } catch (Exception e) {
-            directoryStore.afterFailedCopyFrom(defaultSubContext, holder);
+            directoryStore.afterFailedCopyFrom(subContext, subIndex, holder);
             if (e instanceof SearchEngineException) {
                 throw (SearchEngineException) e;
             }
             throw new SearchEngineException("Failed to copy from " + searchEngineStore, e);
         }
-        directoryStore.afterSuccessfulCopyFrom(defaultSubContext, holder);
+        directoryStore.afterSuccessfulCopyFrom(subContext, subIndex, holder);
     }
 
     public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {

@@ -78,13 +78,11 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
         }
     }
 
-    public CopyFromHolder beforeCopyFrom(String subContext, Directory[] dirs) throws SearchEngineException {
-        for (Directory dir : dirs) {
-            try {
-                ((GigaSpaceDirectory) dir).deleteContent();
-            } catch (IOException e) {
-                throw new SearchEngineException("Failed to delete context before copy from", e);
-            }
+    public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
+        try {
+            ((GigaSpaceDirectory) dir).deleteContent();
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to delete context before copy from", e);
         }
         return new CopyFromHolder();
     }

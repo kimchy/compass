@@ -58,14 +58,14 @@ public abstract class AbstractDirectoryStore implements DirectoryStore {
     public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {
     }
 
-    public CopyFromHolder beforeCopyFrom(String subContext, Directory[] dirs) throws SearchEngineException {
+    public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
         return new CopyFromHolder();
     }
 
-    public void afterSuccessfulCopyFrom(String subContext, CopyFromHolder holder) throws SearchEngineException {
+    public void afterSuccessfulCopyFrom(String subContext, String subIndex, CopyFromHolder holder) throws SearchEngineException {
     }
 
-    public void afterFailedCopyFrom(String subContext, CopyFromHolder holder) throws SearchEngineException {
+    public void afterFailedCopyFrom(String subContext, String subIndex, CopyFromHolder holder) throws SearchEngineException {
     }
 
     public void close() {

@@ -134,11 +134,13 @@ public interface LuceneSearchEngineStore {
 
     /**
      * Copies the index from the given store into the current store.
-     *
-     * @param searchEngineStore The store to copy from
-     * @throws SearchEngineException
      */
-    void copyFrom(LuceneSearchEngineStore searchEngineStore) throws SearchEngineException;
+    void copyFrom(String subContext, String subIndex, LuceneSearchEngineStore searchEngineStore) throws SearchEngineException;
+
+    /**
+     * Copies the index from the given store into the current store.
+     */
+    void copyFrom(String subIndex, LuceneSearchEngineStore searchEngineStore) throws SearchEngineException;
 
     /**
      * Returns the default sub context associated with this store.

@@ -240,8 +240,13 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                     log.debug("[Replace Index] Replacing index [" + searchEngineStore + "] with ["
                             + luceneIndexManager.getStore() + "]");
                 }
-                // copy over the index by renaming the original one, and copy the new one
-                searchEngineStore.copyFrom(luceneIndexManager.getStore());
+                for (String subIndex : searchEngineStore.getSubIndexes()) {
+                    synchronized (indexHoldersLocks.get(subIndex)) {
+                        clearCache(subIndex);
+                        searchEngineStore.copyFrom(subIndex, luceneIndexManager.getStore());
+                        refreshCache(subIndex);
+                    }
+                }
                 if (log.isDebugEnabled()) {
                     log.debug("[Replace Index] Index [" + searchEngineStore + "] replaced from ["
                             + luceneIndexManager.getStore() + "]");

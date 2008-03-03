@@ -60,11 +60,11 @@ public interface DirectoryStore {
      */
     void performScheduledTasks(Directory dir, String subContext, String subIndex) throws SearchEngineException;
 
-    CopyFromHolder beforeCopyFrom(String subContext, Directory[] dirs) throws SearchEngineException;
+    CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException;
 
-    void afterSuccessfulCopyFrom(String subContext, CopyFromHolder holder) throws SearchEngineException;
+    void afterSuccessfulCopyFrom(String subContext, String subIndex, CopyFromHolder holder) throws SearchEngineException;
 
-    void afterFailedCopyFrom(String subContext, CopyFromHolder holder) throws SearchEngineException;
+    void afterFailedCopyFrom(String subContext, String subIndex, CopyFromHolder holder) throws SearchEngineException;
 
     void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager);
 

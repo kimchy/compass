@@ -72,10 +72,8 @@ public abstract class AbstractCoherenceDirectoryStore extends AbstractDirectoryS
         ((CoherenceDirectory) dir).deleteContent();
     }
 
-    public CopyFromHolder beforeCopyFrom(String subContext, Directory[] dirs) throws SearchEngineException {
-        for (Directory dir : dirs) {
-            ((CoherenceDirectory) dir).deleteContent();
-        }
+    public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
+        ((CoherenceDirectory) dir).deleteContent();
         return new CopyFromHolder();
     }
 

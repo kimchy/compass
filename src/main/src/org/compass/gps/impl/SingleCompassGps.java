@@ -136,8 +136,6 @@ public class SingleCompassGps extends AbstractCompassGps {
         indexCompass = null;
         indexCompassTemplate = null;
 
-        compass.getSearchEngineIndexManager().refreshCache();
-
         ((InternalCompass) compass).start();
 
         if (compass.getSpellCheckManager() != null) {

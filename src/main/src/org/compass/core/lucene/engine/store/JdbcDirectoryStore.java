@@ -250,13 +250,11 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
         }
     }
 
-    public CopyFromHolder beforeCopyFrom(String subContext, Directory[] dirs) throws SearchEngineException {
-        for (Directory dir : dirs) {
-            try {
-                ((JdbcDirectory) dir).deleteContent();
-            } catch (IOException e) {
-                throw new SearchEngineException("Failed to delete index content");
-            }
+    public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
+        try {
+            ((JdbcDirectory) dir).deleteContent();
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to delete index content");
         }
         return new CopyFromHolder();
     }
