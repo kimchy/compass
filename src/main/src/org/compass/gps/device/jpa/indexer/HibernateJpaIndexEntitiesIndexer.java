@@ -16,6 +16,7 @@
 
 package org.compass.gps.device.jpa.indexer;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,6 +145,13 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
                         buffer.put(prev);
                     }
                     prev = item;
+                    if (buffer.shouldFlush()) {
+                        // put also the item/prev since we are clearing the session
+                        // in the flush process
+                        buffer.put(prev);
+                        buffer.flush();
+                        prev = null;
+                    }
                 }
                 if (prev != null) {
                     buffer.put(prev);
@@ -173,6 +181,7 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
 
     private class RowBuffer {
         private Object[] buffer;
+        private int fetchCount;
         private int index = 0;
         private CompassSession compassSession;
         private Session hibernateSession;
@@ -180,15 +189,17 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
         RowBuffer(CompassSession compassSession, Session hibernateSession, int fetchCount) {
             this.compassSession = compassSession;
             this.hibernateSession = hibernateSession;
-            this.buffer = new Object[fetchCount];
+            this.fetchCount = fetchCount;
+            this.buffer = new Object[fetchCount + 1];
         }
 
         public void put(Object row) {
-            if (index >= buffer.length) {
-                flush();
-            }
             buffer[index] = row;
             index++;
+        }
+
+        public boolean shouldFlush() {
+            return index >= fetchCount;
         }
 
         public void close() {
@@ -200,6 +211,8 @@ public class HibernateJpaIndexEntitiesIndexer implements JpaIndexEntitiesIndexer
             for (int i = 0; i < index; i++) {
                 compassSession.create(buffer[i]);
             }
+            // clear buffer and sessions to allow for GC
+            Arrays.fill(buffer, null);
             compassSession.evictAll();
             hibernateSession.clear();
             index = 0;
