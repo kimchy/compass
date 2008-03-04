@@ -83,6 +83,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private Map<String, Map<String, Directory>> dirs;
 
+    private volatile boolean closed = false;
+
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
         this.settings = settings;
         this.connectionString = settings.getSetting(CompassEnvironment.CONNECTION);
@@ -186,6 +188,10 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     }
 
     public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         localDirectoryCacheManager.close();
         closeDirectories();
     }
@@ -345,7 +351,9 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                     dir = directoryWrapperProvider.wrap(subIndex, dir);
                 }
             }
-            dir = localDirectoryCacheManager.createLocalCache(subContext, subIndex, dir);
+            if (!closed) {
+                dir = localDirectoryCacheManager.createLocalCache(subContext, subIndex, dir);
+            }
             subContextDirs.put(subIndex, dir);
         }
         return dir;
