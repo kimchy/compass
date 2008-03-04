@@ -17,6 +17,7 @@
 package org.compass.core.spi;
 
 import org.compass.core.Compass;
+import org.compass.core.CompassSession;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngineFactory;
@@ -32,6 +33,8 @@ public interface InternalCompass extends Compass {
     void start();
 
     void stop();
+
+    CompassSession openSession(boolean allowCreate, boolean checkClosed);
 
     String getName();
 

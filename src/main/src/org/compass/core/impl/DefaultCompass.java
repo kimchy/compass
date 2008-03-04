@@ -159,7 +159,6 @@ public class DefaultCompass implements InternalCompass {
     }
 
     public CompassMapping getMapping() {
-        checkClosed();
         return this.mapping;
     }
 
@@ -172,7 +171,13 @@ public class DefaultCompass implements InternalCompass {
     }
 
     public CompassSession openSession(boolean allowCreate) {
-        checkClosed();
+        return openSession(allowCreate, true);
+    }
+
+    public CompassSession openSession(boolean allowCreate, boolean checkClosed) {
+        if (checkClosed) {
+            checkClosed();
+        }
         CompassSession session = transactionFactory.getTransactionBoundSession();
 
         if (session != null) {
@@ -286,14 +291,14 @@ public class DefaultCompass implements InternalCompass {
 
     private static class CompassTransactionContext implements TransactionContext {
 
-        private Compass compass;
+        private InternalCompass compass;
 
-        public CompassTransactionContext(Compass compass) {
+        public CompassTransactionContext(InternalCompass compass) {
             this.compass = compass;
         }
 
         public <T> T execute(TransactionContextCallback<T> callback) throws TransactionException {
-            CompassSession session = compass.openSession();
+            CompassSession session = compass.openSession(true, false);
             CompassTransaction tx = null;
             try {
                 tx = session.beginTransaction();

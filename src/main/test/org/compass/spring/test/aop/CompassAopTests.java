@@ -17,7 +17,6 @@
 package org.compass.spring.test.aop;
 
 import junit.framework.TestCase;
-
 import org.compass.core.Compass;
 import org.compass.core.CompassTemplate;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,6 +36,7 @@ public class CompassAopTests extends TestCase {
                 "org/compass/spring/test/aop/applicationContext.xml");
         mockDaoOrService = (MockDaoOrService) applicationContext.getBean("mockDaoOrService");
         compass = (Compass) applicationContext.getBean("compass");
+        compass.getSearchEngineIndexManager().cleanIndex();
         compassTemplate = new CompassTemplate(compass);
     }
 
