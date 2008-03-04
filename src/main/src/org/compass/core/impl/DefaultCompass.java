@@ -200,6 +200,7 @@ public class DefaultCompass implements InternalCompass {
         if (closed) {
             return;
         }
+        closed = true;
         log.info("Closing Compass [" + name + "]");
         if (settings.getSettingAsBoolean(CompassEnvironment.Jndi.ENABLE, false) && !duplicate) {
             CompassObjectFactory.removeInstance(uuid, name, settings);
