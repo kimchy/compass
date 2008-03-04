@@ -823,18 +823,13 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                 allMapping.setExcludeAlias(sExcludeAlias.equalsIgnoreCase("true"));
             }
             allMapping.setProperty(allConf.getAttribute("name", null));
-            allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(allConf.getAttribute("spell-check", "exclude")));
+            allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(allConf.getAttribute("spell-check", "na")));
         }
         resourceMapping.setAllMapping(allMapping);
     }
 
     private void bindSpellCheck(ConfigurationHelper conf, InternalResourcePropertyMapping mapping) {
-        mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(conf.getAttribute("spell-check", "exclude")));
-    }
-
-    
-    private void bindSpellCheck(ConfigurationHelper conf, InternalResourcePropertyMapping mapping, ResourcePropertyMapping.SpellCheckType defaultType) {
-        mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(conf.getAttribute("spell-check", defaultType.toString())));
+        mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(conf.getAttribute("spell-check", "na")));
     }
 
     private void bindSubIndexHash(ConfigurationHelper conf, AbstractResourceMapping resourceMapping) {

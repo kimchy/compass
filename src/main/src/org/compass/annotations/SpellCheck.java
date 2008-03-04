@@ -26,6 +26,10 @@ package org.compass.annotations;
  */
 public enum SpellCheck {
     /**
+     * NA. Has no affect on the spell check and will use external properties configuration.
+     */
+    NA,
+    /**
      * Should this property mapping be included in the spell check index.
      */
     INCLUDE,

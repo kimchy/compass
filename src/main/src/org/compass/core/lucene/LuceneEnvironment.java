@@ -610,6 +610,13 @@ public class LuceneEnvironment {
         public static final String DEFAULT_PROPERTY = PREFIX + "defaultProperty";
 
         /**
+         * If set the <code>true</code>, will include all the proeprties except for the ones marked
+         * as excluded. If set to <code>false</code> will automatically add the all proeprty if no
+         * incldued properties are defined, or include the defined properties only.
+         */
+        public static final String INCLUDE_ALL_PROPERTIES = PREFIX + "includeAllProperties";
+
+        /**
          * The default accuracy that will be used. Defaults to <code>0.5</code>.
          */
         public static final String ACCURACY = PREFIX + "accuracy";

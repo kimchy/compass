@@ -287,6 +287,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.EXCLUDE);
             } else if (allMetaData.spellCheck() == SpellCheck.INCLUDE) {
                 allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.INCLUDE);
+            } else if (allMetaData.spellCheck() == SpellCheck.NA) {
+                allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.NA);
             }
             allMapping.setOmitNorms(allMetaData.omitNorms());
         }
@@ -845,6 +847,8 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.EXCLUDE);
         } else if (spellCheck == SpellCheck.INCLUDE) {
             mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.INCLUDE);
+        } else if (spellCheck == SpellCheck.NA) {
+            mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.NA);
         }
     }
 

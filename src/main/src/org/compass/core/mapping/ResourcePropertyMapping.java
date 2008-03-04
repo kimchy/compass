@@ -97,11 +97,15 @@ public interface ResourcePropertyMapping extends Mapping {
 
         public static final SpellCheckType EXCLUDE = new SpellCheckType("EXCLUDE");
 
+        public static final SpellCheckType NA = new SpellCheckType("NA");
+
         public static SpellCheckType fromString(String spellCheckType) {
             if ("include".equalsIgnoreCase(spellCheckType)) {
                 return SpellCheckType.INCLUDE;
             } else if ("exclude".equalsIgnoreCase(spellCheckType)) {
                 return SpellCheckType.EXCLUDE;
+            } else if ("na".equalsIgnoreCase(spellCheckType)) {
+                return SpellCheckType.NA;
             }
             throw new IllegalArgumentException("Can't find spell check type for [" + spellCheckType + "]");
         }
@@ -113,7 +117,10 @@ public interface ResourcePropertyMapping extends Mapping {
             if (spellCheckType == EXCLUDE) {
                 return "exlcude";
             }
-            return "exclude";
+            if (spellCheckType == NA) {
+                return "na";
+            }
+            return "na";
         }
     }
 

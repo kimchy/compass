@@ -40,7 +40,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private ExcludeFromAllType excludeFromAll = ExcludeFromAllType.NO;
 
-    private SpellCheckType spellCheck = SpellCheckType.EXCLUDE;
+    private SpellCheckType spellCheck = SpellCheckType.NA;
 
     private boolean omitNorms = false;
 

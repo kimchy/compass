@@ -148,21 +148,31 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         if (sSharedProps != null) {
             sharedProps = StringUtils.tokenizeToStringArray(sSharedProps, ",");
         }
+
+        boolean includeAllProperties = settings.getSettingAsBoolean(LuceneEnvironment.SpellCheck.INCLUDE_ALL_PROPERTIES, false);
         for (String subIndex : indexStore.getSubIndexes()) {
             Set<String> subIndexProps = properties.get(subIndex);
             if (subIndexProps == null) {
                 subIndexProps = new HashSet<String>();
-                properties.put(subIndex,  subIndexProps);
+                properties.put(subIndex, subIndexProps);
             }
-            
+
             subIndexProps.addAll(Arrays.asList(sharedProps));
-            
+
             for (String alias : spellCheckStore.getAliasesBySubIndex(subIndex)) {
                 ResourceMapping resourceMapping = searchEngineFactory.getMapping().getMappingByAlias(alias);
                 for (ResourcePropertyMapping resourcePropertyMapping : resourceMapping.getResourcePropertyMappings()) {
-                    if (resourcePropertyMapping.getSpellCheck() == ResourcePropertyMapping.SpellCheckType.INCLUDE &&
-                            !resourcePropertyMapping.isInternal()) {
-                        subIndexProps.add(resourcePropertyMapping.getPath().getPath());
+                    if (resourcePropertyMapping.isInternal()) {
+                        continue;
+                    }
+                    if (includeAllProperties) {
+                        if (resourcePropertyMapping.getSpellCheck() != ResourcePropertyMapping.SpellCheckType.EXCLUDE) {
+                            subIndexProps.add(resourcePropertyMapping.getPath().getPath());
+                        }
+                    } else {
+                        if (resourcePropertyMapping.getSpellCheck() == ResourcePropertyMapping.SpellCheckType.INCLUDE) {
+                            subIndexProps.add(resourcePropertyMapping.getPath().getPath());
+                        }
                     }
                 }
                 if (resourceMapping.getAllMapping().getSpellCheck() == ResourcePropertyMapping.SpellCheckType.INCLUDE) {
