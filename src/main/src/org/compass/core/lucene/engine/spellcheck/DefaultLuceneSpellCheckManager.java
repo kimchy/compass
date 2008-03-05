@@ -192,6 +192,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
             if (!includeAllProperties && subIndexProps.size() == 0) {
                 subIndexProps.add(settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
             }
+            
             if (log.isDebugEnabled()) {
                 log.debug("Sub index [" + subIndex + "] includes the following properties " + subIndexProps);
             }
