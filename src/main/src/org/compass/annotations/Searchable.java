@@ -192,6 +192,21 @@ public @interface Searchable {
     String[] extend() default {};
 
     /**
+     * What is the default mode for the given searchable class in including/excluding properties from
+     * the spell check index.
+     *
+     * <p>If set to <code>NA</code>, will use the globablly defined mode. If set the <code>INCLUDE</code>
+     * will automatically incldue all the given proeprties mappings unless specific properties are mapped
+     * with <code>EXCLUDE</code>. If set to <code>EXCLUDE</code> will automatically exclude all the given
+     * properties unless they are marked with <code>INCLUDE</code>.
+     *
+     * <p>A special note when both this is set to NA, and the global setting is set to NA as well (which is
+     * the default): In this case, Compass will use the all proeprty as the only property to add to the spell
+     * check index.
+     */
+    SpellCheck spellCheck() default SpellCheck.NA;
+
+    /**
      * Allows to set a converter for the {@link org.compass.core.mapping.osem.ClassMapping} of
      * the searchable class.
      * <p/>

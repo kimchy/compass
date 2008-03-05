@@ -30,6 +30,7 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceAnalyzerController;
 import org.compass.core.mapping.ResourceIdMappingProvider;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalAllMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
@@ -249,5 +250,12 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Inte
 
     public void setAllMapping(AllMapping allMapping) {
         this.allMapping = allMapping;
+    }
+
+    public void setSpellCheck(SpellCheckType spellCheck) {
+    }
+
+    public SpellCheckType getSpellCheck() {
+        return SpellCheckType.NA;
     }
 }

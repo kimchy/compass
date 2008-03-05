@@ -47,7 +47,7 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
@@ -284,15 +284,23 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 allMapping.setTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
             }
             if (allMetaData.spellCheck() == SpellCheck.EXCLUDE) {
-                allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.EXCLUDE);
+                allMapping.setSpellCheck(SpellCheckType.EXCLUDE);
             } else if (allMetaData.spellCheck() == SpellCheck.INCLUDE) {
-                allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.INCLUDE);
+                allMapping.setSpellCheck(SpellCheckType.INCLUDE);
             } else if (allMetaData.spellCheck() == SpellCheck.NA) {
-                allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.NA);
+                allMapping.setSpellCheck(SpellCheckType.NA);
             }
             allMapping.setOmitNorms(allMetaData.omitNorms());
         }
         classMapping.setAllMapping(allMapping);
+
+        if (searchable.spellCheck() == SpellCheck.NA) {
+            classMapping.setSpellCheck(SpellCheckType.NA);
+        } else if (searchable.spellCheck() == SpellCheck.EXCLUDE) {
+            classMapping.setSpellCheck(SpellCheckType.EXCLUDE);
+        } else if (searchable.spellCheck() == SpellCheck.INCLUDE) {
+            classMapping.setSpellCheck(SpellCheckType.INCLUDE);
+        }
 
         classMapping.setBoost(searchable.boost());
         classMapping.setRoot(searchable.root());
@@ -844,11 +852,11 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
     private void bindSpellCheck(InternalResourcePropertyMapping mapping, SpellCheck spellCheck) {
         if (spellCheck == SpellCheck.EXCLUDE) {
-            mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.EXCLUDE);
+            mapping.setSpellCheck(SpellCheckType.EXCLUDE);
         } else if (spellCheck == SpellCheck.INCLUDE) {
-            mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.INCLUDE);
+            mapping.setSpellCheck(SpellCheckType.INCLUDE);
         } else if (spellCheck == SpellCheck.NA) {
-            mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.NA);
+            mapping.setSpellCheck(SpellCheckType.NA);
         }
     }
 

@@ -18,6 +18,7 @@ package org.compass.core.mapping.internal;
 
 import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.SpellCheckType;
 
 /**
  * @author kimchy
@@ -27,4 +28,6 @@ public interface InternalResourceMapping extends ResourceMapping {
     void setUIDPath(String uid);
 
     void setAllMapping(AllMapping allMapping);
+
+    void setSpellCheck(SpellCheckType spellCheck);
 }

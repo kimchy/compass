@@ -65,6 +65,7 @@ import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContextCallback;
 import org.compass.core.transaction.context.TransactionalRunnable;
@@ -144,17 +145,16 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         }
 
         String[] sharedProps = new String[0];
-        String sSharedProps = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.PROPERTY);
+        String sSharedProps = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.GLOBAL_INCLUDE_PROPERTIES);
         if (sSharedProps != null) {
             sharedProps = StringUtils.tokenizeToStringArray(sSharedProps, ",");
         }
         String[] sharedExcludeProps = new String[0];
-        String sSharedExcludeProps = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.EXCLUDE_PROPERTY);
+        String sSharedExcludeProps = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.GLOBAL_EXCLUDE_PROPERTY);
         if (sSharedExcludeProps != null) {
             sharedExcludeProps = StringUtils.tokenizeToStringArray(sSharedExcludeProps, ",");
         }
 
-        boolean includeAllProperties = settings.getSettingAsBoolean(LuceneEnvironment.SpellCheck.INCLUDE_ALL_PROPERTIES, false);
         for (String subIndex : indexStore.getSubIndexes()) {
             Set<String> subIndexProps = properties.get(subIndex);
             if (subIndexProps == null) {
@@ -170,18 +170,20 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                     if (resourcePropertyMapping.isInternal()) {
                         continue;
                     }
-                    if (includeAllProperties) {
-                        if (resourcePropertyMapping.getSpellCheck() != ResourcePropertyMapping.SpellCheckType.EXCLUDE) {
-                            subIndexProps.add(resourcePropertyMapping.getPath().getPath());
-                        }
-                    } else {
-                        if (resourcePropertyMapping.getSpellCheck() == ResourcePropertyMapping.SpellCheckType.INCLUDE) {
-                            subIndexProps.add(resourcePropertyMapping.getPath().getPath());
-                        }
+                    if (resourceMapping.getSpellCheck() == SpellCheckType.INCLUDE && resourcePropertyMapping.getSpellCheck() != SpellCheckType.EXCLUDE) {
+                        subIndexProps.add(resourcePropertyMapping.getPath().getPath());
+                    }
+                    if (resourceMapping.getSpellCheck() == SpellCheckType.EXCLUDE && resourcePropertyMapping.getSpellCheck() == SpellCheckType.INCLUDE) {
+                        subIndexProps.add(resourcePropertyMapping.getPath().getPath());
                     }
                 }
-                if (resourceMapping.getAllMapping().getSpellCheck() == ResourcePropertyMapping.SpellCheckType.INCLUDE) {
+                if (resourceMapping.getAllMapping().getSpellCheck() == SpellCheckType.INCLUDE) {
                     subIndexProps.add(resourceMapping.getAllMapping().getProperty());
+                }
+
+                if (subIndexProps.size() == 0 && resourceMapping.getSpellCheck() == SpellCheckType.NA &&
+                        resourceMapping.getAllMapping().getSpellCheck() != SpellCheckType.EXCLUDE) {
+                    subIndexProps.add(settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
                 }
             }
 
@@ -189,10 +191,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 subIndexProps.remove(excludeProperty);
             }
 
-            if (!includeAllProperties && subIndexProps.size() == 0) {
-                subIndexProps.add(settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
-            }
-            
+
             if (log.isDebugEnabled()) {
                 log.debug("Sub index [" + subIndex + "] includes the following properties " + subIndexProps);
             }

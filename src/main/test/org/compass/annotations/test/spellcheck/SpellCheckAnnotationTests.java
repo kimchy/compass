@@ -38,7 +38,25 @@ public class SpellCheckAnnotationTests extends AbstractAnnotationsTestCase {
         settings.setBooleanSetting(LuceneEnvironment.SpellCheck.SCHEDULE, false);
     }
 
-    public void testSimpleSpellCheckInclude() {
+    public void testSearchInclude() {
+        setUpData();
+
+        SearchEngineSpellCheckManager spellCheckManager = getCompass().getSpellCheckManager();
+        assertTrue(spellCheckManager.rebuild());
+
+        String[] suggestions = spellCheckManager.suggestBuilder("whit").suggest().getSuggestions();
+        assertEquals(1, suggestions.length);
+        assertEquals("white", suggestions[0]);
+
+        suggestions = spellCheckManager.suggestBuilder("whit").aliases("A").suggest().getSuggestions();
+        assertEquals(1, suggestions.length);
+        assertEquals("white", suggestions[0]);
+
+        suggestions = spellCheckManager.suggestBuilder("blac").aliases("A").suggest().getSuggestions();
+        assertEquals(0, suggestions.length);
+    }
+
+    public void testSearchExlcude() {
         setUpData();
 
         SearchEngineSpellCheckManager spellCheckManager = getCompass().getSpellCheckManager();
@@ -52,7 +70,7 @@ public class SpellCheckAnnotationTests extends AbstractAnnotationsTestCase {
         assertEquals(1, suggestions.length);
         assertEquals("five", suggestions[0]);
 
-        suggestions = spellCheckManager.suggestBuilder("fiv").aliases("A").suggest().getSuggestions();
+        suggestions = spellCheckManager.suggestBuilder("sixtee").aliases("B").suggest().getSuggestions();
         assertEquals(0, suggestions.length);
     }
 

@@ -22,6 +22,7 @@ import org.compass.core.converter.Converter;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.SpellCheckType;
 
 /**
  * @author kimchy

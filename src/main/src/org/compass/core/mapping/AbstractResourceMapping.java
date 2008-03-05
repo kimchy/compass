@@ -49,6 +49,8 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private AllMapping allMapping = new DefaultAllMapping();
 
+    private SpellCheckType spellCheck = SpellCheckType.NA;
+
     private String uidProperty;
 
     private Mapping[] idMappings;
@@ -87,6 +89,14 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         this.allMapping = allMapping;
     }
 
+    public SpellCheckType getSpellCheck() {
+        return spellCheck;
+    }
+
+    public void setSpellCheck(SpellCheckType spellCheck) {
+        this.spellCheck = spellCheck;
+    }
+
     public ResourcePropertyMapping[] getResourceIdMappings() {
         if (idPropertyMappings == null) {
             buildResourceIds();
@@ -110,6 +120,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         resourceMapping.setAnalyzer(getAnalyzer());
         resourceMapping.setUIDPath(getUIDPath());
         resourceMapping.setAllMapping(getAllMapping().copy());
+        resourceMapping.setSpellCheck(getSpellCheck());
     }
 
     public void postProcess() throws MappingException {

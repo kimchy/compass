@@ -38,7 +38,9 @@ import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
@@ -168,6 +170,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         bindExtends(xmlObjectConf, xmlObjectMapping);
 
         bindAll(xmlObjectConf, xmlObjectMapping);
+        bindSpellCheck(xmlObjectConf, xmlObjectMapping);
 
         String analyzer = xmlObjectConf.getAttribute("analyzer", null);
         xmlObjectMapping.setAnalyzer(analyzer);
@@ -305,6 +308,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         rawResourceMapping.setAnalyzer(analyzer);
 
         bindAll(resourceConf, rawResourceMapping);
+        bindSpellCheck(resourceConf, rawResourceMapping);
 
         rawResourceMapping.setRoot(true);
         rawResourceMapping.setBoost(getBoost(resourceConf));
@@ -416,6 +420,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         classMapping.setAnalyzer(analyzer);
 
         bindAll(classConf, classMapping);
+        bindSpellCheck(classConf, classMapping);
 
         boolean poly = classConf.getAttributeAsBoolean("poly", false);
         classMapping.setPoly(poly);
@@ -823,13 +828,17 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                 allMapping.setExcludeAlias(sExcludeAlias.equalsIgnoreCase("true"));
             }
             allMapping.setProperty(allConf.getAttribute("name", null));
-            allMapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(allConf.getAttribute("spell-check", "na")));
+            allMapping.setSpellCheck(SpellCheckType.fromString(allConf.getAttribute("spell-check", "na")));
         }
         resourceMapping.setAllMapping(allMapping);
     }
 
     private void bindSpellCheck(ConfigurationHelper conf, InternalResourcePropertyMapping mapping) {
-        mapping.setSpellCheck(ResourcePropertyMapping.SpellCheckType.fromString(conf.getAttribute("spell-check", "na")));
+        mapping.setSpellCheck(SpellCheckType.fromString(conf.getAttribute("spell-check", "na")));
+    }
+
+    private void bindSpellCheck(ConfigurationHelper conf, InternalResourceMapping mapping) {
+        mapping.setSpellCheck(SpellCheckType.fromString(conf.getAttribute("spell-check", "na")));
     }
 
     private void bindSubIndexHash(ConfigurationHelper conf, AbstractResourceMapping resourceMapping) {

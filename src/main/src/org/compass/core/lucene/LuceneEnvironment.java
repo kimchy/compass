@@ -596,21 +596,14 @@ public class LuceneEnvironment {
         public static final String ENABLE = PREFIX + "enable";
 
         /**
-         * The property that will be used to build from the spell check index. Defaults to the all property. Note,
-         * this can be a list of comma separated strings representing different proeprties.
-         *
-         * <p>If using mappings to include certain properties in the spell check index, this list of properties will
-         * be added as shared properties to all the different sub indexes.
+         * A globabl set of comma separated properties that will be included for each sub index.
          */
-        public static final String PROPERTY = PREFIX + "property";
+        public static final String GLOBAL_INCLUDE_PROPERTIES = PREFIX + "globablIncludeProperties";
 
         /**
-         * A comman separated list of proeprties to be excldued by default from all the sub index spell check index.
-         *
-         * <p>This is handy when setting {@link #INCLUDE_ALL_PROPERTIES} to <code>true</code>, and then globally exclude
-         * certain proeprties, such as password.
+         * A globabl set of comma separated properties that will be exluded for each sub index.
          */
-        public static final String EXCLUDE_PROPERTY = PREFIX + "excludeProperty";
+        public static final String GLOBAL_EXCLUDE_PROPERTY = PREFIX + "globalExcludeProperties";
 
         /**
          * The default property for the spell check.
@@ -618,11 +611,15 @@ public class LuceneEnvironment {
         public static final String DEFAULT_PROPERTY = PREFIX + "defaultProperty";
 
         /**
-         * If set the <code>true</code>, will include all the proeprties except for the ones marked
-         * as excluded. If set to <code>false</code> will automatically add the all proeprty if no
-         * incldued properties are defined, or include the defined properties only.
+         * The default mode for inclduing/excluding of proeprties from the spell check index. Only applies on resource
+         * mappings (class/resource/xml-object) that have their spell-check default value (which is NA).
+         *
+         * <p>If not set, will use just the all proeprty for mappings it can apply to. If set to <code>INCLUDE</code>
+         * will include by default all the given proeprties unless there are specific ones that have <code>EXLCUDE</code>
+         * mappings. If set to <code>EXCLUDE</codE> will exclude all proeprties by default unless the given proeprties
+         * are marked with <code>INCLUDE</code>.
          */
-        public static final String INCLUDE_ALL_PROPERTIES = PREFIX + "includeAllProperties";
+        public static final String DEFAULT_MODE = PREFIX + "defaultMode";
 
         /**
          * The default accuracy that will be used. Defaults to <code>0.5</code>.

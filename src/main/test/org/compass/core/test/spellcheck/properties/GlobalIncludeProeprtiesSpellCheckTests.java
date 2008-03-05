@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.internal;
+package org.compass.core.test.spellcheck.properties;
 
-import org.compass.core.Property;
-import org.compass.core.mapping.AllMapping;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.lucene.LuceneEnvironment;
 
 /**
  * @author kimchy
  */
-public interface InternalAllMapping extends AllMapping {
+public class GlobalIncludeProeprtiesSpellCheckTests extends AbstractGlobalPropertiesSpellCheckTests {
 
-    void setSupported(Boolean supported);
-
-    void setProperty(String property);
-
-    void setOmitNorms(Boolean omitNorms);
-
-    void setExcludeAlias(Boolean excludeAlias);
-
-    void setTermVector(Property.TermVector termVector);
-
-    void setSpellCheck(SpellCheckType spellCheck);
+    protected void addSettings(CompassSettings settings) {
+        super.addSettings(settings);
+        settings.setSetting(LuceneEnvironment.SpellCheck.GLOBAL_INCLUDE_PROPERTIES, "value1, value2");
+    }
+    
 }

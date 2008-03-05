@@ -721,9 +721,32 @@ compass.engine.spellcheck.engine.ramBufferSize=40
           </para>
           
           <para>
-              By default, the spell check index will use the "all" property in order to index its contents into the spell check index. There are several ways to configure what should be indexed if the "all" property is not desired. The first option is to use the following setting: <literal>compass.engine.spellcheck.property</literal>, which accepts a comma list separated string of property names. Another option is to use the <literal>spell-check</literal> option within the mapping of different properties and set it to <literal>include</literal>. In case one only wished to exclude certain properties and include all the rest, the setting <literal>compass.engine.spellcheck.includeAllProperties</literal> should be set to <literal>true</literal> and then only mark that ones to be excluded (note, in this case, the all property will not be included by default).
+              So, what is actually being included in the spell check index. Out of the box, by just enabling spell check, the all field is going to be used to get the terms for the spell check index. In this case, things that are excluded from the all field will be excluded from the spell check index as well
           </para>
-      </sect2>
+          <para>
+              Compass allows for great flexibility in what is going to be included or excluded in the spell check index. The first two important settings are: <literal>compass.engine.spellcheck.defaultMode</literal> and the <literal>spell-check</literal> resource mapping level definition (for class/resource/xml-object). By default, both are set to <literal>NA</literal>, which results in including the all property. The all property can be excluded by setting the <literal>spell-check</literal> to <literal>exclude</literal> on the all mapping definition.
+          </para>
+          
+          <para>
+              Each resource mapping (resource/class/xml-object) can have a <literal>spell-check</literal> definition of <literal>include</literal>, <literal>exclude</literal>, and <literal>na</literal>. If set to <literal>na</literal>, the global default mode will be used for it (which can be set to <literal>include</literal>, <literal>exclude</literal> and <literal>na</literal> as well).
+          </para>
+          
+          <para>
+              When the resource mapping ends up with <literal>spell-check</literal> of <literal>include</literal>, it will automatically include all the properties for the given mapping, except for the "all" property. Properties can be excluded by specifically setting their respective <literal>spell-check</literal> to <literal>exclude</literal>.
+          </para>
+
+          <para>
+              When the resource mapping ends up with <literal>spell-check</literal> of <literal>exclude</literal>, it will automatically exclude all the properties for the given mapping, as well as the "all" property. Properties can be included by specifically setting their respective <literal>spell-check</literal> to <literal>include</literal>.
+          </para>
+          
+          <para>
+              On top of specific mapping definition. Compass can be configured with <literal>compass.engine.spellcheck.globablIncludeProperties</literal> which is a comma separated list of properties that will always be included. And <literal>compass.engine.spellcheck.globablExcludeProperties</literal> which is a comma separated list of properties that will always be excluded.
+          </para>
+          
+          <para>
+              If you wish to know which properties end up being included for certain sub index, turn the debug logging level on for <classname>org.compass.core.lucene.engine.spellcheck.DefaultLuceneSpellCheckManager</classname> and it will print out the list of properties that will be used for each sub index.
+          </para>
+      </sect2>      
   </sect1>
 
   <sect1 id="core-searchengine-directlucene">

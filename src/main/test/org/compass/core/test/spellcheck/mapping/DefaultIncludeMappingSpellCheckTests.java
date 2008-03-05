@@ -20,12 +20,13 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.test.AbstractTestCase;
 
 /**
  * @author kimchy
  */
-public class MappingSpellCheckTests extends AbstractTestCase {
+public class DefaultIncludeMappingSpellCheckTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"spellcheck/mapping/mapping.cpm.xml"};
@@ -34,6 +35,7 @@ public class MappingSpellCheckTests extends AbstractTestCase {
     protected void addSettings(CompassSettings settings) {
         settings.setBooleanSetting(LuceneEnvironment.SpellCheck.ENABLE, true);
         settings.setBooleanSetting(LuceneEnvironment.SpellCheck.SCHEDULE, false);
+        settings.setSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, SpellCheckType.INCLUDE.toString());
     }
 
     public void testSimplePropertiesSpellCheck() {
@@ -45,7 +47,7 @@ public class MappingSpellCheckTests extends AbstractTestCase {
         a.value1 = "orange";
         a.value2 = "white";
         a.value3 = "black";
-        session.save("a1", a);
+        session.save("a2", a);
 
         tr.commit();
         session.close();

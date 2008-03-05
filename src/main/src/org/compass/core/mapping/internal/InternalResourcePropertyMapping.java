@@ -17,6 +17,7 @@
 package org.compass.core.mapping.internal;
 
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.SpellCheckType;
 
 /**
  * @author kimchy
@@ -28,5 +29,5 @@ public interface InternalResourcePropertyMapping extends ResourcePropertyMapping
      */
     void setNullValue(String nullValue);
 
-    void setSpellCheck(ResourcePropertyMapping.SpellCheckType spellCheck);
+    void setSpellCheck(SpellCheckType spellCheck);
 }

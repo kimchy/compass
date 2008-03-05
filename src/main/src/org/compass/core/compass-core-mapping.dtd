@@ -24,6 +24,7 @@
     <!ATTLIST xml-object xpath CDATA #IMPLIED>
     <!ATTLIST xml-object analyzer CDATA #IMPLIED>
     <!ATTLIST xml-object boost CDATA #IMPLIED>
+    <!ATTLIST xml-object spell-check (include|exclude|na) "na">
 
 <!ELEMENT xml-id EMPTY
 >
@@ -98,6 +99,7 @@
     <!ATTLIST resource extends CDATA #IMPLIED>
     <!ATTLIST resource analyzer CDATA #IMPLIED>
     <!ATTLIST resource boost CDATA #IMPLIED>
+    <!ATTLIST resource spell-check (include|exclude|na) "na">
 
 <!ELEMENT resource-id EMPTY
 >
@@ -241,6 +243,8 @@
     <!ATTLIST class support-unmarshall (true|false) #IMPLIED>
 
     <!ATTLIST class managed-id (auto|true|false|no|no_store) #IMPLIED>
+
+    <!ATTLIST class spell-check (include|exclude|na) "na">
 
 <!ELEMENT id (
     meta-data*

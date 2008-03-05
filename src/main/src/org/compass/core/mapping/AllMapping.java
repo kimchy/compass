@@ -64,7 +64,7 @@ public interface AllMapping {
     /**
      * 
      */
-    ResourcePropertyMapping.SpellCheckType getSpellCheck();
+    SpellCheckType getSpellCheck();
 
     /**
      * Returns a copy of the All mapping settings.

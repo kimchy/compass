@@ -87,43 +87,6 @@ public interface ResourcePropertyMapping extends Mapping {
         }
     }
 
-    public static class SpellCheckType extends Parameter {
-
-        protected SpellCheckType(String name) {
-            super(name);
-        }
-
-        public static final SpellCheckType INCLUDE = new SpellCheckType("INCLUDE");
-
-        public static final SpellCheckType EXCLUDE = new SpellCheckType("EXCLUDE");
-
-        public static final SpellCheckType NA = new SpellCheckType("NA");
-
-        public static SpellCheckType fromString(String spellCheckType) {
-            if ("include".equalsIgnoreCase(spellCheckType)) {
-                return SpellCheckType.INCLUDE;
-            } else if ("exclude".equalsIgnoreCase(spellCheckType)) {
-                return SpellCheckType.EXCLUDE;
-            } else if ("na".equalsIgnoreCase(spellCheckType)) {
-                return SpellCheckType.NA;
-            }
-            throw new IllegalArgumentException("Can't find spell check type for [" + spellCheckType + "]");
-        }
-
-        public static String toString(SpellCheckType spellCheckType) {
-            if (spellCheckType == INCLUDE) {
-                return "include";
-            }
-            if (spellCheckType == EXCLUDE) {
-                return "exlcude";
-            }
-            if (spellCheckType == NA) {
-                return "na";
-            }
-            return "na";
-        }
-    }
-
     /**
      * Returns the anayzer name that is associated with the property.
      * Can be <code>null</code> (i.e. not set).

@@ -80,6 +80,11 @@ public interface ResourceMapping extends AliasMapping {
     Mapping[] getIdMappings();
 
     /**
+     * Returns the default spell check mode. If NA, will use global setting.
+     */
+    SpellCheckType getSpellCheck();
+
+    /**
      * Returns the uid property name.
      */
     String getUIDPath();

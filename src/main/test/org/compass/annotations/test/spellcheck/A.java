@@ -24,7 +24,7 @@ import org.compass.annotations.SpellCheck;
 /**
  * @author kimchy
  */
-@Searchable
+@Searchable(spellCheck = SpellCheck.INCLUDE)
 public class A {
 
     @SearchableId

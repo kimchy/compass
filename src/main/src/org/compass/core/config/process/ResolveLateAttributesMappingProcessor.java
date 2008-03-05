@@ -23,11 +23,14 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.InternalAllMapping;
+import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 
 /**
@@ -68,6 +71,13 @@ public class ResolveLateAttributesMappingProcessor implements MappingProcessor {
                 if (resourceMapping.getAllMapping().getTermVector() == null) {
                     ((InternalAllMapping) resourceMapping.getAllMapping()).setTermVector(Property.TermVector.fromString(
                             settings.getSetting(CompassEnvironment.All.TERM_VECTOR, Property.TermVector.NO.toString())));
+                }
+            }
+            if (m instanceof InternalResourceMapping) {
+                InternalResourceMapping resourceMapping = (InternalResourceMapping) m;
+                SpellCheckType globablSpellCheck = SpellCheckType.fromString(settings.getSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, "NA"));
+                if (resourceMapping.getSpellCheck() == SpellCheckType.NA) {
+                    resourceMapping.setSpellCheck(globablSpellCheck);
                 }
             }
         }
