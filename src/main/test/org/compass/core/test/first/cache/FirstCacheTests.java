@@ -62,7 +62,7 @@ public class FirstCacheTests extends AbstractTestCase {
         assertTrue(r.getValue("id").equals(cachedR.getValue("id")));
         r = cachedR;
 
-        cachedR = session.getResource("r", new String[] { "1" });
+        cachedR = session.getResource("r", (Object) new String[] { "1" });
         assertEquals("this is a test", r.getValue("mvalue"));
 
         assertTrue(r == cachedR);
@@ -89,7 +89,7 @@ public class FirstCacheTests extends AbstractTestCase {
 
         session.save(a);
 
-        A cachedA = (A) session.get(A.class, id);
+        A cachedA = session.get(A.class, id);
         assertTrue(a == cachedA);
 
         CompassHits hits = session.find("value");
@@ -97,14 +97,14 @@ public class FirstCacheTests extends AbstractTestCase {
         assertTrue(a == hits.data(0));
 
         session.evict(a);
-        cachedA = (A) session.get(A.class, id);
+        cachedA = session.get(A.class, id);
         assertFalse(a == cachedA);
 
         session.save(a);
-        cachedA = (A) session.get(A.class, id);
+        cachedA = session.get(A.class, id);
         assertTrue(a == cachedA);
         session.delete("a", id);
-        cachedA = (A) session.get(A.class, id);
+        cachedA = session.get(A.class, id);
         assertFalse(a == cachedA);
 
         tr.commit();

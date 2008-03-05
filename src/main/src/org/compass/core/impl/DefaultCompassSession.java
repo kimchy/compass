@@ -146,7 +146,7 @@ public class DefaultCompassSession implements InternalCompassSession {
         return new DefaultCompassQueryFilterBuilder(searchEngineQueryFilterBuilder, this);
     }
 
-    public CompassTermFreqsBuilder termFreqsBuilder(String[] names) throws CompassException {
+    public CompassTermFreqsBuilder termFreqsBuilder(String ... names) throws CompassException {
         checkClosed();
         return new DefaultCompassTermFreqsBuilder(this, names);
     }
@@ -394,7 +394,6 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void saveResource(Resource resource) throws CompassException {
         searchEngine.save(resource);
-        ResourceKey key = ((InternalResource) resource).resourceKey();
     }
 
     public void delete(String alias, Object... ids) throws CompassException {

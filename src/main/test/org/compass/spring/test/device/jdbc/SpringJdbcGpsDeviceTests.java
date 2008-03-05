@@ -117,8 +117,8 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         ActiveMirrorGpsDevice gpsDevice = (ActiveMirrorGpsDevice) applicationContext.getBean("jdbcGpsDevice");
 
         gps.index();
-        Resource r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
-        r = compassTemplate.getResource("result-set", new String[]{"4", "6"});
+        compassTemplate.loadResource("result-set", "1", "1");
+        Resource r = compassTemplate.getResource("result-set", "4", "6");
         assertNotNull(r);
         CompassDetachedHits hits = compassTemplate.findWithDetach("parent");
         assertEquals(6, hits.getLength());
@@ -132,10 +132,10 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         con.commit();
         con.close();
 
-        r = compassTemplate.getResource("result-set", new String[]{"999", "0"});
+        r = compassTemplate.getResource("result-set", "999", "0");
         assertNull(r);
         gpsDevice.performMirroring();
-        r = compassTemplate.loadResource("result-set", new String[]{"999", "0"});
+        compassTemplate.loadResource("result-set", "999", "0");
 
         // test that update works
         con = JdbcUtils.getConnection(dataSource);
@@ -146,7 +146,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         con.close();
 
         gpsDevice.performMirroring();
-        r = compassTemplate.loadResource("result-set", new String[]{"1", "1"});
+        r = compassTemplate.loadResource("result-set", "1", "1");
         assertEquals("new first name", r.getValue("parent_first_name"));
 
         // test that delete works
@@ -158,7 +158,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         con.close();
 
         gpsDevice.performMirroring();
-        r = compassTemplate.getResource("result-set", new String[]{"999", "0"});
+        r = compassTemplate.getResource("result-set", "999", "0");
         assertNull(r);
 
         applicationContext.close();
@@ -197,7 +197,7 @@ public class SpringJdbcGpsDeviceTests extends TestCase {
         r = compassTemplate.getResource("parent", "999");
         assertNull(r);
         gpsDevice.performMirroring();
-        r = compassTemplate.loadResource("parent", "999");
+        compassTemplate.loadResource("parent", "999");
 
         gps.stop();
         gps.start();

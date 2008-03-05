@@ -96,19 +96,19 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
         return this;
     }
 
-    public CompassQuery setSubIndexes(String[] subIndexes) {
+    public CompassQuery setSubIndexes(String ... subIndexes) {
         searchEngineQuery.setSubIndexes(subIndexes);
         return this;
     }
 
-    public CompassQuery setAliases(String[] aliases) {
+    public CompassQuery setAliases(String ... aliases) {
         searchEngineQuery.setAliases(aliases);
         return this;
     }
 
-    public CompassQuery setTypes(Class[] types) {
+    public CompassQuery setTypes(Class ... types) {
         if (types == null) {
-            setAliases(null);
+            searchEngineQuery.setAliases(null);
             return this;
         }
         String[] aliases = new String[types.length];

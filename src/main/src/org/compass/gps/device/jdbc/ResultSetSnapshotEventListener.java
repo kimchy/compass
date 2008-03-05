@@ -29,7 +29,6 @@ import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
-import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 import org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
@@ -38,6 +37,7 @@ import org.compass.gps.device.jdbc.snapshot.CreateAndUpdateSnapshotEvent;
 import org.compass.gps.device.jdbc.snapshot.DeleteSnapshotEvent;
 import org.compass.gps.device.jdbc.snapshot.JdbcAliasRowSnapshot;
 import org.compass.gps.device.jdbc.snapshot.JdbcSnapshotEventListener;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * A
@@ -53,10 +53,10 @@ public class ResultSetSnapshotEventListener implements JdbcSnapshotEventListener
 
     private static Log log = LogFactory.getLog(ResultSetSnapshotEventListener.class);
 
-    private HashMap createAndUpdateQueries;
+    private HashMap<String, String> createAndUpdateQueries;
 
     public void configure(ConfigureSnapshotEvent configureSnapshotEvent) throws JdbcGpsDeviceException {
-        createAndUpdateQueries = new HashMap();
+        createAndUpdateQueries = new HashMap<String, String>();
         for (Iterator it = configureSnapshotEvent.getMappings().iterator(); it.hasNext();) {
             ResultSetToResourceMapping mapping = (ResultSetToResourceMapping) it.next();
             if (!mapping.supportsVersioning()) {
@@ -106,10 +106,10 @@ public class ResultSetSnapshotEventListener implements JdbcSnapshotEventListener
                     JdbcAliasRowSnapshot rowSnapshot = (JdbcAliasRowSnapshot) it.next();
                     List ids = rowSnapshot.getIds();
                     if (ids.size() == 1) {
-                        session.delete(mapping.getAlias(), (String) ids.get(0));
+                        session.delete(mapping.getAlias(), ids.get(0));
                     } else {
                         String[] idsArr = (String[]) ids.toArray(new String[ids.size()]);
-                        session.delete(mapping.getAlias(), idsArr);
+                        session.delete(mapping.getAlias(), (Object) idsArr);
                     }
                 }
             }
@@ -130,7 +130,7 @@ public class ResultSetSnapshotEventListener implements JdbcSnapshotEventListener
         CompassGpsInterfaceDevice compassGps = createAndUpdateSnapshotEvent.getCompassGps();
         compassGps.executeForMirror(new CompassCallbackWithoutResult() {
             protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                String query = (String) createAndUpdateQueries.get(mapping.getAlias());
+                String query = createAndUpdateQueries.get(mapping.getAlias());
                 PreparedStatement ps = null;
                 try {
                     ps = createAndUpdateSnapshotEvent.getConnection().prepareStatement(query);

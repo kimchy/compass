@@ -86,13 +86,13 @@ public class ResourceTests extends AbstractTestCase {
         r = session.getResource("a", "1");
         assertEquals("this is a test", r.getValue("mvalue"));
 
-        r = session.getResource("a", new String[]{"1"});
+        r = session.getResource("a", (Object) new String[]{"1"});
         assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("a", id);
         assertEquals("this is a test", r.getValue("mvalue"));
 
-        r = session.getResource("a", new Property[]{id});
+        r = session.getResource("a", (Object) new Property[]{id});
         assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("a", r);
@@ -123,10 +123,12 @@ public class ResourceTests extends AbstractTestCase {
 
         session.save(r);
 
-        r = session.getResource("b", new String[]{"1", "2"});
+        r = session.getResource("b", "1", "2");
         assertEquals("this is a test", r.getValue("mvalue"));
 
-        r = session.getResource("b", new Property[]{id1, id2});
+        // TODO need to make this work
+        // r = session.getResource("b", id1, id2);
+        r = session.getResource("b", (Object) new Property[] {id1, id2});
         assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("b", r);

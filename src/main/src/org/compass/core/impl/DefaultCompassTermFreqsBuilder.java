@@ -65,14 +65,14 @@ public class DefaultCompassTermFreqsBuilder implements CompassTermFreqsBuilder {
         return this;
     }
 
-    public CompassTermFreqsBuilder setAliases(String[] aliases) {
+    public CompassTermFreqsBuilder setAliases(String ... aliases) {
         this.aliases = aliases;
         return this;
     }
 
-    public CompassTermFreqsBuilder setTypes(Class[] types) {
+    public CompassTermFreqsBuilder setTypes(Class ... types) {
         if (types == null) {
-            setAliases(null);
+            this.aliases = null;
             return this;
         }
         String[] aliases = new String[types.length];
@@ -84,7 +84,7 @@ public class DefaultCompassTermFreqsBuilder implements CompassTermFreqsBuilder {
         return this;
     }
 
-    public CompassTermFreqsBuilder setSubIndexes(String[] subIndexes) {
+    public CompassTermFreqsBuilder setSubIndexes(String ... subIndexes) {
         this.subIndexes = subIndexes;
         return this;
     }
