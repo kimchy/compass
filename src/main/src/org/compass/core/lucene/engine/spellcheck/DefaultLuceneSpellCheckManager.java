@@ -148,6 +148,11 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         if (sSharedProps != null) {
             sharedProps = StringUtils.tokenizeToStringArray(sSharedProps, ",");
         }
+        String[] sharedExcludeProps = new String[0];
+        String sSharedExcludeProps = spellCheckSettings.getSetting(LuceneEnvironment.SpellCheck.EXCLUDE_PROPERTY);
+        if (sSharedExcludeProps != null) {
+            sharedExcludeProps = StringUtils.tokenizeToStringArray(sSharedExcludeProps, ",");
+        }
 
         boolean includeAllProperties = settings.getSettingAsBoolean(LuceneEnvironment.SpellCheck.INCLUDE_ALL_PROPERTIES, false);
         for (String subIndex : indexStore.getSubIndexes()) {
@@ -180,7 +185,11 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 }
             }
 
-            if (subIndexProps.size() == 0) {
+            for (String excludeProperty : sharedExcludeProps) {
+                subIndexProps.remove(excludeProperty);
+            }
+
+            if (!includeAllProperties && subIndexProps.size() == 0) {
                 subIndexProps.add(settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
             }
             if (log.isDebugEnabled()) {

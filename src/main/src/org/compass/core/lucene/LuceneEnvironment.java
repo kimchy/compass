@@ -605,6 +605,14 @@ public class LuceneEnvironment {
         public static final String PROPERTY = PREFIX + "property";
 
         /**
+         * A comman separated list of proeprties to be excldued by default from all the sub index spell check index.
+         *
+         * <p>This is handy when setting {@link #INCLUDE_ALL_PROPERTIES} to <code>true</code>, and then globally exclude
+         * certain proeprties, such as password.
+         */
+        public static final String EXCLUDE_PROPERTY = PREFIX + "excludeProperty";
+
+        /**
          * The default property for the spell check.
          */
         public static final String DEFAULT_PROPERTY = PREFIX + "defaultProperty";
