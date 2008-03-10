@@ -33,7 +33,7 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
 
     private Class refClass;
 
-    private HashMap refAliasesMap = new HashMap();
+    private HashMap<String, ClassMapping> refAliasesMap = new HashMap<String, ClassMapping>();
 
     private Cascade[] cascades;
 
@@ -65,8 +65,8 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
         if (refAliases == null) {
             return false;
         }
-        for (int i = 0; i < refAliases.length; i++) {
-            if (hasRefAlias(refAliases[i])) {
+        for (String refAlias : refAliases) {
+            if (hasRefAlias(refAlias)) {
                 return true;
             }
         }
@@ -74,7 +74,7 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
     }
 
     public ClassMapping getRefClassMapping(String alias) {
-        return (ClassMapping) refAliasesMap.get(alias);
+        return refAliasesMap.get(alias);
     }
 
     public String[] getRefAliases() {
@@ -92,8 +92,8 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
     public void setRefClassMappings(ClassMapping[] refClassMappings) {
         this.refClassMappings = refClassMappings;
         if (refClassMappings != null) {
-            for (int i = 0; i < refClassMappings.length; i++) {
-                refAliasesMap.put(refClassMappings[i].getAlias(), refClassMappings[i]);
+            for (ClassMapping refClassMapping : refClassMappings) {
+                refAliasesMap.put(refClassMapping.getAlias(), refClassMapping);
             }
         }
     }
