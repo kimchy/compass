@@ -123,17 +123,17 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
             return false;
         }
         if (shouldCascadeDelete != null) {
-            return shouldCascadeDelete.booleanValue();
+            return shouldCascadeDelete;
         }
-        for (int i = 0; i < cascades.length; i++) {
-            if (cascades[i] == Cascade.DELETE || cascades[i] == Cascade.ALL) {
+        for (Cascade cascade : cascades) {
+            if (cascade == Cascade.DELETE || cascade == Cascade.ALL) {
                 shouldCascadeDelete = Boolean.TRUE;
             }
         }
         if (shouldCascadeDelete == null) {
             shouldCascadeDelete = Boolean.FALSE;
         }
-        return shouldCascadeDelete.booleanValue();
+        return shouldCascadeDelete;
     }
 
 
@@ -142,17 +142,17 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
             return false;
         }
         if (shouldCascadeCreate != null) {
-            return shouldCascadeCreate.booleanValue();
+            return shouldCascadeCreate;
         }
-        for (int i = 0; i < cascades.length; i++) {
-            if (cascades[i] == Cascade.CREATE || cascades[i] == Cascade.ALL) {
+        for (Cascade cascade : cascades) {
+            if (cascade == Cascade.CREATE || cascade == Cascade.ALL) {
                 shouldCascadeCreate = Boolean.TRUE;
             }
         }
         if (shouldCascadeCreate == null) {
             shouldCascadeCreate = Boolean.FALSE;
         }
-        return shouldCascadeCreate.booleanValue();
+        return shouldCascadeCreate;
     }
 
     public boolean shouldCascadeSave() {
@@ -160,17 +160,17 @@ public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping im
             return false;
         }
         if (shouldCascadeSave != null) {
-            return shouldCascadeSave.booleanValue();
+            return shouldCascadeSave;
         }
-        for (int i = 0; i < cascades.length; i++) {
-            if (cascades[i] == Cascade.SAVE || cascades[i] == Cascade.ALL) {
+        for (Cascade cascade : cascades) {
+            if (cascade == Cascade.SAVE || cascade == Cascade.ALL) {
                 shouldCascadeSave = Boolean.TRUE;
             }
         }
         if (shouldCascadeSave == null) {
             shouldCascadeSave = Boolean.FALSE;
         }
-        return shouldCascadeSave.booleanValue();
+        return shouldCascadeSave;
     }
 
 
