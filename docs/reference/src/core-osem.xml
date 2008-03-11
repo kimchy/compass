@@ -512,6 +512,36 @@ public class B {
       </para>
     </sect2>
 
+    <sect2 id="core-osem-cascade">
+        <title>Searchable Cascade</title>
+      
+        <para>
+            The searchable cascading mapping allows to define cascading operations on certain properties without explicitly using component/reference/parent mappings (which have cascading option on them). Cascading actually results in a certain operation (save/delete/create) to be cascaded to and performed on the referenced objects.
+        </para>
+
+        <para>
+            Here is an example of a Searchable Cascade mapping based on the class language:
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableCascading(cascade = {Cascade.ALL})
+  private B b;  
+  // ...
+}]]></programlisting>
+        </para>
+
+        <para>
+            And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <cascade name="b" cascade="all" />
+  <!-- ... -->
+</class>
+]]></programlisting>
+        </para>
+    </sect2>
+
     <sect2 id="core-osem-analyzer">
       <title>Searchable Analyzer</title>
       

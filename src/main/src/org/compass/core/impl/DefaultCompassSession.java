@@ -383,7 +383,7 @@ public class DefaultCompassSession implements InternalCompassSession {
             searchEngine.save(resource);
             ResourceKey key = ((InternalResource) resource).resourceKey();
             firstLevelCache.set(key, object);
-            performedCascading = cascadingManager.cascade(key.getAlias(), CascadeMapping.Cascade.SAVE);
+            performedCascading = cascadingManager.cascade(key.getAlias(), object, CascadeMapping.Cascade.SAVE);
         } else {
             performedCascading = cascadingManager.cascade(object, CascadeMapping.Cascade.SAVE);
         }

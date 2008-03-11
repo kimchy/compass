@@ -50,6 +50,8 @@ public abstract class OsemMappingIterator {
 
         void onReferenceMapping(ClassMapping classMapping, ReferenceMapping referenceMapping);
 
+        void onCascadeMapping(ClassMapping classMapping, PlainCascadeMapping cascadeMapping);
+
         void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping);
 
         void onConstantMetaDataMappaing(ClassMapping classMapping, ConstantMetaDataMapping constantMetaDataMapping);
@@ -154,6 +156,9 @@ public abstract class OsemMappingIterator {
         public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {
         }
 
+        public void onCascadeMapping(ClassMapping classMapping, PlainCascadeMapping cascadeMapping) {
+        }
+
         public void onComponentMapping(ClassMapping classMapping, ComponentMapping componentMapping) {
         }
 
@@ -190,6 +195,8 @@ public abstract class OsemMappingIterator {
                 iteratePropertyMapping(callback, classMapping, classPropertyMapping);
             } else if (m instanceof ParentMapping) {
                 callback.onParentMapping(classMapping, (ParentMapping) m);
+            } else if (m instanceof PlainCascadeMapping) {
+                callback.onCascadeMapping(classMapping, (PlainCascadeMapping) m);
             } else if (m instanceof DynamicMetaDataMapping) {
                 DynamicMetaDataMapping dynamicMetaDataMapping = (DynamicMetaDataMapping) m;
                 callback.onDynamicMetaDataMapping(classMapping, dynamicMetaDataMapping);

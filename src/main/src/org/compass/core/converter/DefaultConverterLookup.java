@@ -58,6 +58,7 @@ import org.compass.core.converter.mapping.osem.CollectionMappingConverter;
 import org.compass.core.converter.mapping.osem.ComponentMappingConverter;
 import org.compass.core.converter.mapping.osem.ConstantMappingConverter;
 import org.compass.core.converter.mapping.osem.ParentMappingConverter;
+import org.compass.core.converter.mapping.osem.PlainCascadeMappingConverter;
 import org.compass.core.converter.mapping.osem.ReferenceMappingConverter;
 import org.compass.core.converter.mapping.rsem.RawResourceMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
@@ -73,6 +74,7 @@ import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.PlainCascadeMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
@@ -252,6 +254,8 @@ public class DefaultConverterLookup implements ConverterLookup {
                 ConstantMetaDataMapping.class, new ConstantMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.PARENT_MAPPING,
                 ParentMapping.class, new ParentMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.CASCADE_MAPPING,
+                PlainCascadeMapping.class, new PlainCascadeMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_OBJECT_MAPPING,
                 XmlObjectMapping.class, new XmlObjectMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_PROPERTY_MAPPING,

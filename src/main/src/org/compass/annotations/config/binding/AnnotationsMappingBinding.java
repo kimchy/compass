@@ -62,6 +62,7 @@ import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.IdComponentMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.PlainCascadeMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
@@ -496,6 +497,12 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             bindObjectMapping(parentMapping, accessor, name, searchableParent.accessor(), searchableClass);
             bindParent(searchableParent, parentMapping, clazz, type);
             classMapping.addMapping(parentMapping);
+        } else if (annotation instanceof SearchableCascading) {
+            PlainCascadeMapping cascadeMapping = new PlainCascadeMapping();
+            SearchableCascading searchableCascading = (SearchableCascading) annotation;
+            bindObjectMapping(cascadeMapping, accessor, name, searchableCascading.accessor(), searchableClass);
+            bindCascade(searchableCascading, cascadeMapping, clazz, type);
+            classMapping.addMapping(cascadeMapping);
         } else if ((annotation instanceof SearchableMetaData) ||
                 (annotation instanceof SearchableMetaDatas)) {
             if (!annotatedElement.isAnnotationPresent(SearchableProperty.class) &&
@@ -503,6 +510,11 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
                 throw new MappingException("SearchableMetaData/s annotation exists without a SearchableProperty/Id, it will be ignored");
             }
         }
+    }
+
+    private void bindCascade(SearchableCascading searchableCascading, PlainCascadeMapping cascadeMapping, Class<?> clazz, Type type) {
+        bindConverter(cascadeMapping, searchableCascading.converter(), clazz, type);
+        bindCascades(searchableCascading.cascade(), cascadeMapping);
     }
 
     private void bindParent(SearchableParent searchableParent, ParentMapping parentMapping, Class<?> clazz, Type type) {

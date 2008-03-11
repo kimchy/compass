@@ -165,7 +165,7 @@
     parent?,
     (analyzer?),
     (boost?),
-    (property|dynamic-meta-data|component|reference|constant)*
+    (property|dynamic-meta-data|component|reference|constant|cascade)*
 )>
     <!--
         The fully qualified class name (or relative if the package is declared in compass-core-mapping).
@@ -325,6 +325,13 @@
     <!ATTLIST parent converter CDATA #IMPLIED>
     <!ATTLIST parent accessor CDATA "property">
     <!ATTLIST parent cascade CDATA  #IMPLIED>
+
+<!ELEMENT cascade EMPTY
+>
+    <!ATTLIST cascade name CDATA #REQUIRED>
+    <!ATTLIST cascade converter CDATA #IMPLIED>
+    <!ATTLIST cascade accessor CDATA "property">
+    <!ATTLIST cascade cascade CDATA  #IMPLIED>
 
 <!ELEMENT constant (
     meta-data,

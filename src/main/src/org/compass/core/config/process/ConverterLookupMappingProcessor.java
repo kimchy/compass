@@ -37,6 +37,7 @@ import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.OsemMappingIterator;
 import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.PlainCascadeMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
@@ -126,6 +127,10 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
 
         public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, parentMapping);
+        }
+
+        public void onCascadeMapping(ClassMapping classMapping, PlainCascadeMapping cascadeMapping) {
+            MappingProcessorUtils.lookupConverter(converterLookup, cascadeMapping);
         }
 
         public void onConstantMetaDataMappaing(ClassMapping classMapping, ConstantMetaDataMapping constantMetaDataMapping) {

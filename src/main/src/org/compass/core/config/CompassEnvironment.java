@@ -247,6 +247,8 @@ public class CompassEnvironment {
                 public static final String CONSTANT_MAPPING = "constantMapping";
 
                 public static final String PARENT_MAPPING = "parentMapping";
+
+                public static final String CASCADE_MAPPING = "cascadeMapping";
             }
 
             public abstract class Dynamic {

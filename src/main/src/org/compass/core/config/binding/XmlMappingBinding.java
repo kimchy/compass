@@ -53,6 +53,7 @@ import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.IdComponentMapping;
 import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.PlainCascadeMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.mapping.rsem.RawBoostPropertyMapping;
 import org.compass.core.mapping.rsem.RawResourceMapping;
@@ -527,6 +528,24 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             bindDynamicMetaData(dynamicConf, classMapping, dynamicMetaDataMapping);
             classMapping.addMapping(dynamicMetaDataMapping);
         }
+
+        ConfigurationHelper[] cascadeConfs = classConf.getChildren("cascade");
+        for (ConfigurationHelper cascadeConf : cascadeConfs) {
+            PlainCascadeMapping cascadeMapping = new PlainCascadeMapping();
+            bindPlainCascading(cascadeConf, cascadeMapping);
+            classMapping.addMapping(cascadeMapping);
+        }
+    }
+
+    private void bindPlainCascading(ConfigurationHelper conf, PlainCascadeMapping cascadeMapping) {
+        String name = conf.getAttribute("name");
+        cascadeMapping.setName(name);
+
+        cascadeMapping.setAccessor(conf.getAttribute("accessor", null));
+        cascadeMapping.setPropertyName(name);
+
+        bindConverter(conf, cascadeMapping);
+        bindCascade(conf, cascadeMapping);
     }
 
     private void bindDynamicMetaData(ConfigurationHelper dynamicConf, AliasMapping aliasMapping,

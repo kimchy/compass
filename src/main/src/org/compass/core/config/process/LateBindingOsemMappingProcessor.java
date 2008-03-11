@@ -39,6 +39,7 @@ import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.IdComponentMapping;
 import org.compass.core.mapping.osem.OsemMappingIterator;
 import org.compass.core.mapping.osem.ParentMapping;
+import org.compass.core.mapping.osem.PlainCascadeMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.marshall.MarshallingEnvironment;
 
@@ -315,6 +316,9 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         }
 
         public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {
+        }
+
+        public void onCascadeMapping(ClassMapping classMapping, PlainCascadeMapping cascadeMapping) {
         }
 
         public void onComponentMapping(ClassMapping classMapping, ComponentMapping componentMapping) {
