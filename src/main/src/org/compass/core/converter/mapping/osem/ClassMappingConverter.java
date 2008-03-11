@@ -204,7 +204,9 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                         // was not marshalled, simply return null
                         return null;
                     }
-                    ((ObjectMapping) id).getSetter().set(obj, idValue);
+                    if (((ObjectMapping) id).getSetter() != null) {
+                        ((ObjectMapping) id).getSetter().set(obj, idValue);
+                    }
                 }
                 return obj;
             }
