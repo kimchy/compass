@@ -231,6 +231,8 @@ public abstract class OsemMappingIterator {
                 } else if (elementMapping instanceof ReferenceMapping) {
                     ReferenceMapping referenceMapping = (ReferenceMapping) elementMapping;
                     iterateReferenceMapping(callback, classMapping, referenceMapping, recursive);
+                } else if (elementMapping instanceof PlainCascadeMapping) {
+                    callback.onCascadeMapping(classMapping, (PlainCascadeMapping) elementMapping);
                 }
                 callback.onEndCollectionMapping(colMapping);
             }
