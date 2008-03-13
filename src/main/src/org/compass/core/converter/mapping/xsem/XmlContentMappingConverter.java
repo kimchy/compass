@@ -33,7 +33,6 @@ import org.compass.core.converter.xsem.PoolXmlContentConverterWrapper;
 import org.compass.core.converter.xsem.PrototypeXmlContentConverterWrapper;
 import org.compass.core.converter.xsem.SingletonXmlContentConverterWrapper;
 import org.compass.core.converter.xsem.XmlContentConverter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -91,7 +90,6 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
     }
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
-        SearchEngine searchEngine = context.getSearchEngine();
         // don't save a null value if the context does not states so
         if (root == null && !handleNulls(context)) {
             return false;
@@ -100,7 +98,7 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
         XmlContentMapping xmlContentMapping = (XmlContentMapping) mapping;
         String sValue = xmlContentConverter.toXml(xmlObject);
         String propertyName = xmlContentMapping.getPath().getPath();
-        Property p = searchEngine.createProperty(propertyName, sValue, xmlContentMapping);
+        Property p = context.getResourceFactory().createProperty(propertyName, sValue, xmlContentMapping);
         resource.addProperty(p);
 
         return xmlContentMapping.getStore() != Property.Store.NO;
@@ -144,6 +142,6 @@ public class XmlContentMappingConverter implements Converter, CompassConfigurabl
      * @return <code>true</code> if the value represents a null value.
      */
     protected boolean isNullValue(MarshallingContext context, String value) {
-        return context.getSearchEngine().isNullValue(value);
+        return context.getResourceFactory().isNullValue(value);
     }
 }

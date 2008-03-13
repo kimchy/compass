@@ -18,9 +18,9 @@ package org.compass.core.converter.extended;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -34,7 +34,7 @@ public class PrimitiveByteArrayConverter implements Converter {
             throws ConversionException {
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
+        ResourceFactory resourceFactory = context.getResourceFactory();
 
         // don't save a null value if the context does not states so
         if (root == null && !handleNulls(context)) {
@@ -43,10 +43,10 @@ public class PrimitiveByteArrayConverter implements Converter {
 
         String propertyName = resourcePropertyMapping.getPath().getPath();
         byte[] value = (byte[]) root;
-        Property p = searchEngine.createProperty(propertyName, value, resourcePropertyMapping.getStore());
+        Property p = resourceFactory.createProperty(propertyName, value, resourcePropertyMapping.getStore());
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
-        
+
         return resourcePropertyMapping.getStore() != Property.Store.NO;
     }
 
@@ -68,7 +68,7 @@ public class PrimitiveByteArrayConverter implements Converter {
 
         return p.getBinaryValue();
     }
-    
+
     /**
      * Should the converter handle nulls? Handling nulls means should the
      * converter process nulls or not. Usually the converter will not

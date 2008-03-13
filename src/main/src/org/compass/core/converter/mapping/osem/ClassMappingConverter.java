@@ -27,7 +27,6 @@ import org.compass.core.accessor.Setter;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.CollectionResourceWrapper;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -80,7 +79,6 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
     protected boolean doMarshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
-        SearchEngine searchEngine = context.getSearchEngine();
         ClassMapping classMapping = (ClassMapping) mapping;
         // Note that even if a component is root, it will not be root when
         // treated as a component (the binding part of the configuration takes
@@ -110,7 +108,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             // go over all the ids and put a null value in it (just so we keep the order)
             boolean store = false;
             for (Mapping id : classMapping.getResourceIdMappings()) {
-                store |= id.getConverter().marshall(resource, context.getSearchEngine().getNullValue(), id, context);
+                store |= id.getConverter().marshall(resource, context.getResourceFactory().getNullValue(), id, context);
             }
             return store;
         }
@@ -119,7 +117,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             // store the poly class only for root mappings when we don't support unmarshalling
             // and for all classes when we do support unmarshalling
             if (classMapping.isSupportUnmarshall() || classMapping.isRoot()) {
-                storePolyClass(resource, root, searchEngine, classMapping);
+                storePolyClass(resource, root, classMapping, context);
             }
         }
 
@@ -230,7 +228,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 // marked a null object
                 boolean nullClass = true;
                 for (Property propId : propIds) {
-                    if (!context.getSearchEngine().isNullValue(propId.getStringValue())) {
+                    if (!context.getResourceFactory().isNullValue(propId.getStringValue())) {
                         nullClass = false;
                     }
                 }
@@ -361,7 +359,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             ((InternalResource) idResource).addUID();
         }
 
-        
+
         return stored;
     }
 
@@ -433,15 +431,10 @@ public class ClassMappingConverter implements ResourceMappingConverter {
     /**
      * Stores the poly class name callback. Uses {@link #getPolyClassName(Object)} in order to get
      * the poly class and store it.
-     *
-     * @param resource     The resource to add the poly class to
-     * @param root         The root class to write its class name
-     * @param searchEngine The search engine to use
-     * @param classMapping The class mapping to use
      */
-    protected void storePolyClass(Resource resource, Object root, SearchEngine searchEngine, ClassMapping classMapping) {
+    protected void storePolyClass(Resource resource, Object root, ClassMapping classMapping, MarshallingContext context) {
         String className = getPolyClassName(root);
-        Property p = searchEngine.createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
+        Property p = context.getResourceFactory().createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
                 Property.Index.UN_TOKENIZED);
         p.setOmitNorms(true);
         resource.addProperty(p);

@@ -22,10 +22,10 @@ import java.util.Iterator;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
@@ -97,7 +97,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
     }
 
     public boolean marshallIds(Resource idResource, Object id, ResourceMapping resourceMapping, MarshallingContext context) throws ConversionException {
-        SearchEngine searchEngine = context.getSearchEngine();
+        ResourceFactory resourceFactory = context.getResourceFactory();
 
         XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) resourceMapping;
         Mapping[] ids = resourceMapping.getIdMappings();
@@ -138,7 +138,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
                 }
             } else {
                 for (int i = 0; i < ids.length; i++) {
-                    idResource.addProperty(searchEngine.createProperty(ids[i].getPath().getPath(), Array.get(id, i).toString(),
+                    idResource.addProperty(resourceFactory.createProperty(ids[i].getPath().getPath(), Array.get(id, i).toString(),
                             Property.Store.YES, Property.Index.UN_TOKENIZED));
                 }
             }
@@ -150,7 +150,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
             if (id instanceof Property) {
                 idResource.addProperty((Property) id);
             } else {
-                idResource.addProperty(searchEngine.createProperty(ids[0].getPath().getPath(), id.toString(), Property.Store.YES,
+                idResource.addProperty(resourceFactory.createProperty(ids[0].getPath().getPath(), id.toString(), Property.Store.YES,
                         Property.Index.UN_TOKENIZED));
             }
         }

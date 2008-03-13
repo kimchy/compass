@@ -16,12 +16,8 @@
 
 package org.compass.core.engine;
 
-import java.io.Reader;
-
 import org.compass.core.CompassTransaction.TransactionIsolation;
-import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * A search engine absraction above the actual search engine implementation.
@@ -47,67 +43,7 @@ import org.compass.core.mapping.ResourcePropertyMapping;
  */
 public interface SearchEngine {
 
-    /**
-     * Returns a null value that represents no entry in the search engine.
-     * Usefull when the system needs to store an actual data entry, but for it
-     * to represent a business null value.
-     */
-    String getNullValue();
-
-    /**
-     * Returns true if the value is marked as a null value.
-     */
-    boolean isNullValue(String value);
-
-    /**
-     * Creates a resource, that is used with the actual Search Engine
-     * implementation.
-     */
-    Resource createResource(String alias) throws SearchEngineException;
-
-    /**
-     * Creates a Property that is used with the actual Search Engine
-     */
-    Property createProperty(String value, ResourcePropertyMapping mapping)
-            throws SearchEngineException;
-
-    Property createProperty(String value, ResourcePropertyMapping mapping, Property.Store store, Property.Index index)
-            throws SearchEngineException;
-
-    /**
-     * Creates a Property that is used with the actual Search Engine
-     */
-    Property createProperty(String name, String value, ResourcePropertyMapping mapping)
-            throws SearchEngineException;
-
-    /**
-     * Creates a Property that is used with the actual Search Engine
-     */
-    Property createProperty(String name, String value, Property.Store store, Property.Index index)
-            throws SearchEngineException;
-
-    /**
-     * Creates a Property that is used with the actual Search Engine. The
-     * available values for the store and index parameters are provided in the
-     * Property interface (Property.Store, Property.Index, Property.TermVector).
-     */
-    Property createProperty(String name, String value, Property.Store store, Property.Index index,
-                            Property.TermVector termVector) throws SearchEngineException;
-
-    /**
-     * Creates a property (TEXT type) for the specified reader.
-     */
-    Property createProperty(String name, Reader value) throws SearchEngineException;
-
-    /**
-     * Creates a property (indexed, and not stored) for the specified reader.
-     */
-    Property createProperty(String name, Reader value, Property.TermVector termVector) throws SearchEngineException;
-
-    /**
-     * Creates a binary property.
-     */
-    Property createProperty(String name, byte[] value, Property.Store store) throws SearchEngineException;
+    SearchEngineFactory getSearchEngineFactory();
 
     /**
      * Begins the search engine transaction, using the configured transaction

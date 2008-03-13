@@ -61,11 +61,11 @@ public class LuceneTransactionIsolationTests extends AbstractTestCase {
         session.create(cyclic1);
 
         // verify they are not in the first level cache
-        InternalResource key = (InternalResource) session.createResource("cyclic1");
+        InternalResource key = (InternalResource) getResourceFactory().createResource("cyclic1");
         key.addProperty("id", id);
         Object val = ((InternalCompassSession) session).getFirstLevelCache().get(key.resourceKey());
         assertNull(val);
-        key = (InternalResource) session.createResource("cyclic2");
+        key = (InternalResource) getResourceFactory().createResource("cyclic2");
         key.addProperty("id", id);
         val = ((InternalCompassSession) session).getFirstLevelCache().get(key.resourceKey());
         assertNull(val);

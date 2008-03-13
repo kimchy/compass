@@ -16,19 +16,13 @@
 
 package org.compass.core.lucene.engine;
 
-import java.io.Reader;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.document.Field;
 import org.compass.core.CompassTransaction.TransactionIsolation;
-import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
-import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineAnalyzerHelper;
 import org.compass.core.engine.SearchEngineException;
@@ -39,8 +33,6 @@ import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.engine.SearchEngineTermFrequencies;
 import org.compass.core.engine.event.SearchEngineEventManager;
-import org.compass.core.lucene.LuceneMultiResource;
-import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.transaction.LuceneSearchEngineTransaction;
@@ -49,12 +41,10 @@ import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTra
 import org.compass.core.lucene.engine.transaction.serializable.SerializableTransaction;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.MultiResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
-import org.compass.core.util.reader.ReverseStringReader;
 
 /**
  * @author kimchy
@@ -90,88 +80,6 @@ public class LuceneSearchEngine implements SearchEngine {
         this.transactionState = UNKNOWN;
         eventManager.registerLifecycleListener(searchEngineFactory.getEventManager());
         searchEngineFactory.getLuceneIndexManager().getStore().registerEventListeners(this, eventManager);
-    }
-
-    public String getNullValue() {
-        return "";
-    }
-
-    public boolean isNullValue(String value) {
-        return value == null || value.length() == 0;
-    }
-
-    public Resource createResource(String alias) throws SearchEngineException {
-        return new LuceneMultiResource(alias, this);
-    }
-
-    public Property createProperty(String value, ResourcePropertyMapping mapping) throws SearchEngineException {
-        return createProperty(mapping.getPath().getPath(), value, mapping);
-    }
-
-    public Property createProperty(String value, ResourcePropertyMapping mapping,
-                                   Property.Store store, Property.Index index) throws SearchEngineException {
-        return createProperty(mapping.getPath().getPath(), value, mapping, store, index);
-    }
-
-    public Property createProperty(String name, String value, ResourcePropertyMapping mapping) throws SearchEngineException {
-        return createProperty(name, value, mapping, mapping.getStore(), mapping.getIndex());
-    }
-
-    public Property createProperty(String name, String value, ResourcePropertyMapping mapping,
-                                   Property.Store store, Property.Index index) throws SearchEngineException {
-        Property property;
-        if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.NO) {
-            property = createProperty(name, value, store, index, mapping.getTermVector());
-        } else if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.READER) {
-            property = createProperty(name, new ReverseStringReader(value), mapping.getTermVector());
-        } else if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.STRING) {
-            property = createProperty(name, StringUtils.reverse(value), store, index, mapping.getTermVector());
-        } else {
-            throw new SearchEngineException("Unsupported Reverse type [" + mapping.getReverse() + "]");
-        }
-        property.setBoost(mapping.getBoost());
-        property.setOmitNorms(mapping.isOmitNorms());
-        ((LuceneProperty) property).setPropertyMapping(mapping);
-        return property;
-    }
-
-    public Property createProperty(String name, String value, Property.Store store, Property.Index index)
-            throws SearchEngineException {
-        return createProperty(name, value, store, index, Property.TermVector.NO);
-    }
-
-    public Property createProperty(String name, String value, Property.Store store, Property.Index index,
-                                   Property.TermVector termVector) throws SearchEngineException {
-        Field.Store fieldStore = LuceneUtils.getFieldStore(store);
-        Field.Index fieldIndex = LuceneUtils.getFieldIndex(index);
-        Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(termVector);
-        Field field = new Field(name, value, fieldStore, fieldIndex, fieldTermVector);
-        return new LuceneProperty(field);
-    }
-
-    public Property createProperty(String name, TokenStream tokenStream, Property.TermVector termVector) {
-        Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(termVector);
-        Field field = new Field(name, tokenStream, fieldTermVector);
-        return new LuceneProperty(field);
-    }
-
-    public Property createProperty(String name, Reader value) {
-        return createProperty(name, value, Property.TermVector.NO);
-    }
-
-    public Property createProperty(String name, byte[] value, Property.Store store) throws SearchEngineException {
-        Field.Store fieldStore = LuceneUtils.getFieldStore(store);
-        Field field = new Field(name, value, fieldStore);
-        return new LuceneProperty(field);
-    }
-
-    public Property createProperty(String name, Reader value, Property.TermVector termVector) {
-        Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(termVector);
-        Field field = new Field(name, value, fieldTermVector);
-        if (value instanceof RepeatableReader) {
-            return new LuceneProperty(field, (RepeatableReader) value);
-        }
-        return new LuceneProperty(field);
     }
 
     public SearchEngineQueryBuilder queryBuilder() throws SearchEngineException {
@@ -388,8 +296,8 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     private Analyzer enhanceResource(ResourceMapping resourceMapping, InternalResource resource) throws SearchEngineException {
-        LuceneUtils.addExtendedProeprty(resource, resourceMapping, this);
-        LuceneUtils.applyBoostIfNeeded(resource, this);
+        LuceneUtils.addExtendedProeprty(resource, resourceMapping, searchEngineFactory);
+        LuceneUtils.applyBoostIfNeeded(resource, searchEngineFactory);
         Analyzer analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerByResource(resource);
         return LuceneUtils.addAllProperty(resource, analyzer, resource.resourceKey().getResourceMapping(), this);
     }

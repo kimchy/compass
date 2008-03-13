@@ -18,12 +18,10 @@ package org.compass.core.engine.utils;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.util.StringUtils;
 
 /**
  * @author kimchy
@@ -76,21 +74,4 @@ public abstract class ResourceHelper {
         }
         return ids;
     }
-
-    public static Property[] toIds(SearchEngine searchEngine, String[] values, ResourceMapping mapping)
-            throws SearchEngineException {
-        Mapping[] idsMapping = mapping.getResourceIdMappings();
-        if (values.length != idsMapping.length) {
-            throw new SearchEngineException("The id values don't match the id mapping. Id values ["
-                    + StringUtils.arrayToCommaDelimitedString(values) + "], Ids Mappings ["
-                    + StringUtils.arrayToCommaDelimitedString(idsMapping) + "]");
-        }
-        Property[] properties = new Property[values.length];
-        for (int i = 0; i < values.length; i++) {
-            String name = idsMapping[i].getPath().getPath();
-            properties[i] = searchEngine.createProperty(name, values[i], Property.Store.YES, Property.Index.UN_TOKENIZED);
-        }
-        return properties;
-    }
-
 }

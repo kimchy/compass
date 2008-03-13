@@ -18,11 +18,11 @@ package org.compass.core.converter.mapping.osem;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.accessor.Getter;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.CollectionResourceWrapper;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -38,16 +38,15 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
-        SearchEngine searchEngine = context.getSearchEngine();
+        ResourceFactory resourceFactory = context.getResourceFactory();
         AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
         ClassMapping rootClassMapping = (ClassMapping) context.getAttribute(ClassMappingConverter.ROOT_CLASS_MAPPING_KEY);
-
 
         // if we have a null value, we check if we need to handle null values
         // if so, we will note the fact that it is null under the size attribute
         if (root == null) {
             if (context.handleNulls() && rootClassMapping.isSupportUnmarshall()) {
-                Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), searchEngine.getNullValue(),
+                Property p = resourceFactory.createProperty(colMapping.getColSizePath().getPath(), resourceFactory.getNullValue(),
                         Property.Store.YES, Property.Index.UN_TOKENIZED);
                 p.setOmitNorms(true);
                 resource.addProperty(p);
@@ -59,7 +58,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
 
         if (rootClassMapping.isSupportUnmarshall()) {
             if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
-                Property p = searchEngine.createProperty(colMapping.getCollectionTypePath().getPath(),
+                Property p = resourceFactory.createProperty(colMapping.getCollectionTypePath().getPath(),
                         AbstractCollectionMapping.CollectionType.toString(getRuntimeCollectionType(root)),
                         Property.Store.YES, Property.Index.UN_TOKENIZED);
                 p.setOmitNorms(true);
@@ -74,7 +73,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
 
         if (rootClassMapping.isSupportUnmarshall()) {
             context.removeHandleNulls(colMapping.getPath());
-            Property p = searchEngine.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
+            Property p = resourceFactory.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
                     Property.Store.YES, Property.Index.UN_TOKENIZED);
             p.setOmitNorms(true);
             resource.addProperty(p);
@@ -94,7 +93,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
         AbstractCollectionMapping colMapping = (AbstractCollectionMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
+        ResourceFactory resourceFactory = context.getResourceFactory();
 
         Property pColSize = resource.getProperty(colMapping.getColSizePath().getPath());
         if (pColSize == null) {
@@ -103,7 +102,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         }
         String sColSize = pColSize.getStringValue();
         // if we marshalled it and marked it as null, return the null value
-        if (searchEngine.isNullValue(sColSize)) {
+        if (resourceFactory.isNullValue(sColSize)) {
             return null;
         }
 

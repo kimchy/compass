@@ -58,12 +58,12 @@ public class RsemModuloTests extends AbstractTestCase {
 
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("a");
+        Resource r = getCompass().getResourceFactory().createResource("a");
         r.addProperty("id", new Long(1));
         r.addProperty("value", "value1");
         session.save(r);
 
-        r = session.createResource("a");
+        r = getCompass().getResourceFactory().createResource("a");
         r.addProperty("id", new Long(2));
         r.addProperty("value", "value2");
         session.save(r);
@@ -117,22 +117,22 @@ public class RsemModuloTests extends AbstractTestCase {
 
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("a");
+        Resource r = getCompass().getResourceFactory().createResource("a");
         r.addProperty("id", new Long(1));
         r.addProperty("value", "value1");
         session.save(r);
 
-        r = session.createResource("a");
+        r = getCompass().getResourceFactory().createResource("a");
         r.addProperty("id", new Long(2));
         r.addProperty("value", "value2");
         session.save(r);
 
-        r = session.createResource("b");
+        r = getCompass().getResourceFactory().createResource("b");
         r.addProperty("id", new Long(1));
         r.addProperty("value", "valueb1");
         session.save(r);
 
-        r = session.createResource("b");
+        r = getCompass().getResourceFactory().createResource("b");
         r.addProperty("id", new Long(2));
         r.addProperty("value", "valueb2");
         session.save(r);

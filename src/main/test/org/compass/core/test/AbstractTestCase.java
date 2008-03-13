@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
+import org.compass.core.ResourceFactory;
 import org.compass.core.cache.first.NullFirstLevelCache;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
@@ -135,6 +136,10 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     public Compass getCompass() {
         return compass;
+    }
+
+    public ResourceFactory getResourceFactory() {
+        return getCompass().getResourceFactory();
     }
 
     private void verifyNoHandlers() throws Exception {

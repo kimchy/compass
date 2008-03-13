@@ -18,6 +18,7 @@ package org.compass.core.marshall;
 
 import java.util.Map;
 
+import org.compass.core.ResourceFactory;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
@@ -30,6 +31,8 @@ import org.compass.core.spi.ResourceKey;
  * @author kimchy
  */
 public interface MarshallingContext {
+
+    ResourceFactory getResourceFactory();
 
     SearchEngine getSearchEngine();
 

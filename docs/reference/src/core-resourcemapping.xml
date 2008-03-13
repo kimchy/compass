@@ -73,11 +73,12 @@
       </para>
 
       <para>
-<programlisting><![CDATA[Resource r = session.createResource("a");
-Property id = session.createProperty("id", "1",
+<programlisting><![CDATA[ResourceFactory resourceFactory = compass.getResourceFactory();
+Resource r = resourceFactory.createResource("a");
+Property id = resourceFactory.createProperty("id", "1",
     Property.Store.YES, Property.Index.UN_TOKENIZED);
 r.addProperty(id);
-r.addProperty(session.createProperty("mvalue", "property test",
+r.addProperty(resourceFactory.createProperty("mvalue", "property test",
     Property.Store.YES, Property.Index.TOKENIZED));
 
 session.save(r);]]></programlisting>
@@ -93,7 +94,8 @@ session.save(r);]]></programlisting>
       
       <para>
         Here is an example of how <literal>resource-property</literal> mappings can simplify Resource construction code:
-<programlisting><![CDATA[Resource r = session.createResource("c");
+<programlisting><![CDATA[ResourceFactory resourceFactory = compass.getResourceFactory();
+Resource r = resourceFactory.createResource("c");
 r.addProperty("id", 1);
 r.addProperty("value1", "this is a sample value");
 r.addProperty("value5", new Date()); // will use the my-date converter (using the format defined there)

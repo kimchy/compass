@@ -27,6 +27,7 @@ import org.compass.core.Resource;
 import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.ActiveMirrorGpsDevice;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.device.AbstractGpsDevice;
@@ -366,7 +367,7 @@ public class Hibernate3ScrollableResultsGpsDevice extends AbstractGpsDevice
         if (shouldMirrorDataChanges() && mapping.supportsVersioning()) {
             rowSnapshot = new HibernateAliasRowSnapshot();
         }
-        Resource resource = session.createResource(mapping.getAlias());
+        Resource resource = ((InternalCompassSession) session).getCompass().getResourceFactory().createResource(mapping.getAlias());
         Hibernate3ScrollableResultsRowMarshallHelper marshallHelper = new Hibernate3ScrollableResultsRowMarshallHelper(
                 mapping, session, resource, rowSnapshot);
         marshallHelper.marshallResultSet(rs, returnAliases);

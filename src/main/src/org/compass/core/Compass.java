@@ -88,6 +88,11 @@ public interface Compass extends Referenceable, Serializable {
     Compass clone(CompassSettings addedSettings);
 
     /**
+     * Returns a resource factory allowing to create resources and properties.
+     */
+    ResourceFactory getResourceFactory();
+
+    /**
      * Retruns the search engine optimizer. You can controll the state of the
      * optimizer (by calling <code>stop</code> or <code>start</code>), you
      * can check if the index need optimization, and you can optimize the index.

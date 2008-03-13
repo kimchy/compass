@@ -26,6 +26,7 @@ import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.device.hibernate.scrollable.snapshot.ConfigureSnapshotEvent;
 import org.compass.gps.device.hibernate.scrollable.snapshot.CreateAndUpdateSnapshotEvent;
@@ -138,7 +139,7 @@ public class ScrollableResultsSnapshotEventListener implements HibernateSnapshot
                     Query hibernateQuery = s.createQuery(query);
                     for (Iterator it = snapshots.iterator(); it.hasNext();) {
                         HibernateAliasRowSnapshot rowSnapshot = (HibernateAliasRowSnapshot) it.next();
-                        Resource resource = session.createResource(mapping.getAlias());
+                        Resource resource = ((InternalCompassSession) session).getCompass().getResourceFactory().createResource(mapping.getAlias());
                         Hibernate3ScrollableResultsRowMarshallHelper marshallHelper = new Hibernate3ScrollableResultsRowMarshallHelper(mapping, session,
                                 resource);
                         //XXX: clearParameters of hibernateQuery?

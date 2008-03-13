@@ -83,7 +83,7 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
      * @return The property to be added to the Resource
      */
     protected Property createProperty(String value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
-        return context.getSearchEngine().createProperty(value, resourcePropertyMapping);
+        return context.getResourceFactory().createProperty(value, resourcePropertyMapping);
     }
 
     /**

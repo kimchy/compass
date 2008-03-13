@@ -46,7 +46,7 @@ public class ResultSetRowMarshallHelper {
 
     private ResultSetToResourceMapping mapping;
 
-    private CompassSession session;
+    private InternalCompassSession session;
 
     private JdbcDialect dialect;
 
@@ -91,7 +91,7 @@ public class ResultSetRowMarshallHelper {
     public ResultSetRowMarshallHelper(ResultSetToResourceMapping mapping, CompassSession session, JdbcDialect dialect,
                                       Resource resource, JdbcAliasRowSnapshot rowSnapshot, Compass compass) {
         this.mapping = mapping;
-        this.session = session;
+        this.session = (InternalCompassSession) session;
         this.dialect = dialect;
         this.rowSnapshot = rowSnapshot;
         resourceMapping = ((InternalCompass) compass).getMapping().getMappingByAlias(mapping.getAlias());
@@ -173,7 +173,7 @@ public class ResultSetRowMarshallHelper {
                 if (value == null) {
                     continue;
                 }
-                Property p = session.createProperty(columnName, value, Property.Store.YES, Property.Index.TOKENIZED);
+                Property p = session.getCompass().getResourceFactory().createProperty(columnName, value, Property.Store.YES, Property.Index.TOKENIZED);
                 resource.addProperty(p);
             }
         }
@@ -182,7 +182,7 @@ public class ResultSetRowMarshallHelper {
     public void marshallProperty(ColumnToPropertyMapping ctpMapping, String value) {
         ResourcePropertyMapping propertyMapping = resourceMapping.getResourcePropertyMapping(ctpMapping.getPropertyName());
         if (propertyMapping == null) {
-            Property p = session.createProperty(ctpMapping.getPropertyName(), value, ctpMapping.getPropertyStore(),
+            Property p = session.getCompass().getResourceFactory().createProperty(ctpMapping.getPropertyName(), value, ctpMapping.getPropertyStore(),
                     ctpMapping.getPropertyIndex(), ctpMapping.getPropertyTermVector());
             p.setBoost(ctpMapping.getBoost());
             resource.addProperty(p);

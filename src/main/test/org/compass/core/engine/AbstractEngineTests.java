@@ -19,6 +19,7 @@ package org.compass.core.engine;
 import junit.framework.TestCase;
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.CompassMapping;
@@ -177,56 +178,60 @@ public abstract class AbstractEngineTests extends TestCase {
     }
 
     protected Resource createSingleIdResource(SearchEngine searchEngine) {
-        Resource singleId = searchEngine.createResource(ALIAS_SINGLE);
-        singleId.addProperty(searchEngine.createProperty(PROPERTY_ID1, VALUE_ID1, Property.Store.YES,
+        ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
+        Resource singleId = resourceFactory.createResource(ALIAS_SINGLE);
+        singleId.addProperty(resourceFactory.createProperty(PROPERTY_ID1, VALUE_ID1, Property.Store.YES,
                 Property.Index.UN_TOKENIZED));
-        singleId.addProperty(searchEngine.createProperty(PROPERTY_VAL1, VALUE_VAL1, Property.Store.YES,
+        singleId.addProperty(resourceFactory.createProperty(PROPERTY_VAL1, VALUE_VAL1, Property.Store.YES,
                 Property.Index.TOKENIZED));
-        singleId.addProperty(searchEngine.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
+        singleId.addProperty(resourceFactory.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
                 Property.Index.TOKENIZED));
         ((InternalResource) singleId).addUID();
         return singleId;
     }
 
     protected Resource createSingleIdResource2(SearchEngine searchEngine) {
-        Resource singleId = searchEngine.createResource(ALIAS_SINGLE);
-        singleId.addProperty(searchEngine.createProperty(PROPERTY_ID1, VALUE_ID1_2, Property.Store.YES,
+        ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
+        Resource singleId = resourceFactory.createResource(ALIAS_SINGLE);
+        singleId.addProperty(resourceFactory.createProperty(PROPERTY_ID1, VALUE_ID1_2, Property.Store.YES,
                 Property.Index.UN_TOKENIZED));
-        singleId.addProperty(searchEngine.createProperty(PROPERTY_VAL1, VALUE_VAL1, Property.Store.YES,
+        singleId.addProperty(resourceFactory.createProperty(PROPERTY_VAL1, VALUE_VAL1, Property.Store.YES,
                 Property.Index.TOKENIZED));
-        singleId.addProperty(searchEngine.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
+        singleId.addProperty(resourceFactory.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
                 Property.Index.TOKENIZED));
         ((InternalResource) singleId).addUID();
         return singleId;
     }
 
     protected Resource createMultiIdResource(SearchEngine searchEngine) {
-        Resource multiId = searchEngine.createResource(ALIAS_MUTLI);
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_ID2, VALUE_ID2, Property.Store.YES,
+        ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
+        Resource multiId = resourceFactory.createResource(ALIAS_MUTLI);
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_ID2, VALUE_ID2, Property.Store.YES,
                 Property.Index.UN_TOKENIZED));
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_ID3, VALUE_ID3, Property.Store.YES,
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_ID3, VALUE_ID3, Property.Store.YES,
                 Property.Index.UN_TOKENIZED));
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_VAL2, VALUE_VAL2, Property.Store.YES,
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL2, VALUE_VAL2, Property.Store.YES,
                 Property.Index.TOKENIZED));
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_VAL3, VALUE_VAL3, Property.Store.YES,
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL3, VALUE_VAL3, Property.Store.YES,
                 Property.Index.TOKENIZED));
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
                 Property.Index.TOKENIZED));
         ((InternalResource) multiId).addUID();
         return multiId;
     }
 
     protected Resource createMultiIdResource2(SearchEngine searchEngine) {
-        Resource multiId = searchEngine.createResource(ALIAS_MUTLI);
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_ID2, VALUE_ID2_2, Property.Store.YES,
+        ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
+        Resource multiId = resourceFactory.createResource(ALIAS_MUTLI);
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_ID2, VALUE_ID2_2, Property.Store.YES,
                 Property.Index.UN_TOKENIZED));
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_ID3, VALUE_ID3_2, Property.Store.YES,
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_ID3, VALUE_ID3_2, Property.Store.YES,
                 Property.Index.UN_TOKENIZED));
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_VAL2, VALUE_VAL2, Property.Store.YES,
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL2, VALUE_VAL2, Property.Store.YES,
                 Property.Index.TOKENIZED));
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_VAL3, VALUE_VAL3, Property.Store.YES,
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL3, VALUE_VAL3, Property.Store.YES,
                 Property.Index.TOKENIZED));
-        multiId.addProperty(searchEngine.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
+        multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
                 Property.Index.TOKENIZED));
         ((InternalResource) multiId).addUID();
         return multiId;

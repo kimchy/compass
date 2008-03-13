@@ -22,7 +22,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = (long) 1;
-        Resource r = session.createResource("a");
+        Resource r = getCompass().getResourceFactory().createResource("a");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         session.save(r);
@@ -57,7 +57,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = (long) 1;
-        Resource r = session.createResource("b");
+        Resource r = getCompass().getResourceFactory().createResource("b");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         session.save(r);
@@ -76,7 +76,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = (long) 1;
-        Resource r = session.createResource("b");
+        Resource r = getCompass().getResourceFactory().createResource("b");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         session.save(r);
@@ -105,7 +105,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = (long) 1;
-        Resource r = session.createResource("d");
+        Resource r = getCompass().getResourceFactory().createResource("d");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("value2", TEXT);
@@ -127,7 +127,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = (long) 1;
-        Resource r = session.createResource("e");
+        Resource r = getCompass().getResourceFactory().createResource("e");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("value2", TEXT);
@@ -146,7 +146,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = (long) 1;
-        Resource r = session.createResource("g");
+        Resource r = getCompass().getResourceFactory().createResource("g");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("analyzer", "simple");
@@ -155,7 +155,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassHits hits = session.find("g.value:the");
         assertEquals(1, hits.getLength());
 
-        r = session.createResource("g");
+        r = getCompass().getResourceFactory().createResource("g");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         try {
@@ -173,7 +173,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = (long) 1;
-        Resource r = session.createResource("g");
+        Resource r = getCompass().getResourceFactory().createResource("g");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("analyzer", "simple");
@@ -182,7 +182,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassHits hits = session.find("g.value:the");
         assertEquals(1, hits.getLength());
 
-        r = session.createResource("h");
+        r = getCompass().getResourceFactory().createResource("h");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         session.save(r);
@@ -200,7 +200,7 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         CompassTransaction tr = session.beginTransaction();
 
         Long id = (long) 1;
-        Resource r = session.createResource("i");
+        Resource r = getCompass().getResourceFactory().createResource("i");
         r.addProperty("id", id);
         r.addProperty("value", TEXT);
         r.addProperty("analyzer", "simple");

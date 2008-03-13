@@ -20,17 +20,15 @@ import java.util.Iterator;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
- * 
  * @author kimchy
- * 
  */
 
 public class ConstantMappingConverter implements Converter {
@@ -38,10 +36,10 @@ public class ConstantMappingConverter implements Converter {
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         ConstantMetaDataMapping cm = (ConstantMetaDataMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
+        ResourceFactory resourceFactory = context.getResourceFactory();
         boolean stored = false;
         for (Iterator it = cm.metaDataValuesIt(); it.hasNext();) {
-            Property p = searchEngine.createProperty((String) it.next(), cm);
+            Property p = resourceFactory.createProperty((String) it.next(), cm);
             p.setBoost(cm.getBoost());
             resource.addProperty(p);
             stored |= cm.getStore() != Property.Store.NO;

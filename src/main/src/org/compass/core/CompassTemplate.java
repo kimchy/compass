@@ -16,8 +16,6 @@
 
 package org.compass.core;
 
-import java.io.Reader;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassTransaction.TransactionIsolation;
@@ -226,58 +224,6 @@ public class CompassTemplate implements CompassOperations {
             public Object doInCompass(CompassSession session) throws CompassException {
                 session.create(alias, obj);
                 return null;
-            }
-        });
-    }
-
-    public Property createProperty(final String name, final Reader value) throws CompassException {
-        return (Property) execute(new CompassCallback<Object>() {
-            public Object doInCompass(CompassSession session) throws CompassException {
-                return session.createProperty(name, value);
-            }
-        });
-    }
-
-    public Property createProperty(final String name, final byte[] value, final Property.Store store)
-            throws CompassException {
-        return (Property) execute(new CompassCallback<Object>() {
-            public Object doInCompass(CompassSession session) throws CompassException {
-                return session.createProperty(name, value, store);
-            }
-        });
-    }
-
-    public Property createProperty(final String name, final Reader value, final Property.TermVector termVector)
-            throws CompassException {
-        return (Property) execute(new CompassCallback<Object>() {
-            public Object doInCompass(CompassSession session) throws CompassException {
-                return session.createProperty(name, value, termVector);
-            }
-        });
-    }
-
-    public Property createProperty(final String name, final String value, final Property.Store store,
-                                   final Property.Index index) throws CompassException {
-        return (Property) execute(new CompassCallback<Object>() {
-            public Object doInCompass(CompassSession session) throws CompassException {
-                return session.createProperty(name, value, store, index);
-            }
-        });
-    }
-
-    public Property createProperty(final String name, final String value, final Property.Store store,
-                                   final Property.Index index, final Property.TermVector termVector) throws CompassException {
-        return (Property) execute(new CompassCallback<Object>() {
-            public Object doInCompass(CompassSession session) throws CompassException {
-                return session.createProperty(name, value, store, index, termVector);
-            }
-        });
-    }
-
-    public Resource createResource(final String alias) throws CompassException {
-        return (Resource) execute(new CompassCallback<Object>() {
-            public Object doInCompass(CompassSession session) throws CompassException {
-                return session.createResource(alias);
             }
         });
     }

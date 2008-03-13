@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.compass.core.ResourceFactory;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
@@ -31,6 +32,7 @@ import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.engine.spi.InternalSearchEngineFactory;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.LuceneResourceFactory;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
 import org.compass.core.lucene.engine.indexdeletionpolicy.IndexDeletionPolicyFactory;
@@ -58,6 +60,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
     private PropertyNamingStrategy propertyNamingStrategy;
 
     private LuceneSettings luceneSettings;
+
+    private ResourceFactory resourceFactory;
 
     private SearchEngineOptimizer searchEngineOptimizer;
 
@@ -116,6 +120,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
     }
 
     private void configure(CompassSettings settings, CompassMapping mapping) {
+        resourceFactory = new LuceneResourceFactory(this);
+
         // build the analyzers
         analyzerManager = new LuceneAnalyzerManager();
         analyzerManager.configure(settings, mapping, luceneSettings);
@@ -171,6 +177,10 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         if (spellCheckManager != null) {
             spellCheckManager.stop();
         }
+    }
+
+    public ResourceFactory getResourceFactory() {
+        return this.resourceFactory;
     }
 
     public String getAliasProperty() {

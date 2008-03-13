@@ -26,6 +26,7 @@ import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.ResourceFactory;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.FirstLevelCacheFactory;
 import org.compass.core.config.CompassEnvironment;
@@ -156,6 +157,10 @@ public class DefaultCompass implements InternalCompass {
 
     public String getName() {
         return this.name;
+    }
+
+    public ResourceFactory getResourceFactory() {
+        return searchEngineFactory.getResourceFactory();
     }
 
     public CompassMapping getMapping() {

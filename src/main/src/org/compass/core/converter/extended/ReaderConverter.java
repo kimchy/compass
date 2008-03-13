@@ -22,7 +22,6 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -35,7 +34,6 @@ public class ReaderConverter implements Converter {
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
 
         // don't save a null value
         if (root == null) {
@@ -44,7 +42,7 @@ public class ReaderConverter implements Converter {
 
         String propertyName = resourcePropertyMapping.getPath().getPath();
         Reader value = (Reader) root;
-        Property p = searchEngine.createProperty(propertyName, value, resourcePropertyMapping.getTermVector());
+        Property p = context.getResourceFactory().createProperty(propertyName, value, resourcePropertyMapping.getTermVector());
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
         

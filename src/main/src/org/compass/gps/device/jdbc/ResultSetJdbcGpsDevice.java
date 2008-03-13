@@ -31,6 +31,7 @@ import org.compass.core.Resource;
 import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.spi.InternalCompass;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.device.jdbc.mapping.AutoGenerateMapping;
 import org.compass.gps.device.jdbc.mapping.ColumnMapping;
@@ -66,11 +67,10 @@ import org.compass.gps.device.jdbc.snapshot.JdbcSnapshot;
  * The <code>autoDetectVersionColumnSqlType</code> setting (which defauls to
  * <code>true</code>) will automatically set the version column jdbc type for
  * mappings that support versioning.
- * 
+ *
+ * @author kimchy
  * @see org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping
  * @see org.compass.gps.device.jdbc.mapping.TableToResourceMapping
- * 
- * @author kimchy
  */
 public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
 
@@ -263,7 +263,7 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
         if (shouldMirrorDataChanges() && mapping.supportsVersioning()) {
             rowSnapshot = new JdbcAliasRowSnapshot();
         }
-        Resource resource = session.createResource(mapping.getAlias());
+        Resource resource = ((InternalCompassSession) session).getCompass().getResourceFactory().createResource(mapping.getAlias());
         ResultSetRowMarshallHelper marshallHelper = new ResultSetRowMarshallHelper(mapping, session, dialect, resource,
                 rowSnapshot);
         marshallHelper.marshallResultSet(rs);

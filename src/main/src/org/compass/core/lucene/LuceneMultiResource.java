@@ -25,7 +25,7 @@ import java.util.Set;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.spi.MultiResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
@@ -41,12 +41,12 @@ public class LuceneMultiResource implements MultiResource, Map<String, Property[
 
     private String alias;
 
-    private transient LuceneSearchEngine searchEngine;
+    private transient LuceneSearchEngineFactory searchEngineFactory;
 
-    public LuceneMultiResource(String alias, LuceneSearchEngine searchEngine) {
+    public LuceneMultiResource(String alias, LuceneSearchEngineFactory searchEngineFactory) {
         this.alias = alias;
-        this.searchEngine = searchEngine;
-        currentResource = new LuceneResource(alias, searchEngine);
+        this.searchEngineFactory = searchEngineFactory;
+        currentResource = new LuceneResource(alias, searchEngineFactory);
         resources.add(currentResource);
     }
 
@@ -69,7 +69,7 @@ public class LuceneMultiResource implements MultiResource, Map<String, Property[
     }
 
     public void addResource() {
-        currentResource = new LuceneResource(alias, searchEngine);
+        currentResource = new LuceneResource(alias, searchEngineFactory);
         resources.add(currentResource);
     }
 

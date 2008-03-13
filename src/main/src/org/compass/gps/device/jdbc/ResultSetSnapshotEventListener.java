@@ -29,6 +29,7 @@ import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
+import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 import org.compass.gps.device.jdbc.mapping.IdColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
@@ -46,7 +47,7 @@ import org.compass.gps.spi.CompassGpsInterfaceDevice;
  * {@link org.compass.gps.device.jdbc.ResultSetJdbcGpsDevice} and
  * performs the changes to the compass index after the change snapshots have
  * been detected by the device.
- * 
+ *
  * @author kimchy
  */
 public class ResultSetSnapshotEventListener implements JdbcSnapshotEventListener {
@@ -123,7 +124,7 @@ public class ResultSetSnapshotEventListener implements JdbcSnapshotEventListener
     }
 
     private void doCreateAndUpdateFor(final List snapshots,
-            final CreateAndUpdateSnapshotEvent createAndUpdateSnapshotEvent, final boolean useCreate)
+                                      final CreateAndUpdateSnapshotEvent createAndUpdateSnapshotEvent, final boolean useCreate)
             throws JdbcGpsDeviceException {
         final ResultSetToResourceMapping mapping = createAndUpdateSnapshotEvent.getMapping();
         final JdbcDialect dialect = createAndUpdateSnapshotEvent.getDialect();
@@ -136,7 +137,7 @@ public class ResultSetSnapshotEventListener implements JdbcSnapshotEventListener
                     ps = createAndUpdateSnapshotEvent.getConnection().prepareStatement(query);
                     for (Iterator it = snapshots.iterator(); it.hasNext();) {
                         JdbcAliasRowSnapshot rowSnapshot = (JdbcAliasRowSnapshot) it.next();
-                        Resource resource = session.createResource(mapping.getAlias());
+                        Resource resource = ((InternalCompassSession) session).getCompass().getResourceFactory().createResource(mapping.getAlias());
                         ResultSetRowMarshallHelper marshallHelper = new ResultSetRowMarshallHelper(mapping, session,
                                 dialect, resource);
                         ps.clearParameters();

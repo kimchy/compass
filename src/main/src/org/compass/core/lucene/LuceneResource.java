@@ -32,7 +32,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -56,24 +56,24 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
 
     private int docNum;
 
-    private transient LuceneSearchEngine searchEngine;
+    private transient LuceneSearchEngineFactory searchEngineFactory;
 
     private transient ResourceMapping resourceMapping;
 
     private transient ResourceKey resourceKey;
 
-    public LuceneResource(String alias, LuceneSearchEngine searchEngine) {
-        this(alias, new Document(), -1, searchEngine);
+    public LuceneResource(String alias, LuceneSearchEngineFactory searchEngineFactory) {
+        this(alias, new Document(), -1, searchEngineFactory);
     }
 
-    public LuceneResource(Document document, int docNum, LuceneSearchEngine searchEngine) {
-        this(null, document, docNum, searchEngine);
+    public LuceneResource(Document document, int docNum, LuceneSearchEngineFactory searchEngineFactory) {
+        this(null, document, docNum, searchEngineFactory);
     }
 
-    public LuceneResource(String alias, Document document, int docNum, LuceneSearchEngine searchEngine) {
+    public LuceneResource(String alias, Document document, int docNum, LuceneSearchEngineFactory searchEngineFactory) {
         this.document = document;
-        this.searchEngine = searchEngine;
-        this.aliasProperty = searchEngine.getSearchEngineFactory().getAliasProperty();
+        this.searchEngineFactory = searchEngineFactory;
+        this.aliasProperty = searchEngineFactory.getAliasProperty();
         this.docNum = docNum;
         if (alias != null) {
             removeProperties(aliasProperty);
@@ -99,7 +99,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         this.docNum = luceneResource.docNum;
         this.properties = luceneResource.properties;
         this.aliasProperty = luceneResource.aliasProperty;
-        this.searchEngine = luceneResource.searchEngine;
+        this.searchEngineFactory = luceneResource.searchEngineFactory;
         this.resourceMapping = luceneResource.resourceMapping;
     }
 
@@ -177,12 +177,12 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         }
         ResourcePropertyConverter converter = (ResourcePropertyConverter) propertyMapping.getConverter();
         if (converter == null) {
-            converter = (ResourcePropertyConverter) searchEngine.getSearchEngineFactory().getMapping().
+            converter = (ResourcePropertyConverter) searchEngineFactory.getMapping().
                     getConverterLookup().lookupConverter(value.getClass());
         }
         String strValue = converter.toString(value, propertyMapping);
 
-        Property property = searchEngine.createProperty(strValue, propertyMapping);
+        Property property = searchEngineFactory.getResourceFactory().createProperty(strValue, propertyMapping);
         property.setBoost(propertyMapping.getBoost());
         return addProperty(property);
     }
@@ -302,7 +302,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     }
 
     public void addUID() {
-        Property uidProp = searchEngine.createProperty(resourceMapping.getUIDPath(), resourceKey().buildUID(),
+        Property uidProp = searchEngineFactory.getResourceFactory().createProperty(resourceMapping.getUIDPath(), resourceKey().buildUID(),
                 Property.Store.YES, Property.Index.UN_TOKENIZED);
         uidProp.setOmitNorms(true);
         addProperty(uidProp);
@@ -315,10 +315,10 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
                 throw new SearchEngineException(
                         "Can't add a resource property based on resource mapping without an alias associated with the resource first");
             }
-            if (!searchEngine.getSearchEngineFactory().getMapping().hasRootMappingByAlias(alias)) {
+            if (!searchEngineFactory.getMapping().hasRootMappingByAlias(alias)) {
                 throw new SearchEngineException("No mapping is defined for alias [" + alias + "]");
             }
-            resourceMapping = searchEngine.getSearchEngineFactory().getMapping().getRootMappingByAlias(alias);
+            resourceMapping = searchEngineFactory.getMapping().getRootMappingByAlias(alias);
         }
     }
 

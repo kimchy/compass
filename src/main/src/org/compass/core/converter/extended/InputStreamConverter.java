@@ -23,9 +23,9 @@ import java.io.InputStream;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -41,7 +41,7 @@ public class InputStreamConverter implements Converter {
             throws ConversionException {
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
+        ResourceFactory resourceFactory = context.getResourceFactory();
 
         // don't save a null value
         if (root == null) {
@@ -63,10 +63,10 @@ public class InputStreamConverter implements Converter {
             throw new ConversionException("Failed to read input stream for [" + propertyName + "]", e);
         }
 
-        Property p = searchEngine.createProperty(propertyName, output.toByteArray(), resourcePropertyMapping.getStore());
+        Property p = resourceFactory.createProperty(propertyName, output.toByteArray(), resourcePropertyMapping.getStore());
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
-        
+
         return resourcePropertyMapping.getStore() != Property.Store.NO;
     }
 

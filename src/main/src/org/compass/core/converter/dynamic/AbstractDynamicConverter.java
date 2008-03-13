@@ -9,7 +9,6 @@ import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.basic.AbstractBasicConverter;
 import org.compass.core.converter.basic.FormatConverter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -48,7 +47,6 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
             throws ConversionException {
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
 
         if (root == null) {
             return false;
@@ -56,7 +54,7 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
         Object value = evaluate(root, resourcePropertyMapping);
         if (value == null) {
             if (resourcePropertyMapping.hasNullValue()) {
-                addProperty(resourcePropertyMapping.getNullValue(), resourcePropertyMapping, searchEngine, root, context, resource);
+                addProperty(resourcePropertyMapping.getNullValue(), resourcePropertyMapping, root, context, resource);
             }
             return false;
         }
@@ -64,20 +62,20 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
         if (value.getClass().isArray()) {
             int length = Array.getLength(value);
             for (int i = 0; i < length; i++) {
-                addProperty(Array.get(value, i), resourcePropertyMapping, searchEngine, root, context, resource);
+                addProperty(Array.get(value, i), resourcePropertyMapping, root, context, resource);
             }
         } else if (value instanceof Collection) {
             Collection colValues = (Collection) value;
             for (Iterator it = colValues.iterator(); it.hasNext();) {
-                addProperty(it.next(), resourcePropertyMapping, searchEngine, root, context, resource);
+                addProperty(it.next(), resourcePropertyMapping, root, context, resource);
             }
         } else {
-            addProperty(value, resourcePropertyMapping, searchEngine, root, context, resource);
+            addProperty(value, resourcePropertyMapping, root, context, resource);
         }
         return resourcePropertyMapping.getStore() != Property.Store.NO;
     }
 
-    protected void addProperty(Object value, ResourcePropertyMapping resourcePropertyMapping, SearchEngine searchEngine,
+    protected void addProperty(Object value, ResourcePropertyMapping resourcePropertyMapping,
                                Object root, MarshallingContext context, Resource resource) {
         String sValue;
         if (formatConverter == null) {
@@ -85,12 +83,12 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
         } else {
             sValue = formatConverter.toString(value, resourcePropertyMapping);
         }
-        addProperty(sValue, resourcePropertyMapping, searchEngine, root, context, resource);
+        addProperty(sValue, resourcePropertyMapping, root, context, resource);
     }
 
-    private void addProperty(String value, ResourcePropertyMapping resourcePropertyMapping, SearchEngine searchEngine,
+    private void addProperty(String value, ResourcePropertyMapping resourcePropertyMapping,
                              Object root, MarshallingContext context, Resource resource) {
-        Property p = searchEngine.createProperty(value, resourcePropertyMapping);
+        Property p = context.getResourceFactory().createProperty(value, resourcePropertyMapping);
         doSetBoost(p, root, resourcePropertyMapping, context);
         resource.addProperty(p);
     }

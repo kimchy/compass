@@ -27,14 +27,12 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class FirstCacheTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[] { "first/cache/first-cache.cpm.xml" };
+        return new String[]{"first/cache/first-cache.cpm.xml"};
     }
 
     protected void addSettings(CompassSettings settings) {
@@ -46,10 +44,10 @@ public class FirstCacheTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("r");
-        Property id = session.createProperty("id", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        Resource r = getResourceFactory().createResource("r");
+        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
         r.addProperty(id);
-        r.addProperty(session.createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
 
         session.save(r);
 
@@ -62,7 +60,7 @@ public class FirstCacheTests extends AbstractTestCase {
         assertTrue(r.getValue("id").equals(cachedR.getValue("id")));
         r = cachedR;
 
-        cachedR = session.getResource("r", (Object) new String[] { "1" });
+        cachedR = session.getResource("r", (Object) new String[]{"1"});
         assertEquals("this is a test", r.getValue("mvalue"));
 
         assertTrue(r == cachedR);

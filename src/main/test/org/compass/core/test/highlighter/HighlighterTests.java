@@ -190,7 +190,7 @@ public class HighlighterTests extends AbstractTestCase {
 
     private void setUpData(CompassSession session, String alias) {
         for (int i = 0; i < texts.length; i++) {
-            Resource resource = session.createResource(alias);
+            Resource resource = getResourceFactory().createResource(alias);
             resource.addProperty("id", "" + i);
             resource.addProperty("text", texts[i]);
             session.save(resource);

@@ -35,11 +35,13 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Lock;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
+import org.compass.core.lucene.LuceneResourceFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.all.AllAnalyzer;
 import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.BoostPropertyMapping;
@@ -59,7 +61,7 @@ public abstract class LuceneUtils {
     public static Resource[] hitsToResourceArray(final TermDocs termDocs, IndexReader indexReader, LuceneSearchEngine searchEngine) throws IOException {
         ArrayList<Resource> list = new ArrayList<Resource>();
         while (termDocs.next()) {
-            list.add(new LuceneResource(indexReader.document(termDocs.doc()), termDocs.doc(), searchEngine));
+            list.add(new LuceneResource(indexReader.document(termDocs.doc()), termDocs.doc(), searchEngine.getSearchEngineFactory()));
         }
         return list.toArray(new Resource[list.size()]);
     }
@@ -69,7 +71,7 @@ public abstract class LuceneUtils {
         Resource[] result = new Resource[length];
         for (int i = 0; i < length; i++) {
             try {
-                result[i] = new LuceneResource(hits.doc(i), hits.id(i), searchEngine);
+                result[i] = new LuceneResource(hits.doc(i), hits.id(i), searchEngine.getSearchEngineFactory());
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to fetch document from hits.", e);
             }
@@ -77,7 +79,7 @@ public abstract class LuceneUtils {
         return result;
     }
 
-    public static void applyBoostIfNeeded(InternalResource resource, SearchEngine searchEngine) {
+    public static void applyBoostIfNeeded(InternalResource resource, SearchEngineFactory searchEngineFactory) {
         BoostPropertyMapping boostPropertyMapping = resource.resourceKey().getResourceMapping().getBoostPropertyMapping();
         if (boostPropertyMapping == null) {
             return;
@@ -85,7 +87,7 @@ public abstract class LuceneUtils {
         float boostValue = boostPropertyMapping.getDefaultBoost();
         String boostPropertyName = boostPropertyMapping.getBoostResourcePropertyName();
         String sBoostValue = resource.getValue(boostPropertyName);
-        if (!searchEngine.isNullValue(sBoostValue)) {
+        if (!searchEngineFactory.getResourceFactory().isNullValue(sBoostValue)) {
             boostValue = Float.parseFloat(sBoostValue);
         }
         resource.setBoost(boostValue);
@@ -100,11 +102,11 @@ public abstract class LuceneUtils {
         }
     }
 
-    public static void addExtendedProeprty(Resource resource, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) {
-        String extendedAliasProperty = searchEngine.getSearchEngineFactory().getExtendedAliasProperty();
+    public static void addExtendedProeprty(Resource resource, ResourceMapping resourceMapping, LuceneSearchEngineFactory searchEngineFactory) {
+        String extendedAliasProperty = searchEngineFactory.getExtendedAliasProperty();
         resource.removeProperties(extendedAliasProperty);
         for (int i = 0; i < resourceMapping.getExtendedAliases().length; i++) {
-            LuceneProperty extendedAliasProp = (LuceneProperty) searchEngine.createProperty(extendedAliasProperty,
+            LuceneProperty extendedAliasProp = (LuceneProperty) searchEngineFactory.getResourceFactory().createProperty(extendedAliasProperty,
                     resourceMapping.getExtendedAliases()[i], Property.Store.NO, Property.Index.UN_TOKENIZED);
             extendedAliasProp.getField().setOmitNorms(true);
             resource.addProperty(extendedAliasProp);
@@ -115,7 +117,7 @@ public abstract class LuceneUtils {
     public static Analyzer addAllProperty(InternalResource resource, Analyzer analyzer, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) throws SearchEngineException {
         AllAnalyzer allAnalyzer = new AllAnalyzer(analyzer, resource, searchEngine);
         AllMapping allMapping = resourceMapping.getAllMapping();
-        Property property = searchEngine.createProperty(allMapping.getProperty(), allAnalyzer.createAllTokenStream(), allMapping.getTermVector());
+        Property property = ((LuceneResourceFactory) searchEngine.getSearchEngineFactory().getResourceFactory()).createProperty(allMapping.getProperty(), allAnalyzer.createAllTokenStream(), allMapping.getTermVector());
         property.setOmitNorms(allMapping.isOmitNorms());
         resource.addProperty(property);
         return allAnalyzer;

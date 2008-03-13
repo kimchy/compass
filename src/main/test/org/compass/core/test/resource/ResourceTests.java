@@ -76,10 +76,10 @@ public class ResourceTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("a");
-        Property id = session.createProperty("id", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        Resource r = getResourceFactory().createResource("a");
+        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
         r.addProperty(id);
-        r.addProperty(session.createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getCompass().getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
 
         session.save(r);
 
@@ -114,12 +114,12 @@ public class ResourceTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("b");
-        Property id1 = session.createProperty("id1", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
-        Property id2 = session.createProperty("id2", "2", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        Resource r = getResourceFactory().createResource("b");
+        Property id1 = getResourceFactory().createProperty("id1", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        Property id2 = getResourceFactory().createProperty("id2", "2", Property.Store.YES, Property.Index.UN_TOKENIZED);
         r.addProperty(id1);
         r.addProperty(id2);
-        r.addProperty(session.createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
 
         session.save(r);
 
@@ -128,7 +128,7 @@ public class ResourceTests extends AbstractTestCase {
 
         // TODO need to make this work
         // r = session.getResource("b", id1, id2);
-        r = session.getResource("b", (Object) new Property[] {id1, id2});
+        r = session.getResource("b", (Object) new Property[]{id1, id2});
         assertEquals("this is a test", r.getValue("mvalue"));
 
         r = session.getResource("b", r);
@@ -146,7 +146,7 @@ public class ResourceTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("c");
+        Resource r = getResourceFactory().createResource("c");
         r.addProperty("id", "1");
         r.addProperty("value1", "this is a test");
         r.addProperty("value2", "this is a test");
@@ -213,7 +213,7 @@ public class ResourceTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("d");
+        Resource r = getResourceFactory().createResource("d");
         r.addProperty("id", "1");
         r.addProperty("value1", "this is a test");
         session.save(r);
@@ -229,7 +229,7 @@ public class ResourceTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("e");
+        Resource r = getResourceFactory().createResource("e");
         r.addProperty("id", "1");
         r.addProperty("value1", "test1");
         r.addProperty("value2", "test2");
@@ -247,7 +247,7 @@ public class ResourceTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Resource r = session.createResource("f");
+        Resource r = getResourceFactory().createResource("f");
         r.addProperty("id1", "1");
         r.addProperty("id2", "2");
         r.addProperty("value1", "test1");

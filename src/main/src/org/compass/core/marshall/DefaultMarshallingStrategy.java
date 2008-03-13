@@ -18,6 +18,7 @@ package org.compass.core.marshall;
 
 import org.compass.core.CompassException;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.accessor.Setter;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
@@ -42,12 +43,15 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
 
     private InternalCompassSession session;
 
+    private ResourceFactory resourceFactory;
+
     public DefaultMarshallingStrategy(CompassMapping mapping, SearchEngine searchEngine,
                                       ConverterLookup converterLookup, InternalCompassSession session) {
         this.mapping = mapping;
         this.searchEngine = searchEngine;
         this.converterLookup = converterLookup;
         this.session = session;
+        this.resourceFactory = session.getCompass().getResourceFactory();
     }
 
     public Resource marshallIds(Object id) {
@@ -74,7 +78,7 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
     }
 
     public Resource marshallIds(ResourceMapping resourceMapping, Object id) {
-        Resource idResource = searchEngine.createResource(resourceMapping.getAlias());
+        Resource idResource = resourceFactory.createResource(resourceMapping.getAlias());
         marshallIds(idResource, resourceMapping, id, createContext());
         return idResource;
     }
@@ -133,7 +137,7 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
         if (resourceMapping == null) {
             return null;
         }
-        Resource resource = searchEngine.createResource(alias);
+        Resource resource = resourceFactory.createResource(alias);
         resourceMapping.getConverter().marshall(resource, root, resourceMapping, createContext());
         return resource;
     }
@@ -146,7 +150,7 @@ public class DefaultMarshallingStrategy implements MarshallingStrategy {
         if (resourceMapping == null) {
             return null;
         }
-        Resource resource = searchEngine.createResource(resourceMapping.getAlias());
+        Resource resource = resourceFactory.createResource(resourceMapping.getAlias());
         resourceMapping.getConverter().marshall(resource, root, resourceMapping, createContext());
         return resource;
     }

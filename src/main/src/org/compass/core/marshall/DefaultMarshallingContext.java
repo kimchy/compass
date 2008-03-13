@@ -19,6 +19,7 @@ package org.compass.core.marshall;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.compass.core.ResourceFactory;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
@@ -106,6 +107,10 @@ public class DefaultMarshallingContext implements MarshallingContext {
 
     public ConverterLookup getConverterLookup() {
         return converterLookup;
+    }
+
+    public ResourceFactory getResourceFactory() {
+        return searchEngine.getSearchEngineFactory().getResourceFactory();
     }
 
     public SearchEngine getSearchEngine() {

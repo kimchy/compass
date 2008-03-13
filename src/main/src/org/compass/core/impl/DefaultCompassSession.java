@@ -16,8 +16,6 @@
 
 package org.compass.core.impl;
 
-import java.io.Reader;
-
 import org.compass.core.CompassAnalyzerHelper;
 import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
@@ -28,7 +26,6 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTermFreqsBuilder;
 import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
-import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.NullFirstLevelCache;
@@ -100,38 +97,6 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public CompassSettings getSettings() {
         return runtimeSettings;
-    }
-
-    public Resource createResource(String alias) throws CompassException {
-        checkClosed();
-        return searchEngine.createResource(alias);
-    }
-
-    public Property createProperty(String name, String value, Property.Store store, Property.Index index)
-            throws CompassException {
-        checkClosed();
-        return searchEngine.createProperty(name, value, store, index);
-    }
-
-    public Property createProperty(String name, String value, Property.Store store, Property.Index index,
-                                   Property.TermVector termVector) throws CompassException {
-        checkClosed();
-        return searchEngine.createProperty(name, value, store, index, termVector);
-    }
-
-    public Property createProperty(String name, Reader value) throws CompassException {
-        checkClosed();
-        return searchEngine.createProperty(name, value);
-    }
-
-    public Property createProperty(String name, Reader value, Property.TermVector termVector) throws CompassException {
-        checkClosed();
-        return searchEngine.createProperty(name, value, termVector);
-    }
-
-    public Property createProperty(String name, byte[] value, Property.Store store) throws CompassException {
-        checkClosed();
-        return searchEngine.createProperty(name, value, store);
     }
 
     public CompassQueryBuilder queryBuilder() throws CompassException {

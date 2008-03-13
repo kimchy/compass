@@ -34,7 +34,7 @@ import org.compass.core.metadata.CompassMetaData;
 public interface InternalCompassSession extends CompassSession {
 
     InternalCompass getCompass();
-    
+
     SearchEngine getSearchEngine();
 
     MarshallingStrategy getMarshallingStrategy();

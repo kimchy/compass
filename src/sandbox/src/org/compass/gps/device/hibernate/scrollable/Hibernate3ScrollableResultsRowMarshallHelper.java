@@ -170,7 +170,7 @@ public class Hibernate3ScrollableResultsRowMarshallHelper {
                 if (value == null) {
                     continue;
                 }
-                Property p = session.createProperty(columnName, value, Property.Store.YES, Property.Index.TOKENIZED);
+                Property p = ((InternalCompassSession) session).getCompass().getResourceFactory().createProperty(columnName, value, Property.Store.YES, Property.Index.TOKENIZED);
                 resource.addProperty(p);
             }
         }
@@ -179,7 +179,7 @@ public class Hibernate3ScrollableResultsRowMarshallHelper {
     public void marshallProperty(ColumnToPropertyMapping ctpMapping, String value) {
         ResourcePropertyMapping propertyMapping = resourceMapping.getResourcePropertyMapping(ctpMapping.getPropertyName());
         if (propertyMapping == null) {
-            Property p = session.createProperty(ctpMapping.getPropertyName(), value, ctpMapping.getPropertyStore(),
+            Property p = ((InternalCompassSession) session).getCompass().getResourceFactory().createProperty(ctpMapping.getPropertyName(), value, ctpMapping.getPropertyStore(),
                     ctpMapping.getPropertyIndex(), ctpMapping.getPropertyTermVector());
             p.setBoost(ctpMapping.getBoost());
             resource.addProperty(p);

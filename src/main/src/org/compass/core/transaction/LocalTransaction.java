@@ -52,7 +52,7 @@ public class LocalTransaction extends AbstractTransaction {
         super(transactionFactory);
         state = UNKNOWN;
         this.session = session;
-        this.compass = session.getCompass();
+        this.compass = (InternalCompass) session.getCompass();
         this.transactionIsolation = transactionIsolation;
     }
 

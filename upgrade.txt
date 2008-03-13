@@ -11,6 +11,8 @@ VERSION 2.0 M3
 4. Moved @Searchable#exlcudeAliasFromAll to @SearchableAllMetaData#excludeAlias
 5. Moved related all attributes (prefixed with all) from resource/class/xml-object mappings to an internal all
    attribute (sorry ...).
+6. Refactored Resource and Property creation from CompassSession (#createResource, #createProperty) to a
+   ResourceFactory which can be accessed from Compass instance.
 
 VERSION 2.0 M2 (February 19, 2008)
 ==================================

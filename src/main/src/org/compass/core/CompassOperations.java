@@ -16,88 +16,12 @@
 
 package org.compass.core;
 
-import java.io.Reader;
-
 /**
  * A interface describing all the available operations allowed by compass.
  *
  * @author kimchy
  */
 public interface CompassOperations {
-
-    /**
-     * Creates a resource, that is used with the actual Search Engine
-     * implementation. <b>Note</b> that this resource will not be created
-     * within the Search Engine.
-     *
-     * @return a new resource
-     * @throws CompassException
-     */
-    Resource createResource(String alias) throws CompassException;
-
-    /**
-     * Creates a Property that is used with the actual Search Engine. The
-     * available values for the store and index parameters are provided in the
-     * Property interface (Property.Store and Property.Index). It stores no term
-     * vector information (Property.TermVector.NO).
-     *
-     * @param name  The name of the property
-     * @param value The value of the property
-     * @param store Teh store setting for the property
-     * @param index The index setting for the property
-     * @return a new property
-     * @throws CompassException
-     */
-    Property createProperty(String name, String value, Property.Store store, Property.Index index)
-            throws CompassException;
-
-    /**
-     * Creates a Property that is used with the actual Search Engine. The
-     * available values for the store and index parameters are provided in the
-     * Property interface (Property.Store, Property.Index, Property.TermVector).
-     *
-     * @param name  The name of the property
-     * @param value The value of the property
-     * @param store The store setting for the property
-     * @param index The index setting for the property
-     * @return a new property
-     * @throws CompassException
-     */
-    Property createProperty(String name, String value, Property.Store store, Property.Index index,
-                            Property.TermVector termVector) throws CompassException;
-
-    /**
-     * Creates a property (indexed, and not stored) for the specified reader. It
-     * stores no term vector information (Property.TermVector.NO).
-     *
-     * @param name  The name of the property
-     * @param value The value of the property
-     * @return a new property
-     * @throws CompassException
-     */
-    Property createProperty(String name, Reader value) throws CompassException;
-
-    /**
-     * Creates a property (indexed, and not stored) for the specified reader.
-     *
-     * @param name       The name of the property
-     * @param value      The value of the property
-     * @param termVector The term vector setting for the property
-     * @return a new property
-     * @throws CompassException
-     */
-    Property createProperty(String name, Reader value, Property.TermVector termVector) throws CompassException;
-
-    /**
-     * Creates a binary property only stored (can be compressed).
-     *
-     * @param name  The name of the property
-     * @param value The value of the property
-     * @param store The store setting for the property
-     * @return a new property
-     * @throws CompassException
-     */
-    Property createProperty(String name, byte[] value, Property.Store store) throws CompassException;
 
     /**
      * Deletes a resource with the specified alias. Note that the resource must

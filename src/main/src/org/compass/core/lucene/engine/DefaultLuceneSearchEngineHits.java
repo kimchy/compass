@@ -54,7 +54,7 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
         verifyWithinTransaction();
         try {
             Document doc = hits.doc(i);
-            return new LuceneResource(doc, hits.id(i), searchEngine);
+            return new LuceneResource(doc, hits.id(i), searchEngine.getSearchEngineFactory());
         } catch (IOException ioe) {
             throw new SearchEngineException("Failed to find hit [" + i + "]", ioe);
         }

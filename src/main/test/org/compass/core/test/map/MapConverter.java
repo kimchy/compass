@@ -23,11 +23,11 @@ import java.util.Map;
 import org.compass.core.CompassException;
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -68,12 +68,12 @@ public class MapConverter implements Converter, CompassConfigurable {
         }
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
+        ResourceFactory resourceFactory = context.getResourceFactory();
 
         Map map = (Map) root;
         for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry) it.next();
-            Property p = searchEngine.createProperty(entry.getKey().toString(), entry.getValue().toString(),
+            Property p = resourceFactory.createProperty(entry.getKey().toString(), entry.getValue().toString(),
                     resourcePropertyMapping.getStore(), resourcePropertyMapping.getIndex(), resourcePropertyMapping.getTermVector());
             p.setBoost(resourcePropertyMapping.getBoost());
             resource.addProperty(p);
@@ -91,12 +91,12 @@ public class MapConverter implements Converter, CompassConfigurable {
                     context.getSession().getCompass().getSearchEngineFactory().getPropertyNamingStrategy();
             // save keys (under an internal name)
             String keyPath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "keys").getPath();
-            Property p = searchEngine.createProperty(keyPath, keys.toString(),
+            Property p = resourceFactory.createProperty(keyPath, keys.toString(),
                     Property.Store.YES, Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
             // save values (under an internal name)
             String valuePath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "values").getPath();
-            p = searchEngine.createProperty(valuePath, values.toString(), Property.Store.YES, Property.Index.UN_TOKENIZED);
+            p = resourceFactory.createProperty(valuePath, values.toString(), Property.Store.YES, Property.Index.UN_TOKENIZED);
             resource.addProperty(p);
         }
 
@@ -109,7 +109,6 @@ public class MapConverter implements Converter, CompassConfigurable {
         }
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
 
         PropertyNamingStrategy propertyNamingStrategy =
                 context.getSession().getCompass().getSearchEngineFactory().getPropertyNamingStrategy();

@@ -20,7 +20,6 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -39,7 +38,6 @@ public class SimpleXmlValueConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         XmlPropertyMapping xmlPropertyMapping = (XmlPropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
         // don't save a null value if the context does not states so
         if (root == null && !handleNulls(xmlPropertyMapping, context)) {
             return false;
@@ -58,7 +56,7 @@ public class SimpleXmlValueConverter implements Converter {
             }
             propertyName = xmlObject.getName();
         }
-        Property p = searchEngine.createProperty(propertyName, sValue, xmlPropertyMapping);
+        Property p = context.getResourceFactory().createProperty(propertyName, sValue, xmlPropertyMapping);
         doSetBoost(p, root, xmlPropertyMapping, context);
         resource.addProperty(p);
 

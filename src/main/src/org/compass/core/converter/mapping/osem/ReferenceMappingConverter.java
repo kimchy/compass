@@ -20,8 +20,8 @@ import java.util.Map;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.HasRefAliasMapping;
@@ -53,18 +53,18 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
             Mapping[] ids = refMapping.getResourceIdMappings();
             boolean store = false;
             for (Mapping id : ids) {
-                store |= id.getConverter().marshall(resource, context.getSearchEngine().getNullValue(), id, context);
+                store |= id.getConverter().marshall(resource, context.getResourceFactory().getNullValue(), id, context);
             }
             return store;
         }
 
         // only add specilized properties for un-marshalling when it is supported
         if (refMapping.isSupportUnmarshall()) {
-            SearchEngine searchEngine = context.getSearchEngine();
+            ResourceFactory resourceFactory = context.getResourceFactory();
             if (refMapping.isPoly() && refMapping.getPolyClass() == null) {
                 // if the class is defined as poly, persist the class name as well
                 String className = root.getClass().getName();
-                Property p = searchEngine.createProperty(refMapping.getClassPath().getPath(), className, Property.Store.YES,
+                Property p = resourceFactory.createProperty(refMapping.getClassPath().getPath(), className, Property.Store.YES,
                         Property.Index.UN_TOKENIZED);
                 p.setOmitNorms(true);
                 resource.addProperty(p);

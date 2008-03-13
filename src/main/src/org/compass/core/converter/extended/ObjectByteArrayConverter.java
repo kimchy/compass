@@ -18,9 +18,9 @@ package org.compass.core.converter.extended;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
-import org.compass.core.engine.SearchEngine;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -34,7 +34,7 @@ public class ObjectByteArrayConverter implements Converter {
             throws ConversionException {
 
         ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-        SearchEngine searchEngine = context.getSearchEngine();
+        ResourceFactory resourceFactory = context.getResourceFactory();
 
         // don't save a null value if the context does not states so
         if (root == null && !handleNulls(context)) {
@@ -47,7 +47,7 @@ public class ObjectByteArrayConverter implements Converter {
         for (int i = 0; i < oValue.length; i++) {
             value[i] = oValue[i].byteValue();
         }
-        Property p = searchEngine.createProperty(propertyName, value, resourcePropertyMapping.getStore());
+        Property p = resourceFactory.createProperty(propertyName, value, resourcePropertyMapping.getStore());
         p.setBoost(resourcePropertyMapping.getBoost());
         resource.addProperty(p);
         
