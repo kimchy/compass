@@ -60,7 +60,7 @@ public class ResolveLateAttributesMappingProcessor implements MappingProcessor {
                     ((InternalAllMapping) resourceMapping.getAllMapping()).setSupported(settings.getSettingAsBoolean(CompassEnvironment.All.ENABLED, true));
                 }
                 if (resourceMapping.getAllMapping().isExcludeAlias() == null) {
-                    ((InternalAllMapping) resourceMapping.getAllMapping()).setExcludeAlias(settings.getSettingAsBoolean(CompassEnvironment.All.EXCLUDE_ALIAS, false));
+                    ((InternalAllMapping) resourceMapping.getAllMapping()).setExcludeAlias(settings.getSettingAsBoolean(CompassEnvironment.All.EXCLUDE_ALIAS, true));
                 }
                 if (resourceMapping.getAllMapping().isOmitNorms() == null) {
                     ((InternalAllMapping) resourceMapping.getAllMapping()).setOmitNorms(settings.getSettingAsBoolean(CompassEnvironment.All.OMIT_NORMS, false));

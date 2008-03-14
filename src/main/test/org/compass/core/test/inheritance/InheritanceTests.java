@@ -22,6 +22,8 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.spi.InternalCompass;
@@ -31,6 +33,10 @@ public class InheritanceTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[] { "inheritance/Inheritance.cpm.xml" };
+    }
+
+    protected void addSettings(CompassSettings settings) {
+        settings.setBooleanSetting(CompassEnvironment.All.EXCLUDE_ALIAS, false);
     }
 
     public void testExtendingAliases() {

@@ -24,6 +24,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.util.LuceneHelper;
 import org.compass.core.test.AbstractTestCase;
 
@@ -34,6 +35,10 @@ public class AllTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"all/All.cpm.xml"};
+    }
+
+    protected void addSettings(CompassSettings settings) {
+        settings.setBooleanSetting(CompassEnvironment.All.EXCLUDE_ALIAS, false);
     }
 
     public void testAll() {
