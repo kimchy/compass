@@ -13,6 +13,7 @@ VERSION 2.0 M3
    attribute (sorry ...).
 6. Refactored Resource and Property creation from CompassSession (#createResource, #createProperty) to a
    ResourceFactory which can be accessed from Compass instance.
+7. The alias is now excluded from the all proeprty by default.
 
 VERSION 2.0 M2 (February 19, 2008)
 ==================================
