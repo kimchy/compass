@@ -152,8 +152,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
                 spellCheckManager = new DefaultLuceneSpellCheckManager();
                 spellCheckManager.configure(this, settings, mapping);
             } catch (ClassNotFoundException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("No spell checker jar file found in classpath, disabling spell checker");
+                if (log.isWarnEnabled()) {
+                    log.warn("No spell checker jar file found in classpath, disabling spell checker");
                 }
             }
         }
