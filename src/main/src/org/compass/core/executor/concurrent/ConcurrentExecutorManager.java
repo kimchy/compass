@@ -28,6 +28,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
@@ -46,6 +48,8 @@ import org.compass.core.util.concurrent.SingleThreadThreadFactory;
  */
 public class ConcurrentExecutorManager implements InternalExecutorManager, CompassConfigurable {
 
+    private static final Log log = LogFactory.getLog(ConcurrentExecutorManager.class);
+
     private ExecutorService executorService;
 
     private ScheduledExecutorService scheduledExecutorService;
@@ -57,9 +61,17 @@ public class ConcurrentExecutorManager implements InternalExecutorManager, Compa
         executorService = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(), new SingleThreadThreadFactory("Compass Executor Thread", true));
 
+        if (log.isDebugEnabled()) {
+            log.debug("Using concurrent executor manager with core size [" + corePoolSize + "], max size [" + maximumPoolSize + "], and keep alive time [" + keepAliveTime +"ms]");
+        }
+
         int scheduledCorePoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.SCHEDULED_CORE_POOL_SIZE, 1);
         scheduledExecutorService = Executors.newScheduledThreadPool(scheduledCorePoolSize,
                 new SingleThreadThreadFactory("Compass Scheduled Executor Thread", true));
+
+        if (log.isDebugEnabled()) {
+            log.debug("Using concurrent executor manager scheduler with size [" + scheduledCorePoolSize + "]");
+        }
     }
 
     public void submit(Runnable task) {
