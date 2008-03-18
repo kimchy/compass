@@ -38,7 +38,7 @@ public class ConcurrentMergeSchedulerProvider implements MergeSchedulerProvider 
     public MergeScheduler create(LuceneSearchEngineIndexManager indexManager, CompassSettings settings) throws SearchEngineException {
         ConcurrentMergeScheduler mergeScheduler = new ConcurrentMergeScheduler();
         mergeScheduler.setMaxThreadCount(settings.getSettingAsInt(LuceneEnvironment.MergeScheduler.Concurrent.MAX_THREAD_COUNT, 3));
-        mergeScheduler.setMergeThreadPriority(settings.getSettingAsInt(LuceneEnvironment.MergeScheduler.Concurrent.THREAD_PRIORITY, -1));
+        mergeScheduler.setMergeThreadPriority(settings.getSettingAsInt(LuceneEnvironment.MergeScheduler.Concurrent.THREAD_PRIORITY, Thread.NORM_PRIORITY));
         return mergeScheduler;
     }
 }
