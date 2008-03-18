@@ -115,6 +115,7 @@ public class ExecutorMergeScheduler extends MergeScheduler {
                     if (currentConcurrentMerges < maxConcurrentMerges) {
                         // OK to spawn a new merge thread to handle this
                         // merge:
+                        currentConcurrentMerges++;
                         MergeThread merger = new MergeThread(writer, merge);
                         executorManager.submit(new TransactionalRunnable(transactionContext, merger));
                         message("    executed merge in executor manager");
@@ -150,7 +151,6 @@ public class ExecutorMergeScheduler extends MergeScheduler {
         }
 
         public void run() {
-
             // First time through the while loop we do the merge
             // that we were started with:
             MergePolicy.OneMerge merge = this.startMerge;
@@ -179,6 +179,8 @@ public class ExecutorMergeScheduler extends MergeScheduler {
                         // COMPASS: Set the running merge so it will be picked up in the next run
                         setRunningMerge(merge);
                         executorManager.submit(new TransactionalRunnable(transactionContext, this));
+                    } else {
+                        currentConcurrentMerges--;
                     }
 //                }
 
@@ -203,7 +205,6 @@ public class ExecutorMergeScheduler extends MergeScheduler {
             } finally {
                 if (merge == null) { // only decrease if we have no more merges and we actually exit
                 synchronized (ExecutorMergeScheduler.this) {
-                    currentConcurrentMerges--;
 //                    ExecutorMergeScheduler.this.notifyAll();
                 }
                 }
