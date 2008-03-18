@@ -155,6 +155,12 @@ public class ExecutorMergeScheduler extends MergeScheduler {
             // that we were started with:
             MergePolicy.OneMerge merge = this.startMerge;
 
+            // COMPASS: If we get into this because of another reschecdule, we set just before we run it the
+            // running merge, so, if it is not null, we use that one instead of the startMerge
+            if (runningMerge != null) {
+                merge = runningMerge;
+            }
+
             try {
 
                 message("  merge thread: start");
@@ -170,6 +176,7 @@ public class ExecutorMergeScheduler extends MergeScheduler {
                     if (merge != null) {
                         writer.mergeInit(merge);
                         message("  merge thread: do another merge " + merge.segString(dir));
+                        // COMPASS: Set the running merge so it will be picked up in the next run
                         setRunningMerge(merge);
                         executorManager.submit(new TransactionalRunnable(transactionContext, this));
                     }
