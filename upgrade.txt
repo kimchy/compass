@@ -1,8 +1,8 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.0 M3
-==============
+VERSION 2.0 M3 (March 19, 2008)
+===============================
 
 1. Updated Lucene to version 2.3.1. Please update also Lucene jars.
 2. The default operator when searching changed from OR to AND (which makes much more sense). Changing back to OR
