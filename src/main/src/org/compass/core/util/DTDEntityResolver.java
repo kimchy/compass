@@ -29,7 +29,7 @@ public class DTDEntityResolver implements EntityResolver, Serializable {
 
     private static final long serialVersionUID = 3256440291954406962L;
 
-    private static final String URL = "http://www.opensymphony.com/compass/dtd/";
+    private static final String URL = "http://www.compass-project.org/dtd/";
 
     private transient ClassLoader resourceLoader;
 
@@ -54,6 +54,9 @@ public class DTDEntityResolver implements EntityResolver, Serializable {
             throw new IllegalArgumentException("Using old format for DTD, please use the url [" + URL + "]");
         }
         if (systemId != null && systemId.startsWith("http://static.compassframework")) {
+            throw new IllegalArgumentException("Using old format for DTD, please use the url [" + URL + "]");
+        }
+        if (systemId != null && systemId.startsWith("http://www.opensymphony.com/compass/dtd/")) {
             throw new IllegalArgumentException("Using old format for DTD, please use the url [" + URL + "]");
         }
         if (systemId != null && systemId.startsWith(URL)) {

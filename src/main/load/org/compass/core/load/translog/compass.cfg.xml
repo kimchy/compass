@@ -1,6 +1,6 @@
-<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+                     xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
 
     <compass name="default">
 

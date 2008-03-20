@@ -732,9 +732,12 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
     protected EntityResolver doGetEntityResolver() {
         return new EntityResolver() {
 
-            private static final String URL = "http://www.opensymphony.com/compass/schema/";
+            private static final String URL = "http://www.compass-project.org/schema/";
 
             public InputSource resolveEntity(String publicId, String systemId) {
+                if (systemId != null && systemId.startsWith("http://www.opensymphony.com/compass/schema/")) {
+                    throw new IllegalArgumentException("Using old format for schema, please use the url [" + URL + "]");
+                }
                 if (systemId != null && systemId.startsWith(URL)) {
                     // Search for DTD
                     String location = "/org/compass/core/" + systemId.substring(URL.length());

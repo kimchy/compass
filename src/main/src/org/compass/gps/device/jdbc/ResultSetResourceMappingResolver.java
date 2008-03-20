@@ -95,8 +95,8 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\"?>");
         sb.append("<!DOCTYPE compass-core-mapping PUBLIC ");
-        sb.append("    \"-//Compass/Compass Core Mapping DTD 1.0//EN\"");
-        sb.append("    \"http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd\">");
+        sb.append("    \"-//Compass/Compass Core Mapping DTD 2.0//EN\"");
+        sb.append("    \"http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd\">");
         sb.append("<compass-core-mapping>");
         sb.append("    <resource alias=\"").append(mapping.getAlias()).append("\"");
         if (subIndex != null) {

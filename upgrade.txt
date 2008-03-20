@@ -4,6 +4,71 @@ COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log
 VERSION 2.0.0 RC1
 =================
 
+1. Changed DTD location for compass cpm mappings. Change from this:
+   <!DOCTYPE compass-core-mapping PUBLIC
+           "-//Compass/Compass Core Mapping DTD 1.0//EN"
+           "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+
+   to this:
+
+    <!DOCTYPE compass-core-mapping PUBLIC
+            "-//Compass/Compass Core Mapping DTD 2.0//EN"
+            "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+2. Changed DTD location for compass configuraiton. Change from this:
+
+    <!DOCTYPE compass-core-configuration PUBLIC
+        "-//Compass/Compass Core Configuration DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-configuration.dtd">
+
+    to this:
+
+    <!DOCTYPE compass-core-configuration PUBLIC
+        "-//Compass/Compass Core Configuration DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-configuration-2.0.dtd">
+
+3. Changed DTD location for compass meta mappings. Change from this:
+
+    <!DOCTYPE compass-core-meta-data PUBLIC
+        "-//Compass/Compass Core Meta Data DTD 1.0//EN"
+        "http://www.opensymphony.com/compass/dtd/compass-core-meta-data.dtd">
+
+    to this:
+
+    <!DOCTYPE compass-core-meta-data PUBLIC
+        "-//Compass/Compass Core Meta Data DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-meta-data-2.0.dtd">
+
+4. Changed schema location for compass configuration. Change from this:
+
+    <compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+
+    to this:
+
+    <compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
+
+5. Changed schema location for Spring configuration. Change from this:
+
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:compass="http://www.opensymphony.com/compass/schema/spring-core-config"
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.opensymphony.com/compass/schema/spring-core-config http://www.opensymphony.com/compass/schema/spring-compass-core-config.xsd">
+
+      
+    to this:
+
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:compass="http://www.compass-project.org/schema/spring-core-config"
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.compass-project.org/schema/spring-core-config http://www.compass-project.org/schema/spring-compass-core-config-2.0.xsd">
+
+
 VERSION 2.0.0 M3 (March 19, 2008)
 =================================
 

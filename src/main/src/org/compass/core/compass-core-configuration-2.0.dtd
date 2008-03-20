@@ -1,0 +1,26 @@
+<!-- Compass file-based configuration document.
+
+<!DOCTYPE compass-core-configuration PUBLIC
+    "-//Compass/Compass Core Configuration DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-configuration-2.0.dtd">
+-->
+
+<!ELEMENT compass-core-configuration (compass)>
+
+<!ELEMENT setting (#PCDATA)>
+<!ATTLIST setting name CDATA #REQUIRED>
+
+<!ELEMENT mapping EMPTY> <!-- reference to a mapping file -->
+<!ATTLIST mapping resource CDATA #IMPLIED>
+<!ATTLIST mapping file CDATA #IMPLIED>
+<!ATTLIST mapping jar CDATA #IMPLIED>
+<!ATTLIST mapping package CDATA #IMPLIED>
+<!ATTLIST mapping class CDATA #IMPLIED>
+
+<!ELEMENT meta-data EMPTY> <!-- reference to a meta-data file -->
+<!ATTLIST meta-data resource CDATA #IMPLIED>
+<!ATTLIST meta-data file CDATA #IMPLIED>
+<!ATTLIST meta-data jar CDATA #IMPLIED>
+
+<!ELEMENT compass (setting*, meta-data*, mapping*)>
+<!ATTLIST compass name CDATA #IMPLIED>

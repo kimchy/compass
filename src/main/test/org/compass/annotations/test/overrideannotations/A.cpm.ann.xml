@@ -1,6 +1,6 @@
 <!DOCTYPE compass-core-mapping PUBLIC
-    "-//Compass/Compass Core Mapping DTD 1.0//EN"
-    "http://www.opensymphony.com/compass/dtd/compass-core-mapping.dtd">
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
 
 <compass-core-mapping package="org.compass.annotations.test.overrideannotations">
 

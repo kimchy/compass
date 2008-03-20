@@ -184,19 +184,19 @@
 
     <target name="distfiles" depends="initdist" description="Copy dtd, tld and co to dist directory">
 
-        <copy file="${main.src.dir}/org/compass/core/compass-core-configuration.dtd"
+        <copy file="${main.src.dir}/org/compass/core/compass-core-configuration-2.0.dtd"
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
-        <copy file="${main.src.dir}/org/compass/core/compass-core-mapping.dtd"
+        <copy file="${main.src.dir}/org/compass/core/compass-core-mapping-2.0.dtd"
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
-        <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data.dtd"
+        <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data-2.0.dtd"
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
-        <copy file="${main.src.dir}/org/compass/core/compass-core-config.xsd"
+        <copy file="${main.src.dir}/org/compass/core/compass-core-config-2.0.xsd"
               todir="${dist.dir}/schema" preservelastmodified="true"/>
 
-        <copy file="${main.src.dir}/org/compass/spring/config/spring-compass-core-config.xsd"
+        <copy file="${main.src.dir}/org/compass/spring/config/spring-compass-core-config-2.0.xsd"
               todir="${dist.dir}/schema" preservelastmodified="true"/>
 
         <copy todir="${dist.dir}/lucene">

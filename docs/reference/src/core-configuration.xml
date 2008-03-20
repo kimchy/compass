@@ -173,10 +173,10 @@ org.compass.converter.test.param2=value2
         <para>
            Here are a few sample configuration files, just to get a feeling of the structure and nature of the configuration file. The first is a simple file based index with the OSEM definitions for the Author class.
 
-<programlisting><![CDATA[<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+<programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
-           http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+  xsi:schemaLocation="http://www.compass-project.org/schema/core-config
+           http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
 
    <compass name="default">
       <connection>
@@ -195,10 +195,10 @@ org.compass.converter.test.param2=value2
         <para>
            The next sample configures a jdbc based index, with a bigger buffer size for default file entries:
         
-<programlisting><![CDATA[<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+<programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
-          http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+ xsi:schemaLocation="http://www.compass-project.org/schema/core-config
+          http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
 
    <compass name="default">
 
@@ -224,10 +224,10 @@ org.compass.converter.test.param2=value2
         <para>
            The next sample configures a jdbc based index, with a JTA transaction (note the managed="true" and commitBeforeCompletion="true"):
 
-<programlisting><![CDATA[<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+<programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
-          http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+ xsi:schemaLocation="http://www.compass-project.org/schema/core-config
+          http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
 
    <compass name="default">
 
@@ -249,10 +249,10 @@ org.compass.converter.test.param2=value2
          <para>
             Here is another sample, that configures another analyzer, a specialized Converter, and changed the default date format for all Java Dates (date is an internal name that maps to Compass default date Converter).
          
-<programlisting><![CDATA[<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+<programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
-          http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+ xsi:schemaLocation="http://www.compass-project.org/schema/core-config
+          http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
 
    <compass name="default">
 
@@ -282,10 +282,10 @@ org.compass.converter.test.param2=value2
          <para>
             The next configuration uses batch_insert transaction, with a higher max buffered documents for faster batch indexing.
 
-<programlisting><![CDATA[<compass-core-config xmlns="http://www.opensymphony.com/compass/schema/core-config"
+<programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
-         http://www.opensymphony.com/compass/schema/compass-core-config.xsd">
+xsi:schemaLocation="http://www.compass-project.org/schema/core-config
+         http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
 
   <compass name="default">
 
@@ -313,10 +313,10 @@ xsi:schemaLocation="http://www.opensymphony.com/compass/schema/core-config
       <para>
         And here is an example of the xml configuration file:
 <programlisting><![CDATA[<!DOCTYPE compass-core-configuration PUBLIC
-"-//Compass/Compass Core Configuration DTD 1.0//EN"
-"http://www.opensymphony.com/compass/dtd/compass-core-configuration.dtd">
+"-//Compass/Compass Core Configuration DTD 2.0//EN"
+"http://www.compass-project.org/dtd/compass-core-configuration-2.0.dtd">
 
-<compass-core-configurationshaysheli75shaysheli75
+<compass-core-configuration>
   
   <compass>
     <setting name="compass.engine.connection">my/index/dir</setting>
