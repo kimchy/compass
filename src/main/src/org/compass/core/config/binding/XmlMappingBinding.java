@@ -545,7 +545,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         cascadeMapping.setPropertyName(name);
 
         bindConverter(conf, cascadeMapping);
-        bindCascade(conf, cascadeMapping);
+        bindCascade(conf, cascadeMapping, "all");
     }
 
     private void bindDynamicMetaData(ConfigurationHelper dynamicConf, AliasMapping aliasMapping,
@@ -609,7 +609,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         referenceMapping.setAccessor(referenceConf.getAttribute("accessor", null));
         referenceMapping.setPropertyName(name);
 
-        bindCascade(referenceConf, referenceMapping);
+        bindCascade(referenceConf, referenceMapping, null);
     }
 
     private void bindComponent(ConfigurationHelper componentConf, AliasMapping aliasMapping,
@@ -631,11 +631,11 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         boolean override = componentConf.getAttributeAsBoolean("override", true);
         compMapping.setOverrideByName(override);
 
-        bindCascade(componentConf, compMapping);
+        bindCascade(componentConf, compMapping, null);
     }
 
-    private void bindCascade(ConfigurationHelper refConf, CascadeMapping cascadeMapping) {
-        String commaSeparatedCascades = refConf.getAttribute("cascade", null);
+    private void bindCascade(ConfigurationHelper refConf, CascadeMapping cascadeMapping, String defaultValue) {
+        String commaSeparatedCascades = refConf.getAttribute("cascade", defaultValue);
         if (commaSeparatedCascades == null) {
             return;
         }
@@ -659,7 +659,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         parentMapping.setPropertyName(name);
         parentMapping.setDefinedInAlias(aliasMapping.getAlias());
 
-        bindCascade(parentConf, parentMapping);
+        bindCascade(parentConf, parentMapping, null);
     }
 
     private void bindClassProperty(ConfigurationHelper classPropertyConf, AliasMapping aliasMapping,

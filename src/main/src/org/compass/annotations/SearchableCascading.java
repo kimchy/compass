@@ -47,8 +47,8 @@ public @interface SearchableCascading {
     public abstract String accessor() default "";
 
     /**
-     * The operations that will cascade to the target association. Defaults to no operations
+     * The operations that will cascade to the target association. Defaults all operations
      * being cascaded.
      */
-    public abstract Cascade[] cascade() default {};
+    public abstract Cascade[] cascade() default Cascade.ALL;
 }
