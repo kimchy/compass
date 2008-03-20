@@ -17,21 +17,52 @@
 package org.compass.gps;
 
 /**
- * Index plan is a general class representing what needs to be indexed.
+ * Index plan is a general class representing what needs to be indexed. By default,
+ * everything (types, aliases, and sub indexes) are set to <code>null</code>.
+ *
+ * <p>If more than one setter is used (i.e. has a non null value), then the join
+ * of all of the different setter values that are not null will be used to index.
+ *
+ * <p>Note, in case of inheritance (for alias or class), the extending classes will
+ * also be indexed.
  *
  * @author kimchy
  */
 public interface IndexPlan {
 
-    IndexPlan setTypes(Class ... types);
+    /**
+     * Sets the given classes that will be indexed. <code>null</code> value
+     * means that it will not be taken into account.
+     */
+    IndexPlan setTypes(Class... types);
 
+    /**
+     * Returns the given classes that will be indexed. <code>null</code> value
+     * means that it will not be taken into account.
+     */
     Class[] getTypes();
 
-    IndexPlan setAliases(String ... aliases);
+    /**
+     * Sets the given aliases that will be indexed. <code>null</code> value
+     * means that it will not be taken into account.
+     */
+    IndexPlan setAliases(String... aliases);
 
+    /**
+     * Returns the given aliases that will be indexed. <code>null</code> value
+     * means that it will not be taken into account.
+     */
     String[] getAliases();
 
-    IndexPlan setSubIndexes(String ... subIndexes);
+    /**
+     * Sets the given sub indexes that will be indexed. <code>null</code> value
+     * means that it will not be taken into account.
+     */
+    IndexPlan setSubIndexes(String... subIndexes);
 
+    /**
+     * Returns the given sub indexes that will be indexed. <code>null</code> value
+     * means that it will not be taken into account.
+     */
     String[] getSubIndexes();
 }

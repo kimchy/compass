@@ -71,10 +71,18 @@ public interface CompassGps {
     /**
      * Indexes all the different devices (by calling their respective
      * <code>index()</code> operation.
+     *
+     * <p>Similar to calling the {@link #index(IndexPlan)} with a new
+     * instance of {@link DefaultIndexPlan} (and nothing else set).
      * 
      * @throws CompassGpsException
      */
     void index() throws CompassGpsException, IllegalStateException;
 
+    /**
+     * Indexes all the different devices based on the given index plan. The index
+     * plan, by default, supports constraining the indexing process to specific
+     * classes/aliases/sub indexes.
+     */
     void index(IndexPlan indexPlan) throws CompassGpsException, IllegalStateException;
 }
