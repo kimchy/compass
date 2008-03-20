@@ -34,6 +34,7 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 import org.compass.gps.PassiveMirrorGpsDevice;
 import org.compass.gps.device.AbstractGpsDevice;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
@@ -90,7 +91,7 @@ public class OjbGpsDevice extends AbstractGpsDevice implements PassiveMirrorGpsD
         this.indexPersistenceBroker = indexPersistenceBroker;
     }
 
-    protected void doIndex(CompassSession session) throws CompassGpsException {
+    protected void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException {
         final PersistenceBroker persistenceBroker = doGetIndexPersistentBroker();
         if (persistenceBroker == null) {
             throw new OjbGpsDeviceException(buildMessage("Must set the index persistent broker"));

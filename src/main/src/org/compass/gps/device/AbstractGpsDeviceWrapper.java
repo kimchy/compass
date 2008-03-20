@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.gps.CompassGps;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 
 /**
  * A helper base class that can wrap a {@link org.compass.gps.CompassGpsDevice}
@@ -69,9 +70,9 @@ public class AbstractGpsDeviceWrapper implements CompassGpsDevice {
         this.gpsDevice.stop();
     }
 
-    public void index() throws CompassGpsException {
+    public void index(IndexPlan indexPlan) throws CompassGpsException, IllegalStateException {
         checkDeviceSet();
-        this.gpsDevice.index();
+        this.gpsDevice.index(indexPlan);
     }
 
     public boolean isRunning() {

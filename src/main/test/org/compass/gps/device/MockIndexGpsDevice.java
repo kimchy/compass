@@ -21,6 +21,7 @@ import java.util.Iterator;
 
 import org.compass.core.CompassSession;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 
 /**
  * @author kimchy
@@ -29,7 +30,7 @@ public class MockIndexGpsDevice extends AbstractGpsDevice {
 
     private ArrayList objects = new ArrayList();
 
-    protected void doIndex(CompassSession session) throws CompassGpsException {
+    protected void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException {
         for (Iterator it = objects.iterator(); it.hasNext();) {
             session.create(it.next());
         }

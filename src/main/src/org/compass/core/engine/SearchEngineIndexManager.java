@@ -22,6 +22,15 @@ package org.compass.core.engine;
  */
 public interface SearchEngineIndexManager {
 
+    public static interface IndexOperationPlan {
+
+        String[] getSubIndexes();
+
+        String[] getAliases();
+
+        Class[] getTypes();
+    }
+
     /**
      * A callback interface that works with.
      *
@@ -219,4 +228,17 @@ public interface SearchEngineIndexManager {
      * Returns <code>true</code> if the given sub index is locked.
      */
     boolean isLocked(String subIndex) throws SearchEngineException;
+
+    /**
+     * Returns the sub indexes the intersect with the given sub indexes and aliases
+     * provided. The types are translated to aliases and retuned as well.
+     */
+    String[] calcSubIndexes(String[] subIndexes, String[] aliases, Class[] types);
+
+    /**
+     * Returns the sub indexes that intersect with the given sub indexes, aliases
+     * and types. Types are translated to the matching aliases. Any extending aliases
+     * of the given aliases (or types) are added as well.
+     */
+    String[] polyCalcSubIndexes(String[] subIndexes, String[] aliases, Class[] types);
 }

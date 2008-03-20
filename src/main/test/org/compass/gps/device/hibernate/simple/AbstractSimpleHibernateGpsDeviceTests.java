@@ -162,5 +162,4 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
         tr.commit();
         sess.close();
     }
-
 }

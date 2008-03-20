@@ -18,17 +18,17 @@ package org.compass.gps.device.jdo;
 
 import java.util.Collection;
 import java.util.Iterator;
-
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
 import org.compass.core.CompassSession;
-import org.compass.core.spi.InternalCompass;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 import org.compass.gps.device.AbstractGpsDevice;
 
 /**
@@ -65,7 +65,8 @@ public class JdoGpsDevice extends AbstractGpsDevice {
         }
     }
 
-    protected void doIndex(CompassSession session) throws CompassGpsException {
+    protected void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException {
+        // TODO take into account the index plan
         if (log.isInfoEnabled()) {
             log.info(buildMessage("Indexing the database"));
         }

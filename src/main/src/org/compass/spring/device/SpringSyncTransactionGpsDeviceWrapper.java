@@ -19,8 +19,9 @@ package org.compass.spring.device;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.util.Assert;
-import org.compass.gps.CompassGpsException;
 import org.compass.gps.CompassGpsDevice;
+import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 import org.compass.gps.device.AbstractGpsDeviceWrapper;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
@@ -69,7 +70,7 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
      * If a Spring <code>PlatformTransactionManager<code> is available, will use it to execute the wrapped gps device
      * index operation within a new transcation with a propagation level of REQUIRES_NEW.
      */
-    public void index() throws CompassGpsException {
+    public void index(final IndexPlan indexPlan) throws CompassGpsException {
         if (transactionManager == null) {
             TransactionFactory transactionFactory =
                     ((InternalCompass) ((CompassGpsInterfaceDevice) gpsDevice.getGps()).getIndexCompass()).getTransactionFactory();
@@ -83,7 +84,7 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
                 if (log.isDebugEnabled()) {
                     log.debug("No transaction manager found, will not execute the index operation within its own transaction");
                 }
-                gpsDevice.index();
+                gpsDevice.index(indexPlan);
             } else {
                 throw new CompassGpsException("No transaction manager is found, and it is not allowed");
             }
@@ -95,7 +96,7 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
             transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-                    gpsDevice.index();
+                    gpsDevice.index(indexPlan);
                 }
             });
         }
@@ -103,7 +104,7 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
 
     /**
      * Sets the Spring <code>PlatformTransactionManager</code> that will be used to start a new transaction
-     * for the {@link #index()} operation. Note, this is an optioanl parameter, since if not set, Compass will
+     * for the {@link #index(org.compass.gps.IndexPlan)} operation. Note, this is an optioanl parameter, since if not set, Compass will
      * try and get Spring transaction manager from the associated {@link org.compass.spring.LocalCompassBean}.
      */
     public void setTransactionManager(PlatformTransactionManager transactionManager) {

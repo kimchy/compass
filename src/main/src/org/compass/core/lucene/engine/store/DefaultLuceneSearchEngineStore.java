@@ -63,6 +63,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private static Log log = LogFactory.getLog(DefaultLuceneSearchEngineStore.class);
 
+    private CompassMapping mapping;
+
     private CompassSettings settings;
 
     private DirectoryStore directoryStore;
@@ -87,6 +89,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
         this.settings = settings;
+        this.mapping = mapping;
         this.connectionString = settings.getSetting(CompassEnvironment.CONNECTION);
         this.dirs = new ConcurrentHashMap<String, Map<String, Directory>>();
 
@@ -235,6 +238,46 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     public String[] getSubIndexes() {
         return subIndexes;
+    }
+
+    public String[] calcSubIndexes(String[] subIndexes, String[] aliases, Class[] types) {
+        return internalCalcSubIndexes(subIndexes, aliases, types, false);
+    }
+
+    public String[] polyCalcSubIndexes(String[] subIndexes, String[] aliases, Class[] types) {
+        return internalCalcSubIndexes(subIndexes, aliases, types, true);
+    }
+
+    public String[] internalCalcSubIndexes(String[] subIndexes, String[] aliases, Class[] types, boolean poly) {
+        if (aliases == null && types == null) {
+            return calcSubIndexes(subIndexes, aliases);
+        }
+        HashSet<String> aliasesSet = new HashSet<String>();
+        if (aliases != null) {
+            for (String alias : aliases) {
+                ResourceMapping resourceMapping = mapping.getRootMappingByAlias(alias);
+                if (resourceMapping == null) {
+                    throw new IllegalArgumentException("No root mapping found for alias [" + alias + "]");
+                }
+                aliasesSet.add(resourceMapping.getAlias());
+                if (poly) {
+                    aliasesSet.addAll(Arrays.asList(resourceMapping.getExtendingAliases()));
+                }
+            }
+        }
+        if (types != null) {
+            for (Class type : types) {
+                ResourceMapping resourceMapping = mapping.getRootMappingByClass(type);
+                if (resourceMapping == null) {
+                    throw new IllegalArgumentException("No root mapping found for class [" + type + "]");
+                }
+                aliasesSet.add(resourceMapping.getAlias());
+                if (poly) {
+                    aliasesSet.addAll(Arrays.asList(resourceMapping.getExtendingAliases()));
+                }
+            }
+        }
+        return calcSubIndexes(subIndexes, aliasesSet.toArray(new String[aliasesSet.size()]));
     }
 
     public String[] calcSubIndexes(String[] subIndexes, String[] aliases) {

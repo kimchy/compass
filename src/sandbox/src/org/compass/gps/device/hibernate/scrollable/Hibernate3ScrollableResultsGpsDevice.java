@@ -30,6 +30,7 @@ import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.ActiveMirrorGpsDevice;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 import org.compass.gps.device.AbstractGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.device.hibernate.scrollable.snapshot.ConfigureSnapshotEvent;
@@ -238,7 +239,7 @@ public class Hibernate3ScrollableResultsGpsDevice extends AbstractGpsDevice
     /**
      * Indexes the data
      */
-    protected void doIndex(CompassSession session) throws CompassException {
+    protected void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassException {
         // reset the snapshot data before we perform the index operation
         snapshot = new HibernateSnapshot();
         for (Iterator it = mappings.iterator(); it.hasNext();) {

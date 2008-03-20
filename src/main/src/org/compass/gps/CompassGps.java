@@ -75,4 +75,6 @@ public interface CompassGps {
      * @throws CompassGpsException
      */
     void index() throws CompassGpsException, IllegalStateException;
+
+    void index(IndexPlan indexPlan) throws CompassGpsException, IllegalStateException;
 }

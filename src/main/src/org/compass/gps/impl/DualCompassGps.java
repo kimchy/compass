@@ -29,6 +29,7 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 
 /**
  * <p>A {@link org.compass.gps.CompassGps} implementation that holds two
@@ -73,7 +74,7 @@ public class DualCompassGps extends AbstractCompassGps {
     protected void doStop() throws CompassGpsException {
     }
 
-    protected void doIndex() throws CompassGpsException {
+    protected void doIndex(final IndexPlan indexPlan) throws CompassGpsException {
         if (mirrorCompass != null) {
             ((InternalCompass) mirrorCompass).stop();
         }
@@ -88,7 +89,7 @@ public class DualCompassGps extends AbstractCompassGps {
             public void buildIndexIfNeeded() throws SearchEngineException {
                 for (Iterator it = devices.values().iterator(); it.hasNext();) {
                     CompassGpsDevice device = (CompassGpsDevice) it.next();
-                    device.index();
+                    device.index(indexPlan);
                 }
             }
         });

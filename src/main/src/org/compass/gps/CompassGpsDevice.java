@@ -87,13 +87,12 @@ public interface CompassGpsDevice {
     boolean isRunning();
 
     /**
-     * Index the device. Optional, since it is preferable to manage the all the
-     * devices through the CompassGps API.
+     * Index the device using the given index plan
      * 
      * @throws CompassGpsException
      * @throws IllegalStateException
      */
-    void index() throws CompassGpsException, IllegalStateException;
+    void index(IndexPlan indexPlan) throws CompassGpsException, IllegalStateException;
 
     /**
      * Retuns <code>true</code> if the devide performs the index operaiton.

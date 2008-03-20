@@ -131,6 +131,19 @@ public interface LuceneSearchEngineStore {
     boolean indexExists() throws SearchEngineException;
 
     /**
+     * Returns the sub indexes the intersect with the given sub indexes and aliases
+     * provided. The types are translated to aliases and retuned as well.
+     */
+    String[] calcSubIndexes(String[] subIndexes, String[] aliases, Class[] types);
+
+    /**
+     * Returns the sub indexes that intersect with the given sub indexes, aliases
+     * and types. Types are translated to the matching aliases. Any extending aliases
+     * of the given aliases (or types) are added as well.
+     */
+    String[] polyCalcSubIndexes(String[] subIndexes, String[] aliases, Class[] types);
+
+    /**
      * Returns the sub indexes that intersect with the given sub indexes and
      * aliases provided. If the sub indexes and aliases are <code>null</code>,
      * return all the sub indexes.

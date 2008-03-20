@@ -19,13 +19,13 @@ package org.compass.gps.device.ibatis;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import org.compass.core.CompassSession;
-import org.compass.gps.CompassGpsException;
-import org.compass.gps.device.AbstractGpsDevice;
-
 import com.ibatis.common.util.PaginatedList;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapSession;
+import org.compass.core.CompassSession;
+import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
+import org.compass.gps.device.AbstractGpsDevice;
 
 /**
  * A <code>SqlMapClient</code> device, provides support for iBatis 2 and the
@@ -101,7 +101,8 @@ public class SqlMapClientGpsDevice extends AbstractGpsDevice {
         this.sqlMapClient = sqlMapClient;
     }
 
-    protected void doIndex(CompassSession session) throws CompassGpsException {
+    protected void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException {
+        // TODO take into account the index plan
         if (log.isInfoEnabled()) {
             log.info(buildMessage("Indexing the database with page size [" + pageSize + "]"));
         }

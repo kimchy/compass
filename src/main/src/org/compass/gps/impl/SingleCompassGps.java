@@ -35,6 +35,7 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 
 /**
  * <p>A {@link org.compass.gps.CompassGps} implementation that holds a
@@ -109,7 +110,7 @@ public class SingleCompassGps extends AbstractCompassGps {
     protected void doStop() throws CompassGpsException {
     }
 
-    protected void doIndex() throws CompassGpsException {
+    protected void doIndex(final IndexPlan indexPlan) throws CompassGpsException {
         ((InternalCompass) compass).stop();
 
         // create the temp compass index, and clean it
@@ -122,7 +123,7 @@ public class SingleCompassGps extends AbstractCompassGps {
                 new SearchEngineIndexManager.ReplaceIndexCallback() {
                     public void buildIndexIfNeeded() throws SearchEngineException {
                         for (CompassGpsDevice device : devices.values()) {
-                            device.index();
+                            device.index(indexPlan);
                         }
                     }
                 });

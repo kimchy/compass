@@ -16,9 +16,16 @@
 
 package org.compass.gps.device.support.parallel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.compass.core.CompassSession;
+import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 import org.compass.gps.device.AbstractGpsDevice;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * <p>A base class for gps device that can parallel the index operation.
@@ -38,7 +45,7 @@ import org.compass.gps.device.AbstractGpsDevice;
  * way to partition the index entities, as it allows for the best concurrent support
  * (locking is performed on the sub index level).
  *
- * <p>The {@link #index()} operation uses the {@link org.compass.gps.device.support.parallel.ParallelIndexExecutor}
+ * <p>The {@link #index(org.compass.gps.IndexPlan)} operation uses the {@link org.compass.gps.device.support.parallel.ParallelIndexExecutor}
  * in order to execute the indexing process. The default implementation used is
  * {@link org.compass.gps.device.support.parallel.ConcurrentParallelIndexExecutor}.
  *
@@ -74,12 +81,36 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
      *
      * @throws CompassGpsException
      */
-    public synchronized void index() throws CompassGpsException {
+    public synchronized void index(IndexPlan indexPlan) throws CompassGpsException {
         if (!isRunning()) {
             throw new IllegalStateException(
                     buildMessage("must be running in order to perform the index operation"));
         }
-        parallelIndexExecutor.performIndex(entities, indexEntitiesIndexer, compassGps);
+
+        String[] arrSubIndexes = ((InternalCompass) ((CompassGpsInterfaceDevice) getGps()).getIndexCompass()).getSearchEngineFactory().getIndexManager().polyCalcSubIndexes(indexPlan.getSubIndexes(), indexPlan.getAliases(), indexPlan.getTypes());
+        HashSet<String> subIndexes = new HashSet<String>(Arrays.asList(arrSubIndexes));
+
+        ArrayList<IndexEntity[]> calcEntities = new ArrayList<IndexEntity[]>();
+        for (IndexEntity[] arrEleEntities : entities) {
+            ArrayList<IndexEntity> eleEntities = new ArrayList<IndexEntity>();
+            for (IndexEntity entity : arrEleEntities) {
+                boolean found = false;
+                for (String subIndex : entity.getSubIndexes()) {
+                    if (subIndexes.contains(subIndex)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    eleEntities.add(entity);
+                }
+            }
+            if (!eleEntities.isEmpty()) {
+                calcEntities.add(eleEntities.toArray(new IndexEntity[eleEntities.size()]));
+            }
+        }
+
+        parallelIndexExecutor.performIndex(calcEntities.toArray(new IndexEntity[calcEntities.size()][]), indexEntitiesIndexer, compassGps);
     }
 
     /**
@@ -94,10 +125,10 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
 
     /**
      * Overriding this method and throws an {@link IllegalStateException} as it should
-     * not be called. The {@link #index()} operation is implemented here and does not
+     * not be called. The {@link #index(org.compass.gps.IndexPlan)} operation is implemented here and does not
      * call this method.
      */
-    protected final void doIndex(CompassSession session) throws CompassGpsException {
+    protected final void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException {
         throw new IllegalStateException("This should not be called");
     }
 
@@ -105,7 +136,7 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
      * Sets the parallel index executor. Defaults to
      * {@link org.compass.gps.device.support.parallel.ConcurrentParallelIndexExecutor}.
      *
-     * @see #index()
+     * @see #index(org.compass.gps.IndexPlan) 
      */
     public void setParallelIndexExecutor(ParallelIndexExecutor parallelIndexExecutor) {
         this.parallelIndexExecutor = parallelIndexExecutor;

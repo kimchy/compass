@@ -28,6 +28,7 @@ import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.CompassGps;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 import org.compass.gps.MirrorDataChangesGpsDevice;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
@@ -83,14 +84,14 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
         return (filteredEntitiesLookupForIndex != null && filteredEntitiesLookupForIndex.contains(entity));
     }
 
-    public synchronized void index() throws CompassGpsException {
+    public synchronized void index(final IndexPlan indexPlan) throws CompassGpsException {
         if (!isRunning()) {
             throw new IllegalStateException(
                     buildMessage("must be running in order to perform the index operation"));
         }
         compassGps.executeForIndex(new CompassCallbackWithoutResult() {
             protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                doIndex(session);
+                doIndex(session, indexPlan);
                 ((InternalCompassSession) session).flush();
             }
         });
@@ -100,7 +101,7 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
      * Derived devices must implement the method to perform the actual indexing
      * operation.
      */
-    protected abstract void doIndex(CompassSession session) throws CompassGpsException;
+    protected abstract void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException;
 
     public synchronized void start() throws CompassGpsException {
         if (name == null) {

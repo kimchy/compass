@@ -27,6 +27,8 @@ import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.DefaultIndexPlan;
+import org.compass.gps.IndexPlan;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
@@ -133,6 +135,10 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
     }
 
     public synchronized void index() throws CompassGpsException, IllegalStateException {
+        index(new DefaultIndexPlan());
+    }
+    
+    public synchronized void index(IndexPlan indexPlan) throws CompassGpsException, IllegalStateException {
         if (!isRunning()) {
             throw new IllegalStateException("CompassGps must be running in order to perform the index operation");
         }
@@ -147,13 +153,13 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         }
         try {
             performingIndexOperation = true;
-            doIndex();
+            doIndex(indexPlan);
         } finally {
             performingIndexOperation = false;
         }
     }
 
-    protected abstract void doIndex() throws CompassGpsException;
+    protected abstract void doIndex(IndexPlan indexPlan) throws CompassGpsException;
 
     public synchronized void start() throws CompassGpsException {
         doStart();

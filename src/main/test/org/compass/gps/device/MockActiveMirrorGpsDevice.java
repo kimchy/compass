@@ -19,6 +19,7 @@ package org.compass.gps.device;
 import org.compass.core.CompassSession;
 import org.compass.gps.ActiveMirrorGpsDevice;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 
 /**
  * 
@@ -31,7 +32,7 @@ public class MockActiveMirrorGpsDevice extends AbstractMirrorGpsDevice implement
 
     private boolean performMirroringCalled;
 
-    protected void doIndex(CompassSession session) throws CompassGpsException {
+    protected void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException {
         doIndexCalled = true;
     }
 

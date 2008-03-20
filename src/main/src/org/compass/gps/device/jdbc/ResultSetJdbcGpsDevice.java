@@ -33,6 +33,7 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.CompassGpsException;
+import org.compass.gps.IndexPlan;
 import org.compass.gps.device.jdbc.mapping.AutoGenerateMapping;
 import org.compass.gps.device.jdbc.mapping.ColumnMapping;
 import org.compass.gps.device.jdbc.mapping.ColumnToPropertyMapping;
@@ -206,7 +207,8 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
         super.doStop();
     }
 
-    protected void doIndex(CompassSession session) throws CompassGpsException {
+    protected void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException {
+        // TODO take into account the index plan
         // reset the snapshot data before we perform the index operation
         snapshot = new JdbcSnapshot();
         for (Iterator it = mappings.iterator(); it.hasNext();) {

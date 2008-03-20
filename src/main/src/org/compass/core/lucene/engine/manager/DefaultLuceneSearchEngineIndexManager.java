@@ -157,7 +157,11 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     protected void doOperate(final IndexOperationCallback callback) throws SearchEngineException {
         // first aquire write lock for all the sub-indexes
-        final String[] subIndexes = searchEngineStore.getSubIndexes();
+        String[] subIndexes = searchEngineStore.getSubIndexes();
+        if (callback instanceof IndexOperationPlan) {
+            IndexOperationPlan plan = (IndexOperationPlan) callback;
+            subIndexes = searchEngineStore.polyCalcSubIndexes(plan.getSubIndexes(), plan.getAliases(), plan.getTypes());
+        }
         final Lock[] writerLocks = new Lock[subIndexes.length];
 
         try {
@@ -228,32 +232,65 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     protected void doReplaceIndex(final SearchEngineIndexManager indexManager, final ReplaceIndexCallback callback) throws SearchEngineException {
         final LuceneSearchEngineIndexManager luceneIndexManager = (LuceneSearchEngineIndexManager) indexManager;
+        doOperate(new ReplaceIndexOperationCallback(luceneIndexManager, callback));
+    }
 
-        doOperate(new IndexOperationCallback() {
-            public boolean firstStep() throws SearchEngineException {
-                callback.buildIndexIfNeeded();
-                return true;
-            }
+    private final class ReplaceIndexOperationCallback implements IndexOperationCallback, IndexOperationPlan {
 
-            public void secondStep() throws SearchEngineException {
-                if (log.isDebugEnabled()) {
-                    log.debug("[Replace Index] Replacing index [" + searchEngineStore + "] with ["
-                            + luceneIndexManager.getStore() + "]");
-                }
-                for (String subIndex : searchEngineStore.getSubIndexes()) {
-                    synchronized (indexHoldersLocks.get(subIndex)) {
-                        clearCache(subIndex);
-                        indexManager.clearCache(subIndex);
-                        searchEngineStore.copyFrom(subIndex, luceneIndexManager.getStore());
-                        refreshCache(subIndex);
-                    }
-                }
-                if (log.isDebugEnabled()) {
-                    log.debug("[Replace Index] Index [" + searchEngineStore + "] replaced from ["
-                            + luceneIndexManager.getStore() + "]");
+        private ReplaceIndexCallback callback;
+
+        private LuceneSearchEngineIndexManager indexManager;
+
+        private ReplaceIndexOperationCallback(LuceneSearchEngineIndexManager indexManager, ReplaceIndexCallback callback) {
+            this.indexManager = indexManager;
+            this.callback = callback;
+        }
+
+        public boolean firstStep() throws SearchEngineException {
+            callback.buildIndexIfNeeded();
+            return true;
+        }
+
+        public void secondStep() throws SearchEngineException {
+            if (log.isDebugEnabled()) {
+                log.debug("[Replace Index] Replacing index [" + searchEngineStore + "] with ["
+                        + indexManager.getStore() + "]");
+            }
+            String[] subIndexes = searchEngineStore.polyCalcSubIndexes(getSubIndexes(), getAliases(), getTypes());
+            for (String subIndex : subIndexes) {
+                synchronized (indexHoldersLocks.get(subIndex)) {
+                    clearCache(subIndex);
+                    indexManager.clearCache(subIndex);
+                    searchEngineStore.copyFrom(subIndex, indexManager.getStore());
+                    refreshCache(subIndex);
                 }
             }
-        });
+            if (log.isDebugEnabled()) {
+                log.debug("[Replace Index] Index [" + searchEngineStore + "] replaced from ["
+                        + indexManager.getStore() + "]");
+            }
+        }
+
+        public String[] getSubIndexes() {
+            if (callback instanceof IndexOperationPlan) {
+                return ((IndexOperationPlan) callback).getSubIndexes();
+            }
+            return null;
+        }
+
+        public String[] getAliases() {
+            if (callback instanceof IndexOperationPlan) {
+                return ((IndexOperationPlan) callback).getAliases();
+            }
+            return null;
+        }
+
+        public Class[] getTypes() {
+            if (callback instanceof IndexOperationPlan) {
+                return ((IndexOperationPlan) callback).getTypes();
+            }
+            return null;
+        }
     }
 
     public void notifyAllToClearCache() throws SearchEngineException {
@@ -625,6 +662,14 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 return null;
             }
         });
+    }
+
+    public String[] calcSubIndexes(String[] subIndexes, String[] aliases, Class[] types) {
+        return searchEngineStore.calcSubIndexes(subIndexes, aliases, types);
+    }
+
+    public String[] polyCalcSubIndexes(String[] subIndexes, String[] aliases, Class[] types) {
+        return searchEngineStore.polyCalcSubIndexes(subIndexes, aliases, types);
     }
 
     public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
