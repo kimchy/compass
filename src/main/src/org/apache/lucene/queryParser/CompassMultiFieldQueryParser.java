@@ -200,7 +200,7 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
     /**
      * @throws ParseException throw in overridden method to disallow
      */
-    // MONITOR AGAINST LUCENE
+    // LUCENE MONITOR
     // Changed: Added boostAll flag
     // Extracted the creation of Terms to allow for overrides
     protected Query getInternalFieldQuery(String field, String queryText) throws ParseException {

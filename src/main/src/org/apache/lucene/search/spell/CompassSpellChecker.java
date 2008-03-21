@@ -68,6 +68,7 @@ import org.apache.lucene.store.Directory;
 // 5. Added a constructor that won't open an index searcher ("indexing" spell checker)
 // 6. Added indexDictionary that accepts a dictionary and IndexWriter so we can configure it
 
+// LUCENE MONITOR
 public class CompassSpellChecker {
 
   /**
