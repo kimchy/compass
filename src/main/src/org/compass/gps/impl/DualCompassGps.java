@@ -16,18 +16,13 @@
 
 package org.compass.gps.impl;
 
-import java.util.Iterator;
-
 import org.compass.core.Compass;
 import org.compass.core.CompassCallback;
 import org.compass.core.CompassException;
 import org.compass.core.CompassTemplate;
-import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
-import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.IndexPlan;
 
@@ -85,15 +80,7 @@ public class DualCompassGps extends AbstractCompassGps {
         indexCompass.getSearchEngineIndexManager().createIndex();
 
         mirrorCompass.getSearchEngineIndexManager().replaceIndex(
-                indexCompass.getSearchEngineIndexManager(), new SearchEngineIndexManager.ReplaceIndexCallback() {
-            public void buildIndexIfNeeded() throws SearchEngineException {
-                for (Iterator it = devices.values().iterator(); it.hasNext();) {
-                    CompassGpsDevice device = (CompassGpsDevice) it.next();
-                    device.index(indexPlan);
-                }
-            }
-        });
-
+                indexCompass.getSearchEngineIndexManager(), new DefaultReplaceIndexCallback(devices.values(), indexPlan));
         if (mirrorCompass != null) {
             ((InternalCompass) mirrorCompass).start();
         }

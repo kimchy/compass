@@ -137,7 +137,15 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
     public synchronized void index() throws CompassGpsException, IllegalStateException {
         index(new DefaultIndexPlan());
     }
-    
+
+    public void index(Class... types) throws CompassGpsException, IllegalStateException {
+        index(new DefaultIndexPlan().setTypes(types));
+    }
+
+    public void index(String... aliases) throws CompassGpsException, IllegalStateException {
+        index(new DefaultIndexPlan().setAliases(aliases));
+    }
+
     public synchronized void index(IndexPlan indexPlan) throws CompassGpsException, IllegalStateException {
         if (!isRunning()) {
             throw new IllegalStateException("CompassGps must be running in order to perform the index operation");

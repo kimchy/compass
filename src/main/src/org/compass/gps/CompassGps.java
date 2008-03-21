@@ -80,6 +80,16 @@ public interface CompassGps {
     void index() throws CompassGpsException, IllegalStateException;
 
     /**
+     * Index just the given types.
+     */
+    void index(Class ... types) throws CompassGpsException, IllegalStateException;
+
+    /**
+     * Index just the aliases.
+     */
+    void index(String ... aliases) throws CompassGpsException, IllegalStateException;
+
+    /**
      * Indexes all the different devices based on the given index plan. The index
      * plan, by default, supports constraining the indexing process to specific
      * classes/aliases/sub indexes.

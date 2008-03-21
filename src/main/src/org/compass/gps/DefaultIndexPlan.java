@@ -16,6 +16,8 @@
 
 package org.compass.gps;
 
+import org.compass.core.util.StringUtils;
+
 /**
  * @author kimchy
  */
@@ -52,5 +54,12 @@ public class DefaultIndexPlan implements IndexPlan {
     public IndexPlan setSubIndexes(String ... subIndexes) {
         this.subIndexes = subIndexes;
         return this;
+    }
+
+    public String toString() {
+        return "subIndexes[" + StringUtils.arrayToCommaDelimitedString(getSubIndexes()) + "], aliases[" +
+                StringUtils.arrayToCommaDelimitedString(getAliases()) + "], types [" +
+                StringUtils.arrayToCommaDelimitedString(getTypes()) + "]";
+
     }
 }

@@ -87,14 +87,18 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
                     buildMessage("must be running in order to perform the index operation"));
         }
 
+        // here, we go over and filter out things that are not based on the index plan
+        // we first get the sub indexes based on the index plan, and then filter out
+        // entities[] that do not match.
+        // Note: once we find a match, we must add all the entities array, since the partitioner
+        // "said" that they must be indexed 2ghter.
         String[] arrSubIndexes = ((InternalCompass) ((CompassGpsInterfaceDevice) getGps()).getIndexCompass()).getSearchEngineFactory().getIndexManager().polyCalcSubIndexes(indexPlan.getSubIndexes(), indexPlan.getAliases(), indexPlan.getTypes());
         HashSet<String> subIndexes = new HashSet<String>(Arrays.asList(arrSubIndexes));
 
         ArrayList<IndexEntity[]> calcEntities = new ArrayList<IndexEntity[]>();
         for (IndexEntity[] arrEleEntities : entities) {
-            ArrayList<IndexEntity> eleEntities = new ArrayList<IndexEntity>();
+            boolean found = false;
             for (IndexEntity entity : arrEleEntities) {
-                boolean found = false;
                 for (String subIndex : entity.getSubIndexes()) {
                     if (subIndexes.contains(subIndex)) {
                         found = true;
@@ -102,15 +106,16 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
                     }
                 }
                 if (found) {
-                    eleEntities.add(entity);
+                    break;
                 }
             }
-            if (!eleEntities.isEmpty()) {
-                calcEntities.add(eleEntities.toArray(new IndexEntity[eleEntities.size()]));
+            if (found) {
+                calcEntities.add(arrEleEntities);
             }
         }
 
-        parallelIndexExecutor.performIndex(calcEntities.toArray(new IndexEntity[calcEntities.size()][]), indexEntitiesIndexer, compassGps);
+        IndexEntity[][] entitiesToIndex = calcEntities.toArray(new IndexEntity[calcEntities.size()][]);
+        parallelIndexExecutor.performIndex(entitiesToIndex, indexEntitiesIndexer, compassGps);
     }
 
     /**
@@ -136,7 +141,7 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
      * Sets the parallel index executor. Defaults to
      * {@link org.compass.gps.device.support.parallel.ConcurrentParallelIndexExecutor}.
      *
-     * @see #index(org.compass.gps.IndexPlan) 
+     * @see #index(org.compass.gps.IndexPlan)
      */
     public void setParallelIndexExecutor(ParallelIndexExecutor parallelIndexExecutor) {
         this.parallelIndexExecutor = parallelIndexExecutor;

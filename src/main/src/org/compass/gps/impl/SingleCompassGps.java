@@ -26,14 +26,11 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
-import org.compass.gps.CompassGpsDevice;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.IndexPlan;
 
@@ -120,13 +117,7 @@ public class SingleCompassGps extends AbstractCompassGps {
 
         indexCompass.getSearchEngineIndexManager().clearCache();
         compass.getSearchEngineIndexManager().replaceIndex(indexCompass.getSearchEngineIndexManager(),
-                new SearchEngineIndexManager.ReplaceIndexCallback() {
-                    public void buildIndexIfNeeded() throws SearchEngineException {
-                        for (CompassGpsDevice device : devices.values()) {
-                            device.index(indexPlan);
-                        }
-                    }
-                });
+                new DefaultReplaceIndexCallback(devices.values(), indexPlan));
         indexCompass.getSearchEngineIndexManager().clearCache();
         try {
             indexCompass.getSearchEngineIndexManager().deleteIndex();

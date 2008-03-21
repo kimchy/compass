@@ -40,6 +40,10 @@ public class MockIndexGpsDevice extends AbstractGpsDevice {
         objects.clear();
     }
 
+    public void add(Object o) {
+        objects.add(o);
+    }
+
     public void add(Long id, String value) {
         MockIndexGpsDeviceObject object = new MockIndexGpsDeviceObject();
         object.id = id;
