@@ -116,6 +116,10 @@ public class LuceneMultiResource implements MultiResource, Map<String, Property[
         return currentResource.getObject(name);
     }
 
+    public Object[] getObjects(String name) {
+        return currentResource.getObjects(name);
+    }
+
     public String[] getValues(String name) {
         return currentResource.getValues(name);
     }

@@ -85,11 +85,11 @@ public interface Resource extends AliasedObject, Serializable {
     String getValue(String name);
 
     /**
-     * Returns the object vlaue of the property with the given name if any exists
+     * Returns the object value of the property with the given name if any exists
      * in the resource, or null. If multiple properties exists with this name,
      * this methods returns the first value added.
-     * <p/>
-     * If a converter is associated with the property in one of Compass mapping definitions,
+     *
+     * <p>If a converter is associated with the property in one of Compass mapping definitions,
      * it will be used to convert the string value to an object value. If there is no converter
      * associated with the property, the string value will be returned.
      *
@@ -97,6 +97,17 @@ public interface Resource extends AliasedObject, Serializable {
      * @return The first object value that match the name (converted if possible)
      */
     Object getObject(String name);
+
+
+    /**
+     * Returns an array of values of the proeprty with the given name. This method
+     * returns an empty array if no values are associated with the given name.
+     *
+     * <p>If a converter is associated with the property in one of Compass mapping definitions,
+     * it will be used to convert the string value to an object value. If there is no converter
+     * associated with the property, the string value will be returned.
+     */
+    Object[] getObjects(String name);
 
     /**
      * Returns an array of values of the property specified as the method

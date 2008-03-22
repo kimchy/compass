@@ -260,8 +260,6 @@ public interface Property extends Serializable {
     /**
      * Sets the boost level for the property. The boost value can be specified in the mapping file to influence the
      * order of search results.
-     *
-     * @param boost
      */
     void setBoost(float boost);
 

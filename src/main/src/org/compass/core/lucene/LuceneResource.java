@@ -130,6 +130,15 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         return prop.getObjectValue();
     }
 
+    public Object[] getObjects(String name) {
+        Property[] props = getProperties(name);
+        Object[] ret = new Object[props.length];
+        for (int i = 0; i < props.length; i++) {
+            ret[i] = props[i].getObjectValue();
+        }
+        return ret;
+    }
+
     public String[] getValues(String name) {
         return document.getValues(name);
     }

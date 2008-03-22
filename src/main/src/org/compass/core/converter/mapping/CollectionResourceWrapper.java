@@ -162,6 +162,10 @@ public class CollectionResourceWrapper implements Resource {
         return resource.getProperties(name);
     }
 
+    public Object[] getObjects(String name) {
+        return resource.getObjects(name);
+    }
+
     public Property[] getProperties() {
         return null;
     }
