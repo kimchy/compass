@@ -68,6 +68,7 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContextCallback;
+import org.compass.core.transaction.context.TransactionContextCallbackWithTr;
 import org.compass.core.transaction.context.TransactionalRunnable;
 import org.compass.core.util.StringUtils;
 
@@ -214,7 +215,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
         for (final String subIndex : indexStore.getSubIndexes()) {
             searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-                public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
+                public Object doInTransaction() throws CompassException {
                     Directory dir = spellCheckStore.openDirectory(spellIndexSubContext, subIndex);
                     close(subIndex);
                     try {
@@ -355,7 +356,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     public boolean isRebuildNeeded(final String subIndex) throws SearchEngineException {
         checkIfStarted();
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
-            public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
+            public Boolean doInTransaction() throws CompassException {
                 try {
                     long spellCheckVersion = readSpellCheckIndexVersion(subIndex);
                     long indexVerion = LuceneSubIndexInfo.getIndexInfo(subIndex, indexStore).version();
@@ -396,7 +397,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     public synchronized boolean rebuild(final String subIndex) throws SearchEngineException {
         checkIfStarted();
-        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallbackWithTr<Boolean>() {
             public Boolean doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 long version = readSpellCheckIndexVersion(subIndex);
                 long indexVersion;
@@ -530,7 +531,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     }
 
     public <T> T execute(final String[] subIndexes, final String[] aliases, final SpellCheckerCallback<T> callback) {
-        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<T>() {
+        return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallbackWithTr<T>() {
             public T doInTransaction(InternalCompassTransaction tr) throws CompassException {
                 CompassSpellChecker spellChecker = createSpellChecker(subIndexes, aliases);
                 if (spellChecker == null) {

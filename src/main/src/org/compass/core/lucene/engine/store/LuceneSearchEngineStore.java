@@ -173,4 +173,10 @@ public interface LuceneSearchEngineStore {
      * @param eventManager The event manager to register events with
      */
     void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager);
+
+    /**
+     * Returns <code>true</code> if a transaction needs to be started when performing operations
+     * with this store.
+     */
+    boolean requiresAsyncTransactionalContext();
 }

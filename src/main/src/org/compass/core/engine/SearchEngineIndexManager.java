@@ -241,4 +241,10 @@ public interface SearchEngineIndexManager {
      * of the given aliases (or types) are added as well.
      */
     String[] polyCalcSubIndexes(String[] subIndexes, String[] aliases, Class[] types);
+
+    /**
+     * Returns <code>true</code> if a transaction needs to be started when performing operations
+     * with this store.
+     */
+    boolean requiresAsyncTransactionalContext();
 }

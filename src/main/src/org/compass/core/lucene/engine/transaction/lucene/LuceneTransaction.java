@@ -171,7 +171,7 @@ public class LuceneTransaction extends AbstractTransaction {
                     if (termDocs != null) {
                         termDocs.close();
                     }
-             } catch (IOException e) {
+                } catch (IOException e) {
                     // swallow it
                 }
             }

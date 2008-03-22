@@ -54,6 +54,7 @@ import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.transaction.TransactionFactoryFactory;
 import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.transaction.context.TransactionContextCallback;
+import org.compass.core.transaction.context.TransactionContextCallbackWithTr;
 
 /**
  * @author kimchy
@@ -303,6 +304,42 @@ public class DefaultCompass implements InternalCompass {
         }
 
         public <T> T execute(TransactionContextCallback<T> callback) throws TransactionException {
+            // if marked as not requiring transaction context, just execute without starting a transaction.
+            if (!compass.getSearchEngineIndexManager().requiresAsyncTransactionalContext()) {
+                return callback.doInTransaction();
+            }
+
+            CompassSession session = compass.openSession(true, false);
+            CompassTransaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                T result = callback.doInTransaction();
+                tx.commit();
+                return result;
+            } catch (RuntimeException e) {
+                if (tx != null) {
+                    try {
+                        tx.rollback();
+                    } catch (Exception e1) {
+                        log.error("Failed to rollback transaction, ignoring", e1);
+                    }
+                }
+                throw e;
+            } catch (Error err) {
+                if (tx != null) {
+                    try {
+                        tx.rollback();
+                    } catch (Exception e1) {
+                        log.error("Failed to rollback transaction, ignoring", e1);
+                    }
+                }
+                throw err;
+            } finally {
+                session.close();
+            }
+        }
+
+        public <T> T execute(TransactionContextCallbackWithTr<T> callback) throws TransactionException {
             CompassSession session = compass.openSession(true, false);
             CompassTransaction tx = null;
             try {

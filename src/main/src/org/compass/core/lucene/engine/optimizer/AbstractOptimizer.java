@@ -22,7 +22,6 @@ import org.compass.core.CompassException;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
-import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
@@ -85,7 +84,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
         }
 
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction(InternalCompassTransaction tr) throws CompassException {
+            public Object doInTransaction() throws CompassException {
                 doOptimize(subIndex);
                 searchEngineFactory.getIndexManager().refreshCache(subIndex);
                 return null;

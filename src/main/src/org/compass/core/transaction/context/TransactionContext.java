@@ -19,9 +19,20 @@ package org.compass.core.transaction.context;
 import org.compass.core.transaction.TransactionException;
 
 /**
+ * Allows to execute operations within a transactional context.
+ *
  * @author kimchy
  */
 public interface TransactionContext {
 
+    /**
+     * Executes the given callback within a transactional context. Note, the transaction
+     * will only be started if needed. See {@link org.compass.core.engine.SearchEngineIndexManager#requiresAsyncTransactionalContext()}.
+     */
     <T> T execute(TransactionContextCallback<T> callback) throws TransactionException;
+
+    /**
+     * Executes the given callback within a transactional context (always).
+     */
+    <T> T execute(TransactionContextCallbackWithTr<T> callback) throws TransactionException;
 }

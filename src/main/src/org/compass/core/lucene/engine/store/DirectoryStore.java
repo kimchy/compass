@@ -72,4 +72,10 @@ public interface DirectoryStore {
      * Closes the given directory.
      */
     void close();
+
+    /**
+     * Returns <code>true</code> if a transaction needs to be started when performing operations
+     * with this store.
+     */
+    boolean requiresAsyncTransactionalContext();
 }

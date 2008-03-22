@@ -16,29 +16,36 @@
 
 package org.compass.core.transaction.context;
 
+import java.util.concurrent.Callable;
+
 import org.compass.core.CompassException;
+import org.compass.core.transaction.InternalCompassTransaction;
+import org.compass.core.transaction.TransactionException;
 
 /**
- * A wrapper around a delegate runnable that will execute it within a transactional context.
+ * A wrapper around a delegate callable that will execute it within a transactional context.
  *
  * @author kimchy
  */
-public class TransactionalRunnable implements Runnable {
+public class TransactionalCallableWithTr<T> implements Callable<T> {
 
     private TransactionContext transactionContext;
 
-    private Runnable delegate;
+    private Callable<T> delegate;
 
-    public TransactionalRunnable(TransactionContext transactionContext, Runnable delegate) {
+    public TransactionalCallableWithTr(TransactionContext transactionContext, Callable<T> delegate) {
         this.transactionContext = transactionContext;
         this.delegate = delegate;
     }
 
-    public void run() {
-        transactionContext.execute(new TransactionContextCallback<Object>() {
-            public Object doInTransaction() throws CompassException {
-                delegate.run();
-                return null;
+    public T call() throws Exception {
+        return transactionContext.execute(new TransactionContextCallbackWithTr<T>() {
+            public T doInTransaction(InternalCompassTransaction tr) throws CompassException {
+                try {
+                    return delegate.call();
+                } catch (Exception e) {
+                    throw new TransactionException("Failed to execute callable", e);
+                }
             }
         });
     }

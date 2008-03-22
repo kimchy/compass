@@ -28,7 +28,6 @@ import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.spi.InternalCompassSession;
-import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
@@ -134,7 +133,7 @@ public class LuceneSubIndexInfo {
         final LuceneSearchEngineIndexManager indexManager = (LuceneSearchEngineIndexManager) searchEngine.getSearchEngineFactory().getIndexManager();
 
         return searchEngine.getSearchEngineFactory().getTransactionContext().execute(new TransactionContextCallback<LuceneSubIndexInfo>() {
-            public LuceneSubIndexInfo doInTransaction(InternalCompassTransaction tr) throws CompassException {
+            public LuceneSubIndexInfo doInTransaction() throws CompassException {
                 try {
                     return getIndexInfo(subIndex, indexManager);
                 } catch (IOException e) {

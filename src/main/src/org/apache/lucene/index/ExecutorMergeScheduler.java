@@ -172,16 +172,16 @@ public class ExecutorMergeScheduler extends MergeScheduler {
 
                 // Subsequent times through the loop we do any new
                 // merge that writer says is necessary:
-                    merge = writer.getNextMerge();
-                    if (merge != null) {
-                        writer.mergeInit(merge);
-                        message("  merge thread: do another merge " + merge.segString(dir));
-                        // COMPASS: Set the running merge so it will be picked up in the next run
-                        setRunningMerge(merge);
-                        executorManager.submit(new TransactionalRunnable(transactionContext, this));
-                    } else {
-                        currentConcurrentMerges--;
-                    }
+                merge = writer.getNextMerge();
+                if (merge != null) {
+                    writer.mergeInit(merge);
+                    message("  merge thread: do another merge " + merge.segString(dir));
+                    // COMPASS: Set the running merge so it will be picked up in the next run
+                    setRunningMerge(merge);
+                    executorManager.submit(new TransactionalRunnable(transactionContext, this));
+                } else {
+                    currentConcurrentMerges--;
+                }
 //                }
 
                 message("  merge thread: done");
@@ -204,9 +204,9 @@ public class ExecutorMergeScheduler extends MergeScheduler {
                 }
             } finally {
                 if (merge == null) { // only decrease if we have no more merges and we actually exit
-                synchronized (ExecutorMergeScheduler.this) {
+                    synchronized (ExecutorMergeScheduler.this) {
 //                    ExecutorMergeScheduler.this.notifyAll();
-                }
+                    }
                 }
             }
         }

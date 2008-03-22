@@ -19,7 +19,6 @@ package org.compass.core.transaction.context;
 import java.util.concurrent.Callable;
 
 import org.compass.core.CompassException;
-import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.TransactionException;
 
 /**
@@ -40,7 +39,7 @@ public class TransactionalCallable<T> implements Callable<T> {
 
     public T call() throws Exception {
         return transactionContext.execute(new TransactionContextCallback<T>() {
-            public T doInTransaction(InternalCompassTransaction tr) throws CompassException {
+            public T doInTransaction() throws CompassException {
                 try {
                     return delegate.call();
                 } catch (Exception e) {

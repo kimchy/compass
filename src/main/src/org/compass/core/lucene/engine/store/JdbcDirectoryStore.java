@@ -73,7 +73,6 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
 
     private Map<String, JdbcTable> cachedJdbcTables = new ConcurrentHashMap<String, JdbcTable>();
 
-
     public void configure(CompassSettings settings) throws CompassException {
         String connection = settings.getSetting(CompassEnvironment.CONNECTION);
         String url = connection.substring(PROTOCOL.length());
@@ -269,6 +268,13 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
 
     public void close() {
         this.dataSourceProvider.closeDataSource();
+    }
+
+    /**
+     * The Jdbc store does require transactional context when executing async operations. 
+     */
+    public boolean requiresAsyncTransactionalContext() {
+        return true;
     }
 
     private class ManagedEventListeners implements SearchEngineLifecycleEventListener {

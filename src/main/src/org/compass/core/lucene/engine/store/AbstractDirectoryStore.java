@@ -70,4 +70,12 @@ public abstract class AbstractDirectoryStore implements DirectoryStore {
 
     public void close() {
     }
+
+    /**
+     * By default, stores do not require transactional context.
+     */
+    public boolean requiresAsyncTransactionalContext() {
+        return false;
+    }
+    
 }

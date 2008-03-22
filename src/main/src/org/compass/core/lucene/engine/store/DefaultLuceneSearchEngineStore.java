@@ -589,6 +589,10 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         directoryStore.registerEventListeners(searchEngine, eventManager);
     }
 
+    public boolean requiresAsyncTransactionalContext() {
+        return directoryStore.requiresAsyncTransactionalContext();
+    }
+
     public String getDefaultSubContext() {
         return this.defaultSubContext;
     }
