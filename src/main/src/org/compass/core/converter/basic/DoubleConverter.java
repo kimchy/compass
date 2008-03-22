@@ -28,6 +28,6 @@ public class DoubleConverter extends AbstractNumberConverter {
     }
 
     protected Object fromNumber(Number number) {
-        return new Double(number.doubleValue());
+        return number.doubleValue();
     }
 }

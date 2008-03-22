@@ -28,6 +28,6 @@ public class ShortConverter extends AbstractNumberConverter {
     }
 
     protected Object fromNumber(Number number) {
-        return new Short(number.shortValue());
+        return number.shortValue();
     }
 }

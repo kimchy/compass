@@ -28,6 +28,6 @@ public class IntConverter extends AbstractNumberConverter {
     }
 
     protected Object fromNumber(Number number) {
-        return new Integer(number.intValue());
+        return number.intValue();
     }
 }

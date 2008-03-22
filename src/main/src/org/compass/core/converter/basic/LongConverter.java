@@ -28,6 +28,6 @@ public class LongConverter extends AbstractNumberConverter {
     }
 
     protected Object fromNumber(Number number) {
-        return new Long(number.longValue());
+        return number.longValue();
     }
 }

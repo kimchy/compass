@@ -28,6 +28,6 @@ public class FloatConverter extends AbstractNumberConverter {
     }
 
     protected Object fromNumber(Number number) {
-        return new Float(number.floatValue());
+        return number.floatValue();
     }
 }

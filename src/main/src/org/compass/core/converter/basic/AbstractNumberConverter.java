@@ -68,9 +68,9 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
 
     protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         if (hasFormatter) {
-            for (int i = 0; i < formatters.length; i++) {
+            for (ThreadSafeFormat formatter : formatters) {
                 try {
-                    return fromNumber((Number) formatters[i].parse(str));
+                    return fromNumber((Number) formatter.parse(str));
                 } catch (ParseException e) {
                     // do nothing, continue to the next one
                 }

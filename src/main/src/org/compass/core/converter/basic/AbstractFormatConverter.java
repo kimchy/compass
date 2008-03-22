@@ -69,7 +69,7 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
 
     public FormatConverter copy() {
         try {
-            AbstractFormatConverter copy = (AbstractFormatConverter) getClass().newInstance();
+            AbstractFormatConverter copy = getClass().newInstance();
             copy.locale = locale;
             return copy;
         } catch (Exception e) {
