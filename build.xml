@@ -14,8 +14,8 @@
 
 
     <tstamp>
-        <format property="daystamp" pattern="yyyyMMdd" />
-        <format property="timestamp" pattern="yyyyMMdd HH:mm" />
+        <format property="daystamp" pattern="yyyyMMdd"/>
+        <format property="timestamp" pattern="yyyyMMdd HH:mm"/>
     </tstamp>
 
     <path id="all-libs">
@@ -32,7 +32,7 @@
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
         </fileset>
-        
+
     </path>
 
     <condition property="coherence.exists">
@@ -167,6 +167,22 @@
 
     </target>
 
+    <target name="fulljar14" depends="fulljar" description="Creates a full 1.4 JAR file">
+        <taskdef name="retrotranslator" classname="net.sf.retrotranslator.transformer.RetrotranslatorTask">
+            <classpath>
+                <fileset dir="${lib.dir}">
+                    <include name="retrotranslator/**/*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+
+        <delete file="${dist.dir}/${compass-name}14.jar"/>
+        <retrotranslator target="1.4" srcjar="${dist.dir}/${compass-name}.jar" destjar="${dist.dir}/${compass-name}14.jar"
+                         verify="false" failonwarning="false" embed="org.compass.retrotranslator" >
+            <classpath refid="compile-libs"/>
+        </retrotranslator>
+    </target>
+
 
     <target name="srczip" depends="initdist" description="Create source ZIP (containing Java sources)">
 
@@ -207,7 +223,7 @@
     </target>
 
 
-    <target name="alljars" depends="fulljar,srczip" description="Create all JAR files"/>
+    <target name="alljars" depends="fulljar,fulljar14,srczip" description="Create all JAR files"/>
 
 
     <!--
@@ -236,9 +252,13 @@
                 <include name="org/compass/**"/>
             </packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
-            <link href="http://lucene.apache.org/java/2_3_0/api/"/>
+            <link href="http://lucene.apache.org/java/2_3_1/api/"/>
             <link href="http://www.junit.org/junit/javadoc/"/>
-            <link href="http://logging.apache.org/log4j/docs/api/"/>
+            <link href="http://www.hibernate.org/hib_docs/v3/api/"/>
+            <link href="http://www.hibernate.org/hib_docs/ejb3-api/"/>
+            <link href="http://www.hibernate.org/hib_docs/annotations/api/"/>
+            <link href="http://www.hibernate.org/hib_docs/entitymanager/api/"/>
+            <link href="http://www.dom4j.org/apidocs/"/>
         </javadoc>
 
     </target>
