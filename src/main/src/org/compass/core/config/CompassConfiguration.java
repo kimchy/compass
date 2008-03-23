@@ -89,7 +89,7 @@ public class CompassConfiguration {
 
     protected ConfigurationBuilder configurationBuilder = new SmartConfigurationBuilder();
 
-    private HashMap<String, Converter> temporaryConvertersByName = new HashMap<String, Converter>();
+    private HashMap<String, ConverterHolder> temporaryConvertersByName = new HashMap<String, ConverterHolder>();
 
     public CompassConfiguration() {
         mapping = new CompassMapping();
@@ -170,9 +170,24 @@ public class CompassConfiguration {
      * @return The configuration
      */
     public CompassConfiguration registerConverter(String converterName, Converter converter) {
-        this.temporaryConvertersByName.put(converterName, converter);
+        this.temporaryConvertersByName.put(converterName, new ConverterHolder(converter));
         return this;
     }
+
+    /**
+     * Regsiters a {@link Converter} under the given name. This converter will apply to all the given
+     * types that match the given type.
+     *
+     * @param converterName The name of the converter
+     * @param type          The type to register the converter for
+     * @param converter     The converter
+     * @return The configuration
+     */
+    public CompassConfiguration registerConverter(String converterName, Class type, Converter converter) {
+        this.temporaryConvertersByName.put(converterName, new ConverterHolder(type, converter));
+        return this;
+    }
+
 
     /**
      * Build compass with the configurations set. Creates a copy of all the
@@ -212,8 +227,12 @@ public class CompassConfiguration {
         registerExtraConverters(converterLookup);
         converterLookup.configure(copySettings);
         for (String converterName : temporaryConvertersByName.keySet()) {
-            Converter converter = temporaryConvertersByName.get(converterName);
-            converterLookup.registerConverter(converterName, converter);
+            ConverterHolder converterHolder = temporaryConvertersByName.get(converterName);
+            if (converterHolder.type == null) {
+                converterLookup.registerConverter(converterName, converterHolder.converter);
+            } else {
+                converterLookup.registerConverter(converterName, converterHolder.converter, converterHolder.type);
+            }
         }
 
         CompassMapping copyCompassMapping = mapping.copy(converterLookup);
@@ -503,5 +522,19 @@ public class CompassConfiguration {
             log.info("Mapping InputStream [" + resourceName + "]");
         }
         return this;
+    }
+
+    private class ConverterHolder {
+        Class type;
+        Converter converter;
+
+        public ConverterHolder(Converter converter) {
+            this.converter = converter;
+        }
+
+        private ConverterHolder(Class type, Converter converter) {
+            this.type = type;
+            this.converter = converter;
+        }
     }
 }
