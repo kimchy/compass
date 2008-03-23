@@ -68,7 +68,7 @@ public abstract class MappingProcessorUtils {
                 mdMapping.setConverter(converterLookup.lookupConverter(converterName));
                 if (mdMapping.getConverter() == null) {
                     throw new ConfigurationException("Failed to find converter [" + converterName + "] for property " +
-                            "[" + classPropertyMapping.getName() + "]");
+                            "[" + classPropertyMapping.getName() + "] and alias [" + classPropertyMapping.getDefinedInAlias() + "]");
                 }
             } else {
                 Converter converter = resolveConverterByClass(classPropertyMapping, converterLookup);
