@@ -36,7 +36,7 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using Compass's Hibernate 2.1 support
 
 * hibernate/hibernate3.jar
-- Hibernate 3.2.4 GA (http://www.hibernate.org)
+- Hibernate 3.2.6 GA (http://www.hibernate.org)
 - required for building compass
 - required at runtime when using Compass's Hibernate 3.x support
 
