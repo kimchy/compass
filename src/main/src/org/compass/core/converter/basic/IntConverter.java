@@ -16,6 +16,10 @@
 
 package org.compass.core.converter.basic;
 
+import java.text.ParseException;
+
+import org.compass.core.converter.basic.format.Formatter;
+import org.compass.core.converter.basic.format.NumberUtils;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
@@ -29,5 +33,22 @@ public class IntConverter extends AbstractNumberConverter {
 
     protected Object fromNumber(Number number) {
         return number.intValue();
+    }
+
+    protected Formatter createSortableFormatter() {
+        return new Formatter() {
+            public String format(Object obj) {
+                int val = ((Number) obj).intValue();
+                return NumberUtils.int2sortableStr(val);
+            }
+
+            public Object parse(String str) throws ParseException {
+                return NumberUtils.SortableStr2int(str);
+            }
+
+            public boolean isThreadSafe() {
+                return true;
+            }
+        };
     }
 }

@@ -18,6 +18,7 @@ package org.compass.core.converter.basic;
 
 import java.math.BigInteger;
 
+import org.compass.core.converter.basic.format.Formatter;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
@@ -32,5 +33,9 @@ public class BigIntegerConverter extends AbstractNumberConverter {
     protected Object fromNumber(Number number) {
         // TODO need to think more about how to do it, we loose data
         return new BigInteger(number.toString());
+    }
+
+    protected Formatter createSortableFormatter() {
+        return null;
     }
 }

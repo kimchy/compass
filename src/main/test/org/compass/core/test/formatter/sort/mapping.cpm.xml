@@ -1,0 +1,34 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.formatter.sort">
+
+    <class name="A" alias="sort">
+
+        <id name="id" accessor="field"/>
+
+        <property name="intVal" accessor="field">
+            <meta-data format="sortable">intFormatted</meta-data>
+        </property>
+
+        <property name="shortVal" accessor="field">
+            <meta-data format="sortable">shortFormatted</meta-data>
+        </property>
+
+        <property name="longVal" accessor="field">
+            <meta-data format="sortable">longFormatted</meta-data>
+        </property>
+
+        <property name="doubleVal" accessor="field">
+            <meta-data format="sortable">doubleFormatted</meta-data>
+        </property>
+
+        <property name="floatVal" accessor="field">
+            <meta-data format="sortable">floatFormatted</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>
+    

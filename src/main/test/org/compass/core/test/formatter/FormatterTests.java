@@ -81,7 +81,7 @@ public class FormatterTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setIntVal(12);
@@ -124,7 +124,7 @@ public class FormatterTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setIntVal(12);
@@ -156,7 +156,7 @@ public class FormatterTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        Long id = new Long(1);
+        Long id = (long) 1;
         A a = new A();
         a.setId(id);
         a.setIntVal(12);

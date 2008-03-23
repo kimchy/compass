@@ -17,13 +17,15 @@
 package org.compass.core.converter.basic;
 
 import java.text.DateFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.basic.format.Formatter;
+import org.compass.core.converter.basic.format.FormatterFactory;
+import org.compass.core.converter.basic.format.TextFormatFormatter;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
@@ -39,7 +41,7 @@ public class DateConverter extends AbstractFormatConverter {
 
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd-HH-mm-ss-S-a";
 
-    private static class DateFormatter implements ThreadSafeFormat.FormatterFactory {
+    private static class DateFormatter implements FormatterFactory {
 
         private String format;
 
@@ -50,7 +52,7 @@ public class DateConverter extends AbstractFormatConverter {
             this.locale = locale;
         }
 
-        public Format create() {
+        public Formatter create() {
             DateFormat dateFormat;
             if (locale != null) {
                 dateFormat = new SimpleDateFormat(format, locale);
@@ -58,7 +60,7 @@ public class DateConverter extends AbstractFormatConverter {
                 dateFormat = new SimpleDateFormat(format);
             }
             dateFormat.setLenient(false);
-            return dateFormat;
+            return new TextFormatFormatter(dateFormat);
         }
     }
 
@@ -66,7 +68,7 @@ public class DateConverter extends AbstractFormatConverter {
         return DEFAULT_DATE_FORMAT;
     }
 
-    protected ThreadSafeFormat.FormatterFactory doCreateFormatterFactory() {
+    protected FormatterFactory doCreateFormatterFactory() {
         return new DateConverter.DateFormatter();
     }
 

@@ -22,6 +22,9 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.converter.basic.format.Formatter;
+import org.compass.core.converter.basic.format.FormatterFactory;
+import org.compass.core.converter.basic.format.ThreadSafeFormat;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -39,7 +42,7 @@ import org.compass.core.util.StringUtils;
  */
 public abstract class AbstractFormatConverter extends AbstractBasicConverter implements CompassConfigurable, FormatConverter {
 
-    protected ThreadSafeFormat[] formatters;
+    protected Formatter[] formatters;
 
     protected boolean hasFormatter = true;
 
@@ -77,7 +80,7 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
         }
     }
 
-    protected abstract ThreadSafeFormat.FormatterFactory doCreateFormatterFactory();
+    protected abstract FormatterFactory doCreateFormatterFactory();
 
     protected String doGetDefaultFormat() {
         return null;
@@ -85,18 +88,22 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
 
     private void createFormatters(String format, CompassSettings settings) {
         String[] formatStrings = StringUtils.delimitedListToStringArray(format, "||");
-        formatters = new ThreadSafeFormat[formatStrings.length];
+        formatters = new Formatter[formatStrings.length];
         for (int i = 0; i < formatters.length; i++) {
             String currentFromat = formatStrings[i];
-            ThreadSafeFormat.FormatterFactory formatterFactory = doCreateFormatterFactory();
+            FormatterFactory formatterFactory = doCreateFormatterFactory();
             formatterFactory.configure(currentFromat, locale);
-            int minPoolSize = 4;
-            int maxPoolSize = 20;
-            if (settings != null) {
-                minPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.Format.MIN_POOL_SIZE, minPoolSize);
-                maxPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.Format.MAX_POOL_SIZE, maxPoolSize);
+
+            formatters[i] = formatterFactory.create();
+            if (!formatters[i].isThreadSafe()) {
+                int minPoolSize = 4;
+                int maxPoolSize = 20;
+                if (settings != null) {
+                    minPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.Format.MIN_POOL_SIZE, minPoolSize);
+                    maxPoolSize = settings.getSettingAsInt(CompassEnvironment.Converter.Format.MAX_POOL_SIZE, maxPoolSize);
+                }
+                formatters[i] = new ThreadSafeFormat(minPoolSize, maxPoolSize, formatterFactory);
             }
-            formatters[i] = new ThreadSafeFormat(minPoolSize, maxPoolSize, formatterFactory);
         }
     }
 

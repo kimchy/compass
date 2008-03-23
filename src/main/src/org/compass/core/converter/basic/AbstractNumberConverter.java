@@ -23,6 +23,9 @@ import java.util.Locale;
 
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.basic.format.Formatter;
+import org.compass.core.converter.basic.format.FormatterFactory;
+import org.compass.core.converter.basic.format.TextFormatFormatter;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
@@ -34,7 +37,9 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public abstract class AbstractNumberConverter extends AbstractFormatConverter implements CompassConfigurable {
 
-    private static class NumberFormatter implements ThreadSafeFormat.FormatterFactory {
+    public static final String SORTABLE_FORMAT = "sortable";
+
+    private class NumberFormatter implements FormatterFactory {
 
         private String format;
 
@@ -45,7 +50,14 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
             this.locale = locale;
         }
 
-        public java.text.Format create() {
+        public Formatter create() {
+            if (SORTABLE_FORMAT.equalsIgnoreCase(format)) {
+                Formatter formatter = createSortableFormatter();
+                if (formatter == null) {
+                    throw new ConversionException("This converter [" + getClass().getName() + "] does not support sortable format");
+                }
+                return formatter;
+            }
             NumberFormat numberFormat;
             if (locale != null) {
                 numberFormat = NumberFormat.getInstance(locale);
@@ -53,12 +65,12 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
                 numberFormat = NumberFormat.getInstance();
             }
             ((DecimalFormat) numberFormat).applyPattern(format);
-            return numberFormat;
+            return new TextFormatFormatter(numberFormat);
         }
 
     }
 
-    protected ThreadSafeFormat.FormatterFactory doCreateFormatterFactory() {
+    protected FormatterFactory doCreateFormatterFactory() {
         return new AbstractNumberConverter.NumberFormatter();
     }
 
@@ -66,9 +78,11 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
 
     protected abstract Object fromNumber(Number number);
 
+    protected abstract Formatter createSortableFormatter();
+
     protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         if (hasFormatter) {
-            for (ThreadSafeFormat formatter : formatters) {
+            for (Formatter formatter : formatters) {
                 try {
                     return fromNumber((Number) formatter.parse(str));
                 } catch (ParseException e) {
