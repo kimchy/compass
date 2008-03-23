@@ -337,7 +337,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             // the object is the key
             for (Mapping rpId : ids) {
                 ObjectMapping objectMapping = (ObjectMapping) rpId;
-                stored |= convertId(idResource, objectMapping.getGetter().get(id), rpId, context);
+                stored |= convertId(classMapping, idResource, objectMapping.getGetter().get(id), rpId, context);
             }
         } else if (id instanceof Object[]) {
             if (Array.getLength(id) != ids.length) {
@@ -345,10 +345,10 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                         + "] mappings while has ids mappings of [" + ids.length + "]");
             }
             for (int i = 0; i < ids.length; i++) {
-                stored |= convertId(idResource, Array.get(id, i), ids[i], context);
+                stored |= convertId(classMapping, idResource, Array.get(id, i), ids[i], context);
             }
         } else if (ids.length == 1) {
-            stored = convertId(idResource, id, ids[0], context);
+            stored = convertId(classMapping, idResource, id, ids[0], context);
         } else {
             String type = id.getClass().getName();
             throw new ConversionException("Cannot marshall ids, not supported id object type [" + type
@@ -363,9 +363,9 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         return stored;
     }
 
-    private boolean convertId(Resource resource, Object root, Mapping mapping, MarshallingContext context) {
+    private boolean convertId(ResourceMapping resourceMapping, Resource resource, Object root, Mapping mapping, MarshallingContext context) {
         if (root == null) {
-            throw new ConversionException("Trying to marshall a null id [" + mapping.getName() + "] for alias [" + resource.getAlias() + "]");
+            throw new ConversionException("Trying to marshall a null id [" + mapping.getName() + "] for alias [" + resourceMapping.getAlias() + "]");
         }
         return mapping.getConverter().marshall(resource, root, mapping, context);
     }

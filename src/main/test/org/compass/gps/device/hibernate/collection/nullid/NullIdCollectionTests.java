@@ -52,6 +52,7 @@ public class NullIdCollectionTests extends TestCase {
     protected void tearDown() throws Exception {
         compass.close();
         sessionFactory.close();
+        compass.getSearchEngineIndexManager().deleteIndex();
     }
 
     public void testMarshall() {
