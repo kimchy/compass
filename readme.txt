@@ -41,32 +41,8 @@ This product includes software developed by Clinton Begin (http://www.ibatis.com
 
 3. DISTRIBUTION JAR FILES
 
-The "dist" directory contains the following distinct jar files for use in applications. Both module-specific
-jar files and a jar file with all of Compass are provided. The following list specifies the respective contents
-and third-party dependencies. Libraries in brackets are optional, i.e. just necessary for certain functionality.
-
-FULL JAR (dist):
-
-* "compass"
-- Convenient jar file that combines all standard modules (see "module jars" below)
-
-MODULE JARS (dist/modules):
-
-* "compass-core"
-- Contents: core compass functionality - OSEM, RSEM, Transaction, Optimizer, JDBC Store
-- Dependencies: Commons Logging, Lucene Core (Highlighter) (Analyzers) (Snowball), (JTA/JEE)
-
-* "compass-annotations"
-- Contents: Java 5 Annotation based OSEM support
-- Dependencies: compass-core
-
-* "compass-gps"
-- Contents: Index and Synchronization with different Data Sources - Gps and GpsDevice.
-- Dependencies: compass-core, (Hibernate), (iBatis), (Apache OJB), (JPA), (JDBC), (JDO)
-
-* "compass-spring"
-- Contents: Compass Spring integration
-- Dependencies: compass-core, (compass-gps), Spring (1.2/2.0)
+The "dist" directory contains the following distinct jar files for use in applications. The "compass.jar"
+is the full Java 1.5 compass jar. The "compass14.jar" is a retro translated jar file supporting Java 1.4. 
 
 4. WHERE TO START?
 
