@@ -16,6 +16,7 @@
 
 package org.compass.gps.device.hibernate.lifecycle;
 
+import org.hibernate.event.AbstractCollectionEvent;
 import org.hibernate.event.PostDeleteEvent;
 import org.hibernate.event.PostInsertEvent;
 import org.hibernate.event.PostUpdateEvent;
@@ -50,4 +51,9 @@ public interface HibernateMirrorFilter {
      * @return <code>true</code> if the event should be filtered, <code>false</code> otherwise
      */
     boolean shouldFilterDelete(PostDeleteEvent postDeleteEvent);
+
+    /**
+     * Should the post collection event be filtered or not.
+     */
+    boolean shouldFilterCollection(AbstractCollectionEvent postCollectionEvent);
 }

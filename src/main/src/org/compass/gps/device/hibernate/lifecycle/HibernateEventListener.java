@@ -16,13 +16,14 @@
 
 package org.compass.gps.device.hibernate.lifecycle;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.mapping.CascadeMapping;
-import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
@@ -41,13 +42,13 @@ import org.hibernate.event.PostUpdateEventListener;
  */
 public class HibernateEventListener implements PostInsertEventListener, PostUpdateEventListener, PostDeleteEventListener {
 
-    private Log log = LogFactory.getLog(HibernateEventListener.class);
+    protected final Log log = LogFactory.getLog(getClass());
 
-    private HibernateGpsDevice device;
+    protected final HibernateGpsDevice device;
 
-    private HibernateMirrorFilter mirrorFilter;
+    protected final HibernateMirrorFilter mirrorFilter;
 
-    private boolean marshallIds;
+    protected final boolean marshallIds;
 
     public HibernateEventListener(HibernateGpsDevice device, boolean marshallIds) {
         this.device = device;
@@ -80,8 +81,8 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             compassGps.executeForMirror(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
                     if (marshallIds) {
-                        ((InternalCompassSession) session).getMarshallingStrategy().marshallIds(entity,
-                                postInsertEvent.getId());
+                        Serializable id = postInsertEvent.getId();
+                        postInsertEvent.getPersister().setIdentifier(entity, id, postInsertEvent.getSession().getEntityMode());
                     }
                     session.create(entity);
                 }

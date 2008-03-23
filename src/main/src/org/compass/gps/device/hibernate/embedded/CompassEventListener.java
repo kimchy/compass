@@ -16,6 +16,7 @@
 
 package org.compass.gps.device.hibernate.embedded;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -42,14 +43,8 @@ import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.hibernate.lifecycle.HibernateMirrorFilter;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.event.EventSource;
-import org.hibernate.event.Initializable;
-import org.hibernate.event.PostDeleteEvent;
-import org.hibernate.event.PostDeleteEventListener;
-import org.hibernate.event.PostInsertEvent;
-import org.hibernate.event.PostInsertEventListener;
-import org.hibernate.event.PostUpdateEvent;
-import org.hibernate.event.PostUpdateEventListener;
+import org.hibernate.engine.EntityEntry;
+import org.hibernate.event.*;
 import org.hibernate.mapping.PersistentClass;
 
 /**
@@ -69,6 +64,15 @@ import org.hibernate.mapping.PersistentClass;
  *              &lt;listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/&gt;
  *          &lt;/event&gt;
  *          &lt;event type="post-delete"&gt;
+ *              &lt;listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/&gt;
+ *          &lt;/event&gt;
+ *          &lt;event type="post-collection-recreate"&gt;
+ *              &lt;listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/&gt;
+ *          &lt;/event&gt;
+ *          &lt;event type="post-collection-remove"&gt;
+ *              &lt;listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/&gt;
+ *          &lt;/event&gt;
+ *          &lt;event type="post-collection-update"&gt;
  *              &lt;listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/&gt;
  *          &lt;/event&gt;
  *
@@ -112,6 +116,7 @@ import org.hibernate.mapping.PersistentClass;
  * @author kimchy
  */
 public class CompassEventListener implements PostDeleteEventListener, PostInsertEventListener, PostUpdateEventListener,
+        PostCollectionRecreateEventListener, PostCollectionRemoveEventListener, PostCollectionUpdateEventListener,
         Initializable {
 
     private static Log log = LogFactory.getLog(CompassEventListener.class);
@@ -201,6 +206,63 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
         }
         holder.session.save(entity);
         afterOperation(holder);
+    }
+
+    public void onPostRecreateCollection(PostCollectionRecreateEvent postCollectionRecreateEvent) {
+        processCollectionEvent(postCollectionRecreateEvent);
+    }
+
+    public void onPostRemoveCollection(PostCollectionRemoveEvent postCollectionRemoveEvent) {
+        processCollectionEvent(postCollectionRemoveEvent);
+    }
+
+    public void onPostUpdateCollection(PostCollectionUpdateEvent postCollectionUpdateEvent) {
+        processCollectionEvent(postCollectionUpdateEvent);
+    }
+
+    private void processCollectionEvent(AbstractCollectionEvent event) {
+        if (compassHolder == null) {
+            return;
+        }
+        final Object entity = event.getAffectedOwnerOrNull();
+        if (entity == null) {
+            //Hibernate cannot determine every single time the owner especially incase detached objects are involved
+            // or property-ref is used
+            //Should log really but we don't know if we're interested in this collection for indexing
+            return;
+        }
+
+        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+            return;
+        }
+
+        Serializable id = getId(entity, event);
+        if (id == null) {
+            log.warn("Unable to reindex entity on collection change, id cannot be extracted: " + event.getAffectedOwnerEntityName());
+            return;
+        }
+        
+        if (compassHolder.mirrorFilter != null) {
+            if (compassHolder.mirrorFilter.shouldFilterCollection(event)) {
+                return;
+            }
+        }
+        TransactionSyncHolder holder = getOrCreateHolder(event.getSession());
+        if (log.isTraceEnabled()) {
+            log.trace("Updating [" + entity + "]");
+        }
+        holder.session.save(entity);
+        afterOperation(holder);
+    }
+
+    private Serializable getId(Object entity, AbstractCollectionEvent event) {
+        Serializable id = event.getAffectedOwnerIdOrNull();
+        if (id == null) {
+            //most likely this recovery is unnecessary since Hibernate Core probably try that
+            EntityEntry entityEntry = event.getSession().getPersistenceContext().getEntry(entity);
+            id = entityEntry == null ? null : entityEntry.getId();
+        }
+        return id;
     }
 
     private TransactionSyncHolder getOrCreateHolder(EventSource session) {

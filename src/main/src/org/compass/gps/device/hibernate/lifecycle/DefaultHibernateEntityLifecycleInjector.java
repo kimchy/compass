@@ -39,9 +39,9 @@ import org.hibernate.impl.SessionFactoryImpl;
  */
 public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityLifecycleInjector {
 
-    private boolean registerPostCommitListeneres = false;
+    protected boolean registerPostCommitListeneres = false;
 
-    private boolean marshallIds = false;
+    protected boolean marshallIds = false;
 
     public DefaultHibernateEntityLifecycleInjector() {
         this(false);
@@ -53,7 +53,7 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
      * or with plain post events (triggered based on Hibrenate flushing logic).
      *
      * @param registerPostCommitListeneres <code>true</code> if post commit listeners will be
-     * registered. <code>false</code> for plain listeners. 
+     *                                     registered. <code>false</code> for plain listeners.
      */
     public DefaultHibernateEntityLifecycleInjector(boolean registerPostCommitListeneres) {
         this.registerPostCommitListeneres = registerPostCommitListeneres;
@@ -73,55 +73,59 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
         SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) sessionFactory;
         EventListeners eventListeners = sessionFactoryImpl.getEventListeners();
 
-        // TODO add the ability to extend the system and register your own event listener (which maybe performs filtering)
-        HibernateEventListener hibernateEventListener = new HibernateEventListener(device, marshallIds);
+        Object hibernateEventListener = doCreateListener(device);
 
-        PostInsertEventListener[] postInsertEventListeners;
-        if (registerPostCommitListeneres) {
-            postInsertEventListeners = eventListeners.getPostCommitInsertEventListeners();
-        } else {
-            postInsertEventListeners = eventListeners.getPostInsertEventListeners();
-        }
-        PostInsertEventListener[] tempPostInsertEventListeners = new PostInsertEventListener[postInsertEventListeners.length + 1];
-        System.arraycopy(postInsertEventListeners, 0, tempPostInsertEventListeners, 0, postInsertEventListeners.length);
-        tempPostInsertEventListeners[postInsertEventListeners.length] = hibernateEventListener;
-        if (registerPostCommitListeneres) {
-            eventListeners.setPostCommitInsertEventListeners(tempPostInsertEventListeners);
-        } else {
-            eventListeners.setPostInsertEventListeners(tempPostInsertEventListeners);
-        }
-
-        PostUpdateEventListener[] postUpdateEventListeners;
-        if (registerPostCommitListeneres) {
-            postUpdateEventListeners = eventListeners.getPostCommitUpdateEventListeners();
-        } else {
-            postUpdateEventListeners = eventListeners.getPostUpdateEventListeners();
-        }
-        PostUpdateEventListener[] tempPostUpdateEventListeners = new PostUpdateEventListener[postUpdateEventListeners.length + 1];
-        System.arraycopy(postUpdateEventListeners, 0, tempPostUpdateEventListeners, 0, postUpdateEventListeners.length);
-        tempPostUpdateEventListeners[postUpdateEventListeners.length] = hibernateEventListener;
-        if (registerPostCommitListeneres) {
-            eventListeners.setPostCommitUpdateEventListeners(tempPostUpdateEventListeners);
-        } else {
-            eventListeners.setPostUpdateEventListeners(tempPostUpdateEventListeners);
+        if (hibernateEventListener instanceof PostInsertEventListener) {
+            PostInsertEventListener[] postInsertEventListeners;
+            if (registerPostCommitListeneres) {
+                postInsertEventListeners = eventListeners.getPostCommitInsertEventListeners();
+            } else {
+                postInsertEventListeners = eventListeners.getPostInsertEventListeners();
+            }
+            PostInsertEventListener[] tempPostInsertEventListeners = new PostInsertEventListener[postInsertEventListeners.length + 1];
+            System.arraycopy(postInsertEventListeners, 0, tempPostInsertEventListeners, 0, postInsertEventListeners.length);
+            tempPostInsertEventListeners[postInsertEventListeners.length] = (PostInsertEventListener) hibernateEventListener;
+            if (registerPostCommitListeneres) {
+                eventListeners.setPostCommitInsertEventListeners(tempPostInsertEventListeners);
+            } else {
+                eventListeners.setPostInsertEventListeners(tempPostInsertEventListeners);
+            }
         }
 
-        PostDeleteEventListener[] postDeleteEventListeners;
-        if (registerPostCommitListeneres) {
-            postDeleteEventListeners = eventListeners.getPostCommitDeleteEventListeners();
-        } else {
-            postDeleteEventListeners = eventListeners.getPostDeleteEventListeners();
+        if (hibernateEventListener instanceof PostUpdateEventListener) {
+            PostUpdateEventListener[] postUpdateEventListeners;
+            if (registerPostCommitListeneres) {
+                postUpdateEventListeners = eventListeners.getPostCommitUpdateEventListeners();
+            } else {
+                postUpdateEventListeners = eventListeners.getPostUpdateEventListeners();
+            }
+            PostUpdateEventListener[] tempPostUpdateEventListeners = new PostUpdateEventListener[postUpdateEventListeners.length + 1];
+            System.arraycopy(postUpdateEventListeners, 0, tempPostUpdateEventListeners, 0, postUpdateEventListeners.length);
+            tempPostUpdateEventListeners[postUpdateEventListeners.length] = (PostUpdateEventListener) hibernateEventListener;
+            if (registerPostCommitListeneres) {
+                eventListeners.setPostCommitUpdateEventListeners(tempPostUpdateEventListeners);
+            } else {
+                eventListeners.setPostUpdateEventListeners(tempPostUpdateEventListeners);
+            }
         }
-        PostDeleteEventListener[] tempPostDeleteEventListeners = new PostDeleteEventListener[postDeleteEventListeners.length + 1];
-        System.arraycopy(postDeleteEventListeners, 0, tempPostDeleteEventListeners, 0, postDeleteEventListeners.length);
-        tempPostDeleteEventListeners[postDeleteEventListeners.length] = hibernateEventListener;
-        if (registerPostCommitListeneres) {
-            eventListeners.setPostCommitDeleteEventListeners(tempPostDeleteEventListeners);
-        } else {
-            eventListeners.setPostDeleteEventListeners(tempPostDeleteEventListeners);
+
+        if (hibernateEventListener instanceof PostDeleteEventListener) {
+            PostDeleteEventListener[] postDeleteEventListeners;
+            if (registerPostCommitListeneres) {
+                postDeleteEventListeners = eventListeners.getPostCommitDeleteEventListeners();
+            } else {
+                postDeleteEventListeners = eventListeners.getPostDeleteEventListeners();
+            }
+            PostDeleteEventListener[] tempPostDeleteEventListeners = new PostDeleteEventListener[postDeleteEventListeners.length + 1];
+            System.arraycopy(postDeleteEventListeners, 0, tempPostDeleteEventListeners, 0, postDeleteEventListeners.length);
+            tempPostDeleteEventListeners[postDeleteEventListeners.length] = (PostDeleteEventListener) hibernateEventListener;
+            if (registerPostCommitListeneres) {
+                eventListeners.setPostCommitDeleteEventListeners(tempPostDeleteEventListeners);
+            } else {
+                eventListeners.setPostDeleteEventListeners(tempPostDeleteEventListeners);
+            }
         }
     }
-
 
     public void removeLifecycle(SessionFactory sessionFactory, HibernateGpsDevice device) throws HibernateGpsDeviceException {
 
@@ -184,5 +188,9 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
         } else {
             eventListeners.setPostDeleteEventListeners((PostDeleteEventListener[]) tempPostDeleteEventListeners.toArray(new PostDeleteEventListener[tempPostDeleteEventListeners.size()]));
         }
+    }
+
+    protected Object doCreateListener(HibernateGpsDevice device) {
+        return new HibernateEventListener(device, marshallIds);
     }
 }

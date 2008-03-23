@@ -365,7 +365,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
     private boolean convertId(Resource resource, Object root, Mapping mapping, MarshallingContext context) {
         if (root == null) {
-            throw new ConversionException("Trying to marshall a null id [" + mapping.getName() + "]");
+            throw new ConversionException("Trying to marshall a null id [" + mapping.getName() + "] for alias [" + resource.getAlias() + "]");
         }
         return mapping.getConverter().marshall(resource, root, mapping, context);
     }

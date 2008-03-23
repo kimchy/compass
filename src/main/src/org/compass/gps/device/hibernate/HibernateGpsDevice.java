@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.compass.core.util.Assert;
+import org.compass.core.util.ClassUtils;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.PassiveMirrorGpsDevice;
 import org.compass.gps.device.hibernate.entities.DefaultHibernateEntitiesLocator;
@@ -132,7 +133,12 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
 
         if (mirrorDataChanges) {
             if (lifecycleInjector == null) {
-                lifecycleInjector = new DefaultHibernateEntityLifecycleInjector();
+                try {
+                    lifecycleInjector = (HibernateEntityLifecycleInjector) ClassUtils.forName("org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityCollectionLifecycleInjector",
+                            compassGps.getMirrorCompass().getSettings().getClassLoader()).newInstance();
+                } catch (Exception e) {
+                    lifecycleInjector = new DefaultHibernateEntityLifecycleInjector();
+                }
             }
             if (log.isDebugEnabled()) {
                 log.debug(buildMessage("Using lifecycleInjector [" + lifecycleInjector.getClass().getName() + "]"));

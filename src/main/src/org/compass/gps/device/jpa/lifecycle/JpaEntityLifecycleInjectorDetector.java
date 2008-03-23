@@ -38,13 +38,18 @@ import org.compass.gps.device.jpa.support.NativeJpaHelper;
  */
 public abstract class JpaEntityLifecycleInjectorDetector {
 
-    public static JpaEntityLifecycleInjector detectInjector(EntityManagerFactory entityManagerFactory, CompassSettings settings)
+    public static JpaEntityLifecycleInjector detectInjector(EntityManagerFactory entityManagerFactory, final CompassSettings settings)
             throws JpaGpsDeviceException {
         String injectorClassName =
                 NativeJpaHelper.detectNativeJpa(entityManagerFactory, settings, new NativeJpaHelper.NativeJpaCallback<String>() {
 
                     public String onHibernate() {
-                        return "org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityLifecycleInjector";
+                        try {
+                            ClassUtils.forName("org.hibernate.event.AbstractCollectionEvent", settings.getClassLoader());
+                            return "org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityCollectionLifecycleInjector";
+                        } catch (ClassNotFoundException e) {
+                            return "org.compass.gps.device.jpa.lifecycle.HibernateJpaEntityLifecycleInjector";
+                        }
                     }
 
                     public String onTopLinkEssentials() {
