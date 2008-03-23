@@ -56,10 +56,8 @@ public class NullIdCollectionTests extends TestCase {
     }
 
     public void testMarshall() {
-        //TODO see if we can fix this test
-        if (true) {
-            return;
-        }
+        // Bad Hibernate, it does not set the ids on the Album objects if
+        // not using hibSession.save(album).
         CompassSession session = compass.openSession();
         CompassTransaction tr = session.beginTransaction();
 
@@ -71,9 +69,11 @@ public class NullIdCollectionTests extends TestCase {
 
         Album a1 = new Album();
         a1.setTitle("the first album");
+        hibSession.save(a1);
 
         Album a2 = new Album();
         a2.setTitle("the second album");
+        hibSession.save(a2);
 
         u1.getAlbums().add(a1);
         u1.getAlbums().add(a2);
