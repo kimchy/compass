@@ -54,7 +54,7 @@ public class DefaultLuceneHighlighterFactory implements LuceneHighlighterFactory
         if (computeIdfSetting == null) {
             computeIdf = formatterRequiresToComputeIdf(formatter);
         } else {
-            computeIdf = Boolean.valueOf(computeIdfSetting).booleanValue();
+            computeIdf = Boolean.valueOf(computeIdfSetting);
         }
 
         int maxNumFragments = settings.getSettingAsInt(LuceneEnvironment.Highlighter.MAX_NUM_FRAGMENTS, 3);

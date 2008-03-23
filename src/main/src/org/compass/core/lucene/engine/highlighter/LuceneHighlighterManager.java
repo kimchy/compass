@@ -17,7 +17,6 @@
 package org.compass.core.lucene.engine.highlighter;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -28,9 +27,7 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.util.ClassUtils;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class LuceneHighlighterManager {
 
@@ -38,22 +35,20 @@ public class LuceneHighlighterManager {
 
     private LuceneHighlighterSettings defaultHighlighterSettings;
 
-    private HashMap highlightersSettings = new HashMap();
+    private Map<String, LuceneHighlighterSettings> highlightersSettings = new HashMap<String, LuceneHighlighterSettings>();
 
     public void configure(CompassSettings settings) throws SearchEngineException {
-        Map highlighterSettingGroups = settings.getSettingGroups(LuceneEnvironment.Highlighter.PREFIX);
+        Map<String, CompassSettings> highlighterSettingGroups = settings.getSettingGroups(LuceneEnvironment.Highlighter.PREFIX);
 
-        for (Iterator it = highlighterSettingGroups.keySet().iterator(); it.hasNext();) {
-            String highlighterName = (String) it.next();
+        for (String highlighterName : highlighterSettingGroups.keySet()) {
             if (log.isInfoEnabled()) {
                 log.info("Building highlighter [" + highlighterName + "]");
             }
             LuceneHighlighterSettings highlighter = buildHighlighter(highlighterName,
-                    (CompassSettings) highlighterSettingGroups.get(highlighterName));
+                    highlighterSettingGroups.get(highlighterName));
             highlightersSettings.put(highlighterName, highlighter);
         }
-        defaultHighlighterSettings = (DefaultLuceneHighlighterSettings) highlightersSettings
-                .get(LuceneEnvironment.Highlighter.DEFAULT_GROUP);
+        defaultHighlighterSettings = highlightersSettings.get(LuceneEnvironment.Highlighter.DEFAULT_GROUP);
         if (defaultHighlighterSettings == null) {
             // if no default highlighter is defined, we need to configre one
             defaultHighlighterSettings = buildHighlighter(LuceneEnvironment.Highlighter.DEFAULT_GROUP,
@@ -85,12 +80,11 @@ public class LuceneHighlighterManager {
     }
 
     public LuceneHighlighterSettings getHighlighterSettings(String highlighterName) {
-        return (LuceneHighlighterSettings) highlightersSettings.get(highlighterName);
+        return highlightersSettings.get(highlighterName);
     }
 
     public LuceneHighlighterSettings getHighlighterSettingsMustExists(String highlighterName) {
-        LuceneHighlighterSettings highlighterSettings = (LuceneHighlighterSettings) highlightersSettings
-                .get(highlighterName);
+        LuceneHighlighterSettings highlighterSettings = highlightersSettings.get(highlighterName);
         if (highlighterSettings == null) {
             throw new SearchEngineException("No highlighter is defined for highlighter name [" + highlighterName + "]");
         }
