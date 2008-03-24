@@ -28,6 +28,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +40,9 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.basic.*;
+import org.compass.core.converter.basic.atomic.AtomicBooleanConverter;
+import org.compass.core.converter.basic.atomic.AtomicIntConverter;
+import org.compass.core.converter.basic.atomic.AtomicLongConverter;
 import org.compass.core.converter.dynamic.GroovyDynamicConverter;
 import org.compass.core.converter.dynamic.JakartaElDynamicConverter;
 import org.compass.core.converter.dynamic.JexlDynamicConverter;
@@ -109,6 +115,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BIGDECIMAL, BigDecimalConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BIGINTEGER, BigIntegerConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BOOLEAN, BooleanConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.ATOMIC_BOOLEAN, AtomicBooleanConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.BYTE, ByteConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.CALENDAR, CalendarConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.CHAR, CharConverter.class);
@@ -116,7 +123,9 @@ public class DefaultConverterLookup implements ConverterLookup {
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.DOUBLE, DoubleConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.FLOAT, FloatConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.INTEGER, IntConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.ATOMIC_INTEGER, AtomicIntConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.LONG, LongConverter.class);
+        defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.ATOMIC_LONG, AtomicLongConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.SHORT, ShortConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRING, StringConverter.class);
         defaultConveterTypes.put(CompassEnvironment.Converter.DefaultTypes.Simple.STRINGBUFFER, StringBufferConverter.class);
@@ -148,6 +157,8 @@ public class DefaultConverterLookup implements ConverterLookup {
                 BigInteger.class, new BigIntegerConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.BOOLEAN,
                 new Class[]{Boolean.class, boolean.class}, new BooleanConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.ATOMIC_BOOLEAN,
+                new Class[]{AtomicBoolean.class}, new AtomicBooleanConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.BYTE,
                 new Class[]{Byte.class, byte.class}, new ByteConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.CHAR,
@@ -162,8 +173,12 @@ public class DefaultConverterLookup implements ConverterLookup {
                 new Class[]{Float.class, float.class}, new FloatConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.INTEGER,
                 new Class[]{Integer.class, int.class}, new IntConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.ATOMIC_INTEGER,
+                new Class[]{AtomicInteger.class}, new AtomicIntConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.LONG,
                 new Class[]{Long.class, long.class}, new LongConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.ATOMIC_LONG,
+                new Class[]{AtomicLong.class}, new AtomicLongConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.SHORT,
                 new Class[]{Short.class, short.class}, new ShortConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Simple.STRING,

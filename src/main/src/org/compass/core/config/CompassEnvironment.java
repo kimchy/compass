@@ -101,7 +101,11 @@ public class CompassEnvironment {
 
                 public static final String LONG = "long";
 
+                public static final String ATOMIC_LONG = "atomiclong";
+
                 public static final String BOOLEAN = "boolean";
+
+                public static final String ATOMIC_BOOLEAN = "atomicboolean";
 
                 public static final String BYTE = "byte";
 
@@ -112,6 +116,8 @@ public class CompassEnvironment {
                 public static final String FLOAT = "float";
 
                 public static final String INTEGER = "int";
+
+                public static final String ATOMIC_INTEGER = "atomicint";
 
                 public static final String SHORT = "short";
 
@@ -166,7 +172,11 @@ public class CompassEnvironment {
 
                 public static final String LONG = "long";
 
+                public static final String ATOMIC_LONG = "atomiclong";
+
                 public static final String BOOLEAN = "boolean";
+
+                public static final String ATOMIC_BOOLEAN = "atomicboolean";
 
                 public static final String BYTE = "byte";
 
@@ -177,6 +187,8 @@ public class CompassEnvironment {
                 public static final String FLOAT = "float";
 
                 public static final String INTEGER = "int";
+
+                public static final String ATOMIC_INTEGER = "atomicint";
 
                 public static final String SHORT = "short";
 
