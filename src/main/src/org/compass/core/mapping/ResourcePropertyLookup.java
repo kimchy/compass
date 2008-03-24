@@ -1,7 +1,7 @@
 package org.compass.core.mapping;
 
 import org.compass.core.converter.Converter;
-import org.compass.core.converter.ResourcePropertyConverter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 
 /**
  * A simple lookup class, for a given path, will provide simple access to
@@ -149,7 +149,7 @@ public final class ResourcePropertyLookup {
      * convert it from Object to String. If it returns false, will use a Converter assigned to the given
      * parameter class.
      *
-     * @see org.compass.core.converter.ResourcePropertyConverter
+     * @see org.compass.core.converter.mapping.ResourcePropertyConverter
      */
     public String getValue(Object value) {
         if (value instanceof String) {
@@ -171,7 +171,7 @@ public final class ResourcePropertyLookup {
      * from String to Object. If it returns <code>false</code>, will use a Converter assigned to the
      * given parameter class.
      *
-     * @see org.compass.core.converter.ResourcePropertyConverter
+     * @see org.compass.core.converter.mapping.ResourcePropertyConverter
      */
     public Object fromString(String value) {
         ResourcePropertyConverter converter;
@@ -190,13 +190,13 @@ public final class ResourcePropertyLookup {
      * <p>If {@link #hasSpecificConverter()} return <code>false</code> (note {@link #setConvertOnlyWithDotPath(boolean)})
      * will simply return the given value.
      *
-     * <p>If the {@link org.compass.core.converter.ResourcePropertyConverter} states that it should not be used
-     * for normalization ({@link org.compass.core.converter.ResourcePropertyConverter#canNormalize()} returns
+     * <p>If the {@link org.compass.core.converter.mapping.ResourcePropertyConverter} states that it should not be used
+     * for normalization ({@link org.compass.core.converter.mapping.ResourcePropertyConverter#canNormalize()} returns
      * <code>false</code>), the provided value will be returned.
      *
      * <p>If none of the above happens, will conver it
-     * {@link org.compass.core.converter.ResourcePropertyConverter#fromString(String, org.compass.core.mapping.ResourcePropertyMapping)}
-     * and then {@link org.compass.core.converter.ResourcePropertyConverter#toString(Object, org.compass.core.mapping.ResourcePropertyMapping)}.
+     * {@link org.compass.core.converter.mapping.ResourcePropertyConverter#fromString(String, org.compass.core.mapping.ResourcePropertyMapping)}
+     * and then {@link org.compass.core.converter.mapping.ResourcePropertyConverter#toString(Object, org.compass.core.mapping.ResourcePropertyMapping)}.
      */
     public String normalizeString(String value) {
         if (!hasSpecificConverter()) {

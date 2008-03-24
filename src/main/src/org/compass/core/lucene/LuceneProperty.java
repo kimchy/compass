@@ -17,7 +17,7 @@
 package org.compass.core.lucene;
 
 import org.apache.lucene.document.Field;
-import org.compass.core.converter.ResourcePropertyConverter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.InternalProperty;

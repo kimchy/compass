@@ -17,7 +17,7 @@
 package org.compass.core.converter.basic;
 
 import org.compass.core.converter.Converter;
-import org.compass.core.converter.ResourcePropertyConverter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 
 /**
  * A {@link Converter} that can handle format parameter.

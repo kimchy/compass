@@ -30,7 +30,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.compass.core.Property;
 import org.compass.core.Resource;
-import org.compass.core.converter.ResourcePropertyConverter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.util.LuceneUtils;
