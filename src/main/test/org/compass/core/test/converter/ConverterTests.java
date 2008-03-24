@@ -18,6 +18,7 @@ package org.compass.core.test.converter;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
@@ -100,5 +101,24 @@ public class ConverterTests extends AbstractTestCase {
         assertEquals("test1YYYtest2", resource.getValue("mvalue"));
 
         tr.commit();
+    }
+
+    public void testConverterControlledIndex() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = new Long(1);
+        A o = new A();
+        o.setId(id);
+        o.setIntVal(1);
+        session.save("a3", o);
+
+        o = (A) session.load("a3", 1);
+        assertEquals(1, o.getIntVal());
+
+        assertEquals(Property.Index.UN_TOKENIZED, getCompass().getMapping().getResourcePropertyLookup("a3.intVal.intVal").getResourcePropertyMapping().getIndex());
+
+        tr.commit();
+        session.close();
     }
 }

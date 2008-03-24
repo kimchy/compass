@@ -69,6 +69,9 @@ VERSION 2.0.0 RC1
            http://www.compass-project.org/schema/spring-core-config http://www.compass-project.org/schema/spring-compass-core-config-2.0.xsd">
 
 
+6. By default, Compass will now try to use Index type based on the actual type. For example, every formattable type
+   (such as number and dates), URL, URI, and Boolean are now UN_TOKENIZED by defualt (if not explicitly specified).
+
 VERSION 2.0.0 M3 (March 19, 2008)
 =================================
 

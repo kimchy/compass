@@ -132,7 +132,7 @@ public @interface SearchableProperty {
      * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
      * {@link #name()} is not set.
      */
-    Store store() default Store.YES;
+    Store store() default Store.NA;
 
     /**
      * The index of the auto generated {@link SearchableMetaData}. Maps to
@@ -142,7 +142,7 @@ public @interface SearchableProperty {
      * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
      * {@link #name()} is not set.
      */
-    Index index() default Index.TOKENIZED;
+    Index index() default Index.NA;
 
     /**
      * The termVector of the auto generated {@link SearchableMetaData}. Maps to
@@ -152,7 +152,7 @@ public @interface SearchableProperty {
      * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
      * {@link #name()} is not set.
      */
-    TermVector termVector() default TermVector.NO;
+    TermVector termVector() default TermVector.NA;
 
     /**
      * The termVector of the auto generated {@link SearchableMetaData}. Maps to
@@ -162,7 +162,7 @@ public @interface SearchableProperty {
      * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
      * {@link #name()} is not set.
      */
-    boolean omitNorms() default false;
+    OmitNorms omitNorms() default OmitNorms.NA;
 
     /**
      * The reverse of the auto generated {@link SearchableMetaData}. Maps to

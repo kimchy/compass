@@ -291,7 +291,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             } else if (allMetaData.spellCheck() == SpellCheck.NA) {
                 allMapping.setSpellCheck(SpellCheckType.NA);
             }
-            allMapping.setOmitNorms(allMetaData.omitNorms());
+            allMapping.setOmitNorms(AnnotationsBindingUtils.convert(allMetaData.omitNorms()));
         }
         classMapping.setAllMapping(allMapping);
 
@@ -648,7 +648,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setStore(AnnotationsBindingUtils.convert(searchableProp.store()));
             mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableProp.index()));
             mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableProp.termVector()));
-            mdMapping.setOmitNorms(searchableProp.omitNorms());
+            mdMapping.setOmitNorms(AnnotationsBindingUtils.convert(searchableProp.omitNorms()));
             mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableProp.reverse()));
 
             handleFormat(mdMapping, name, searchableProp.format());
@@ -725,7 +725,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
             mdMapping.setStore(AnnotationsBindingUtils.convert(searchableProp.store()));
             mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableProp.index()));
             mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableProp.termVector()));
-            mdMapping.setOmitNorms(searchableProp.omitNorms());
+            mdMapping.setOmitNorms(AnnotationsBindingUtils.convert(searchableProp.omitNorms()));
             mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableProp.reverse()));
 
             handleFormat(mdMapping, name, searchableProp.format());
@@ -777,7 +777,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         mdMapping.setStore(AnnotationsBindingUtils.convert(searchableMetaData.store()));
         mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableMetaData.index()));
         mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableMetaData.termVector()));
-        mdMapping.setOmitNorms(searchableMetaData.omitNorms());
+        mdMapping.setOmitNorms(AnnotationsBindingUtils.convert(searchableMetaData.omitNorms()));
         mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableMetaData.reverse()));
 
         handleFormat(mdMapping, name, searchableMetaData.format());
@@ -843,7 +843,7 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         constantMapping.setStore(AnnotationsBindingUtils.convert(searchableConstant.store()));
         constantMapping.setIndex(AnnotationsBindingUtils.convert(searchableConstant.index()));
         constantMapping.setTermVector(AnnotationsBindingUtils.convert(searchableConstant.termVector()));
-        constantMapping.setOmitNorms(searchableConstant.omitNorms());
+        constantMapping.setOmitNorms(AnnotationsBindingUtils.convert(searchableConstant.omitNorms()));
         if (StringUtils.hasLength(searchableConstant.analyzer())) {
             constantMapping.setAnalyzer(searchableConstant.analyzer());
         } else {

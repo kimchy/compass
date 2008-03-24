@@ -113,7 +113,7 @@ public @interface SearchableId {
      * <p/>
      * The meta-data will be auto generated only if the name has a value.
      */
-    Store store() default Store.YES;
+    Store store() default Store.NA;
 
     /**
      * The index of the auto generated {@link SearchableMetaData}. Maps to
@@ -121,7 +121,7 @@ public @interface SearchableId {
      * <p/>
      * The meta-data will be auto generated only if the name has a value.
      */
-    Index index() default Index.UN_TOKENIZED;
+    Index index() default Index.NA;
 
     /**
      * The termVector of the auto generated {@link SearchableMetaData}. Maps to
@@ -129,7 +129,7 @@ public @interface SearchableId {
      *
      * <p>The meta-data will be auto generated only if the name has a value.
      */
-    TermVector termVector() default TermVector.NO;
+    TermVector termVector() default TermVector.NA;
 
     /**
      * The termVector of the auto generated {@link SearchableMetaData}. Maps to
@@ -137,7 +137,7 @@ public @interface SearchableId {
      *
      * <p>The meta-data will be auto generated only if the name has a value.
      */
-    boolean omitNorms() default true;
+    OmitNorms omitNorms() default OmitNorms.YES;
 
     /**
      * The reverse of the auto generated {@link SearchableMetaData}. Maps to

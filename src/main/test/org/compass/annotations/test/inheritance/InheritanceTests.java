@@ -23,7 +23,6 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
@@ -37,20 +36,20 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
     }
 
     public void testExtendedAliases() {
-        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("B");
+        ResourceMapping resourceMapping = getCompass().getMapping().getMappingByAlias("B");
         assertEquals(1, resourceMapping.getExtendedAliases().length);
         assertEquals("A", resourceMapping.getExtendedAliases()[0]);
 
-        resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("A");
+        resourceMapping = getCompass().getMapping().getMappingByAlias("A");
         assertEquals(0, resourceMapping.getExtendedAliases().length);
     }
 
     public void testExtendingAliases() {
-        ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("A");
+        ResourceMapping resourceMapping = getCompass().getMapping().getMappingByAlias("A");
         assertEquals(1, resourceMapping.getExtendingAliases().length);
         assertEquals("B", resourceMapping.getExtendingAliases()[0]);
 
-        resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias("B");
+        resourceMapping = getCompass().getMapping().getMappingByAlias("B");
         assertEquals(0, resourceMapping.getExtendingAliases().length);
     }
 
@@ -64,7 +63,7 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         b.setValue2("value2");
         session.save(b);
 
-        b = (B) session.load(B.class, 1);
+        b = session.load(B.class, 1);
         assertEquals("value1", b.getValue1());
         assertEquals("value2", b.getValue2());
 
@@ -95,7 +94,7 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         c.id = 1;
         c.a = b;
         session.save(c);
-        c = (C) session.load(C.class, 1);
+        c = session.load(C.class, 1);
         assertTrue(c.a instanceof B);
         assertEquals("value1", c.a.getValue1());
         assertEquals("value2", c.a.getValue2());

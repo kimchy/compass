@@ -80,6 +80,9 @@ public interface Property extends Serializable {
         }
 
         public static Property.Store fromString(String propertyStore) {
+            if (propertyStore == null || "na".equalsIgnoreCase(propertyStore)) {
+                return null;
+            }
             if ("no".equalsIgnoreCase(propertyStore)) {
                 return Property.Store.NO;
             } else if ("yes".equalsIgnoreCase(propertyStore)) {
@@ -132,6 +135,9 @@ public interface Property extends Serializable {
         }
 
         public static Property.Index fromString(String propertyIndex) {
+            if (propertyIndex == null || "na".equalsIgnoreCase(propertyIndex)) {
+                return null;
+            }
             if ("no".equalsIgnoreCase(propertyIndex)) {
                 return Property.Index.NO;
             } else if ("tokenized".equalsIgnoreCase(propertyIndex)) {
@@ -204,6 +210,9 @@ public interface Property extends Serializable {
         }
 
         public static Property.TermVector fromString(String propertyTermVector) {
+            if (propertyTermVector == null || "na".equalsIgnoreCase(propertyTermVector)) {
+                return null;
+            }
             if ("no".equalsIgnoreCase(propertyTermVector)) {
                 return Property.TermVector.NO;
             } else if ("yes".equalsIgnoreCase(propertyTermVector)) {

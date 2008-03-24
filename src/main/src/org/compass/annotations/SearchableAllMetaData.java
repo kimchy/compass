@@ -70,7 +70,7 @@ public @interface SearchableAllMetaData {
      * If set, omit normalization factors associated with this indexed field.
      * This effectively disables indexing boosts and length normalization for this field.
      */
-    boolean omitNorms() default false;
+    OmitNorms omitNorms() default OmitNorms.NO;
 
     /**
      * Should this propety be included in the spell check index.

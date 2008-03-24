@@ -16,6 +16,7 @@
 
 package org.compass.core.converter.mapping.osem;
 
+import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
@@ -74,5 +75,21 @@ public class MetaDataFormatDelegateConverter implements DelegateConverter, Resou
 
     public boolean canNormalize() {
         return delegatedConverter.canNormalize();
+    }
+
+    public Property.Index suggestIndex() {
+        return delegatedConverter.suggestIndex();
+    }
+
+    public Property.TermVector suggestTermVector() {
+        return delegatedConverter.suggestTermVector();
+    }
+
+    public Property.Store suggestStore() {
+        return delegatedConverter.suggestStore();
+    }
+
+    public Boolean suggestOmitNorms() {
+        return delegatedConverter.suggestOmitNorms();
     }
 }

@@ -45,6 +45,8 @@ public class A {
 
     private Long id;
 
+    private int intVal;
+
     private TwoStringsValue value;
 
     public Long getId() {
@@ -61,5 +63,13 @@ public class A {
 
     public void setValue(TwoStringsValue value) {
         this.value = value;
+    }
+
+    public int getIntVal() {
+        return intVal;
+    }
+
+    public void setIntVal(int intVal) {
+        this.intVal = intVal;
     }
 }

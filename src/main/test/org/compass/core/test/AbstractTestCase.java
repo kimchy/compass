@@ -28,6 +28,7 @@ import org.compass.core.cache.first.NullFirstLevelCache;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.FileHandlerMonitor;
 
 /**
@@ -35,14 +36,14 @@ import org.compass.core.util.FileHandlerMonitor;
  */
 public abstract class AbstractTestCase extends ExtendedTestCase {
 
-    private static Compass compass;
+    private static InternalCompass compass;
 
     private static FileHandlerMonitor fileHandlerMonitor;
 
     protected abstract String[] getMappings();
 
     protected void beforeTestCase() throws Exception {
-        compass = buildCompass();
+        compass = (InternalCompass) buildCompass();
         if (System.getProperty("compass.test.validateFileHandler", "false").equals("true")) {
             String connection = compass.getSettings().getSetting(CompassEnvironment.CONNECTION);
             if (connection.startsWith("file://") || connection.indexOf("://") == -1) {
@@ -134,7 +135,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
         return compass.openSession();
     }
 
-    public Compass getCompass() {
+    public InternalCompass getCompass() {
         return compass;
     }
 

@@ -73,24 +73,24 @@ public @interface SearchableMetaData {
     /**
      * Specifies whether and how a meta-data property will be stored.
      */
-    Store store() default Store.YES;
+    Store store() default Store.NA;
 
     /**
      * Specifies whether and how a meta-data proeprty should be indexed.
      */
-    Index index() default Index.TOKENIZED;
+    Index index() default Index.NA;
 
     /**
      * Specifies whether and how a meta-data property should have term vectors.
      */
-    TermVector termVector() default TermVector.NO;
+    TermVector termVector() default TermVector.NA;
 
     /**
      * Expert:
      * If set, omit normalization factors associated with this indexed field.
      * This effectively disables indexing boosts and length normalization for this field.
      */
-    boolean omitNorms() default false;
+    OmitNorms omitNorms() default OmitNorms.NA;
 
     /**
      * Specifies whether and how the meta-data proeprty should value will be revered.

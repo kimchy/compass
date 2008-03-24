@@ -42,7 +42,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private SpellCheckType spellCheck = SpellCheckType.NA;
 
-    private boolean omitNorms = false;
+    private Boolean omitNorms = false;
 
     private ReverseType reverse = ReverseType.NO;
 
@@ -138,11 +138,11 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         this.reverse = reverse;
     }
 
-    public boolean isOmitNorms() {
+    public Boolean isOmitNorms() {
         return omitNorms;
     }
 
-    public void setOmitNorms(boolean omitNorms) {
+    public void setOmitNorms(Boolean omitNorms) {
         this.omitNorms = omitNorms;
     }
 

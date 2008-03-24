@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.internal;
 
+import org.compass.core.Property;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.SpellCheckType;
 
@@ -30,4 +31,22 @@ public interface InternalResourcePropertyMapping extends ResourcePropertyMapping
     void setNullValue(String nullValue);
 
     void setSpellCheck(SpellCheckType spellCheck);
+
+    void setIndex(Property.Index index);
+
+    void setStore(Property.Store store);
+
+    void setTermVector(Property.TermVector termVector);
+
+    void setOmitNorms(Boolean omitNorms);
+
+    void setBoost(float boost);
+
+    void setReverse(ReverseType reverseType);
+
+    void setAnalyzer(String analyzer);
+
+    void setExcludeFromAll(ExcludeFromAllType excludeFromAll);
+
+    void setInternal(boolean internal);
 }

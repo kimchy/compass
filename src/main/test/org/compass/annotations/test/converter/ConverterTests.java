@@ -21,6 +21,7 @@ import org.compass.annotations.test.Converted;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 
@@ -43,7 +44,7 @@ public class ConverterTests extends AbstractAnnotationsTestCase {
 
         session.save(a);
 
-        a = (A) session.load(A.class, a.id);
+        a = session.load(A.class, a.id);
         assertEquals("id1", a.id.value1);
         assertEquals("id2", a.id.value2);
         assertEquals("value1", a.value.value1);
@@ -75,6 +76,9 @@ public class ConverterTests extends AbstractAnnotationsTestCase {
 
         CompassHits hits = session.queryBuilder().between("value", 1000.0, 2000.0, true).hits();
         assertEquals(2, hits.length());
+
+        assertEquals(Property.Index.UN_TOKENIZED,
+                getCompass().getMapping().getResourcePropertyLookup("B.value.value").getResourcePropertyMapping().getIndex());
 
         tr.commit();
         session.close();

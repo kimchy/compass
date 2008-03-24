@@ -105,7 +105,7 @@ public interface ResourcePropertyMapping extends Mapping {
 
     float getBoost();
 
-    boolean isOmitNorms();
+    Boolean isOmitNorms();
 
     ExcludeFromAllType getExcludeFromAll();
 

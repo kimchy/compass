@@ -218,4 +218,26 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
     public boolean canNormalize() {
         return false;
     }
+
+    /**
+     * By default for all converters simply return <code>null</code>.
+     */
+    public Property.Index suggestIndex() {
+        return null;
+    }
+
+    public Property.TermVector suggestTermVector() {
+        return null;
+    }
+
+    public Property.Store suggestStore() {
+        return null;
+    }
+
+    /**
+     * By default for all converters simply return <code>null</code>.
+     */
+    public Boolean suggestOmitNorms() {
+        return null;
+    }
 }

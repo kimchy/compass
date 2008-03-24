@@ -25,6 +25,7 @@ import org.compass.annotations.ExcludeFromAll;
 import org.compass.annotations.Index;
 import org.compass.annotations.ManagedId;
 import org.compass.annotations.ManagedIdIndex;
+import org.compass.annotations.OmitNorms;
 import org.compass.annotations.Reverse;
 import org.compass.annotations.Store;
 import org.compass.annotations.TermVector;
@@ -77,7 +78,9 @@ public abstract class AnnotationsBindingUtils {
     }
 
     public static Property.TermVector convert(TermVector termVector) throws IllegalArgumentException {
-        if (termVector == TermVector.NO) {
+        if (termVector == TermVector.NA) {
+            return null;
+        } else if (termVector == TermVector.NO) {
             return Property.TermVector.NO;
         } else if (termVector == TermVector.YES) {
             return Property.TermVector.YES;
@@ -113,8 +116,21 @@ public abstract class AnnotationsBindingUtils {
         throw new IllegalArgumentException("Failed to convert exclude from all [" + excludeFromAll + "]");
     }
 
+    public static Boolean convert(OmitNorms omitNorms) {
+        if (omitNorms == OmitNorms.NA) {
+            return null;
+        } else if (omitNorms == OmitNorms.YES) {
+            return true;
+        } else if (omitNorms == OmitNorms.NO) {
+            return false;
+        }
+        throw new IllegalArgumentException("Failed to convert omitNorms [" + omitNorms + "]");
+    }
+
     public static Property.Store convert(Store store) throws IllegalArgumentException {
-        if (store == Store.NO) {
+        if (store == Store.NA) {
+            return null;
+        } else if (store == Store.NO) {
             return Property.Store.NO;
         } else if (store == Store.YES) {
             return Property.Store.YES;
@@ -125,7 +141,9 @@ public abstract class AnnotationsBindingUtils {
     }
 
     public static Property.Index convert(Index index) throws IllegalArgumentException {
-        if (index == Index.NO) {
+        if (index == Index.NA) {
+            return null;
+        } else if (index == Index.NO) {
             return Property.Index.NO;
         } else if (index == Index.TOKENIZED) {
             return Property.Index.TOKENIZED;

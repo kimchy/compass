@@ -30,7 +30,7 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
 
     public DynamicConverter copy() {
         try {
-            DynamicConverter converter = (DynamicConverter) getClass().newInstance();
+            DynamicConverter converter = getClass().newInstance();
             converter.setType(getType());
             converter.setFormatConverter(formatConverter);
             return converter;
@@ -125,5 +125,33 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
 
     public void setType(Class type) {
         this.type = type;
+    }
+
+    public Property.Index suggestIndex() {
+        if (formatConverter != null) {
+            return formatConverter.suggestIndex();
+        }
+        return super.suggestIndex();
+    }
+
+    public Property.TermVector suggestTermVector() {
+        if (formatConverter != null) {
+            return formatConverter.suggestTermVector();
+        }
+        return super.suggestTermVector();
+    }
+
+    public Property.Store suggestStore() {
+        if (formatConverter != null) {
+            return formatConverter.suggestStore();
+        }
+        return super.suggestStore();
+    }
+
+    public Boolean suggestOmitNorms() {
+        if (formatConverter != null) {
+            return formatConverter.suggestOmitNorms();
+        }
+        return super.suggestOmitNorms();
     }
 }

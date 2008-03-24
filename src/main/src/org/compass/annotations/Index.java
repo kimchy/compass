@@ -23,6 +23,12 @@ package org.compass.annotations;
  */
 public enum Index {
     /**
+     * Lest Compass derive the index. By default, it will be based on the type and either
+     * be TOKENIZED or UN_TOKENIZED.
+     */
+    NA,
+
+    /**
      * Do not index the property value. This property can thus not be searched, but one
      * can still access its contents provided it is {@link Store stored}.
      */

@@ -24,4 +24,14 @@
 
     </class>
 
+    <class name="A" alias="a3">
+
+        <id name="id"/>
+
+        <property name="intVal">
+            <meta-data>intVal</meta-data>
+        </property>
+
+    </class>
+
 </compass-core-mapping>

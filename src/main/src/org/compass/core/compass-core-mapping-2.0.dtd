@@ -40,10 +40,10 @@
 >
     <!ATTLIST xml-property xpath CDATA #REQUIRED>
     <!ATTLIST xml-property name CDATA #IMPLIED>
-    <!ATTLIST xml-property store (no|yes|compress) "yes">
-    <!ATTLIST xml-property index (no|tokenized|un_tokenized) "tokenized">
-    <!ATTLIST xml-property term-vector (no|yes|positions|offsets|positions_offsets) "no">
-    <!ATTLIST xml-property omit-norms (true|false) "false">
+    <!ATTLIST xml-property store (no|yes|compress) #IMPLIED>
+    <!ATTLIST xml-property index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST xml-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
+    <!ATTLIST xml-property omit-norms (true|false) #IMPLIED>
     <!ATTLIST xml-property reverse (no|reader|string) "no">
     <!ATTLIST xml-property null-value CDATA #IMPLIED>
     <!ATTLIST xml-property analyzer CDATA #IMPLIED>
@@ -114,10 +114,10 @@
 <!ELEMENT resource-property EMPTY
 >
     <!ATTLIST resource-property name CDATA #REQUIRED>
-    <!ATTLIST resource-property store (no|yes|compress) "yes">
-    <!ATTLIST resource-property index (no|tokenized|un_tokenized) "tokenized">
-    <!ATTLIST resource-property term-vector (no|yes|positions|offsets|positions_offsets) "no">
-    <!ATTLIST resource-property omit-norms (true|false) "false">
+    <!ATTLIST resource-property store (no|yes|compress) #IMPLIED>
+    <!ATTLIST resource-property index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST resource-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
+    <!ATTLIST resource-property omit-norms (true|false) #IMPLIED>
     <!ATTLIST resource-property reverse (no|reader|string) "no">
     <!ATTLIST resource-property analyzer CDATA #IMPLIED>
     <!ATTLIST resource-property null-value CDATA #IMPLIED>
@@ -346,10 +346,10 @@
     #PCDATA
 )>
     <!ATTLIST dynamic-meta-data name CDATA #REQUIRED>
-    <!ATTLIST dynamic-meta-data store (no|yes|compress) "yes">
-    <!ATTLIST dynamic-meta-data index (no|tokenized|un_tokenized) "tokenized">
-    <!ATTLIST dynamic-meta-data term-vector (no|yes|positions|offsets|positions_offsets) "no">
-    <!ATTLIST dynamic-meta-data omit-norms (true|false) "false">
+    <!ATTLIST dynamic-meta-data store (no|yes|compress) #IMPLIED>
+    <!ATTLIST dynamic-meta-data index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST dynamic-meta-data term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
+    <!ATTLIST dynamic-meta-data omit-norms (true|false) #IMPLIED>
     <!ATTLIST dynamic-meta-data override (true|false) "true">
     <!ATTLIST dynamic-meta-data reverse (no|reader|string) "no">
     <!ATTLIST dynamic-meta-data analyzer CDATA #IMPLIED>
@@ -364,10 +364,10 @@
 <!ELEMENT meta-data (
     #PCDATA
 )>
-    <!ATTLIST meta-data store (no|yes|compress) "yes">
-    <!ATTLIST meta-data index (no|tokenized|un_tokenized) "tokenized">
-    <!ATTLIST meta-data term-vector (no|yes|positions|offsets|positions_offsets) "no">
-    <!ATTLIST meta-data omit-norms (true|false) "false">
+    <!ATTLIST meta-data store (no|yes|compress) #IMPLIED>
+    <!ATTLIST meta-data index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST meta-data term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
+    <!ATTLIST meta-data omit-norms (true|false) #IMPLIED>
     <!ATTLIST meta-data reverse (no|reader|string) "no">
     <!ATTLIST meta-data null-value CDATA #IMPLIED>
     <!ATTLIST meta-data analyzer CDATA #IMPLIED>

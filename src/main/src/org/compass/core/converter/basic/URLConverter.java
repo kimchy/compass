@@ -19,6 +19,7 @@ package org.compass.core.converter.basic;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.compass.core.Property;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -34,5 +35,12 @@ public class URLConverter extends AbstractBasicConverter {
         } catch (MalformedURLException e) {
             throw new ConversionException("Failed to convert url", e);
         }
+    }
+
+    /**
+     * URL is {@link org.compass.core.Property.Index#UN_TOKENIZED} by default.
+     */
+    public Property.Index suggestIndex() {
+        return Property.Index.UN_TOKENIZED;
     }
 }

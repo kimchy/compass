@@ -19,6 +19,7 @@ package org.compass.core.converter.basic;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.compass.core.Property;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -34,5 +35,12 @@ public class URIConverter extends AbstractBasicConverter {
         } catch (URISyntaxException e) {
             throw new ConversionException("Failed to convert uri", e);
         }
+    }
+
+    /**
+     * URI is {@link org.compass.core.Property.Index#UN_TOKENIZED} by default.
+     */
+    public Property.Index suggestIndex() {
+        return Property.Index.UN_TOKENIZED;
     }
 }

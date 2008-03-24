@@ -16,6 +16,7 @@
 
 package org.compass.core.converter.basic;
 
+import org.compass.core.Property;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -27,5 +28,12 @@ public class BooleanConverter extends AbstractBasicConverter {
 
     protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return str.equals("true") ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    /**
+     * Boolean is {@link org.compass.core.Property.Index#UN_TOKENIZED} by default.
+     */
+    public Property.Index suggestIndex() {
+        return Property.Index.UN_TOKENIZED;
     }
 }

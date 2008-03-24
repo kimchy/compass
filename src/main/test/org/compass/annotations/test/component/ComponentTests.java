@@ -98,7 +98,7 @@ public class ComponentTests extends AbstractAnnotationsTestCase {
         assertEquals(1, hits.length());
 
         query = session.queryBuilder().term("A.bValues.value", "bvalue1");
-        hits = query.setAliases(new String[]{"A"}).hits();
+        hits = query.setAliases("A").hits();
         assertEquals(1, hits.length());
 
         tr.commit();
@@ -124,7 +124,7 @@ public class ComponentTests extends AbstractAnnotationsTestCase {
         CompassQueryBuilder.CompassBooleanQueryBuilder communityQuery = builder.bool();
         communityQuery.addShould(builder.term("User.communities.name", "root"));
         booleanQuery.addMust(communityQuery.toQuery());
-        CompassQuery compassQuery = booleanQuery.toQuery().setAliases(new String[]{"User"});
+        CompassQuery compassQuery = booleanQuery.toQuery().setAliases("User");
         CompassHits hits = compassQuery.hits();
         assertEquals(1, hits.length());
 
@@ -134,7 +134,7 @@ public class ComponentTests extends AbstractAnnotationsTestCase {
         communityQuery.addShould(builder.term("User.communities.name",
                 session.analyzerHelper().analyzeSingle("testCommunity").getTermText()));
         booleanQuery.addMust(communityQuery.toQuery());
-        compassQuery = booleanQuery.toQuery().setAliases(new String[]{"User"});
+        compassQuery = booleanQuery.toQuery().setAliases("User");
         hits = compassQuery.hits();
         assertEquals(1, hits.length());
 

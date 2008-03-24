@@ -155,7 +155,7 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
         
     }
 
-    public boolean isOmitNorms() {
+    public Boolean isOmitNorms() {
         return false;
     }
 

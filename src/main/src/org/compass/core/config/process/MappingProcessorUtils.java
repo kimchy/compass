@@ -24,9 +24,12 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.DelegateConverter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.util.ClassUtils;
@@ -159,4 +162,43 @@ public abstract class MappingProcessorUtils {
         return converter;
     }
 
+    public static void applyResourcePropertySettings(ResourcePropertyMapping mapping) {
+        InternalResourcePropertyMapping intMapping = (InternalResourcePropertyMapping) mapping;
+        ResourcePropertyConverter converter = null;
+        if (mapping.getConverter() instanceof ResourcePropertyConverter) {
+            converter = (ResourcePropertyConverter) mapping.getConverter();
+        }
+        if (intMapping.getIndex() == null) {
+            if (converter != null) {
+                intMapping.setIndex(converter.suggestIndex());
+            }
+            if (intMapping.getIndex() == null) {
+                intMapping.setIndex(Property.Index.TOKENIZED);
+            }
+        }
+        if (intMapping.getStore() == null) {
+            if (converter != null) {
+                intMapping.setStore(converter.suggestStore());
+            }
+            if (intMapping.getStore() == null) {
+                intMapping.setStore(Property.Store.YES);
+            }
+        }
+        if (intMapping.getTermVector() == null) {
+            if (converter != null) {
+                intMapping.setTermVector(converter.suggestTermVector());
+            }
+            if (intMapping.getTermVector() == null) {
+                intMapping.setTermVector(Property.TermVector.NO);
+            }
+        }
+        if (intMapping.isOmitNorms() == null) {
+            if (converter != null) {
+                intMapping.setOmitNorms(intMapping.isOmitNorms());
+            }
+            if (intMapping.isOmitNorms() == null) {
+                intMapping.setOmitNorms(false);
+            }
+        }
+    }
 }

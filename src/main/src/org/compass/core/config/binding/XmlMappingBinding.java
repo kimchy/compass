@@ -237,7 +237,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         xmlContentMapping.setName(name);
         xmlContentMapping.setPath(new StaticPropertyPath(name));
         bindConverter(xmlContentConf, xmlContentMapping);
-        String storeType = xmlContentConf.getAttribute("store", "yes");
+        String storeType = xmlContentConf.getAttribute("store", null);
         xmlContentMapping.setStore(Property.Store.fromString(storeType));
         xmlContentMapping.setInternal(true);
     }
@@ -252,21 +252,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         xmlPropertyMapping.setName(name);
         xmlPropertyMapping.setPath((name == null ? null : new StaticPropertyPath(name)));
         bindConverter(xmlPropConf, xmlPropertyMapping);
-        String storeType = xmlPropConf.getAttribute("store", "yes");
-        xmlPropertyMapping.setStore(Property.Store.fromString(storeType));
-        String indexType = xmlPropConf.getAttribute("index", "tokenized");
-        xmlPropertyMapping.setIndex(Property.Index.fromString(indexType));
-        String termVectorType = xmlPropConf.getAttribute("term-vector", "no");
-        xmlPropertyMapping.setTermVector(Property.TermVector.fromString(termVectorType));
-        boolean omitNorms = xmlPropConf.getAttributeAsBoolean("omit-norms", false);
-        xmlPropertyMapping.setOmitNorms(omitNorms);
-        String reverseType = xmlPropConf.getAttribute("reverse", "no");
-        xmlPropertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
-        xmlPropertyMapping.setInternal(false);
-        xmlPropertyMapping.setAnalyzer(xmlPropConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
-        xmlPropertyMapping.setNullValue(xmlPropConf.getAttribute("null-value", null));
-        String excludeFromAll = xmlPropConf.getAttribute("exclude-from-all", "no");
-        xmlPropertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
+
+        bindResourcePropertyMapping(xmlPropConf, xmlPropertyMapping, aliasMapping);
+
+
         boolean override = xmlPropConf.getAttributeAsBoolean("override", true);
         xmlPropertyMapping.setOverrideByName(override);
 
@@ -359,23 +348,11 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         propertyMapping.setName(name);
         propertyMapping.setPath(new StaticPropertyPath(name));
         bindConverter(resourcePropConf, propertyMapping);
-        String storeType = resourcePropConf.getAttribute("store", "yes");
-        propertyMapping.setStore(Property.Store.fromString(storeType));
-        String indexType = resourcePropConf.getAttribute("index", "tokenized");
-        propertyMapping.setIndex(Property.Index.fromString(indexType));
-        String termVectorType = resourcePropConf.getAttribute("term-vector", "no");
-        propertyMapping.setTermVector(Property.TermVector.fromString(termVectorType));
-        boolean omitNorms = resourcePropConf.getAttributeAsBoolean("omit-norms", false);
-        propertyMapping.setOmitNorms(omitNorms);
-        String reverseType = resourcePropConf.getAttribute("reverse", "no");
-        propertyMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
-        propertyMapping.setInternal(false);
-        propertyMapping.setAnalyzer(resourcePropConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
-        propertyMapping.setNullValue(resourcePropConf.getAttribute("null-value", null));
-        String excludeFromAll = resourcePropConf.getAttribute("exclude-from-all", "no");
-        propertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
+
         boolean override = resourcePropConf.getAttributeAsBoolean("override", true);
         propertyMapping.setOverrideByName(override);
+
+        bindResourcePropertyMapping(resourcePropConf, propertyMapping, aliasMapping);
 
         bindSpellCheck(resourcePropConf, propertyMapping);
     }
@@ -569,25 +546,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         bindConverter(dynamicConf, dynamicMetaDataMapping);
         bindSpellCheck(dynamicConf, dynamicMetaDataMapping);
+        bindResourcePropertyMapping(dynamicConf, dynamicMetaDataMapping, aliasMapping);
 
         boolean override = dynamicConf.getAttributeAsBoolean("override", true);
         dynamicMetaDataMapping.setOverrideByName(override);
-
-        String storeType = dynamicConf.getAttribute("store", "yes");
-        dynamicMetaDataMapping.setStore(Property.Store.fromString(storeType));
-        String indexType = dynamicConf.getAttribute("index", "tokenized");
-        dynamicMetaDataMapping.setIndex(Property.Index.fromString(indexType));
-        String termVectorType = dynamicConf.getAttribute("term-vector", "no");
-        dynamicMetaDataMapping.setTermVector(Property.TermVector.fromString(termVectorType));
-        boolean omitNorms = dynamicConf.getAttributeAsBoolean("omit-norms", false);
-        dynamicMetaDataMapping.setOmitNorms(omitNorms);
-        String reverseType = dynamicConf.getAttribute("reverse", "no");
-        dynamicMetaDataMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
-        dynamicMetaDataMapping.setInternal(false);
-        dynamicMetaDataMapping.setAnalyzer(dynamicConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
-        dynamicMetaDataMapping.setNullValue(dynamicConf.getAttribute("null-value", null));
-        String excludeFromAll = dynamicConf.getAttribute("exclude-from-all", "no");
-        dynamicMetaDataMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
     }
 
     private void bindReference(ConfigurationHelper referenceConf, AliasMapping aliasMapping,
@@ -715,25 +677,17 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
         String metaDataValue = metadataConf.getValue().trim();
         constantMapping.setName(valueLookup.lookupMetaDataName(metaDataValue));
-        constantMapping.setBoost(getBoost(metadataConf, 1.0f));
-        String storeType = metadataConf.getAttribute("store", "yes");
-        constantMapping.setStore(Property.Store.fromString(storeType));
-        String indexType = metadataConf.getAttribute("index", "tokenized");
-        constantMapping.setIndex(Property.Index.fromString(indexType));
-        String termVectorType = metadataConf.getAttribute("term-vector", "no");
-        constantMapping.setTermVector(Property.TermVector.fromString(termVectorType));
-        boolean omitNorms = metadataConf.getAttributeAsBoolean("omit-norms", false);
-        constantMapping.setOmitNorms(omitNorms);
-
-        constantMapping.setAnalyzer(constantConf.getAttribute("analyzer", classMapping.getAnalyzer()));
 
         String excludeFromAll = constantConf.getAttribute("exclude-from-all", "no");
         constantMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
 
-        boolean override = constantConf.getAttributeAsBoolean("override", true);
-        constantMapping.setOverrideByName(override);
+        bindResourcePropertyMapping(metadataConf, constantMapping, classMapping, 1.0f,
+                constantMapping.getExcludeFromAll(), classMapping.getAnalyzer());
 
         bindSpellCheck(constantConf, constantMapping);
+
+        boolean override = constantConf.getAttributeAsBoolean("override", true);
+        constantMapping.setOverrideByName(override);
 
         ConfigurationHelper[] values = constantConf.getChildren("meta-data-value");
         for (ConfigurationHelper value : values) {
@@ -749,7 +703,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                     classPropertyMapping.getName() + "] has a meta-data mapping with no value");
         }
         String name = valueLookup.lookupMetaDataName(metadataConf.getValue().trim());
-        mdMapping.setBoost(getBoost(metadataConf, classPropertyMapping.getBoost()));
         mdMapping.setName(name);
         mdMapping.setPath(new StaticPropertyPath(name));
 
@@ -774,22 +727,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             }
         }
 
-        String storeType = metadataConf.getAttribute("store", "yes");
-        mdMapping.setStore(Property.Store.fromString(storeType));
-        String indexType = metadataConf.getAttribute("index", "tokenized");
-        mdMapping.setIndex(Property.Index.fromString(indexType));
-        String termVectorType = metadataConf.getAttribute("term-vector", "no");
-        mdMapping.setTermVector(Property.TermVector.fromString(termVectorType));
-        boolean omitNorms = metadataConf.getAttributeAsBoolean("omit-norms", false);
-        mdMapping.setOmitNorms(omitNorms);
-        String reverseType = metadataConf.getAttribute("reverse", "no");
-        mdMapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
-        mdMapping.setInternal(false);
-        mdMapping.setAnalyzer(metadataConf.getAttribute("analyzer", classPropertyMapping.getAnalyzer()));
-        mdMapping.setNullValue(metadataConf.getAttribute("null-value", null));
-        String excludeFromAll = metadataConf.getAttribute("exclude-from-all", ResourcePropertyMapping.ExcludeFromAllType.toString(classPropertyMapping.getExcludeFromAll()));
-        mdMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
-
+        bindResourcePropertyMapping(metadataConf, mdMapping, aliasMapping, classPropertyMapping.getBoost(),
+                classPropertyMapping.getExcludeFromAll(), classPropertyMapping.getAnalyzer());
         bindSpellCheck(metadataConf, mdMapping);
     }
 
@@ -895,6 +834,39 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         if (log.isTraceEnabled()) {
             log.trace("Alias [" + resourceMapping.getAlias() + "] is mapped to sub index hash [" + resourceMapping.getSubIndexHash() + "]");
         }
+    }
+
+    private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
+                                             AliasMapping aliasMapping) {
+        bindResourcePropertyMapping(conf, mapping, aliasMapping, 1.0f, ResourcePropertyMapping.ExcludeFromAllType.NO,
+                aliasMapping.getAnalyzer());
+    }
+
+    private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
+                                             AliasMapping aliasMapping, float defaultBoost,
+                                             ResourcePropertyMapping.ExcludeFromAllType excludeFromAllType,
+                                             String analyzer) {
+        mapping.setBoost(getBoost(conf, defaultBoost));
+        String storeType = conf.getAttribute("store", null);
+        mapping.setStore(Property.Store.fromString(storeType));
+        String indexType = conf.getAttribute("index", null);
+        mapping.setIndex(Property.Index.fromString(indexType));
+        String termVectorType = conf.getAttribute("term-vector", null);
+        mapping.setTermVector(Property.TermVector.fromString(termVectorType));
+
+        String omitNorms = conf.getAttribute("omit-norms", null);
+        if (omitNorms != null) {
+            mapping.setOmitNorms(Boolean.valueOf(omitNorms));
+        }
+
+        String reverseType = conf.getAttribute("reverse", "no");
+        mapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
+        mapping.setAnalyzer(conf.getAttribute("analyzer", analyzer));
+        mapping.setNullValue(conf.getAttribute("null-value", null));
+        String excludeFromAll = conf.getAttribute("exclude-from-all", ResourcePropertyMapping.ExcludeFromAllType.toString(excludeFromAllType));
+        mapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
+
+        mapping.setInternal(false);
     }
 
     private static float getBoost(ConfigurationHelper conf) {

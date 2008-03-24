@@ -19,6 +19,7 @@ package org.compass.core.converter.basic;
 import java.util.Locale;
 
 import org.compass.core.CompassException;
+import org.compass.core.Property;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
@@ -113,5 +114,12 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
      */
     public boolean canNormalize() {
         return true;
+    }
+
+    /**
+     * Formattable types should usually be {@link org.compass.core.Property.Index#UN_TOKENIZED}.
+     */
+    public Property.Index suggestIndex() {
+        return Property.Index.UN_TOKENIZED;
     }
 }

@@ -173,6 +173,9 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
          * @param resourcePropertyMapping The mapping of the callback
          */
         public void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping) {
+            // we do it here as well as later in the processing since with OSEM, the index, for example,
+            // is important to be resolved as fast as possible
+            MappingProcessorUtils.applyResourcePropertySettings(resourcePropertyMapping);
         }
     }
 }

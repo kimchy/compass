@@ -16,6 +16,7 @@
 
 package org.compass.core.converter.mapping;
 
+import org.compass.core.Property;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -34,6 +35,7 @@ public interface ResourcePropertyConverter extends Converter {
      * @param resourcePropertyMapping The resource property mapping
      * @return Theh object converterd from the String
      * @throws org.compass.core.converter.ConversionException
+     *
      */
     Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException;
 
@@ -55,4 +57,28 @@ public interface ResourcePropertyConverter extends Converter {
      * and then {@link #toString(Object, org.compass.core.mapping.ResourcePropertyMapping)}.
      */
     boolean canNormalize();
+
+    /**
+     * The converter can suggest what type of index will be used in case no index is configured.
+     * Can return <code>null</code> and will let global Compass defaults to be used.
+     */
+    Property.Index suggestIndex();
+
+    /**
+     * The converter can suggest if term vectors should be saved for this type in case no explicit one is configured.
+     * Can return <code>null</code> and will let global Compass defaults to be used.
+     */
+    Property.TermVector suggestTermVector();
+
+    /**
+     * The converter can suggest the store type for this type in case no explicit one is configured.
+     * Can return <code>null</code> and will let global Compass defaults to be used.
+     */
+    Property.Store suggestStore();
+
+    /**
+     * The converter can suggest if norms should be saved for this type in case no explicit one is configured.
+     * Can return <code>null</code> and will let global Compass defaults to be used.
+     */
+    Boolean suggestOmitNorms();
 }
