@@ -167,8 +167,12 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
     }
 
     public long count() {
+        return count(0.0f);
+    }
+
+    public long count(float minimumScore) {
         LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(getSubIndexes(), getAliases());
-        CountHitCollector countHitCollector = new CountHitCollector();
+        CountHitCollector countHitCollector = new CountHitCollector(minimumScore);
         try {
             internalSearch.getSearcher().search(getQuery(), getLuceneFilter(), countHitCollector);
         } catch (IOException e) {

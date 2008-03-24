@@ -11,8 +11,14 @@ public class CountHitCollector extends HitCollector {
 
     private int totalHits;
 
+    private float minimumScore = 0.0f;
+
+    public CountHitCollector(float minimumScore) {
+        this.minimumScore = minimumScore;
+    }
+
     public void collect(int doc, float score) {
-        if (score > 0.0f) {
+        if (score > minimumScore) {
             totalHits++;
         }
     }

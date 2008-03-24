@@ -59,5 +59,7 @@ public interface SearchEngineQuery {
 
     long count();
 
+    long count(float minimumScore);
+
     Object clone() throws CloneNotSupportedException;
 }

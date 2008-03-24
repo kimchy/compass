@@ -96,17 +96,17 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
         return this;
     }
 
-    public CompassQuery setSubIndexes(String ... subIndexes) {
+    public CompassQuery setSubIndexes(String... subIndexes) {
         searchEngineQuery.setSubIndexes(subIndexes);
         return this;
     }
 
-    public CompassQuery setAliases(String ... aliases) {
+    public CompassQuery setAliases(String... aliases) {
         searchEngineQuery.setAliases(aliases);
         return this;
     }
 
-    public CompassQuery setTypes(Class ... types) {
+    public CompassQuery setTypes(Class... types) {
         if (types == null) {
             searchEngineQuery.setAliases(null);
             return this;
@@ -148,6 +148,10 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
 
     public long count() {
         return searchEngineQuery.count();
+    }
+
+    public long count(float minimumScore) {
+        return searchEngineQuery.count(minimumScore);
     }
 
     public CompassHits hits() throws CompassException {

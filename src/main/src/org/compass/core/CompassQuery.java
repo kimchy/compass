@@ -300,8 +300,16 @@ public interface CompassQuery {
     /**
      * Returns the count of hits that match this query. Note, this will be faster than
      * {@link CompassHitsOperations#length()}.
+     *
+     * <p>Same as calling <code>count(0.0f)</code>.
      */
     long count();
+
+    /**
+     * Returns the count of hits that match this query and are higher than the given score.
+     * Note, this will be faster than {@link CompassHitsOperations#length()}.
+     */
+    long count(float minimumScore);
 
     /**
      * Clones the given query.
