@@ -640,7 +640,7 @@ public class LuceneEnvironment {
 
 
         /**
-         * The initial delay of the scheduled rebuild. In seconds.
+         * The initial delay of the scheduled rebuild. In seconds. Defaults to 10 seconds.
          */
         public static final String SCHEDULE_INITIAL_DELAY = PREFIX + "scheduleInitialDelay";
 
