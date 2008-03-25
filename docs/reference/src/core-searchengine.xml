@@ -695,6 +695,14 @@ if (hits.getSuggestedQuery().isSuggested()) {
           In order to perform spell index level operations, <classname>Compass</classname> exposes now a <literal>getSpellCheckManager()</literal> in order to perform them. Note, this method will return <literal>null</literal> in case spell check is disabled. The spell check manager also allows to get suggestions for a given word.
       </para>
       
+      <para>
+          By default, when the spell check index is enabled, two scheduled tasks will kick in. The first scheduled task is responsible for monitoring the spell check index, and if changed (for example, by a different Compass instance), will reload the latest changes into the index. The interval for this scheduled task can be controlled using the setting <literal>compass.engine.cacheIntervalInvalidation</literal> (which is used by Compass for the actual index as well), and defaults to 5 seconds (it is set in milliseconds).
+      </para>
+      
+      <para>
+          The second scheduler is responsible for identifying that the actual index was changed, and rebuild the spell check index for the relevant sub indexes that were changed. It is important to understand that the spell check index will not be updated when operations are performed against the actual index. It will only be updated if explicitly called for rebuild or concurrentRebuild using the Spell Check Manager, or through the scheduler (which calls the same methods). By default, the scheduler will run every 10 minutes (no sense in rebuilding the spell check index very often), and can be controlled using the following setting: <literal>compass.engine.spellcheck.scheduleInterval</literal> (resolution in seconds).
+      </para>
+      
       <sect2 id="core-searchengine-spellcheck-index">
           <title>Spell Index</title>
           
