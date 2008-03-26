@@ -17,15 +17,20 @@
 package org.compass.gps.device.ibatis;
 
 import java.sql.SQLException;
-import java.util.Iterator;
 
-import com.ibatis.common.util.PaginatedList;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapSession;
+import com.ibatis.sqlmap.client.event.RowHandler;
+import com.ibatis.sqlmap.engine.impl.ExtendedSqlMapClient;
+import com.ibatis.sqlmap.engine.mapping.statement.MappedStatement;
+import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.gps.CompassGpsException;
-import org.compass.gps.IndexPlan;
-import org.compass.gps.device.AbstractGpsDevice;
+import org.compass.gps.device.support.parallel.AbstractParallelGpsDevice;
+import org.compass.gps.device.support.parallel.IndexEntitiesIndexer;
+import org.compass.gps.device.support.parallel.IndexEntity;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * A <code>SqlMapClient</code> device, provides support for iBatis 2 and the
@@ -53,7 +58,7 @@ import org.compass.gps.device.AbstractGpsDevice;
  *
  * @author kimchy
  */
-public class SqlMapClientGpsDevice extends AbstractGpsDevice {
+public class SqlMapClientGpsDevice extends AbstractParallelGpsDevice {
 
     private SqlMapClient sqlMapClient;
 
@@ -102,60 +107,40 @@ public class SqlMapClientGpsDevice extends AbstractGpsDevice {
         }
     }
 
+    protected IndexEntity[] doGetIndexEntities() throws CompassGpsException {
+        ExtendedSqlMapClient extSqlMapClient = (ExtendedSqlMapClient) sqlMapClient;
+        IndexEntity[] entities = new IndexEntity[selectStatementsIds.length];
+        for (int i = 0; i < selectStatementsIds.length; i++) {
+            String statementId = selectStatementsIds[i];
+            MappedStatement statement = extSqlMapClient.getMappedStatement(statementId);
+            if (statement == null) {
+                throw new IllegalArgumentException("Failed to find statement for [" + statementId + "]");
+            }
+            Class resultClass = statement.getResultMap().getResultClass();
+            ResourceMapping resourceMapping = ((CompassGpsInterfaceDevice) getGps()).getMappingForEntityForIndex(resultClass);
+            if (resourceMapping == null) {
+                throw new IllegalArgumentException("Failed to find mapping for class [" + resultClass.getClass() + "]");
+            }
+            Object parameterObject = null;
+            if (statementsParameterObjects != null) {
+                parameterObject = statementsParameterObjects[i];
+            }
+            entities[i] = new SqlMapIndexEntity(resultClass.getName(), resourceMapping.getSubIndexHash().getSubIndexes(),
+                    statementId, parameterObject);
+        }
+        return entities;
+    }
+
+    protected IndexEntitiesIndexer doGetIndexEntitiesIndexer() {
+        return new SqlMapIndexer();
+    }
+
     public SqlMapClient getSqlMapClient() {
         return sqlMapClient;
     }
 
     public void setSqlMapClient(SqlMapClient sqlMapClient) {
         this.sqlMapClient = sqlMapClient;
-    }
-
-    protected void doIndex(CompassSession session, IndexPlan indexPlan) throws CompassGpsException {
-        // TODO take into account the index plan
-        if (log.isInfoEnabled()) {
-            log.info(buildMessage("Indexing the database with page size [" + pageSize + "]"));
-        }
-
-        for (int i = 0; i < selectStatementsIds.length; i++) {
-            SqlMapSession sqlMapSession = sqlMapClient.openSession();
-            try {
-                sqlMapSession.startTransaction();
-                Object parameterObject = null;
-                if (statementsParameterObjects != null) {
-                    parameterObject = statementsParameterObjects[i];
-                }
-                PaginatedList paginatedList = sqlMapSession.queryForPaginatedList(selectStatementsIds[i],
-                        parameterObject, pageSize);
-                do {
-                    if (log.isDebugEnabled()) {
-                        log.debug(buildMessage("Indexing select statement id [" + selectStatementsIds[i]
-                                + "] page [" + paginatedList.getPageIndex() + "]"));
-                    }
-                    for (Iterator it = paginatedList.iterator(); it.hasNext();) {
-                        session.create(it.next());
-                    }
-                    session.evictAll();
-                } while (paginatedList.nextPage());
-                sqlMapSession.commitTransaction();
-            } catch (SQLException e) {
-                throw new SqlMapGpsDeviceException("Failed to fetch paginated list for statement ["
-                        + selectStatementsIds[i] + "]", e);
-            } finally {
-                try {
-                    try {
-                        sqlMapSession.endTransaction();
-                    } catch (Exception e) {
-                        log.warn(buildMessage("Failed to close sqlMap session, ignoring"), e);
-                    }
-                } finally {
-                    sqlMapSession.close();
-                }
-            }
-        }
-
-        if (log.isInfoEnabled()) {
-            log.info(buildMessage("Finished indexing the database"));
-        }
     }
 
     /**
@@ -179,7 +164,7 @@ public class SqlMapClientGpsDevice extends AbstractGpsDevice {
      * for some of the statements, they can be passed using {@link #setStatementsParameterObjects(Object[])} with
      * the order similar to the statement ids.
      *
-     * <p>Note, this method can be replaced with {@link #setIndexStatements(IndexStatement[])}. 
+     * <p>Note, this method can be replaced with {@link #setIndexStatements(IndexStatement[])}.
      */
     public void setSelectStatementsIds(String... statementsNames) {
         this.selectStatementsIds = statementsNames;
@@ -203,4 +188,68 @@ public class SqlMapClientGpsDevice extends AbstractGpsDevice {
         this.pageSize = pageSize;
     }
 
+    private class SqlMapIndexer implements IndexEntitiesIndexer {
+
+        public void performIndex(CompassSession session, IndexEntity[] entities) throws CompassException {
+            for (IndexEntity entity : entities) {
+                SqlMapIndexEntity indexEntity = (SqlMapIndexEntity) entity;
+
+                SqlMapSession sqlMapSession = getSqlMapClient().openSession();
+                try {
+                    sqlMapSession.startTransaction();
+                    if (log.isDebugEnabled()) {
+                        log.debug(buildMessage("Indexing select statement id [" + indexEntity.getStatementId() + "]"));
+                    }
+                    sqlMapSession.queryWithRowHandler(indexEntity.getStatementId(), indexEntity.getParam(),
+                            new SqlMapClientGpsDeviceRowHandler(indexEntity, session, pageSize));
+                    session.evictAll();
+                    sqlMapSession.commitTransaction();
+                } catch (SQLException e) {
+                    throw new SqlMapGpsDeviceException("Failed to fetch paginated list for statement [" + indexEntity.getStatementId() + "]", e);
+                } finally {
+                    try {
+                        try {
+                            sqlMapSession.endTransaction();
+                        } catch (Exception e) {
+                            log.warn(buildMessage("Failed to close sqlMap session, ignoring"), e);
+                        }
+                    } finally {
+                        sqlMapSession.close();
+                    }
+                }
+            }
+        }
+    }
+
+    public class SqlMapClientGpsDeviceRowHandler implements RowHandler {
+
+        private SqlMapIndexEntity indexEntity;
+
+        private CompassSession session;
+
+        private int pageSize;
+
+        private int pageCount = 0;
+
+        private int currentItem = 1;
+
+        public SqlMapClientGpsDeviceRowHandler(SqlMapIndexEntity indexEntity, CompassSession session, int pageSize) {
+            this.session = session;
+            this.pageSize = pageSize;
+            this.indexEntity = indexEntity;
+        }
+
+        public void handleRow(Object o) {
+            session.create(o);
+            if (currentItem == pageSize) {
+                if (log.isTraceEnabled()) {
+                    log.trace(buildMessage("Indexing [" + indexEntity.getName() + "] page number [" + pageCount++ + "]"));
+                }
+                session.evictAll();
+                pageCount++;
+                currentItem = 0;
+            }
+            currentItem++;
+        }
+    }
 }
