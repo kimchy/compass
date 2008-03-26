@@ -60,8 +60,8 @@ distribution/website before using any of them in your own applications.
 - HSQLDB 1.8.0.1 (http://hsqldb.sourceforge.net)
 - required for running PetClinic
 
-* ibatis/ibatis-sqlmap-2.jar, ibatis/ibatis-common-2.jar
-- iBATIS SQL Maps 2.1.7 (http://www.ibatis.com)
+* ibatis/ibatis-2.3.0.677.jar
+- iBATIS SQL Maps 2.3.0.677 (http://www.ibatis.com)
 - required for building compass
 - required at runtime when using Compass's iBATIS SQL Maps 2.0 support
 

@@ -504,8 +504,7 @@
     </library>
     <library name="ibatis">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ibatis/ibatis-common-2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/ibatis/ibatis-sqlmap-2.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ibatis/ibatis-2.3.0.677.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
