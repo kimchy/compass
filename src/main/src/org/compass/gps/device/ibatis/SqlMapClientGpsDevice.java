@@ -42,11 +42,14 @@ import org.compass.gps.device.AbstractGpsDevice;
  * the <code>pageSize</code> property.
  *
  * <p>The select statment can have a parameter object associated with it. If one of
- * the select statements requires a parameter object, than the
+ * the select statements requires a parameter object, then the
  * <code>statementsParameterObjects</code> property must be set. It must have
  * the same size as the <code>selectStatementsIds</code>, and the matching
  * index of the <code>selectStatementsIds</code> should be set at the
  * <code>statementsParameterObjects</code> property.
+ *
+ * <p>As a replacement, the {@link #setIndexStatements(IndexStatement[])} can be used
+ * which combines both a select statement id and its optional parameter.
  *
  * @author kimchy
  */
@@ -155,6 +158,13 @@ public class SqlMapClientGpsDevice extends AbstractGpsDevice {
         }
     }
 
+    /**
+     * Sets the given index statements that will be used. An index statement is a combination of the
+     * statement id and a possible parameter.
+     *
+     * <p>Note, this method is used to replace the combination of {@link #setSelectStatementsIds(String[])} and
+     * {@link #setStatementsParameterObjects(Object[])}.
+     */
     public void setIndexStatements(IndexStatement... statements) {
         selectStatementsIds = new String[statements.length];
         statementsParameterObjects = new Object[statements.length];
@@ -164,16 +174,33 @@ public class SqlMapClientGpsDevice extends AbstractGpsDevice {
         }
     }
 
+    /**
+     * Sets the select statement ids that will be used to fetch data to be indexed. If parameters are required
+     * for some of the statements, they can be passed using {@link #setStatementsParameterObjects(Object[])} with
+     * the order similar to the statement ids.
+     *
+     * <p>Note, this method can be replaced with {@link #setIndexStatements(IndexStatement[])}. 
+     */
     public void setSelectStatementsIds(String... statementsNames) {
         this.selectStatementsIds = statementsNames;
     }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
+    /**
+     * Sets the select statement parameters for each select statment. The order is important and must match the
+     * {@link #setSelectStatementsIds(String[])} order.
+     *
+     * <p>Note, the {@link #setIndexStatements(IndexStatement[])} can replce the combination of
+     * {@link #setSelectStatementsIds(String[])} and {@link #setStatementsParameterObjects(Object[])}.
+     */
     public void setStatementsParameterObjects(Object[] statementsParameterObjects) {
         this.statementsParameterObjects = statementsParameterObjects;
+    }
+
+    /**
+     * Sets the pagination/fetch size when iterating through the result set.
+     */
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
     }
 
 }
