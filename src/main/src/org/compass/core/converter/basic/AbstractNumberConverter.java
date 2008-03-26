@@ -82,14 +82,15 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
 
     protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         if (hasFormatter) {
+            ParseException pe = null;
             for (Formatter formatter : formatters) {
                 try {
                     return fromNumber((Number) formatter.parse(str));
                 } catch (ParseException e) {
-                    // do nothing, continue to the next one
+                    pe = e;
                 }
             }
-            throw new ConversionException("Failed to parse number [" + str + "]");
+            throw new ConversionException("Failed to parse number [" + str + "]", pe);
         } else {
             return defaultFromString(str, resourcePropertyMapping);
         }
