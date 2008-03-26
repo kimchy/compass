@@ -89,7 +89,7 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
                     // do nothing, continue to the next one
                 }
             }
-            throw new ConversionException("Failed to parse date [" + str + "]");
+            throw new ConversionException("Failed to parse number [" + str + "]");
         } else {
             return defaultFromString(str, resourcePropertyMapping);
         }
