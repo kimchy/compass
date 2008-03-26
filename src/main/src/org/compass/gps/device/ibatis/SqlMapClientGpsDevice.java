@@ -31,17 +31,17 @@ import org.compass.gps.device.AbstractGpsDevice;
  * A <code>SqlMapClient</code> device, provides support for iBatis 2 and the
  * <code>index</code> operation. The device holds a list of iBatis select
  * statements ids, executes them, and index the result.
- * <p/>
- * The device must be initialized with a <code>SqlMapClient</code> instance.
+ *
+ * <p>The device must be initialized with a <code>SqlMapClient</code> instance.
  * When indexing the data, a <code>SqlMapSession</code> will be opened, and a
  * transaction will be started. The device will then execute the select
  * statement id, and use the iBatis <code>PaginatedList</code> to index the
  * data.
- * <p/>
- * The page size for the <code>PaginatedList</code> can be controlled using
+ *
+ * <p>The page size for the <code>PaginatedList</code> can be controlled using
  * the <code>pageSize</code> property.
- * <p/>
- * The select statment can have a parameter object associated with it. If one of
+ *
+ * <p>The select statment can have a parameter object associated with it. If one of
  * the select statements requires a parameter object, than the
  * <code>statementsParameterObjects</code> property must be set. It must have
  * the same size as the <code>selectStatementsIds</code>, and the matching
@@ -64,7 +64,13 @@ public class SqlMapClientGpsDevice extends AbstractGpsDevice {
 
     }
 
-    public SqlMapClientGpsDevice(String deviceName, SqlMapClient sqlMapClient, String[] selectStatementsIds) {
+    public SqlMapClientGpsDevice(String deviceName, SqlMapClient sqlMapClient, IndexStatement... statements) {
+        setName(deviceName);
+        this.sqlMapClient = sqlMapClient;
+        setIndexStatements(statements);
+    }
+
+    public SqlMapClientGpsDevice(String deviceName, SqlMapClient sqlMapClient, String... selectStatementsIds) {
         this(deviceName, sqlMapClient, selectStatementsIds, null);
     }
 
@@ -149,24 +155,21 @@ public class SqlMapClientGpsDevice extends AbstractGpsDevice {
         }
     }
 
-    public String[] getSelectStatementsIds() {
-        return selectStatementsIds;
+    public void setIndexStatements(IndexStatement... statements) {
+        selectStatementsIds = new String[statements.length];
+        statementsParameterObjects = new Object[statements.length];
+        for (int i = 0; i < statements.length; i++) {
+            selectStatementsIds[i] = statements[i].getStatementId();
+            statementsParameterObjects[i] = statements[i].getParam();
+        }
     }
 
-    public void setSelectStatementsIds(String[] statementsNames) {
+    public void setSelectStatementsIds(String... statementsNames) {
         this.selectStatementsIds = statementsNames;
-    }
-
-    public int getPageSize() {
-        return pageSize;
     }
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
-    }
-
-    public Object[] getStatementsParameterObjects() {
-        return statementsParameterObjects;
     }
 
     public void setStatementsParameterObjects(Object[] statementsParameterObjects) {

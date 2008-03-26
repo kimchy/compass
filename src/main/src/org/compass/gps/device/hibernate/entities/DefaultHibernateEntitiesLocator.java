@@ -71,7 +71,7 @@ public class DefaultHibernateEntitiesLocator implements HibernateEntitiesLocator
                 log.debug("Entity [" + entityname + "] will be indexed");
             }
         }
-        return (EntityInformation[]) entitiesList.toArray(new EntityInformation[entitiesList.size()]);
+        return entitiesList.toArray(new EntityInformation[entitiesList.size()]);
     }
 
     /**
