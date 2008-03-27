@@ -243,7 +243,7 @@ public class SqlMapClientGpsDevice extends AbstractParallelGpsDevice {
             session.create(o);
             if (currentItem == pageSize) {
                 if (log.isTraceEnabled()) {
-                    log.trace(buildMessage("Indexing [" + indexEntity.getName() + "] page number [" + pageCount++ + "]"));
+                    log.trace(buildMessage("Indexing [" + indexEntity.getName() + "] page number [" + pageCount + "]"));
                 }
                 session.evictAll();
                 pageCount++;
