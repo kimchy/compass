@@ -475,6 +475,13 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting("compass.engine.store.space.bucketSize", getElementAttribute(connEle, "bucketSize"));
             return;
         }
+        // --- Terracota Connection ---
+        child = DomUtils.getChildElementsByTagName(ele, "tc", true);
+        if (child.size() == 1) {
+            Element connEle = (Element) child.get(0);
+            settings.setSetting("compass.engine.store.tc.bufferSize", getElementAttribute(connEle, "bufferSize"));
+            return;
+        }
         // --- Coherence Connection ---
         child = DomUtils.getChildElementsByTagName(ele, "coherence", true);
         if (child.size() == 1) {

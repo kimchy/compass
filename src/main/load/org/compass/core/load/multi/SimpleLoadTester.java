@@ -189,7 +189,7 @@ public class SimpleLoadTester {
             final Long id = new Long(i);
             template.execute(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    A a = (A) session.get(A.class, id);
+                    A a = session.get(A.class, id);
                     if (a == null) {
                         System.err.println("FAILURE ID [" + id + "] FINAL CHECK NULL");
                     }

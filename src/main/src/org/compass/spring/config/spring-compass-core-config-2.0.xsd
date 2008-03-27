@@ -1276,6 +1276,7 @@
                 <xsd:element name="jdbc" type="jdbcConnType"/>
                 <xsd:element name="space" type="spaceConnType"/>
                 <xsd:element name="coherence" type="coherenceConnType"/>
+                <xsd:element name="tc" type="tcConnType"/>
                 <xsd:element name="custom" type="customConnType"/>
             </xsd:choice>
             <xsd:element name="lockFactory" minOccurs="0" maxOccurs="1">
@@ -1399,6 +1400,20 @@
                     <xsd:enumeration value="invocable"/>
                 </xsd:restriction>
             </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="tcConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A Terracota based index.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="bufferSize" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The buffer size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
         </xsd:attribute>
     </xsd:complexType>
     <xsd:complexType name="mmapConnType">

@@ -154,6 +154,12 @@
                     <attribute name="Implementation-Version" value="${compass-version}"/>
                     <attribute name="Compass-Version" value="${compass-version}"/>
                     <attribute name="Compass-Date" value="${timestamp}"/>
+                    <attribute name="Bundle-Category" value="compass"/>
+                    <attribute name="Bundle-Copyright" value="Compass"/>
+                    <attribute name="Bundle-ManifestVersion" value="2"/>
+                    <attribute name="Bundle-Name" value="Compass"/>
+                    <attribute name="Bundle-SymbolicName" value="org.compass.compass"/>
+                    <attribute name="Bundle-Version" value="${compass-version}"/>
                 </manifest>
             </jar>
         </sequential>
@@ -161,9 +167,9 @@
 
     <target name="fulljar" depends="build,initdist" description="Create full JAR file with all Compass classes">
 
-        <delete file="${dist.dir}/${compass-name}.jar"/>
+        <delete file="${dist.dir}/${compass-jarname}.jar"/>
         <jar-module includes="META-INF/**,org/apache/lucene/**,org/compass/**,org/springframework/**"
-                    name="${compass-name}" target-dir="${dist.dir}"/>
+                    name="${compass-jarname}" target-dir="${dist.dir}"/>
 
     </target>
 
@@ -176,8 +182,8 @@
             </classpath>
         </taskdef>
 
-        <delete file="${dist.dir}/${compass-name}14.jar"/>
-        <retrotranslator target="1.4" srcjar="${dist.dir}/${compass-name}.jar" destjar="${dist.dir}/${compass-name}14.jar"
+        <delete file="${dist.dir}/${compass-jarname14}.jar"/>
+        <retrotranslator target="1.4" srcjar="${dist.dir}/${compass-jarname}.jar" destjar="${dist.dir}/${compass-jarname14}.jar"
                          verify="false" failonwarning="false" embed="org.compass.retrotranslator" >
             <classpath refid="compile-libs"/>
         </retrotranslator>
@@ -186,9 +192,9 @@
 
     <target name="srczip" depends="initdist" description="Create source ZIP (containing Java sources)">
 
-        <delete file="${dist.dir}/compass-src.zip"/>
+        <delete file="${dist.dir}/${compass-jarname}.zip"/>
 
-        <zip zipfile="${dist.dir}/compass-src.zip">
+        <zip zipfile="${dist.dir}/${compass-jarname}.zip">
             <fileset dir="${main.src.dir}">
                 <include name="org/apache/lucene/**"/>
                 <include name="org/compass/**"/>

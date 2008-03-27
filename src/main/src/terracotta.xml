@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-fragment>
+    <instrumented-classes>
+        <include>
+            <class-expression>org.compass.needle.terracotta.*</class-expression>
+        </include>
+        <include>
+          <class-expression>org.apache.lucene.store.Directory</class-expression>
+        </include>
+        <include>
+          <class-expression>org.apache.lucene.store.LockFactory</class-expression>
+        </include>
+    </instrumented-classes>
+
+    <locks>
+        <autolock>
+            <method-expression>* org.compass.needle.terracotta.*.*(..)</method-expression>
+            <lock-level>write</lock-level>
+        </autolock>
+        <autolock>
+            <method-expression>* org.compass.needle.terracotta.*.get*(..)</method-expression>
+            <lock-level>read</lock-level>
+        </autolock>
+    </locks>
+
+    <roots>
+        <root>
+            <field-name>org.compass.needle.terracotta.TerracottaDirectoryStore.dirs</field-name>
+        </root>
+    </roots>
+</xml-fragment>
