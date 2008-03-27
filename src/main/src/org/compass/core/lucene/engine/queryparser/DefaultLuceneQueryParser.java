@@ -23,6 +23,7 @@ import org.apache.lucene.queryParser.CompassMultiFieldQueryParser;
 import org.apache.lucene.queryParser.CompassQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
@@ -52,11 +53,17 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
 
     private boolean allowConstantScorePrefixQuery;
 
+    private float fuzzyMinSimilarity;
+
+    private int fuzzyPrefixLength;
+
     private QueryParser.Operator defaultOperator;
 
     public void configure(CompassSettings settings) throws CompassException {
         allowLeadingWildcard = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_LEADING_WILDCARD, true);
         allowConstantScorePrefixQuery = settings.getSettingAsBoolean(LuceneEnvironment.QueryParser.DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY, true);
+        fuzzyMinSimilarity = settings.getSettingAsFloat(LuceneEnvironment.QueryParser.DEFAULT_PARSER_FUZZY_MIN_SIMILARITY, FuzzyQuery.defaultMinSimilarity);
+        fuzzyPrefixLength = settings.getSettingAsInt(LuceneEnvironment.QueryParser.DEFAULT_PARSER_FUZZY_PERFIX_LENGTH, FuzzyQuery.defaultPrefixLength);
         String sDefaultOperator = settings.getSetting(LuceneEnvironment.QueryParser.DEFAULT_PARSER_DEFAULT_OPERATOR, "AND");
         if ("and".equalsIgnoreCase(sDefaultOperator)) {
             defaultOperator = QueryParser.Operator.AND;
@@ -83,6 +90,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         queryParser.setDefaultOperator(getOperator(operator));
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
+        queryParser.setFuzzyMinSim(fuzzyMinSimilarity);
+        queryParser.setFuzzyPrefixLength(fuzzyPrefixLength);
         try {
             Query query = queryParser.parse(queryString);
             return new QueryHolder(query, queryParser.isSuggestedQuery());
@@ -100,6 +109,8 @@ public class DefaultLuceneQueryParser implements LuceneQueryParser, CompassMappi
         queryParser.setDefaultOperator(getOperator(operator));
         queryParser.setAllowLeadingWildcard(allowLeadingWildcard);
         queryParser.setAllowConstantScorePrefixQuery(allowConstantScorePrefixQuery);
+        queryParser.setFuzzyMinSim(fuzzyMinSimilarity);
+        queryParser.setFuzzyPrefixLength(fuzzyPrefixLength);
         try {
             Query query = queryParser.parse(queryString);
             return new QueryHolder(query, queryParser.isSuggestedQuery());

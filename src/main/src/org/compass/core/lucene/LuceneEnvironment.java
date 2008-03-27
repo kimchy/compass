@@ -1278,6 +1278,16 @@ public class LuceneEnvironment {
         public static final String DEFAULT_PARSER_ALLOW_CONSTANT_SCORE_PREFIX_QUERY = "allowConstantScorePrefixQuery";
 
         /**
+         * The minimum fuzzy similarity for the query parser. Default to <code>0.5f</code>.
+         */
+        public static final String DEFAULT_PARSER_FUZZY_MIN_SIMILARITY = "fuzzyMinSimilarity";
+
+        /**
+         * Get the prefix length for fuzzy queries. Default to <code>0</code>.
+         */
+        public static final String DEFAULT_PARSER_FUZZY_PERFIX_LENGTH = "fuzzyPrefixLength";
+
+        /**
          * The default operator when parsing query strings. Defaults to <code>AND</code>. Can be either
          * <code>AND</code> or <code>OR</code>.
          */
