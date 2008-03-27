@@ -25,6 +25,13 @@ public class MMapDirectoryStore extends FSDirectoryStore {
 
     public static final String PROTOCOL = "mmap://";
 
+    protected String findIndexPath(String connection) {
+        if (connection.startsWith(PROTOCOL)) {
+            return connection.substring(PROTOCOL.length());
+        }
+        return connection;
+    }
+
     protected String getFSDirectoryClass() {
         return "org.apache.lucene.store.MMapDirectory";
     }

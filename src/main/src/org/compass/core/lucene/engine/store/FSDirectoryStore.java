@@ -45,11 +45,7 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
 
     public void configure(CompassSettings settings) throws CompassException {
         String connection = settings.getSetting(CompassEnvironment.CONNECTION);
-        if (connection.startsWith(PROTOCOL)) {
-            indexPath = connection.substring(PROTOCOL.length());
-        } else {
-            indexPath = connection;
-        }
+        indexPath = findIndexPath(connection);
         // Make sure we use the FSDirectory
         System.setProperty("org.apache.lucene.FSDirectory.class", getFSDirectoryClass());
         FSDirectory directory;
@@ -63,6 +59,13 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
             throw new SearchEngineException("Setting type of FS directory is a JVM "
                     + "level setting, you can not set different values within the same JVM");
         }
+    }
+
+    protected String findIndexPath(String connection) {
+        if (connection.startsWith(PROTOCOL)) {
+            return connection.substring(PROTOCOL.length());
+        }
+        return connection;
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
