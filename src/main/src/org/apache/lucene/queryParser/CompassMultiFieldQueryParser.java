@@ -134,11 +134,7 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
      */
     protected Query getRangeQuery(String field, String part1, String part2, boolean inclusive) throws ParseException {
         if (field == null) {
-            Vector clauses = new Vector();
-            for (int i = 0; i < fields.length; i++) {
-                clauses.add(new BooleanClause(getRangeQuery(fields[i], part1, part2, inclusive), BooleanClause.Occur.SHOULD));
-            }
-            return getBooleanQuery(clauses, true);
+            return super.getRangeQuery(field, part1, part2, inclusive);
         }
 
 
@@ -173,21 +169,15 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
     }
 
     protected Query getPrefixQuery(String field, String termStr) throws ParseException {
+        if (field == null) {
+            return super.getPrefixQuery(field, termStr);
+        }
         ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
         lookup.setConvertOnlyWithDotPath(false);
 
         if (!allowConstantScorePrefixQuery) {
             return super.getPrefixQuery(lookup.getPath(), termStr);
         }
-
-        if (field == null) {
-            Vector clauses = new Vector();
-            for (int i = 0; i < fields.length; i++) {
-                clauses.add(new BooleanClause(getPrefixQuery(fields[i], termStr), BooleanClause.Occur.SHOULD));
-            }
-            return getBooleanQuery(clauses, true);
-        }
-
 
         if (getLowercaseExpandedTerms()) {
             termStr = termStr.toLowerCase();
