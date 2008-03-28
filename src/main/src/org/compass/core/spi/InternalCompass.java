@@ -22,6 +22,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.events.CompassEventManager;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
@@ -55,4 +56,6 @@ public interface InternalCompass extends Compass {
     ConverterLookup getConverterLookup();
 
     PropertyNamingStrategy getPropertyNamingStrategy();
+
+    CompassEventManager getEventManager();
 }

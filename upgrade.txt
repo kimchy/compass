@@ -71,6 +71,7 @@ VERSION 2.0.0 RC1
 
 6. By default, Compass will now try to use Index type based on the actual type. For example, every formattable type
    (such as number and dates), URL, URI, and Boolean are now UN_TOKENIZED by defualt (if not explicitly specified).
+7. Removed the method saveResource since save(Object obj) can also accepts a resource.
 
 VERSION 2.0.0 M3 (March 19, 2008)
 =================================

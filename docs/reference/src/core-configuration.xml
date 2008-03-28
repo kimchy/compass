@@ -345,4 +345,21 @@ xsi:schemaLocation="http://www.compass-project.org/schema/core-config
 
   </sect1>
 
+  <sect1 id="core-configuration-events">
+    <title>Configuring Callback Events</title>
+
+    <para>
+      Compass allows to configure events that will be fired once certain operations occur in using Compass, for example, <literal>save</literal> operation.
+    </para>
+
+    <para>
+      Configuring event listener can be done settings. For example, to configure a pre save event listener, the following setting should be used: <literal>compass.event.preSave.mylistener.type</literal> and its value can be the actual class name of the listener.
+    </para>
+    
+    <para>
+      More information for each listener can be found in the javadoc under the <literal>org.compass.events</literal> package. An important note with regards to pre listener is the fact that they can filter out certain operations.
+    </para>
+
+  </sect1>
+
 </chapter>

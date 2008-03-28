@@ -133,14 +133,6 @@ public interface CompassOperations {
     Resource loadResource(String alias, Object... ids) throws CompassException;
 
     /**
-     * Saves a resource within Search Engine.
-     *
-     * @param resource The resource to save
-     * @throws CompassException
-     */
-    void saveResource(Resource resource) throws CompassException;
-
-    /**
      * Deletes an object from Compass. The object must have been either loaded
      * by Compass or it's ids must be set if already known.
      *

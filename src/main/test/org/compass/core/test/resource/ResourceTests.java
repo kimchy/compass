@@ -110,6 +110,28 @@ public class ResourceTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testSingleIdResourceDelete() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Resource r = getResourceFactory().createResource("a");
+        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        r.addProperty(id);
+        r.addProperty(getCompass().getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
+
+        session.save(r);
+
+        r = session.getResource("a", "1");
+        assertEquals("this is a test", r.getValue("mvalue"));
+
+        session.delete(r);
+        r = session.getResource("a", r);
+        assertNull(r);
+
+        tr.commit();
+        session.close();
+    }
+
     public void testMultipleIdResource() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();

@@ -39,6 +39,7 @@ import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.engine.spi.InternalSearchEngineFactory;
+import org.compass.core.events.CompassEventManager;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.id.IdentifierGenerator;
 import org.compass.core.id.UUIDGenerator;
@@ -87,6 +88,8 @@ public class DefaultCompass implements InternalCompass {
 
     private ExecutorManager executorManager;
 
+    private CompassEventManager eventManager;
+
     protected CompassSettings settings;
 
     private FirstLevelCacheFactory firstLevelCacheFactory;
@@ -129,6 +132,9 @@ public class DefaultCompass implements InternalCompass {
         this.settings = settings;
         this.duplicate = duplicate;
 
+        this.eventManager = new CompassEventManager(this, mapping);
+        eventManager.configure(settings);
+
         if (!duplicate) {
             registerJndi();
         }
@@ -170,6 +176,10 @@ public class DefaultCompass implements InternalCompass {
 
     public ExecutorManager getExecutorManager() {
         return executorManager;
+    }
+
+    public CompassEventManager getEventManager() {
+        return this.eventManager;
     }
 
     public CompassSession openSession() {

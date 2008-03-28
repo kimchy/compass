@@ -43,6 +43,74 @@ public class CompassEnvironment {
     public static final String MAPPING_PREFIX = "compass.mapping";
 
     /**
+     * Allows to set event listeners for Compas.
+     */
+    public abstract class Event {
+
+        public static final String TYPE = "type";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PreCreateEventListener}.
+         */
+        public static final String PREFIX_PRE_CREATE = "compass.event.preCreate";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PreCreateResourceEventListener}.
+         */
+        public static final String PREFIX_PRE_CREATE_RESOURCE = "compass.event.preCreateResource";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PreDeleteEventListener}.
+         */
+        public static final String PREFIX_PRE_DELETE = "compass.event.preDelete";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PreDeleteResourceEventListener}.
+         */
+        public static final String PREFIX_PRE_DELETE_RESOURCE = "compass.event.preDeleteResource";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PreSaveEventListener}.
+         */
+        public static final String PREFIX_PRE_SAVE = "compass.event.preSave";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PreSaveResourceEventListener}.
+         */
+        public static final String PREFIX_PRE_SAVE_RESOURCE = "compass.event.preSaveResource";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PostCreateEventListener}.
+         */
+        public static final String PREFIX_POST_CREATE = "compass.event.postCreate";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PostCreateResourceEventListener}.
+         */
+        public static final String PREFIX_POST_CREATE_RESOURCE = "compass.event.postCreateResource";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PostDeleteEventListener}.
+         */
+        public static final String PREFIX_POST_DELETE = "compass.event.postDelete";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PostDeleteResourceEventListener}.
+         */
+        public static final String PREFIX_POST_DELETE_RESOURCE = "compass.event.postDeleteResource";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PostSaveEventListener}.
+         */
+        public static final String PREFIX_POST_SAVE = "compass.event.postSave";
+
+        /**
+         * Allows to configure {@link org.compass.core.events.PostSaveResourceEventListener}.
+         */
+        public static final String PREFIX_POST_SAVE_RESOURCE = "compass.event.postSaveResource";
+    }
+
+    /**
      * Settings for global rregistration and handling of property accessors.
      * <p/>
      * This is a group settings, you can set more than one property accessor setting.
