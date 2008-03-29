@@ -83,7 +83,7 @@ public class TerracottaIndexInput extends IndexInput implements Cloneable {
         }
     }
 
-    private final void switchCurrentBuffer() throws IOException {
+    private void switchCurrentBuffer() throws IOException {
         if (currentBufferIndex >= file.getNumBuffers()) {
             // end of file reached, no more buffers left
             throw new IOException("Read past EOF");

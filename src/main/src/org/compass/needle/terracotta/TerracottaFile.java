@@ -30,9 +30,8 @@ final class TerracottaFile {
 
     private long lastModified = System.currentTimeMillis();
 
-    private ReentrantLock lock  = new ReentrantLock();
+    private ReentrantLock lock = new ReentrantLock();
 
-    // File used as buffer, in no RAMDirectory
     TerracottaFile() {
     }
 
@@ -70,6 +69,10 @@ final class TerracottaFile {
         return buffer.buffer.buffer;
     }
 
+    final void setFirstBuffer(byte[] buffer) {
+        buffers.get(0).buffer.buffer = buffer;
+    }
+
     final byte[] getBuffer(int index) {
         return buffers.get(index).buffer.buffer;
     }
@@ -102,7 +105,7 @@ final class TerracottaFile {
     }
 
     private class Buffer {
-        public final byte[] buffer;
+        public byte[] buffer;
 
         private Buffer(byte[] buffer) {
             this.buffer = buffer;

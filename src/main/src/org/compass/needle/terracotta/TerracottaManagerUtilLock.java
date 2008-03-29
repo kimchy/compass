@@ -17,34 +17,39 @@
 package org.compass.needle.terracotta;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import com.tc.object.bytecode.ManagerUtil;
 import com.tc.object.lockmanager.api.LockLevel;
 import org.apache.lucene.store.Lock;
-import org.apache.lucene.store.LockFactory;
 
 /**
- * A Terracotta {@link com.tc.object.bytecode.ManagerUtil} based lock factory.
- *
- * <p>Currently disabled since locking does not seem to work.
- *
  * @author kimchy
  */
-public class TerracottaManagerUtilLockFactory extends LockFactory {
+class TerracottaManagerUtilLock extends Lock {
 
-    private final String lockPrefix = UUID.randomUUID().toString();
+    private String lockName;
 
-    public TerracottaManagerUtilLockFactory() {
+    public TerracottaManagerUtilLock(String lockName) {
+        this.lockName = lockName;
     }
 
-    public Lock makeLock(String lockName) {
-        return new TerracottaManagerUtilLock(lockPrefix + "-" + lockName);
+    public boolean obtain() throws IOException {
+        return ManagerUtil.tryBeginLock(lockName, LockLevel.WRITE);
     }
 
-    public void clearLock(String lockName) throws IOException {
-        if (ManagerUtil.isLocked(lockName, LockLevel.WRITE)) {
+    public void release() {
+        try {
             ManagerUtil.commitLock(lockName);
+        } catch (Exception e) {
+            // we get this exception if this is not locked
         }
+    }
+
+    public boolean isLocked() {
+        return ManagerUtil.isLocked(lockName, LockLevel.WRITE);
+    }
+
+    public String toString() {
+        return "TerracottaManagerUtilLock: " + lockName;
     }
 }

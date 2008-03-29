@@ -37,12 +37,17 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
 
     public static final String BUFFER_SIZE_PROP = "compass.engine.store.tc.bufferSize";
 
+    public static final String FLUSH_RATE_PROP = "compass.engine.store.tc.flushRate";
+
     private final Map<String, Map<String, TerracottaDirectory>> dirs = new HashMap<String, Map<String, TerracottaDirectory>>();
 
     private int bufferSize;
 
+    private int flushRate;
+
     public void configure(CompassSettings settings) throws CompassException {
         bufferSize = settings.getSettingAsInt(BUFFER_SIZE_PROP, TerracottaDirectory.DEFAULT_BUFFER_SIZE);
+        flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, TerracottaDirectory.DEFAULT_FLUSH_RATE);
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
@@ -52,7 +57,7 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
                 subIndexDirs = new HashMap<String, TerracottaDirectory>();
                 dirs.put(subContext, subIndexDirs);
             }
-            TerracottaDirectory dir = new TerracottaDirectory(bufferSize);
+            TerracottaDirectory dir = new TerracottaDirectory(bufferSize, flushRate);
             subIndexDirs.put(subIndex, dir);
             return dir;
         }

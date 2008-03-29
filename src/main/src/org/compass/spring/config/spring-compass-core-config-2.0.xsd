@@ -791,7 +791,7 @@
                 </xsd:complexType>
             </xsd:element>
         </xsd:sequence>
-        <xsd:attribute name="useCompoundFile" type="booleanType" use="optional" default="true">
+        <xsd:attribute name="useCompoundFile" type="booleanType" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     Setting to turn on usage of a compound file. When on, multiple files for each segment are merged

@@ -44,24 +44,31 @@ public class TerracottaDirectory extends Directory {
 
     public static final transient int DEFAULT_BUFFER_SIZE = 4096;
 
+    public static final transient int DEFAULT_FLUSH_RATE = 10;
+
     private static final transient Log log = LogFactory.getLog(TerracottaDirectory.class);
 
     private Map<String, TerracottaFile> fileMap = new ConcurrentHashMap<String, TerracottaFile>();
 
     private final int bufferSize;
 
+    private final int flushRate;
+
     public TerracottaDirectory() {
-        this(DEFAULT_BUFFER_SIZE);
+        this(DEFAULT_BUFFER_SIZE, DEFAULT_FLUSH_RATE);
     }
 
     /**
      * Constructs an empty {@link Directory}.
      */
-    public TerracottaDirectory(int bufferSize) {
+    public TerracottaDirectory(int bufferSize, int flushRate) {
         this.bufferSize = bufferSize;
+        this.flushRate = flushRate;
         try {
             Class.forName("com.tc.object.bytecode.ManagerUtil", true, Thread.currentThread().getContextClassLoader());
-            setLockFactory(new TerracottaManagerUtilLockFactory());
+//            setLockFactory(new TerracottaManagerUtilLockFactory());
+            // Use the default lock factory for now as there are some problems with ManagerUtil
+            setLockFactory(new TerracottaLockFactory());
         } catch (ClassNotFoundException e) {
             setLockFactory(new TerracottaLockFactory());
         }
@@ -77,7 +84,7 @@ public class TerracottaDirectory extends Directory {
     }
 
     private TerracottaDirectory(Directory dir, boolean closeDir) throws IOException {
-        this(DEFAULT_BUFFER_SIZE);
+        this(DEFAULT_BUFFER_SIZE, DEFAULT_FLUSH_RATE);
         Directory.copy(dir, this, closeDir);
     }
 
@@ -181,7 +188,7 @@ public class TerracottaDirectory extends Directory {
         if (fromFile == null) {
             throw new FileNotFoundException(from);
         }
-        TerracottaFile toFile = fileMap.get(to);
+        // not thread safe (dough), but it is deprecated...
         fileMap.remove(from);
         fileMap.put(to, fromFile);
     }
@@ -190,9 +197,7 @@ public class TerracottaDirectory extends Directory {
      * Creates a new, empty file in the directory with the given name. Returns a stream writing this file.
      */
     public IndexOutput createOutput(String name) throws IOException {
-        TerracottaFile file = new TerracottaFile();
-        fileMap.put(name, file);
-        return new TerracottaIndexOutput(file, bufferSize);
+        return new TerracottaIndexOutput(this, name);
     }
 
     /**
@@ -204,6 +209,18 @@ public class TerracottaDirectory extends Directory {
             throw new FileNotFoundException(name);
         }
         return new TerracottaIndexInput(file, bufferSize);
+    }
+
+    void addFile(String name, TerracottaFile file) {
+        fileMap.put(name, file);
+    }
+
+    int getBufferSize() {
+        return bufferSize;
+    }
+
+    int getFlushRate() {
+        return flushRate;
     }
 
     /**
