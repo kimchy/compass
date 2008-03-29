@@ -469,6 +469,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             analyzer = searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer();
         }
         IndexWriter indexWriter = new IndexWriter(dir, autoCommit, analyzer, create, deletionPolicy);
+
+        indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));
+        indexWriter.setMergeScheduler(MergeSchedulerFactory.create(this, settings));
+
         indexWriter.setMaxMergeDocs(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, luceneSettings.getMaxMergeDocs()));
         indexWriter.setMergeFactor(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, luceneSettings.getMergeFactor()));
         indexWriter.setRAMBufferSizeMB(settings.getSettingAsDouble(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, luceneSettings.getRamBufferSize()));
@@ -477,8 +481,6 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setUseCompoundFile(searchEngineStore.isUseCompoundFile());
         indexWriter.setMaxFieldLength(luceneSettings.getMaxFieldLength());
         indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
-        indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));
-        indexWriter.setMergeScheduler(MergeSchedulerFactory.create(this, settings));
         return indexWriter;
     }
 
