@@ -17,7 +17,7 @@
 package org.compass.needle.terracotta;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.LockFactory;
@@ -27,7 +27,9 @@ import org.apache.lucene.store.LockFactory;
  */
 public class TerracottaLockFactory extends LockFactory {
 
-    private final HashSet<String> locks = new HashSet<String>();
+    static final Object MARK = new Object();
+
+    private final ConcurrentHashMap<String, Object> locks = new ConcurrentHashMap<String, Object>();
 
     public Lock makeLock(String lockName) {
         // We do not use the LockPrefix at all, because the private
@@ -37,11 +39,7 @@ public class TerracottaLockFactory extends LockFactory {
     }
 
     public void clearLock(String lockName) throws IOException {
-        synchronized (locks) {
-            if (locks.contains(lockName)) {
-                locks.remove(lockName);
-            }
-        }
+        locks.remove(lockName);
     }
 }
 

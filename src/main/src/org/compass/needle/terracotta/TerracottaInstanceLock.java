@@ -17,7 +17,7 @@
 package org.compass.needle.terracotta;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.lucene.store.Lock;
 
@@ -27,29 +27,23 @@ import org.apache.lucene.store.Lock;
 class TerracottaInstanceLock extends Lock {
 
     private String lockName;
-    private final HashSet<String> locks;
+    private final ConcurrentHashMap<String, Object> locks;
 
-    public TerracottaInstanceLock(HashSet<String> locks, String lockName) {
+    public TerracottaInstanceLock(ConcurrentHashMap<String, Object> locks, String lockName) {
         this.locks = locks;
         this.lockName = lockName;
     }
 
     public boolean obtain() throws IOException {
-        synchronized (locks) {
-            return locks.add(lockName);
-        }
+        return locks.putIfAbsent(lockName, TerracottaLockFactory.MARK) == null;
     }
 
     public void release() {
-        synchronized (locks) {
-            locks.remove(lockName);
-        }
+        locks.remove(lockName);
     }
 
     public boolean isLocked() {
-        synchronized (locks) {
-            return locks.contains(lockName);
-        }
+        return locks.containsKey(lockName);
     }
 
     public String toString() {
