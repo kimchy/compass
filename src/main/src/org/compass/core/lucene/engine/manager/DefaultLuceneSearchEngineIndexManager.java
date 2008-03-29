@@ -474,7 +474,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setRAMBufferSizeMB(settings.getSettingAsDouble(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, luceneSettings.getRamBufferSize()));
         indexWriter.setMaxBufferedDocs(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, luceneSettings.getMaxBufferedDocs()));
         indexWriter.setMaxBufferedDeleteTerms(settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DELETED_TERMS, luceneSettings.getMaxBufferedDeletedTerms()));
-        indexWriter.setUseCompoundFile(luceneSettings.isUseCompoundFile());
+        indexWriter.setUseCompoundFile(searchEngineStore.isUseCompoundFile());
         indexWriter.setMaxFieldLength(luceneSettings.getMaxFieldLength());
         indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
         indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));

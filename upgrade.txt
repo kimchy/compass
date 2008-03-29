@@ -72,6 +72,9 @@ VERSION 2.0.0 RC1
 6. By default, Compass will now try to use Index type based on the actual type. For example, every formattable type
    (such as number and dates), URL, URI, and Boolean are now UN_TOKENIZED by defualt (if not explicitly specified).
 7. Removed the method saveResource since save(Object obj) can also accepts a resource.
+8. Compass now, by default (if not set), will use the preferable flag if to use the compound file format based on the
+   actual store configured. File system based will be in compound file format, others (jdbc, coherence, gigaspaces,
+   terracotta) will not use it.
 
 VERSION 2.0.0 M3 (March 19, 2008)
 =================================

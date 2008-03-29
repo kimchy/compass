@@ -156,6 +156,10 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         return indexPath + "/" + subContext + "/" + subIndex;
     }
 
+    public boolean suggestedUseCompoundFile() {
+        return true;
+    }
+
     protected String getFSDirectoryClass() {
         return "org.apache.lucene.store.FSDirectory";
     }

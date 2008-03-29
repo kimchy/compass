@@ -64,8 +64,6 @@ public class LuceneSettings {
 
     private int mergeFactor;
 
-    private boolean useCompoundFile;
-
     private int maxFieldLength;
 
     private int maxBufferedDocs;
@@ -88,7 +86,7 @@ public class LuceneSettings {
 
     private boolean clearCacheOnCommit;
 
-    
+
     public void configure(CompassSettings settings) throws SearchEngineException {
         this.settings = settings;
         connection = settings.getSetting(CompassEnvironment.CONNECTION);
@@ -188,16 +186,12 @@ public class LuceneSettings {
         }
 
         maxMergeDocs = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_MERGE_DOCS, Integer.MAX_VALUE);
-        useCompoundFile = settings.getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, true);
-        if (log.isDebugEnabled()) {
-            log.debug("Using compound format [" + useCompoundFile + "]");
-        }
 
         clearCacheOnCommit = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, true);
         if (log.isDebugEnabled()) {
             log.debug("Using clear cache on commit [" + clearCacheOnCommit + "]");
         }
-        
+
         // pure lucene transaction settings
         mergeFactor = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, 10);
         maxBufferedDocs = settings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MAX_BUFFERED_DOCS, IndexWriter.DISABLE_AUTO_FLUSH);
@@ -253,10 +247,6 @@ public class LuceneSettings {
 
     public int getMergeFactor() {
         return mergeFactor;
-    }
-
-    public boolean isUseCompoundFile() {
-        return useCompoundFile;
     }
 
     public int getMaxFieldLength() {
@@ -318,7 +308,7 @@ public class LuceneSettings {
     public boolean isClearCacheOnCommit() {
         return this.clearCacheOnCommit;
     }
-    
+
     public String getSubContext() {
         return subContext;
     }

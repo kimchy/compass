@@ -179,4 +179,9 @@ public interface LuceneSearchEngineStore {
      * with this store.
      */
     boolean requiresAsyncTransactionalContext();
+
+    /**
+     * Should we use the compound file format or not.
+     */
+    boolean isUseCompoundFile();
 }

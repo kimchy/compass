@@ -85,6 +85,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private Map<String, Map<String, Directory>> dirs;
 
+    private boolean useCompoundFile;
+
     private volatile boolean closed = false;
 
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
@@ -132,6 +134,17 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         if (directoryStore instanceof CompassConfigurable) {
             ((CompassConfigurable) directoryStore).configure(settings);
         }
+
+        String useCompoundFileSetting = settings.getSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE);
+        if (useCompoundFileSetting == null) {
+            useCompoundFile = directoryStore.suggestedUseCompoundFile();
+        } else {
+            useCompoundFile = Boolean.valueOf(useCompoundFileSetting);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Using compound format [" + useCompoundFile + "]");
+        }
+        
 
         // setup sub indexes and aliases
         HashSet<String> subIndexesSet = new HashSet<String>();
@@ -591,6 +604,10 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     public boolean requiresAsyncTransactionalContext() {
         return directoryStore.requiresAsyncTransactionalContext();
+    }
+
+    public boolean isUseCompoundFile() {
+        return useCompoundFile;
     }
 
     public String getDefaultSubContext() {

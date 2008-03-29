@@ -77,5 +77,11 @@ public abstract class AbstractDirectoryStore implements DirectoryStore {
     public boolean requiresAsyncTransactionalContext() {
         return false;
     }
-    
+
+    /**
+     * By default, stores should <b>not</b> use compound file format.
+     */
+    public boolean suggestedUseCompoundFile() {
+        return false;
+    }
 }

@@ -119,7 +119,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         }
         // if this is a compound file extension, don't delete it from the actual directory
         // since we never copied it
-        if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneSettings().isUseCompoundFile() &&
+        if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
                 IndexFileNameFilter.getFilter().isCFSFile(name)) {
             return;
         }
@@ -299,7 +299,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
                 synchronized (monitors[Math.abs(name.hashCode()) % monitors.length]) {
                     try {
                         // don't do anything with a cfs file since it will not be in the actual directory
-                        if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneSettings().isUseCompoundFile() &&
+                        if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
                                 IndexFileNameFilter.getFilter().isCFSFile(name)) {
                             continue;
                         }
@@ -358,7 +358,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
             localCacheIndexOutput.close();
             // if we are using compound file extension don't copy them to the actual directory
             // just copy over the cfs file
-            if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneSettings().isUseCompoundFile() &&
+            if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
                     IndexFileNameFilter.getFilter().isCFSFile(name)) {
                 return;
             }

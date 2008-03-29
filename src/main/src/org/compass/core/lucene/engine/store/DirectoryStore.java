@@ -78,4 +78,6 @@ public interface DirectoryStore {
      * with this store.
      */
     boolean requiresAsyncTransactionalContext();
+
+    boolean suggestedUseCompoundFile();
 }
