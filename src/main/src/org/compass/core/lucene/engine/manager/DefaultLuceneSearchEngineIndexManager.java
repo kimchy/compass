@@ -481,6 +481,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setUseCompoundFile(searchEngineStore.isUseCompoundFile());
         indexWriter.setMaxFieldLength(luceneSettings.getMaxFieldLength());
         indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
+        
         return indexWriter;
     }
 
