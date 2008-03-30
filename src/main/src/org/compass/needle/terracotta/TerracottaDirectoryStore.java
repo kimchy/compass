@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.lucene.store.Directory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.store.AbstractDirectoryStore;
@@ -35,27 +36,37 @@ import org.compass.core.lucene.engine.store.CopyFromHolder;
  */
 public class TerracottaDirectoryStore extends AbstractDirectoryStore implements CompassConfigurable {
 
+    public static final String PROTOCOL = "tc://";
+
     public static final String BUFFER_SIZE_PROP = "compass.engine.store.tc.bufferSize";
 
     public static final String FLUSH_RATE_PROP = "compass.engine.store.tc.flushRate";
 
-    private final Map<String, Map<String, TerracottaDirectory>> dirs = new HashMap<String, Map<String, TerracottaDirectory>>();
+    private final Map<String, Map<String, Map<String, TerracottaDirectory>>> dirs = new HashMap<String, Map<String, Map<String, TerracottaDirectory>>>();
 
     private int bufferSize;
 
     private int flushRate;
 
+    private transient String indexName;
+
     public void configure(CompassSettings settings) throws CompassException {
+        indexName = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
         bufferSize = settings.getSettingAsInt(BUFFER_SIZE_PROP, TerracottaDirectory.DEFAULT_BUFFER_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, TerracottaDirectory.DEFAULT_FLUSH_RATE);
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
         synchronized (dirs) {
-            Map<String, TerracottaDirectory> subIndexDirs = dirs.get(subContext);
+            Map<String, Map<String, TerracottaDirectory>> index = dirs.get(indexName);
+            if (index == null) {
+                index = new HashMap<String, Map<String, TerracottaDirectory>>();
+                dirs.put(indexName, index);
+            }
+            Map<String, TerracottaDirectory> subIndexDirs = index.get(subContext);
             if (subIndexDirs == null) {
                 subIndexDirs = new HashMap<String, TerracottaDirectory>();
-                dirs.put(subContext, subIndexDirs);
+                index.put(subContext, subIndexDirs);
             }
             TerracottaDirectory dir = new TerracottaDirectory(bufferSize, flushRate);
             subIndexDirs.put(subIndex, dir);
@@ -69,7 +80,11 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
 
     public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
         synchronized (dirs) {
-            Map<String, TerracottaDirectory> subIndexDirs = dirs.get(subContext);
+            Map<String, Map<String, TerracottaDirectory>> index = dirs.get(indexName);
+            if (index == null) {
+                return;
+            }
+            Map<String, TerracottaDirectory> subIndexDirs = index.get(subContext);
             if (subIndexDirs != null) {
                 subIndexDirs.remove(subIndex);
             }
