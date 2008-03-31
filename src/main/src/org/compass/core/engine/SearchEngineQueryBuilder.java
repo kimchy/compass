@@ -82,6 +82,8 @@ public interface SearchEngineQueryBuilder {
 
         SearchEngineMultiPropertyQueryStringBuilder useAndDefaultOperator();
 
+        SearchEngineMultiPropertyQueryStringBuilder useOrDefaultOperator();
+
         SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder forceAnalyzer();
 
         SearchEngineMultiPropertyQueryStringBuilder setQueryParser(String queryParser);

@@ -230,6 +230,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
             return this;
         }
 
+        public CompassMultiPropertyQueryStringBuilder useOrDefaultOperator() {
+            queryBuilder.useOrDefaultOperator();
+            return this;
+        }
+
         public CompassMultiPropertyQueryStringBuilder forceAnalyzer() {
             queryBuilder.forceAnalyzer();
             return this;

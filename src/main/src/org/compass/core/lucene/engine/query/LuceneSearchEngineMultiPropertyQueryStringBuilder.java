@@ -74,6 +74,11 @@ public class LuceneSearchEngineMultiPropertyQueryStringBuilder implements Search
         return this;
     }
 
+    public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder useOrDefaultOperator() {
+        this.operator = QueryParser.Operator.OR;
+        return this;
+    }
+
     public SearchEngineQueryBuilder.SearchEngineMultiPropertyQueryStringBuilder forceAnalyzer() {
         this.forceAnalyzer = true;
         return this;
