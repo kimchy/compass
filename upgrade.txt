@@ -75,6 +75,9 @@ VERSION 2.0.0 RC1
 8. Compass now, by default (if not set), will use the preferable flag if to use the compound file format based on the
    actual store configured. File system based will be in compound file format, others (jdbc, coherence, gigaspaces,
    terracotta) will not use it.
+9. Changed the default globabl managed-id from AUTO to NO_STORE. This means that now, when setting store="no", Compass
+   won't create an internal id for it, and it will not be un-marshalled back. This is the more sensible default. To
+   change back to the original setting, set setting: compass.osem.managedId to: AUTO.
 
 VERSION 2.0.0 M3 (March 19, 2008)
 =================================

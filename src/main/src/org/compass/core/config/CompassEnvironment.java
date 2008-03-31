@@ -670,7 +670,7 @@ public class CompassEnvironment {
 
         /**
          * The default managed id for all property mappings based on {@link org.compass.core.mapping.osem.ClassPropertyMapping.ManagedId}
-         * configuration. Defaults to <code>AUTO</code>.
+         * configuration. Defaults to <code>NO_STORE</code>.
          *
          * <p>This can be overriden either by using class mapping level setting or property level mapping.
          */

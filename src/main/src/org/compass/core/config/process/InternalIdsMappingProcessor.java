@@ -127,7 +127,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
             // not set, up to Compass settings, and if not there, default to auto).
             if (classPropertyMapping.getManagedId() == null) {
                 if (classMapping.getManagedId() == null) {
-                    String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, ClassPropertyMapping.ManagedId.AUTO.toString());
+                    String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, ClassPropertyMapping.ManagedId.NO_STORE.toString());
                     classPropertyMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(globalManagedId));
                 } else {
                     classPropertyMapping.setManagedId(classMapping.getManagedId());
