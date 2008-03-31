@@ -4,7 +4,7 @@
 
 <compass-core-mapping package="org.compass.core.test.property.storeindex">
 
-    <class name="A" alias="a1">
+    <class name="A" alias="a1" managed-id="auto">
     
         <id name="id" />
         
@@ -14,7 +14,7 @@
 
     </class>
 
-    <class name="A" alias="a2">
+    <class name="A" alias="a2" managed-id="auto">
     
         <id name="id" />
         
@@ -24,7 +24,7 @@
 
     </class>
 
-    <class name="A" alias="a3">
+    <class name="A" alias="a3" managed-id="auto">
     
         <id name="id" />
         
@@ -34,7 +34,7 @@
 
     </class>
 
-    <class name="A" alias="a4">
+    <class name="A" alias="a4" managed-id="auto">
     
         <id name="id" />
         
@@ -44,7 +44,7 @@
 
     </class>
     
-    <class name="A" alias="a5">
+    <class name="A" alias="a5" managed-id="auto">
     
         <id name="id" />
         
@@ -54,7 +54,7 @@
 
     </class>
 
-    <class name="A" alias="a6">
+    <class name="A" alias="a6" managed-id="auto">
     
         <id name="id" />
         
@@ -64,7 +64,7 @@
 
     </class>
 
-    <class name="A" alias="a7">
+    <class name="A" alias="a7" managed-id="auto">
     
         <id name="id" />
         
@@ -74,7 +74,7 @@
 
     </class>
 
-    <class name="A" alias="a8">
+    <class name="A" alias="a8" managed-id="auto">
     
         <id name="id" />
         
@@ -84,7 +84,7 @@
 
     </class>
 
-    <class name="A" alias="a9">
+    <class name="A" alias="a9" managed-id="auto">
     
         <id name="id" />
         
@@ -94,7 +94,7 @@
 
     </class>
 
-    <class name="A" alias="a10">
+    <class name="A" alias="a10" managed-id="auto">
     
         <id name="id" />
         
@@ -104,7 +104,7 @@
 
     </class>
 
-    <class name="A" alias="a11">
+    <class name="A" alias="a11" managed-id="auto">
     
         <id name="id" />
         
@@ -114,7 +114,7 @@
 
     </class>
 
-    <class name="A" alias="a12">
+    <class name="A" alias="a12" managed-id="auto">
     
         <id name="id" />
         
@@ -124,7 +124,7 @@
 
     </class>
 
-    <class name="A" alias="a13">
+    <class name="A" alias="a13" managed-id="auto">
     
         <id name="id" />
         

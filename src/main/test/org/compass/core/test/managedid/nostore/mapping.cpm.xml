@@ -32,7 +32,7 @@
         </property>
     </class>
 
-    <class name="A" alias="a2">
+    <class name="A" alias="a2" managed-id="auto">
 
         <id name="id" accessor="field" />
 

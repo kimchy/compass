@@ -127,7 +127,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
             // not set, up to Compass settings, and if not there, default to auto).
             if (classPropertyMapping.getManagedId() == null) {
                 if (classMapping.getManagedId() == null) {
-                    String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, "auto");
+                    String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, ClassPropertyMapping.ManagedId.AUTO.toString());
                     classPropertyMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(globalManagedId));
                 } else {
                     classPropertyMapping.setManagedId(classMapping.getManagedId());
@@ -151,10 +151,12 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
                 for (int i = 0; i < classPropertyMapping.mappingsSize(); i++) {
                     ClassPropertyMetaDataMapping pMapping = (ClassPropertyMetaDataMapping) classPropertyMapping.getMapping(i);
                     if (!pMapping.canActAsPropertyId()) {
-                        continue;
+                        allMetaDataHasStoreNo = false;
+                        break;
                     }
                     if (pMapping.getStore() != Property.Store.NO) {
                         allMetaDataHasStoreNo = false;
+                        break;
                     }
                 }
                 if (!allMetaDataHasStoreNo) {
