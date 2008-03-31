@@ -54,6 +54,9 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         indexName = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
         bufferSize = settings.getSettingAsInt(BUFFER_SIZE_PROP, TerracottaDirectory.DEFAULT_BUFFER_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, TerracottaDirectory.DEFAULT_FLUSH_RATE);
+        if (log.isDebugEnabled()) {
+            log.debug("Terracotta directory store configured with index [" + indexName + "], bufferSize [" + bufferSize + "], and flushRate [" + flushRate + "]");
+        }
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
