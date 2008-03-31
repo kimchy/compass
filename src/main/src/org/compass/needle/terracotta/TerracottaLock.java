@@ -20,26 +20,34 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.lucene.store.Lock;
-import org.apache.lucene.store.LockFactory;
 
 /**
  * @author kimchy
  */
-public class TerracottaLockFactory extends LockFactory {
+class TerracottaLock extends Lock {
 
-    static final Object MARK = new Object();
+    private String lockName;
+    
+    private final ConcurrentHashMap<String, Object> locks;
 
-    private final ConcurrentHashMap<String, Object> locks = new ConcurrentHashMap<String, Object>();
-
-    public Lock makeLock(String lockName) {
-        // We do not use the LockPrefix at all, because the private
-        // HashSet instance effectively scopes the locking to this
-        // single Directory instance.
-        return new TerracottaLock(locks, lockName);
+    public TerracottaLock(ConcurrentHashMap<String, Object> locks, String lockName) {
+        this.locks = locks;
+        this.lockName = lockName;
     }
 
-    public void clearLock(String lockName) throws IOException {
+    public boolean obtain() throws IOException {
+        return locks.putIfAbsent(lockName, TerracottaLockFactory.MARK) == null;
+    }
+
+    public void release() {
         locks.remove(lockName);
     }
-}
 
+    public boolean isLocked() {
+        return locks.containsKey(lockName);
+    }
+
+    public String toString() {
+        return "TerracottaLock: " + lockName;
+    }
+}
