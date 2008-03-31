@@ -26,24 +26,27 @@ import org.compass.core.config.CompassConfiguration;
 /**
  * @author kimchy
  */
-public class NumberFormatConverterTests extends AbstractAnnotationsTestCase {
+public class NumberFormatPropertyConverterTests extends AbstractAnnotationsTestCase {
 
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addClass(A.class);
-        conf.setSetting("compass.converter.long.format", "#00000000");
+        conf.addClass(A1.class);
     }
 
-    public void testGlobablLongFormat() {
+    public void testPropertyLongFormat() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        A a = new A();
+        A1 a = new A1();
         a.id = 1;
         a.property = 300l;
         session.save(a);
 
         CompassQueryBuilder queryBuilder = session.queryBuilder();
         CompassQuery query = queryBuilder.ge("property", 300L);
+        assertEquals("property:[300 TO *]", query.toString());
+
+        queryBuilder = session.queryBuilder();
+        query = queryBuilder.ge("A1.property", 300L);
         assertEquals("property:[00000300 TO *]", query.toString());
 
         tr.commit();
