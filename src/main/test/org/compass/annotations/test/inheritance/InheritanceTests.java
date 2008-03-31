@@ -22,6 +22,8 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.mapping.ResourceMapping;
 
 /**
@@ -35,21 +37,25 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         conf.addClass(C.class);
     }
 
-    public void testExtendedAliases() {
-        ResourceMapping resourceMapping = getCompass().getMapping().getMappingByAlias("B");
-        assertEquals(1, resourceMapping.getExtendedAliases().length);
-        assertEquals("A", resourceMapping.getExtendedAliases()[0]);
+    protected void addSettings(CompassSettings settings) {
+        settings.setBooleanSetting(CompassEnvironment.All.EXCLUDE_ALIAS, false);
+    }
 
-        resourceMapping = getCompass().getMapping().getMappingByAlias("A");
+    public void testExtendedAliases() {
+        ResourceMapping resourceMapping = getCompass().getMapping().getMappingByAlias("b");
+        assertEquals(1, resourceMapping.getExtendedAliases().length);
+        assertEquals("a1", resourceMapping.getExtendedAliases()[0]);
+
+        resourceMapping = getCompass().getMapping().getMappingByAlias("a1");
         assertEquals(0, resourceMapping.getExtendedAliases().length);
     }
 
     public void testExtendingAliases() {
-        ResourceMapping resourceMapping = getCompass().getMapping().getMappingByAlias("A");
+        ResourceMapping resourceMapping = getCompass().getMapping().getMappingByAlias("a1");
         assertEquals(1, resourceMapping.getExtendingAliases().length);
-        assertEquals("B", resourceMapping.getExtendingAliases()[0]);
+        assertEquals("b", resourceMapping.getExtendingAliases()[0]);
 
-        resourceMapping = getCompass().getMapping().getMappingByAlias("B");
+        resourceMapping = getCompass().getMapping().getMappingByAlias("b");
         assertEquals(0, resourceMapping.getExtendingAliases().length);
     }
 
@@ -121,14 +127,32 @@ public class InheritanceTests extends AbstractAnnotationsTestCase {
         b.setValue2("value2");
         session.save(b);
 
-        CompassHits hits = session.queryBuilder().alias("B").hits();
+        CompassHits hits = session.queryBuilder().alias("b").hits();
         assertEquals(1, hits.length());
-        hits = session.queryBuilder().polyAlias("A").hits();
+        hits = session.queryBuilder().polyAlias("a1").hits();
         assertEquals(1, hits.length());
-        hits = session.queryBuilder().polyAlias("B").hits();
+        hits = session.queryBuilder().polyAlias("b").hits();
         assertEquals(1, hits.length());
-        hits = session.queryBuilder().alias("A").hits();
+        hits = session.queryBuilder().alias("a1").hits();
         assertEquals(0, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testAllExtendedAliases() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        B b = new B();
+        b.setId(1);
+        b.setValue1("value1");
+        b.setValue2("value2");
+        session.save(b);
+
+        assertEquals(1, session.find("abasevalue").length());
+        assertEquals(1, session.find("b").length());
+        assertEquals(1, session.find("a1").length());
 
         tr.commit();
         session.close();

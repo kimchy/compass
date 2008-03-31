@@ -24,7 +24,7 @@ import org.compass.annotations.SearchableProperty;
 /**
  * @author kimchy
  */
-@Searchable(poly = true)
+@Searchable(poly = true, alias = "a1")
 @SearchableConstant(name = "abase", values = {"abasevalue"})
 public class A {
 

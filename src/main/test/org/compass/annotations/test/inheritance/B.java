@@ -22,7 +22,7 @@ import org.compass.annotations.SearchableProperty;
 /**
  * @author kimchy
  */
-@Searchable(poly = true)
+@Searchable(poly = true, alias = "b")
 public class B extends A {
 
     private String value3;
