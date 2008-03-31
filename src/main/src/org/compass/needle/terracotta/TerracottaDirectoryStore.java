@@ -68,8 +68,11 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
                 subIndexDirs = new HashMap<String, TerracottaDirectory>();
                 index.put(subContext, subIndexDirs);
             }
-            TerracottaDirectory dir = new TerracottaDirectory(bufferSize, flushRate);
-            subIndexDirs.put(subIndex, dir);
+            TerracottaDirectory dir = subIndexDirs.get(subIndex);
+            if (dir == null) {
+                dir = new TerracottaDirectory(bufferSize, flushRate);
+                subIndexDirs.put(subIndex, dir);
+            }
             return dir;
         }
     }

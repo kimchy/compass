@@ -56,14 +56,17 @@
             <!--<localCache subIndex="__default__" connection="ram://" />-->
         </connection>
 
-        <transaction isolation="read_committed" />
+        <transaction isolation="read_committed"/>
 
         <cache>
-            <firstLevel type="org.compass.core.cache.first.DefaultFirstLevelCache" />
+            <firstLevel type="org.compass.core.cache.first.DefaultFirstLevelCache"/>
         </cache>
 
         <searchEngine>
-            <optimizer type="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer" schedule="false" />
+            <optimizer type="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer" schedule="false"/>
+            <indexDeletionPolicy>
+                <expirationTime expirationTimeSeconds="60"/>
+            </indexDeletionPolicy>
         </searchEngine>
     </compass>
 

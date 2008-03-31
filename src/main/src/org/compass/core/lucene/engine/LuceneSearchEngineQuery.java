@@ -174,6 +174,10 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
         LuceneSearchEngineInternalSearch internalSearch = (LuceneSearchEngineInternalSearch) searchEngine.internalSearch(getSubIndexes(), getAliases());
         CountHitCollector countHitCollector = new CountHitCollector(minimumScore);
         try {
+            if (internalSearch.getSearcher() == null) {
+                // no index, return 0
+                return 0;
+            }
             internalSearch.getSearcher().search(getQuery(), getLuceneFilter(), countHitCollector);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to count query [" + query + "]", e);
