@@ -22,7 +22,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import javax.sql.DataSource;
 
 import org.apache.lucene.store.jdbc.JdbcDirectorySettings;
@@ -102,7 +101,7 @@ public class JdbcTemplate {
         ResultSet rs = null;
         try {
             ps = con.prepareStatement(sql);
-            ps.setQueryTimeout(settings.getQueryTimeout());
+//            ps.setQueryTimeout(settings.getQueryTimeout());
             callback.fillPrepareStatement(ps);
             rs = ps.executeQuery();
             return callback.execute(rs);
@@ -128,7 +127,7 @@ public class JdbcTemplate {
         CallableStatement cs = null;
         try {
             cs = con.prepareCall(sql);
-            cs.setQueryTimeout(settings.getQueryTimeout());
+//            cs.setQueryTimeout(settings.getQueryTimeout());
             callback.fillCallableStatement(cs);
             cs.execute();
             return callback.readCallableData(cs);
@@ -154,7 +153,7 @@ public class JdbcTemplate {
         PreparedStatement ps = null;
         try {
             ps = con.prepareStatement(sql);
-            ps.setQueryTimeout(settings.getQueryTimeout());
+//            ps.setQueryTimeout(settings.getQueryTimeout());
             callback.fillPrepareStatement(ps);
             ps.executeUpdate();
         } catch (JdbcStoreException e) {
@@ -176,7 +175,7 @@ public class JdbcTemplate {
         Statement statement = null;
         try {
             statement = con.createStatement();
-            statement.setQueryTimeout(settings.getQueryTimeout());
+//            statement.setQueryTimeout(settings.getQueryTimeout());
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             throw new JdbcStoreException("Failed to execute [" + sql + "]", e);
@@ -194,7 +193,7 @@ public class JdbcTemplate {
         Statement statement = null;
         try {
             statement = con.createStatement();
-            statement.setQueryTimeout(settings.getQueryTimeout());
+//            statement.setQueryTimeout(settings.getQueryTimeout());
             for (int i = 0; i < sqls.length; i++) {
                 statement.addBatch(sqls[i]);
             }
@@ -216,7 +215,7 @@ public class JdbcTemplate {
         PreparedStatement ps = null;
         try {
             ps = con.prepareStatement(sql);
-            ps.setQueryTimeout(settings.getQueryTimeout());
+//            ps.setQueryTimeout(settings.getQueryTimeout());
             callback.fillPrepareStatement(ps);
             return ps.executeBatch();
         } catch (JdbcStoreException e) {
