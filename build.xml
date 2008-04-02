@@ -151,15 +151,15 @@
             <jar jarfile="@{target-dir}/@{name}.jar" basedir="${target.classes.dir}" includes="@{includes}">
                 <manifest>
                     <attribute name="Implementation-Title" value="${compass-title}"/>
-                    <attribute name="Implementation-Version" value="${compass-version}"/>
-                    <attribute name="Compass-Version" value="${compass-version}"/>
+                    <attribute name="Implementation-Version" value="${compass-manifest-version}"/>
+                    <attribute name="Compass-Version" value="${compass-manifest-version}"/>
                     <attribute name="Compass-Date" value="${timestamp}"/>
                     <attribute name="Bundle-Category" value="compass"/>
                     <attribute name="Bundle-Copyright" value="Compass"/>
                     <attribute name="Bundle-ManifestVersion" value="2"/>
                     <attribute name="Bundle-Name" value="Compass"/>
                     <attribute name="Bundle-SymbolicName" value="org.compass.compass"/>
-                    <attribute name="Bundle-Version" value="${compass-version}"/>
+                    <attribute name="Bundle-Version" value="${compass-manifest-version}"/>
                 </manifest>
             </jar>
         </sequential>
@@ -168,7 +168,7 @@
     <target name="fulljar" depends="build,initdist" description="Create full JAR file with all Compass classes">
 
         <delete file="${dist.dir}/${compass-jarname}.jar"/>
-        <jar-module includes="META-INF/**,org/apache/lucene/**,org/compass/**,org/springframework/**"
+        <jar-module includes="META-INF/**,org/apache/lucene/**,org/compass/**,org/springframework/**,**/*.xml"
                     name="${compass-jarname}" target-dir="${dist.dir}"/>
 
     </target>
@@ -697,8 +697,8 @@
             </fileset>
             <manifest>
                 <attribute name="Implementation-Title" value="${compass-title}"/>
-                <attribute name="Implementation-Version" value="${compass-version}"/>
-                <attribute name="Compass-Version" value="${compass-version}"/>
+                <attribute name="Implementation-Version" value="${compass-manifest-version}"/>
+                <attribute name="Compass-Version" value="${compass-manifest-version}"/>
                 <attribute name="Compass-Date" value="${timestamp}"/>
             </manifest>
         </jar>
