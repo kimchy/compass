@@ -53,6 +53,15 @@ public class SimpleTests extends AbstractTestCase {
 
         tr.commit();
         session.close();
+
+        session = openSession();
+        tr = session.beginTransaction();
+
+        a = session.load(A.class, 1);
+        assertEquals("value", a.getValue());
+        
+        tr.commit();
+        session.close();
     }
 
     public void testSimpleDelete() {

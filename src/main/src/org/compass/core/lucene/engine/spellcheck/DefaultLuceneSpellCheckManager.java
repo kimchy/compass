@@ -80,6 +80,8 @@ import org.compass.core.util.StringUtils;
  */
 public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngineSpellCheckManager {
 
+    public static String SPELL_CHECK_VERSION_FILENAME = "spellcheck.version";
+
     private static final Log log = LogFactory.getLog(DefaultLuceneSpellCheckManager.class);
 
     private LuceneSearchEngineFactory searchEngineFactory;
@@ -105,8 +107,6 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     private float defaultAccuracy = 0.5f;
 
     private float defaultDictionaryThreshold;
-
-    private String spellCheckVersionFileName = "spellcheck.version";
 
     private volatile boolean started = false;
 
@@ -579,10 +579,10 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
     private void writeSpellCheckIndexVersion(String subIndex, long version) {
         Directory dir = spellCheckStore.openDirectory(spellIndexSubContext, subIndex);
         try {
-            if (dir.fileExists(spellCheckVersionFileName)) {
-                dir.deleteFile(spellCheckVersionFileName);
+            if (dir.fileExists(SPELL_CHECK_VERSION_FILENAME)) {
+                dir.deleteFile(SPELL_CHECK_VERSION_FILENAME);
             }
-            IndexOutput indexOutput = dir.createOutput(spellCheckVersionFileName);
+            IndexOutput indexOutput = dir.createOutput(SPELL_CHECK_VERSION_FILENAME);
             indexOutput.writeLong(version);
             indexOutput.close();
         } catch (IOException e) {
@@ -594,10 +594,10 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         Directory dir = spellCheckStore.openDirectory(spellIndexSubContext, subIndex);
         IndexInput input = null;
         try {
-            if (!dir.fileExists(spellCheckVersionFileName)) {
+            if (!dir.fileExists(SPELL_CHECK_VERSION_FILENAME)) {
                 return -1;
             }
-            input = dir.openInput(spellCheckVersionFileName);
+            input = dir.openInput(SPELL_CHECK_VERSION_FILENAME);
             return input.readLong();
         } catch (IOException e) {
             throw new SearchEngineException("Failed to read spell check index version for sub index [" + subIndex + "]", e);

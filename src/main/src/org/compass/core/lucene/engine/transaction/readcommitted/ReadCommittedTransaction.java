@@ -102,23 +102,50 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     protected void doPrepare() throws SearchEngineException {
         releaseHolders();
-        ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
-        for (String subIndex : indexWriterBySubIndex.keySet()) {
-            if (!transIndexManager.hasTransIndex(subIndex)) {
-                continue;
+        if (indexManager.supportsConcurrentOperations()) {
+            ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
+            for (String subIndex : indexWriterBySubIndex.keySet()) {
+                if (!transIndexManager.hasTransIndex(subIndex)) {
+                    continue;
+                }
+                prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new PrepareCallable(subIndex)));
             }
-            prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new PrepareCallable(subIndex)));
+            indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
+        } else {
+            for (String subIndex : indexWriterBySubIndex.keySet()) {
+                if (!transIndexManager.hasTransIndex(subIndex)) {
+                    continue;
+                }
+                try {
+                    new PrepareCallable(subIndex).call();
+                } catch (SearchEngineException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new SearchEngineException("Failed to prepare transaction for sub index [" + subIndex + "]", e);
+                }
+            }
         }
-        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
     }
 
     protected void doCommit(boolean onePhase) throws SearchEngineException {
         releaseHolders();
-        ArrayList<Callable<Object>> commitCallables = new ArrayList<Callable<Object>>();
-        for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
-            commitCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue(), onePhase)));
+        if (indexManager.supportsConcurrentOperations()) {
+            ArrayList<Callable<Object>> commitCallables = new ArrayList<Callable<Object>>();
+            for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
+                commitCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue(), onePhase)));
+            }
+            indexManager.getExecutorManager().invokeAllWithLimitBailOnException(commitCallables, 1);
+        } else {
+            for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
+                try {
+                    new CommitCallable(entry.getKey(), entry.getValue(), onePhase).call();
+                } catch (SearchEngineException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new SearchEngineException("Failed to commit transaction for sub index [" + entry.getKey() + "]", e);
+                }
+            }
         }
-        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(commitCallables, 1);
     }
 
     protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
@@ -379,7 +406,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 } catch (Exception e1) {
                     log.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
                 }
-                throw new SearchEngineException("Failed add transaction index to sub index [" + subIndex + "]", e);
+                throw new SearchEngineException("Failed to add transaction index to sub index [" + subIndex + "]", e);
             }
             if (indexManager.getSettings().isClearCacheOnCommit()) {
                 indexManager.refreshCache(subIndex);

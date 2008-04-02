@@ -271,7 +271,7 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
     }
 
     /**
-     * The Jdbc store does require transactional context when executing async operations. 
+     * The Jdbc store does require transactional context when executing async operations.
      */
     public boolean requiresAsyncTransactionalContext() {
         return true;

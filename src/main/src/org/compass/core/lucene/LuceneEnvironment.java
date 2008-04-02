@@ -760,6 +760,12 @@ public class LuceneEnvironment {
         public static final String USE_COMPOUND_FILE = "compass.engine.useCompoundFile";
 
         /**
+         * Should concurrent operations be performed during a transaction against the search engine
+         * index store. Defualts to <code>true</code>.
+         */
+        public static final String USE_CONCURRENT_OPERATIONS = "compass.engine.useConcurrentOperations";
+
+        /**
          * The maximum number of terms that will be indexed for a single field in a
          * document. This limits the amount of memory required for indexing, so that
          * collections with very large files will not crash the indexing process by

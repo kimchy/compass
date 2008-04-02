@@ -48,6 +48,7 @@
     <orderEntry type="library" exported="" name="velocity" level="project" />
     <orderEntry type="library" exported="" name="xpp" level="project" />
     <orderEntry type="library" name="Terracota" level="project" />
+    <orderEntry type="library" name="postgres" level="project" />
     <orderEntryProperties />
   </component>
 </module>

@@ -79,5 +79,13 @@ public interface DirectoryStore {
      */
     boolean requiresAsyncTransactionalContext();
 
+    /**
+     * Returns the suggested compound file format usage.
+     */
     boolean suggestedUseCompoundFile();
+
+    /**
+     * Returns <code>true</code> if this store supports concurrent operations.
+     */
+    boolean supportsConcurrentOperations();
 }

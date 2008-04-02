@@ -84,4 +84,11 @@ public abstract class AbstractDirectoryStore implements DirectoryStore {
     public boolean suggestedUseCompoundFile() {
         return false;
     }
+
+    /**
+     * By defualt, stores support concurrent operations (return <code>true</code>).
+     */
+    public boolean supportsConcurrentOperations() {
+        return true;
+    }
 }

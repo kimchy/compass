@@ -1,6 +1,7 @@
 package org.compass.core.lucene.engine.merge.scheduler;
 
 import org.apache.lucene.index.MergeScheduler;
+import org.apache.lucene.index.SerialMergeScheduler;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
@@ -16,6 +17,9 @@ import org.compass.core.util.ClassUtils;
 public class MergeSchedulerFactory {
 
     public static MergeScheduler create(LuceneSearchEngineIndexManager indexManager, CompassSettings settings) throws SearchEngineException {
+        if (!indexManager.supportsConcurrentOperations()) {
+            return new SerialMergeScheduler();
+        }
         String type = settings.getSetting(LuceneEnvironment.MergeScheduler.TYPE, LuceneEnvironment.MergeScheduler.Executor.NAME);
         MergeSchedulerProvider provider;
         if (type.equals(LuceneEnvironment.MergeScheduler.Executor.NAME)) {

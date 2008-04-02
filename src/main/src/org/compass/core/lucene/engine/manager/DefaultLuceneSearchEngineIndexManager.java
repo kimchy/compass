@@ -678,6 +678,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return searchEngineStore.requiresAsyncTransactionalContext();
     }
 
+    public boolean supportsConcurrentOperations() {
+        return searchEngineStore.supportsConcurrentOperations();
+    }
+
     public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
         this.waitForCacheInvalidationBeforeSecondStep = timeToWaitInMillis;
     }

@@ -247,4 +247,9 @@ public interface SearchEngineIndexManager {
      * with this store.
      */
     boolean requiresAsyncTransactionalContext();
+
+    /**
+     * Returns <code>true</code> if the index store supports concurrent operations.
+     */
+    boolean supportsConcurrentOperations();
 }

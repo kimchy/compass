@@ -95,11 +95,23 @@ public class LuceneTransaction extends AbstractTransaction {
         if (indexWriterBySubIndex.isEmpty()) {
             return;
         }
-        ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
-        for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
-            prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue())));
+        if (indexManager.supportsConcurrentOperations()) {
+            ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
+            for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
+                prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue())));
+            }
+            indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
+        } else {
+            for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
+                try {
+                    new CommitCallable(entry.getKey(), entry.getValue()).call();
+                } catch (SearchEngineException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new SearchEngineException("Failed to commit transaction for sub index [" + entry.getKey() + "]", e);
+                }
+            }
         }
-        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
     }
 
     public void flush() throws SearchEngineException {

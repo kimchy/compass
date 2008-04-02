@@ -181,6 +181,11 @@ public interface LuceneSearchEngineStore {
     boolean requiresAsyncTransactionalContext();
 
     /**
+     * Returns <code>true</code> if this store supports concurrent operations.
+     */
+    boolean supportsConcurrentOperations();
+
+    /**
      * Should we use the compound file format or not.
      */
     boolean isUseCompoundFile();

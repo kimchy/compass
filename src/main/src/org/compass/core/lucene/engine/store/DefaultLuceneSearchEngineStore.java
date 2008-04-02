@@ -87,6 +87,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private boolean useCompoundFile;
 
+    private boolean supportsConcurrentOperations;
+
     private volatile boolean closed = false;
 
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
@@ -144,7 +146,17 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         if (log.isDebugEnabled()) {
             log.debug("Using compound format [" + useCompoundFile + "]");
         }
-        
+
+        String useConcurrentOperationsSetting = settings.getSetting(LuceneEnvironment.SearchEngineIndex.USE_CONCURRENT_OPERATIONS);
+        if (useConcurrentOperationsSetting == null) {
+            supportsConcurrentOperations = directoryStore.supportsConcurrentOperations();
+        } else {
+            supportsConcurrentOperations = Boolean.valueOf(useConcurrentOperationsSetting);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Support concurrent operations [" + supportsConcurrentOperations + "]");
+        }
+
 
         // setup sub indexes and aliases
         HashSet<String> subIndexesSet = new HashSet<String>();
@@ -604,6 +616,10 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     public boolean requiresAsyncTransactionalContext() {
         return directoryStore.requiresAsyncTransactionalContext();
+    }
+
+    public boolean supportsConcurrentOperations() {
+        return supportsConcurrentOperations;
     }
 
     public boolean isUseCompoundFile() {

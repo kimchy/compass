@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
 
+import org.apache.lucene.index.StaticFiles;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.DirectoryTemplate;
 import org.apache.lucene.store.IndexInput;
@@ -328,7 +329,20 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
     }
 
     public void deleteFile(final String name) throws IOException {
-        getFileEntryHandler(name).deleteFile(name);
+        if (StaticFiles.isStaticFile(name)) {
+            forceDeleteFile(name);
+        } else {
+            getFileEntryHandler(name).deleteFile(name);
+        }
+    }
+
+    public void forceDeleteFile(final String name) throws IOException {
+        jdbcTemplate.executeUpdate(table.sqlDeleteByName(), new JdbcTemplate.PrepateStatementAwareCallback() {
+            public void fillPrepareStatement(PreparedStatement ps) throws Exception {
+                ps.setFetchSize(1);
+                ps.setString(1, name);
+            }
+        });
     }
 
     public List deleteFiles(List names) throws IOException {
@@ -368,6 +382,9 @@ public class JdbcDirectory extends Directory implements MultiDeleteDirectory {
     }
 
     public IndexOutput createOutput(String name) throws IOException {
+        if (StaticFiles.isStaticFile(name)) {
+            forceDeleteFile(name);
+        }
         return getFileEntryHandler(name).createOutput(name);
     }
 
