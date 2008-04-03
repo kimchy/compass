@@ -668,7 +668,9 @@ session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommit
 ]]></programlisting>      
     </para>
     
-    <para>Compass comes built in with several additional deletion policies including: <literal>keepall</literal> which keeps all commit points. <literal>keeplastn</literal> which keeps the last N commit points. <literal>expirationtime</literal> which keeps commit points for X number of seconds.</para>
+    <para>Compass comes built in with several additional deletion policies including: <literal>keepall</literal> which keeps all commit points. <literal>keeplastn</literal> which keeps the last N commit points. <literal>expirationtime</literal> which keeps commit points for X number of seconds (with a default expiration time of "cache invalidation interval * 3").</para>
+    
+    <para>By default, the index deletion policy is controlled by the actual index storage. For most (ram, file) the deletion policy is keep last committed (which should be changed when working over a shared disk). For distributed ones (such as coherence, gigaspaces, terrracotta), the index deletion policy is the expiration time one.</para>
   </sect1>
   
   <sect1 id="core-searchengine-spellcheck">

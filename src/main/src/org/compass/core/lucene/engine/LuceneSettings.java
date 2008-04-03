@@ -202,9 +202,9 @@ public class LuceneSettings {
         ramBufferSize = settings.getSettingAsDouble(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, IndexWriter.DEFAULT_RAM_BUFFER_SIZE_MB);
 
         // cach invalidation settings
-        cacheInvalidationInterval = settings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, 5000);
+        cacheInvalidationInterval = settings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, LuceneEnvironment.SearchEngineIndex.DEFAULT_CACHE_INTERVAL_INVALIDATION);
         if (log.isDebugEnabled()) {
-            log.debug("Using cach invalidation interval [" + cacheInvalidationInterval + "ms]");
+            log.debug("Using cache invalidation interval [" + cacheInvalidationInterval + "ms]");
         }
         indexManagerScheduleInterval = (long) (settings.getSettingAsFloat(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60.0f) * 1000);
         if (log.isDebugEnabled()) {

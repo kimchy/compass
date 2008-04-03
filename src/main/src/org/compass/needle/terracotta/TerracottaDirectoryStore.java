@@ -26,6 +26,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.AbstractDirectoryStore;
 import org.compass.core.lucene.engine.store.CopyFromHolder;
 
@@ -107,5 +108,9 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
             throw new SearchEngineException("Faield to delete ram directory before copy", e);
         }
         return new CopyFromHolder();
+    }
+
+    public String suggestedIndexDeletionPolicy() {
+        return LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME;
     }
 }

@@ -126,15 +126,15 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         analyzerManager = new LuceneAnalyzerManager();
         analyzerManager.configure(settings, mapping, luceneSettings);
 
-        // build the index deletion policy manager
-        indexDeletionPolicyManager = new IndexDeletionPolicyFactory();
-        indexDeletionPolicyManager.configure(settings);
-
         // build the search engine store
         LuceneSearchEngineStore searchEngineStore = new DefaultLuceneSearchEngineStore();
         searchEngineStore.configure(this, settings, mapping);
         indexManager = new DefaultLuceneSearchEngineIndexManager(this, searchEngineStore);
 
+        // build the index deletion policy manager
+        indexDeletionPolicyManager = new IndexDeletionPolicyFactory(indexManager);
+        indexDeletionPolicyManager.configure(settings);
+        
         try {
             ClassUtils.forName("org.apache.lucene.search.highlight.Highlighter", settings.getClassLoader());
             highlighterManager = new LuceneHighlighterManager();

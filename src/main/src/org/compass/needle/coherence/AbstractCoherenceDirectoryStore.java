@@ -24,6 +24,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.AbstractDirectoryStore;
 import org.compass.core.lucene.engine.store.CopyFromHolder;
 
@@ -80,5 +81,9 @@ public abstract class AbstractCoherenceDirectoryStore extends AbstractDirectoryS
     public void close() {
         // TODO Do we release here or destroy here?
         cache.release();
+    }
+
+    public String suggestedIndexDeletionPolicy() {
+        return LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME;
     }
 }

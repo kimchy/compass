@@ -88,4 +88,10 @@ public interface DirectoryStore {
      * Returns <code>true</code> if this store supports concurrent operations.
      */
     boolean supportsConcurrentOperations();
+
+    /**
+     * Returns the suggested index deletion policy for the given store. Will be applied if not
+     * explicitly configured. Can return <code>null</code> if globabl settings should be applied.
+     */
+    String suggestedIndexDeletionPolicy();
 }

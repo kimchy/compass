@@ -626,6 +626,10 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         return useCompoundFile;
     }
 
+    public String suggestedIndexDeletionPolicy() {
+        return directoryStore.suggestedIndexDeletionPolicy();
+    }
+
     public String getDefaultSubContext() {
         return this.defaultSubContext;
     }

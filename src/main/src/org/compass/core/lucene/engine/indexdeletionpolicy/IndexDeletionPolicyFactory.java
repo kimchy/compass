@@ -8,6 +8,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -17,15 +18,28 @@ import org.compass.core.util.ClassUtils;
  */
 public class IndexDeletionPolicyFactory implements CompassConfigurable {
 
-    private CompassSettings settings;
+    private LuceneSearchEngineIndexManager indexManager;
 
-    private String indexDeletionPolicyType;
+    private CompassSettings settings;
 
     private IndexDeletionPolicy globalIndexDeletionPolicy;
 
+    public IndexDeletionPolicyFactory(LuceneSearchEngineIndexManager indexManager) {
+        this.indexManager = indexManager;
+    }
+
     public void configure(CompassSettings settings) throws CompassException {
         this.settings = settings;
-        indexDeletionPolicyType = settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE, LuceneEnvironment.IndexDeletionPolicy.KeepLastCommit.NAME);
+    }
+
+    public IndexDeletionPolicy createIndexDeletionPolicy(Directory dir) throws SearchEngineException {
+        if (globalIndexDeletionPolicy != null) {
+            return globalIndexDeletionPolicy;
+        }
+        String indexDeletionPolicyType = settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE, indexManager.getStore().suggestedIndexDeletionPolicy());
+        if (indexDeletionPolicyType == null) {
+            indexDeletionPolicyType = LuceneEnvironment.IndexDeletionPolicy.KeepLastCommit.NAME;
+        }
         if (LuceneEnvironment.IndexDeletionPolicy.KeepLastCommit.NAME.equalsIgnoreCase(indexDeletionPolicyType)) {
             globalIndexDeletionPolicy = new KeepOnlyLastCommitDeletionPolicy();
         } else if (LuceneEnvironment.IndexDeletionPolicy.KeepLastN.NAME.equalsIgnoreCase(indexDeletionPolicyType)) {
@@ -40,13 +54,10 @@ public class IndexDeletionPolicyFactory implements CompassConfigurable {
             if (globalIndexDeletionPolicy instanceof CompassConfigurable) {
                 ((CompassConfigurable) globalIndexDeletionPolicy).configure(settings);
             }
-        }
-    }
-
-    public IndexDeletionPolicy createIndexDeletionPolicy(Directory dir) throws SearchEngineException {
-        if (globalIndexDeletionPolicy != null) {
             return globalIndexDeletionPolicy;
         }
+
+        // index deletion policy that rely on the actual directory
         if (LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME.equalsIgnoreCase(indexDeletionPolicyType)) {
             ExpirationTimeDeletionPolicy indexDeletionPolicy = new ExpirationTimeDeletionPolicy();
             indexDeletionPolicy.setDirectory(dir);

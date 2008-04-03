@@ -35,4 +35,8 @@ public class KeepLastNDeletionPolicy implements IndexDeletionPolicy, CompassConf
             ((IndexCommitPoint) commits.get(i)).delete();
         }
     }
+
+    public String toString() {
+        return super.toString() + " numToKeep [" + numToKeep + "]";
+    }
 }

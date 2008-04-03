@@ -30,8 +30,16 @@ public class ExpirationTimeDeletionPolicy implements IndexDeletionPolicy, Direct
         this.dir = directory;
     }
 
+    /**
+     * Configures the expiration time of the deletion policy. Can be controlled using
+     * {@link LuceneEnvironment.IndexDeletionPolicy.ExpirationTime#EXPIRATION_TIME_IN_SECONDS}.
+     *
+     * <p>Defaults to the cache invalidation time * 3.
+     */
     public void configure(CompassSettings settings) throws CompassException {
-        this.expirationTimeSeconds = settings.getSettingAsDouble(LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.EXPIRATION_TIME_IN_SECONDS, 60);
+        double defaultValue = ((double) settings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, LuceneEnvironment.SearchEngineIndex.DEFAULT_CACHE_INTERVAL_INVALIDATION)) / 1000;
+        this.expirationTimeSeconds = settings.getSettingAsDouble(LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.EXPIRATION_TIME_IN_SECONDS,
+                defaultValue * 3);
     }
 
     public void onInit(List commits) throws IOException {
@@ -53,5 +61,9 @@ public class ExpirationTimeDeletionPolicy implements IndexDeletionPolicy, Direct
                 commit.delete();
             }
         }
+    }
+
+    public String toString() {
+        return super.toString() + " expirationTimeInSeconds [" + expirationTimeSeconds + "]";
     }
 }

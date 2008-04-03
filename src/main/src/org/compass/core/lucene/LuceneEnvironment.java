@@ -791,6 +791,13 @@ public class LuceneEnvironment {
         public static final String CACHE_INTERVAL_INVALIDATION = "compass.engine.cacheIntervalInvalidation";
 
         /**
+         * The default cache interval invalidation.
+         *
+         * @see #CACHE_INTERVAL_INVALIDATION
+         */
+        public static final long DEFAULT_CACHE_INTERVAL_INVALIDATION = 5000;
+
+        /**
          * The index manager schedule interval (in seconds) where different actions related to index manager will happen (such
          * as global cache interval checks. If set to <code>-1</code>, not scheduling will happen.
          */
