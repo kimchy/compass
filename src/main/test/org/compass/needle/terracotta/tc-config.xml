@@ -11,10 +11,10 @@
                     <class-expression>org.compass.needle.terracotta.*</class-expression>
                 </include>
                 <include>
-                  <class-expression>org.apache.lucene.store.Directory</class-expression>
+                    <class-expression>org.apache.lucene.store.Directory</class-expression>
                 </include>
                 <include>
-                  <class-expression>org.apache.lucene.store.LockFactory</class-expression>
+                    <class-expression>org.apache.lucene.store.LockFactory</class-expression>
                 </include>
             </instrumented-classes>
 
@@ -32,6 +32,12 @@
             <roots>
                 <root>
                     <field-name>org.compass.needle.terracotta.TerracottaDirectoryStore.dirs</field-name>
+                </root>
+                <root>
+                    <field-name>org.compass.needle.terracotta.TerracottaLockFactoryProvider.lockFactories</field-name>
+                </root>
+                <root>
+                    <field-name>org.compass.needle.terracotta.TerracottaManagerUtilLockFactoryProvider.lockFactories</field-name>
                 </root>
             </roots>
 

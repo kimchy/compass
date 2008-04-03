@@ -34,6 +34,10 @@ GigaSpaceDirectory dir = new GigaSpaceDirectory(space, "test");
 	    <para>
 	        Note, it is preferable to configure the directory not to use the compound index format as it yields better performance.
 	    </para>
+	    
+	    <para>
+	      The GigaSpaces integration can also use GigaSpaces just as a distributed lock manager without the need to actually store the index on GigaSpaces. The <classname>GigaSpaceLockFactory</classname> can be used for it.
+	    </para>
 	</sect1>
 	
 	<sect1 id="needle-gigaspacse-store">
@@ -59,21 +63,14 @@ GigaSpaceDirectory dir = new GigaSpaceDirectory(space, "test");
 	    </para>
 	    
 	    <para>
-	        Since the lucene directory actually deletes a file from the file system, when several clients are connected to the index and are updating the index, it is important to configure Compass with an index deletion strategy that won't delete files only after a period of time (this will allow other clients time to refresh their cache). Here is an example of how this can be configured (see more in the search engine section):
-	        
-<programlisting><![CDATA[<compass name="default">
-
-  <connection>
-      <space indexName="test" url="jini://*/*/mySpace" />
-  </connection>
-
-  <searchEngine>
-    <indexDeletionPolicy>
-        <expirationTime expirationTimeSeconds="600" />
-    </indexDeletionPolicy>
-  </searchEngine>
-</compass>
-]]></programlisting>      	        
+	      By default, when using GigaSpaces as the Compass store, the index will be in an uncompound file format. It will also automatically be configured with an expiration time based index deletion policy so multiple clients will work correctly.
+	    </para>
+	    
+	    <para>
+	      Compass can also be configured just to used GigaSpaces as a distributed lock manager without the need to actually store the index on GigaSpaces (note that when configuring GigaSpaces as the actual store, the GigaSpaces lock factory will be used by default). Here is how it can be configured:
+<programlisting><![CDATA[compass.engine.store.lockFactory.type=org.compass.needle.gigaspaces.store.GigaSpaceLockFactoryProvider
+compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
+]]></programlisting>
 	    </para>
 	</sect1>
 	

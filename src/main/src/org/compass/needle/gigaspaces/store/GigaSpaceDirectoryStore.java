@@ -89,7 +89,7 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
     }
 
     private String buildFullIndexName(String subContext, String subIndex) {
-        return indexName + "X" + subContext + "X" + subIndex;
+        return indexName + "/" + subContext + "/" + subIndex;
     }
 
     public String suggestedIndexDeletionPolicy() {

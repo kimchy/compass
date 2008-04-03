@@ -33,9 +33,14 @@ import org.apache.lucene.store.LockFactory;
  */
 public class TerracottaManagerUtilLockFactory extends LockFactory {
 
-    private final String lockPrefix = UUID.randomUUID().toString();
+    private final String lockPrefix;
 
     public TerracottaManagerUtilLockFactory() {
+        this(UUID.randomUUID().toString());
+    }
+
+    public TerracottaManagerUtilLockFactory(String lockPrefix) {
+        this.lockPrefix = lockPrefix;
     }
 
     public Lock makeLock(String lockName) {

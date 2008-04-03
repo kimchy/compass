@@ -23,19 +23,32 @@ import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.LockFactory;
 
 /**
+ * A lock factory that creates {@link org.compass.needle.terracotta.TerracottaLock}s. Uses a concurrent
+ * hash map to hold the locks.
+ *
  * @author kimchy
  */
 public class TerracottaLockFactory extends LockFactory {
 
     static final Object MARK = new Object();
 
+    private final String prefix;
+
     private final ConcurrentHashMap<String, Object> locks = new ConcurrentHashMap<String, Object>();
+
+    public TerracottaLockFactory() {
+        this("");
+    }
+
+    public TerracottaLockFactory(String prefix) {
+        this.prefix = prefix;
+    }
 
     public Lock makeLock(String lockName) {
         // We do not use the LockPrefix at all, because the private
         // HashSet instance effectively scopes the locking to this
         // single Directory instance.
-        return new TerracottaLock(locks, lockName);
+        return new TerracottaLock(locks, prefix + lockName);
     }
 
     public void clearLock(String lockName) throws IOException {

@@ -403,7 +403,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                     if (temp instanceof LockFactory) {
                         lockFactory = (LockFactory) temp;
                     } else if (temp instanceof LockFactoryProvider) {
-                        lockFactory = ((LockFactoryProvider) temp).createLockFactory(path, subIndex, settings);
+                        lockFactory = ((LockFactoryProvider) temp).createLockFactory(path, subContext, subIndex, settings);
                     } else {
                         throw new SearchEngineException("No specific type of lock factory");
                     }

@@ -28,7 +28,7 @@ import org.apache.lucene.store.Lock;
 import org.apache.lucene.store.LockFactory;
 
 /**
- * A locak factory using Coherence invocable support in order to use the actual
+ * A lock factory using Coherence invocable support in order to use the actual
  * existance of a key within the cache to represent a lock.
  *
  * @author kimchy
