@@ -480,6 +480,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
             settings.setSetting("compass.engine.store.tc.bufferSize", getElementAttribute(connEle, "bufferSize"));
+            settings.setSetting("compass.engine.store.tc.flushRate", getElementAttribute(connEle, "flushRate"));
             return;
         }
         // --- Coherence Connection ---
