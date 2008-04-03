@@ -142,5 +142,15 @@ class GigaSpaceIndexInput extends IndexInput {
             throw new GigaSpaceDirectoryException(fileEntry.indexName, fileEntry.fileName, "Bucket [" + bucketIndex
                     + "] not found");
         }
+        if (bucketEntry.data == null) {
+            throw new GigaSpaceDirectoryException(fileEntry.indexName, fileEntry.fileName, "Bucket [" + bucketIndex
+                    + "] has no data");
+        }
+    }
+
+    public Object clone() {
+        GigaSpaceIndexInput indexInput = (GigaSpaceIndexInput) super.clone();
+        indexInput.bucketEntry = new FileBucketEntry(fileEntry.indexName, fileEntry.fileName, -1, null);
+        return indexInput;
     }
 }

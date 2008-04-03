@@ -143,4 +143,10 @@ class CoherenceIndexInput extends IndexInput {
                     + "] not found");
         }
     }
+
+    public Object clone() {
+        CoherenceIndexInput indexInput = (CoherenceIndexInput) super.clone();
+        indexInput.fileBucketKey = new FileBucketKey(fileHeaderKey.getIndexName(), fileHeaderKey.getFileName(), -1);
+        return indexInput;
+    }
 }
