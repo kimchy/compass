@@ -1,0 +1,71 @@
+<chapter id="needle-terracotta">
+	<title>Terracotta</title>
+	
+	<sect1 id="needle-terracotta-introduction">
+	    <title>Overview</title>
+	    
+	    <para>
+	        The Compass Needle <ulink url="http://www.terracotta.org">Terracotta</ulink> integration allows to store a Lucene index in a distributed manner using Terracotta as well as provide seamless integration with Compass. 
+	    </para>
+	</sect1>
+	
+	<sect1 id="needle-terracotta-directory">
+	  <title>Lucene Directory</title>
+	  
+	  <para>
+	    Compass provides a Terracotta optimized directory (similar to Lucene RAM directory) called <classname>TerracottaDirectory</classname>. When using it with pure Lucene applications, the directory needs to be defined as a "root" Terracotta object and then used when constructing <literal>IndexWriter</literal> and <literal>IndexReader</literal>. See the Compass Store on how to use compass jar file as a Terracotta Integration Module (TIM).
+	  </para>
+	  
+	  <para>
+	    Terracotta is a shared memory (referred to as "network attached memory"). The terracotta directory makes use of that and stores the directory in memory allowing for terracotta to distribute changes of it to all relevant nodes connected to the terracotta server. The actual content of a "file" in the directory is broken down into one or more byte arrays, which can be controlled using the bufferSize parameter. Note, once an index is created with a certain bufferSize, it should not be changed. By default, the buffer size is set to <literal>4096</literal> bytes.
+	  </para>
+	  
+	  <para>
+	    Terracotta will automatically fetch required content from the server, and will evict content if memory thresholds break for an application. When constructing large files, the directory allows to set a flush rate when the file content will be flushed (and be allowed to be evicted) during its creation. The formula is that every <literal>bufferSize * flushRate</literal> bytes, it will be released by Compass and allow terracotta to move it to the server and reclaim the memory. The default flush rate is set to 10.
+	  </para>  
+	  
+	</sect1>
+	
+	<sect1 id="needle-terracotta-store">
+	  <title>Compass Store</title>
+	  
+	  <para>
+	    When using Compass, it is very simple to configure Compass to store the index using Terracotta. Compass jar file already comes in the format of a Terracotta Integration Module (TIM) allowing to simply drop it into <literal>TC_HOME/modules</literal> and it already comes pre-configured with a terracotta configuration of both locks and roots (<literal>terracotta.xml</literal> file within the root of the compass jar file). Another option is to tell Terracotta where to look for more TIMs within the application <literal>tc-config</literal> file and point it to where the compass jar is located.
+	  </para>
+	  
+	  <para>
+	    Once the TIM is setup, Compass has a special Terracotta connection that allows it to use the <literal>TerracottaDirectory</literal> called <literal>TerracottaDirectoryStore</literal>. The <literal>TerracottaDirectoryStore</literal> is where terracotta is configured to have its root (note, this is all defined for you already since compass is a TIM).
+	  </para>
+	  
+	  <para>
+	    Here is a properties/settings based configuration
+<programlisting><![CDATA[compass.engine.connection=tc://myindex
+# default values, just showing how it can be configured
+compass.engine.store.tc.bufferSize=4096  
+compass.engine.store.tc.flushRate=10
+]]></programlisting>
+	  </para>
+	  
+	  <para>
+	    And here is an xml based configuration:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <tc indexName="myindex" bufferSize="4096" flushRate="10" />
+  </connection>
+</compass>
+]]></programlisting>
+	  </para>
+	  
+	  <para>
+	    The "client application" will need to run using Terracotta bootclasspath configuration, and have the following in its <literal>tc-config.xml</literal>: 
+<programlisting><![CDATA[
+  <clients>
+      <modules>
+          <module group-id="org.compass" name="compass" version="2.0.0-RC1" />
+      </modules>
+  </clients>
+]]></programlisting>
+      For more information on how to run it in different ways/environments, please refer to the terracotta documentation.
+	  </para>
+	</sect1>  
+</chapter>
