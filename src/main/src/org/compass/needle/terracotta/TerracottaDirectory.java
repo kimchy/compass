@@ -34,9 +34,9 @@ import org.apache.lucene.store.IndexOutput;
  * A Terracota based directory based on Lucene RAM directory improved to support
  * better concurrency.
  *
- * <p>By default, will try and use the {@link org.compass.needle.terracotta.TerracottaManagerUtilLockFactory}.
- * If it does not exists within the classpath (i.e. was not started with the terracota agent) then will fall
- * back to {@link org.compass.needle.terracotta.TerracottaLockFactory}.
+ * <p>Basically, the direcotry stores {@link org.compass.needle.terracotta.TerracottaFile}
+ * which are broken into one or more byte arrays. The size of the byte array can be configured
+ * but should not be changed once the index created.
  *
  * @author kimchy
  */
