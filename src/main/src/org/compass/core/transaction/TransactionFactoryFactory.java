@@ -21,8 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.config.ConfigurationException;
-import org.compass.core.util.ClassUtils;
 
 /**
  * @author kimchy
@@ -32,27 +30,17 @@ public class TransactionFactoryFactory {
     private static final Log log = LogFactory.getLog(TransactionFactoryFactory.class);
 
     public static TransactionFactory createTransactionFactory(Compass compass, CompassSettings settings) {
-        String factoryClassName = settings.getSetting(CompassEnvironment.Transaction.FACTORY,
-                LocalTransactionFactory.class.getName());
-        return createTransactionFactory(compass, factoryClassName, settings);
+        TransactionFactory transactionFactory = (TransactionFactory) settings.getSettingAsInstance(CompassEnvironment.Transaction.FACTORY, LocalTransactionFactory.class.getName());
+        if (log.isDebugEnabled()) {
+            log.debug("Using transaction factory [" + transactionFactory + "]");
+        }
+        transactionFactory.configure(compass, settings);
+        return transactionFactory;
     }
 
     public static LocalTransactionFactory createLocalTransactionFactory(Compass compass, CompassSettings settings) {
-        return (LocalTransactionFactory) createTransactionFactory(compass, LocalTransactionFactory.class.getName(), settings);
-    }
-
-    public static TransactionFactory createTransactionFactory(Compass compass, String factoryClassName, CompassSettings settings) {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Using transaction factory [" + factoryClassName + "]");
-        }
-
-        try {
-            TransactionFactory factory = (TransactionFactory) ClassUtils.forName(factoryClassName, settings.getClassLoader()).newInstance();
-            factory.configure(compass, settings);
-            return factory;
-        } catch (Exception e) {
-            throw new ConfigurationException("Failed to create transaction factory class [" + factoryClassName + "]", e);
-        }
+        LocalTransactionFactory localTransactionFactory = new LocalTransactionFactory();
+        localTransactionFactory.configure(compass, settings);
+        return localTransactionFactory;
     }
 }

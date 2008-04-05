@@ -94,7 +94,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
 
     protected abstract void doOptimize(String subIndex) throws SearchEngineException;
 
-    public LuceneSearchEngineFactory getSearchEngineFactory() {
+    protected LuceneSearchEngineFactory getSearchEngineFactory() {
         return searchEngineFactory;
     }
 

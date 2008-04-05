@@ -286,23 +286,28 @@ public class DefaultConverterLookup implements ConverterLookup {
             if (log.isDebugEnabled()) {
                 log.debug("Conveter [" + converterName + "] building...");
             }
-            String converterClassType = converterSettings.getSetting(CompassEnvironment.Converter.TYPE);
-            if (converterClassType == null) {
-                throw new ConfigurationException("Must define a class type for converter [" + converterName + "]");
-            }
             Converter converter;
-            try {
-                Class converterClass = defaultConveterTypes.get(converterClassType);
-                if (converterClass == null) {
-                    converterClass = ClassUtils.forName(converterClassType, settings.getClassLoader());
+            Object obj = converterSettings.getSettingAsObject(CompassEnvironment.Converter.TYPE);
+            if (obj == null) {
+                throw new ConfigurationException("Must define a class type / objecy instance for converter [" + converterName + "]");
+            }
+            if (obj instanceof String) {
+                String converterClassType = (String) obj;
+                try {
+                    Class converterClass = defaultConveterTypes.get(converterClassType);
+                    if (converterClass == null) {
+                        converterClass = ClassUtils.forName(converterClassType, settings.getClassLoader());
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("Converter [" + converterName + "] is of type [" + converterClass.getName() + "]");
+                    }
+                    converter = (Converter) converterClass.newInstance();
+                } catch (Exception e) {
+                    throw new ConfigurationException("Failed to create converter type [" + converterClassType +
+                            " for converter [" + converterName + "]", e);
                 }
-                if (log.isDebugEnabled()) {
-                    log.debug("Converter [" + converterName + "] is of type [" + converterClass.getName() + "]");
-                }
-                converter = (Converter) converterClass.newInstance();
-            } catch (Exception e) {
-                throw new ConfigurationException("Failed to create converter type [" + converterClassType +
-                        " for converter [" + converterName + "]", e);
+            } else {
+                converter = (Converter) obj;
             }
             if (converter instanceof CompassConfigurable) {
                 if (log.isDebugEnabled()) {

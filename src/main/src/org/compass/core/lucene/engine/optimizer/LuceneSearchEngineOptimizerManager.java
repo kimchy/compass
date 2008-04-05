@@ -28,7 +28,6 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.util.ClassUtils;
 
 /**
  * @author kimchy
@@ -51,18 +50,9 @@ public class LuceneSearchEngineOptimizerManager implements CompassConfigurable, 
 
     public void configure(CompassSettings settings) throws CompassException {
         // build the optimizer and start it
-        String optimizerClassSetting = settings.getSetting(LuceneEnvironment.Optimizer.TYPE, AdaptiveOptimizer.class.getName());
+        searchEngineOptimizer = (LuceneSearchEngineOptimizer) settings.getSettingAsInstance(LuceneEnvironment.Optimizer.TYPE, AdaptiveOptimizer.class.getName());
         if (log.isDebugEnabled()) {
-            log.debug("Using optimizer [" + optimizerClassSetting + "]");
-        }
-        try {
-            Class optimizerClass = ClassUtils.forName(optimizerClassSetting, settings.getClassLoader());
-            searchEngineOptimizer = (LuceneSearchEngineOptimizer) optimizerClass.newInstance();
-            if (searchEngineOptimizer instanceof CompassConfigurable) {
-                ((CompassConfigurable) searchEngineOptimizer).configure(settings);
-            }
-        } catch (Exception e) {
-            throw new SearchEngineException("Can't find optimizer class [" + optimizerClassSetting + "]", e);
+            log.debug("Using optimizer [" + searchEngineOptimizer + "]");
         }
         searchEngineOptimizer.setSearchEngineFactory(searchEngineFactory);
     }

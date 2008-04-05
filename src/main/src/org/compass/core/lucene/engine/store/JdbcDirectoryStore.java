@@ -77,19 +77,10 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
         String connection = settings.getSetting(CompassEnvironment.CONNECTION);
         String url = connection.substring(PROTOCOL.length());
 
-        String dataSourceProviderClassName = settings.getSetting(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
+        dataSourceProvider = (DataSourceProvider) settings.getSettingAsInstance(LuceneEnvironment.JdbcStore.DataSourceProvider.CLASS,
                 DriverManagerDataSourceProvider.class.getName());
-        try {
-            dataSourceProvider =
-                    (DataSourceProvider) ClassUtils.forName(dataSourceProviderClassName, settings.getClassLoader()).newInstance();
-            if (log.isDebugEnabled()) {
-                log.debug("Using data source provider [" + dataSourceProvider.getClass().getName() + "]");
-            }
-            dataSourceProvider.configure(url, settings);
-            this.dataSource = dataSourceProvider.getDataSource();
-        } catch (Exception e) {
-            throw new CompassException("Failed to configure data source provider [" + dataSourceProviderClassName + "]", e);
-        }
+        dataSourceProvider.configure(url, settings);
+        this.dataSource = dataSourceProvider.getDataSource();
 
         String dialectClassName = settings.getSetting(LuceneEnvironment.JdbcStore.DIALECT, null);
         if (dialectClassName == null) {

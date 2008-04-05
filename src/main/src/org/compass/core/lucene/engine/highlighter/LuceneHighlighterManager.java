@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.util.ClassUtils;
 
 /**
  * @author kimchy
@@ -58,20 +57,7 @@ public class LuceneHighlighterManager {
     }
 
     private LuceneHighlighterSettings buildHighlighter(String highlighterName, CompassSettings settings) {
-        String highlighterFactorySetting = settings.getSetting(LuceneEnvironment.Highlighter.FACTORY, null);
-        LuceneHighlighterFactory highlighterFactory;
-        if (highlighterFactorySetting == null) {
-            highlighterFactory = new DefaultLuceneHighlighterFactory();
-        } else {
-            try {
-                highlighterFactory = (LuceneHighlighterFactory) ClassUtils.forName(highlighterFactorySetting, settings.getClassLoader())
-                        .newInstance();
-            } catch (Exception e) {
-                throw new SearchEngineException("Cannot create Highlighter factory [" + highlighterFactorySetting
-                        + "]. Please verify the highlighter factory setting at ["
-                        + LuceneEnvironment.Highlighter.FACTORY + "]", e);
-            }
-        }
+        LuceneHighlighterFactory highlighterFactory = (LuceneHighlighterFactory) settings.getSettingAsInstance(LuceneEnvironment.Highlighter.FACTORY, DefaultLuceneHighlighterFactory.class.getName());
         return highlighterFactory.createHighlighterSettings(highlighterName, settings);
     }
 

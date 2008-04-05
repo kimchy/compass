@@ -17,7 +17,6 @@
 package org.compass.core.accessor;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -50,7 +49,7 @@ public class PropertyAccessorFactory implements CompassConfigurable {
 
     private static final PropertyAccessor DIRECT_PROPERTY_ACCESSOR = new DirectPropertyAccessor();
 
-    private Map propertyAccessorsRegistry = new HashMap();
+    private Map<String, PropertyAccessor> propertyAccessorsRegistry = new HashMap<String, PropertyAccessor>();
 
     /**
      * Configures the property accessor registry, using the two default ones (field and property),
@@ -60,25 +59,16 @@ public class PropertyAccessorFactory implements CompassConfigurable {
         propertyAccessorsRegistry.put("property", BASIC_PROPERTY_ACCESSOR);
         propertyAccessorsRegistry.put("field", DIRECT_PROPERTY_ACCESSOR);
 
-        Map paGroups = settings.getSettingGroups(CompassEnvironment.PropertyAccessor.PREFIX);
-        for (Iterator it = paGroups.keySet().iterator(); it.hasNext();) {
-            String paName = (String) it.next();
+        Map<String, CompassSettings> paGroups = settings.getSettingGroups(CompassEnvironment.PropertyAccessor.PREFIX);
+        for (Map.Entry<String, CompassSettings> entry : paGroups.entrySet()) {
+            String paName = entry.getKey();
             if (log.isDebugEnabled()) {
                 log.debug("Property Accessor [" + paName + "] building...");
             }
-            CompassSettings paSettings = (CompassSettings) paGroups.get(paName);
-            String paType = paSettings.getSetting(CompassEnvironment.PropertyAccessor.TYPE);
-            if (paType == null) {
+            CompassSettings paSettings = entry.getValue();
+            PropertyAccessor propertyAccessor = (PropertyAccessor) paSettings.getSettingAsInstance(CompassEnvironment.PropertyAccessor.TYPE);
+            if (propertyAccessor == null) {
                 throw new ConfigurationException("Must define type for property accessor [" + paName + "]");
-            }
-            PropertyAccessor propertyAccessor;
-            try {
-                propertyAccessor = (PropertyAccessor) ClassUtils.forName(paType, settings.getClassLoader()).newInstance();
-            } catch (Exception e) {
-                throw new ConfigurationException("Failed to create property accessor [" + paName + "] type", e);
-            }
-            if (propertyAccessor instanceof CompassConfigurable) {
-                ((CompassConfigurable) propertyAccessor).configure(paSettings);
             }
             propertyAccessorsRegistry.put(paName, propertyAccessor);
         }
@@ -94,14 +84,14 @@ public class PropertyAccessorFactory implements CompassConfigurable {
 
         if (type == null) {
             PropertyAccessor propertyAccessor =
-                    (PropertyAccessor) propertyAccessorsRegistry.get(CompassEnvironment.PropertyAccessor.DEFAULT_GROUP);
+                    propertyAccessorsRegistry.get(CompassEnvironment.PropertyAccessor.DEFAULT_GROUP);
             if (propertyAccessor != null) {
                 return propertyAccessor;
             }
             return BASIC_PROPERTY_ACCESSOR;
         }
 
-        PropertyAccessor propertyAccessor = (PropertyAccessor) propertyAccessorsRegistry.get(type);
+        PropertyAccessor propertyAccessor = propertyAccessorsRegistry.get(type);
         if (propertyAccessor != null) {
             return propertyAccessor;
         }

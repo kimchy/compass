@@ -16,6 +16,8 @@
 
 package org.compass.gps.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.compass.core.Compass;
@@ -59,7 +61,7 @@ public class SingleCompassGps extends AbstractCompassGps {
 
     private CompassTransaction.TransactionIsolation indexTransactionIsolation = CompassTransaction.TransactionIsolation.LUCENE;
 
-    private Properties indexSettings;
+    private Map<String, Object> indexSettings;
 
     private CompassSettings indexCompassSettings;
 
@@ -212,7 +214,24 @@ public class SingleCompassGps extends AbstractCompassGps {
      * used to define different connection string for example.
      */
     public void setIndexSettings(Properties indexSettings) {
-        this.indexSettings = indexSettings;
+        if (this.indexSettings == null) {
+            this.indexSettings = new HashMap<String, Object>();
+        }
+        for (Map.Entry entry : indexSettings.entrySet()) {
+            this.indexSettings.put((String) entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * Sets the additional cloned compass index settings. The settings can
+     * override existing settings used to create the Compass instance. Can be
+     * used to define different connection string for example.
+     */
+    public void setIndexSettings(Map<String, Object> indexSettings) {
+        if (this.indexSettings == null) {
+            this.indexSettings = new HashMap<String, Object>();
+        }
+        this.indexSettings.putAll(indexSettings);
     }
 
     /**
@@ -221,7 +240,7 @@ public class SingleCompassGps extends AbstractCompassGps {
      * used to define different connection string for example.
      */
     public void setIndexProperties(Properties indexSettings) {
-        this.indexSettings = indexSettings;
+        setIndexSettings(indexSettings);
     }
 
     /**
@@ -230,6 +249,9 @@ public class SingleCompassGps extends AbstractCompassGps {
      * used to define different connection string for example.
      */
     public void setIndexSettings(CompassSettings indexSettings) {
-        this.indexSettings = indexSettings.getProperties();
+        if (this.indexSettings == null) {
+            this.indexSettings = new HashMap<String, Object>();
+        }
+        this.indexSettings.putAll(indexSettings.getUnderlyingMap());
     }
 }

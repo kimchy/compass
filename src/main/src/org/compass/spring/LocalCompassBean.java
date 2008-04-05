@@ -73,6 +73,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     private Properties compassSettings;
 
+    private Map<String, Object> settings;
+
     private DataSource dataSource;
 
     private PlatformTransactionManager transactionManager;
@@ -136,6 +138,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     public void setCompassSettings(Properties compassSettings) {
         this.compassSettings = compassSettings;
+    }
+
+    public void setSettings(Map<String, Object> settings) {
+        this.settings = settings;
     }
 
     /**
@@ -249,6 +255,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
         if (this.compassSettings != null) {
             config.getSettings().addSettings(this.compassSettings);
+        }
+
+        if (this.settings != null) {
+            config.getSettings().addSettings(this.settings);
         }
 
         if (resourceLocations != null) {

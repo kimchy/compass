@@ -38,18 +38,18 @@ public class DefaultLuceneAnalyzerFactory implements LuceneAnalyzerFactory {
 
     private static final Log log = LogFactory.getLog(DefaultLuceneAnalyzerFactory.class);
 
-    private static final Set extednedAnalyzers;
+    private static final Set<String> extednedAnalyzers;
 
-    private static final Set coreAnalyzers;
+    private static final Set<String> coreAnalyzers;
 
     static {
-        coreAnalyzers = new HashSet();
+        coreAnalyzers = new HashSet<String>();
         coreAnalyzers.add(LuceneEnvironment.Analyzer.CoreTypes.WHITESPACE);
         coreAnalyzers.add(LuceneEnvironment.Analyzer.CoreTypes.STANDARD);
         coreAnalyzers.add(LuceneEnvironment.Analyzer.CoreTypes.SIMPLE);
         coreAnalyzers.add(LuceneEnvironment.Analyzer.CoreTypes.STOP);
 
-        extednedAnalyzers = new HashSet();
+        extednedAnalyzers = new HashSet<String>();
         extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.BRAZILIAN);
         extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.CJK);
         extednedAnalyzers.add(LuceneEnvironment.Analyzer.ExtendedTypes.CHINESE);
@@ -62,9 +62,17 @@ public class DefaultLuceneAnalyzerFactory implements LuceneAnalyzerFactory {
     }
 
     public Analyzer createAnalyzer(String analyzerName, CompassSettings settings) throws SearchEngineException {
+
+        Object obj = settings.getSettingAsObject(LuceneEnvironment.Analyzer.TYPE);
+        if (obj instanceof Analyzer) {
+            if (obj instanceof CompassConfigurable) {
+                ((CompassConfigurable) obj).configure(settings);
+            }
+            return (Analyzer) obj;
+        }
+
         Analyzer analyzer;
-        String analyzerSetting = settings.getSetting(LuceneEnvironment.Analyzer.TYPE,
-                LuceneEnvironment.Analyzer.CoreTypes.STANDARD);
+        String analyzerSetting = settings.getSetting(LuceneEnvironment.Analyzer.TYPE, LuceneEnvironment.Analyzer.CoreTypes.STANDARD);
         if (log.isDebugEnabled()) {
             log.debug("Analyzer [" + analyzerName + "] uses Lucene analyzer [" + analyzerSetting + "]");
         }
@@ -108,14 +116,14 @@ public class DefaultLuceneAnalyzerFactory implements LuceneAnalyzerFactory {
             stopWords = stopWords.substring(1);
         }
         StringTokenizer st = new StringTokenizer(stopWords, ",");
-        ArrayList listStopWords = new ArrayList();
+        ArrayList<String> listStopWords = new ArrayList<String>();
         while (st.hasMoreTokens()) {
             String stopword = st.nextToken().trim();
             if (StringUtils.hasLength(stopword)) {
                 listStopWords.add(stopword);
             }
         }
-        String[] arrStopWords = (String[]) listStopWords.toArray(new String[listStopWords.size()]);
+        String[] arrStopWords = listStopWords.toArray(new String[listStopWords.size()]);
 
         if (addStopWords) {
             if (log.isTraceEnabled()) {

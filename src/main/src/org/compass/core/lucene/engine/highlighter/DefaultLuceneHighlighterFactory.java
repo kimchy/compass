@@ -32,9 +32,7 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.util.ClassUtils;
 
 /**
- * 
  * @author kimchy
- * 
  */
 public class DefaultLuceneHighlighterFactory implements LuceneHighlighterFactory {
 
@@ -84,82 +82,98 @@ public class DefaultLuceneHighlighterFactory implements LuceneHighlighterFactory
 
     protected Encoder createEncoder(String highlighterName, CompassSettings settings) throws SearchEngineException {
         Encoder encoder;
-        String encoderSetting = settings.getSetting(LuceneEnvironment.Highlighter.Encoder.TYPE,
-                LuceneEnvironment.Highlighter.Encoder.DEFAULT);
-        if (log.isDebugEnabled()) {
-            log.debug("Highlighter [" + highlighterName + "] uses encoder [" + encoderSetting + "]");
-        }
-        if (LuceneEnvironment.Highlighter.Encoder.DEFAULT.equals(encoderSetting)) {
-            encoder = new DefaultEncoder();
-        } else if (LuceneEnvironment.Highlighter.Encoder.HTML.equals(encoderSetting)) {
-            encoder = new SimpleHTMLEncoder();
+        Object obj = settings.getSetting(LuceneEnvironment.Highlighter.Encoder.TYPE);
+        if (obj instanceof Encoder) {
+            encoder = (Encoder) obj;
+            if (log.isDebugEnabled()) {
+                log.debug("Highlighter [" + highlighterName + "] uses encoder instance [" + encoder + "]");
+            }
         } else {
-            try {
-                // the formatter is the fully qualified class name
-                encoder = (Encoder) ClassUtils.forName(encoderSetting, settings.getClassLoader()).newInstance();
-            } catch (Exception e) {
-                throw new SearchEngineException("Cannot instantiate Lucene encoder [" + encoderSetting
-                        + "] for highlighter [" + highlighterName
-                        + "]. Please verify the highlighter encoder setting at ["
-                        + LuceneEnvironment.Highlighter.Encoder.TYPE + "]", e);
+            String encoderSetting = settings.getSetting(LuceneEnvironment.Highlighter.Encoder.TYPE,
+                    LuceneEnvironment.Highlighter.Encoder.DEFAULT);
+            if (log.isDebugEnabled()) {
+                log.debug("Highlighter [" + highlighterName + "] uses encoder [" + encoderSetting + "]");
             }
-            if (encoder instanceof CompassConfigurable) {
-                ((CompassConfigurable) encoder).configure(settings);
+            if (LuceneEnvironment.Highlighter.Encoder.DEFAULT.equals(encoderSetting)) {
+                encoder = new DefaultEncoder();
+            } else if (LuceneEnvironment.Highlighter.Encoder.HTML.equals(encoderSetting)) {
+                encoder = new SimpleHTMLEncoder();
+            } else {
+                try {
+                    // the formatter is the fully qualified class name
+                    encoder = (Encoder) ClassUtils.forName(encoderSetting, settings.getClassLoader()).newInstance();
+                } catch (Exception e) {
+                    throw new SearchEngineException("Cannot instantiate Lucene encoder [" + encoderSetting
+                            + "] for highlighter [" + highlighterName
+                            + "]. Please verify the highlighter encoder setting at ["
+                            + LuceneEnvironment.Highlighter.Encoder.TYPE + "]", e);
+                }
             }
+        }
+        if (encoder instanceof CompassConfigurable) {
+            ((CompassConfigurable) encoder).configure(settings);
         }
         return encoder;
     }
 
     protected Formatter createFormatter(String highlighterName, CompassSettings settings) throws SearchEngineException {
         Formatter formatter;
-        String formatterSettings = settings.getSetting(LuceneEnvironment.Highlighter.Formatter.TYPE,
-                LuceneEnvironment.Highlighter.Formatter.SIMPLE);
-        if (log.isDebugEnabled()) {
-            log.debug("Highlighter [" + highlighterName + "] uses formatter [" + formatterSettings + "]");
-        }
-        if (LuceneEnvironment.Highlighter.Formatter.SIMPLE.equals(formatterSettings)) {
-            String preTag = settings.getSetting(LuceneEnvironment.Highlighter.Formatter.SIMPLE_PRE_HIGHLIGHT, "<b>");
-            String postTag = settings.getSetting(LuceneEnvironment.Highlighter.Formatter.SIMPLE_POST_HIGHLIGHT, "</b>");
-            formatter = new SimpleHTMLFormatter(preTag, postTag);
+        Object obj = settings.getSettingAsObject(LuceneEnvironment.Highlighter.Formatter.TYPE);
+        if (obj instanceof Formatter) {
+            formatter = (Formatter) obj;
             if (log.isDebugEnabled()) {
-                log.debug("Highlighter [" + highlighterName + "] uses pre [" + preTag + "] and post [" + postTag + "]");
-            }
-        } else if (LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT.equals(formatterSettings)) {
-            float maxScore = settings.getSettingAsFloat(
-                    LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_SCORE, Float.MIN_VALUE);
-            if (maxScore == Float.MIN_VALUE) {
-                throw new SearchEngineException("Highlighter [" + highlighterName
-                        + "] uses span formatter and must set the ["
-                        + LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_SCORE + "] setting");
-            }
-            String minForegroundColor = settings
-                    .getSetting(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MIN_FOREGROUND_COLOR);
-            String maxForegroundColor = settings
-                    .getSetting(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_FOREGROUND_COLOR);
-            String minBackgroundColor = settings
-                    .getSetting(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MIN_BACKGROUND_COLOR);
-            String maxBackgroundColor = settings
-                    .getSetting(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_BACKGROUND_COLOR);
-            try {
-                formatter = new SpanGradientFormatter(maxScore, minForegroundColor, maxForegroundColor,
-                        minBackgroundColor, maxBackgroundColor);
-            } catch (IllegalArgumentException e) {
-                throw new SearchEngineException("Highlighter [" + highlighterName
-                        + "] using span gradient formatter failed [" + e.getMessage() + "]");
+                log.debug("Highlighter [" + highlighterName + "] uses formatter instance [" + formatter + "]");
             }
         } else {
-            try {
-                // the formatter is the fully qualified class name
-                formatter = (Formatter) ClassUtils.forName(formatterSettings, settings.getClassLoader()).newInstance();
-            } catch (Exception e) {
-                throw new SearchEngineException("Cannot instantiate Lucene formatter [" + formatterSettings
-                        + "] for highlighter [" + highlighterName
-                        + "]. Please verify the highlighter formatter setting at ["
-                        + LuceneEnvironment.Highlighter.Formatter.TYPE + "]", e);
+            String formatterSettings = settings.getSetting(LuceneEnvironment.Highlighter.Formatter.TYPE,
+                    LuceneEnvironment.Highlighter.Formatter.SIMPLE);
+            if (log.isDebugEnabled()) {
+                log.debug("Highlighter [" + highlighterName + "] uses formatter [" + formatterSettings + "]");
             }
-            if (formatter instanceof CompassConfigurable) {
-                ((CompassConfigurable) formatter).configure(settings);
+            if (LuceneEnvironment.Highlighter.Formatter.SIMPLE.equals(formatterSettings)) {
+                String preTag = settings.getSetting(LuceneEnvironment.Highlighter.Formatter.SIMPLE_PRE_HIGHLIGHT, "<b>");
+                String postTag = settings.getSetting(LuceneEnvironment.Highlighter.Formatter.SIMPLE_POST_HIGHLIGHT, "</b>");
+                formatter = new SimpleHTMLFormatter(preTag, postTag);
+                if (log.isDebugEnabled()) {
+                    log.debug("Highlighter [" + highlighterName + "] uses pre [" + preTag + "] and post [" + postTag + "]");
+                }
+            } else if (LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT.equals(formatterSettings)) {
+                float maxScore = settings.getSettingAsFloat(
+                        LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_SCORE, Float.MIN_VALUE);
+                if (maxScore == Float.MIN_VALUE) {
+                    throw new SearchEngineException("Highlighter [" + highlighterName
+                            + "] uses span formatter and must set the ["
+                            + LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_SCORE + "] setting");
+                }
+                String minForegroundColor = settings
+                        .getSetting(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MIN_FOREGROUND_COLOR);
+                String maxForegroundColor = settings
+                        .getSetting(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_FOREGROUND_COLOR);
+                String minBackgroundColor = settings
+                        .getSetting(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MIN_BACKGROUND_COLOR);
+                String maxBackgroundColor = settings
+                        .getSetting(LuceneEnvironment.Highlighter.Formatter.HTML_SPAN_GRADIENT_MAX_BACKGROUND_COLOR);
+                try {
+                    formatter = new SpanGradientFormatter(maxScore, minForegroundColor, maxForegroundColor,
+                            minBackgroundColor, maxBackgroundColor);
+                } catch (IllegalArgumentException e) {
+                    throw new SearchEngineException("Highlighter [" + highlighterName
+                            + "] using span gradient formatter failed [" + e.getMessage() + "]");
+                }
+            } else {
+                try {
+                    // the formatter is the fully qualified class name
+                    formatter = (Formatter) ClassUtils.forName(formatterSettings, settings.getClassLoader()).newInstance();
+                } catch (Exception e) {
+                    throw new SearchEngineException("Cannot instantiate Lucene formatter [" + formatterSettings
+                            + "] for highlighter [" + highlighterName
+                            + "]. Please verify the highlighter formatter setting at ["
+                            + LuceneEnvironment.Highlighter.Formatter.TYPE + "]", e);
+                }
             }
+        }
+        if (formatter instanceof CompassConfigurable) {
+            ((CompassConfigurable) formatter).configure(settings);
         }
         return formatter;
     }

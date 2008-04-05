@@ -16,11 +16,8 @@
 
 package org.compass.core.engine.naming;
 
-import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.engine.SearchEngineException;
-import org.compass.core.util.ClassUtils;
 
 /**
  * A default implementation of the property naming strategy factory. Can be used
@@ -42,19 +39,7 @@ import org.compass.core.util.ClassUtils;
 public class DefaultPropertyNamingStrategyFactory implements PropertyNamingStrategyFactory {
 
     public PropertyNamingStrategy createNamingStrategy(CompassSettings settings) {
-        PropertyNamingStrategy namingStrategy;
-        String namingStrategySetting = settings.getSetting(CompassEnvironment.NamingStrategy.TYPE,
-                DefaultPropertyNamingStrategy.class.getName());
-        try {
-            namingStrategy = (PropertyNamingStrategy) ClassUtils.forName(namingStrategySetting, settings.getClassLoader()).newInstance();
-        } catch (Exception e) {
-            throw new SearchEngineException("Cannot create naming Strategy [" + namingStrategySetting
-                    + "]. Please verify the naming setting at [" + CompassEnvironment.NamingStrategy.TYPE + "]", e);
-        }
-        if (namingStrategy instanceof CompassConfigurable) {
-            ((CompassConfigurable) namingStrategy).configure(settings);
-        }
-        return namingStrategy;
+        return (PropertyNamingStrategy) settings.getSettingAsInstance(CompassEnvironment.NamingStrategy.TYPE, DefaultPropertyNamingStrategy.class.getName());
     }
 
 }

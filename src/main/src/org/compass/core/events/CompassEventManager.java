@@ -31,7 +31,6 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.AliasedObject;
-import org.compass.core.util.ClassUtils;
 
 /**
  * The event manager responsible for delegation of a specific event to one or more event listeners.
@@ -103,25 +102,17 @@ public class CompassEventManager implements CompassConfigurable,
         T[] listeners = (T[]) Array.newInstance(type, listenerSettings.size());
         int count = 0;
         for (Map.Entry<String, CompassSettings> entry : listenerSettings.entrySet()) {
-            String typeSetting = entry.getValue().getSetting(CompassEnvironment.Event.TYPE);
-            if (typeSetting == null) {
+            T listener = (T) entry.getValue().getSettingAsInstance(CompassEnvironment.Event.TYPE);
+            if (listener == null) {
                 throw new ConfigurationException("type is required when configuring the [" + entry.getKey() + "] event");
             }
-            try {
-                T listener = (T) ClassUtils.forName(typeSetting, settings.getClassLoader()).newInstance();
-                if (listener instanceof CompassConfigurable) {
-                    ((CompassConfigurable) listener).configure(entry.getValue());
-                }
-                if (listener instanceof CompassMappingAware) {
-                    ((CompassMappingAware) listener).setCompassMapping(mapping);
-                }
-                if (listener instanceof CompassAware) {
-                    ((CompassAware) listener).setCompass(compass);
-                }
-                listeners[count++] = listener;
-            } catch (Exception e) {
-                throw new ConfigurationException("Failed to create pre create listener [" + type + "]", e);
+            if (listener instanceof CompassMappingAware) {
+                ((CompassMappingAware) listener).setCompassMapping(mapping);
             }
+            if (listener instanceof CompassAware) {
+                ((CompassAware) listener).setCompass(compass);
+            }
+            listeners[count++] = listener;
         }
         return listeners;
     }

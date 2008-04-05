@@ -52,11 +52,11 @@ public class LuceneEnvironment {
 
         /**
          * The name of the analyzer to use, can be ANALYZER_WHITESPACE,
-         * ANALYZER_STANDARD, ANALYZER_SIMPLE, ANALYZER_STOP, or a fully
-         * qualified class of the analyzer.
+         * ANALYZER_STANDARD, ANALYZER_SIMPLE, ANALYZER_STOP, a fully
+         * qualified class of the analyzer ({@link Analyzer} or an instnace of it.
          *
          * <p>It is part of the anaylzer group, and should be constructed using the
-         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
+         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],Object[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
          * name, and the type as one of the values.
          */
@@ -68,7 +68,7 @@ public class LuceneEnvironment {
          * inteface.
          *
          * <p>It is part of the anaylzer group, and should be constructed using the
-         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
+         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],Object[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
          * name, and the type as one of the values.
          */
@@ -83,7 +83,7 @@ public class LuceneEnvironment {
          *
          * <p>It is part of the anaylzer group, and should be
          * constructed using the
-         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
+         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],Object[])},
          * with the {@link #PREFIX} as the prefix, the analyzer group
          * name, and the stopwords as one of the values.
          */
@@ -285,7 +285,8 @@ public class LuceneEnvironment {
 
         /**
          * The fully qualified class name of the
-         * {@link org.compass.core.lucene.engine.analyzer.LuceneAnalyzerTokenFilterProvider} implementation.
+         * {@link org.compass.core.lucene.engine.analyzer.LuceneAnalyzerTokenFilterProvider} implementation
+         * or an actual instance of it.
          */
         public static final String TYPE = "type";
 
@@ -360,12 +361,12 @@ public class LuceneEnvironment {
         public static final String MAX_BYTES_TO_ANALYZE = "maxBytesToAnalyze";
 
         /**
-         * The fully qualified name of the highlighter factory. Must implement
+         * The fully qualified name of the highlighter factory or an actual instance. Must implement
          * the
          * {@link org.compass.core.lucene.engine.highlighter.LuceneHighlighterFactory}
          * inteface. <p/> It is part of the highlighter group, and should be
          * constructed using the
-         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],String[])},
+         * {@link org.compass.core.config.CompassSettings#setGroupSettings(String,String,String[],Object[])},
          * with the {@link #PREFIX} as the prefix, the highlighter
          * group name, and the factory as one of the values.
          */
@@ -544,7 +545,8 @@ public class LuceneEnvironment {
     public static abstract class Optimizer {
 
         /**
-         * The fully qualified class name of the optimizer.
+         * The fully qualified class name of the optimizer or an actual instance. Must implement
+         * {@link org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizer}.
          */
         public static final String TYPE = "compass.engine.optimizer.type";
 
@@ -877,7 +879,7 @@ public class LuceneEnvironment {
         public abstract class DataSourceProvider {
 
             /**
-             * The class for the data source provider. Responsible for creating data sources.
+             * The class (or the actual instance) for the data source provider. Responsible for creating data sources.
              */
             public static final String CLASS = "compass.engine.store.jdbc.connection.provider.class";
 
@@ -1262,7 +1264,7 @@ public class LuceneEnvironment {
         public static final String PREFIX = "compass.engine.queryParser";
 
         /**
-         * The type of the query parser. A fully qualified class name, must
+         * The type of the query parser. A fully qualified class name or an actual instance, must
          * implement {@link org.compass.core.lucene.engine.queryparser.LuceneQueryParser}.
          */
         public static final String TYPE = "type";

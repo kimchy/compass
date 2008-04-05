@@ -47,6 +47,9 @@ public class CompassEnvironment {
      */
     public abstract class Event {
 
+        /**
+         * The type of the event listener. Either a fully qualified type of the event, or an actual instance.
+         */
         public static final String TYPE = "type";
 
         /**
@@ -123,7 +126,7 @@ public class CompassEnvironment {
         public static final String PREFIX = "compass.propertyAccessor";
 
         /**
-         * The fully qualified class name of the {@link PropertyAccessor}.
+         * The fully qualified class name of the {@link PropertyAccessor} or an actual instance.
          */
         public static final String TYPE = "type";
 
@@ -145,7 +148,7 @@ public class CompassEnvironment {
         public static final String PREFIX = "compass.converter";
 
         /**
-         * The fully qualified class name of the {@link Converter} implementation.
+         * The fully qualified class name of the {@link Converter} implementation or an actual instance.
          */
         public static final String TYPE = "type";
 
@@ -632,8 +635,9 @@ public class CompassEnvironment {
 
         /**
          * The naming strategy that will be used to save internal resource
-         * properties within a resource. A fully qualified class name of the naming
-         * strategy.
+         * properties within a resource. A fully qualified class name of
+         * {@link org.compass.core.engine.naming.PropertyNamingStrategy} or an
+         * actual instance of it.
          */
         public static final String TYPE = "compass.property.naming";
 

@@ -51,19 +51,19 @@ public final class TransactionManagerLookupFactory {
         if (tmLookupClass == null) {
             // try and auto detect the transaction manager
             log.info("JTA Transaction Manager Lookup setting not found, auto detecting....");
-            for (int i = 0; i < autoDetectOrder.length; i++) {
+            for (Class anAutoDetectOrder : autoDetectOrder) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Trying [" + autoDetectOrder[i].getName() + "]");
+                    log.debug("Trying [" + anAutoDetectOrder.getName() + "]");
                 }
-                TransactionManagerLookup tmLookup = detect(autoDetectOrder[i], settings);
+                TransactionManagerLookup tmLookup = detect(anAutoDetectOrder, settings);
                 if (tmLookup != null) {
-                    log.info("Detected JTA Transaction Manager [" + autoDetectOrder[i].getName() + "]");
+                    log.info("Detected JTA Transaction Manager [" + anAutoDetectOrder.getName() + "]");
                     return tmLookup;
                 }
             }
             return null;
         } else {
-            log.info("Instansiating TransactionManagerLookup [" + tmLookupClass + "]");
+            log.debug("Instansiating TransactionManagerLookup [" + tmLookupClass + "]");
             try {
                 return (TransactionManagerLookup) ClassUtils.forName(tmLookupClass, settings.getClassLoader()).newInstance();
             } catch (Exception e) {

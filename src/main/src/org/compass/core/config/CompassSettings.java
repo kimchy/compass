@@ -31,7 +31,7 @@ import org.compass.core.util.ClassUtils;
  */
 public class CompassSettings {
 
-    private Properties settings;
+    private ConcurrentHashMap<String, Object> settings;
 
     private final Map<String, HashMap<String, CompassSettings>> groups = new ConcurrentHashMap<String, HashMap<String, CompassSettings>>();
 
@@ -40,28 +40,50 @@ public class CompassSettings {
     private ClassLoader classLoader;
 
     public CompassSettings() {
-        this(new Properties());
+        this.settings = new ConcurrentHashMap<String, Object>();
     }
 
     public CompassSettings(ClassLoader classLoader) {
-        this(new Properties());
+        this();
         this.classLoader = classLoader;
     }
 
-    public CompassSettings(Properties settings) {
-        this.settings = settings;
-    }
-
-    public void addSettings(Properties settings) {
+    public CompassSettings(Map<String, Object> settings) {
+        this();
         this.settings.putAll(settings);
     }
 
+    public void addSettings(Properties settings) {
+        for (Map.Entry entry : settings.entrySet()) {
+            setSetting((String) entry.getKey(), (String) entry.getValue());
+        }
+    }
+
+    public void addSettings(Map<String, Object> settings) {
+        this.settings.putAll(settings);
+    }
+
+    public Map<String, Object> getUnderlyingMap() {
+        return settings;
+    }
+
+    public Properties getProperties() {
+        Properties properties = new Properties();
+        for (Map.Entry<String, Object> entry : settings.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                properties.setProperty(entry.getKey(), (String) entry.getValue());
+            }
+        }
+        return properties;
+    }
+
     public void addSettings(CompassSettings settings) {
-        this.settings.putAll(settings.getProperties());
+        this.settings.putAll(settings.settings);
     }
 
     public CompassSettings copy() {
-        CompassSettings copySettings = new CompassSettings((Properties) settings.clone());
+        CompassSettings copySettings = new CompassSettings();
+        copySettings.settings.putAll(settings);
         copySettings.registry = new ConcurrentHashMap<Object, Object>(registry);
         copySettings.classLoader = classLoader;
         return copySettings;
@@ -94,20 +116,24 @@ public class CompassSettings {
         return this.classLoader;
     }
 
-    public Properties getProperties() {
-        return settings;
-    }
-
     public Collection keySet() {
         return settings.keySet();
     }
 
     public String getSetting(String setting) {
-        return settings.getProperty(setting);
+        return (String) settings.get(setting);
+    }
+
+    public Object getSettingAsObject(String setting) {
+        return settings.get(setting);
     }
 
     public String getSetting(String setting, String defaultValue) {
-        return settings.getProperty(setting, defaultValue);
+        String retVal = (String) settings.get(setting);
+        if (retVal == null) {
+            return defaultValue;
+        }
+        return retVal;
     }
 
     public Map<String, CompassSettings> getSettingGroups(String settingPrefix) {
@@ -137,7 +163,7 @@ public class CompassSettings {
                     groupSettings.setClassLoader(getClassLoader());
                     map.put(name, groupSettings);
                 }
-                groupSettings.setSetting(value, getSetting(setting));
+                groupSettings.setObjectSetting(value, getSettingAsObject(setting));
             }
         }
         groups.put(settingPrefix, map);
@@ -200,11 +226,47 @@ public class CompassSettings {
         return ClassUtils.forName(sValue, classLoader);
     }
 
+    public Object getSettingAsInstance(String setting) {
+        return getSettingAsInstance(setting, null);
+    }
+
+    public Object getSettingAsInstance(String setting, String defaultClass) {
+        Object type = getSettingAsObject(setting);
+        if (type == null) {
+            if (defaultClass == null) {
+                return null;
+            }
+            type = defaultClass;
+        }
+        Object instance;
+        if (type instanceof String) {
+            try {
+                instance = ClassUtils.forName((String) type, getClassLoader()).newInstance();
+            } catch (Exception e) {
+                throw new ConfigurationException("Failed to instantiate [" + type + "], please verify class type at setting [" + setting + "]", e);
+            }
+        } else {
+            instance = type;
+        }
+        if (instance instanceof CompassConfigurable) {
+            ((CompassConfigurable) instance).configure(this);
+        }
+        return instance;
+    }
+
     public CompassSettings setSetting(String setting, String value) {
         if (value == null) {
             return this;
         }
-        this.settings.setProperty(setting, value);
+        this.settings.put(setting, value);
+        return this;
+    }
+
+    public CompassSettings setObjectSetting(String setting, Object value) {
+        if (value == null) {
+            return this;
+        }
+        this.settings.put(setting, value);
         return this;
     }
 
@@ -251,7 +313,7 @@ public class CompassSettings {
      * @param values        The values of the settings matched against the settings parameters
      * @return This settings instance for method chaining
      */
-    public CompassSettings setGroupSettings(String settingPrefix, String groupName, String[] settings, String[] values) {
+    public CompassSettings setGroupSettings(String settingPrefix, String groupName, String[] settings, Object[] values) {
         if (settings.length != values.length) {
             throw new IllegalArgumentException("The settings length must match the value length");
         }
@@ -259,7 +321,7 @@ public class CompassSettings {
             if (values[i] == null) {
                 continue;
             }
-            setSetting(settingPrefix + "." + groupName + "." + settings[i], values[i]);
+            setObjectSetting(settingPrefix + "." + groupName + "." + settings[i], values[i]);
         }
         return this;
     }

@@ -42,6 +42,10 @@ public class RuntimeCompassSettings extends CompassSettings {
         runtimeSettings.addSettings(settings);
     }
 
+    public void addSettings(Map<String, Object> settings) {
+        runtimeSettings.addSettings(settings);
+    }
+
     public void addSettings(CompassSettings settings) {
         runtimeSettings.addSettings(settings);
     }
@@ -60,6 +64,14 @@ public class RuntimeCompassSettings extends CompassSettings {
         return globalSettings.getSetting(setting);
     }
 
+    public Object getSettingAsObject(String setting) {
+        Object value = runtimeSettings.getSettingAsObject(setting);
+        if (value != null) {
+            return value;
+        }
+        return globalSettings.getSettingAsObject(setting);
+    }
+
     public String getSetting(String setting, String defaultValue) {
         String value = runtimeSettings.getSetting(setting);
         if (value != null) {
@@ -69,7 +81,7 @@ public class RuntimeCompassSettings extends CompassSettings {
     }
 
     public Map<String, CompassSettings> getSettingGroups(String settingPrefix) {
-        Map group = runtimeSettings.getSettingGroups(settingPrefix);
+        Map<String, CompassSettings> group = runtimeSettings.getSettingGroups(settingPrefix);
         if (group.size() != 0) {
             return group;
         }
@@ -108,6 +120,14 @@ public class RuntimeCompassSettings extends CompassSettings {
         return globalSettings.getSettingAsBoolean(setting, defaultValue);
     }
 
+    public double getSettingAsDouble(String setting, double defaultValue) {
+        String value = runtimeSettings.getSetting(setting);
+        if (value != null) {
+            return runtimeSettings.getSettingAsDouble(setting, defaultValue);
+        }
+        return globalSettings.getSettingAsDouble(setting, defaultValue);
+    }
+
     public Class getSettingAsClass(String setting, Class clazz) throws ClassNotFoundException {
         String value = runtimeSettings.getSetting(setting);
         if (value != null) {
@@ -124,8 +144,21 @@ public class RuntimeCompassSettings extends CompassSettings {
         return globalSettings.getSettingAsClass(setting, clazz, classLoader);
     }
 
+    public Object getSettingAsInstance(String setting, String defaultClass) {
+        Object value = runtimeSettings.getSettingAsObject(setting);
+        if (value != null) {
+            return runtimeSettings.getSettingAsInstance(setting, defaultClass);
+        }
+        return globalSettings.getSettingAsInstance(setting, defaultClass);
+    }
+
     public CompassSettings setSetting(String setting, String value) {
         runtimeSettings.setSetting(setting, value);
+        return this;
+    }
+
+    public CompassSettings setObjectSetting(String setting, Object value) {
+        runtimeSettings.setObjectSetting(setting, value);
         return this;
     }
 
@@ -149,12 +182,17 @@ public class RuntimeCompassSettings extends CompassSettings {
         return this;
     }
 
+    public CompassSettings setDoubleSetting(String setting, double value) {
+        runtimeSettings.setDoubleSetting(setting, value);
+        return this;
+    }
+
     public CompassSettings setClassSetting(String setting, Class clazz) {
         runtimeSettings.setClassSetting(setting, clazz);
         return this;
     }
 
-    public CompassSettings setGroupSettings(String settingPrefix, String groupName, String[] settings, String[] values) {
+    public CompassSettings setGroupSettings(String settingPrefix, String groupName, String[] settings, Object[] values) {
         runtimeSettings.setGroupSettings(settingPrefix, groupName, settings, values);
         return this;
     }

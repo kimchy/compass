@@ -76,19 +76,20 @@ public class DefaultLuceneHighlighterSettings implements LuceneHighlighterSettin
             int size = settings.getSettingAsInt(LuceneEnvironment.Highlighter.Fragmenter.SIMPLE_SIZE, 100);
             return new SimpleFragmenter(size);
         }
-        if (fragmenterSetting.equals(LuceneEnvironment.Highlighter.Fragmenter.TYPE_NULL)) {
-            return new NullFragmenter();
-        }
         Fragmenter oFragmenter;
-        try {
-            Class fragmenterClass = ClassUtils.forName(fragmenterSetting, settings.getClassLoader());
-            oFragmenter = (Fragmenter) fragmenterClass.newInstance();
-        } catch (Exception e) {
-            throw new SearchEngineException("Failed to create highlighter fragmenter class [" + fragmenterSetting
-                    + "]", e);
-        }
-        if (oFragmenter instanceof CompassConfigurable) {
-            ((CompassConfigurable) oFragmenter).configure(settings);
+        if (fragmenterSetting.equals(LuceneEnvironment.Highlighter.Fragmenter.TYPE_NULL)) {
+            oFragmenter = new NullFragmenter();
+        } else {
+            try {
+                Class fragmenterClass = ClassUtils.forName(fragmenterSetting, settings.getClassLoader());
+                oFragmenter = (Fragmenter) fragmenterClass.newInstance();
+            } catch (Exception e) {
+                throw new SearchEngineException("Failed to create highlighter fragmenter class [" + fragmenterSetting
+                        + "]", e);
+            }
+            if (oFragmenter instanceof CompassConfigurable) {
+                ((CompassConfigurable) oFragmenter).configure(settings);
+            }
         }
         return oFragmenter;
     }

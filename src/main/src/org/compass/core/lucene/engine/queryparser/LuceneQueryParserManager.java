@@ -62,7 +62,7 @@ public class LuceneQueryParserManager implements CompassConfigurable {
                 defaultGroupSettings = queryParserSettings;
             }
 
-            String queryParserType = queryParserSettings.getSetting(LuceneEnvironment.QueryParser.TYPE);
+            Object queryParserType = queryParserSettings.getSettingAsObject(LuceneEnvironment.QueryParser.TYPE);
             if (queryParserType == null) {
                 if (queryParserName.equals(LuceneEnvironment.QueryParser.DEFAULT_GROUP)) {
                     // no problem, continue here and we will create the default one ourself using the provided settings
@@ -71,10 +71,14 @@ public class LuceneQueryParserManager implements CompassConfigurable {
                 throw new ConfigurationException("Failed to locate query parser [" + queryParserName + "] type, it must be set");
             }
             LuceneQueryParser queryParser;
-            try {
-                queryParser = (LuceneQueryParser) ClassUtils.forName(queryParserType, settings.getClassLoader()).newInstance();
-            } catch (Exception e) {
-                throw new ConfigurationException("Failed to create query parser class [" + queryParserType + "]", e);
+            if (queryParserType instanceof LuceneQueryParser) {
+                queryParser = (LuceneQueryParser) queryParserType;
+            } else {
+                try {
+                    queryParser = (LuceneQueryParser) ClassUtils.forName((String) queryParserType, settings.getClassLoader()).newInstance();
+                } catch (Exception e) {
+                    throw new ConfigurationException("Failed to create query parser class [" + queryParserType + "]", e);
+                }
             }
             if (queryParser instanceof CompassConfigurable) {
                 ((CompassConfigurable) queryParser).configure(queryParserSettings);

@@ -78,21 +78,27 @@ public class LuceneAnalyzerManager {
                 log.info("Building analyzer filter [" + analyzerFilterName + "]");
             }
             CompassSettings analyzerFilterSettings = analyzerFilterSettingGroups.get(analyzerFilterName);
-            String analyzerFilterType = analyzerFilterSettings.getSetting(LuceneEnvironment.AnalyzerFilter.TYPE);
-            if (analyzerFilterType == null) {
-                throw new SearchEngineException("Failed to locate analyzer filter [" + analyzerFilterName + "] type, it must be set");
-            }
-            try {
-                if (analyzerFilterType.equals(LuceneEnvironment.AnalyzerFilter.SYNONYM_TYPE)) {
-                    analyzerFilterType = SynonymAnalyzerTokenFilterProvider.class.getName();
+            LuceneAnalyzerTokenFilterProvider provider;
+
+            Object obj = analyzerFilterSettings.getSettingAsObject(LuceneEnvironment.AnalyzerFilter.TYPE);
+            if (obj instanceof LuceneAnalyzerTokenFilterProvider) {
+                provider = (LuceneAnalyzerTokenFilterProvider) obj;
+            } else {
+                String analyzerFilterType = analyzerFilterSettings.getSetting(LuceneEnvironment.AnalyzerFilter.TYPE);
+                if (analyzerFilterType == null) {
+                    throw new SearchEngineException("Failed to locate analyzer filter [" + analyzerFilterName + "] type, it must be set");
                 }
-                LuceneAnalyzerTokenFilterProvider provider =
-                        (LuceneAnalyzerTokenFilterProvider) ClassUtils.forName(analyzerFilterType, settings.getClassLoader()).newInstance();
-                provider.configure(analyzerFilterSettings);
-                analyzersFilters.put(analyzerFilterName, provider);
-            } catch (Exception e) {
-                throw new SearchEngineException("Failed to create analyzer filter [" + analyzerFilterName + "]", e);
+                try {
+                    if (analyzerFilterType.equals(LuceneEnvironment.AnalyzerFilter.SYNONYM_TYPE)) {
+                        analyzerFilterType = SynonymAnalyzerTokenFilterProvider.class.getName();
+                    }
+                    provider = (LuceneAnalyzerTokenFilterProvider) ClassUtils.forName(analyzerFilterType, settings.getClassLoader()).newInstance();
+                } catch (Exception e) {
+                    throw new SearchEngineException("Failed to create analyzer filter [" + analyzerFilterName + "]", e);
+                }
             }
+            provider.configure(analyzerFilterSettings);
+            analyzersFilters.put(analyzerFilterName, provider);
         }
     }
 
@@ -199,16 +205,7 @@ public class LuceneAnalyzerManager {
     }
 
     private Analyzer buildAnalyzer(String analyzerName, CompassSettings settings) {
-        String analyzerFactorySetting = settings.getSetting(LuceneEnvironment.Analyzer.FACTORY,
-                DefaultLuceneAnalyzerFactory.class.getName());
-        LuceneAnalyzerFactory analyzerFactory;
-        try {
-            analyzerFactory = (LuceneAnalyzerFactory) ClassUtils.forName(analyzerFactorySetting, settings.getClassLoader()).newInstance();
-        } catch (Exception e) {
-            throw new SearchEngineException("Cannot create Analyzer factory [" + analyzerFactorySetting
-                    + "]. Please verify the analyzer factory setting at [" + LuceneEnvironment.Analyzer.FACTORY + "]",
-                    e);
-        }
+        LuceneAnalyzerFactory analyzerFactory = (LuceneAnalyzerFactory) settings.getSettingAsInstance(LuceneEnvironment.Analyzer.FACTORY, DefaultLuceneAnalyzerFactory.class.getName());
         Analyzer analyzer = analyzerFactory.createAnalyzer(analyzerName, settings);
         String filters = settings.getSetting(LuceneEnvironment.Analyzer.FILTERS);
         if (filters != null) {

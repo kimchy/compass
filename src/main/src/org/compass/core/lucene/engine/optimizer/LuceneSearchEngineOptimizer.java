@@ -26,9 +26,10 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
  */
 public interface LuceneSearchEngineOptimizer extends SearchEngineOptimizer {
 
+    /**
+     * Injected with the actual search engine factory upon construction or Compass startup.
+     */
     void setSearchEngineFactory(LuceneSearchEngineFactory searchEngineFactory);
-
-    LuceneSearchEngineFactory getSearchEngineFactory();
 
     /**
      * Can the optimizer be scheduled or not.
