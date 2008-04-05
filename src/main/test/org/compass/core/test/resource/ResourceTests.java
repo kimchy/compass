@@ -102,6 +102,16 @@ public class ResourceTests extends AbstractTestCase {
         assertEquals(1, hits.getLength());
         assertEquals("this is a test", hits.resource(0).getValue("mvalue"));
 
+
+        assertEquals(1, session.queryBuilder().matchAll().count());
+        r = getResourceFactory().createResource("a");
+        r.addProperty("id", 1);
+        r.addProperty(getResourceFactory().createProperty("mvalue", "updatetests", Property.Store.YES, Property.Index.TOKENIZED));
+        session.save(r);
+        assertEquals(1, session.queryBuilder().matchAll().count());
+        hits = session.find("updatetests");
+        assertEquals(1, hits.getLength());
+
         session.delete("a", "1");
         r = session.getResource("a", r);
         assertNull(r);
