@@ -22,6 +22,16 @@ public abstract class QueryParserUtils {
     }
 
     /**
+     * Returns a poly alias query.
+     */
+    public static Query createPolyAliasQuery(SearchEngineFactory searchEngineFactory, String value) {
+        BooleanQuery query = new BooleanQuery();
+        query.add(new TermQuery(new Term(searchEngineFactory.getAliasProperty(), value)), BooleanClause.Occur.SHOULD);
+        query.add(new TermQuery(new Term(searchEngineFactory.getExtendedAliasProperty(), value)), BooleanClause.Occur.SHOULD);
+        return query;
+    }
+
+    /**
      * If enabled and allowed, wraps the given query with a boolean query that adds a must match on the alias).
      */
     public static Query andAliasQueryIfNeeded(Query query, ResourcePropertyLookup lookup, boolean addAliasQueryWithDotPath,

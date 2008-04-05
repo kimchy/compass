@@ -104,6 +104,9 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         if (field == null) {
             return super.getFieldQuery(field, queryText);
         }
+        if (searchEngineFactory.getAliasProperty().equals(field)) {
+            return QueryParserUtils.createPolyAliasQuery(searchEngineFactory, queryText);
+        }
         ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
         lookup.setConvertOnlyWithDotPath(false);
         if (lookup.hasSpecificConverter()) {
@@ -302,7 +305,7 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
     }
 
     public void close() {
-        
+
     }
 
     protected Term getTerm(String field, String text) throws ParseException {

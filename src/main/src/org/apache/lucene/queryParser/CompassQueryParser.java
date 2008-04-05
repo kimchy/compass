@@ -104,6 +104,9 @@ public class CompassQueryParser extends QueryParser {
         if (field == null) {
             return super.getFieldQuery(field, queryText);
         }
+        if (searchEngineFactory.getAliasProperty().equals(field)) {
+            return QueryParserUtils.createPolyAliasQuery(searchEngineFactory, queryText);
+        }
         ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
         lookup.setConvertOnlyWithDotPath(false);
         if (lookup.hasSpecificConverter()) {
