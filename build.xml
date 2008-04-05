@@ -639,6 +639,8 @@
                 <include name="lib/velocity/**"/>
                 <include name="lib/xpp/**"/>
                 <include name="lib/gigaspaces/**"/>
+                <include name="lib/terracotta/**"/>
+                <include name="lib/joda/**"/>
             </zipfileset>
         </zip>
 
