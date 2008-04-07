@@ -261,6 +261,19 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
     private static Method getterMethod(Class theClass, String propertyName) {
 
+        // first try and find it directly
+        try {
+            return theClass.getMethod("get" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1));
+        } catch (NoSuchMethodException e) {
+            // continue our search
+        }
+
+        try {
+            return theClass.getMethod("is" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1));
+        } catch (NoSuchMethodException e) {
+            // continue our search
+        }
+
         Method[] methods = theClass.getDeclaredMethods();
         for (Method method : methods) {
             // only carry on if the method has no parameters
