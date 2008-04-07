@@ -27,6 +27,7 @@ import org.compass.core.CompassTermFreqsBuilder;
 import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Resource;
+import org.compass.core.ResourceFactory;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.NullFirstLevelCache;
 import org.compass.core.cascade.CascadingManager;
@@ -94,6 +95,10 @@ public class DefaultCompassSession implements InternalCompassSession {
         this.cascadingManager = new CascadingManager(this);
 
         transactionFactory.tryJoinExistingTransaction(this);
+    }
+
+    public ResourceFactory resourceFactory() {
+        return compass.getResourceFactory();
     }
 
     public CompassSettings getSettings() {

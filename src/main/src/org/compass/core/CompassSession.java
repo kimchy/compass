@@ -52,6 +52,11 @@ import org.compass.core.config.CompassSettings;
 public interface CompassSession extends CompassOperations {
 
     /**
+     * Returns a resource factory allowing to create resources and properties.
+     */
+    ResourceFactory resourceFactory();
+    
+    /**
      * Runtimes settings that apply on the session level.
      *
      * @return Runtime settings applies on the session level

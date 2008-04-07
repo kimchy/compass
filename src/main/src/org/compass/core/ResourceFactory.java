@@ -22,6 +22,13 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
+ * A {@link org.compass.core.Resource} and {@link org.compass.core.Property} factory allowing to
+ * create new instances.
+ *
+ * <p>Note, this does not means that the resources will be created in the search engine.
+ * {@link org.compass.core.CompassSession#create(Object)}, or one of the other APIs still need
+ * to be called.
+ *
  * @author kimchy
  */
 public interface ResourceFactory {
