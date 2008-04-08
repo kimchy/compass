@@ -144,6 +144,9 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
         if (mapping.getConverter() != null) {
             sb.append("converter=\"").append(mapping.getConverter()).append("\"").append(" ");
         }
+        if (mapping.getBoost() > 0.0f) {
+            sb.append("boost=\"").append(mapping.getBoost()).append("\"").append(" ");
+        }
         sb.append(" />");
     }
 
@@ -159,6 +162,9 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
         }
         if (mapping.getConverter() != null) {
             sb.append("converter=\"").append(mapping.getConverter()).append("\"").append(" ");
+        }
+        if (mapping.getBoost() > 0.0f) {
+            sb.append("boost=\"").append(mapping.getBoost()).append("\"").append(" ");
         }
         sb.append(" />");
     }
