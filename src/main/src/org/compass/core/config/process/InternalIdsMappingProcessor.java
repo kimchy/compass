@@ -69,9 +69,9 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
      * do not support un-marshalling.
      */
     private void buildInternalIdForIdProperties(ClassMapping classMapping) {
-        List idMappings = classMapping.findClassPropertyIdMappings();
-        for (Iterator it = idMappings.iterator(); it.hasNext();) {
-            MappingProcessorUtils.addInternalId(settings, converterLookup, (ClassPropertyMapping) it.next(), true);
+        List<ClassIdPropertyMapping> idMappings = classMapping.findClassPropertyIdMappings();
+        for (ClassIdPropertyMapping idMapping : idMappings) {
+            MappingProcessorUtils.addInternalId(settings, converterLookup, idMapping, true);
         }
     }
 
@@ -101,28 +101,26 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
                 new OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer();
         OsemMappingIterator.iterateMappings(callback, classMapping);
 
-        HashMap propertyMappingsMap = new HashMap();
-        List pMappings = callback.getResourcePropertyMappings();
-        for (Iterator it = pMappings.iterator(); it.hasNext();) {
-            ResourcePropertyMapping pMapping = (ResourcePropertyMapping) it.next();
+        HashMap<String, Integer> propertyMappingsMap = new HashMap<String, Integer>();
+        List<ResourcePropertyMapping> pMappings = callback.getResourcePropertyMappings();
+        for (Iterator<ResourcePropertyMapping> it = pMappings.iterator(); it.hasNext();) {
+            ResourcePropertyMapping pMapping = it.next();
             // no need to count the ones we don't store since they won't
             // be reflected when we unmarshall the data
             if (pMapping.getStore() == Property.Store.NO) {
                 continue;
             }
-            Integer count = (Integer) propertyMappingsMap.get(pMapping.getName());
+            Integer count = propertyMappingsMap.get(pMapping.getName());
             if (count == null) {
-                count = new Integer(1);
+                count = 1;
             } else {
-                count = new Integer(count.intValue() + 1);
+                count = count + 1;
             }
             propertyMappingsMap.put(pMapping.getName(), count);
         }
 
-        List classPropertyMappings = callback.getClassPropertyMappings();
-        for (Iterator it = classPropertyMappings.iterator(); it.hasNext();) {
-            ClassPropertyMapping classPropertyMapping = (ClassPropertyMapping) it.next();
-
+        List<ClassPropertyMapping> classPropertyMappings = callback.getClassPropertyMappings();
+        for (ClassPropertyMapping classPropertyMapping : classPropertyMappings) {
             // first, set the managed id if not set usign default (up to class mapping, and if
             // not set, up to Compass settings, and if not there, default to auto).
             if (classPropertyMapping.getManagedId() == null) {
@@ -162,7 +160,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
                 if (!allMetaDataHasStoreNo) {
                     autoAddIfRequiredInternalId(propertyMappingsMap, classPropertyMapping, mustBeUnTokenized);
                 } // else, don't set the id property, and don't unmarshall it
-                
+
             } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.NO) {
                 // do nothing, don't set the managed id, won't be unmarshallled
             } else { // ManagedId.FALSE
@@ -172,7 +170,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         }
     }
 
-    private void autoAddIfRequiredInternalId(HashMap propertyMappingsMap, ClassPropertyMapping classPropertyMapping, boolean mustBeUnTokenized) {
+    private void autoAddIfRequiredInternalId(HashMap<String, Integer> propertyMappingsMap, ClassPropertyMapping classPropertyMapping, boolean mustBeUnTokenized) {
         boolean foundPropertyId = false;
         for (int i = 0; i < classPropertyMapping.mappingsSize(); i++) {
             ClassPropertyMetaDataMapping pMapping = (ClassPropertyMetaDataMapping) classPropertyMapping.getMapping(i);
@@ -186,7 +184,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
                 continue;
             }
             // if there is only one mapping, and it is stored, use it as the id
-            if (((Integer) propertyMappingsMap.get(pMapping.getName())).intValue() == 1
+            if (propertyMappingsMap.get(pMapping.getName()) == 1
                     && (pMapping.getStore() == Property.Store.YES || pMapping.getStore() == Property.Store.COMPRESS)) {
                 if (mustBeUnTokenized && pMapping.getIndex() != Property.Index.UN_TOKENIZED) {
                     continue;
