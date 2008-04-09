@@ -16,12 +16,12 @@
 
 package org.compass.core.lucene.engine.query;
 
-import org.compass.core.engine.SearchEngineQueryBuilder;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.compass.core.engine.SearchEngineQuery;
+import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BooleanClause;
 
 /**
  * @author kimchy
@@ -49,6 +49,11 @@ public class LuceneSearchEngineBooleanQueryBuilder implements SearchEngineQueryB
 
     public SearchEngineQueryBuilder.SearchEngineBooleanQueryBuilder addShould(SearchEngineQuery query) {
         boolQuery.add(((LuceneSearchEngineQuery) query).getQuery(), BooleanClause.Occur.SHOULD);
+        return this;
+    }
+
+    public SearchEngineQueryBuilder.SearchEngineBooleanQueryBuilder setMinimumNumberShouldMatch(int min) {
+        boolQuery.setMinimumNumberShouldMatch(min);
         return this;
     }
 

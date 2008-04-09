@@ -68,6 +68,11 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
             return this;
         }
 
+        public CompassBooleanQueryBuilder setMinimumNumberShouldMatch(int min) {
+            queryBuilder.setMinimumNumberShouldMatch(min);
+            return this;
+        }
+
         public CompassQuery toQuery() {
             SearchEngineQuery query = queryBuilder.toQuery();
             return new DefaultCompassQuery(query, session);

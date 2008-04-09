@@ -87,6 +87,23 @@ public interface CompassQueryBuilder {
          * @return The current builder
          */
         CompassBooleanQueryBuilder addShould(CompassQuery query);
+
+        /**
+         * Specifies a minimum number of the optional BooleanClauses
+         * which must be satisfied.
+         *
+         * <p>By default no optional clauses are necessary for a match
+         * (unless there are no required clauses).  If this method is used,
+         * then the specified number of clauses is required.
+         *
+         * <p>Use of this method is totally independent of specifying that
+         * any specific clauses are required (or prohibited).  This number will
+         * only be compared against the number of matching optional clauses.
+         *
+         * <p>EXPERT NOTE: Using this method may force collecting docs in order,
+         * regardless of whether setAllowDocsOutOfOrder(true) has been called.
+         */
+        CompassBooleanQueryBuilder setMinimumNumberShouldMatch(int min);
     }
 
     /**
@@ -154,7 +171,7 @@ public interface CompassQueryBuilder {
         /**
          * Uses the spell check for suggesting a query based on the query string.
          */
-        CompassQueryStringBuilder useSpellCheck() throws CompassException ;
+        CompassQueryStringBuilder useSpellCheck() throws CompassException;
 
         /**
          * Sets the analyzer that will be used to analyzer the query string. The
@@ -249,7 +266,7 @@ public interface CompassQueryBuilder {
          * Uses the OR operator as the default operator instead of AND operator.
          */
         CompassMultiPropertyQueryStringBuilder useOrDefaultOperator();
-        
+
         /**
          * Forces the query parser to use the analyzer specified or confiugred and not
          * analyzers that might be defined on different mappings.

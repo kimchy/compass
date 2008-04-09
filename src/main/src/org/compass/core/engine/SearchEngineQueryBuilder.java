@@ -38,6 +38,8 @@ public interface SearchEngineQueryBuilder {
         SearchEngineBooleanQueryBuilder addMustNot(SearchEngineQuery query);
 
         SearchEngineBooleanQueryBuilder addShould(SearchEngineQuery query);
+
+        SearchEngineBooleanQueryBuilder setMinimumNumberShouldMatch(int min);
     }
 
     public static interface SearchEngineMultiPhraseQueryBuilder extends SearchEngineToQuery {
