@@ -52,7 +52,9 @@ public abstract class QueryParserUtils {
         BooleanQuery booleanQuery = new BooleanQuery();
         booleanQuery.add(query, BooleanClause.Occur.MUST);
         booleanQuery.add(new TermQuery(new Term(searchEngineFactory.getAliasProperty(), alias)), BooleanClause.Occur.MUST);
-        booleanQuery.add(new TermQuery(new Term(searchEngineFactory.getExtendedAliasProperty(), alias)), BooleanClause.Occur.SHOULD);
+        // need to think about if this make sense, so we can get extended aliases match as well.
+//        booleanQuery.add(new TermQuery(new Term(searchEngineFactory.getExtendedAliasProperty(), alias)), BooleanClause.Occur.SHOULD);
+//        booleanQuery.setMinimumNumberShouldMatch(1);
         return booleanQuery;
     }
 

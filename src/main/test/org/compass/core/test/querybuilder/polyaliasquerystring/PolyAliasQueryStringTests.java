@@ -48,4 +48,29 @@ public class PolyAliasQueryStringTests extends AbstractAnnotationsTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testSimpleAliasQueryString() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        a.value = "test";
+        session.save(a);
+
+        B b = new B();
+        b.id = 2;
+        b.value = "me";
+        session.save(b);
+
+        assertEquals(1, session.find("A.id:1").length());
+        assertEquals(0, session.find("A.id:2").length());
+        assertEquals(1, session.find("B.id:2").length());
+
+        assertEquals(1, session.find("A.value:test").length());
+        assertEquals(1, session.find("B.value:me").length());
+
+        tr.commit();
+        session.close();
+    }
 }
