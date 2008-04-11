@@ -252,7 +252,7 @@
     <!ATTLIST id name CDATA #REQUIRED>
     <!ATTLIST id class CDATA #IMPLIED>
     <!ATTLIST id analyzer CDATA #IMPLIED>
-    <!ATTLIST id accessor CDATA "property">
+    <!ATTLIST id accessor CDATA #IMPLIED>
     <!ATTLIST id managed-id (auto|true|false) "auto">
     <!ATTLIST id managed-id-converter CDATA #IMPLIED>
     <!ATTLIST id exclude-from-all (true|false|yes|no|no_analyzed) "no">
@@ -266,7 +266,7 @@
     <!ATTLIST property class CDATA #IMPLIED>
     <!ATTLIST property analyzer CDATA #IMPLIED>
     <!ATTLIST property override (true|false) "true">
-    <!ATTLIST property accessor CDATA "property">
+    <!ATTLIST property accessor CDATA #IMPLIED>
     <!ATTLIST property managed-id (auto|true|false|no|no_store) #IMPLIED>
     <!ATTLIST property managed-id-index (no|un_tokenized) #IMPLIED>
     <!ATTLIST property managed-id-converter CDATA #IMPLIED>
@@ -279,7 +279,7 @@
 )>
     <!ATTLIST boost name CDATA #REQUIRED>
     <!ATTLIST boost default CDATA #IMPLIED>
-    <!ATTLIST boost accessor (field|property) "property">
+    <!ATTLIST boost accessor CDATA #IMPLIED>
     <!ATTLIST boost converter CDATA #IMPLIED>
 
 <!ELEMENT analyzer (
@@ -287,7 +287,7 @@
 )>
     <!ATTLIST analyzer name CDATA #REQUIRED>
     <!ATTLIST analyzer null-analyzer CDATA #IMPLIED>
-    <!ATTLIST analyzer accessor (field|property) "property">
+    <!ATTLIST analyzer accessor CDATA #IMPLIED>
     <!ATTLIST analyzer converter CDATA #IMPLIED>
 
 <!ELEMENT id-component EMPTY
@@ -297,7 +297,7 @@
     <!ATTLIST id-component override (true|false) "true">
     <!ATTLIST id-component max-depth CDATA #IMPLIED>
     <!ATTLIST id-component converter CDATA #IMPLIED>
-    <!ATTLIST id-component accessor CDATA "property">
+    <!ATTLIST id-component accessor CDATA #IMPLIED>
     <!ATTLIST id-component cascade CDATA  #IMPLIED>
 
 <!ELEMENT component EMPTY
@@ -307,7 +307,7 @@
     <!ATTLIST component override (true|false) "true">
     <!ATTLIST component max-depth CDATA #IMPLIED>
     <!ATTLIST component converter CDATA #IMPLIED>
-    <!ATTLIST component accessor CDATA "property">
+    <!ATTLIST component accessor CDATA #IMPLIED>
     <!ATTLIST component cascade CDATA  #IMPLIED>
 
 <!ELEMENT reference EMPTY
@@ -316,21 +316,21 @@
     <!ATTLIST reference ref-alias CDATA #IMPLIED>
     <!ATTLIST reference ref-comp-alias CDATA #IMPLIED>
     <!ATTLIST reference converter CDATA #IMPLIED>
-    <!ATTLIST reference accessor CDATA "property">
+    <!ATTLIST reference accessor CDATA #IMPLIED>
     <!ATTLIST reference cascade CDATA  #IMPLIED>
 
 <!ELEMENT parent EMPTY
 >
     <!ATTLIST parent name CDATA #REQUIRED>
     <!ATTLIST parent converter CDATA #IMPLIED>
-    <!ATTLIST parent accessor CDATA "property">
+    <!ATTLIST parent accessor CDATA #IMPLIED>
     <!ATTLIST parent cascade CDATA  #IMPLIED>
 
 <!ELEMENT cascade EMPTY
 >
     <!ATTLIST cascade name CDATA #REQUIRED>
     <!ATTLIST cascade converter CDATA #IMPLIED>
-    <!ATTLIST cascade accessor CDATA "property">
+    <!ATTLIST cascade accessor CDATA #IMPLIED>
     <!ATTLIST cascade cascade CDATA  #IMPLIED>
 
 <!ELEMENT constant (
