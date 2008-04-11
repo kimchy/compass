@@ -497,16 +497,16 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (isRunning) {
             return;
         }
-        if (luceneSettings.getIndexManagerScheduleInterval() > 0) {
+        long indexManagerScheduleInterval = (long) (luceneSettings.getSettings().getSettingAsFloat(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60.0f) * 1000);
+        if (indexManagerScheduleInterval > 0) {
             if (log.isInfoEnabled()) {
-                log.info("Starting scheduled index manager with period [" + luceneSettings.getIndexManagerScheduleInterval() + "ms]");
+                log.info("Starting scheduled index manager with period [" + indexManagerScheduleInterval + "ms]");
             }
             ScheduledIndexManagerRunnable scheduledIndexManagerRunnable = new ScheduledIndexManagerRunnable(this);
-            long period = luceneSettings.getIndexManagerScheduleInterval();
-            scheduledFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledIndexManagerRunnable, period, period, TimeUnit.MILLISECONDS);
+            scheduledFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledIndexManagerRunnable, indexManagerScheduleInterval, indexManagerScheduleInterval, TimeUnit.MILLISECONDS);
 
             // set the time to wait for clearing cache to 110% of the schedule time
-            setWaitForCacheInvalidationBeforeSecondStep((long) (luceneSettings.getIndexManagerScheduleInterval() * 1.1));
+            setWaitForCacheInvalidationBeforeSecondStep((long) (indexManagerScheduleInterval * 1.1));
         } else {
             log.info("Not starting scheduled index manager");
             return;

@@ -78,8 +78,6 @@ public class LuceneSettings {
 
     private long cacheInvalidationInterval;
 
-    private long indexManagerScheduleInterval;
-
     private boolean waitForCacheInvalidationOnIndexOperation;
 
     private String lockDir;
@@ -206,10 +204,6 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Using cache invalidation interval [" + cacheInvalidationInterval + "ms]");
         }
-        indexManagerScheduleInterval = (long) (settings.getSettingAsFloat(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60.0f) * 1000);
-        if (log.isDebugEnabled()) {
-            log.debug("Using index manager schedule interval [" + indexManagerScheduleInterval + "ms]");
-        }
 
         waitForCacheInvalidationOnIndexOperation = settings.getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION, false);
         if (log.isDebugEnabled()) {
@@ -295,10 +289,6 @@ public class LuceneSettings {
 
     public String getLockDir() {
         return lockDir;
-    }
-
-    public long getIndexManagerScheduleInterval() {
-        return indexManagerScheduleInterval;
     }
 
     public boolean isWaitForCacheInvalidationOnIndexOperation() {
