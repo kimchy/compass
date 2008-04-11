@@ -41,6 +41,7 @@ import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterSettings;
+import org.compass.core.lucene.engine.highlighter.support.TokenOrderingFilter;
 
 /**
  * @author kimchy
@@ -180,12 +181,12 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
         }
     }
 
-    public String[] multiResourceFragment(Resource resource, String propertyName)
+    public String[] multiValueFragment(Resource resource, String propertyName)
             throws SearchEngineException {
-        return multiResourceFragment(resource, propertyName, getTextsFromResource(resource, propertyName));
+        return multiValueFragment(resource, propertyName, getTextsFromResource(resource, propertyName));
     }
 
-    public String[] multiResourceFragment(Resource resource, String propertyName, String[] texts)
+    public String[] multiValueFragment(Resource resource, String propertyName, String[] texts)
             throws SearchEngineException {
         List fragmentList = new ArrayList();
         Highlighter highlighter = createHighlighter(propertyName);
@@ -194,7 +195,7 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
             if (text != null && text.length() > 0) {
                 //TokenStream tokenStream = createTokenStream(resource, propertyName, text);
                 // We have to re-analyze one field value at a time
-                TokenStream tokenStream = analyzer.tokenStream(propertyName, new StringReader(text));
+                TokenStream tokenStream = createTokenStreamFromAnalyzer(propertyName, text);
                 try {
                     String fragment = highlighter.getBestFragment(tokenStream, text);
                     if (fragment != null && fragment.length() > 0) {
@@ -209,14 +210,14 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
         return (String[]) fragmentList.toArray(new String[fragmentList.size()]);
     }
 
-    public String multiResourceFragmentWithSeparator(Resource resource, String propertyName)
+    public String multiValueFragmentWithSeparator(Resource resource, String propertyName)
             throws SearchEngineException {
-        return multiResourceFragmentWithSeparator(resource, propertyName, getTextsFromResource(resource, propertyName));
+        return multiValueFragmentWithSeparator(resource, propertyName, getTextsFromResource(resource, propertyName));
     }
 
-    public String multiResourceFragmentWithSeparator(Resource resource, String propertyName, String[] texts)
+    public String multiValueFragmentWithSeparator(Resource resource, String propertyName, String[] texts)
             throws SearchEngineException {
-        String[] fragments = multiResourceFragment(resource, propertyName, texts);
+        String[] fragments = multiValueFragment(resource, propertyName, texts);
         String actualSeparator = getActualSeparator();
         StringBuffer fragment = new StringBuffer();
         if (fragments.length > 0) {
@@ -238,11 +239,11 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
         if (actualTextTokenizer == CompassHighlighter.TextTokenizer.AUTO) {
             TokenStream tokenStream = createTokenStreamFromTermPositions(resource, propertyName);
             if (tokenStream == null) {
-                tokenStream = analyzer.tokenStream(propertyName, new StringReader(text));
+                tokenStream = createTokenStreamFromAnalyzer(propertyName, text);
             }
             return tokenStream;
         } else if (actualTextTokenizer == CompassHighlighter.TextTokenizer.ANALYZER) {
-            return analyzer.tokenStream(propertyName, new StringReader(text));
+            return createTokenStreamFromAnalyzer(propertyName, text);
         } else if (actualTextTokenizer == CompassHighlighter.TextTokenizer.TERM_VECTOR) {
             TokenStream tokenStream = createTokenStreamFromTermPositions(resource, propertyName);
             if (tokenStream == null) {
@@ -252,6 +253,14 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
             return tokenStream;
         }
         throw new SearchEngineException("No handling for text tokenizer [" + actualTextTokenizer + "]");
+    }
+
+    protected TokenStream createTokenStreamFromAnalyzer(String propertyName, String text) {
+        TokenStream tokenStream = analyzer.tokenStream(propertyName, new StringReader(text));
+        if (tokenStream == null) {
+            tokenStream = new TokenOrderingFilter(tokenStream, 10);
+        }
+        return tokenStream;
     }
 
     protected TokenStream createTokenStreamFromTermPositions(Resource resource, String propertyName)

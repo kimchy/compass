@@ -57,11 +57,11 @@ public interface SearchEngineHighlighter {
 
     String fragmentsWithSeparator(Resource resource, String propertyName, String text) throws SearchEngineException;
     
-    String[] multiResourceFragment(Resource resource, String propertyName) throws SearchEngineException;
+    String[] multiValueFragment(Resource resource, String propertyName) throws SearchEngineException;
     
-    String[] multiResourceFragment(Resource resource, String propertyName, String[] texts) throws SearchEngineException;
+    String[] multiValueFragment(Resource resource, String propertyName, String[] texts) throws SearchEngineException;
     
-    String multiResourceFragmentWithSeparator(Resource resource, String propertyName) throws SearchEngineException;
+    String multiValueFragmentWithSeparator(Resource resource, String propertyName) throws SearchEngineException;
     
-    String multiResourceFragmentWithSeparator(Resource resource, String propertyName, String[] texts) throws SearchEngineException;
+    String multiValueFragmentWithSeparator(Resource resource, String propertyName, String[] texts) throws SearchEngineException;
 }

@@ -120,29 +120,29 @@ public class DefaultCompassHighlighter implements CompassHighlighter {
         return fragment;
     }
 
-	public String[] multiResourceFragment(String propertyName) throws CompassException {
+	public String[] multiValueFragment(String propertyName) throws CompassException {
 		ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
-		String[] fragments = highlighter.multiResourceFragment(resource, lookup.getPath());
+		String[] fragments = highlighter.multiValueFragment(resource, lookup.getPath());
 		return fragments;
 	}
 
-	public String[] multiResourceFragment(String propertyName, String[] texts) throws CompassException {
+	public String[] multiValueFragment(String propertyName, String[] texts) throws CompassException {
 		ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
-		String[] fragments = highlighter.multiResourceFragment(resource, lookup.getPath(), texts);
+		String[] fragments = highlighter.multiValueFragment(resource, lookup.getPath(), texts);
 		return fragments;
 	}
 
-	public String multiResourceFragmentWithSeparator(String propertyName) throws CompassException {
+	public String multiValueFragmentWithSeparator(String propertyName) throws CompassException {
 		ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
-		String fragment = highlighter.multiResourceFragmentWithSeparator(resource, lookup.getPath());
+		String fragment = highlighter.multiValueFragmentWithSeparator(resource, lookup.getPath());
 		hits.setHighlightedText(hitNumber, propertyName, fragment);
 		return fragment;
 	}
 
-	public String multiResourceFragmentWithSeparator(String propertyName, String[] texts)
+	public String multiValueFragmentWithSeparator(String propertyName, String[] texts)
 			throws CompassException {
 		ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(propertyName);
-		String fragment = highlighter.multiResourceFragmentWithSeparator(resource, lookup.getPath(), texts);
+		String fragment = highlighter.multiValueFragmentWithSeparator(resource, lookup.getPath(), texts);
 		hits.setHighlightedText(hitNumber, propertyName, fragment);
 		return fragment;
 	}

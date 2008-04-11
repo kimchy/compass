@@ -304,7 +304,7 @@ public interface CompassHighlighter {
      * @return The best fragment texts highlighted.
      * @throws CompassException
      */
-    String[] multiResourceFragment(String propertyName) throws CompassException;
+    String[] multiValueFragment(String propertyName) throws CompassException;
     
     /**
      * Returns the best highlighted fragment of each matching <i>multi</ib> resource
@@ -327,7 +327,7 @@ public interface CompassHighlighter {
      * @return The best fragment texts highlighted.
      * @throws CompassException
      */
-    String[] multiResourceFragment(String propertyName, String[] texts) throws CompassException;
+    String[] multiValueFragment(String propertyName, String[] texts) throws CompassException;
     
     /**
      * Returns the best highlighted fragments for the given <i>multi</i> property
@@ -347,7 +347,7 @@ public interface CompassHighlighter {
      * @return The best fragments highlighted and separated.
      * @throws CompassException
      */
-    String multiResourceFragmentWithSeparator(String propertyName) throws CompassException;
+    String multiValueFragmentWithSeparator(String propertyName) throws CompassException;
     
     /**
      * Returns the best highlighted fragments for the given <i>multi</i> property
@@ -369,6 +369,6 @@ public interface CompassHighlighter {
      * @return The best fragments highlighted and separated.
      * @throws CompassException
      */
-    String multiResourceFragmentWithSeparator(String propertyName, String[] texts) throws CompassException;
+    String multiValueFragmentWithSeparator(String propertyName, String[] texts) throws CompassException;
 
 }

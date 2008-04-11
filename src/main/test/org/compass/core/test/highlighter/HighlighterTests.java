@@ -159,12 +159,12 @@ public class HighlighterTests extends AbstractTestCase {
         CompassHits hits = session.find("Lu*e");
         assertEquals(1, hits.length());
 
-        String[] fragments = hits.highlighter(0).multiResourceFragment("text");
+        String[] fragments = hits.highlighter(0).multiValueFragment("text");
         assertEquals(2, fragments.length);
 
         String fragment = hits.highlighter(0)
                 .setHighlighter("commaSeparator")
-                .multiResourceFragmentWithSeparator("text");
+                .multiValueFragmentWithSeparator("text");
         assertEquals("<b>Lucene</b>,<b>Luke</b>", fragment);
 
         tr.commit();
