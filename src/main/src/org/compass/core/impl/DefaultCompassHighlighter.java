@@ -45,6 +45,7 @@ public class DefaultCompassHighlighter implements CompassHighlighter {
         this.hitNumber = n;
         this.highlighter = hits.getSearchEngineHits().getHighlighter();
         this.resource = hits.resource(n);
+        setAnalyzer(resource);
     }
 
     public CompassHighlighter setAnalyzer(String analyzerName) throws CompassException {
