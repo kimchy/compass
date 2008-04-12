@@ -35,7 +35,8 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
-import org.compass.core.config.binding.MappingBindingSupport;
+import org.compass.core.config.binding.AbstractClassMetaDataMappingBinding;
+import org.compass.core.config.binding.metadata.ClassMetaData;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.osem.MetaDataFormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
@@ -72,7 +73,7 @@ import org.compass.core.util.StringUtils;
 /**
  * @author kimchy
  */
-public class AnnotationsMappingBinding extends MappingBindingSupport {
+public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBinding {
 
     public static final Log log = LogFactory.getLog(AnnotationsMappingBinding.class);
 
@@ -85,9 +86,14 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
     private CompassSettings settings;
 
     public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
+        super.setUpBinding(mapping, metaData, settings);
         this.mapping = mapping;
         this.valueLookup = new CommonMetaDataLookup(metaData);
         this.settings = settings;
+    }
+
+    protected boolean isApplicable(ClassMetaData classMetaData) {
+        return classMetaData.hasAnnotation(Searchable.class.getName());
     }
 
     public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
@@ -126,89 +132,6 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
         }
         return true;
     }
-
-    private void bindAnalyzerFilter(SearchAnalyzerFilter searchAnalyzerFilter) throws ConfigurationException, MappingException {
-        ArrayList<String> settingsNames = new ArrayList<String>();
-        ArrayList<String> settingsValues = new ArrayList<String>();
-        settingsNames.add(LuceneEnvironment.AnalyzerFilter.TYPE);
-        settingsValues.add(searchAnalyzerFilter.type().getName());
-
-        for (SearchSetting setting : searchAnalyzerFilter.settings()) {
-            settingsNames.add(setting.name());
-            settingsValues.add(setting.value());
-        }
-
-        settings.setGroupSettings(LuceneEnvironment.AnalyzerFilter.PREFIX, searchAnalyzerFilter.name(),
-                settingsNames.toArray(new String[settingsNames.size()]),
-                settingsValues.toArray(new String[settingsValues.size()]));
-    }
-
-    private void bindAnalyzer(SearchAnalyzer searchAnalyzer) throws ConfigurationException, MappingException {
-        ArrayList<String> settingsNames = new ArrayList<String>();
-        ArrayList<String> settingsValues = new ArrayList<String>();
-
-        settingsNames.add(LuceneEnvironment.Analyzer.TYPE);
-        if (searchAnalyzer.type() == AnalyzerType.CustomAnalyzer) {
-            if (Analyzer.class.equals(searchAnalyzer.analyzerClass())) {
-                throw new ConfigurationException("SearchableAnalyzer [" + searchAnalyzer.name() + "] has " +
-                        "type of [" + AnalyzerType.CustomAnalyzer + "] but does not set analyzerClass");
-            }
-            settingsValues.add(searchAnalyzer.analyzerClass().getName());
-        } else {
-            settingsValues.add(searchAnalyzer.type().toString());
-        }
-
-        if (searchAnalyzer.type() == AnalyzerType.Snowball) {
-            settingsNames.add(LuceneEnvironment.Analyzer.Snowball.NAME_TYPE);
-            settingsValues.add(searchAnalyzer.snowballType().toString());
-        }
-
-        if (searchAnalyzer.stopWords().length > 0) {
-            StringBuffer sb = new StringBuffer();
-            if (searchAnalyzer.addStopWords()) {
-                sb.append("+");
-            }
-            for (String stopword : searchAnalyzer.stopWords()) {
-                sb.append(stopword).append(",");
-            }
-            settingsNames.add(LuceneEnvironment.Analyzer.STOPWORDS);
-            settingsValues.add(sb.toString());
-        }
-
-        if (searchAnalyzer.filters().length > 0) {
-            StringBuffer sb = new StringBuffer();
-            for (String filter : searchAnalyzer.filters()) {
-                sb.append(filter).append(",");
-            }
-            settingsNames.add(LuceneEnvironment.Analyzer.FILTERS);
-            settingsValues.add(sb.toString());
-        }
-
-        for (SearchSetting setting : searchAnalyzer.settings()) {
-            settingsNames.add(setting.name());
-            settingsValues.add(setting.value());
-        }
-
-        settings.setGroupSettings(LuceneEnvironment.Analyzer.PREFIX, searchAnalyzer.name(),
-                settingsNames.toArray(new String[settingsNames.size()]),
-                settingsValues.toArray(new String[settingsValues.size()]));
-    }
-
-    private void bindConverter(SearchConverter searchConverter) throws ConfigurationException, MappingException {
-        String[] settingsNames = new String[searchConverter.settings().length + 1];
-        String[] settingsValues = new String[searchConverter.settings().length + 1];
-        int i = 0;
-        for (; i < searchConverter.settings().length; i++) {
-            SearchSetting setting = searchConverter.settings()[i];
-            settingsNames[i] = setting.name();
-            settingsValues[i] = setting.value();
-        }
-        settingsNames[i] = CompassEnvironment.Converter.TYPE;
-        settingsValues[i] = searchConverter.type().getName();
-        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, searchConverter.name(),
-                settingsNames, settingsValues);
-    }
-
 
     public boolean addClass(Class clazz) throws ConfigurationException, MappingException {
         Class<?> annotationClass = clazz;
@@ -333,6 +256,89 @@ public class AnnotationsMappingBinding extends MappingBindingSupport {
 
         return true;
     }
+
+    private void bindAnalyzerFilter(SearchAnalyzerFilter searchAnalyzerFilter) throws ConfigurationException, MappingException {
+        ArrayList<String> settingsNames = new ArrayList<String>();
+        ArrayList<String> settingsValues = new ArrayList<String>();
+        settingsNames.add(LuceneEnvironment.AnalyzerFilter.TYPE);
+        settingsValues.add(searchAnalyzerFilter.type().getName());
+
+        for (SearchSetting setting : searchAnalyzerFilter.settings()) {
+            settingsNames.add(setting.name());
+            settingsValues.add(setting.value());
+        }
+
+        settings.setGroupSettings(LuceneEnvironment.AnalyzerFilter.PREFIX, searchAnalyzerFilter.name(),
+                settingsNames.toArray(new String[settingsNames.size()]),
+                settingsValues.toArray(new String[settingsValues.size()]));
+    }
+
+    private void bindAnalyzer(SearchAnalyzer searchAnalyzer) throws ConfigurationException, MappingException {
+        ArrayList<String> settingsNames = new ArrayList<String>();
+        ArrayList<String> settingsValues = new ArrayList<String>();
+
+        settingsNames.add(LuceneEnvironment.Analyzer.TYPE);
+        if (searchAnalyzer.type() == AnalyzerType.CustomAnalyzer) {
+            if (Analyzer.class.equals(searchAnalyzer.analyzerClass())) {
+                throw new ConfigurationException("SearchableAnalyzer [" + searchAnalyzer.name() + "] has " +
+                        "type of [" + AnalyzerType.CustomAnalyzer + "] but does not set analyzerClass");
+            }
+            settingsValues.add(searchAnalyzer.analyzerClass().getName());
+        } else {
+            settingsValues.add(searchAnalyzer.type().toString());
+        }
+
+        if (searchAnalyzer.type() == AnalyzerType.Snowball) {
+            settingsNames.add(LuceneEnvironment.Analyzer.Snowball.NAME_TYPE);
+            settingsValues.add(searchAnalyzer.snowballType().toString());
+        }
+
+        if (searchAnalyzer.stopWords().length > 0) {
+            StringBuffer sb = new StringBuffer();
+            if (searchAnalyzer.addStopWords()) {
+                sb.append("+");
+            }
+            for (String stopword : searchAnalyzer.stopWords()) {
+                sb.append(stopword).append(",");
+            }
+            settingsNames.add(LuceneEnvironment.Analyzer.STOPWORDS);
+            settingsValues.add(sb.toString());
+        }
+
+        if (searchAnalyzer.filters().length > 0) {
+            StringBuffer sb = new StringBuffer();
+            for (String filter : searchAnalyzer.filters()) {
+                sb.append(filter).append(",");
+            }
+            settingsNames.add(LuceneEnvironment.Analyzer.FILTERS);
+            settingsValues.add(sb.toString());
+        }
+
+        for (SearchSetting setting : searchAnalyzer.settings()) {
+            settingsNames.add(setting.name());
+            settingsValues.add(setting.value());
+        }
+
+        settings.setGroupSettings(LuceneEnvironment.Analyzer.PREFIX, searchAnalyzer.name(),
+                settingsNames.toArray(new String[settingsNames.size()]),
+                settingsValues.toArray(new String[settingsValues.size()]));
+    }
+
+    private void bindConverter(SearchConverter searchConverter) throws ConfigurationException, MappingException {
+        String[] settingsNames = new String[searchConverter.settings().length + 1];
+        String[] settingsValues = new String[searchConverter.settings().length + 1];
+        int i = 0;
+        for (; i < searchConverter.settings().length; i++) {
+            SearchSetting setting = searchConverter.settings()[i];
+            settingsNames[i] = setting.name();
+            settingsValues[i] = setting.value();
+        }
+        settingsNames[i] = CompassEnvironment.Converter.TYPE;
+        settingsValues[i] = searchConverter.type().getName();
+        settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, searchConverter.name(),
+                settingsNames, settingsValues);
+    }
+
 
     private String getAliasFromSearchableClass(Class clazz, Searchable searchable) {
         String alias = searchable.alias();

@@ -96,10 +96,15 @@ public class CompassConfiguration {
         metaData = new DefaultCompassMetaData();
 
         settings = new CompassSettings();
+    }
 
-        mappingBinding = new CompassMappingBinding();
-        addMappingBindings(mappingBinding);
-        mappingBinding.setUpBinding(mapping, metaData, settings);
+    private CompassMappingBinding getMappingBinding() {
+        if (mappingBinding == null) {
+            mappingBinding = new CompassMappingBinding();
+            addMappingBindings(mappingBinding);
+            mappingBinding.setUpBinding(mapping, metaData, settings);
+        }
+        return mappingBinding;
     }
 
     protected void addMappingBindings(CompassMappingBinding mappingBinding) {
@@ -312,7 +317,7 @@ public class CompassConfiguration {
      * implementation which allows for adding pre built mapping constructs.
      */
     public CompassConfiguration addResourceMapping(ResourceMapping resourceMapping) {
-        boolean hasAddedResource = mappingBinding.addResoruceMapping(resourceMapping);
+        boolean hasAddedResource = getMappingBinding().addResoruceMapping(resourceMapping);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match resource mapping [" + resourceMapping.getAlias() + "]");
         }
@@ -329,7 +334,7 @@ public class CompassConfiguration {
      * @param mappingResolver The mapping resolver
      */
     public CompassConfiguration addMappingResover(InputStreamMappingResolver mappingResolver) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addMappingResolver(mappingResolver);
+        boolean hasAddedResource = getMappingBinding().addMappingResolver(mappingResolver);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match mapping resolver [" + mappingResolver + "]");
         }
@@ -346,7 +351,7 @@ public class CompassConfiguration {
      * @param classLoader a <code>ClassLoader</code> to use
      */
     public CompassConfiguration addResource(String path, ClassLoader classLoader) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addResource(path, classLoader);
+        boolean hasAddedResource = getMappingBinding().addResource(path, classLoader);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match resource [" + path + "] and class loader [" + classLoader + "]");
         }
@@ -364,7 +369,7 @@ public class CompassConfiguration {
      * @param path The path of the resource
      */
     public CompassConfiguration addResource(String path) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addResource(path, getClassLoader());
+        boolean hasAddedResource = getMappingBinding().addResource(path, getClassLoader());
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match resource [" + path + "]");
         }
@@ -380,7 +385,7 @@ public class CompassConfiguration {
      * @param filePath a path to a file
      */
     public CompassConfiguration addFile(String filePath) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addFile(filePath);
+        boolean hasAddedResource = getMappingBinding().addFile(filePath);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match file [" + filePath + "]");
         }
@@ -396,7 +401,7 @@ public class CompassConfiguration {
      * @param file a path to a file
      */
     public CompassConfiguration addFile(File file) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addFile(file);
+        boolean hasAddedResource = getMappingBinding().addFile(file);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match file [" + file.getAbsolutePath() + "]");
         }
@@ -412,7 +417,7 @@ public class CompassConfiguration {
      * @param packageName The package name to load
      */
     public CompassConfiguration addPackage(String packageName) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addPackage(packageName);
+        boolean hasAddedResource = getMappingBinding().addPackage(packageName);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match package [" + packageName + "]");
         }
@@ -430,7 +435,7 @@ public class CompassConfiguration {
      * @param searchableClass the mapped class
      */
     public CompassConfiguration addClass(Class searchableClass) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addClass(searchableClass);
+        boolean hasAddedResource = getMappingBinding().addClass(searchableClass);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match class [" + searchableClass.getName() + "]");
         }
@@ -448,7 +453,7 @@ public class CompassConfiguration {
      * @throws ConfigurationException
      */
     public boolean tryAddClass(Class searchableClass) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addClass(searchableClass);
+        boolean hasAddedResource = getMappingBinding().addClass(searchableClass);
         if (log.isInfoEnabled() && hasAddedResource) {
             log.info("Mapping class [" + searchableClass + "]");
         }
@@ -463,7 +468,7 @@ public class CompassConfiguration {
      * @param dir a directory
      */
     public CompassConfiguration addDirectory(File dir) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addDirectory(dir);
+        boolean hasAddedResource = getMappingBinding().addDirectory(dir);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match directory [" + dir.getAbsolutePath() + "]");
         }
@@ -481,7 +486,7 @@ public class CompassConfiguration {
      * @param jar a jar file
      */
     public CompassConfiguration addJar(File jar) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addJar(jar);
+        boolean hasAddedResource = getMappingBinding().addJar(jar);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match jar [" + jar.getAbsolutePath() + "]");
         }
@@ -497,7 +502,7 @@ public class CompassConfiguration {
      * @param url the URL
      */
     public CompassConfiguration addURL(URL url) throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addURL(url);
+        boolean hasAddedResource = getMappingBinding().addURL(url);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match URL [" + url.toExternalForm() + "]");
         }
@@ -514,7 +519,7 @@ public class CompassConfiguration {
      */
     public CompassConfiguration addInputStream(InputStream inputStream, String resourceName)
             throws ConfigurationException {
-        boolean hasAddedResource = mappingBinding.addInputStream(inputStream, resourceName);
+        boolean hasAddedResource = getMappingBinding().addInputStream(inputStream, resourceName);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match input stream [" + resourceName + "]");
         }

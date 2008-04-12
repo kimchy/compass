@@ -806,4 +806,14 @@ public class CompassEnvironment {
             public static final String JNDI_NAME = PREFIX + "jndiName";
         }
     }
+
+    /**
+     * A set of settings that affect the automatic scanner.
+     */
+    public abstract static class Scanner {
+
+        private static final String PREFIX = "compass.scanner.";
+
+        public static final String READER = PREFIX + "reader";
+    }
 }

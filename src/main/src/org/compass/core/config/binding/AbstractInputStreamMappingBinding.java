@@ -41,7 +41,7 @@ import org.compass.core.metadata.CompassMetaData;
  */
 public abstract class AbstractInputStreamMappingBinding implements MappingBinding {
 
-    private final Log log = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
 
     protected CompassMapping mapping;
 
@@ -73,7 +73,7 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
         try {
             return internalAddInputStream(url.openStream(), url.toExternalForm(), true);
         } catch (IOException e) {
-            throw new ConfigurationException("Failed to open url [" + url.toExternalForm() + "]");
+            throw new ConfigurationException("Failed to open url [" + url.toExternalForm() + "]", e);
         }
     }
 

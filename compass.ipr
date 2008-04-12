@@ -729,6 +729,15 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="asm">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/asm/asm-2.2.3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/asm/asm-util-2.2.3.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/asm/asm-commons-2.2.3.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
 

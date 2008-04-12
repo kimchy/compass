@@ -98,6 +98,11 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
     }
 
     protected Compass buildCompass() throws IOException {
+        CompassConfiguration conf = buildConf();
+        return conf.buildCompass();
+    }
+
+    protected CompassConfiguration buildConf() throws IOException {
         CompassConfiguration conf = createConfiguration()
                 .configure("/org/compass/core/test/compass.cfg.xml");
         File testPropsFile = new File("compass.test.properties");
@@ -112,7 +117,7 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
         conf.getSettings().setSetting(CompassEnvironment.Cache.FirstLevel.TYPE, NullFirstLevelCache.class.getName());
         addSettings(conf.getSettings());
         addExtraConf(conf);
-        return conf.buildCompass();
+        return conf;
     }
 
     protected String getPackagePrefix() {
