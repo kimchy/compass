@@ -20,7 +20,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.compass.core.config.binding.MappingBinding;
 import org.compass.core.mapping.CompassMapping;
@@ -176,5 +179,15 @@ public class CompassMappingBinding implements MappingBinding {
             }
         }
         return hasAddedResource;
+    }
+
+    public String[] getSuffixes() {
+        Set<String> suffixes = new HashSet<String>();
+        for (MappingBinding mappingBinding : mappingBindings) {
+            if (mappingBinding.getSuffixes() != null) {
+                suffixes.addAll(Arrays.asList(mappingBinding.getSuffixes()));
+            }
+        }
+        return suffixes.toArray(new String[suffixes.size()]);
     }
 }

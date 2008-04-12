@@ -40,8 +40,8 @@ public class XmlMetaDataBinding extends AbstractXmlMappingBinding {
         return new DTDEntityResolver();
     }
 
-    protected String getSuffix() {
-        return ".cmd.xml";
+    public String[] getSuffixes() {
+        return new String[] {".cmd.xml"};
     }
 
     public boolean doAddConfiguration(ConfigurationHelper doc) throws ConfigurationException, MappingException {

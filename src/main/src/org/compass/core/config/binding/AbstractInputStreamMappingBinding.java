@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -86,10 +87,14 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
                 if (retVal) {
                     addedAtLeastOne = true;
                 }
-            } else if (file.getName().endsWith(getSuffix())) {
-                boolean retVal = addFile(file);
-                if (retVal) {
-                    addedAtLeastOne = true;
+            } else {
+                for (String suffix : getSuffixes()) {
+                    if (file.getName().endsWith(suffix)) {
+                        boolean retVal = addFile(file);
+                        if (retVal) {
+                            addedAtLeastOne = true;
+                        }
+                    }
                 }
             }
         }
@@ -108,16 +113,18 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
         Enumeration jarEntries = jarFile.entries();
         while (jarEntries.hasMoreElements()) {
             ZipEntry ze = (ZipEntry) jarEntries.nextElement();
-            if (ze.getName().endsWith(getSuffix())) {
-                try {
-                    boolean retVal = internalAddInputStream(jarFile.getInputStream(ze), ze.getName(), true);
-                    if (retVal) {
-                        addedAtLeastOne = true;
+            for (String suffix : getSuffixes()) {
+                if (ze.getName().endsWith(suffix)) {
+                    try {
+                        boolean retVal = internalAddInputStream(jarFile.getInputStream(ze), ze.getName(), true);
+                        if (retVal) {
+                            addedAtLeastOne = true;
+                        }
+                    } catch (ConfigurationException me) {
+                        throw me;
+                    } catch (Exception e) {
+                        throw new ConfigurationException("Could not configure datastore from jar [" + jar.getAbsolutePath() + "]", e);
                     }
-                } catch (ConfigurationException me) {
-                    throw me;
-                } catch (Exception e) {
-                    throw new ConfigurationException("Could not configure datastore from jar [" + jar.getAbsolutePath() + "]", e);
                 }
             }
         }
@@ -143,16 +150,20 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
     }
 
     public boolean addClass(Class clazz) throws ConfigurationException, MappingException {
-        String fileName = clazz.getName().replace('.', '/') + getSuffix();
-        InputStream rsrc = clazz.getClassLoader().getResourceAsStream(fileName);
-        if (rsrc == null) {
-            return false;
+        boolean addedAtLeaseOne = false;
+        for (String suffix : getSuffixes()) {
+            String fileName = clazz.getName().replace('.', '/') + suffix;
+            InputStream rsrc = clazz.getClassLoader().getResourceAsStream(fileName);
+            if (rsrc == null) {
+                continue;
+            }
+            try {
+                addedAtLeaseOne |= internalAddInputStream(rsrc, fileName, true);
+            } catch (ConfigurationException me) {
+                throw new ConfigurationException("Error reading resource [" + fileName + "]", me);
+            }
         }
-        try {
-            return internalAddInputStream(rsrc, fileName, true);
-        } catch (ConfigurationException me) {
-            throw new ConfigurationException("Error reading resource [" + fileName + "]", me);
-        }
+        return addedAtLeaseOne;
     }
 
     public boolean addMappingResolver(InputStreamMappingResolver mappingResolver) throws ConfigurationException, MappingException {
@@ -165,9 +176,16 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
 
     private boolean internalAddInputStream(InputStream is, String resourceName, boolean closeStream) throws ConfigurationException, MappingException {
         try {
-            if (resourceName.indexOf(getSuffix()) == -1) {
+            boolean matchedOnSuffix = false;
+            for (String suffix : getSuffixes()) {
+                if (resourceName.endsWith(suffix)) {
+                    matchedOnSuffix = true;
+                    break;
+                }
+            }
+            if (!matchedOnSuffix) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Resource name [" + resourceName + "] does not end with suffix [" + getSuffix() + "], ignoring");
+                    log.trace("Resource name [" + resourceName + "] does not end with suffix [" + Arrays.toString(getSuffixes()) + "], ignoring");
                 }
                 return false;
             }
@@ -185,6 +203,4 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
 
     protected abstract boolean doAddInputStream(InputStream is, String resourceName)
             throws ConfigurationException, MappingException;
-
-    protected abstract String getSuffix();
 }

@@ -45,7 +45,7 @@ public abstract class AbstractClassMetaDataMappingBinding extends AbstractInputS
 
     protected abstract boolean isApplicable(ClassMetaData classMetaData);
 
-    protected String getSuffix() {
-        return ".class";
+    public String[] getSuffixes() {
+        return new String[] {".class"};
     }
 }

@@ -23,7 +23,7 @@ import org.compass.core.config.binding.XmlMappingBinding;
  */
 public class OverrideAnnotationsWithCpmMappingBinding extends XmlMappingBinding {
 
-    protected String getSuffix() {
-        return ".cpm.ann.xml";
+    public String[] getSuffixes() {
+        return new String[] {".cpm.ann.xml"};
     }
 }

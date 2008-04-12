@@ -59,4 +59,6 @@ public interface MappingBinding {
     boolean addInputStream(InputStream is, String resourceName) throws ConfigurationException, MappingException;
 
     boolean addResoruceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException;
+
+    String[] getSuffixes();
 }

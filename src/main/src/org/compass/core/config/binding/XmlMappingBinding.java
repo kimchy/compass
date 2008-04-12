@@ -92,8 +92,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         return new DTDEntityResolver();
     }
 
-    protected String getSuffix() {
-        return ".cpm.xml";
+    public String[] getSuffixes() {
+        return new String[] {".cpm.xml"};
     }
 
     protected boolean doAddConfiguration(ConfigurationHelper doc) throws ConfigurationException, MappingException {

@@ -87,4 +87,8 @@ public class MappingBindingSupport implements MappingBinding {
     public boolean addInputStream(InputStream is, String resourceName) throws ConfigurationException, MappingException {
         return false;
     }
+
+    public String[] getSuffixes() {
+        return null;
+    }
 }

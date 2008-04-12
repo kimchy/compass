@@ -21,7 +21,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import javax.sql.DataSource;
@@ -79,7 +78,7 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     private PlatformTransactionManager transactionManager;
 
-    private Map convertersByName;
+    private Map<String, Converter> convertersByName;
 
     private Compass compass;
 
@@ -91,8 +90,6 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     /**
      * Allows to register a post processor for the Compass configuration.
-     *
-     * @param postProcessor
      */
     public void setPostProcessor(LocalCompassBeanPostProcessor postProcessor) {
         this.postProcessor = postProcessor;
@@ -229,7 +226,7 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
      * the name that the converter will be registered against, and the value should be the
      * Converter itself (natuarally configured using spring DI).
      */
-    public void setConvertersByName(Map convertersByName) {
+    public void setConvertersByName(Map<String, Converter> convertersByName) {
         this.convertersByName = convertersByName;
     }
 
@@ -248,8 +245,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         }
 
         if (this.configLocations != null) {
-            for (int i = 0; i < configLocations.length; i++) {
-                config.configure(configLocations[i].getURL());
+            for (Resource configLocation1 : configLocations) {
+                config.configure(configLocation1.getURL());
             }
         }
 
@@ -262,37 +259,37 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         }
 
         if (resourceLocations != null) {
-            for (int i = 0; i < resourceLocations.length; i++) {
-                config.addInputStream(resourceLocations[i].getInputStream(), resourceLocations[i].getDescription());
+            for (Resource resourceLocation : resourceLocations) {
+                config.addInputStream(resourceLocation.getInputStream(), resourceLocation.getFilename());
             }
         }
 
         if (resourceJarLocations != null) {
-            for (int i = 0; i < resourceJarLocations.length; i++) {
-                config.addJar(resourceJarLocations[i].getFile());
+            for (Resource resourceJarLocation : resourceJarLocations) {
+                config.addJar(resourceJarLocation.getFile());
             }
         }
 
         if (classMappings != null) {
-            for (int i = 0; i < classMappings.length; i++) {
-                config.addClass(ClassUtils.forName(classMappings[i], getClassLoader()));
+            for (String classMapping : classMappings) {
+                config.addClass(ClassUtils.forName(classMapping, getClassLoader()));
             }
         }
 
         if (resourceDirectoryLocations != null) {
-            for (int i = 0; i < resourceDirectoryLocations.length; i++) {
-                File file = resourceDirectoryLocations[i].getFile();
+            for (Resource resourceDirectoryLocation : resourceDirectoryLocations) {
+                File file = resourceDirectoryLocation.getFile();
                 if (!file.isDirectory()) {
                     throw new IllegalArgumentException("Resource directory location ["
-                            + this.resourceDirectoryLocations[i] + "] does not denote a directory");
+                            + resourceDirectoryLocation + "] does not denote a directory");
                 }
                 config.addDirectory(file);
             }
         }
 
         if (mappingResolvers != null) {
-            for (int i = 0; i < mappingResolvers.length; i++) {
-                config.addMappingResover(mappingResolvers[i]);
+            for (InputStreamMappingResolver mappingResolver : mappingResolvers) {
+                config.addMappingResover(mappingResolver);
             }
         }
 
@@ -317,9 +314,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         SpringSyncTransactionFactory.setTransactionManager(transactionManager);
 
         if (convertersByName != null) {
-            for (Iterator it = convertersByName.keySet().iterator(); it.hasNext();) {
-                String converterName = (String) it.next();
-                config.registerConverter(converterName, (Converter) convertersByName.get(converterName));
+            for (Map.Entry<String, Converter> entry : convertersByName.entrySet()) {
+                config.registerConverter(entry.getKey(), entry.getValue());
             }
         }
         if (config.getSettings().getSetting(CompassEnvironment.NAME) == null) {
