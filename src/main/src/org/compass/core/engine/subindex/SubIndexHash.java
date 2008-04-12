@@ -22,8 +22,8 @@ import org.compass.core.engine.SearchEngineException;
 /**
  * Reprensetns a set of sub indexes, and knows how to map a single sub index
  * value from an alias and a set of {@link Property} ids.
- * <p/>
- * This allows to have different mappings from {@link org.compass.core.Resource}
+ *
+ * <p>This allows to have different mappings from {@link org.compass.core.Resource}
  * to a specific sub index.
  *
  * @author kimchy
@@ -37,7 +37,7 @@ public interface SubIndexHash {
     String[] getSubIndexes();
 
     /**
-     * Copmutes a sub index based on the given alias and ids.
+     * Computes a sub index based on the given alias and ids.
      *
      * @param alias The alias to compute the sub index by (optional)
      * @param ids   The set of ids to compute the sub index by (optional)
