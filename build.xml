@@ -4,7 +4,7 @@
   Build file for the Compass.
 -->
 
-<project name="compass" default="usage" basedir=".">
+<project name="compass" default="usage" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
     <property file="project.properties"/>
     <property file="build.properties"/>
@@ -40,6 +40,11 @@
             <available file="${lib.dir}/coherence/tangosol.jar"/>
         </and>
     </condition>
+
+    <available
+            property="maven.ant.tasks.present"
+            classname="org.apache.maven.artifact.ant.Pom"
+            />
 
     <target name="usage">
 
@@ -158,7 +163,7 @@
                     <attribute name="Bundle-Copyright" value="Compass"/>
                     <attribute name="Bundle-ManifestVersion" value="2"/>
                     <attribute name="Bundle-Name" value="Compass"/>
-                    <attribute name="Bundle-SymbolicName" value="org.compass.compass"/>
+                    <attribute name="Bundle-SymbolicName" value="org.compass-project.compass"/>
                     <attribute name="Bundle-Version" value="${compass-manifest-version}"/>
                 </manifest>
             </jar>
@@ -183,8 +188,9 @@
         </taskdef>
 
         <delete file="${dist.dir}/${compass-jarname14}.jar"/>
-        <retrotranslator target="1.4" srcjar="${dist.dir}/${compass-jarname}.jar" destjar="${dist.dir}/${compass-jarname14}.jar"
-                         verify="false" failonwarning="false" embed="org.compass.retrotranslator" >
+        <retrotranslator target="1.4" srcjar="${dist.dir}/${compass-jarname}.jar"
+                         destjar="${dist.dir}/${compass-jarname14}.jar"
+                         verify="false" failonwarning="false" embed="org.compass.retrotranslator">
             <classpath refid="compile-libs"/>
         </retrotranslator>
     </target>
@@ -192,14 +198,14 @@
 
     <target name="srczip" depends="initdist" description="Create source ZIP (containing Java sources)">
 
-        <delete file="${dist.dir}/${compass-jarname}.zip"/>
+        <delete file="${dist.dir}/${compass-jarname}-src.jar"/>
 
-        <zip zipfile="${dist.dir}/${compass-jarname}.zip">
+        <jar destfile="${dist.dir}/${compass-jarname}-src.jar">
             <fileset dir="${main.src.dir}">
                 <include name="org/apache/lucene/**"/>
                 <include name="org/compass/**"/>
             </fileset>
-        </zip>
+        </jar>
 
     </target>
 
@@ -267,6 +273,9 @@
             <link href="http://www.dom4j.org/apidocs/"/>
         </javadoc>
 
+        <delete file="${dist.dir}/${compass-jarname}-javadoc.jar"/>
+
+        <jar destfile="${dist.dir}/${compass-jarname}-javadoc.jar" basedir="${javadoc.dir}" />
     </target>
 
 
@@ -355,6 +364,35 @@
 
     </target>
 
+    <target name="maven.ant.tasks-check">
+        <fail unless="maven.ant.tasks.present">
+            ##################################################################
+            Maven ant tasks not found.
+            Please make sure the maven-ant-tasks jar is in ANT_HOME/lib, or made
+            available to Ant using other mechanisms like -lib or CLASSPATH.
+            ##################################################################
+        </fail>
+    </target>
+
+
+    <target name="mvn" depends="maven.ant.tasks-check, fulljar, srczip, javadoc">
+        <copy file="pom.xml.template" tofile="${basedir}/target/pom.xml">
+            <filterset begintoken="@" endtoken="@">
+                <filter token="version" value="${compass-version}"/>
+            </filterset>
+        </copy>
+        <artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-2"/>
+
+        <artifact:pom id="maven.project" file="${basedir}/target/pom.xml"/>
+
+        <mkdir dir="${basedir}/target/maven" />
+        
+        <artifact:install file="${dist.dir}/${compass-jarname}.jar">
+            <pom refid="maven.project"/>
+            <attach file="${dist.dir}/${compass-jarname}-src.jar" classifier="sources"/>
+            <attach file="${dist.dir}/${compass-jarname}-javadoc.jar" classifier="javadoc"/>
+        </artifact:install>
+    </target>
 
     <!--
          Run test suite. However it's possible to run specific tests by passing in
@@ -590,6 +628,7 @@
             <include name="src/**"/>
             <include name="samples/**"/>
             <include name="*.bat"/>
+            <include name="pom.xml.template" />
             <include name="*.txt"/>
             <include name="*.xml"/>
             <exclude name="osbuild.xml"/>
@@ -609,6 +648,7 @@
                 <include name="lib/*.txt"/>
                 <include name="lib/ant/**"/>
                 <include name="lib/antlr/**"/>
+                <include name="lib/asm/**"/>
                 <include name="lib/c3p0/**"/>
                 <include name="lib/cglib/**"/>
                 <include name="lib/dom4j/**"/>

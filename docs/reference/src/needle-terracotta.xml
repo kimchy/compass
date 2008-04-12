@@ -61,7 +61,7 @@ compass.engine.store.tc.flushRate=10
 <programlisting><![CDATA[
   <clients>
       <modules>
-          <module group-id="org.compass" name="compass" version="2.0.0-RC1" />
+          <module group-id="org.compass-project" name="compass" version="2.0.0-RC1" />
       </modules>
   </clients>
 ]]></programlisting>
