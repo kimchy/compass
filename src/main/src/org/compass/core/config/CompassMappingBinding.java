@@ -44,6 +44,8 @@ public class CompassMappingBinding implements MappingBinding {
 
     private CompassMapping mapping;
 
+    private String[] suffixes;
+
     public void addMappingBinding(MappingBinding mappingBinding) {
         this.mappingBindings.add(mappingBinding);
     }
@@ -53,6 +55,13 @@ public class CompassMappingBinding implements MappingBinding {
         for (MappingBinding mappingBinding : mappingBindings) {
             (mappingBinding).setUpBinding(mapping, metaData, settings);
         }
+        Set<String> suffixes = new HashSet<String>();
+        for (MappingBinding mappingBinding : mappingBindings) {
+            if (mappingBinding.getSuffixes() != null) {
+                suffixes.addAll(Arrays.asList(mappingBinding.getSuffixes()));
+            }
+        }
+        this.suffixes = suffixes.toArray(new String[suffixes.size()]);
     }
 
     public boolean addResoruceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
@@ -182,12 +191,6 @@ public class CompassMappingBinding implements MappingBinding {
     }
 
     public String[] getSuffixes() {
-        Set<String> suffixes = new HashSet<String>();
-        for (MappingBinding mappingBinding : mappingBindings) {
-            if (mappingBinding.getSuffixes() != null) {
-                suffixes.addAll(Arrays.asList(mappingBinding.getSuffixes()));
-            }
-        }
-        return suffixes.toArray(new String[suffixes.size()]);
+        return this.suffixes;
     }
 }

@@ -708,6 +708,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                     config.addDirectory(new File(getElementAttribute(mappingEle, "path")));
                 } else if ("package".equals(nodeName)) {
                     config.addPackage(getElementAttribute(mappingEle, "name"));
+                } else if ("scan".equals(nodeName)) {
+                    config.addScan(getElementAttribute(mappingEle, "basePackage"), getElementAttribute(mappingEle, "pattern"));
                 }
             }
         }

@@ -17,8 +17,10 @@
 package org.compass.core.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -30,6 +32,10 @@ import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.config.binding.XmlMappingBinding;
 import org.compass.core.config.binding.XmlMetaDataBinding;
+import org.compass.core.config.binding.scanner.Filter;
+import org.compass.core.config.binding.scanner.ScanItem;
+import org.compass.core.config.binding.scanner.Scanner;
+import org.compass.core.config.binding.scanner.ScannerFactoy;
 import org.compass.core.config.builder.ConfigurationBuilder;
 import org.compass.core.config.builder.SmartConfigurationBuilder;
 import org.compass.core.config.process.MappingProcessor;
@@ -46,6 +52,8 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
 import org.compass.core.util.ClassUtils;
+import org.compass.core.util.matcher.AntPathMatcher;
+import org.compass.core.util.matcher.PathMatcher;
 
 /**
  * Used to configure <code>Compass</code> instances.
@@ -441,6 +449,69 @@ public class CompassConfiguration {
         }
         if (log.isInfoEnabled()) {
             log.info("Mapping class [" + searchableClass + "]");
+        }
+        return this;
+    }
+
+    /**
+     * Scans the given base package recursivly for any applicable mappings definitions. This
+     * incldues xml mapping defintiions as well as annotations.
+     */
+    public CompassConfiguration addScan(String basePackage) throws ConfigurationException {
+        return addScan(basePackage, null);
+    }
+
+    /**
+     * Scans the given base package recursivly for any applicable mappings definitions. This
+     * incldues xml mapping defintiions as well as annotations.
+     *
+     * <p>An optional ant style pattern can be provided to narrow down the search. For example,
+     * the base package can be <code>com.mycompany</code>, and the pattern can be <code>**&#47model&#47**</code>
+     * which will match all the everythign that has a package named model within it under the given base package.
+     */
+    public CompassConfiguration addScan(String basePackage, final String pattern) throws ConfigurationException {
+        basePackage = basePackage.replace('.', '/');
+        Enumeration<URL> urls;
+        try {
+            urls = settings.getClassLoader().getResources(basePackage);
+        } catch (IOException e) {
+            throw new ConfigurationException("Failed to list resource for base package [" + basePackage + "]", e);
+        }
+        final PathMatcher matcher = new AntPathMatcher();
+        final boolean performMatch = pattern != null && matcher.isPattern(pattern);
+        Filter filter = new Filter() {
+            public boolean accepts(String name) {
+                for (String suffix : getMappingBinding().getSuffixes()) {
+                    if (performMatch && !matcher.match(pattern, name)) {
+                        return false;
+                    }
+                    if (name.endsWith(suffix)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+        while (urls.hasMoreElements()) {
+            URL url = urls.nextElement();
+            Scanner scanner;
+            try {
+                scanner = ScannerFactoy.create(basePackage, url, filter);
+            } catch (IOException e) {
+                throw new ConfigurationException("Failed to create scan factory for basePackage [" + basePackage + "] and url [" + url + "]", e);
+            }
+            try {
+                ScanItem si;
+                while ((si = scanner.next()) != null) {
+                    try {
+                        getMappingBinding().addInputStream(si.getInputStream(), si.getName());
+                    } finally {
+                        si.close();
+                    }
+                }
+            } finally {
+                scanner.close();
+            }
         }
         return this;
     }

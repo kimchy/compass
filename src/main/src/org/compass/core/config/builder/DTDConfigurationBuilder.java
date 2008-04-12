@@ -86,6 +86,8 @@ public class DTDConfigurationBuilder extends AbstractXmlConfigurationBuilder {
                         }
                         config.addFile(file);
                     }
+                } else if ("scan".equals(ele.getNodeName())) {
+                    config.addScan(DomUtils.getElementAttribute(ele, "base-package"), DomUtils.getElementAttribute(ele, "pattern"));
                 }
             }
         }

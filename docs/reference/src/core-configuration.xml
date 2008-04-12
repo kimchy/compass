@@ -77,6 +77,10 @@
               <entry>Loads all the files named <literal>*.cpm.xml</literal> or <literal>*.cmd.xml</literal> from within the specified Jar file.</entry>
             </row>
             <row>
+              <entry><literal>addScan(String basePackage, String pattern)</literal></entry>
+              <entry>Scans for all the mappings that exist wihtin the base backage recursively. An optioal ant style pattern can be provided as well. The mappings detected are all the xml based mappings. Annotation based mappings will be detected automatically if either ASM or Javassist exists within the classpath.</entry>
+            </row>
+            <row>
               <entry><literal>addMappingResolver(MappingResolver)</literal></entry>
               <entry>Uses a class that implements the <literal>MappingResolver</literal> to get an <literal>InputStream</literal> for xml mapping definitions.</entry>
             </row>

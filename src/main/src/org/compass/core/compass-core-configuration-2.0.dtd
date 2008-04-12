@@ -22,5 +22,9 @@
 <!ATTLIST meta-data file CDATA #IMPLIED>
 <!ATTLIST meta-data jar CDATA #IMPLIED>
 
-<!ELEMENT compass (setting*, meta-data*, mapping*)>
+<!ELEMENT scan EMPTY>
+<!ATTLIST scan base-package CDATA #REQUIRED>
+<!ATTLIST scan pattern CDATA #IMPLIED>
+
+<!ELEMENT compass (setting*, meta-data*, mapping*, scan*)>
 <!ATTLIST compass name CDATA #IMPLIED>

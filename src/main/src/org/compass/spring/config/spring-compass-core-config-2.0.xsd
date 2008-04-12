@@ -2361,6 +2361,29 @@
                     </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
+            <xsd:element name="scan" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A scan support requiring a base package and an optional ant style pattern.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="basePackage" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The base package to search for mappings.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="pattern" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                An optioanl ant style matching pattern.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
         </xsd:sequence>
     </xsd:complexType>
     <!-- Settings Types -->
