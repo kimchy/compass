@@ -724,7 +724,7 @@
     </library>
     <library name="Terracota">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/terracota/terracotta-api-2.6-stable0-prealpha.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/terracotta/terracotta-api-2.6-stable0-prealpha.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

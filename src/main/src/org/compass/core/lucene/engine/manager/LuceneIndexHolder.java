@@ -21,24 +21,13 @@ import java.io.IOException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
-import org.compass.core.util.FieldInvoker;
 
 /**
  * @author kimchy
  */
 public class LuceneIndexHolder {
 
-    private static FieldInvoker fieldInvoker;
-
-    static {
-        try {
-            fieldInvoker = new FieldInvoker(IndexReader.class, "refCount").prepare();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private long lastCacheInvalidation = System.currentTimeMillis();
+    private volatile long lastCacheInvalidation = System.currentTimeMillis();
 
     private IndexSearcher indexSearcher;
 
