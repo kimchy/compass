@@ -31,9 +31,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.MultiSearcher;
-import org.apache.lucene.search.Searcher;
+import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
@@ -69,6 +67,10 @@ public class LuceneTransaction extends AbstractTransaction {
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             try {
                 entry.getValue().abort();
+            } catch (AlreadyClosedException e) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
+                }
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(entry.getKey());
                 try {
@@ -137,31 +139,6 @@ public class LuceneTransaction extends AbstractTransaction {
         }
         Hits hits = findByQuery(internalSearch, query, qFilter);
         return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
-    }
-
-    protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
-        ArrayList<LuceneIndexHolder> indexHoldersToClose = new ArrayList<LuceneIndexHolder>();
-        try {
-            String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(subIndexes, aliases);
-            ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>();
-            for (String subIndex : calcSubIndexes) {
-                LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
-                indexHoldersToClose.add(indexHolder);
-                if (indexHolder.getIndexReader().numDocs() > 0) {
-                    searchers.add(indexHolder.getIndexSearcher());
-                }
-            }
-            if (searchers.size() == 0) {
-                return new LuceneSearchEngineInternalSearch(null, null);
-            }
-            MultiSearcher indexSeracher = new MultiSearcher(searchers.toArray(new Searcher[searchers.size()]));
-            return new LuceneSearchEngineInternalSearch(indexSeracher, indexHoldersToClose);
-        } catch (IOException e) {
-            for (LuceneIndexHolder indexHolder : indexHoldersToClose) {
-                indexHolder.release();
-            }
-            throw new SearchEngineException("Failed to open Lucene reader/searcher", e);
-        }
     }
 
     public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {

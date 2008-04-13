@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.compass.core.engine.SearchEngineException;
@@ -34,6 +37,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
+import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -109,8 +113,31 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
         return internalSearch;
     }
 
-    protected abstract LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases)
-            throws SearchEngineException;
+    protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        ArrayList<LuceneIndexHolder> indexHoldersToClose = new ArrayList<LuceneIndexHolder>();
+        try {
+            String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(subIndexes, aliases);
+            ArrayList<IndexReader> readers = new ArrayList<IndexReader>();
+            for (String subIndex : calcSubIndexes) {
+                LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
+                indexHoldersToClose.add(indexHolder);
+                if (indexHolder.getIndexReader().numDocs() > 0) {
+                    readers.add(indexHolder.getIndexReader());
+                }
+            }
+            if (readers.size() == 0) {
+                return new LuceneSearchEngineInternalSearch(null, null, null);
+            }
+            MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
+            return new LuceneSearchEngineInternalSearch(reader, new IndexSearcher(reader), indexHoldersToClose);
+        } catch (Exception e) {
+            for (LuceneIndexHolder indexHolder : indexHoldersToClose) {
+                indexHolder.release();
+            }
+            throw new SearchEngineException("Failed to open Lucene reader/searcher", e);
+        }
+    }
+
 
     public void create(final InternalResource resource, Analyzer analyzer) throws SearchEngineException {
         dirty = true;

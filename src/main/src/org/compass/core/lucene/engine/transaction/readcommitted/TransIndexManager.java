@@ -78,6 +78,10 @@ public class TransIndexManager implements CompassConfigurable {
         return transIndexMap.get(subIndex).getDirectory();
     }
 
+    public boolean hasTransactions() {
+        return !transIndexMap.isEmpty();
+    }
+
     public boolean hasTransIndex(String subIndex) {
         return transIndexMap.containsKey(subIndex);
     }

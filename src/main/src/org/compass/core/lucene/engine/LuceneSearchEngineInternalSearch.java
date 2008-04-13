@@ -21,20 +21,30 @@ import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
  */
 public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSearch, LuceneDelegatedClose {
 
-    private MultiSearcher searcher;
-    protected MultiReader reader;
+    private Searcher searcher;
+
+    protected IndexReader indexReader;
 
     private boolean closed;
     private List<LuceneIndexHolder> indexHoldersToClose;
 
+    public LuceneSearchEngineInternalSearch(MultiSearcher searcher, List<LuceneIndexHolder> indexHolders) {
+        this.searcher = searcher;
+        this.indexHoldersToClose = indexHolders;
+        Searchable[] searchables = searcher.getSearchables();
+        IndexReader[] readers = new IndexReader[searchables.length];
+        for (int i = 0; i < searchables.length; i++) {
+            readers[i] = ((IndexSearcher) searchables[i]).getIndexReader();
+        }
+        indexReader = new MultiReader(readers, false);
+    }
+
     /**
      * Creates a new instance, with a searcher and index holders which will be used
      * to release when calling close.
-     *
-     * @param searcher     The searcher, which is also used to construct the reader
-     * @param indexHolders Holders to be released when calling close.
      */
-    public LuceneSearchEngineInternalSearch(MultiSearcher searcher, List<LuceneIndexHolder> indexHolders) {
+    public LuceneSearchEngineInternalSearch(IndexReader indexReader, Searcher searcher, List<LuceneIndexHolder> indexHolders) {
+        this.indexReader = indexReader;
         this.searcher = searcher;
         this.indexHoldersToClose = indexHolders;
     }
@@ -43,7 +53,7 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
      * Returns <code>true</code> if it represents an empty index scope.
      */
     public boolean isEmpty() {
-        return searcher == null || searcher.getSearchables().length == 0;
+        return searcher == null;
     }
 
     /**
@@ -57,17 +67,7 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
      * Returns a Lucene {@link IndexReader}.
      */
     public IndexReader getReader() throws SearchEngineException {
-        if (reader != null) {
-            return this.reader;
-        }
-
-        Searchable[] searchables = searcher.getSearchables();
-        IndexReader[] readers = new IndexReader[searchables.length];
-        for (int i = 0; i < searchables.length; i++) {
-            readers[i] = ((IndexSearcher) searchables[i]).getIndexReader();
-        }
-        reader = new MultiReader(readers, false);
-        return this.reader;
+        return this.indexReader;
     }
 
     /**
@@ -81,10 +81,17 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
         }
         closed = true;
 
-        if (reader != null) {
-            // close the multi reader so we dec ref its count
+        if (searcher != null) {
             try {
-                reader.close();
+                searcher.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        if (indexReader != null) {
+            try {
+                indexReader.close();
             } catch (IOException e) {
                 // ignore
             }

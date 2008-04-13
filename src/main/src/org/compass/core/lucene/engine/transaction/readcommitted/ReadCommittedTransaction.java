@@ -149,6 +149,11 @@ public class ReadCommittedTransaction extends AbstractTransaction {
     }
 
     protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        // if there are no ongoing dirty operations, simply return the default one which is faster
+        if (indexHoldersBySubIndex.isEmpty() && !transIndexManager.hasTransactions()) {
+            return super.doInternalSearch(subIndexes, aliases);
+        }
+        // we have a transaction, take it into account
         ArrayList<LuceneIndexHolder> indexHoldersToClose = new ArrayList<LuceneIndexHolder>();
         try {
             String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(subIndexes, aliases);
