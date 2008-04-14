@@ -129,7 +129,7 @@ public final class ResourceKey {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("alias [").append(getAlias()).append("]");
-        sb.append("uid [").append(buildUID()).append("]");
+        sb.append(" uid [").append(buildUID()).append("]");
         return sb.toString();
     }
 }
