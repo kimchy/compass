@@ -69,6 +69,7 @@ public class PolyAliasQueryStringTests extends AbstractAnnotationsTestCase {
 
         assertEquals(1, session.find("A.value:test").length());
         assertEquals(1, session.find("B.value:me").length());
+        assertEquals(1, session.find("A.value:me").length());
 
         tr.commit();
         session.close();

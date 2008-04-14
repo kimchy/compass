@@ -449,6 +449,7 @@ public class DefaultCompassQueryBuilder implements CompassQueryBuilder {
     public CompassQuery polyAlias(String aliasValue) {
         return bool().addShould(term(session.getCompass().getSearchEngineFactory().getAliasProperty(), aliasValue))
                 .addShould(term(session.getCompass().getSearchEngineFactory().getExtendedAliasProperty(), aliasValue))
+                .setMinimumNumberShouldMatch(1)
                 .toQuery();
     }
 
