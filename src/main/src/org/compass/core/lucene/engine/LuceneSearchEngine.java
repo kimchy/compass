@@ -306,7 +306,7 @@ public class LuceneSearchEngine implements SearchEngine {
         verifyWithinTransaction();
         ResourceKey resourceKey = ((InternalResource) idResource).resourceKey();
         if (resourceKey.getIds().length == 0) {
-            throw new SearchEngineException("Cannot load a resource with no ids");
+            throw new SearchEngineException("Cannot load a resource with no ids and alias [" + resourceKey.getAlias() + "]");
         }
         Resource[] result = transaction.get(resourceKey);
         if (result.length == 0) {
