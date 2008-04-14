@@ -159,7 +159,7 @@ public class Author {
       <title>Searchable Id and Searchable Meta Data</title>
       
       <para>
-        Each <emphasis>root</emphasis> searchable class must define at least one searchable id. The searchable id(s) are used to uniquely identify the class within its alias context. More than one searchable id can be defined, as well as user defined classes to act as searchable ids (must register its own converter).
+        Each <emphasis>root</emphasis> searchable class must define at least one searchable id. The searchable id(s) are used to uniquely identify the object within its alias context. More than one searchable id can be defined, as well as user defined classes to act as searchable ids (must register its own converter or use searchable id component mapping).
       </para>
       
       <para>
@@ -217,6 +217,87 @@ public class Author {
 ]]></programlisting>
       </para>
       
+    </sect2>
+
+    <sect2 id="core-osem-idcomponent">
+        <title>Searchable Id Component</title>
+        
+        <para>
+            A searchable id component represent a composite object acting as the id of a object. It works in a similar manner to searchable component except that it will act as the id of the class.
+        </para>
+
+      <para>
+        Here is an example of defining a Searchable Id Component using annotations (note, in this case, B is not a root searchable class, and it needs to define only ids):
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableIdComponent
+  private B b;  
+  // ...
+}
+
+@Searchable(root = false)
+public class B {
+  @SearchableId
+  private long id1;
+  
+  @SearchableId
+  private long id2;
+}]]></programlisting>
+      </para>
+
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id-component name="b" />
+  <!-- ... -->
+</class>
+<class name="B" alias="b" root="false">
+  <id name="id1" />
+  <id name="id2" />
+</class>
+]]></programlisting>
+      </para>
+    </sect2>    
+
+    <sect2 id="core-osem-parent">
+      <title>Searchable Parent</title>
+      
+        <para>
+          Searchable Parent mapping provides support for cyclic mappings for components (though bi directional component mappings are also supported). If the component class mapping wish to map the enclosing class, the parent mapping can be used to map to it. The parent mapping will not marshal (persist the data to the search engine) the parent object, it will only initialize it when loading the parent object from the search engine.
+        </para>
+        
+        <para>
+          Here is an example of defining a Searchable Component and Searchable Parent using annotations (note, in this case, B is not a root searchable class, and need not define any ids):
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableComponent
+  private B b;  
+  // ...
+}
+
+@Searchable(root = false)
+public class B {
+  @SearchableParent
+  private A a;
+  // ...
+}]]></programlisting>          
+        </para>
+
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <component name="b" />
+  <!-- ... -->
+</class>
+<class name="B" alias="b" root="false">
+  <parent name="a" />
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
     </sect2>
     
     <sect2 id="core-osem-propertyandmetadata">
@@ -429,88 +510,7 @@ public class B {
 </class>
 ]]></programlisting>
       </para>
-    </sect2>
-    
-    <sect2 id="core-osem-idcomponent">
-        <title>Searchable Id Component</title>
-        
-        <para>
-            A searchable id component represent a composite object acting as the id of a class. It works in a similar manner to searchable component except that it will act as the id of the class.
-        </para>
-
-      <para>
-        Here is an example of defining a Searchable Id Component using annotations (note, in this case, B is not a root searchable class, and it needs to define only ids):
-<programlisting><![CDATA[@Searchable
-public class A {
-  @SearchableIdComponent
-  private B b;  
-  // ...
-}
-
-@Searchable(root = false)
-public class B {
-  @SearchableId
-  private long id1;
-  
-  @SearchableId
-  private long id2;
-}]]></programlisting>
-      </para>
-
-      <para>
-        And here is the same mapping definition using xml:
-<programlisting><![CDATA[<class name="A" alias="a">
-  <id-component name="b" />
-  <!-- ... -->
-</class>
-<class name="B" alias="b" root="false">
-  <id name="id1" />
-  <id name="id2" />
-</class>
-]]></programlisting>
-      </para>
     </sect2>    
-
-    <sect2 id="core-osem-parent">
-      <title>Searchable Parent</title>
-      
-        <para>
-          Searchable Parent mapping provides support for cyclic mappings for components (though bi directional component mappings are also supported). If the component class mapping wish to map the enclosing class, the parent mapping can be used to map to it. The parent mapping will not marshal (persist the data to the search engine) the parent object, it will only initialize it when loading the parent object from the search engine.
-        </para>
-        
-        <para>
-          Here is an example of defining a Searchable Component and Searchable Parent using annotations (note, in this case, B is not a root searchable class, and need not define any ids):
-<programlisting><![CDATA[@Searchable
-public class A {
-  @SearchableId
-  private Long id;
-  @SearchableComponent
-  private B b;  
-  // ...
-}
-
-@Searchable(root = false)
-public class B {
-  @SearchableParent
-  private A a;
-  // ...
-}]]></programlisting>          
-        </para>
-
-      <para>
-        And here is the same mapping definition using xml:
-<programlisting><![CDATA[<class name="A" alias="a">
-  <id name="id" />
-  <component name="b" />
-  <!-- ... -->
-</class>
-<class name="B" alias="b" root="false">
-  <parent name="a" />
-  <!-- ... -->
-</class>
-]]></programlisting>
-      </para>
-    </sect2>
 
     <sect2 id="core-osem-cascade">
         <title>Searchable Cascade</title>
