@@ -238,6 +238,12 @@ public class LuceneSearchEngine implements SearchEngine {
             throw new SearchEngineException("Cannot delete a resource with no ids and alias [" + resourceKey.getAlias() + "]");
         }
         transaction.delete(resourceKey);
+        String[] extendingAliases = resourceKey.getResourceMapping().getExtendingAliases();
+        for (String extendingAlias : extendingAliases) {
+            ResourceMapping extendingMapping = getSearchEngineFactory().getMapping().getMappingByAlias(extendingAlias);
+            ResourceKey key = new ResourceKey(extendingMapping, resourceKey.getIds());
+            transaction.delete(key);
+        }
         if (log.isDebugEnabled()) {
             log.debug("RESOURCE DELETE {" + resourceKey.getAlias() + "} " + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()));
         }
@@ -310,6 +316,17 @@ public class LuceneSearchEngine implements SearchEngine {
         }
         Resource[] result = transaction.get(resourceKey);
         if (result.length == 0) {
+            // none directly, try and load polymorphic ones
+            String[] extendingAliases = resourceKey.getResourceMapping().getExtendingAliases();
+            for (String extendingAlias : extendingAliases) {
+                ResourceMapping extendingMapping = getSearchEngineFactory().getMapping().getMappingByAlias(extendingAlias);
+                ResourceKey key = new ResourceKey(extendingMapping, resourceKey.getIds());
+                result = transaction.get(key);
+                if (result.length > 0) {
+                    return result[result.length - 1];
+                }
+            }
+            // did not find in the extending aliases as well
             return null;
         } else if (result.length > 1) {
             log.warn("Found several matches in get/load operation for resource alias [" + resourceKey.getAlias() + "] and ids ["

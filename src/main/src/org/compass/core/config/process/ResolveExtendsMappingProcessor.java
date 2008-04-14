@@ -40,7 +40,7 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
 
-        ArrayList innerMappingsCopy = new ArrayList();
+        ArrayList<AliasMapping> innerMappingsCopy = new ArrayList<AliasMapping>();
         for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
             AliasMapping origAliasMapping = (AliasMapping) it.next();
             AliasMapping aliasMapping = origAliasMapping.shallowCopy();
@@ -48,13 +48,13 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
             innerMappingsCopy.add(aliasMapping);
         }
         compassMapping.clearMappings();
-        for (Iterator it = innerMappingsCopy.iterator(); it.hasNext();) {
-            compassMapping.addMapping((AliasMapping) it.next());
+        for (AliasMapping anInnerMappingsCopy : innerMappingsCopy) {
+            compassMapping.addMapping(anInnerMappingsCopy);
         }
 
         for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
             AliasMapping aliasMapping = (AliasMapping) it.next();
-            resolveExtending(compassMapping, aliasMapping, new HashSet());
+            resolveExtending(compassMapping, aliasMapping, new HashSet<String>());
         }
 
         return compassMapping;
@@ -63,7 +63,7 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
     /**
      * Resolves (recursivly) and sets the extending mapping section of {@link org.compass.core.mapping.AliasMapping}.
      */
-    private void resolveExtending(CompassMapping compassMapping, AliasMapping aliasMapping, HashSet extendingAliases) {
+    private void resolveExtending(CompassMapping compassMapping, AliasMapping aliasMapping, HashSet<String> extendingAliases) {
 
         if (aliasMapping.getExtendedAliases() != null) {
             for (int i = 0; i < aliasMapping.getExtendedAliases().length; i++) {
@@ -76,7 +76,7 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
                     }
                 }
                 extendingAliases.add(aliasMapping.getAlias());
-                extendedAliasMapping.setExtendingAliases((String[]) extendingAliases.toArray(new String[extendingAliases.size()]));
+                extendedAliasMapping.setExtendingAliases(extendingAliases.toArray(new String[extendingAliases.size()]));
 
                 resolveExtending(compassMapping, extendedAliasMapping, extendingAliases);
             }

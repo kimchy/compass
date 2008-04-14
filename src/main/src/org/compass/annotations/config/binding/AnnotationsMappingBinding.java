@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import org.apache.commons.logging.Log;
@@ -418,11 +419,18 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         }
 
         // if the super class has Searchable annotation as well, add it to the list of extends
-        Class<?> superClass = clazz.getSuperclass();
-        if (superClass != null && superClass.isAnnotationPresent(Searchable.class)) {
+        ArrayList<Class> extendedClasses = new ArrayList<Class>();
+        if (clazz.getSuperclass() != null) {
+            extendedClasses.add(clazz.getSuperclass());
+        }
+        extendedClasses.addAll(Arrays.asList(clazz.getInterfaces()));
+        for (Class<?> superClass : extendedClasses) {
+            if (!superClass.isAnnotationPresent(Searchable.class)) {
+                continue;
+            }
             Searchable superSearchable = superClass.getAnnotation(Searchable.class);
             String alias = getAliasFromSearchableClass(superClass, superSearchable);
-            ArrayList<String> extendedMappings = new ArrayList<String>();
+            HashSet<String> extendedMappings = new HashSet<String>();
             if (classMapping.getExtendedAliases() != null) {
                 extendedMappings.addAll(Arrays.asList(classMapping.getExtendedAliases()));
             }
