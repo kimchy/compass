@@ -455,6 +455,9 @@ public interface CompassQueryBuilder {
     /**
      * Returns a query that <b>exactly</b> match the given alias.
      *
+     * <p>Note, this will <b>not</b> narrow down the search to specific sub indxes.
+     * In order to do that, please use {@link org.compass.core.CompassQuery#setAliases(String[])}.
+     *
      * @param aliasValue The alias value to match to.
      * @return The generated query.
      */
@@ -462,6 +465,9 @@ public interface CompassQueryBuilder {
 
     /**
      * Returns a query that match the given alias or any extedning aliases.
+     *
+     * <p>Note, this will <b>not</b> narrow down the search to specific sub indxes.
+     * In order to do that, please use {@link org.compass.core.CompassQuery#setAliases(String[])}.
      *
      * @param aliasValue The alias value to match to or any extending aliases.
      * @return The generated query.
