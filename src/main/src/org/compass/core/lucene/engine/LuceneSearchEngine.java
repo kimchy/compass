@@ -235,7 +235,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     private void delete(ResourceKey resourceKey) throws SearchEngineException {
         if (resourceKey.getIds().length == 0) {
-            throw new SearchEngineException("Cannot delete a resource with no ids");
+            throw new SearchEngineException("Cannot delete a resource with no ids and alias [" + resourceKey.getAlias() + "]");
         }
         transaction.delete(resourceKey);
         if (log.isDebugEnabled()) {
