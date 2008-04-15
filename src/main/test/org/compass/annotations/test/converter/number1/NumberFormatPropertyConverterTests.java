@@ -47,7 +47,7 @@ public class NumberFormatPropertyConverterTests extends AbstractAnnotationsTestC
 
         queryBuilder = session.queryBuilder().convertOnlyWithDotPath(true);
         query = queryBuilder.ge("A1.property", 300L);
-        assertEquals("property:[00000300 TO *]", query.toString());
+        assertEquals("+property:[00000300 TO *] +((alias:A1 extendedAlias:A1)~1)", query.toString());
 
         queryBuilder = session.queryBuilder().convertOnlyWithDotPath(false);
         query = queryBuilder.ge("property", 300L);
@@ -55,7 +55,7 @@ public class NumberFormatPropertyConverterTests extends AbstractAnnotationsTestC
 
         queryBuilder = session.queryBuilder();
         query = queryBuilder.ge("A1.property", 300L);
-        assertEquals("property:[00000300 TO *]", query.toString());
+        assertEquals("+property:[00000300 TO *] +((alias:A1 extendedAlias:A1)~1)", query.toString());
 
         tr.commit();
         session.close();

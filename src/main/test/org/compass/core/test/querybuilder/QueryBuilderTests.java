@@ -313,7 +313,7 @@ public class QueryBuilderTests extends AbstractTestCase {
         A a = new A();
         a.setId(new Long(1));
         a.setValue1("wuzzy");
-        session.save(a);
+        session.save("a", a);
 
         CompassQueryBuilder queryBuilder = session.queryBuilder();
         CompassHits hits = queryBuilder.fuzzy("mvalue1", "wuzza").hits();

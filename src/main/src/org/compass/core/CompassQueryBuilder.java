@@ -420,6 +420,13 @@ public interface CompassQueryBuilder {
     CompassQueryBuilder convertOnlyWithDotPath(boolean convertOnlyWithDotPath);
 
     /**
+     * Should the query builder wrap automatically any query that has dot path notation (such as
+     * <code>alias.property</code>) with specific narrowing to match the given alias. Default to
+     * <code>true</code>.
+     */
+    CompassQueryBuilder addAliasQueryIfNeeded(boolean addAliasQueryIfNeeded);
+
+    /**
      * Constructs a boolean query builder.
      */
     CompassBooleanQueryBuilder bool();
