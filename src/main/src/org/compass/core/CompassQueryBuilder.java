@@ -412,6 +412,14 @@ public interface CompassQueryBuilder {
     }
 
     /**
+     * Should Compass use a converter for value passed even if there is no specific direct dot
+     * path notation to it. It will try and derive the best converter to use. Defaults to <code>false</code>.
+     *
+     * @see org.compass.core.mapping.ResourcePropertyLookup#setConvertOnlyWithDotPath(boolean) 
+     */
+    CompassQueryBuilder convertOnlyWithDotPath(boolean convertOnlyWithDotPath);
+
+    /**
      * Constructs a boolean query builder.
      */
     CompassBooleanQueryBuilder bool();

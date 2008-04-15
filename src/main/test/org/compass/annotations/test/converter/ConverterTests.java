@@ -74,7 +74,7 @@ public class ConverterTests extends AbstractAnnotationsTestCase {
         b.value = 1594;
         session.save(b);
 
-        CompassHits hits = session.queryBuilder().between("value", 1000.0, 2000.0, true).hits();
+        CompassHits hits = session.queryBuilder().between("B.value", 1000.0, 2000.0, true).hits();
         assertEquals(2, hits.length());
 
         assertEquals(Property.Index.UN_TOKENIZED,
