@@ -1,5 +1,6 @@
 package org.compass.core.mapping;
 
+import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 
@@ -147,7 +148,7 @@ public final class ResourcePropertyLookup {
      * Returns the String representation of the provided value Object. If {@link #hasSpecificConverter()}
      * return <code>true</code>, will use the first mapping definition for the given name in order to
      * convert it from Object to String. If it returns false, will use a Converter assigned to the given
-     * parameter class.
+     * parameter class. If a <code>String</code> is passed, will normalize it using {@link #normalizeString(String)}.
      *
      * @see org.compass.core.converter.mapping.ResourcePropertyConverter
      */
@@ -184,6 +185,18 @@ public final class ResourcePropertyLookup {
     }
 
     /**
+     * Tries to normalize the string using {@link #normalizeString(String)}, and if it fails, will
+     * return the original value.
+     */
+    public String attemptNormalizeString(String value) {
+        try {
+            return normalizeString(value);
+        } catch (ConversionException e) {
+            return value;
+        }
+    }
+
+    /**
      * Normalizes a given String value to a (hopefully) String value that mathces the one stored in the
      * index.
      *
@@ -194,11 +207,11 @@ public final class ResourcePropertyLookup {
      * for normalization ({@link org.compass.core.converter.mapping.ResourcePropertyConverter#canNormalize()} returns
      * <code>false</code>), the provided value will be returned.
      *
-     * <p>If none of the above happens, will conver it
+     * <p>If none of the above happens, will convert it
      * {@link org.compass.core.converter.mapping.ResourcePropertyConverter#fromString(String, org.compass.core.mapping.ResourcePropertyMapping)}
      * and then {@link org.compass.core.converter.mapping.ResourcePropertyConverter#toString(Object, org.compass.core.mapping.ResourcePropertyMapping)}.
      */
-    public String normalizeString(String value) {
+    public String normalizeString(String value) throws ConversionException {
         if (!hasSpecificConverter()) {
             return value;
         }

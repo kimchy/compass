@@ -110,7 +110,7 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
         ResourcePropertyLookup lookup = mapping.getResourcePropertyLookup(field);
         lookup.setConvertOnlyWithDotPath(false);
         if (lookup.hasSpecificConverter()) {
-            queryText = lookup.normalizeString(queryText);
+            queryText = lookup.attemptNormalizeString(queryText);
         }
         Analyzer origAnalyzer = analyzer;
         if (!forceAnalyzer) {
@@ -152,12 +152,12 @@ public class CompassMultiFieldQueryParser extends MultiFieldQueryParser {
             if ("*".equals(part1)) {
                 part1 = null;
             } else {
-                part1 = lookup.normalizeString(part1);
+                part1 = lookup.attemptNormalizeString(part1);
             }
             if ("*".equals(part2)) {
                 part2 = null;
             } else {
-                part2 = lookup.normalizeString(part2);
+                part2 = lookup.attemptNormalizeString(part2);
             }
         } else {
             if ("*".equals(part1)) {
