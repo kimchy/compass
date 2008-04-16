@@ -172,7 +172,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 }
             }
             if (searchers.size() == 0) {
-                return new LuceneSearchEngineInternalSearch(null, null);
+                return new LuceneSearchEngineInternalSearch();
             }
             MultiSearcher indexSeracher = new MultiSearcher(searchers.toArray(new Searcher[searchers.size()]));
             return new LuceneSearchEngineInternalSearch(indexSeracher, indexHoldersToClose);

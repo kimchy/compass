@@ -117,16 +117,22 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
         ArrayList<LuceneIndexHolder> indexHoldersToClose = new ArrayList<LuceneIndexHolder>();
         try {
             String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(subIndexes, aliases);
-            ArrayList<IndexReader> readers = new ArrayList<IndexReader>();
+            ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
+            LuceneIndexHolder lastNonEmptyIndexHolder = null;
             for (String subIndex : calcSubIndexes) {
                 LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
                 indexHoldersToClose.add(indexHolder);
                 if (indexHolder.getIndexReader().numDocs() > 0) {
                     readers.add(indexHolder.getIndexReader());
+                    lastNonEmptyIndexHolder = indexHolder;
                 }
             }
             if (readers.size() == 0) {
                 return new LuceneSearchEngineInternalSearch(null, null, null);
+            }
+            // if we have just one reader, no need to create a multi reader on top of it
+            if (readers.size() == 1) {
+                return new LuceneSearchEngineInternalSearch(lastNonEmptyIndexHolder, indexHoldersToClose);
             }
             MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
             return new LuceneSearchEngineInternalSearch(reader, new IndexSearcher(reader), indexHoldersToClose);

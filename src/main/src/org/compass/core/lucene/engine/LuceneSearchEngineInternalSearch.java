@@ -25,8 +25,17 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
 
     protected IndexReader indexReader;
 
-    private boolean closed;
     private List<LuceneIndexHolder> indexHoldersToClose;
+
+    private boolean closeReader;
+
+    private boolean closeSearcher;
+
+    private boolean closed;
+
+    public LuceneSearchEngineInternalSearch() {
+        // do nothing, an empty internal search one
+    }
 
     public LuceneSearchEngineInternalSearch(MultiSearcher searcher, List<LuceneIndexHolder> indexHolders) {
         this.searcher = searcher;
@@ -37,6 +46,16 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
             readers[i] = ((IndexSearcher) searchables[i]).getIndexReader();
         }
         indexReader = new MultiReader(readers, false);
+        this.closeReader = true;
+        this.closeSearcher = true;
+    }
+
+    public LuceneSearchEngineInternalSearch(LuceneIndexHolder indexHolder, List<LuceneIndexHolder> indexHolders) {
+        this.searcher = indexHolder.getIndexSearcher();
+        this.indexReader = indexHolder.getIndexReader();
+        this.indexHoldersToClose = indexHolders;
+        this.closeReader = false;
+        this.closeSearcher = false;
     }
 
     /**
@@ -47,6 +66,8 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
         this.indexReader = indexReader;
         this.searcher = searcher;
         this.indexHoldersToClose = indexHolders;
+        this.closeReader = true;
+        this.closeSearcher = true;
     }
 
     /**
@@ -81,7 +102,7 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
         }
         closed = true;
 
-        if (searcher != null) {
+        if (searcher != null && closeSearcher) {
             try {
                 searcher.close();
             } catch (IOException e) {
@@ -89,7 +110,7 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
             }
         }
 
-        if (indexReader != null) {
+        if (indexReader != null && closeReader) {
             try {
                 indexReader.close();
             } catch (IOException e) {
