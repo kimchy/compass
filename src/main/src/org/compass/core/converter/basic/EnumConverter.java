@@ -30,6 +30,7 @@ public class EnumConverter extends AbstractBasicConverter {
     protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         ClassPropertyMetaDataMapping metaDataMapping = (ClassPropertyMetaDataMapping) resourcePropertyMapping;
         // if this is an EnumSet, get the collection parameter
+        // TODO we can do better than check it every time, we should store it on the mapping level
         Class<? extends Enum> enumType = AccessorUtils.getCollectionParameter(metaDataMapping.getGetter());
         // if it is not, just use the actual type and assume it is the actual enum
         if (enumType == null) {
