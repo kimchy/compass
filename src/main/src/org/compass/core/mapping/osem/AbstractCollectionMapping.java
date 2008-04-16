@@ -46,6 +46,8 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
 
         public static final CollectionType SORTED_SET = new CollectionType("SORTED_SET");
 
+        public static final CollectionType LINKED_HASH_SET = new CollectionType("LINKED_HASH_SET");
+
         public static String toString(CollectionType collectionType) {
             if (collectionType == CollectionType.NOT_REQUIRED) {
                 return "na";
@@ -57,6 +59,8 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
                 return "list";
             } else if (collectionType == CollectionType.SORTED_SET) {
                 return "sortset";
+            } else if (collectionType == CollectionType.LINKED_HASH_SET) {
+                return "linkedset";
             } else if (collectionType == CollectionType.ENUM_SET) {
                 return "eset";
             }
@@ -74,6 +78,8 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
                 return CollectionType.LIST;
             } else if ("sortset".equalsIgnoreCase(collectionType)) {
                 return CollectionType.SORTED_SET;
+            } else if ("linkedset".equalsIgnoreCase(collectionType)) {
+                return CollectionType.LINKED_HASH_SET;
             } else if ("eset".equalsIgnoreCase(collectionType)) {
                 return CollectionType.ENUM_SET;
             }

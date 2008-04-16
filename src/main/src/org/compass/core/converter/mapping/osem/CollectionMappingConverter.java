@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -66,6 +67,8 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
     protected AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root) {
         if (root instanceof List) {
             return AbstractCollectionMapping.CollectionType.LIST;
+        } else if (root instanceof LinkedHashSet) {
+            return AbstractCollectionMapping.CollectionType.LINKED_HASH_SET;
         } else if (root instanceof EnumSet) {
             return AbstractCollectionMapping.CollectionType.ENUM_SET;
         } else if (root instanceof SortedSet) {
@@ -87,6 +90,8 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
             return new HashSet(size);
         } else if (collectionType == AbstractCollectionMapping.CollectionType.SORTED_SET) {
             return new TreeSet();
+        } else if (collectionType == AbstractCollectionMapping.CollectionType.LINKED_HASH_SET) {
+            return new LinkedHashSet(size);
         } else {
             throw new IllegalStateException("Should not happen, internal compass error");
         }

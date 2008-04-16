@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -109,6 +110,8 @@ public class CollectionMappingProcessor implements MappingProcessor {
             collectionMapping = new CollectionMapping();
             if (List.class.isAssignableFrom(collectionClass)) {
                 collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.LIST);
+            } else if (LinkedHashSet.class.isAssignableFrom(collectionClass)) {
+                collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.LINKED_HASH_SET);
             } else if (EnumSet.class.isAssignableFrom(collectionClass)) {
                 collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.ENUM_SET);
             } else if (SortedSet.class.isAssignableFrom(collectionClass)) {
