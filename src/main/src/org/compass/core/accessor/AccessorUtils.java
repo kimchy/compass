@@ -16,8 +16,6 @@
 
 package org.compass.core.accessor;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -35,14 +33,7 @@ public class AccessorUtils {
         if (!Collection.class.isAssignableFrom(getter.getReturnType())) {
             return null;
         }
-        Type type = null;
-        if (getter instanceof DirectPropertyAccessor.DirectGetter) {
-            Field field = ((DirectPropertyAccessor.DirectGetter) getter).getField();
-            type = field.getGenericType();
-        } else if (getter instanceof BasicPropertyAccessor.BasicGetter) {
-            Method method = ((BasicPropertyAccessor.BasicGetter) getter).getMethod();
-            type = method.getGenericReturnType();
-        }
+        Type type = getter.getGenericReturnType();
         if (type == null) {
             return null;
         }

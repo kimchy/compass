@@ -18,6 +18,7 @@ package org.compass.core.converter.mapping.osem;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.Resource;
+import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.accessor.Getter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
@@ -37,8 +41,10 @@ import org.compass.core.marshall.MarshallingEnvironment;
  */
 public class CollectionMappingConverter extends AbstractCollectionMappingConverter {
 
+    private static final Log log = LogFactory.getLog(CollectionMappingConverter.class);
+
     protected int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
-                                       MarshallingContext context) {
+                                      MarshallingContext context) {
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         int count = 0;
         Mapping elementMapping = colMapping.getElementMapping();
@@ -51,7 +57,7 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, current);
             boolean stored = elementMapping.getConverter().marshall(resource, value, elementMapping, context);
             if (stored) {
-                count ++;
+                count++;
             }
         }
         return count;
@@ -60,6 +66,8 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
     protected AbstractCollectionMapping.CollectionType getRuntimeCollectionType(Object root) {
         if (root instanceof List) {
             return AbstractCollectionMapping.CollectionType.LIST;
+        } else if (root instanceof EnumSet) {
+            return AbstractCollectionMapping.CollectionType.ENUM_SET;
         } else if (root instanceof SortedSet) {
             return AbstractCollectionMapping.CollectionType.SORTED_SET;
         } else if (root instanceof Set) {
@@ -73,6 +81,8 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
     protected Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size) {
         if (collectionType == AbstractCollectionMapping.CollectionType.LIST) {
             return new ArrayList(size);
+        } else if (collectionType == AbstractCollectionMapping.CollectionType.ENUM_SET) {
+            return EnumSet.noneOf(AccessorUtils.getCollectionParameter(getter));
         } else if (collectionType == AbstractCollectionMapping.CollectionType.SET) {
             return new HashSet(size);
         } else if (collectionType == AbstractCollectionMapping.CollectionType.SORTED_SET) {

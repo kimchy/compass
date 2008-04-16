@@ -17,6 +17,7 @@
 package org.compass.core.accessor;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 
 import org.compass.core.CompassException;
 
@@ -25,7 +26,7 @@ import org.compass.core.CompassException;
  * <p>
  * Initial version taken from hibernate
  * </p>
- * 
+ *
  * @author kimchy
  */
 public interface Getter extends Serializable {
@@ -38,6 +39,15 @@ public interface Getter extends Serializable {
      * Get the declared Java type
      */
     Class getReturnType();
+
+    /**
+     * Returns the generic return type of the return type. Can return
+     * <code>null</code> if not known or not set.
+     *
+     * @see java.lang.reflect.Field#getGenericType()
+     * @see java.lang.reflect.Method#getGenericReturnType()
+     */
+    Type getGenericReturnType();
 
     /**
      * Get the property name

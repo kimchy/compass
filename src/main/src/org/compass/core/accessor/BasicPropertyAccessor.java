@@ -19,6 +19,7 @@ package org.compass.core.accessor;
 import java.beans.Introspector;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -146,6 +147,10 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
         public Class getReturnType() {
             return method.getReturnType();
+        }
+
+        public Type getGenericReturnType() {
+            return method.getGenericReturnType();
         }
 
         public Method getMethod() {

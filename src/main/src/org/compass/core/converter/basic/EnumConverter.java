@@ -16,6 +16,7 @@
 
 package org.compass.core.converter.basic;
 
+import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
@@ -28,7 +29,12 @@ public class EnumConverter extends AbstractBasicConverter {
 
     protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         ClassPropertyMetaDataMapping metaDataMapping = (ClassPropertyMetaDataMapping) resourcePropertyMapping;
-        Class<? extends Enum> enumType = (Class<? extends Enum>) metaDataMapping.getGetter().getReturnType();
+        // if this is an EnumSet, get the collection parameter
+        Class<? extends Enum> enumType = AccessorUtils.getCollectionParameter(metaDataMapping.getGetter());
+        // if it is not, just use the actual type and assume it is the actual enum
+        if (enumType == null) {
+            enumType = (Class<? extends Enum>) metaDataMapping.getGetter().getReturnType();
+        }
         return Enum.valueOf(enumType, str);
     }
 

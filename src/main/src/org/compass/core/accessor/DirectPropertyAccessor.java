@@ -18,6 +18,7 @@ package org.compass.core.accessor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 import org.compass.core.CompassException;
 import org.compass.core.util.ClassUtils;
@@ -62,6 +63,10 @@ public class DirectPropertyAccessor implements PropertyAccessor {
 
         public Class getReturnType() {
             return field.getType();
+        }
+
+        public Type getGenericReturnType() {
+            return field.getGenericType();
         }
 
         public Field getField() {

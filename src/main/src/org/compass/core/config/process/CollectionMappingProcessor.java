@@ -18,6 +18,7 @@ package org.compass.core.config.process;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -108,6 +109,8 @@ public class CollectionMappingProcessor implements MappingProcessor {
             collectionMapping = new CollectionMapping();
             if (List.class.isAssignableFrom(collectionClass)) {
                 collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.LIST);
+            } else if (EnumSet.class.isAssignableFrom(collectionClass)) {
+                collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.ENUM_SET);
             } else if (SortedSet.class.isAssignableFrom(collectionClass)) {
                 collectionMapping.setCollectionType(AbstractCollectionMapping.CollectionType.SORTED_SET);
             } else if (Set.class.isAssignableFrom(collectionClass)) {

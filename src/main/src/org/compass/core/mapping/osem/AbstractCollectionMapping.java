@@ -42,6 +42,8 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
 
         public static final CollectionType LIST = new CollectionType("LIST");
 
+        public static final CollectionType ENUM_SET = new CollectionType("ESET");
+
         public static final CollectionType SORTED_SET = new CollectionType("SORTED_SET");
 
         public static String toString(CollectionType collectionType) {
@@ -55,6 +57,8 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
                 return "list";
             } else if (collectionType == CollectionType.SORTED_SET) {
                 return "sortset";
+            } else if (collectionType == CollectionType.ENUM_SET) {
+                return "eset";
             }
             throw new IllegalArgumentException("Can't find collection type for [" + collectionType + "]");
         }
@@ -70,6 +74,8 @@ public abstract class AbstractCollectionMapping extends AbstractAccessorMapping 
                 return CollectionType.LIST;
             } else if ("sortset".equalsIgnoreCase(collectionType)) {
                 return CollectionType.SORTED_SET;
+            } else if ("eset".equalsIgnoreCase(collectionType)) {
+                return CollectionType.ENUM_SET;
             }
             throw new IllegalArgumentException("Can't find collection type for [" + collectionType + "]");
         }
