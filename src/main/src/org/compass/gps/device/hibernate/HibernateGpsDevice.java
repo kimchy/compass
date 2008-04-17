@@ -134,7 +134,7 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
         if (mirrorDataChanges) {
             if (lifecycleInjector == null) {
                 try {
-                    ClassUtils.forName("PostCollectionRecreateEventListener", compassGps.getMirrorCompass().getSettings().getClassLoader());
+                    ClassUtils.forName("org.hibernate.event.PostCollectionRecreateEventListener", compassGps.getMirrorCompass().getSettings().getClassLoader());
                     lifecycleInjector = (HibernateEntityLifecycleInjector) ClassUtils.forName("org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityCollectionLifecycleInjector",
                             compassGps.getMirrorCompass().getSettings().getClassLoader()).newInstance();
                 } catch (Exception e) {
