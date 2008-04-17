@@ -49,6 +49,7 @@
     <orderEntry type="library" exported="" name="xpp" level="project" />
     <orderEntry type="library" name="Terracota" level="project" />
     <orderEntry type="library" name="asm" level="project" />
+    <orderEntry type="library" name="jsr223" level="project" />
     <orderEntryProperties />
   </component>
 </module>

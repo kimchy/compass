@@ -739,6 +739,15 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="jsr223">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jsr223/script-api.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jsr223/js.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/jsr223/script-js.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
 

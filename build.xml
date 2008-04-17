@@ -667,6 +667,7 @@
                 <include name="lib/jpa/**"/>
                 <include name="lib/jpox/**"/>
                 <include name="lib/junit/**"/>
+                <include name="lib/jsr223/**"/>
                 <include name="lib/log4j/**"/>
                 <include name="lib/lucene/**"/>
                 <include name="lib/odmg/**"/>
