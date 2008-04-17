@@ -59,7 +59,9 @@ import org.hibernate.SessionFactory;
  *
  * <p>Mirroring is done by injecting lifecycle listeners into Hibernate. It is done using
  * {@link org.compass.gps.device.hibernate.lifecycle.HibernateEntityLifecycleInjector} with
- * a default implementation of {@link org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityLifecycleInjector}.
+ * a default implementation of {@link org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityLifecycleInjector}
+ * when using Hibernate version < 3.2.6 and {@link org.compass.gps.device.hibernate.lifecycle.DefaultHibernateEntityCollectionLifecycleInjector}
+ * when using Hibernate version >= 3.2.6.
  *
  * <p>Mirroring can be turned off using the {@link #setMirrorDataChanges(boolean)} to <code>false</code>.
  * It defaults to <code>true<code>.
