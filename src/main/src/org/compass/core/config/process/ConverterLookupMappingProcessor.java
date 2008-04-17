@@ -49,9 +49,12 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
 
     private ConverterLookup converterLookup;
 
+    private CompassSettings settings;
+
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
         this.converterLookup = converterLookup;
+        this.settings = settings;
 
         for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
@@ -175,7 +178,7 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
         public void onResourcePropertyMapping(ResourcePropertyMapping resourcePropertyMapping) {
             // we do it here as well as later in the processing since with OSEM, the index, for example,
             // is important to be resolved as fast as possible
-            MappingProcessorUtils.applyResourcePropertySettings(resourcePropertyMapping);
+            MappingProcessorUtils.applyResourcePropertySettings(resourcePropertyMapping, settings);
         }
     }
 }

@@ -611,7 +611,8 @@ public class CompassEnvironment {
     public abstract class Alias {
 
         /**
-         * The name of the "alias" proeprty.
+         * The name of the "alias" proeprty. Defaults to {@link #DEFAULT_NAME} which is
+         * <code>alias</code>.
          */
         public static final String NAME = "compass.property.alias";
 
@@ -622,6 +623,7 @@ public class CompassEnvironment {
 
         /**
          * The name of the property where extended aliases are stored in the resource.
+         * Defaults to {@link #DEFAULT_EXTENDED_ALIAS_NAME} which is <code>extendedAlias</code>.
          */
         public static final String EXTENDED_ALIAS_NAME = "compass.property.extendedAlias";
 
@@ -629,6 +631,38 @@ public class CompassEnvironment {
          * The default name for the extended alias property: <code>extendedAlias</code>.
          */
         public static final String DEFAULT_EXTENDED_ALIAS_NAME = "extendedAlias";
+    }
+
+    /**
+     * Global settings that affect the different mappings.
+     */
+    public abstract class Mapping {
+
+        /**
+         * The default value of store for mappings. If set, will be used for all the mappings
+         * that have not explicitly set it. If not set, will be {@link org.compass.core.Property.Store#YES}.
+         */
+        public static final String GLOBAL_STORE = "compass.mapping.globalStore";
+
+        /**
+         * The default value of index for mappings. If set, will be used for all the mappings
+         * that have not explicitly set it. If not set, will be {@link org.compass.core.Property.Index#TOKENIZED}
+         * for most properties unless the converer suggested otherwise (such as
+         * {@link org.compass.core.Property.Index#UN_TOKENIZED} for numbers.
+         */
+        public static final String GLOBAL_INDEX = "comapss.mapping.globalIndex";
+
+        /**
+         * The default value of term vector for mappings. If set, will be used for all the mappings
+         * that have not explicitly set it. If not set, will be {@link org.compass.core.Property.TermVector#NO}.
+         */
+        public static final String GLOBAL_TERM_VECTOR = "compass.mapping.globalTermVector";
+
+        /**
+         * The default value of omit norms for mappings. If set, will be used for all the mappings
+         * that have not explicitly set it. If not set, will be <code>false</code>.
+         */
+        public static final String GLOBAL_OMIT_NORMS = "compass.mapping.globalOmitNorms";
     }
 
     public abstract class NamingStrategy {

@@ -162,7 +162,7 @@ public abstract class MappingProcessorUtils {
         return converter;
     }
 
-    public static void applyResourcePropertySettings(ResourcePropertyMapping mapping) {
+    public static void applyResourcePropertySettings(ResourcePropertyMapping mapping, CompassSettings settings) {
         InternalResourcePropertyMapping intMapping = (InternalResourcePropertyMapping) mapping;
         ResourcePropertyConverter converter = null;
         if (mapping.getConverter() instanceof ResourcePropertyConverter) {
@@ -173,7 +173,7 @@ public abstract class MappingProcessorUtils {
                 intMapping.setIndex(converter.suggestIndex());
             }
             if (intMapping.getIndex() == null) {
-                intMapping.setIndex(Property.Index.TOKENIZED);
+                intMapping.setIndex(Property.Index.fromString(settings.getSetting(CompassEnvironment.Mapping.GLOBAL_INDEX, Property.Index.TOKENIZED.toString())));
             }
         }
         if (intMapping.getStore() == null) {
@@ -181,7 +181,7 @@ public abstract class MappingProcessorUtils {
                 intMapping.setStore(converter.suggestStore());
             }
             if (intMapping.getStore() == null) {
-                intMapping.setStore(Property.Store.YES);
+                intMapping.setStore(Property.Store.fromString(settings.getSetting(CompassEnvironment.Mapping.GLOBAL_STORE, Property.Store.YES.toString())));
             }
         }
         if (intMapping.getTermVector() == null) {
@@ -189,7 +189,7 @@ public abstract class MappingProcessorUtils {
                 intMapping.setTermVector(converter.suggestTermVector());
             }
             if (intMapping.getTermVector() == null) {
-                intMapping.setTermVector(Property.TermVector.NO);
+                intMapping.setTermVector(Property.TermVector.fromString(settings.getSetting(CompassEnvironment.Mapping.GLOBAL_TERM_VECTOR, Property.TermVector.NO.toString())));
             }
         }
         if (intMapping.isOmitNorms() == null) {
@@ -197,7 +197,7 @@ public abstract class MappingProcessorUtils {
                 intMapping.setOmitNorms(intMapping.isOmitNorms());
             }
             if (intMapping.isOmitNorms() == null) {
-                intMapping.setOmitNorms(false);
+                intMapping.setOmitNorms(settings.getSettingAsBoolean(CompassEnvironment.Mapping.GLOBAL_OMIT_NORMS, false));
             }
         }
     }

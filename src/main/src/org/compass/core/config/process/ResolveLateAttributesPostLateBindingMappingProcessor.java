@@ -46,7 +46,7 @@ public class ResolveLateAttributesPostLateBindingMappingProcessor implements Map
                 ResourceMapping resourceMapping = (ResourceMapping) m;
                 if (resourceMapping.isRoot()) {
                     for (ResourcePropertyMapping mapping : resourceMapping.getResourcePropertyMappings()) {
-                        MappingProcessorUtils.applyResourcePropertySettings(mapping);
+                        MappingProcessorUtils.applyResourcePropertySettings(mapping, settings);
                     }
                 }
             }
