@@ -305,6 +305,11 @@ public class DefaultCompass implements InternalCompass {
         }
     }
 
+    protected void finalize() throws Throwable {
+        super.finalize();
+        close();
+    }
+
     private static class CompassTransactionContext implements TransactionContext {
 
         private InternalCompass compass;
