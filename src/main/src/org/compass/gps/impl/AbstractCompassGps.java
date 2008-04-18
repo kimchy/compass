@@ -43,9 +43,9 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
 
     protected HashMap<String, CompassGpsDevice> devices = new HashMap<String, CompassGpsDevice>();
 
-    private boolean started = false;
+    private volatile boolean started = false;
 
-    private boolean performingIndexOperation = false;
+    private volatile boolean performingIndexOperation = false;
 
     public void addGpsDevice(CompassGpsDevice gpsDevice) {
         checkDeviceValidity(gpsDevice);
@@ -199,5 +199,10 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
 
     public boolean isPerformingIndexOperation() {
         return performingIndexOperation;
+    }
+
+    protected void finalize() throws Throwable {
+        super.finalize();
+        stop();
     }
 }
