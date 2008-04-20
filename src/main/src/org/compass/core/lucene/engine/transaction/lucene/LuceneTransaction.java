@@ -50,6 +50,10 @@ import org.compass.core.transaction.context.TransactionalCallable;
 import org.compass.core.util.StringUtils;
 
 /**
+ * Lucene based transaction, allows to perfom dirty operations direct over the index
+ * using Lucene support for "transactions". Reads and search will be performed on the
+ * index itself without taking into account the "transactional" operations.
+ *
  * @author kimchy
  */
 public class LuceneTransaction extends AbstractTransaction {
