@@ -51,6 +51,8 @@
     <orderEntry type="library" name="asm" level="project" />
     <orderEntry type="library" name="jsr223" level="project" />
     <orderEntry type="library" name="jaxen" level="project" />
+    <orderEntry type="library" name="stax" level="project" />
+    <orderEntry type="library" name="woodstox" level="project" />
     <orderEntryProperties />
   </component>
 </module>

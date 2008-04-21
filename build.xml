@@ -685,9 +685,11 @@
                 <include name="lib/openjpa/**"/>
                 <include name="lib/ognl/**"/>
                 <include name="lib/spring/**"/>
+                <include name="lib/stax/**"/>
                 <include name="lib/sunfsjndi/**"/>
                 <include name="lib/toplink/**"/>
                 <include name="lib/velocity/**"/>
+                <include name="lib/woodstox/**"/>
                 <include name="lib/xpp/**"/>
                 <include name="lib/gigaspaces/**"/>
                 <include name="lib/terracotta/**"/>

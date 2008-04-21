@@ -34,6 +34,7 @@ public abstract class AbstractXmlWriterXmlContentConverter implements XmlContent
         XMLWriter xmlWriter = new XMLWriter(stringWriter, outputFormat);
         try {
             xmlWriter.write(dom4jXmlObject.getNode());
+            xmlWriter.close();
         } catch (IOException e) {
             throw new ConversionException("This should not happen", e);
         }
