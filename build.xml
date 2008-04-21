@@ -694,6 +694,21 @@
             </zipfileset>
         </zip>
 
+        <delete file="${target.release.dir}/compass-${compass-version}-docs.zip" />
+        <zip zipfile="${target.release.dir}/compass-${compass-version}-docs.zip" basedir="${basedir}">
+            <include name="docs/**"/>
+            <exclude name="docs/reference/*"/>
+            <exclude name="docs/reference/src/**"/>
+            <exclude name="docs/reference/styles/*.xsl"/>
+            <exclude name="docs/reference/lib/**"/>
+            <exclude name="docs/reference/pdf/images/**"/>
+            <exclude name="docs/javadoc/**"/>
+            <exclude name="docs/versions/**"/>
+            <exclude name="docs/content/**"/>
+            <exclude name="docs/index.html"/>
+            <exclude name="docs/meta.xml"/>
+        </zip>
+
     </target>
 
 
