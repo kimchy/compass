@@ -13,7 +13,7 @@ Release Process:
 * Run svn commit
 * Tag using svn copy, branch if required
 * Upload the release files (zip files) to sourceforge.
-* Upload the release jars into repo.compass-project.org.
+* Run "ant mvn" and Upload the jars into repo.compass-project.org.
 * Upload the new documentation to compass-project site.
 * Update the Compass homepage with links to the new release.
 * Change project.properties compass-version to the next version
