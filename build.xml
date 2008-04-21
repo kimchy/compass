@@ -6,6 +6,10 @@
 
 <project name="compass" default="usage" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
+    <property name="maven.dist.dir" location="${basedir}/target/maven"/>
+    <property name="m2.repository.url" value="file://${maven.dist.dir}"/>
+    <property name="m2.repository.private.key" value="${user.home}/.ssh/id_dsa"/>
+
     <property file="project.properties"/>
     <property file="build.properties"/>
 
@@ -275,7 +279,7 @@
 
         <delete file="${dist.dir}/${compass-jarname}-javadoc.jar"/>
 
-        <jar destfile="${dist.dir}/${compass-jarname}-javadoc.jar" basedir="${javadoc.dir}" />
+        <jar destfile="${dist.dir}/${compass-jarname}-javadoc.jar" basedir="${javadoc.dir}"/>
     </target>
 
 
@@ -376,6 +380,8 @@
 
 
     <target name="mvn" depends="maven.ant.tasks-check, fulljar, srczip, javadoc">
+        <mkdir dir="${maven.dist.dir}" />
+
         <copy file="pom.xml.template" tofile="${basedir}/target/pom.xml">
             <filterset begintoken="@" endtoken="@">
                 <filter token="version" value="${compass-version}"/>
@@ -385,13 +391,16 @@
 
         <artifact:pom id="maven.project" file="${basedir}/target/pom.xml"/>
 
-        <mkdir dir="${basedir}/target/maven" />
-        
-        <artifact:install file="${dist.dir}/${compass-jarname}.jar">
+        <mkdir dir="${basedir}/target/maven"/>
+
+        <artifact:deploy file="${dist.dir}/${compass-jarname}.jar">
             <pom refid="maven.project"/>
             <attach file="${dist.dir}/${compass-jarname}-src.jar" classifier="sources"/>
             <attach file="${dist.dir}/${compass-jarname}-javadoc.jar" classifier="javadoc"/>
-        </artifact:install>
+            <remoteRepository url="${m2.repository.url}">
+                <authentication username="${m2.repository.username}" privateKey="${m2.repository.private.key}"/>
+            </remoteRepository>
+        </artifact:deploy>
     </target>
 
     <!--
@@ -628,7 +637,7 @@
             <include name="src/**"/>
             <include name="samples/**"/>
             <include name="*.bat"/>
-            <include name="pom.xml.template" />
+            <include name="pom.xml.template"/>
             <include name="*.txt"/>
             <include name="*.xml"/>
             <exclude name="osbuild.xml"/>
