@@ -671,6 +671,7 @@
                 <include name="lib/j2ee/**"/>
                 <include name="lib/jakarta-commons/**"/>
                 <include name="lib/jakarta-taglibs/**"/>
+                <include name="lib/jaxen/**"/>
                 <include name="lib/jdo/**"/>
                 <include name="lib/jotm/**"/>
                 <include name="lib/jpa/**"/>

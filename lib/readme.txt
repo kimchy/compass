@@ -21,9 +21,9 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 - required for running PetClinic (by Hibernate)
 
-* dom4j/dom4j-1.6.1, dom4j/jaxen-1.1-beta-7.jar
+* dom4j/dom4j-1.6.1
 - DOM4J 1.6.1 XML parser (http://www.dom4j.org)
-- required for running PetClinic (by Hibernate)
+- required for building compass
 
 * ehcache/ehcache-1.2.3.jar
 - EHCache 1.2.3 (http://ehcache.sourceforge.net)
@@ -149,6 +149,10 @@ distribution/website before using any of them in your own applications.
 * jakarta-taglibs/standard.jar
 - Jakarta's JSTL implementation 1.0.6 (http://jakarta.apache.org/taglibs)
 - required for running PetClinic
+
+* jaxen/jaxen-1.1.1.jar
+- Jaxen XPath engine (http://jaxen.codehaus.org/)
+- required when using dom4j/... for xpath processing
 
 * jdo/jdo2.jar
 - JDO API 2.0 (http://www.jpox.org, corresponding to JPOX 1.1.0)

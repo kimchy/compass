@@ -475,7 +475,6 @@
     </library>
     <library name="dom4j">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/dom4j/jaxen-1.1-beta-7.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/dom4j/dom4j-1.6.1.jar!/" />
       </CLASSES>
       <JAVADOC />
@@ -744,6 +743,13 @@
         <root url="jar://$PROJECT_DIR$/lib/jsr223/script-api.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jsr223/js.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/jsr223/script-js.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="jaxen">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/jaxen/jaxen-1.1.1.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
