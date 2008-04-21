@@ -28,7 +28,7 @@ public class FSSpellCheckTests extends SpellCheckTests {
 
     protected void addSettings(CompassSettings settings) {
         super.addSettings(settings);
-        settings.setSetting(CompassEnvironment.CONNECTION, "file://test-index");
+        settings.setSetting(CompassEnvironment.CONNECTION, "file://target/test-index");
     }
 
     public void testRebuildNeeded2() throws Exception {
