@@ -7,7 +7,7 @@
 
     <path id="classpath">
         <fileset dir="${compass.root}/dist">
-            <include name="compass.jar"/>
+            <include name="compass*.jar"/>
         </fileset>
         <fileset dir="${compass.root}/lib/lucene">
             <include name="*.jar"/>
@@ -39,14 +39,6 @@
 
     </target>
 
-    <target name="check-environment" description="Validates the ant environment (junit exists)">
-        <available classname="junit.framework.TestCase"
-                property="junit.available"/>
-        <fail unless="junit.available">
-            JUnit not available.  Add junit.jar to ANT_HOME/lib
-        </fail>
-    </target>
-    
     <target name="clean" description="cleans the output directory (build)">
         <delete dir="${build.dir}" />
         <delete dir="${basedir}/target" />
@@ -69,7 +61,7 @@
         </copy>
     </target>
     
-    <target name="compile" depends="check-environment, copy-resources" 
+    <target name="compile" depends="copy-resources" 
         description="generates the common meta data and compiles the sample">
         
         <mkdir dir="${build.dir}" />
