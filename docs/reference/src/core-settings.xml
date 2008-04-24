@@ -136,8 +136,7 @@
      <title>Transaction Level</title>
 
       <para>
-        Defines Compass::Core supported transaction and special transaction levels. The two most common transaction levels that Compass::Core supports are <literal>read_committed</literal> and <literal>serializable</literal> (Compass::Core uses a sophisticated mechanism for the <literal>read_committed</literal> level, which does operate as fast as the same transaction with a hint that it is read only). A special transaction level
-        <literal>batch_insert</literal> is also supported, which specializes in handling batch indexing. You can set the transaction level using the <literal>compass.transaction.isolation</literal> setting. The following is a list of available Compass transaction levels:
+        Compass supports several transaction isolation levels. More information about them can be found in the Search Engine chapter.
 
         <table>
           <tgroup cols="2">
@@ -168,8 +167,8 @@
                 <entry>The same as serializable from data base systems. Performance killer, basically results in transactions executed sequentially.</entry>
               </row>
               <row>
-                <entry>batch_insert</entry>
-                <entry>Specialized transaction level, mainly used for batch indexing. Note that it does not support queries, delete and save actions. Only the create operation is supported (If a resources with the same id and alias is in the index, you will have two after the create operation). Extremely fast for batch indexing, especially when tweaked with the matching settings in the Search Engine section.</entry>
+                <entry>lucene (batch_insert)</entry>
+                <entry>A special transaction level, <literal>lucene</literal> (previously known as <literal>batch_insert</literal>) isolation level is similar to the <literal>read_committed</literal> isolation level except dirty operations done during a transaction are not visible to get/load/find operations that occur within the same transaction. This isolation level is very handy for long running batch dirty operations and can be faster than <literal>read_committed</literal>. Most usage patterns of Compass (such as integration with ORM tools) can work perfectly well with the <literal>lucene</literal> isolation level.</entry>
               </row>
             </tbody>
           </tgroup>
