@@ -286,7 +286,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         <title>lucene</title>
   
         <para>
-            A special transaction level, <literal>lucene</literal> (previously known as <literal>batch_insert</literal>) isolation level is similar to the <literal>read_committed</literal> isolation level except dirty operations done during a transaction are not visible to get/load/find operations that occur within the same transaction. This isolation level is very handy for long running batch dirty operations and can be faster than <literal>read_committed</literal>. Most usage patterns of Compass (such as integratino with ORM tools) can work perfectly well with the <literal>lucene</literal> isolation level.
+            A special transaction level, <literal>lucene</literal> (previously known as <literal>batch_insert</literal>) isolation level is similar to the <literal>read_committed</literal> isolation level except dirty operations done during a transaction are not visible to get/load/find operations that occur within the same transaction. This isolation level is very handy for long running batch dirty operations and can be faster than <literal>read_committed</literal>. Most usage patterns of Compass (such as integration with ORM tools) can work perfectly well with the <literal>lucene</literal> isolation level.
         </para>
 		
 		<para>
@@ -298,7 +298,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 		</para>
 		
 		<para>
-			Most of the parameters can also be configured on a per session/transaction level. Please refere to <classname>RuntimeLuceneEnvironment</classname> for more information.
+			Most of the parameters can also be configured on a per session/transaction level. Please refer to <classname>RuntimeLuceneEnvironment</classname> for more information.
 		</para>
 		
 		<para>
