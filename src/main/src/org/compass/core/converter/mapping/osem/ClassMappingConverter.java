@@ -457,10 +457,13 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
         private Integer objHashCode;
 
+        private Object value;
+
         private int hashCode = Integer.MIN_VALUE;
 
         public IdentityAliasedObjectKey(String alias, Object value) {
             this.alias = alias;
+            this.value = value;
             this.objHashCode = System.identityHashCode(value);
         }
 
@@ -469,8 +472,11 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             if (this == other) {
                 return true;
             }
+            if (!(other instanceof IdentityAliasedObjectKey)) {
+                return false;
+            }
             final IdentityAliasedObjectKey idObjKey = (IdentityAliasedObjectKey) other;
-            return idObjKey.objHashCode.equals(this.objHashCode) && idObjKey.alias.equals(this.alias);
+            return idObjKey.value == value && idObjKey.alias.equals(this.alias);
         }
 
 
@@ -520,9 +526,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             if (this == other)
                 return true;
 
-//      We will make sure that it never happens
-//        if (!(other instanceof IdsAliasesObjectKey))
-//            return false;
+            if (!(other instanceof IdsAliasesObjectKey))
+                return false;
 
             final IdsAliasesObjectKey key = (IdsAliasesObjectKey) other;
             if (!key.alias.equals(alias)) {
