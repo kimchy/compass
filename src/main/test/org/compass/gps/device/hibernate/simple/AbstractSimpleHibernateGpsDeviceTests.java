@@ -51,15 +51,15 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
         Simple simple = new Simple();
         simple.setId(1);
         simple.setValue("value1");
-        session.save(simple);
+        session.save("simple", simple);
         simple = new Simple();
         simple.setId(2);
         simple.setValue("value2");
-        session.save(simple);
+        session.save("simple", simple);
         simple = new Simple();
         simple.setId(3);
         simple.setValue("value3");
-        session.save(simple);
+        session.save("simple", simple);
 
         SimpleBase simpleBase = new SimpleBase();
         simpleBase.setId(1);
@@ -74,7 +74,7 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
     }
 
     protected void tearDownDB(Session session) {
-        Query query = session.createQuery("delete from Simple");
+        Query query = session.createQuery("delete from simple");
         query.executeUpdate();
         query = session.createQuery("delete from SimpleBase");
         query.executeUpdate();
@@ -108,14 +108,14 @@ public abstract class AbstractSimpleHibernateGpsDeviceTests extends AbstractHibe
         Simple simple = new Simple();
         simple.setId(4);
         simple.setValue("value4");
-        session.save(simple);
+        session.save("simple", simple);
 
         // delete the second one
-        simple = (Simple) session.load(Simple.class, 2);
+        simple = (Simple) session.load("simple", 2);
         session.delete(simple);
 
         // update the first one
-        simple = (Simple) session.load(Simple.class, 1);
+        simple = (Simple) session.load("simple", 1);
         simple.setValue("updatedValue1");
         session.save(simple);
 

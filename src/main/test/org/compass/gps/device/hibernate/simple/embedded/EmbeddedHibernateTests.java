@@ -39,14 +39,14 @@ public class EmbeddedHibernateTests extends ScrollableSimpleHibernateGpsDeviceTe
         Simple simple = new Simple();
         simple.setId(4);
         simple.setValue("value4");
-        session.save(simple);
+        session.save("simple", simple);
 
         // delete the second one
-        simple = (Simple) session.load(Simple.class, 2);
+        simple = (Simple) session.load("simple", 2);
         session.delete(simple);
 
         // update the first one
-        simple = (Simple) session.load(Simple.class, 1);
+        simple = (Simple) session.load("simple", 1);
         simple.setValue("updatedValue1");
         session.save(simple);
 

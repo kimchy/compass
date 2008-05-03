@@ -74,8 +74,7 @@ public class DefaultHibernateQueryProvider implements HibernateQueryProvider {
         if (!isUsingDefaultSelectQuery) {
             return null;
         }
-        Class type = entityInformation.getEntityClass();
-    	return session.createCriteria(type);
+    	return session.createCriteria(entityInformation.getName());
     }
 
     public String toString() {
