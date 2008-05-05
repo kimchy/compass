@@ -18,4 +18,6 @@ public abstract class CoherenceDirectory extends Directory {
     abstract public String getIndexName();
 
     abstract public int getBucketSize();
+
+    abstract public int getFlushRate();
 }

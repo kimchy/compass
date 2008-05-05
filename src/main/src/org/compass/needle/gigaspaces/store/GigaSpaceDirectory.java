@@ -39,11 +39,15 @@ public class GigaSpaceDirectory extends Directory {
 
     public static final int DEFAULT_BUCKET_SIZE = 20 * 1024;
 
+    public static final int DEFAULT_FLUSH_RATE = 50;
+
     private IJSpace space;
 
     private String indexName;
 
     private int bucketSize = DEFAULT_BUCKET_SIZE;
+
+    private int flushRate = DEFAULT_FLUSH_RATE;
 
     public GigaSpaceDirectory(GigaSpace gigaSpace, String indexName) {
         this(gigaSpace.getSpace(), indexName);
@@ -54,9 +58,14 @@ public class GigaSpaceDirectory extends Directory {
     }
 
     public GigaSpaceDirectory(IJSpace space, String indexName, int bucketSize) {
+        this(space, indexName, bucketSize, DEFAULT_FLUSH_RATE);
+    }
+
+    public GigaSpaceDirectory(IJSpace space, String indexName, int bucketSize, int flushRate) {
         this.space = space;
         this.indexName = indexName;
         this.bucketSize = bucketSize;
+        this.flushRate = flushRate;
         setLockFactory(new GigaSpaceLockFactory(space, indexName));
     }
 
@@ -85,6 +94,10 @@ public class GigaSpaceDirectory extends Directory {
 
     public int getBucketSize() {
         return bucketSize;
+    }
+
+    public int getFlushRate() {
+        return flushRate;
     }
 
     public void deleteFile(String fileName) throws IOException {

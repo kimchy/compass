@@ -17,6 +17,7 @@
 package org.compass.needle.gigaspaces.store;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import net.jini.core.lease.Lease;
 import org.apache.lucene.store.IndexOutput;
@@ -53,6 +54,8 @@ class GigaSpaceMemIndexOutput extends IndexOutput {
     // seek occured, we only allow to work on the first bucket
     private boolean seekOccured;
 
+    private ArrayList<FileBucketEntry> flushBuckets;
+
     public GigaSpaceMemIndexOutput(GigaSpaceDirectory dir, String fileName) throws IOException {
         this.dir = dir;
         this.fileName = fileName;
@@ -62,6 +65,7 @@ class GigaSpaceMemIndexOutput extends IndexOutput {
         if (fileName.equals("segments.gen")) {
             dir.deleteFile(fileName);
         }
+        flushBuckets = new ArrayList<FileBucketEntry>(dir.getFlushRate());
     }
 
     public void writeByte(byte b) throws IOException {
@@ -111,16 +115,7 @@ class GigaSpaceMemIndexOutput extends IndexOutput {
         open = false;
         // flush any bucket we might have
         flushBucket();
-        try {
-            dir.getSpace().write(firstBucketEntry, null, Lease.FOREVER);
-        } catch (Exception e) {
-            throw new GigaSpaceDirectoryException(dir.getIndexName(), fileName, "Failed to write bucket [0]", e);
-        }
-        try {
-            dir.getSpace().write(new FileEntry(dir.getIndexName(), fileName, length), null, Lease.FOREVER);
-        } catch (Exception e) {
-            throw new GigaSpaceDirectoryException(dir.getIndexName(), fileName, "Failed to write file entry", e);
-        }
+        forceFlushBuckets(firstBucketEntry, new FileEntry(dir.getIndexName(), fileName, length));
         buffer = null;
         firstBucketEntry = null;
     }
@@ -176,11 +171,27 @@ class GigaSpaceMemIndexOutput extends IndexOutput {
         FileBucketEntry fileBucketEntry = new FileBucketEntry(dir.getIndexName(), fileName, bucketIndex, null);
         fileBucketEntry.data = new byte[length];
         System.arraycopy(buffer, 0, fileBucketEntry.data, 0, length);
+        flushBuckets.add(fileBucketEntry);
+        if (flushBuckets.size() >= dir.getFlushRate()) {
+            forceFlushBuckets();
+        }
+    }
+
+    private void forceFlushBuckets(Object ... additionalEntries) throws IOException {
+        if (flushBuckets.size() == 0 && additionalEntries == null) {
+            return;
+        }
+        Object[] entries = new Object[flushBuckets.size() + additionalEntries.length];
+        flushBuckets.toArray(entries);
+        for (int i = 0; i < additionalEntries.length; i++) {
+            entries[flushBuckets.size() + i] = additionalEntries[i];
+        }
         try {
-            dir.getSpace().write(fileBucketEntry, null, Lease.FOREVER);
+            dir.getSpace().writeMultiple(entries, null, Lease.FOREVER);
         } catch (Exception e) {
-            throw new GigaSpaceDirectoryException(dir.getIndexName(), fileName, "Failed to write bucket [" + bucketIndex
-                    + "]", e);
+            throw new GigaSpaceDirectoryException(dir.getIndexName(), fileName, "Failed to write buckets", e);
+        } finally {
+            flushBuckets.clear();
         }
     }
 }

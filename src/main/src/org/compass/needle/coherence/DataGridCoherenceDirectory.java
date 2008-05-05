@@ -49,11 +49,15 @@ public class DataGridCoherenceDirectory extends CoherenceDirectory {
 
     public static final int DEFAULT_BUCKET_SIZE = 20 * 1024;
 
+    public static final int DEFAULT_FLUSH_RATE = 50;
+
     private String indexName;
 
     private NamedCache cache;
 
     private int bucketSize = DEFAULT_BUCKET_SIZE;
+
+    private int flushRate = DEFAULT_FLUSH_RATE;
 
     private boolean closeCache = false;
 
@@ -86,9 +90,14 @@ public class DataGridCoherenceDirectory extends CoherenceDirectory {
     }
 
     public DataGridCoherenceDirectory(NamedCache cache, String indexName, int bucketSize) {
+        this(cache, indexName, bucketSize, DEFAULT_FLUSH_RATE);
+    }
+
+    public DataGridCoherenceDirectory(NamedCache cache, String indexName, int bucketSize, int flushRate) {
         this.indexName = indexName;
         this.cache = cache;
         this.bucketSize = bucketSize;
+        this.flushRate = flushRate;
         this.closeCache = false;
         // init indexes 
         cache.addIndex(indexNameKeyExtractor, false, null);
@@ -116,6 +125,10 @@ public class DataGridCoherenceDirectory extends CoherenceDirectory {
 
     public int getBucketSize() {
         return this.bucketSize;
+    }
+
+    public int getFlushRate() {
+        return this.flushRate;
     }
 
     public ValueExtractor getIndexNameKeyExtractor() {

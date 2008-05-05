@@ -17,6 +17,7 @@
 package org.compass.needle.coherence;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import org.apache.lucene.store.IndexOutput;
 
@@ -39,6 +40,8 @@ class CoherenceMemIndexOutput extends IndexOutput {
 
     private FileBucketValue firstBucketValue;
 
+    private HashMap<Object, Object> flushBuckets;
+
     private byte[] buffer;
 
     private int bufferPosition;
@@ -59,6 +62,7 @@ class CoherenceMemIndexOutput extends IndexOutput {
         this.fileName = fileName;
         open = true;
         buffer = new byte[dir.getBucketSize()];
+        flushBuckets = new HashMap<Object, Object>();
         // this file is overridden by Lucene, so delete it first
         if (fileName.equals("segments.gen")) {
             dir.deleteFile(fileName);
@@ -112,16 +116,9 @@ class CoherenceMemIndexOutput extends IndexOutput {
         open = false;
         // flush any bucket we might have
         flushBucket();
-        try {
-            dir.getCache().put(firstBucketKey, firstBucketValue);
-        } catch (Exception e) {
-            throw new CoherenceDirectoryException(dir.getIndexName(), fileName, "Failed to write bucket [0]", e);
-        }
-        try {
-            dir.getCache().put(new FileHeaderKey(dir.getIndexName(), fileName), new FileHeaderValue(System.currentTimeMillis(), length));
-        } catch (Exception e) {
-            throw new CoherenceDirectoryException(dir.getIndexName(), fileName, "Failed to write file entry", e);
-        }
+        flushBuckets.put(firstBucketKey, firstBucketValue);
+        flushBuckets.put(new FileHeaderKey(dir.getIndexName(), fileName), new FileHeaderValue(System.currentTimeMillis(), length));
+        forceFlushBuckets();
         buffer = null;
         firstBucketKey = null;
         firstBucketValue = null;
@@ -180,11 +177,22 @@ class CoherenceMemIndexOutput extends IndexOutput {
         FileBucketKey fileBucketKey = new FileBucketKey(dir.getIndexName(), fileName, bucketIndex);
         FileBucketValue fileBucketValue = new FileBucketValue(new byte[length]);
         System.arraycopy(buffer, 0, fileBucketValue.getData(), 0, length);
+        flushBuckets.put(fileBucketKey, fileBucketValue);
+        if (flushBuckets.size() >= dir.getFlushRate()) {
+            forceFlushBuckets();
+        }
+    }
+
+    private void forceFlushBuckets() throws IOException {
+        if (flushBuckets.size() == 0) {
+            return;
+        }
         try {
-            dir.getCache().put(fileBucketKey, fileBucketValue);
+            dir.getCache().putAll(flushBuckets);
         } catch (Exception e) {
-            throw new CoherenceDirectoryException(dir.getIndexName(), fileName, "Failed to write bucket [" + bucketIndex
-                    + "]", e);
+            throw new CoherenceDirectoryException(dir.getIndexName(), fileName, "Failed to flush buckets", e);
+        } finally {
+            flushBuckets.clear();
         }
     }
 }

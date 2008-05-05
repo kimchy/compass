@@ -43,11 +43,15 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
 
     public static final String BUCKET_SIZE_PROP = "compass.engine.store.space.bucketSize";
 
+    public static final String FLUSH_RATE_PROP = "compass.engine.store.space.flushRate";
+
     private String indexName;
 
     private IJSpace space;
 
     private int bucketSize;
+
+    private int flushRate;
 
     public void configure(CompassSettings settings) throws CompassException {
         String connection = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
@@ -56,6 +60,7 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
 
         String spaceUrl = connection.substring(index + 1);
         bucketSize = settings.getSettingAsInt(BUCKET_SIZE_PROP, GigaSpaceDirectory.DEFAULT_BUCKET_SIZE);
+        flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, GigaSpaceDirectory.DEFAULT_FLUSH_RATE);
         try {
             space = (IJSpace) SpaceFinder.find(spaceUrl, settings.getProperties());
         } catch (Exception e) {
@@ -64,7 +69,7 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
-        return new GigaSpaceDirectory(space, buildFullIndexName(subContext, subIndex), bucketSize);
+        return new GigaSpaceDirectory(space, buildFullIndexName(subContext, subIndex), bucketSize, flushRate);
     }
 
     public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {

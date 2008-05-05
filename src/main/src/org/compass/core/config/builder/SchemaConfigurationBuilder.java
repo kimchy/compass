@@ -473,6 +473,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.CONNECTION, "space://" + indexName + ":" + url);
             // we don't use the static constant so we don't create dependency on GigaSpaces
             settings.setSetting("compass.engine.store.space.bucketSize", getElementAttribute(connEle, "bucketSize"));
+            settings.setSetting("compass.engine.store.space.flushRate", getElementAttribute(connEle, "flushRate"));
             return;
         }
         // --- Terracota Connection ---
@@ -497,6 +498,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             }
             // we don't use the static constant so we don't create dependency on GigaSpaces
             settings.setSetting("compass.engine.store.coherence.bucketSize", getElementAttribute(connEle, "bucketSize"));
+            settings.setSetting("compass.engine.store.coherence.flushRate", getElementAttribute(connEle, "flushRate"));
             return;
         }
         // --- Custom Connection ---

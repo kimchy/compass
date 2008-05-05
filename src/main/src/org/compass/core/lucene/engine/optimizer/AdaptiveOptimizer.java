@@ -35,7 +35,6 @@ import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 public class AdaptiveOptimizer extends AbstractOptimizer implements CompassConfigurable {
 
     private int mergeFactor;
-    private LuceneSearchEngineIndexManager indexManager;
 
     public void configure(CompassSettings settings) throws CompassException {
         mergeFactor = settings.getSettingAsInt(LuceneEnvironment.Optimizer.Adaptive.MERGE_FACTOR, 10);
@@ -54,7 +53,7 @@ public class AdaptiveOptimizer extends AbstractOptimizer implements CompassConfi
             log.debug("Optimizing sub-index [" + subIndex + "]");
         }
         long time = System.currentTimeMillis();
-        indexManager = (LuceneSearchEngineIndexManager) getSearchEngineFactory().getIndexManager();
+        LuceneSearchEngineIndexManager indexManager = (LuceneSearchEngineIndexManager) getSearchEngineFactory().getIndexManager();
         IndexWriter indexWriter;
         try {
             indexWriter = indexManager.openIndexWriter(indexManager.getSettings().getSettings(), subIndex);

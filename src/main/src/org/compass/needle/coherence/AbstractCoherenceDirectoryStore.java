@@ -35,11 +35,15 @@ public abstract class AbstractCoherenceDirectoryStore extends AbstractDirectoryS
 
     public static final String BUCKET_SIZE_PROP = "compass.engine.store.coherence.bucketSize";
 
+    public static final String FLUSH_RATE_PROP = "compass.engine.store.coherence.flushRate";
+
     private String indexName;
 
     private NamedCache cache;
 
     private int bucketSize;
+
+    private int flushRate;
 
     public void configure(CompassSettings settings) throws CompassException {
         String connection = findConnection(settings.getSetting(CompassEnvironment.CONNECTION));
@@ -48,6 +52,7 @@ public abstract class AbstractCoherenceDirectoryStore extends AbstractDirectoryS
         String cacheName = connection.substring(index + 1);
 
         bucketSize = settings.getSettingAsInt(BUCKET_SIZE_PROP, DataGridCoherenceDirectory.DEFAULT_BUCKET_SIZE);
+        flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, DataGridCoherenceDirectory.DEFAULT_FLUSH_RATE);
         cache = CacheFactory.getCache(cacheName);
     }
 

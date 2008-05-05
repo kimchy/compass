@@ -1360,6 +1360,13 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="flushRate" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The flush rate when writing buckets.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
     <xsd:complexType name="coherenceConnType">
         <xsd:annotation>
@@ -1385,6 +1392,13 @@
             <xsd:annotation>
                 <xsd:documentation>
                     The bucket size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="flushRate" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The flush rate when writing buckets.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

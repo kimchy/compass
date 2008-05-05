@@ -1276,10 +1276,17 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="bucketSize" type="xsd:string" use="optional">
+        <xsd:attribute name="bucketSize" type="xsd:positiveInteger" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The bucket size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="flushRate" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The flush rate when writing buckets to the space.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
@@ -1308,6 +1315,13 @@
             <xsd:annotation>
                 <xsd:documentation>
                     The bucket size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="flushRate" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The flush rate when writing buckets.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
