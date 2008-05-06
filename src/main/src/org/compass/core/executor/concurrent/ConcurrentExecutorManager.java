@@ -99,7 +99,7 @@ public class ConcurrentExecutorManager implements InternalExecutorManager, Compa
     }
 
     public void close() {
-        executorService.shutdownNow();
-        scheduledExecutorService.shutdownNow();
+        executorService.shutdown();
+        scheduledExecutorService.shutdown();
     }
 }

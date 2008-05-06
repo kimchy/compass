@@ -105,6 +105,6 @@ public class WorkManagerExecutorManager implements InternalExecutorManager, Comp
     }
 
     public void close() {
-        executorService.shutdownNow();
+        executorService.shutdown();
     }
 }

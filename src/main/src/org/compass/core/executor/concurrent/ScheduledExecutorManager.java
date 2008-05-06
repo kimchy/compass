@@ -74,6 +74,6 @@ public class ScheduledExecutorManager implements InternalExecutorManager, Compas
     }
 
     public void close() {
-        executorService.shutdownNow();
+        executorService.shutdown();
     }
 }
