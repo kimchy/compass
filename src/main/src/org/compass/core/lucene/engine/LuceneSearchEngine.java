@@ -288,7 +288,7 @@ public class LuceneSearchEngine implements SearchEngine {
             InternalResource resource1 = (InternalResource) resource;
             Analyzer analyzer = enhanceResource(resourceMapping, resource1);
             if (update) {
-                transaction.create(resource1, analyzer);
+                transaction.update(resource1, analyzer);
                 if (log.isDebugEnabled()) {
                     log.debug("RESOURCE SAVE " + resource1);
                 }
