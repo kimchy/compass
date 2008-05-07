@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
@@ -68,6 +69,11 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
                             + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
                 }
                 session.getSearchEngine().begin(transactionIsolation);
+
+                int timeout = session.getSettings().getSettingAsInt(CompassEnvironment.Transaction.TRANSACTION_TIMEOUT, -1);
+                if (timeout != -1) {
+                    ut.setTransactionTimeout(timeout);
+                }
                 ut.begin();
             } else {
                 // joining an exisiting transaction

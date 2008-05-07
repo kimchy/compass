@@ -546,6 +546,12 @@ public class CompassEnvironment {
          * will create a new transaction and not join one if one is already in progress within the thread.
          */
         public static final String DISABLE_THREAD_BOUND_LOCAL_TRANSATION = "compass.transaction.disableThreadBoundLocalTransaction";
+
+        /**
+         * Configures the transaction timeout (JTA or Spring). The defualt is <code>-1</code> which does not set the
+         * timout and uses the default one configured for the transaction manager.
+         */
+        public static final String TRANSACTION_TIMEOUT = "compass.transaction.timeout";
     }
 
     /**

@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransaction;
 import org.compass.core.transaction.TransactionException;
@@ -66,6 +67,10 @@ public class SpringSyncTransaction extends AbstractTransaction {
         if (transactionManager != null) {
             DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
             transactionDefinition.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
+            int timeout = session.getSettings().getSettingAsInt(CompassEnvironment.Transaction.TRANSACTION_TIMEOUT, -1);
+            if (timeout != -1) {
+                transactionDefinition.setTimeout(timeout);
+            }
             boolean readOnly = false;
             if (transactionIsolation == TransactionIsolation.READ_ONLY_READ_COMMITTED) {
                 readOnly = true;

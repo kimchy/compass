@@ -16,6 +16,7 @@
 
 package org.compass.spring.device;
 
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.transaction.TransactionFactory;
 import org.compass.core.util.Assert;
@@ -53,6 +54,8 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
     private PlatformTransactionManager transactionManager;
 
     private boolean allowNoTransactionManager = true;
+
+    private Integer transactionTimeout;
 
     public SpringSyncTransactionGpsDeviceWrapper() {
 
@@ -94,6 +97,14 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
             }
             TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
             transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            if (transactionTimeout != null) {
+                transactionTemplate.setTimeout(transactionTimeout);
+            } else {
+                int timeout = ((CompassGpsInterfaceDevice) gpsDevice.getGps()).getIndexCompass().getSettings().getSettingAsInt(CompassEnvironment.Transaction.TRANSACTION_TIMEOUT, -1);
+                if (timeout != -1) {
+                    transactionTemplate.setTimeout(timeout);
+                }
+            }
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
                     gpsDevice.index(indexPlan);
@@ -120,5 +131,12 @@ public class SpringSyncTransactionGpsDeviceWrapper extends AbstractGpsDeviceWrap
      */
     public void setAllowNoTransactionManager(boolean allowNoTransactionManager) {
         this.allowNoTransactionManager = allowNoTransactionManager;
+    }
+
+    /**
+     * Sets the transaction timeout (see Spring {@link TransactionTemplate#setTimeout(int)}.
+     */
+    public void setTransactionTimeout(Integer transactionTimeout) {
+        this.transactionTimeout = transactionTimeout;
     }
 }
