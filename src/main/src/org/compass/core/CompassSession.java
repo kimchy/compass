@@ -55,7 +55,7 @@ public interface CompassSession extends CompassOperations {
      * Returns a resource factory allowing to create resources and properties.
      */
     ResourceFactory resourceFactory();
-    
+
     /**
      * Runtimes settings that apply on the session level.
      *
@@ -125,7 +125,7 @@ public interface CompassSession extends CompassOperations {
      * @return A term freqs builder
      * @throws CompassException
      */
-    CompassTermFreqsBuilder termFreqsBuilder(String ... names) throws CompassException;
+    CompassTermFreqsBuilder termFreqsBuilder(String... names) throws CompassException;
 
     /**
      * Returns an Analyzer helper. Can be used to help analyze given texts.
@@ -136,10 +136,11 @@ public interface CompassSession extends CompassOperations {
     CompassAnalyzerHelper analyzerHelper() throws CompassException;
 
     /**
-     * Closes the CompassSession. Note, if this session another session, it won't
-     * actually be closed, and defer closing the session to the other session.
+     * Closes the CompassSession. Note, if this session is "contained" within another session,
+     * it won't actually be closed, and defer closing the session to the other session.
      *
      * @throws CompassException
+     * @see org.compass.core.Compass#openSession()
      */
     void close() throws CompassException;
 
