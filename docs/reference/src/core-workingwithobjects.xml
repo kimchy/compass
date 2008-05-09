@@ -149,7 +149,7 @@ session.delete(Author.class, "12"); // Everything in the search engine is a Stri
         </para>
         
         <para>
-          When using dates, Compass allows to use several different formats for the same property. The format of the Date object should be sortable in order to perform range queries. This means, for example, that the format attribute should be: format="yyyy-MM-dd". This allows for range queries such as: date:[1980-01-01 TO 1985-01-01] to work. Compass also allows to use different formats for range queries. It can be configured within the format configuration: format="yyyy-MM-dd;dd-MM-yyyy" (the first format is the one used to store the String). And now the following range query can be executed: date:[01-01-1980 TO 01-01-1985].
+          When using dates, Compass allows to use several different formats for the same property. The format of the Date object should be sortable in order to perform range queries. This means, for example, that the format attribute should be: format="yyyy-MM-dd". This allows for range queries such as: date:[1980-01-01 TO 1985-01-01] to work. Compass also allows to use different formats for range queries. It can be configured within the format configuration: format="yyyy-MM-dd||dd-MM-yyyy" (the first format is the one used to store the String). And now the following range query can be executed: date:[01-01-1980 TO 01-01-1985].
         </para>
         
         <para>
