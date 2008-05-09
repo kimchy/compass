@@ -379,7 +379,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             Class clazz = ClassUtils.forName(classMapping.getName(), settings.getClassLoader());
             classMapping.setClazz(clazz);
         } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("Failed to find class [" + defaultPackage + classMapping.getName() + "]");
+            throw new ConfigurationException("Failed to find class [" + classMapping.getName() + "] and class loader [" + settings.getClassLoader() + "]");
         }
 
         String aliasValue = classConf.getAttribute("alias");
