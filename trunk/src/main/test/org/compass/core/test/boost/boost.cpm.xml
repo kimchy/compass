@@ -1,0 +1,92 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.boost">
+
+    <class name="A" alias="a1">
+
+        <id name="id" accessor="field" />
+
+        <property name="value1" accessor="field" boost="1">
+            <meta-data>value1</meta-data>
+        </property>
+
+        <property name="value2" accessor="field" boost="1">
+            <meta-data>value2</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a2">
+
+        <id name="id" accessor="field" />
+
+        <property name="value1" accessor="field" boost="1">
+            <meta-data>value1</meta-data>
+        </property>
+
+        <property name="value2" accessor="field" boost="2">
+            <meta-data>value2</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a3" boost="1">
+
+        <id name="id" accessor="field" />
+
+        <property name="value1" accessor="field">
+            <meta-data>value1</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+
+    </class>
+
+    <class name="A" alias="a4" boost="2">
+
+        <id name="id" accessor="field" />
+
+        <property name="value1" accessor="field">
+            <meta-data>value1</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+
+    </class>
+
+    <class name="Parent" alias="parent11" boost="2">
+
+        <id name="id" accessor="field" />
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+    </class>
+
+    <class name="Parent" alias="parent12" boost="1">
+
+        <id name="id" accessor="field" />
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="child" ref-alias="child12" accessor="field" />
+
+    </class>
+
+    <class name="Child" alias="child12" boost="4" root="false">
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+    </class>
+</compass-core-mapping>

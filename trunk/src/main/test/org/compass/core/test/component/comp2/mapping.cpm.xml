@@ -1,0 +1,34 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.comp2">
+
+    <contract alias="common1">
+        <property name="description" accessor="field">
+            <meta-data>description1</meta-data>
+        </property>
+    </contract>
+
+    <contract alias="common2">
+        <property name="description" accessor="field">
+            <meta-data>description2</meta-data>
+        </property>
+    </contract>
+
+    <class name="Person" alias="person" extends="common1" poly="true">
+        <id name="id" accessor="field"/>
+        <property name="names" accessor="field" class="java.lang.String">
+            <meta-data>person</meta-data>
+        </property>
+    </class>
+
+    <class name="SpecialPerson" alias="specialPerson" extends="person" poly="true">
+    </class>
+
+    <class name="User" alias="user" extends="common2" poly="true">
+        <id name="id" accessor="field"/>
+        <component name="identity" ref-alias="specialPerson, person" accessor="field"/>
+    </class>
+
+</compass-core-mapping>

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping 
+    package="org.compass.gps.device.hibernate.collection">
+
+    <class name="Parent" table="PARENT_XXSSADASFSDFS">
+        <id name="id">
+            <generator class="native"/>
+        </id>
+        <property name="value" />
+        <set name="childs" lazy="true" inverse="true" cascade="all">
+            <key column="parent_id"/>
+            <one-to-many class="Child"/>
+        </set>
+    </class>
+
+</hibernate-mapping>

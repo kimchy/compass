@@ -1,0 +1,268 @@
+<chapter id="samples-petclinic">
+
+    <title>Petclinic Sample</title>
+
+    <sect1 id="samples-petclinic-introduction">
+        <title>Introduction</title>
+
+        <para>
+            Compass::Samples [petclinic] is the Spring petclinic sample powered by Compass. The main aim of the sample is to show how simple it is to add compass to an application, especially if one of the frameworks the application uses is one of the ones compass seamlessly integrates with.
+        </para>
+
+        <para>
+            Integrating compass into the petclinic sample, did not require any Java code to be written. Although several unit tests were added (good programming practice). Integration consisted of extending the Spring configuration files and writing a search and index jsp pages. The following sections will explain how integration was achieved.
+        </para>
+
+        <para>
+            The Compass petclinic sample shows how to integrate Compass with Spring and other frameworks. An important note, of course, is that Compass can be integrated with applications that do not use the Spring framework. Although Spring does make integration a bit simpler (and building applications much simpler).
+        </para>
+
+    </sect1>
+
+    <sect1 id="samples-petclinic-running">
+        <title>Running The Sample</title>
+
+        <para>
+            To run the petclinic sample, you will to install <ulink url="http://ant.apache.org">Apache Ant</ulink> and have ANT_HOME/bin on your path. The following table lists the available ant targets.
+
+            <table>
+                <tgroup cols="2">
+                <colspec colname="c1" colwidth="3*" />
+                <colspec colname="c2" colwidth="5*" />
+                <thead>
+                    <row>
+                        <entry>Target</entry><entry>Description</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>usage (also the default target)</entry>
+                        <entry>Lists all the available targets.</entry>
+                    </row>
+                    <row>
+                        <entry>clean</entry>
+                        <entry>Clean all the output dirs.</entry>
+                    </row>
+                    <row>
+                        <entry>build</entry>
+                        <entry>Compile main Java sources and copy libraries.</entry>
+                    </row>
+                    <row>
+                        <entry>docs</entry>
+                        <entry>Create complete Javadoc documentation.</entry>
+                    </row>
+                    <row>
+                        <entry>warfile</entry>
+                        <entry>Build the web application archive.</entry>
+                    </row>
+                    <row>
+                        <entry>setupDB</entry>
+                        <entry>Initialize the database.</entry>
+                    </row>
+                    <row>
+                        <entry>tests</entry>
+                        <entry>Run the tests (a database does not have to be running).</entry>
+                    </row>
+                    <row>
+                        <entry>all</entry>
+                        <entry>Clean, build, docs, warfile, tests.</entry>
+                    </row>
+                </tbody>
+                </tgroup>
+            </table>
+
+        </para>
+
+    </sect1>
+
+    <sect1 id="samples-petclinic-datamodel">
+        <title>Data Model In Petclinic</title>
+
+        <para>
+            Petclinic data model is based on POJOs (Plain Old Java Objects), including  <literal>Pet</literal>, <literal>Vet</literal>, <literal>Owner</literal>, and <literal>Visit</literal> among others. The model also includes the base classes <literal>Entity</literal> (which holds the id of an entity), <literal>NamedEntity</literal> (holds a name as well), and <literal>Person</literal> (holds person information).
+        </para>
+
+        <sect2 id="samples-petclinic-datamodel-commonmetadata">
+            <title>Common Meta-data (Optional)</title>
+
+            <para>
+                As we explained in the <link linkend="core-commonmetadata">Common Meta-data</link> section, Common meta-data provides a global lookup mechanism for meta-data and alias definitions. It integrates with OSEM definitions and Gps::Jdbc mappings, externalising (and centralising) the actual semantic lookup keys that will be stored in the index. It also provides an Ant task to provides a constant Java class definitions for all the common meta-data definitions which can be used by Java application to lookup and store Compass <literal>Resource</literal>.
+            </para>
+
+            <para>
+                Defining a common meta-data definition is an optional step when integrating Compass. Though taking the time and creating one can provides valuable information and centralisation of the system (or systems) semantic definitions.
+            </para>
+
+            <para>
+                In the petclinic sample, the Common meta-data file is located in the <literal>org.compass.sample.petclinic</literal> package, and is called <literal>petclinic.cmd.xml</literal>. A fragment of it is shown here:
+
+<programlisting><![CDATA[
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-meta-data PUBLIC
+    "-//Compass/Compass Core Meta Data DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-meta-data-2.0.dtd">
+
+<compass-core-meta-data>
+
+    <meta-data-group id="petclinic" displayName="Petclinic Meta Data">
+
+        <description>Petclinic Meta Data</description>
+        <uri>http://compass/sample/petclinic</uri>
+
+        <alias id="vet" displayName="Vet">
+            <description>Vet alias</description>
+            <uri>http://compass/sample/petclinic/alias/vet</uri>
+            <name>vet</name>
+        </alias>
+
+        <!-- ...... more alias definitions -->
+
+
+        <meta-data id="birthdate" displayName="Birthdate">
+            <description>The birthdate</description>
+            <uri>http://compass/sample/petclinic/birthdate</uri>
+            <name format="yyyy-MM-dd">birthdate</name>
+        </meta-data>
+
+
+        <!-- ...... more meta-data definitions -->
+
+    </meta-data-group>
+
+</compass-core-meta-data>
+]]></programlisting>
+            </para>
+
+            <para>
+                The above fragment of the common meta-data definitions, declares an alias called vet and meta-data called birthdate. The birthdate meta-data example shows one of the benefits of using common meta-data. The format of the date field is defined in the meta-data, instead of defining it in every mapping of birtdate meta-data (in OSEM for example).
+            </para>
+
+        </sect2>
+
+        <sect2 id="samples-petclinic-datamodel-resourcemapping">
+            <title>Resource Mapping</title>
+
+            <para>
+                One of the features of the search engine abstraction layer is the use of <literal>Resource</literal> and <literal>Property</literal>. As well as simple and minimal <link linkend="core-rsem">Resource Mapping</link> definitions.
+            </para>
+
+            <para>
+                Although it is not directly used, the Jdbc implementation of the data access layer uses Search Engine API, based on <literal>Resource</literal>s and resource mappings (the Jdbc device of Compass::Gps can automatically generate them).
+            </para>
+
+        </sect2>
+
+        <sect2 id="samples-petclinic-datamodel-osem">
+            <title>OSEM</title>
+
+            <para>
+                One of the main features of Compass is OSEM (Object / Search Engine Mapping), and it is heavily used in the petclinic sample. OSEM maps Java objects (domain model) to the underlying search engine using simple mapping definitions.
+            </para>
+
+            <para>
+                The petclinic sample uses most of the features provided by OSEM, among them are: <literal>contract</literal>, with mappings defined for the <literal>Entity</literal>, <literal>NamedEntity</literal>, and <literal>Person</literal> (all are "abstract" domain definitions), Cyclic references are defined (for example between pet and owner), and many more. The OSEM definitions can be found at the <literal>petclinic.cpm.xml</literal> file.
+            </para>
+
+        </sect2>
+
+    </sect1>
+
+    <sect1 id="samples-petclinic-dataaccess">
+        <title>Data Access In Petclinic</title>
+
+        <para>
+            Petclinic provides an abstraction layer on top of the actual implementation of the data access layer. The Petclinic can use Hibernate, Apache ORB, or JDBC for database access. Compass can seamlessly integrate with each of the mentioned layers.
+        </para>
+
+        <para>
+            The main concern with the data access layer (and Compass) is to synchronise each data model change made with Compass search engine index. Compass provides integration support for indexing the data using any of the actual implementation of the data access layer.
+        </para>
+
+        <sect2 id="samples-petclinic-dataaccess-hibernate">
+            <title>Hibernate</title>
+
+            <para>
+                <link linkend="gps-introduction">Compass::Gps</link> comes with the <link linkend="gps-hibernate">Hibernate</link> device. The device can index the data mapped by Hibernate, and mirror any data changes made by Hibernate to the search engine index. Since we are using Hibernate with Spring, the device used is the <link linkend="spring-hibernate">Spring Hibernate</link> device.
+            </para>
+
+            <para>
+                The integration uses the OSEM definitions, working with Compass object level API to interact with the underlying search engine. The spring application context bean definitions for the <literal>compass</literal> (required by the Hibernate Gps device) instance is defined with OSEM definitions and spring based transaction support. The <literal>applicationContext-hibernate.xml</literal> in the test package, and the <literal>applicationContext-hibernate.xml</literal> in the WEB-INF directory define all the required definitions to work with hibernate and compass. Note, that only the mentioned configuration has to be created in order to integrate compass to the data access layer.
+            </para>
+
+        </sect2>
+
+        <sect2 id="samples-petclinic-dataaccess-ojb">
+            <title>Apache OJB</title>
+
+            <para>
+                <link linkend="gps-introduction">Compass::Gps</link> comes with the <link linkend="gps-ojb">OJB</link> device. The device can index the data mapped by OJB, and mirror any data changes made by OJB to the search engine index. Since we are using OJB with Spring, the device used is the <link linkend="spring-ojb">Spring OJB</link> device, which offers even simpler integration with OJB.
+            </para>
+
+            <para>
+                The integration uses the OSEM definitions, and works with Compass object level API to work with the search engine. The spring application context bean definitions for the <literal>compass</literal> (required by the OJB Gps device) instance is defined with OSEM definitions and spring based transaction support. The <literal>applicationContext-ojb.xml</literal> in the test package, and the <literal>applicationContext-ojb.xml</literal> in the WEB-INF directory define all the required definitions to work with OJB and compass. Note, that only the mentioned configuration has to be created in order to integrate compass to the data access layer.
+            </para>
+
+        </sect2>
+
+        <sect2 id="samples-petclinic-dataaccess-jdbc">
+            <title>JDBC</title>
+
+            <para>
+                <link linkend="gps-introduction">Compass::Gps</link> comes with the <link linkend="gps-jdbc">JDBC</link> device. The Jdbc device can connect to a database using jdbc, and based on different mappings defentions, index it's content and mirror any data changes. When using the Jdbc device, the mapping is made on the <literal>Resource</literal> level (cannot use OSEM).
+            </para>
+
+            <para>
+                It is important to understand the different options for integrating Compass for a Jdbc (or a Jdbc helper framework like Spring or iBatis) data access implementation. If the system has no domain model, than <literal>Resource</literal> level API and mapping must be used. The Jdbc device can automate most of the actions needed to index and mirror the database. If the system has a domain model (such as the petclinic sample), two options are available: working on the <literal>Resource</literal> level and again using the Jdbc device, or using OSEM definitions, and plumb Compass calls to the data access API's (i.e. save the Vet in compass when the Vet is saved to the database). In the petclinic sample, the Jdbc device option was taken in order to demonstrate the Jdbc device usage. An API level solution should be simple, especially if the system has decent and centralized data access layer (which in our case it does).
+            </para>
+
+            <para>
+                The integration uses the Jdbc Gps Device mapping definitions and works with Compass object level API to work with the search engine. The spring application context bean definitions for the <literal>compass</literal> (required by the Jdbc Gps device) instance are defined with Jdbc mapping resolvers, and Local transactions. The <literal>applicationContext-jdbc.xml</literal> in the test package, and the <literal>applicationContext-jdbc.xml</literal> in the WEB-INF directory define all the required definitions to work with jdbc and compass. Note, that only the mentioned configuration has to be created in order to integrate compass to the data access layer.
+            </para>
+
+            <para>
+                The petclinic sample using the Jdbc Gps Device and defines several Jdbc mappings to the database. Some of the mappings use the more complex Result Set mappings (for mappings that require a join operation) and some use the simple Table mapping. The mapping definitions uses the common meta-data to lookup the actual meta-data values.
+            </para>
+
+            <para>
+                Note, that an important change made to the original petclinic sample was the addition the Version column. The version column is needed for automatic data mirroring (some databases, like Oracle, provides a "version column" by default).
+            </para>
+
+            <para>
+                The Resource mapping definition are automatically generated using mapping resolvers, and <literal>compass</literal> use them.
+            </para>
+
+            <para>
+                Note, that the Jdbc support currently only works with Hsql database (since the sql queries used in the Result Set mappings use hsql functions).
+            </para>
+
+        </sect2>
+
+    </sect1>
+
+
+    <sect1 id="samples-petclinic-web">
+        <title>Web (MVC) in Petclinic</title>
+
+        <para>
+            The petclinic sample uses Spring MVC framework for web support. Compass::Spring module comes with special support for the <link linkend="spring-mvc">Spring MVC</link> framework.
+        </para>
+
+        <para>
+            The only thing required when using the Compass and Spring mvc integration is writing the view layer for the search / index operations. These are the <literal>index.jsp</literal>, <literal>search.jsp</literal> and <literal>serachResource.jsp</literal> Jstl view based files.
+        </para>
+
+        <para>
+            The <literal>index.jsp</literal> is responsible for both initiating the index operation for <literal>CompassGps</literal> (and it's controlled devices), as well as displaying the results for the index operation.
+        </para>
+
+        <para>
+            The <literal>search.jsp</literal> and the <literal>searchResource.jsp</literal> are responsible for initiating the search operation as well as displaying the results. The difference between them is the <literal>search.jsp</literal> works with OSEM enabled petclinic (when using Hibernate or Apache OJB), and the <literal>searchResource.jsp</literal> works with resource mapping and resource level petclinic (when using Jdbc).
+        </para>
+
+        <para>
+            Note, that when using Jdbc, remember to change the <literal>views.proeprties</literal> file under the WEB-INF/classes directory and have both the <literal>searchView.url</literal> and the <literal>searchResultsView.url</literal> referring to <literal>searchResource.jsp</literal> view. And when using either Hibernate or OJB, change it to point to <literal>search.jsp</literal>.
+        </para>
+
+    </sect1>
+
+</chapter>

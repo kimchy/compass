@@ -1,0 +1,18 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component">
+
+    <class name="SimpleComponent" alias="sc" root="false">
+    
+        <!-- No need to define an id, since it won't be used as the root class
+            to be marshalled. Ever. Only as an internal componet in serveral places. -->
+    
+        <property name="value">
+            <meta-data>value</meta-data>
+        </property>
+        
+    </class>
+
+</compass-core-mapping>

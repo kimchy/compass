@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping>
+
+    <xml-object alias="data1">
+        <xml-id name="id" xpath="/xml-fragment/data/id/@value" />
+        <xml-property xpath="/xml-fragment/data/data1/@value" />
+        <xml-property name="eleText" xpath="/xml-fragment/data/data1" />
+    </xml-object>
+
+    <xml-object alias="data2" xpath="/xml-fragment/data[1]">
+        <xml-id name="id" xpath="id/@value" />
+        <xml-property xpath="data1/@value" />
+        <xml-property name="eleText" xpath="data1" />
+    </xml-object>
+
+    <xml-object alias="data3" xpath="/xml-fragment/data">
+        <xml-id name="id" xpath="id/@value" />
+        <xml-property xpath="data1/@value" />
+        <xml-property name="eleText" xpath="data1" />
+    </xml-object>
+
+    <xml-object alias="data4" xpath="/xml-fragment/data">
+        <xml-id name="id" xpath="id/@value" />
+        <xml-property xpath="data1/@value" />
+        <xml-property name="eleText" xpath="data1" />
+        <xml-content name="content" />
+    </xml-object>
+
+</compass-core-mapping>
+    

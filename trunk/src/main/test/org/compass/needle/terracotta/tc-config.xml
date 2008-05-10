@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tc:tc-config xmlns:tc="http://www.terracotta.org/config"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.terracotta.org/schema/terracotta-4.xsd">
+
+    <application>
+        <dso>
+
+            <instrumented-classes>
+                <include>
+                    <class-expression>org.compass.needle.terracotta.*</class-expression>
+                </include>
+                <include>
+                    <class-expression>org.apache.lucene.store.Directory</class-expression>
+                </include>
+                <include>
+                    <class-expression>org.apache.lucene.store.LockFactory</class-expression>
+                </include>
+            </instrumented-classes>
+
+            <locks>
+                <autolock>
+                    <method-expression>* org.compass.needle.terracotta.*.*(..)</method-expression>
+                    <lock-level>write</lock-level>
+                </autolock>
+                <autolock>
+                    <method-expression>* org.compass.needle.terracotta.*.get*(..)</method-expression>
+                    <lock-level>read</lock-level>
+                </autolock>
+            </locks>
+
+            <roots>
+                <root>
+                    <field-name>org.compass.needle.terracotta.TerracottaDirectoryStore.dirs</field-name>
+                </root>
+                <root>
+                    <field-name>org.compass.needle.terracotta.TerracottaLockFactoryProvider.lockFactories</field-name>
+                </root>
+                <root>
+                    <field-name>org.compass.needle.terracotta.TerracottaManagerUtilLockFactoryProvider.lockFactories</field-name>
+                </root>
+            </roots>
+
+        </dso>
+    </application>
+
+</tc:tc-config>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/../../target/classes" />
+    <exclude-output />
+    <output-test url="file://$MODULE_DIR$/../../target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/load" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="Lucene" level="project" />
+    <orderEntry type="library" exported="" name="Ant" level="project" />
+    <orderEntry type="library" exported="" name="c3p0" level="project" />
+    <orderEntry type="library" exported="" name="antlr" level="project" />
+    <orderEntry type="library" exported="" name="cglib" level="project" />
+    <orderEntry type="library" exported="" name="clover" level="project" />
+    <orderEntry type="library" exported="" name="coherence" level="project" />
+    <orderEntry type="library" exported="" name="dom4j" level="project" />
+    <orderEntry type="library" exported="" name="eclipselink" level="project" />
+    <orderEntry type="library" exported="" name="ehcache" level="project" />
+    <orderEntry type="library" exported="" name="gigaspaces" level="project" />
+    <orderEntry type="library" exported="" name="groovy" level="project" />
+    <orderEntry type="library" exported="" name="hibernate" level="project" />
+    <orderEntry type="library" exported="" name="hsqldb" level="project" />
+    <orderEntry type="library" exported="" name="ibatis" level="project" />
+    <orderEntry type="library" exported="" name="jee" level="project" />
+    <orderEntry type="library" exported="" name="jakarta-commons" level="project" />
+    <orderEntry type="library" exported="" name="jakarta-taglibs" level="project" />
+    <orderEntry type="library" exported="" name="jboss" level="project" />
+    <orderEntry type="library" exported="" name="jdo" level="project" />
+    <orderEntry type="library" exported="" name="jgroups" level="project" />
+    <orderEntry type="library" exported="" name="jotm" level="project" />
+    <orderEntry type="library" exported="" name="jpa" level="project" />
+    <orderEntry type="library" exported="" name="jpox" level="project" />
+    <orderEntry type="library" exported="" name="junit" level="project" />
+    <orderEntry type="library" exported="" name="log4j" level="project" />
+    <orderEntry type="library" exported="" name="mina" level="project" />
+    <orderEntry type="library" exported="" name="odmg" level="project" />
+    <orderEntry type="library" exported="" name="ognl" level="project" />
+    <orderEntry type="library" exported="" name="ojb" level="project" />
+    <orderEntry type="library" exported="" name="openjpa" level="project" />
+    <orderEntry type="library" exported="" name="spring" level="project" />
+    <orderEntry type="library" exported="" name="sunfsjndi" level="project" />
+    <orderEntry type="library" exported="" name="toplink" level="project" />
+    <orderEntry type="library" exported="" name="velocity" level="project" />
+    <orderEntry type="library" exported="" name="xpp" level="project" />
+    <orderEntry type="library" name="Terracota" level="project" />
+    <orderEntry type="library" name="asm" level="project" />
+    <orderEntry type="library" name="jsr223" level="project" />
+    <orderEntry type="library" name="jaxen" level="project" />
+    <orderEntry type="library" name="stax" level="project" />
+    <orderEntry type="library" name="woodstox" level="project" />
+    <orderEntryProperties />
+  </component>
+</module>
+

@@ -1,0 +1,27 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.dynamic.ognl">
+
+    <class name="A" alias="a1">
+
+        <id name="id"/>
+
+        <dynamic-meta-data name="test" converter="ognl">
+            value + value2
+        </dynamic-meta-data>
+        <dynamic-meta-data name="test1" converter="ognl">
+            value
+        </dynamic-meta-data>
+    </class>
+
+    <class name="A" alias="a2">
+
+        <id name="id"/>
+
+        <dynamic-meta-data name="test" converter="ognl" format="yyyy" type="java.util.Date">
+            date
+        </dynamic-meta-data>
+    </class>
+</compass-core-mapping>

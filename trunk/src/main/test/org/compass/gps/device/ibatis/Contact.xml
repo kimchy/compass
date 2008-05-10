@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+    "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Contact">
+  <typeAlias alias="contact" type="org.compass.gps.device.ibatis.Contact"/>
+
+  <select id="getContact" parameterClass="int" resultClass="contact">
+    select FIRSTNAME as firstName,LASTNAME  as lastName, CONTACTID as contactId from CONTACT where CONTACTID = #contactId#
+  </select>
+
+
+  <insert id="insertContact" parameterClass="contact">
+    INSERT INTO CONTACT(CONTACTID,FIRSTNAME,LASTNAME) values(#contactId#,#firstName#,#lastName#)
+  </insert>
+  
+  <update id="updateContact" parameterClass="contact">
+    UPDATE CONTACT SET FIRSTNAME=#firstName#, LASTNAME = #lastName#  where CONTACTID=#contactId#
+  </update>
+  
+  <delete id="deleteContact" parameterClass="int">
+    DELETE FROM CONTACT WHERE CONTACTID=#contactId#
+  </delete>
+
+  <select id="getContacts" parameterClass="int"  resultClass="contact" >
+    select * from CONTACT
+  </select>
+    
+</sqlMap>

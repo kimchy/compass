@@ -1,0 +1,32 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.reference.deeprel">
+
+    <class name="A" alias="a">
+        <id name="id" accessor="field"/>
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+        <reference name="bs" accessor="field" ref-alias="b"/>
+    </class>
+
+    <class name="B" alias="b">
+        <id name="id" accessor="field"/>
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+        <reference name="a" accessor="field" ref-alias="a"/>
+        <reference name="cs" accessor="field" ref-alias="c"/>
+    </class>
+
+    <class name="C" alias="c">
+        <id name="id" accessor="field"/>
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+        <reference name="bs" accessor="field" ref-alias="b"/>
+    </class>
+
+</compass-core-mapping>

@@ -1,0 +1,17 @@
+<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
+
+    <compass name="default">
+
+        <connection>
+            <file path="target/test-index" />
+        </connection>
+
+        <searchEngine>
+            <aliasProperty name="alias1" />
+            <allProperty name="all1" termVector="yes" />
+        </searchEngine>
+    </compass>
+
+</compass-core-config>

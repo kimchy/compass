@@ -1,0 +1,33 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.load.concurrentcommit">
+
+    <contract alias="a-contract">
+
+        <id name="id" accessor="field"/>
+
+        <property name="value1" accessor="field">
+            <meta-data>value11</meta-data>
+            <meta-data>value12</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value21</meta-data>
+            <meta-data>mdata22</meta-data>
+        </property>
+
+        <property name="indexTime" accessor="field">
+            <meta-data>indextime</meta-data>
+        </property>
+
+    </contract>
+
+    <class name="A" alias="a1" extends="a-contract" />
+    <class name="A" alias="a2" extends="a-contract" />
+    <class name="A" alias="a3" extends="a-contract" />
+    <class name="A" alias="a4" extends="a-contract" />
+    <class name="A" alias="a5" extends="a-contract" />
+
+</compass-core-mapping>

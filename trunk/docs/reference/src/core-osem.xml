@@ -1,0 +1,1699 @@
+<chapter id="core-osem">
+  <title>OSEM - Object/Search Engine Mapping</title>
+
+  <sect1 id="core-osem-introduction">
+    <title>Introduction</title>
+
+    <para>
+      Compass provides the ability to map Java Objects to the underlying Search Engine using Java 5 Annotations or simple XML mapping files. We call this technology OSEM (Object Search Engine Mapping). OSEM provides a rich syntax for describing Object attributes and relationships. The OSEM files/annotations are used by Compass to extract the required property from the Object model at run-time and inserting the required meta-data into the Search Engine index.
+    </para>
+    
+    <para>
+      The process of saving an Object into the search engine is called marshaling, and the process of retrieving an object from the search engine is called un-marshaling. As described in <xref linkend="core-searchengine-AliasResourceProperty"/>, Compass uses Resources when working against a search engine, and OSEM is the process of marshaling and un-marshaling an Object tree to a Resource (for simplicity, think of a Resource as a Map).
+    </para>
+  </sect1>
+  
+  <sect1 id="core-osem-searchableclasses">
+    <title>Searchable Classes</title>
+
+    <para>
+      Searchable classes are normally classes representing the state of the application, implementing the entities with the business model. Compass works best if the classes follow the simple Plain Old Java Object (POJO) programming model. The following class is an example of a searchable class:
+      
+<programlisting><![CDATA[import java.util.Date;
+import java.util.Set;
+
+@Searchable
+@SearchableConstant(name = "type", values = {"person", "author"})
+public class Author {
+  private Long id;  // identifier
+  private String name;
+  private Date birthday;
+
+  @SearchableId
+  public Long getId() {
+    return this.id;
+  }
+
+  private void setId(Long id) {
+    this.id = id;
+  }
+
+  @SearchableProperty(name = "name")
+  @SearchableMetaData(name = "authorName")
+  public String getName() {
+    return this.name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  @SearchableProperty(format = "yyyy-MM-dd")
+  public Date getBirthday() {
+    return this.birtday;
+  }
+
+  public void setBirthday(Date birthday) {
+    this.birthday = birthday;
+  }
+} ]]></programlisting>
+
+    </para>
+    
+    <para>
+      The Author class is mapped using Java 5 annotations. The following shows how to map the same class using OSEM xml mapping definitions:
+      
+<programlisting><![CDATA[<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="eg">
+
+  <class name="Author" alias="author">
+
+    <id name="id" />
+
+    <constant>
+      <meta-data>type</meta-data>
+      <meta-data-value>person</meta-data-value>
+      <meta-data-value>author</meta-data-value>
+    </constant>
+
+    <property name="name">
+      <meta-data>name</meta-data>
+      <meta-data>authorName</meta-data>
+    </property>
+
+    <property name="birthday">
+      <meta-data format="yyyy-MM-dd">birthday</meta-data>
+    </property>
+
+  </class>
+</compass-core-mapping>]]></programlisting>
+    
+    </para>
+    
+    <para>
+      Compass works non-intrusive with application Objects, these Objects must follow several rules:
+      <itemizedlist>
+        <listitem>
+          <para>Implement a Default Constructor: <literal>Author</literal> has an implicit default (no-argument) constructor. All persistent classes must have a default constructor (which may be non-public) so Compass::Core can instantiate using <literal>Constructor.newInstance()</literal></para>
+        </listitem>
+        <listitem>
+          <para>Provide Property Identifier(s): OSEM requires that a <emphasis>root searchable</emphasis> Object will define one or more properties (JavaBean properties) that identifies the class.</para>
+        </listitem>
+        <listitem>
+          <para>Declare Accessors and Mutators (Optional): Even though Compass can directly persist instance variables, it is usually better to decouple this implementation detail from the Search Engine mechanism. Compass recognizes JavaBean style property (<literal>getFoo</literal>, <literal>isFoo</literal>, and <literal>setFoo</literal>). This mechanism works with any level of visibility.</para>
+        </listitem>
+        <listitem>
+          <para>It is recommended to override the <literal>equals()</literal> and <literal>hashCode()</literal> methods if you intend to mix objects of persistent classes (e.g. in a <literal>Set</literal>). You can implement it by using the identifier of both objects, but note that Compass works best with surrogate identifier (and will provide a way to automatically generate them), thus it is best to implement the methods using business keys..</para>
+        </listitem>
+      </itemizedlist>
+    </para>
+
+    
+    <para>
+      The above example defines the mapping for <literal>Author</literal> class.  It introduces some key Compass mapping concepts and syntax. Before explaining the concepts, it is essential that the terminology used is clearly understood.
+    </para>
+
+    <para>
+      The first issue to address is the usage of the term Property. Because of its common usage as a concept in Java and Compass (to express Search Engine and Semantic terminology), special care has been taken to clearly prefix the meaning. A class property refers to a Java class attribute. A resource property refers in Compass to Search Engine meta-data, which contains the values of the mapped class property value. In previous OSEM example, the value of class property "name" is mapped to two resource property instances called "name" and "authorname", each containing the value of the class property "name".
+    </para>
+    
+    <sect2 id="core-osem-sc-alias">
+      <title>Alias</title>
+      
+      <para>
+        Each mapping definition in Compass is registered under an alias. The alias is used as the link between the OSEM definitions of a class, and the class itself.  The alias can then be used to reference the mapping, both in other mapping definitions and when working directly with Compass API. When using annotations mappings, the alias defaults to the short class name.
+      </para>
+    </sect2>
+
+    <sect2 id="core-osem-sc-root">
+      <title>Root</title>
+      
+      <para>
+        There are two types of searchable classes in Compass, root searchable classes and non-root searchable classes. Root searchable classes are best defined as classes that return as hits when a search is performed. For example, in a scenario where we have Customer class with a Name class, the Customer will be a root searchable class, and Name would have root="false" in it since it does not "stands on its own". Another way of looking at root searchable classes is as searchable classes that end up marshaled into their own Resource (which is then used to work against the search engine).
+      </para>
+
+      <para>
+        Non root searchable classes are not required to define id mappings.
+      </para>
+    </sect2>
+
+    <sect2 id="core-osem-sc-subindex">
+      <title>Sub Index</title>
+      
+      <para>
+        By default, each <emphasis>root</emphasis> searchable class will have its own sub index defaulting to the alias name. The sub index name can be controlled, allowing to join several root searchable classes into the same sub index, or using different sub index hashing functions. Please read <xref linkend="core-searchengine-subindexhash"/> for more information.
+      </para>
+
+    </sect2>
+
+  </sect1>
+  
+  <sect1 id="core-osem-sc-mappings">
+    <title>Searchable Class Mappings</title>
+
+    <sect2 id="core-osem-idandmetadata">
+      <title>Searchable Id and Searchable Meta Data</title>
+      
+      <para>
+        Each <emphasis>root</emphasis> searchable class must define at least one searchable id. The searchable id(s) are used to uniquely identify the object within its alias context. More than one searchable id can be defined, as well as user defined classes to act as searchable ids (must register its own converter or use searchable id component mapping).
+      </para>
+      
+      <para>
+        Searchable Id does not require the definition of a searchable meta-data. If none is defined, Compass will automatically create an internal meta-data id (explained later) which most times is perfectly fine (usually, text searching based on the surrogate id is not required). If the searchable id does need to be searched, a searchable meta-data need to be defined for it. When using xml mapping, one or more meta-data element need to be added to the id element. When using annotations, there are three options: the first, provide a name for the SearchableId (compass will automatically act as if a SearchableMetaData was defined on the SearchableId and add it), the second is to add a SearchableMetaData annotation and the last is to add SearchableMetaDatas annotation (for multiple meta-datas). Of course, all the three can be combined. The reason why SearchalbeId will automatically create a SearchableMetaData if the name is provided is to ease the number of annotations required (and not get to annotation hell).
+      </para>
+      
+      <para>
+        Here is an example of defining a Searchable Id using annotations. This example will not create any visible meta-data (as the SearchableId has no name to it, or SearchableMetaData(s) annotation).
+<programlisting><![CDATA[@Searchable
+public class Author {
+  @SearchableId
+  private Long id;  
+  // ...
+}]]></programlisting>
+      </para>
+      
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="Author" alias="author">
+  <id name="id" />
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+
+      <para>
+        The following is another example, now with actually defining a meta-data on the id for its values to be searchable:
+<programlisting><![CDATA[@Searchable
+public class Author {
+  @SearchableId(name = "id")
+  private Long id;  
+  // ...
+}]]></programlisting>
+      </para>
+      
+      <para>
+        Which is the same as defining the following mapping using SearchableMetaData explicitly:
+<programlisting><![CDATA[@Searchable
+public class Author {
+  @SearchableId
+  @SearchableMetaData(name = "id")
+  private Long id;  
+  // ...
+}]]></programlisting>
+      </para>
+      
+      <para>
+        And here is the same mappings as above using xml:
+<programlisting><![CDATA[<class name="Author" alias="author">
+  <id name="id">
+    <meta-data>id</meta-data>
+  </id>
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+      
+    </sect2>
+
+    <sect2 id="core-osem-idcomponent">
+        <title>Searchable Id Component</title>
+        
+        <para>
+            A searchable id component represent a composite object acting as the id of a object. It works in a similar manner to searchable component except that it will act as the id of the class.
+        </para>
+
+      <para>
+        Here is an example of defining a Searchable Id Component using annotations (note, in this case, B is not a root searchable class, and it needs to define only ids):
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableIdComponent
+  private B b;  
+  // ...
+}
+
+@Searchable(root = false)
+public class B {
+  @SearchableId
+  private long id1;
+  
+  @SearchableId
+  private long id2;
+}]]></programlisting>
+      </para>
+
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id-component name="b" />
+  <!-- ... -->
+</class>
+<class name="B" alias="b" root="false">
+  <id name="id1" />
+  <id name="id2" />
+</class>
+]]></programlisting>
+      </para>
+    </sect2>    
+
+    <sect2 id="core-osem-parent">
+      <title>Searchable Parent</title>
+      
+        <para>
+          Searchable Parent mapping provides support for cyclic mappings for components (though bi directional component mappings are also supported). If the component class mapping wish to map the enclosing class, the parent mapping can be used to map to it. The parent mapping will not marshal (persist the data to the search engine) the parent object, it will only initialize it when loading the parent object from the search engine.
+        </para>
+        
+        <para>
+          Here is an example of defining a Searchable Component and Searchable Parent using annotations (note, in this case, B is not a root searchable class, and need not define any ids):
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableComponent
+  private B b;  
+  // ...
+}
+
+@Searchable(root = false)
+public class B {
+  @SearchableParent
+  private A a;
+  // ...
+}]]></programlisting>          
+        </para>
+
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <component name="b" />
+  <!-- ... -->
+</class>
+<class name="B" alias="b" root="false">
+  <parent name="a" />
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+    </sect2>
+    
+    <sect2 id="core-osem-propertyandmetadata">
+      <title>Searchable Property and Searchable Meta Data</title>
+      
+      <para>
+        A Searchable Property maps to a Class attribute/property which is a simple relationship. The searchable property maps to a class attribute that ends up as a String within the search engine. This include primitive types, primitive wrapper types, java.util.Date, java.util.Calendar and many more types that are automatically supported by Compass (please see the converter section). A user defined type can be used as well using a custom converter (though most times, a component relationship is more suited - explained later). A Searchable Mata Data uses the Searchable Property value (converted String value using its registered converter) and stores it in the index against a name.
+      </para>
+      
+      <para>
+        When using xml mapping, one or more meta-data elements can be defined for a property mapping. When using annotation, a SearchableProperty needs to be defined on the mapped class attribute. A SearchableMetaData annotation can be explicitly defined, as well as SearchableMetaDatas (for multiple meta data). A SearchableProperty will automatically create a SearchableMetaData (in order not to get annotation hell) if no SearchableMetaData(s) annotation is defined, or a its name is explicitly defined (note, all the SearchableMetaData options are also defined on the SearchableProperty, they apply to the automatically created SearchableMetaData). 
+      </para>
+
+      <para>
+        Here is an example of defining a Searchable Property using annotations. This example will automatically create a Searchable Meta Data with the name of value (the class field name).
+<programlisting><![CDATA[@Searchable
+public class Author {
+  // ...
+  @SearchableProperty
+  private String value;  
+  // ...
+}]]></programlisting>
+      </para>
+      
+      <para>
+        This mapping is the same as defining the following annotation using SearchableMetaData explicitly:
+<programlisting><![CDATA[@Searchable
+public class Author {
+  // ...
+  @SearchableProperty
+  @SearchableMetaData(name = "value")
+  private String value;  
+  // ...
+}]]></programlisting>
+      </para>
+      
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="Author" alias="author">
+  <! ... -->
+  <property name="value">
+    <meta-data>value</meta-data>
+  </property>
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+      
+    </sect2>
+    
+    <sect2 id="core-osem-constant">
+      <title>Searchable Constant</title>
+      
+      <para>
+        Searchable Constant allows to define constant meta data associated with a searchable class with a list of values set against a constant name. This is useful for adding static meta-data against a Searchable Class, allowing to create semantic groups across the searchable classes.
+      </para>
+      
+      <para>
+        Here is how a searchable constant meta-data can be defined using annotations:
+<programlisting><![CDATA[
+@Searchable
+@SearchableConstant(name = "type", values = {"person", "author"})
+public class Author {
+} ]]></programlisting>
+      </para>
+      
+      <para>
+        And here is how it can be defined using xml mappings:
+<programlisting><![CDATA[<class name="Author" alias="author">
+  <id name="id" />
+  <constant>
+    <meta-data>type</meta-data>
+    <meta-data-value>person</meta-data-value>
+    <meta-data-value>author</meta-data-value>
+  </constant>
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="core-osem-dynamic">
+      <title>Searchable Dynamic Meta Data</title>
+      
+      <para>
+          The dynamic meta data mapping allows to define meta-data saved into the search engine as a result of evaluating an expression. The mapping does not map to any class property and acts as a syntactic meta-data (similar to the constant mapping). The value of the dynamic meta-data tag is the expression evaluated by a Dynamic Converter. Compass comes with several built in dynamic converters: el (Jakarta commons el), jexl (Jakarta commons jexl), velocity, ognl, and groovy. When defining the expression, the root class is registered under the <literal>data</literal> key (for libraries that require it).
+      </para>
+      
+      <para>
+        Here is an example of how to define a searchable dynamic meta-data (with jakarta commons jexl) using annotations (assuming class A has value1 and value2 as class fields):
+<programlisting><![CDATA[
+@Searchable
+@SearchableDynamicMetaData(name = "test", expression = "data.value + data.value2", converter = "jexl")
+public class A {
+} ]]></programlisting>
+      </para>
+      
+      <para>
+        And here is the same mapping using xml:
+<programlisting><![CDATA[<class name="Author" alias="author">
+  <id name="id" />
+  <dynamic-meta-data name="test" converter="jexl">
+      data.value + data.value2
+  </dynamic-meta-data>
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="core-osem-reference">
+      <title>Searchable Reference</title>
+      
+      <para>
+        A searchable reference mapping maps between one root searchable class and the other. The mapping is only used for keeping the relationship "alive" when performing un-marshalling. The marshalling process marshals only the referenced object ids (based on its id mappings) and use it later in the un-marshalling process to load the referenced object from the index.
+      </para>
+      
+      <para>
+        Cascading is supported when using reference mappings. Cascading can be configured to cascade any combination of create/save/delete operations, or all of them. By default, no cascading will be performed on the referenced object.
+      </para>
+      
+      <para>
+        In order to identify the referenced class mapping, Compass needs access to its class mapping definition. In most cases there is no need to define the referenced alias that define the class mapping, as Compass can automatically detect it. If it is required, it can be explicitly set on the reference mappings (an example when Compass needs this mapping is when using Collection without generics or when a class has more than one class mapping).
+      </para>
+
+      <para>
+        Currently, Compass does not support lazy loading, this means that when loading a searchable class, all its referenced mappings will be loaded as well.
+      </para>
+      
+      <para>
+        Here is an example of defining a Searchable Reference using annotations:
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableReference
+  private B b;  
+  // ...
+}
+
+@Searchable
+public class B {
+  @SearchableId
+  private Long id;
+  // ...
+}]]></programlisting>
+      </para>
+
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <reference name="b" />
+  <!-- ... -->
+</class>
+<class name="B" alias="b">
+  <id name="id" />
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+      
+    </sect2>
+    
+    <sect2 id="core-osem-component">
+      <title>Searchable Component</title>
+      
+      <para>
+        A searchable component mapping embeds a searchable class within its owning searchable class. The mapping is used to allow for searches that "hit" the component referenced searchable class to return the owning searchable class (or its parent if it also acts a component mapping up until the root object that was saved).
+      </para>
+      
+      <para>
+        The component referenced searchable class can be either root or not. An example for a non root component can be a Person class (which is root) with a component mapping to a non root searchable class Name (with firstName and lastName fields). An example for a root component can be a Customer root searchable class and an Account searchable class, where when searching for account details, both Account and Customer should return as hits.
+      </para>
+      
+      <para>
+        Cascading is supported when using component mappings. Cascading can be configured to cascade any combination of create/save/delete operations, or all of them. By default, no cascading will be performed on the referenced object. Cascading can be performed on non root objects as well, which means that a non root object can be "created/saved/deleted" in Compass (using save operation) and Compass will only cascade the operation on its referenced objects without actually performing the operation on the non root object.
+      </para>
+      
+      <para>
+        In order to identify the referenced component class mapping, Compass needs access to its class mapping definition. In most cases there is no need to define the referenced alias that define the class mapping, as Compass can automatically detect it. If it is required, it can be explicitly set on the reference mappings (an example when Compass needs this mapping is when using Collection without generics or when a class has more than one class mapping).
+      </para>
+
+      <para>
+        Here is an example of defining a Searchable Component using annotations (note, in this case, B is not a root searchable class, and need not define any ids):
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableComponent
+  private B b;  
+  // ...
+}
+
+@Searchable(root = false)
+public class B {
+  // ...
+}]]></programlisting>
+      </para>
+
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <component name="b" />
+  <!-- ... -->
+</class>
+<class name="B" alias="b" root="false">
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+    </sect2>    
+
+    <sect2 id="core-osem-cascade">
+        <title>Searchable Cascade</title>
+      
+        <para>
+            The searchable cascading mapping allows to define cascading operations on certain properties without explicitly using component/reference/parent mappings (which have cascading option on them). Cascading actually results in a certain operation (save/delete/create) to be cascaded to and performed on the referenced objects.
+        </para>
+
+        <para>
+            Here is an example of a Searchable Cascade mapping based on the class language:
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableCascading(cascade = {Cascade.ALL})
+  private B b;  
+  // ...
+}]]></programlisting>
+        </para>
+
+        <para>
+            And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <cascade name="b" cascade="all" />
+  <!-- ... -->
+</class>
+]]></programlisting>
+        </para>
+    </sect2>
+
+    <sect2 id="core-osem-analyzer">
+      <title>Searchable Analyzer</title>
+      
+        <para>
+          The searchable analyzer mapping dynamically controls the analyzer that will be used when indexing the class data. If the mapping is defined, it will override the class mapping analyzer attribute setting.
+        </para>
+
+        <para>
+          If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the searchable analyzer can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, a <literal>null-analyzer</literal> can be configured that will be used in that case. If the class property has a value, but there is not matching analyzer, an exception will be thrown.
+        </para>
+        
+        <para>
+          Here is an example of a Searchable Analyzer mapping based on the class language:
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableAnalyzer
+  private String language;  
+  // ...
+}]]></programlisting>
+      </para>
+
+      <para>
+        And here is the same mapping definition using xml:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <analyzer name="language" />
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+    </sect2>
+
+        <sect2 id="core-osem-boost">
+          <title>Searchable Boost</title>
+
+            <para>
+              The searchable boost mapping dynamically controls the boost value associated with the Resource stored. If the mapping is defined, it will override the class mapping boost attribute setting. The value of the property should be convertable to float value.
+            </para>
+
+            <para>
+              Here is an example of a Searchable Analyzer mapping based on the class language:
+    <programlisting><![CDATA[@Searchable
+    public class A {
+      @SearchableId
+      private Long id;
+      @SearchableBoost(defaultValue = 2.0f)
+      private Float value;  
+      // ...
+    }]]></programlisting>
+          </para>
+
+          <para>
+            And here is the same mapping definition using xml:
+    <programlisting><![CDATA[<class name="A" alias="a">
+      <id name="id" />
+      <boost name="value" default="2.0" />
+      <!-- ... -->
+    </class>
+    ]]></programlisting>
+          </para>
+        </sect2>
+  </sect1>
+  
+  <sect1 id="core-osem-speicifcs">
+    <title>Specifics</title>
+
+    <sect2 id="core-osem-collection">
+      <title>Handling Collection Types</title>
+      
+      <para>
+        Collection (java.util.Collection) based types cab be mapped using Searchable Property, Searchable Component and Searchable Reference. The same mapping declaration should be used, with Compass automatically detecting that a java.util.Collection is being mapped, and applying the mapping definition to the collection element.
+      </para>
+      
+      <para>
+        When mapping a Collection with a Searchable Property, Compass will try to automatically identify the collection element type if using Java 5 Generics. If Generics are not used, the class attribute should be set with the FQN of the element class. With Searchable Component or Reference Compass will try to automatically identify the referenced mapping if Generics are used. If generics are not used the ref-alias should be explicitly set.
+      </para>
+      
+    </sect2>
+
+    <sect2 id="core-osem-managedid">
+      <title>Managed Id</title>
+      
+      <para>
+        When marshaling an Object into a search engine, Compass might add internal meta-data for certain Searchable Properties in order to properly un-marshall it correctly. Here is an example mapping where an internal meta-data id will be created for the firstName and lastName searchable properties:
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableProperty(name = "name")
+  private String lastName;  
+  @SearchableProperty(name = "name")
+  private String firstName;  
+  @SearchableProperty
+  private String birthdate;  
+}]]></programlisting>
+      </para>
+      
+      <para>
+        In the above mapping we map firstName and lastName into "name". Compass will automatically create internal meta-data for both firstName and lastName, since if it did not create one, it won't be able to identify which name belongs to which. Compass comes with three strategies for creating internal meta-data:
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>AUTO</emphasis>: Compass will automatically identify if a searchable property requires an internal meta-data, and create one for it.</para>
+          </listitem>
+          <listitem>
+            <para><emphasis>TRUE</emphasis>: Compass will always create an internal meta-data id for the searchable property.</para>
+          </listitem>
+          <listitem>
+            <para><emphasis>FALSE</emphasis>: Compass will not create an internal meta-data id, and will use the first searchable meta-data as the searchable property meta-data identifier.</para>
+          </listitem>
+          <listitem>
+            <para><emphasis>NO</emphasis>: Compass will not create an internal meta-data id, and will not try to un-marshall this property at all.</para>
+          </listitem>
+          <listitem>
+            <para><emphasis>NO_STORE</emphasis>: Compass will not create an internal meta-data id if all of its meta-data mappings have store="no". Otherwise, it will be treated as AUTO.</para>
+          </listitem>
+        </itemizedlist>
+      </para>
+
+      <para>
+	      Setting the managed id can be done on several levels. It can be set on the property mapping level explicitly. It can be set on the class level mapping which will then be applied to all the properties that are not set explicitly. And it can also be set globally be setting the following setting <literal>compass.osem.managedId</literal> which will apply to all the classes and properties that do not set it explicitly. By default, it is set to <literal>NO_STORE</literal>.
+	  </para>
+    </sect2>
+    
+    <sect2 id="core-osem-inheritance">
+      <title>Handling Inheritance</title>
+      
+      <para>
+        There are different strategies when mapping an inheritance tree with Compass. The first apply when the inheritance tree is known in advance. If we take a simple inheritance of class A and class B that extends it, here is the annotation mapping that can be used for it:
+<programlisting><![CDATA[@Searchable
+public class A {
+  @SearchableId
+  private Long id;
+  @SearchableProperty
+  private String aValue;
+}
+
+@Searchable
+public class B extends A {
+  @SearchableProperty
+  private String bValue;
+}]]></programlisting>
+      </para>
+      
+      <para>
+        Compass will automatically identify that B extends A, and will include all of A mapping definitions (note that Searchable attributes will not be inherited). When using annotations, Compass will automatically interrogate interfaces as well for possible Searchable annotations, as well have the possibility to explicitly define which mappings to extend using the extend attribute (the mappings to extends need not be annotation driven mappings).
+      </para>
+      
+      <para>
+        When using xml mapping definition, the above inheritance tree can be mapped as follows:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <property name="aValue">
+    <meta-data>aValue</meta-data>
+  </property>
+</class>
+<class name="B" alias="b" extends="a">
+  <property name="bValue">
+    <meta-data>aValue</meta-data>
+  </property>
+</class>
+]]></programlisting>
+      </para>
+      
+      <para>
+        When using extends explicitly (as needed when using xml mappings), a list of the aliases to extend (comma separated) can be provided. All the extended mapping definitions will be inherited except for class mapping attributes.
+      </para>
+
+      <para>
+        If the inheritance tree is not known in advance, a poly flag should be set on all the known mapped inheritance tree. Compass will be able to persist unknown classes that are part of the mapped inheritance tree, using the closest searchable mapping definition. Here is an example of three classes: A and B are searchable classes, with B extending A. C extends B but is not a searchable class and we would still like to persist it in the search engine. The following is the annotation mappings for such a relationship:
+<programlisting><![CDATA[@Searchable(poly = true)
+public class A {
+  // ...
+}
+
+@Searchable(poly = true)
+public class B extends A {
+  // ...
+}
+
+// Note, No Searchable annotation for C
+public class C extends B {
+  // ...
+}]]></programlisting>
+      </para>
+      
+      <para>
+        And here is the xml mapping definition:
+<programlisting><![CDATA[<class name="A" alias="a">
+  <id name="id" />
+  <property name="aValue">
+    <meta-data>aValue</meta-data>
+  </property>
+</class>
+<class name="B" alias="b" extends="a">
+  <property name="bValue">
+    <meta-data>aValue</meta-data>
+  </property>
+</class>
+]]></programlisting>
+      </para>
+      
+      <para>
+        When saving an Object of class C, B mapping definitions will be used to map it to the search engine. When loading it, an instance of class C will be returned, with all of its B level attributes initialized.
+      </para>
+      
+    </sect2>
+
+    <sect2 id="core-osem-poly-relationship">
+      <title>Polymorphic Relationships</title>
+      
+      <para>
+        Polymorphic relationship are applicable when using component or reference mappings. If we take the following polymorphic relationship of a Father class to a Child class, with a Son and Daughter sub classes, the component/reference mapping relationship between Father and Child is actually a relationship between Father and Child, Son and Daughter. The following is how to map it using annotations:
+<programlisting><![CDATA[@Searchable
+public class Father {
+  // ...
+  @SearchableComponent
+  private Child child;
+}
+
+@Searchable(poly = true)
+public class Child {
+  // ...
+}
+
+@Searchable(poly = true)
+public class Son extends Child {
+  // ...
+}
+
+@Searchable(poly = true)
+public class Daughter extends Child {
+  // ...
+}]]></programlisting>
+      </para>
+      
+      <para>
+        Compass will automatically identify that Child mappings has a Son and a Daughter, and will add them to the ref-alias definition of the SearchableComponent (similar to automatically identifying the mapping of Child). Explicit definition of the referenced aliases can be done by providing a comma separated list of aliases (this will disable Compass automatic detection of related classes and will only use the provided list). Note as well, that the Child hierarchy had to be defined as poly.
+      </para>
+      
+      <para>
+        Here is the same mapping using xml:
+<programlisting><![CDATA[<class name="Father" alias="father">
+  <id name="id" />
+  <component name="child" />
+</class>
+<class name="Child" alias="chlid" poly="true">
+  <!-- ... -->
+</class>
+<class name="Son" alias="son" poly="true" extends="child">
+  <!-- ... -->
+</class>
+<class name="Daughter" alias="daughter" poly="true" extends="child">
+  <!-- ... -->
+</class>
+]]></programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="core-osem-cyclic">
+      <title>Cyclic Relationships</title>
+      
+      <para>
+        Compass OSEM fully supports cyclic relationships both for reference and component mappings. Reference mappings are simple, they are simply defined, and Compass would handle everything if they happen to perform a cyclic relationship. 
+      </para>
+      
+      <para>
+        Bi directional component mappings are simple as well with Compass automatically identifying cyclic relationship. A tree based cyclic relationship is a bit more complex (think of a file system tree like relationship). In such a case, the depth Compass will traverse with the component mapping is controlled using the max-depth attribute (defaults to 1).
+      </para>
+    </sect2>
+
+    <sect2 id="core-osem-annxml">
+      <title>Annotations and Xml Combined</title>
+      
+      <para>
+        Compass allows for Annotations and Xml mappings definitions to be used together. Annotations mappings can extend/override usual cpm.xml mapping definition (event extending xml contract mapping). When using annotations, a .cpm.ann.xml can be defined that will override annotations definitions using xml definitions.
+      </para>
+    </sect2>
+
+    <sect2 id="core-osem-supportunmarshall">
+      <title>Support Unmarshall</title>
+      
+      <para>
+        Compass adds an overhead both in terms of memory consumption, processing speed and index size (managed ids) when it works in a mode that needs to support un-marshalling (i.e. getting objects back from the search engine). Compass can be configured not to support un-marshalling. In such a mode it will not add any internal Compass information to the index, and will use less memory. This setting can be a global setting (set within Compass configuration), or per searchable class definitions.
+      </para>
+      
+      <para>
+        Though initially this mode may sounds unusable, it is important to remember that when working with support unmarshall set to false, the application can still use Compass Resource level access to the search engine. An application that works against the database using an ORM tool for example, might only need Compass to index its domain model into the search engine, and display search results. Displaying search results can be done using Resources (many times this is done even when using support for unmarshalling). Create/Delete/Update operations will be done based on ORM based fetched objects, and mirrored (either explicitly or implicitly) to the search engine.
+      </para>
+    </sect2>
+
+    <sect2 id="core-osem-configann">
+      <title>Configuration Annotations</title>
+      
+      <para>
+        Compass also allows using annotation for certain configuration settings. The annotations are defined on a package level (package-info.java). Some of the configuration annotations are <literal>@SearchAnalyzer</literal>, <literal>@SearchAnalyzerFilter</literal>, and <literal>@SearchConverter</literal>. Please see the javadocs for more information.
+      </para>
+    </sect2>
+  </sect1>  
+  
+  <sect1 id="core-osem-ann-reference">
+    <title>Searchable Annotations Reference</title>
+    
+    <para>
+      All the annotations are documented in Compass javadoc. Please review it for a complete reference of all of Compass Searchable annotations.
+    </para>
+  </sect1>
+
+  <sect1 id="core-osem-xml-reference">
+    <title>Searchable Xml Reference</title>
+    
+    <para>
+      All XML mappings should declare the doctype shown. The actual DTD may be found at the URL above, or in the compass-core-x.x.x.jar. Compass will always look for the DTD in the classpath first.
+    </para>
+    
+    <sect2 id="compass-core-mapping">
+      <title>compass-core-mapping</title>
+
+      <para>
+        The main element which holds all the rest of the mappings definitions.
+
+        <programlisting><![CDATA[<compass-core-mapping package="packageName"/>
+        ]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - compass-core-mapping</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>package (optional)</entry>
+                <entry>Specifies a package prefix for unqualified class names in the mapping document.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </para>
+    </sect2>
+
+    <sect2 id="class">
+      <title>class</title>
+
+      <para>
+          Declaring a searchable class using the <literal>class</literal> element.
+<programlisting><![CDATA[<class
+        name="className"
+        alias="alias"
+        sub-index="sub index name"
+        analyzer="name of the analyzer"
+        root="true|false"
+        poly="false|true"
+        poly-class="the class name that will be used to instantiate poly mapping (optional)"
+        extends="a comma separated list of aliases to extend"
+        support-unmarshall="true|false"
+        boost="boost value for the class"
+        converter="converter lookup name"
+>
+    all?,
+    sub-index-hash?.
+    (id)*,
+    parent?,
+    (analyzer?),
+    (boost?),
+    (property|dynamic-meta-data|component|reference|constant)*
+</class>]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - class</title>
+          <tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>name</entry>
+              <entry>The fully qualified class name (or relative if the package is declared in <literal>compass-core-mapping</literal>).</entry>
+            </row>
+            <row>
+              <entry>alias</entry>
+              <entry>The alias of the <literal>Resource</literal> that will be mapped to the class.</entry>
+            </row>
+            <row>
+              <entry>sub-index (optional, defaults to the <literal>alias</literal> value)</entry>
+              <entry>The name of the sub-index that the alias will map to. When joining several searchable classes into the same index, the search will be much faster, but updates perform locks on the sub index level, so it might slow it down.</entry>
+            </row>
+            <row>
+              <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
+              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>analyzer</literal> mapping (a child mapping of class mapping) (for a property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
+            </row>
+            <row>
+              <entry>root (optional, defaults to <literal>true</literal>)</entry>
+              <entry>Specifies if the class is a "root" class or not. You should define the searchable class with false if it only acts as mapping definitions for a component mapping.</entry>
+            </row>
+            <row>
+              <entry>poly (optional, defaults to <literal>false</literal>)</entry>
+              <entry>Specifies if the class will be enabled to support polymorphism. This is the less preferable way to map an inheritance tree, since the extends attribute can be used to statically extend base classes or contracts.</entry>
+            </row>
+            <row>
+              <entry>poly-class (optional)</entry>
+              <entry>If poly is set to <literal>true</literal>, the actual class name of the indexed object will be saved to the index as well (will be used later to instantiate the Object). If the poly-class is set, the class name will not be saved to the index, and the value of poly-class will be used to instantiate all the classes in the inheritance tree.</entry>
+            </row>
+            <row>
+              <entry>extends (optional)</entry>
+              <entry>A comma separated list of aliases to extend. Can extend a <literal>class</literal> mapping or a <literal>contract</literal> mapping. Note that can extend more than one <literal>class/contract</literal></entry> mapping.
+            </row>
+            <row>
+              <entry>support-unmarhsall (optional)</entry>
+              <entry>Controls if the searchable class will support unmarshalling from the search engine or using <literal>Resource</literal> is enough. Un-marshalling is the process of converting a raw <literal>Resource</literal> into the actual domain object. If support un-marshall is enabled extra information will be stored within the search engine, as well as consumes extra memory. Defaults to Compass global setting <literal>compass.osem.supportUnmarshall</literal> (which in turn defaults to <literal>true</literal>).</entry>
+            </row>
+            <row>
+              <entry>boost (optional, defaults to <literal>1.0</literal>)</entry>
+              <entry>Specifies the boost level for the class.</entry>
+            </row>
+            <row>
+              <entry>converter (optional)</entry>
+              <entry>The global converter lookup name registered with the configuration. Responsible for converting the <literal>ClassMapping</literal> definition. Defaults to compass internal <literal>ClassMappingConverter</literal>.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
+
+        <para>
+          Root classes have their own index within the search engine index directory (by default). Classes with a dependency to Root class, that don't require an index (i.e. component) should set <literal>root</literal> to false. You can control the sub-index that the root classes will map to using the <literal>sub-index</literal> attribute or the <literal>sub-index-hash</literal> element, otherwise it will create a sub-index based on the alias name.
+        </para>
+
+        <para>
+          The <literal>class</literal> mapping can extend other <literal>class</literal> mappings (more than one), as well as <literal>contract</literal> mappings. All the mappings that are defined within the <literal>class</literal> mapping or the <literal>contract</literal> mapping will be inherited from the extended mappings. You can add any defined mappings by defining the same mappings in the <literal>class</literal> mappings, except for id mappings, which will be overridden. Note that any xml attributes (like root, sub-index, ...) that are defined within the extended mappings are not inherited.
+        </para>
+
+        <para>
+          The default behavior of the searchable class will support the "all" feature, which means that compass will create an "all" meta-data which represents all the other meta-data (with several exceptions, like <literal>Reader</literal> class property). The name of the "all" meta-data will default to the compass setting, but you can also set it using the <literal>all-metadata</literal> attribute.
+        </para>
+      </para>
+    </sect2>
+    
+        <sect2 id="contract">
+      <title>contract</title>
+
+      <para>
+        Declaring a searchable contract using the <literal>contract</literal> element.
+<programlisting><![CDATA[<contract
+        alias="alias"
+>
+    (id)*,
+    (analyzer?),
+    (boost?),
+    (property|dynamic-meta-data|component|reference|constant)*
+</contract>]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - contract</title>
+          <tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+              <row>
+                  <entry>alias</entry>
+                  <entry>The alias of the contract. Will be used as the alias name in the <literal>class</literal> mapping extended attribute</entry>
+              </row>
+          </tbody>
+        </tgroup></table>
+
+        <para>
+          A contract acts as an interface in the Java language. You can define the same mappings within it that you can define in the <literal>class</literal> mapping, without defining the class that it will map to.
+        </para>
+
+        <para>
+          If you have several classes that have similar properties, you can define a <literal>contract</literal> that joins the properties definition, and than extend the contract within the mapped classes (even if you don't have a concrete interface or class in your Java definition).
+        </para>
+      </para>
+    </sect2>
+
+    <sect2 id="id">
+      <title>id</title>
+
+      <para>
+        Declaring a searchable id class property (a.k.a JavaBean property) of a class using the <literal>id</literal> element.
+
+<programlisting><![CDATA[<id
+      name="property name"
+      accessor="property|field"
+      boost="boost value for the class property"
+      class="explicit declaration of the property class"
+      managed-id="auto|true|false"
+      managed-id-converter="managed id converter lookup name"
+      exclude-from-all="no|yes|no_analyzed"
+      converter="converter lookup name"
+  >
+ (meta-data)*
+</id>
+]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - id</title>
+          <tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+            <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>name</entry>
+              <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+            </row>
+            <row>
+              <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+              <entry>The strategy to access the class property value. <literal>property</literal> access using the Java Bean accessor methods, while <literal>field</literal> directly access the class fields.</entry>
+            </row>
+            <row>
+              <entry>boost (optional, default to <literal>1.0f</literal>)</entry>
+              <entry>The boost level that will be propagated to all the meta-data defined within the id.</entry>
+            </row>
+            <row>
+              <entry>class (optional)</entry>
+              <entry>An explicit definition of the class of the property, helps for certain converters.</entry>
+            </row>
+            <row>
+              <entry>managed-id (optional, defaults to <literal>auto</literal>)</entry>
+              <entry>The strategy for creating or using a class property meta-data id (which maps to a <literal>Resource</literal> <literal>Property</literal>).</entry>
+            </row>
+            <row>
+              <entry>managed-id-converter (optional)</entry>
+              <entry>The global converter lookup name applied to the generated managed id (if generated).</entry>
+            </row>
+            <row>
+              <entry>exclude-from-all (optional, defaults to <literal>no</literal>)</entry>
+              <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+            </row>
+            <row>
+              <entry>converter (optional)</entry>
+              <entry>The global converter lookup name registered with the configuration.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
+
+        <para>
+          The id mapping is used to map the class property that identifies the class. You can define several id properties, even though we recommend using one. You can use the id mapping for all the Java primitive types (i.e. <literal>int</literal>), Java primitive wrapper types (i.e. <literal>Integer</literal>), <literal>String</literal> type, and many other custom types, with the only requirement that a type used for an id will be converted to a single String.
+        </para>
+      </para>
+    </sect2>
+
+    <sect2 id="property">
+      <title>property</title>
+
+      <para>
+        Declaring a searchable class property (a.k.a JavaBean property) of a class using the <literal>property</literal> element.
+
+<programlisting><![CDATA[<property
+      name="property name"
+      accessor="property|field"
+      boost="boost value for the property"
+      class="explicit declaration of the property class"
+      analyzer="name of the analyzer"
+      override="true|false"
+      managed-id="auto|true|false"
+      managed-id-index="[compass.managedId.index setting]|no|un_tokenized"
+      managed-id-converter="managed id converter lookup name"
+      exclude-from-all="no|yes|no_analyzed"
+      converter="converter lookup name"
+>
+   (meta-data)*
+</property>]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - property</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> means accessing using the Java Bean accessor methods, while <literal>field</literal> directly accesses the class fields.</entry>
+              </row>
+              <row>
+                <entry>boost (optional, default to <literal>1.0f</literal>)</entry>
+                <entry>The boost level that will be propagated to all the meta-data defined within the class property.</entry>
+              </row>
+              <row>
+                <entry>class (optional)</entry>
+                <entry>An explicit definition of the class of the property, helps for certain converters (especially for <literal>java.util.Collection</literal> type properties, since it applies to the collection elements).</entry>
+              </row>
+              <row>
+                <entry>analyzer (optional, defaults to the class mapping analyzer decision scheme)</entry>
+                <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data mappings defined for the given property. Defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+              </row>
+              <row>
+                <entry>override (optional, defaults to <literal>true</literal>)</entry>
+                <entry>If there is another definition with the same mapping name, if it will be overridden or added as additional mapping. Mainly used to override definitions made in extended mappings.</entry>
+              </row>
+              <row>
+                <entry>managed-id (optional, defaults to <literal>auto</literal>)</entry>
+                <entry>The strategy for creating or using a class property meta-data id (which maps to a <literal>Resource</literal> <literal>Property</literal>.</entry>
+              </row>
+              <row>
+                <entry>managed-id-index (optional, defaults to <literal>compass.managedId.index</literal> setting, which defaults to <literal>no</literal>)</entry>
+                <entry>Can be either <literal>un_tokenized</literal> or <literal>no</literal>. It is the index setting that will be used when creating an internal managed id for a class property mapping (if it is not a property id, if it is, it will always be <literal>un_tokenized</literal>).</entry>
+              </row>
+            <row>
+              <entry>managed-id-converter (optional)</entry>
+              <entry>The global converter lookup name applied to the generated managed id (if generated).</entry>
+            </row>
+              <row>
+                <entry>exclude-from-all (optional, defaults to <literal>no</literal>)</entry>
+                <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para>
+          You can map all internal Java primitive data types, primitive wrappers and most of the common Java classes (i.e. <literal>Date</literal> and <literal>Calendar</literal>). You can also map Arrays and Collections of these data types. When mapping a <literal>Collection</literal>, you must specify the object class (like <literal>java.lang.String</literal>) in the class mapping property (unless you are using generics).
+        </para>
+
+        <para>
+          Note, that you can define a property with no <literal>meta-data</literal> mapping within it. It means that it will not be searchable, but the property value will be stored when persisting the object to the search engine, and it will be loaded from it as well (unless it is of type <literal>java.io.Reader</literal>).
+        </para>
+      </para>
+    </sect2>
+
+    <sect2 id="analyzer">
+      <title>analyzer</title>
+
+      <para>
+        Declaring an analyzer controller property (a.k.a JavaBean property) of a class using the <literal>analyzer</literal> element.
+
+<programlisting><![CDATA[<analyzer
+      name="property name"
+      null-analyzer="analyzer name if value is null"
+      accessor="property|field"
+      converter="converter lookup name"
+>
+</analyzer>]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - analyzer</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> means accessing using the Java Bean accessor methods, while <literal>field</literal> directly accesses the class fields.</entry>
+              </row>
+              <row>
+                <entry>null-analyzer (optional, defaults to error in case of a <literal>null</literal> value)</entry>
+                <entry>The name of the analyzer that will be used if the property has the <literal>null</literal> value.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para>
+          The analyzer class property mapping, controls the analyzer that will be used when indexing the class data (the underlying <literal>Resource</literal>). If the mapping is defined, it will override the class mapping analyzer attribute setting.
+        </para>
+
+        <para>
+          If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the class property can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, a <literal>null-analyzer</literal> can be configured that will be used in that case. If the class property has a value, but there is not matching analyzer, an exception will be thrown.
+        </para>
+
+      </para>
+
+    </sect2>
+
+        <sect2 id="boost">
+          <title>boost</title>
+
+          <para>
+            Declaring boost property (a.k.a JavaBean property) of a class using the <literal>boost</literal> element.
+
+<programlisting><![CDATA[<boost
+      name="property name"
+      default="the boost default value when no property value is present"
+      accessor="property|field"
+      converter="converter lookup name"
+>
+</boost>]]></programlisting>
+
+            <table>
+              <title>OSEM Xml Mapping - analyzer</title>
+              <tgroup cols="2">
+                <colspec colname="c1" colwidth="3*" />
+                <colspec colname="c2" colwidth="5*" />
+                <thead>
+                  <row><entry>Attribute</entry><entry>Description</entry></row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry>name</entry>
+                    <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+                  </row>
+                  <row>
+                    <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                    <entry>The strategy to access the class property value. <literal>property</literal> means accessing using the Java Bean accessor methods, while <literal>field</literal> directly accesses the class fields.</entry>
+                  </row>
+                  <row>
+                    <entry>default (optional, defaults <literal>1.0f</literal>)</entry>
+                    <entry>The default value if the property has a null value.</entry>
+                  </row>
+                  <row>
+                    <entry>converter (optional)</entry>
+                    <entry>The global converter lookup name registered with the configuration.</entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </table>
+
+            <para>
+                The boost class property mapping, controls the boost associated with the Resource created based on the mapped property. The value of the property should be allowed to be converted to float.
+            </para>
+
+          </para>
+
+        </sect2>
+
+    <sect2 id="meta-data">
+      <title>meta-data</title>
+
+      <para>
+        Declaring and using the <literal>meta-data</literal> element.
+
+ <programlisting><![CDATA[<meta-data
+      store="yes|no|compress"
+      index="tokenized|un_tokenized|no"
+      boost="boost value for the meta-data"
+      analyzer="name of the analyzer"
+      reverse="no|reader|string"
+      null-value="String value that will be stored when the property value is null"
+      exclude-from-all="[parent's exclude-from-all]|no|yes|no_analyzed"
+      converter="converter lookup name"
+      term-vector="no|yes|positions|offsets|positions_offsets"
+      format="the format string (only applies to formatted elements)"
+>
+</meta-data>]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - meta-data</title>
+          <tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>store (optional, defaults to <literal>yes</literal>)</entry>
+              <entry>If the value of the class property that the meta-data maps to, is going to be stored in the index.</entry>
+            </row>
+            <row>
+              <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
+              <entry>If the value of the class property that the meta-data maps to, is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analysed
+              (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+            </row>
+            <row>
+              <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
+              <entry>Controls the boost level for the <literal>meta-data</literal>.</entry>
+            </row>
+            <row>
+              <entry>analyzer (optional, defaults to the parent analyzer)</entry>
+              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+            </row>
+            <row>
+              <entry>term-vector (optional, defaults to <literal>no</literal>)</entry>
+              <entry>The term vector value of meta data.</entry>
+            </row>
+            <row>
+              <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
+              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more performant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
+            </row>
+            <row>
+              <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
+              <entry>Excludes the meta-data from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+            </row>
+            <row>
+              <entry>null-value (optional, defaults to not storing the anything on null)</entry>
+              <entry>A String null value that will be used when the property evaluates to null.</entry>
+            </row>
+            <row>
+              <entry>converter (optional)</entry>
+              <entry>The global converter lookup name registered with the configuration. Note, that in case of a <literal>Collection</literal> property, the converter will be applied to the collection elements (Compass has it's own converter for Collections).</entry>
+            </row>
+            <row>
+              <entry>format (optional)</entry>
+              <entry>Allows for quickly setting a format for format-able types (dates, and numbers), without creating/registering a specialized converter under a lookup name.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
+
+        <para>
+          The element <literal>meta-data</literal> is a <literal>Property</literal> within a <literal>Resource</literal>.
+        </para>
+
+        <para>
+          You can control the format of the marshalled values when mapping a <literal>java.lang.Number</literal> (or the equivalent primitive value) using the format provided by the <literal>java.text.DecimalFormat</literal>. You can also format a <literal>java.util.Date</literal> using the format provided by <literal>java.text.SimpleDateFormat</literal>. You set the format string in the <literal>format</literal> attribute.
+        </para>
+      </para>
+    </sect2>
+
+    <sect2 id="dynamic-meta-data">
+      <title>dynamic-meta-data</title>
+
+      <para>
+        Declaring and using the <literal>dynamic-meta-data</literal> element.
+
+<programlisting><![CDATA[<dynamic-meta-data
+      name="The name the meta data will be saved under"
+      store="yes|no|compress"
+      index="tokenized|un_tokenized|no"
+      boost="boost value for the meta-data"
+      analyzer="name of the analyzer"
+      reverse="no|reader|string"
+      null-value="optional String value when expression is null"
+      exclude-from-all="[parent's exclude-from-all]|no|yes|no_analyzed"
+      converter="the Dynamic Converter lookup name (required)"
+      format="the format string (only applies to formatted elements)"
+>
+</meta-data>]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - dynamic-meta-data</title>
+          <tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>name</entry>
+              <entry>The name the dynamic meta data will be saved under (similar to the tag name of the <literal>meta-data</literal> mapping).</entry>
+            </row>
+            <row>
+              <entry>store (optional, defaults to <literal>yes</literal>)</entry>
+              <entry>If the value of the class property that the meta-data maps to, is going to be stored in the index.</entry>
+            </row>
+            <row>
+              <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
+              <entry>If the value of the class property that the meta-data maps to, is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analysed
+              (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+            </row>
+            <row>
+              <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
+              <entry>Controls the boost level for the <literal>meta-data</literal>.</entry>
+            </row>
+            <row>
+              <entry>analyzer (optional, defaults to the parent analyzer)</entry>
+              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+            </row>
+            <row>
+              <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
+              <entry>The meta-data will have it's value reversed. Can have the values of <literal>no</literal> - no reverse will happen, <literal>string</literal> - the reverse will happen and the value stored will be a reversed string, and <literal>reader</literal> - a special reader will wrap the string and reverse it. The <literal>reader</literal> option is more performant, but the <literal>store</literal> and <literal>index</literal> settings will be discarded.</entry>
+            </row>
+            <row>
+              <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
+              <entry>Excludes the meta-data from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+            </row>
+            <row>
+              <entry>null-value (optional, defaults to not saving the value)</entry>
+              <entry>If the expression evaluates to null, the String null value that will be stored for it.</entry>
+            </row>
+            <row>
+              <entry>converter (required)</entry>
+              <entry>The global dynamic converter lookup name registered with the configuration. Built in dynamic converters include: el, jexl, velocity, ognl and groovy.</entry>
+            </row>
+            <row>
+              <entry>format (optional)</entry>
+              <entry>Allows for quickly setting a format for format-able types (dates, and numbers), without creating/registering a specialized converter under a lookup name. Applies when the dynamic expression evaluates to a formatable object. Must set the type attribute as well.</entry>
+            </row>
+            <row>
+              <entry>type (optional)</entry>
+              <entry>The fully qualified class name of the object evaluated as a result of the dynamic expression. Applies when using formats.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
+
+        <para>
+          The dynamic meta data mapping allows to define meta-data saved into the search engine as a result of evaluating an expression. The mapping does not map to any class property and acts as a syntactic meta-data (similar to the constant mapping). The value of the dynamic meta-data tag is the expression evaluated by a Dynamic Converter. Compass comes with several built in dynamic converters: el (Jakarta commons el), jexl (Jakarta commons jexl), velocity, ognl, and groovy. When defining the expression, the root class is registered under the <literal>data</literal> key (for libraries that require it).
+        </para>
+
+      </para>
+
+    </sect2>
+
+    <sect2 id="component">
+      <title>component</title>
+
+      <para>
+        Declaring and using the <literal>component</literal> element.
+
+<programlisting><![CDATA[<component
+      name="the class property name"
+      ref-alias="name of the alias"
+      max-depth="the depth of cyclic component mappings allowed"
+      accessor="property|field"
+      converter="converter lookup name"
+      cascade="comma separated list of create,save,delete or all"
+>
+</component>]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - component</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>ref-alias (optional)</entry>
+                <entry>The class mapping alias that defines the component. This is an optional attribute since under most conditions, Compass can infer the referenced alias (it actually can't infer it when using Collection without generics, or when a class has more than one mapping). In case of polymorphic relationship, a list of aliases can be provided (though again, Compass will try and auto detect the list of aliases if none is defined).</entry>
+              </row>
+              <row>
+                <entry>max-depth (optional, defaults to 1)</entry>
+                <entry>The depth of cyclic component mappings allowed.</entry>
+              </row>
+              <row>
+                <entry>override (optional, defaults to <literal>true</literal>)</entry>
+                <entry>If there is another definition with the same mapping name, if it will be overridden or added as additional mapping. Mainly used to override definitions made in extended mappings.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> access using the Java Bean accessor methods, while <literal>field</literal> directly access the class fields.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+              <row>
+                <entry>cascade (optional, defaults to none)</entry>
+                <entry>A comma separated list of operations to cascade. The operations names are: create, save and delete. all can be used as well to mark cascading for all operations.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para>
+          The component element defines a class dependency within the root class. The dependency name is identified by the <literal>ref-alias</literal>, which can be non-rootable or have no <literal>id</literal> mappings.
+        </para>
+
+        <para>
+          An embedded class means that all the mappings (meta-data values) defined in the referenced class are stored within the alias of the root class. It means that a search that will hit one of the component mapped meta-datas, will return it's owning class.
+        </para>
+
+        <para>
+          The type of the JavaBean property can be the class mapping class itself, an <literal>Array</literal> or <literal>Collection</literal>.
+        </para>
+      </para>
+    </sect2>
+
+    <sect2 id="reference">
+      <title>reference</title>
+
+      <para>
+        Declaring and using the <literal>reference</literal> element.
+
+ <programlisting><![CDATA[<reference
+        name="the class property name"
+        ref-alias="name of the alias"
+        ref-comp-alias="name of an optional alias mapped as component"
+        accessor="property|field"
+        converter="converter lookup name"
+        cascade="comma separated list of create,save,delete or all"
+  >
+</reference>
+]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - reference</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>ref-alias (optional)</entry>
+                <entry>The class mapping alias that defines the reference. This is an optional attribute since under most conditions, Compass can infer the referenced alias (it actually can't infer it when using Collection without generics, or when a class has more than one mapping). In case of polymorphic relationship, a list of aliases can be provided (though again, Compass will try and auto detect the list of aliases if none is defined).</entry>
+              </row>
+              <row>
+                <entry>ref-comp-alias (optional)</entry>
+                <entry>The class mapping alias that defines a "shadow component". Will marshal a component like mapping based on the alias into the current class. Note, it's best to create a dedicated class mapping (with root="false") that only holds the required information. Based on the information, if you search for it, you will be able to get as part of your hits the encompassing class. Note as well, that when changing the referenced class, for it to be reflected as part of the ref-comp-alias you will have to save all the relevant encompassing classes.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> access using the Java Bean accessor methods, while <literal>field</literal> directly access the class fields.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+              <row>
+                <entry>cascade (optional, defaults to none)</entry>
+                <entry>A comma separated list of operations to cascade. The operations names are: create, save and delete. all can be used as well to mark cascading for all operations.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para>
+          The reference element defines a "pointer" to a class dependency identified in <literal>ref-alias</literal>.
+        </para>
+
+        <para>
+          The type of the JavaBean property can be the class mapping class itself, an <literal>Array</literal> of it, or a <literal>Collection</literal>.
+        </para>
+
+        <para>
+          Currently there is no support for lazy behavior or cascading. It means that when saving an object, it will not persist the object defined references and when loading an object, it will load all it's references. Future versions will support lazy and cascading features.
+        </para>
+
+        <para>
+          Compass supports cyclic references, which means that two classes can have a cyclic reference defined between them.
+        </para>
+
+      </para>
+
+    </sect2>
+
+    <sect2 id="parent">
+      <title>parent</title>
+
+      <para>
+        Declaring and using the <literal>parent</literal> element.
+
+ <programlisting><![CDATA[<parent
+        name="the class property name"
+        accessor="property|field"
+        converter="converter lookup name"
+  >
+</reference>
+]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - parent</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The class property (a.k.a JavaBean property) name, with initial lowercase letter.</entry>
+              </row>
+              <row>
+                <entry>accessor (optional, defaults to <literal>property</literal>)</entry>
+                <entry>The strategy to access the class property value. <literal>property</literal> access using the Java Bean accessor methods, while <literal>field</literal> directly access the class fields.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para>
+          The parent mapping provides support for cyclic mappings for components (though bi directional component mappings are also supported). If the component class mapping wish to map the enclosing class, the parent mapping can be used to map to it. The parent mapping will not marshal (persist the data to the search engine) the parent object, it will only initialize it when loading the parent object from the search engine.
+        </para>
+
+      </para>
+
+    </sect2>
+
+    <sect2 id="constant">
+      <title>constant</title>
+
+      <para>
+        Declaring a constant set of <literal>meta-data</literal> using the
+
+        <literal>constant</literal> element.
+ <programlisting><![CDATA[<constant
+          exclude-from-all="no|yes|no_analyzed"
+          converter="converter lookup name"
+    >
+   meta-data,
+   meta-data-value+
+</reference>]]></programlisting>
+
+        <table>
+          <title>OSEM Xml Mapping - constant</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Attribute</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
+                <entry>Excludes the constant meta-data and all it's values from participating in the "all" feature. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+              </row>
+              <row>
+                <entry>override (optional, defaults to <literal>true</literal>)</entry>
+                <entry>If there is another definition with the same mapping name, if it will be overridden or added as additional mapping. Mainly used to override definitions made in extended mappings.</entry>
+              </row>
+              <row>
+                <entry>converter (optional)</entry>
+                <entry>The global converter lookup name registered with the configuration.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <para>
+          If you wish to define a set of constant meta data that will be embedded within the searchable class (<literal>Resource</literal>), you can use the <literal>constant</literal> element. You define the usual <literal>meta-data</literal> element followed by one or more<literal>meta-data-value</literal> elements with the value that maps to the <literal>meta-data</literal> within it.
+        </para>
+      </para>
+    </sect2>
+
+  </sect1>
+  
+</chapter>

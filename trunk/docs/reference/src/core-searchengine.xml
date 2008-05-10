@@ -1,0 +1,824 @@
+<chapter id="core-searchengine">
+  <title>Search Engine</title>
+
+  <sect1 id="core-searchengine-introduction">
+    <title>Introduction</title>
+
+    <para>
+      Compass Core provides an abstraction layer on top of the wonderful <ulink url="http://lucene.apache.org">Lucene</ulink> Search Engine. Compass also provides several additional features on top of Lucene, like two phase transaction management, fast updates, and optimizers. When trying to explain how Compass works with the Search Engine, first we need to understand the Search Engine domain model.
+    </para>
+  </sect1>
+
+  <sect1 id="core-searchengine-AliasResourceProperty">
+    <title>Alias, Resource and Property</title>
+
+    <para>
+      <literal>Resource</literal> represents a collection of properties. You can think about it as a virtual document - a chunk of data, such as a web page, an e-mail message, or a serialization of the Author object. A <literal>Resource</literal> is always associated with a single Alias and several <literal>Resource</literal>s can have the same Alias. The alias acts as the connection between a <literal>Resource</literal> and its mapping definitions (OSEM/XSEM/RSEM). A <literal>Property</literal> is just a place holder for a name and value (both strings). A <literal>Property</literal> within a <literal>Resource</literal> represents some kind of meta-data that is associated with the <literal>Resource</literal> like the author name.
+    </para>
+
+    <para>
+      Every <literal>Resource</literal> is associated with one or more id properties. They are required for Compass to manage <literal>Resource</literal> loading based on ids and <literal>Resource</literal> updates (a well known difficulty when using Lucene directly). Id properties are defined either explicitly in RSEM definitions or implicitly in OSEM/XSEM definitions.
+    </para>
+
+    <para>
+      For Lucene users, Compass <literal>Resource</literal> maps to Lucene <literal>Document</literal> and Compass <literal>Property</literal> maps to Lucene <literal>Field</literal>.
+    </para>
+
+    <sect2 id="core-searchengine-arp-using">
+      <title>Using Resource/Property</title>
+
+      <para>
+        When working with RSEM, resources acts as your prime data model. They are used to construct searchable content, as well as manipulate it. When performing a search, resources be used to display the search results.
+      </para>
+
+      <para>
+        Another important place where resources can be used, which is often ignored, is with OSEM/XSEM. When manipulating search content through the use of the application domain model (in case of OSEM), or through the use of xml data structures (in case of XSEM), resources are rarely used. They can be used when performing search operations. Based on your mapping definition, the semantic model could be accessed in a uniformed way through resources and properties.
+      </para>
+
+      <para>
+        Lets simplify this statement by using an example. If our application has two object types, Recipe and Ingredient, we can map both recipe title and ingredient title into the same semantic meta-data name, <literal>title</literal> (Resource Property name). This will allow us when searching to display the search results (hits) only on the Resource level, presenting the value of the property title from the list of resources returned.
+      </para>
+    </sect2>
+
+  </sect1>
+
+  <sect1 id="core-searchengine-analyzers">
+    <title>Analyzers</title>
+
+    <para>
+      <literal>Analyzer</literal>s are components that pre-process input text. They are also used when searching (the search string has to be processed the same way that the indexed text was processed). Therefore, it is usually important to use the same <literal>Analyzer</literal> for both indexing and searching.
+    </para>
+
+    <para>
+      <literal>Analyzer</literal> is a Lucene class (which qualifies to <literal>org.apache.lucene.analysis.Analyzer</literal> class). Lucene core itself comes with several <literal>Analyzer</literal>s and you can configure Compass to work with either one of them. If we take the following sentence: "The quick brown fox jumped over the lazy dogs", we can see how the different <literal>Analyzer</literal>s handle it:
+
+<programlisting><![CDATA[
+whitespace (org.apache.lucene.analysis.WhitespaceAnalyzer):
+  [The] [quick] [brown] [fox] [jumped] [over] [the] [lazy] [dogs]
+
+simple (org.apache.lucene.analysis.SimpleAnalyzer):
+  [the] [quick] [brown] [fox] [jumped] [over] [the] [lazy] [dogs]
+
+stop (org.apache.lucene.analysis.StopAnalyzer):
+  [quick] [brown] [fox] [jumped] [over] [lazy] [dogs]
+
+standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
+  [quick] [brown] [fox] [jumped] [over] [lazy] [dogs]
+]]></programlisting>
+
+    </para>
+
+    <para>
+      Lucene also comes with an extension library, holding many more analyzer implementations (including language specific analyzers). Compass can be configured to work with all of them as well.
+    </para>
+
+    <sect2 id="core-searchengine-analyzers-config">
+      <title>Configuring Analyzers</title>
+
+      <para>
+        A Compass instance acts as a registry of analyzers, with each analyzer bound to a lookup name. Two internal analyzer names within Compass are: <literal>default</literal> and <literal>search</literal>. <literal>default</literal> is the default analyzer that is used when no other analyzer is configured (configuration of using different analyzer is usually done in the mapping definition by referencing a different analyzer lookup name). <literal>search</literal> is the analyzer used on a search query string when no other analyzer is configured (configuring a different analyzer when executing a search based on a query string is done through the query builder API). By default, when nothing is configured, Compass will use Lucene standard analyzer as the <literal>default</literal> analyzer.
+      </para>
+
+      <para>
+        The following is an example of configuring two analyzers, one that will replace the <literal>default</literal> analyzer, and another one registered against <literal>myAnalyzer</literal> (it will probably later be referenced from within the different mapping definitions).
+<programlisting><![CDATA[<compass name="default">
+
+    <connection>
+        <file path="target/test-index" />
+    </connection>
+
+    <searchEngine>
+        <analyzer name="deault" type="Snowball" snowballType="Lovins">
+            <stopWords>
+                <stopWord value="no" />
+            </stopWords>
+        </analyzer>
+        <analyzer name="myAnalyzer" type="Standard" />
+    </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+
+      <para>
+        Compass also supports custom implementations of Lucene <classname>Analyzer</classname> class (note, the same goal might be achieved by implementing an analyzer filter, described later). If the implementation also implements <classname>CompassConfigurable</classname>, additional settings (parameters) can be injected to it using the configuration file. Here is an example configuration that registers a custom analyzer implementation that accepts a parameter named threshold:
+<programlisting><![CDATA[<compass name="default">
+
+    <connection>
+        <file path="target/test-index" />
+    </connection>
+
+    <searchEngine>
+        <analyzer name="deault" type="CustomAnalyzer" analyzerClass="eg.MyAnalyzer">
+          <setting name="threshold">5</setting>
+        </analyzer>
+    </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="core-searchengine-analyzers-filter">
+      <title>Analyzer Filter</title>
+
+      <para>
+        Filters are provided for simpler support for additional filtering (or enrichment) of analyzed streams, without the hassle of creating your own analyzer. Also, filters, can be shared across different analyzers, potentially having different analyzer types.
+      </para>
+
+      <para>
+        A custom filter implementation need to implement Compass <classname>LuceneAnalyzerTokenFilterProvider</classname>, which single method creates a Lucene <classname>TokenFilter</classname>. Filters are registered against a name as well, which can then be used in the analyzer configuration to reference them. The next example configured two analyzer filters, which are applied on to the <literal>default</literal> analyzer:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+      <analyzer name="deafult" type="Standard" filters="test1, test2" />
+
+      <analyzerFilter name="test1" type="eg.AnalyzerTokenFilterProvider1">
+          <setting name="param1" value="value1" />
+      </analyzerFilter>
+      <analyzerFilter name="test2" type="eg.AnalyzerTokenFilterProvider2">
+          <setting name="paramX" value="valueY" />
+      </analyzerFilter>
+  </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="core-searchengine-analyzers-synonym">
+      <title>Handling Synonyms</title>
+
+      <para>
+        Since synonyms are a common requirement with a search application, Compass comes with a simple synonym analyzer filter: <classname>SynonymAnalyzerTokenFilterProvider</classname>. The implementation requires as a parameter (setting) an implementation of a <classname>SynonymLookupProvider</classname>, which can return all the synonyms for a given value. No implementation is provided, though one that goes to a public synonym database, or a file input structure is simple to implement. Here is an example of how to configure it:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+      <analyzer name="deafult" type="Standard" filters="synonymFilter" />
+
+      <analyzerFilter name="synonymFilter" type="synonym">
+          <setting name="lookup" value="eg.MySynonymLookupProvider" />
+      </analyzerFilter>
+  </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+
+      <para>
+        Note the fact that we did not set the fully qualified class name for the type, and used <literal>synonym</literal>. This is a simplification that comes with Compass (naturally, you can still use the fully qualified class name of the synonym token filter provider).
+      </para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="core-searchengine-queryparser">
+    <title>Query Parser</title>
+
+    <para>
+      By default, Compass uses its own query parser based on Lucene query parser. Compass allows to configure several query parsers (registered under a lookup name), as well as override the default Compass query parser (registered under the name <literal>default</literal>). Custom query parsers can be used to extend the default query language support, to add parsed query caching, and so on. A custom query parser must implement the <classname>LuceneQueryParser</classname> interface.
+    </para>
+
+    <para>
+      Here is an example of configuring a custom query parser registered under the name <literal>test</literal>:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+    <queryParser name="test" type="eg.MyQueryParser">
+      <setting name="param1" value="value1" />
+    </queryParser>
+  </searchEngine>
+</compass>
+]]></programlisting>
+    </para>
+  </sect1>
+
+  <sect1 id="core-searchengine-indexstructure">
+    <title>Index Structure</title>
+
+    <para>
+      It is very important to understand how the Search Engine index is organized so we can than talk about transaction, optimizers, and sub index hashing. The following structure shows the Search Engine Index Structure:
+    </para>
+
+    <para>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/searchengine-index-structure.png" format="PNG" align="center" />
+        </imageobject>
+        <caption>
+          <para>Compass Index Structure</para>
+        </caption>
+      </mediaobject>
+    </para>
+
+    <para>
+      Every sub-index has it's own fully functional index structure (which maps to a single Lucene index). The Lucene index part holds a "meta data" file about the index (called <literal>segments</literal>) and 0 to N segment files. The segments can be a single file (if the compound setting is enabled) or multiple files (if the compound setting is disable). A segment is close to a fully functional index, which hold the actual inverted index data (see <ulink url="http://lucene.apache.org">Lucene</ulink> documentation for a detailed description of these concepts).
+    </para>
+
+    <para>
+      Index partitioning is one of Compass main features, allowing for flexible and configurable way to manage complex indexes and performance considerations. The next sections will explain in more details why this feature is important, especially in terms of transaction management.
+    </para>
+  </sect1>
+
+  <sect1 id="core-searchengine-transaction">
+    <title>Transaction</title>
+
+    <para>
+      Compass Search Engine abstraction provides support for transaction management on top of Lucene. The abstraction support common transaction levels: <literal>read_committed</literal> and <literal>serializable</literal>, as well as the special <literal>batch_insert</literal> one. Compass provides two phase commit support for the common transaction levels only.
+    </para>
+
+    <sect2 id="core-searchengine-transaction-locking">
+      <title>Locking</title>
+
+      <para>
+        Compass utilizes Lucene inter and outer process locking mechanism and uses them to establish it's transaction locking. Note that the transaction locking is on the "sub-index" level (the sub index based index), which means that dirty operations only lock their respective sub-index index. So, the more aliases / searchable content map to the same index (next section will explain how to do it - called sub index hashing), the more aliases / searchable content will be locked when performing dirty operations, yet the faster the searches will be. Lucene uses a special lock file to manage the inter and outer process locking which can be set in the Compass configuration. You can manage the transaction timeout and polling interval using Compass configuration.
+      </para>
+
+      <para>
+        A Compass transaction acquires a lock only when a dirty (i.e. <literal>create</literal>, <literal>save</literal> or <literal>delete</literal>) operation occurs, which makes "read only" transactions as fast as they should and can be. The following configuration file shows how to control the two main settings for locking, the locking timeout (which defaults to 10 seconds) and the locking polling interval (how often Compass will check and see if a lock is released or not) (defaults to 100 milli-seconds):
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <transaction lockTimeout="15" lockPollInterval="200" />
+</compass>
+]]></programlisting>
+      </para>
+    </sect2>
+    
+    <sect2 id="core-searchengine-transaction-isolation">
+      <title>Isolation</title>
+
+      <sect3 id="core-searchengine-transaction-read_committed">
+        <title>read_committed</title>
+  
+        <para>
+			Read committed transaction isolation level allows to isolate changes done during a transaction from other transactions until commit. It also allows for load/get/find operations to take into account changes done during the current transaction. This means that a delete that occurs during a transaction will be filtered out if a search is executed within the same transaction just after the delete.
+		</para>
+  
+        <para>
+          When starting a <literal>read_committed</literal> transaction, no locks are obtained. Read operation will not obtain a lock either. A lock will be obtained only when a dirty operation is performed. The lock is obtained only on the index of the alias / searchable content that is associated with the dirty operation, i.e the sub-index, and will lock all other aliases / searchable content that map to that sub-index. In Compass, every transaction that performed one or more <literal>save</literal> or <literal>create</literal> operation, and committed successfully, creates another segment in the respective index (different than how Lucene manages it's index), which helps in implementing quick transaction commits, fast updates, as well as paving the way for a two phase commit support (and the reason behind having optimizers).
+        </para>
+
+		<para>
+			The read committed transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. It uses Compass internal Execution Manager where the number of threads as well as the type of the execution manager (concurrent or work manager) can be configured.
+		</para>
+      </sect3>
+  
+      <sect3 id="core-searchengine-transaction-serializable">
+        <title>serializable</title>
+  
+        <para>
+            The <literal>serializable</literal> transaction level operates the same as the <literal>read_committed</literal> transaction level, except that when the transaction is opened/started, a lock is acquired on all the sub-indexes. This causes the transactional operations to be sequential in nature (as well as being a performance killer).
+        </para>
+      </sect3>
+  
+      <sect3 id="core-searchengine-transaction-lucene">
+        <title>lucene</title>
+  
+        <para>
+            A special transaction level, <literal>lucene</literal> (previously known as <literal>batch_insert</literal>) isolation level is similar to the <literal>read_committed</literal> isolation level except dirty operations done during a transaction are not visible to get/load/find operations that occur within the same transaction. This isolation level is very handy for long running batch dirty operations and can be faster than <literal>read_committed</literal>. Most usage patterns of Compass (such as integration with ORM tools) can work perfectly well with the <literal>lucene</literal> isolation level.
+        </para>
+		
+		<para>
+			It is important to understand this transaction isolation level in terms of merging done during commit time. Lucene might perform some merges during commit time depending on the merge factor configured using <literal>compass.engine.mergeFactor</literal>. This is different from the <literal>read_committed</literal> isolation level where no merges are perfomed during commit time. Possible merges can cause commits to take some time, so one option is to configure a large merge factor and let the optimizer do its magic (you can configure a different merge factor for the optimizer).
+		</para>
+		
+		<para>
+			Another important parameter when using this transaction isolation level is <literal>compass.engine.ramBufferSize</literal> (defaults to 16.0 Mb) which replaces the max buffered docs parameter and controls the amount of transactional data stored in memory. Larger values will yield better performance and it is best to allocate as much as possible.
+		</para>
+		
+		<para>
+			Most of the parameters can also be configured on a per session/transaction level. Please refer to <classname>RuntimeLuceneEnvironment</classname> for more information.
+		</para>
+		
+		<para>
+			The lucene transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. It uses Compass internal Execution Manager where the number of threads as well as the type of the execution manager (concurrent or work manager) can be configured.
+		</para>
+		
+		<para>
+			Here is how the transaction isolation level can be configured:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+  <transaction isolation="lucene" />
+</compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.transaction.isolation=lucene
+]]></programlisting>			
+		</para>
+      </sect3>
+      
+    </sect2>
+    
+    <sect2 id="core-searchengine-transaction-translog">
+      <title>Transaction Log</title>
+      
+      <para>
+        For <literal>read_committed</literal> and <literal>serializable</literal> transaction isolation Compass uses a transaction log of the current transaction data running. Compass provides the following transaction log implementations:
+      </para>
+      
+      <sect3 id="core-searchengine-transaction-translog-ram">
+        <title>Ram Transaction Log</title>
+        
+        <para>
+          The Ram transaction log stores all the transaction information in memory. This is the fastest transaction log available and is the default one Compass uses. The transaction size is controlled by the amount of memory the JVM has.
+        </para>
+        
+        <para>
+          Even though this is the default transaction log implementation, here is how it can be configured:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+  <transaction isolation="read_committed">
+    <readCommittedSettings transLog="ram://" />
+  </transaction>
+</compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.transaction.readcommitted.translog.connection=ram://
+]]></programlisting>
+
+        </para>
+      </sect3>
+
+      <sect3 id="core-searchengine-transaction-translog-fs">
+        <title>FS Transaction Log</title>
+        
+        <para>
+          The FS transaction log stores the transactional data on the file system. This allows for bigger transactions (bigger in terms of data) to be run when compared with the ram transaction log though on account of performance. The fs transaction log can be configured with a path where to store the transaction log (defaults to java.io.tmpdir system property). The path is then appended with <literal>compass/translog</literal> and for each transaction a new unique directory is created.
+        </para>
+        
+        <para>
+          Here is an example of how the fs transaction can be configured:
+<programlisting><![CDATA[<compass name="default">
+<connection>
+    <file path="target/test-index" />
+</connection>
+<transaction isolation="read_committed">
+  <readCommittedSettings transLog="file://" />
+</transaction>
+</compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.transaction.readcommitted.translog.connection=file://
+]]></programlisting>
+        </para>
+      </sect3>
+      
+      <para>
+        Transactional log settings are one of the session level settings that can be set. This allows to change how Compass would save the transaction log per session, and not globally on the Compass instance level configuration. Note, this only applies on the session that is responsible for creating the transaction. The following is an example of how it can be done:
+<programlisting><![CDATA[CompassSession session = compass.openSession();
+session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, 
+                                 "file://tmp/");
+]]></programlisting>
+      </para>
+    </sect2>
+  </sect1>
+  
+  <sect1 id="core-searchengine-all">
+      <title>All Support</title>
+      
+      <para>When indexing an Object, XML, or a plain Resource, their respective properties are added to the index. These properties can later be searched explicitly, for example: <literal>title:fang</literal>. Most times users wish to search on all the different properties. For this reason, Compass, by default, supports the notion of an "all" property. The property is actually a combination of the different properties mapped to the search engine.</para>
+      
+      <para>The all property provides advance features such using declared mappings of given properties. For example, if a property is marked with a certain analyzer, that analyzer will be usde to add the property to the all property. If it is untokenized, it will be added without analyzing it. If it is configured with a certain boost value, that part of the all property, when "hit", will result in higher ranking of the result.</para>
+      
+      <para>
+          The all property allows for global configuration and per mapping configuration. The global configuration allows to disable the all feature completely (<literal>compass.property.all.enabled=false</literal>). It allows to exclude the alias from the all proeprty (<literal>compass.property.all.excludeAlias=true</literal>), and can set the term vector for the all property (<literal>compass.property.all.termVector=yes</literal> for example).
+      </para>
+      
+      <para>
+          The per mapping definitions allow to configure the above settings on a mapping level (they override the global ones). They are included in an <literal>all</literal> tag that should be the first one within the different mappings. Here is an example for OSEM:
+<programlisting><![CDATA[<compass-core-mapping>
+<[mapping] alias="test-alias">
+  <all enable="true" exclude-alias="true" term-vector="yes" omit-norms="yes" />
+</[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+  </sect1>
+
+  <sect1 id="core-searchengine-subindexhash">
+    <title>Sub Index Hashing</title>
+
+    <para>
+      Searchable content is mapped to the search engine using Compass different mapping definitions (OSEM/XSEM/RSEM). Compass provides the ability to partition the searchable content into different sub indexes, as shown in the next diagram:
+    </para>
+
+    <para>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/subindex-hash.png" format="PNG" align="center" />
+        </imageobject>
+        <caption>
+          <para>Sub Index Hashing</para>
+        </caption>
+      </mediaobject>
+    </para>
+
+    <para>
+      In the above diagram A, B, C, and D represent aliases which in turn stands for the mapping definitions of the searchable content. A1, B2, and so on, are actual instances of the mentioned searchable content. The diagram shows the different options of mapping searchable content into different sub indexes.
+    </para>
+
+    <sect2 id="core-searchengine-subindexhash-constant">
+      <title>Constant Sub Index Hashing</title>
+
+      <para>
+        The simplest way to map aliases (stands for the mapping definitions of a searchable content) is by mapping all its searchable content instances into the same sub index. Defining how searchable content mapping to the search engine (OSEM/XSEM/RSEM) is done within the respectable mapping definitions. There are two ways to define a constant mapping to a sub index, the first one (which is simpler) is:
+<programlisting><![CDATA[<compass-core-mapping>
+  <[mapping] alias="test-alias" sub-index="test-subindex">
+    <!-- ... -->
+  </[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+      <para>
+        The mentioned <literal>[mapping]</literal> that is represented by the alias <literal>test-alias</literal> will map all its instances to <literal>test-subindex</literal>. Note, if <literal>sub-index</literal> is not defined, it will default to the <literal>alias</literal> value.
+      </para>
+      <para>
+        Another option, which probably will not be used to define constant sub index hashing, but shown here for completeness, is by specifying the constant implementation of <classname>SubIndexHash</classname> within the mapping definition (explained in details later in this section):
+<programlisting><![CDATA[<compass-core-mapping>
+  <[mapping] alias="test-alias">
+    <sub-index-hash type="org.compass.core.engine.subindex.ConstantSubIndexHash">
+        <setting name="subIndex" value="test-subindex" />
+    </sub-index-hash>
+    <!-- ... -->
+  </[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+      <para>
+        Here is an example of how three different aliases: A, B and C can be mapped using constant sub index hashing:
+      </para>
+      <para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/subindex-constant.png" format="PNG" align="center" />
+          </imageobject>
+          <caption>
+            <para>Modulo Sub Index Hashing</para>
+          </caption>
+        </mediaobject>
+      </para>
+    </sect2>
+
+    <sect2 id="core-searchengine-subindexhash-modulo">
+      <title>Modulo Sub Index Hashing</title>
+
+      <para>
+        Constant sub index hashing allows to map an alias (and all its searchable instances it represents) into the same sub index. The modulo sub index hashing allows for partitioning an alias into several sub indexes. The partitioning is done by hashing the alias value with all the string values of the searchable content ids, and then using the modulo operation against a specified size. It also allows setting a constant prefix for the generated sub index value. This is shown in the following diagram:
+      </para>
+      <para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/subindex-modulo1.png" format="PNG" align="center" />
+          </imageobject>
+          <caption>
+            <para>Modulo Sub Index Hashing</para>
+          </caption>
+        </mediaobject>
+      </para>
+      <para>
+        Here, A1, A2 and A3 represent different instances of alias A (let it be a mapped Java class in OSEM, a Resource in RSEM, or an XmlObject in XSEM), with a single id mapping with the value of 1, 2, and 3. A modulo hashing is configured with a prefix of <literal>test</literal>, and a size of 2. This resulted in the creation of 2 sub indexes, called <literal>test_0</literal> and <literal>test_1</literal>. Based on the hashing function (the alias String hash code and the different ids string hash code), instances of A will be directed to their respective sub index. Here is how A alias would be configured:
+<programlisting><![CDATA[<compass-core-mapping>
+  <[mapping] alias="A">
+    <sub-index-hash type="org.compass.core.engine.subindex.ModuloSubIndexHash">
+        <setting name="prefix" value="test" />
+        <setting name="size" value="2" />
+    </sub-index-hash>
+    <!-- ... -->
+  </[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+      <para>
+        Naturally, more than one mapping definition can map to the same sub indexes using the same modulo configuration:
+      </para>
+      <para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/subindex-modulo2.png" format="PNG" align="center" />
+          </imageobject>
+          <caption>
+            <para>Complex Modulo Sub Index Hashing</para>
+          </caption>
+        </mediaobject>
+      </para>
+    </sect2>
+
+    <sect2 id="core-searchengine-subindexhash-custom">
+      <title>Custom Sub Index Hashing</title>
+
+      <para>
+        <classname>ConstantSubIndexHash</classname> and <classname>ModuloSubIndexHash</classname> are implementation of Compass <classname>SubIndexHash</classname> interface that comes built in with Compass. Naturally, a custom implementation of the <classname>SubIndexHash</classname> interface can be configured in the mapping definition.
+      </para>
+
+      <para>
+        An implementation of <classname>SubIndexHash</classname> must provide two operations. The first, <literal>getSubIndexes</literal>, must return all the possible sub indexes the sub index hash implementation can produce. The second, <literal>mapSubIndex(String alias, Property[] ids)</literal> uses the provided aliases and ids in order to compute the given sub index. If the sub index hash implementation also implements the <classname>CompassConfigurable</classname> interface, different settings can be injected to it. Here is an example of a mapping definition with custom sub index hash implementation:
+<programlisting><![CDATA[<compass-core-mapping>
+  <[mapping] alias="A">
+    <sub-index-hash type="eg.MySubIndexHash">
+        <setting name="param1" value="value1" />
+        <setting name="param2" value="value2" />
+    </sub-index-hash>
+    <!-- ... -->
+  </[mapping]>
+</compass-core-mapping>]]></programlisting>
+      </para>
+    </sect2>
+  </sect1>
+
+  <sect1 id="core-searchengine-optimizers">
+    <title>Optimizers</title>
+
+    <para>
+      As mentioned in the <literal>read_committed</literal> section, every dirty transaction that is committed successfully creates another segment in the respective sub index. The more segments the index has, the slower the fetching operations take. That's why it is important to keep the index optimized and with a controlled number of segments. We do this by merging small segments into larger segments.
+    </para>
+
+    <para>
+      In order to solve the problem, Compass has a <classname>SearchEngineOptimizer</classname> which is responsible for keeping the number of segments at bay. When <classname>Compass</classname> is built using <classname>CompassConfiguration</classname>, the <classname>SearchEngineOptimizer</classname> is started and when <classname>Compass</classname> is closed, the <classname>SearchEngineOptimizer</classname> is stopped.
+    </para>
+
+    <para>
+      The optimization process works on a sub index level, performing the optimization for each one. During the optimization process, optimizers will lock the sub index for dirty operations. This causes a tradeoff between having an optimized index, and spending less time on the optimization process in order to allow for other dirty operations.
+    </para>
+
+    <sect2 id="core-searchengine-optimizers-scheduledOptimizers">
+      <title>Scheduled Optimizers</title>
+      <para>
+        Each optimizer in Compass can be wrapped to be executed in a scheduled manner. The default behavior within Compass is to schedule the configured optimizer (unless it is the null optimizer). Here is a sample configuration file that controls the scheduling of an optimizer:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+    <optimizer scheduleInterval="90" schedule="true" />
+  </searchEngine>
+</compass>
+]]></programlisting>
+      </para>
+
+    </sect2>
+
+    <sect2 id="core-searchengine-optimizers-aggressiveOptimizer">
+      <title>Aggressive Optimizer</title>
+
+      <para>
+        The <classname>AggressiveOptimizer</classname> uses Lucene optimization feature to optimize the index. Lucene optimization merges all the segments into one segment. You can set the limit of the number of segments, after which the index is considered to need optimization (the aggressive optimizer merge factor).
+      </para>
+
+      <para>
+        Since this optimizer causes all the segments in the index to be optimized into a single segment, the optimization process might take a long time to happen. This means that for large indexes, the optimizer will block other dirty operations for a long time in order to perform the index optimization. It also means that the index will be fully optimized after it, which means that search operations will execute faster. For most cases, the <classname>AdaptiveOptimizer</classname> should be the one used.
+      </para>
+    </sect2>
+
+    <sect2 id="core-searchengine-optimizers-adaptiveOptimizer">
+      <title>Adaptive Optimizer</title>
+
+      <para>
+        The <classname>AdaptiveOptimizer</classname> optimizes the segments while trying to keep the optimization time at bay. As an example, when we have a large segment in our index (for example, after we batched indexed the data), and we perform several interactive transactions, the aggressive optimizer will then merge all the segments together, while the adaptive optimizer will only merge the new small segments. You can set the limit of the number of segments, after which the index is considered to need optimization (the adaptive optimizer merge factor).
+      </para>
+
+    </sect2>
+
+    <sect2 id="core-searchengine-optimizers-nullOptimizer">
+      <title>Null Optimizer</title>
+
+      <para>
+        Compass also comes with a <classname>NullOptimizer</classname>, which performs no optimizations. It is mainly there if the hosting application developed it's own optimization which is maintained by other means than the <classname>SearchEngineOptimizer</classname>. It also makes sense to use it when configuring a <classname>Compass</classname> instance with a <literal>batch_insert</literal> transaction. It can also be used when the index was built offline and has been fully optimized, and later it is only used for search/read operations.
+      </para>
+
+    </sect2>
+  </sect1>
+
+  <sect1 id="core-searchengine-merge">
+    <title>Merge</title>
+	
+	<para>
+		Lucene perfoms merges of different segments after certain operaitons are done on the index. The less merges you have, the faster the searching is. The more merges you do, the slower certain operations will be. Compass allows for fine control over when merges will occur. This depends greatly on the transaction isolation level and the optimizer used and how they are configured.
+	</para>
+	
+	<sect2 id="core-searchengine-merge-policy">
+		<title>Merge Policy</title>
+		
+		<para>
+			Merge policy controls which merges are supposed to happen for a ceratin index. Compass allows to simply configure the two merge policies that come with Lucene, the <literal>LogByteSize</literal> (the default) and <literal>LogDoc</literal>, as well as configure custom implementations. Configuring the type can be done usign <literal>compass.engine.merge.policy.type</literal> and has possible values of <literal>logbytesize</literal>, <literal>logdoc</literal>, or the fully qualified class name of a <classname>MergePolicyProvider</classname>.
+		</para>
+		
+		<para>
+			The <literal>LogByteSize</literal> can be further configured using <literal>compass.engine.merge.policy.maxMergeMB</literal> and <literal>compass.engine.merge.policy.minMergeMB</literal>.
+		</para>
+	</sect2>
+	
+	<sect2 id="core-searchengine-merge-scheduler">
+		<title>Merge Scheduler</title>
+		
+		<para>
+			Merge scheduler controls how merge operations happen once a merge is needed. Lucene comes with built in <literal>ConcurrentMergeSchduler</literal> (executes merges concurrently on newly created threads) and <literal>SerialMergeScheduler</literal> that executes the merge operations on the same therad. Compass extends Lucene and provide <literal>ExecutorMergeScheduler</literal> allowing to utlize Compass internal exdecutor pool (either concurrent or work manager backed) with no overhead of creating new threads. This is the default merge scheduler that comes with Compass.
+		</para>
+		
+		<para>
+			Configuring the type of the merge scheduler can be done using <literal>compass.engine.merge.scheduler.type</literal> with the following possible values: <literal>executor</literal> (the default), <literal>concurrent</literal> (Lucene Concurrent merge scheduler), and <literal>serial</literal> (Lucene serial merge scheduler). It can also have a fully qualified name of an implementation of <classname>MergeSchedulerProvider</classname>.
+		</para>
+	</sect2>
+  </sect1>
+  
+  <sect1 id="core-searchengine-indexdeletionpolicy">
+    <title>Index Deletion Policy</title>
+    
+    <para>
+      Lucene allows to define an <literal>IndexDeletionPolicy</literal> which allows to control when commit points are deleted from the index storage. Index deletion policy mainly aim at allowing to keep old Lucene commit points relevant for a certain parameter (such as expiration time or number of commits), which allows for better NFS support for example. Compass allows to easily control the index deletion policy to use and comes built in with several index deletion policy implementations. Here is an example of its configuration using the default index deletion policy  which keeps only the last commit point:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <searchEngine>
+    <indexDeletionPolicy>
+        <keepLastCommit />
+    </indexDeletionPolicy>
+  </searchEngine>
+</compass>
+]]></programlisting>      
+    </para>
+    
+    <para>
+      Here is the same configuration using properties based configuration:
+<programlisting><![CDATA[<compass name="default">
+
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+
+  <settings>
+      <setting name="compass.engine.store.indexDeletionPolicy.type" value="keeplastcommit" />
+  </settings>
+</compass>
+]]></programlisting>      
+    </para>
+    
+    <para>Compass comes built in with several additional deletion policies including: <literal>keepall</literal> which keeps all commit points. <literal>keeplastn</literal> which keeps the last N commit points. <literal>expirationtime</literal> which keeps commit points for X number of seconds (with a default expiration time of "cache invalidation interval * 3").</para>
+    
+    <para>By default, the index deletion policy is controlled by the actual index storage. For most (ram, file) the deletion policy is keep last committed (which should be changed when working over a shared disk). For distributed ones (such as coherence, gigaspaces, terrracotta), the index deletion policy is the expiration time one.</para>
+  </sect1>
+  
+  <sect1 id="core-searchengine-spellcheck">
+      <title>Spell Check / Did You Mean</title>
+      
+      <para>
+          Compass comes with built in support for spell check support. It allows to suggest queries (did you mean feature) as well as allow to get possible suggestions for given words. By default, the spell check support is disabled. In other to enable it, the following property need to be set:
+<programlisting><![CDATA[compass.engine.spellcheck.enable=true
+]]></programlisting>      
+      </para>
+      
+      <para>
+          Once spell check is enabled, a special spell check index will be built based on the "all" property (more on that later). It can then be used in the following simple manner:
+<programlisting><![CDATA[CompassQuery query = session.queryBuilder().queryString("jack london").toQuery();
+CompassHits hits = query.hits();
+System.out.println("Original Query: " + hits.getQuery());
+if (hits.getSuggestedQuery().isSuggested()) {
+    System.out.println("Did You Mean: " + hits.getSuggestedQuery());
+}
+]]></programlisting>      
+      </para>
+      
+      <para>
+          In order to perform spell index level operations, <classname>Compass</classname> exposes now a <literal>getSpellCheckManager()</literal> in order to perform them. Note, this method will return <literal>null</literal> in case spell check is disabled. The spell check manager also allows to get suggestions for a given word.
+      </para>
+      
+      <para>
+          By default, when the spell check index is enabled, two scheduled tasks will kick in. The first scheduled task is responsible for monitoring the spell check index, and if changed (for example, by a different Compass instance), will reload the latest changes into the index. The interval for this scheduled task can be controlled using the setting <literal>compass.engine.cacheIntervalInvalidation</literal> (which is used by Compass for the actual index as well), and defaults to 5 seconds (it is set in milliseconds).
+      </para>
+      
+      <para>
+          The second scheduler is responsible for identifying that the actual index was changed, and rebuild the spell check index for the relevant sub indexes that were changed. It is important to understand that the spell check index will not be updated when operations are performed against the actual index. It will only be updated if explicitly called for rebuild or concurrentRebuild using the Spell Check Manager, or through the scheduler (which calls the same methods). By default, the scheduler will run every 10 minutes (no sense in rebuilding the spell check index very often), and can be controlled using the following setting: <literal>compass.engine.spellcheck.scheduleInterval</literal> (resolution in seconds).
+      </para>
+      
+      <sect2 id="core-searchengine-spellcheck-index">
+          <title>Spell Index</title>
+          
+          <para>
+              Compass by default will build a spell index using the same configured index storage simply under a different "sub context" name called <literal>spellcheck</literal> (the compass index is built under sub context <literal>index</literal>). For each sub index in Compass, a spell check sub index will be created. By default, a scheduler will kick in (by default each 10 minutes) and will check if the spell index needs to be rebuilt, and if it does, it will rebuild it. The spell check manager also exposes API in order to perform the rebuild operations as well as checking if the spell index needs to be rebuilt. Here is an example of how the scheduler can be configured:
+<programlisting><![CDATA[compass.engine.spellcheck.enable=true
+# the default it true, just showing the setting
+compass.engine.spellcheck.schedule=true
+# the schedule, in minutes (defaults to 10)
+compass.engine.spellcheck.scheduleInterval=10
+]]></programlisting>      
+          </para>
+          
+          <para>
+              The spell check index can be configured to be stored on a different location than the Compass index. Any index related parameters can be set as well. Here is an example (for example, if the index is stored in the database, and spell index should be stored on the file system):
+<programlisting><![CDATA[compass.engine.spellcheck.enable=true
+compass.engine.spellcheck.engine.connection=file://target/spellindex
+compass.engine.spellcheck.engine.ramBufferSize=40
+]]></programlisting>      
+          </para>
+          
+          <para>
+              In the above example we also configure the indexing process of the spell check index to use more memory (40) so the indexing process will be faster. As seen here, settings that control the index can be used (<literal>compass.engine.</literal> settings) can apply to the spell check index by prepending the <literal>compass.engine.spellcheck</literal> setting.
+          </para>
+          
+          <para>
+              So, what is actually being included in the spell check index. Out of the box, by just enabling spell check, the all field is going to be used to get the terms for the spell check index. In this case, things that are excluded from the all field will be excluded from the spell check index as well
+          </para>
+          <para>
+              Compass allows for great flexibility in what is going to be included or excluded in the spell check index. The first two important settings are: <literal>compass.engine.spellcheck.defaultMode</literal> and the <literal>spell-check</literal> resource mapping level definition (for class/resource/xml-object). By default, both are set to <literal>NA</literal>, which results in including the all property. The all property can be excluded by setting the <literal>spell-check</literal> to <literal>exclude</literal> on the all mapping definition.
+          </para>
+          
+          <para>
+              Each resource mapping (resource/class/xml-object) can have a <literal>spell-check</literal> definition of <literal>include</literal>, <literal>exclude</literal>, and <literal>na</literal>. If set to <literal>na</literal>, the global default mode will be used for it (which can be set to <literal>include</literal>, <literal>exclude</literal> and <literal>na</literal> as well).
+          </para>
+          
+          <para>
+              When the resource mapping ends up with <literal>spell-check</literal> of <literal>include</literal>, it will automatically include all the properties for the given mapping, except for the "all" property. Properties can be excluded by specifically setting their respective <literal>spell-check</literal> to <literal>exclude</literal>.
+          </para>
+
+          <para>
+              When the resource mapping ends up with <literal>spell-check</literal> of <literal>exclude</literal>, it will automatically exclude all the properties for the given mapping, as well as the "all" property. Properties can be included by specifically setting their respective <literal>spell-check</literal> to <literal>include</literal>.
+          </para>
+          
+          <para>
+              On top of specific mapping definition. Compass can be configured with <literal>compass.engine.spellcheck.globablIncludeProperties</literal> which is a comma separated list of properties that will always be included. And <literal>compass.engine.spellcheck.globablExcludeProperties</literal> which is a comma separated list of properties that will always be excluded.
+          </para>
+          
+          <para>
+              If you wish to know which properties end up being included for certain sub index, turn the debug logging level on for <classname>org.compass.core.lucene.engine.spellcheck.DefaultLuceneSpellCheckManager</classname> and it will print out the list of properties that will be used for each sub index.
+          </para>
+      </sect2>      
+  </sect1>
+
+  <sect1 id="core-searchengine-directlucene">
+    <title>Direct Lucene</title>
+
+    <para>
+      Compass provides a helpful abstraction layer on top of Lucene, but it also acknowledges that there are cases where direct Lucene access, both in terms of API and constructs, is required. Most of the direct Lucene access is done using the <classname>LuceneHelper</classname> class. The next sections will describe its main features, for a complete list, please consult its javadoc.
+    </para>
+
+    <sect2 id="core-searchengine-dl-wrapper">
+      <title>Wrappers</title>
+      <para>
+        Compass wraps some of Lucene classes, like <classname>Query</classname> and <classname>Filter</classname>. There are cases where a Compass wrapper will need to be created out of an actual Lucene class, or an actual Lucene class need to be accessed out of a wrapper.
+      </para>
+      <para>
+        Here is an example for wrapping the a custom implementation of a Lucene <classname>Query</classname> with a <classname>CompassQuery</classname>:
+<programlisting><![CDATA[CompassSession session = // obtain a compass session
+Query myQ = new MyQuery(param1, param2);
+CompassQuery myCQ = LuceneHelper.createCompassQuery(session, myQ);
+CompassHits hits = myCQ.hits();
+]]></programlisting>
+      </para>
+      <para>
+        The next sample shows how to get Lucene <classname>Explanation</classname>, which is useful to understand how a query works and executes:
+<programlisting><![CDATA[CompassSession session = // obtain a compass session
+CompassHits hits = session.find("london");
+for (int i = 0; i < hits.length(); i++) {
+  Explanation exp = LuceneHelper.getLuceneSearchEngineHits(hits).explain(i);
+  System.out.println(exp.toString());
+}
+]]></programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="core-searchengine-dl-searcher">
+      <title>Searcher And IndexReader</title>
+      <para>
+        When performing read operations against the index, most of the time Compass abstraction layer is enough. Sometimes, direct access to Lucene own <classname>IndexReader</classname> and <classname>Searcher</classname> are required. Here is an example of using the reader to get all the available terms for the category property name (Note, this is a prime candidate for future inclusion as part of Compass API):
+<programlisting><![CDATA[CompassSession session = // obtain a compass session
+LuceneSearchEngineInternalSearch internalSearch = LuceneHelper.getLuceneInternalSearch(session);
+TermEnum termEnum = internalSearch.getReader().terms(new Term("category", ""));
+try {
+  ArrayList tempList = new ArrayList();
+  while ("category".equals(termEnum.term().field())) {
+    tempList.add(termEnum.term().text());
+
+    if (!termEnum.next()) {
+        break;
+    }
+  }
+} finally {
+  termEnum.close();
+}
+]]></programlisting>
+      </para>
+    </sect2>
+
+  </sect1>
+</chapter>
+
+
+
+
+
+

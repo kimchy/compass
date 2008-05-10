@@ -1,0 +1,2347 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.compass-project.org/schema/core-config" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.compass-project.org/schema/core-config" elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+    <xsd:element name="compass-core-config">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="compass" type="compassType"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="compassType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures a Compass instance.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="connection" type="connectionType"/>
+            <xsd:element name="transaction" type="transactionType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="jndi" type="jndiType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="cache" type="cacheType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="converters" type="convertersType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="propertyAccessors" type="propertyAccessorsType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="propertyNamingStrategy" type="propertyNamingStrategyType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="searchEngine" type="searchEngineType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="osem" type="osemType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="mappings" type="mappingsType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="settings" type="settingsType" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the Compass instance. Will be used as the registration name when using Jndi registation.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- OSEM -->
+    <xsd:complexType name="osemType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Controls osem level settings and configuration
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="supportUnmarshall" type="booleanType" default="true">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Controls if the default support for un-marshalling within class mappings will default to true or
+                    false (unless it is explicitly set in the class mapping). Defaults to true.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="managedIdIndex" type="xsd:string" default="no">
+            <xsd:annotation>
+                <xsd:documentation>
+                    A setting for managed id index feature. When an internal managed id is created, it's index setting
+                    will be created using this global setting (if not defined locally in the mapping file). Possible
+                    values are no and un_tokenized, with default value set to no.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- Search Engine -->
+    <xsd:complexType name="searchEngineType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Controls search engine level settings and configuration.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="aliasProperty" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Controls the alias property settings.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="name" type="xsd:string" use="optional" default="alias">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name of the alias property.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="allProperty" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Controls the all property settings. The all property is an intenral Compass property for each
+                        resource that holds all the content of a Resource (except for the exceluded ones).
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="name" type="xsd:string" use="optional" default="all">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name of the all property.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="termVector" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The TermVectory that will be used to store the all property.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="no"/>
+                                <xsd:enumeration value="yes"/>
+                                <xsd:enumeration value="positions"/>
+                                <xsd:enumeration value="offsets"/>
+                                <xsd:enumeration value="positions_offsets"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="enable" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If all should be enabled globally or not. Defaults to true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="boostSupport" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Should the all property honor boost settings on sepecific proeprties when searching.
+                                Defaults to true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="highlighter" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures a Highlighter within Compass. The highlighter is bound to a lookup name, which can be
+                        used to reference the highlighter. The default highlighter should be regsitered under the name
+                        default.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="fragmenter" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Responsible for fragmenting the text. For a custom implementation of the Fragmenter
+                                    class, use the custom type, and provide the fully qualified class name in the class
+                                    attribute.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="type" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The type of the fragmenter.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                            <xsd:enumeration value="null">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        A null Lucene Fragmenter. Does not fragment the text.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="simple">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        A simple Lucene Fragmenter. Breaks text up into same-size
+                                                        fragments with no concerns over spotting sentence boundaries.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="custom">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Allows to specify a custom class implementation of Lucene
+                                                        Fragmenter class. The class can be defined in the class
+                                                        attribute.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                        </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:attribute>
+                                <xsd:attribute name="class" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The fully qualified class name of the implementation of Lucene Fragmenter.
+                                            Used when the type is custom.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="size" type="xsd:positiveInteger" use="optional" default="100">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The size of the fragment. Applies to the simple fragmenter.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="encoder" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Responsible for encoding the text. For a custom implementation of the Encoder
+                                    class, use the custom type, and provide the fully qualified class name in the class
+                                    attribute.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="type" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The type of the fragmenter.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                            <xsd:enumeration value="default">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Performs no encoding of the text.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="html">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Simple encoder that encodes html tags.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration value="custom">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Allows to specify a custom class implementation of Lucene
+                                                        Encoder class. The class can be defined in the class
+                                                        attribute.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                        </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:attribute>
+                                <xsd:attribute name="class" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The fully qualified class name of the implementation of Lucene Encoder.
+                                            Used when the type is custom.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:choice>
+                            <xsd:element name="simpleFormatter" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        A simple wrapper formatter. Wraps the highlight with pre and post string (can be
+                                        html or xml tags)
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="pre" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Controlls the text that is appened before the highlighted text.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="post" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Controlls the text that is appened after the highlighted text.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="htmlSpanGradientFormatter" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Wraps an html span tag around the highlighted text. The background and
+                                        foreground colors can be controlled and will have different color intensity
+                                        depending on the score.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="maxScore" type="xsd:float" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The score (and above) displayed as maxColor.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="minForegroundColor" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The hex color used for representing IDF scores of zero eg #FFFFFF
+                                                (white) or not set if no foreground color required.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="maxForegroundColor" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The largest hex color used for representing IDF scores eg #000000
+                                                (black) or not set if no foreground color required.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="minBackgroundColor" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The hex color used for representing IDF scores of zero eg #FFFFFF
+                                                (white) or not set if no background color required.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="maxBackgroundColor" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The largest hex color used for representing IDF scores eg #000000
+                                                (black) or not set if no background color required.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="customFormatter" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        A custom implementation of the Lucene Formatter.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="class" type="xsd:string" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The fully qualified class name implementation of Lucene Formatter.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:choice>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name the highlighter will be registered under.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="textTokenizer" use="optional" default="auto">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Controls the way text will be tokenized in order to perform the highlight operation.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="auto">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Will use term vector if available to tokenize the text, otherwise will use
+                                            analyzer.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="analyzer">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Forces tokenization of the text using the analyzer.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="termVector">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Forces tokenization of the text using the tem vector information.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="rewriteQuery" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Low level. If the query will be rewritten befored it is used by the highlighter.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="computeIdf" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If the idf value will be used during the highlighting process. Used by formatters that
+                                a) score selected fragments better b) use graded highlights eg chaning intensity of font
+                                color. Automatically assigned for the provided formatters.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="maxNumFragments" type="xsd:positiveInteger" use="optional" default="3">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the maximum number of fragments that will be returned.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="separator" type="xsd:string" use="optional" default="...">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the separator string between fragments if using the combined fragments highlight
+                                option.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="maxBytesToAnalyze" type="xsd:positiveInteger" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Maximum bytes to analyze. Default to 50*1024 bytes.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="analyzer" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures an Analyzer within Compass. The analyzer is bound to a lookup name, which can be used
+                        to reference the analyzer. Two internal names that Compass uses are: default and search.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="stopWords" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Allows adding stop words for the anlayzers, or completly replacing them.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="stopWord" minOccurs="0" maxOccurs="unbounded">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Sets a stop word.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:complexType>
+                                            <xsd:attribute name="value" type="xsd:string" use="required">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        The value for the stop word.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:attribute>
+                                        </xsd:complexType>
+                                    </xsd:element>
+                                </xsd:sequence>
+                                <xsd:attribute name="replace" type="booleanType" default="false">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Replace the set of stop words that comes with certain analyzers.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Configures additonal settings for the analyzer. Mainly used with custom analyzers.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name the analyzer will bind to.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                One of the internal analyzer types that comes with Compass. A CustomAnalyzer type is
+                                also provided for custom analyzers, which can be defined in the analyzerClass type.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="Standard"/>
+                                <xsd:enumeration value="Simple"/>
+                                <xsd:enumeration value="Whitespace"/>
+                                <xsd:enumeration value="Stop"/>
+                                <xsd:enumeration value="Snowball"/>
+                                <xsd:enumeration value="Braziliian"/>
+                                <xsd:enumeration value="Cjk"/>
+                                <xsd:enumeration value="Chinese"/>
+                                <xsd:enumeration value="Czech"/>
+                                <xsd:enumeration value="German"/>
+                                <xsd:enumeration value="Greek"/>
+                                <xsd:enumeration value="French"/>
+                                <xsd:enumeration value="Dutch"/>
+                                <xsd:enumeration value="Russian"/>
+                                <xsd:enumeration value="CustomAnalyzer"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="analyzerClass" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Used to define the fully qualified analyzer class name in case of a CustomAnalyzer type.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="snowballType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If using the snowball analyzer, controlls the snowball analyzer type.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="Danish"/>
+                                <xsd:enumeration value="Dutch"/>
+                                <xsd:enumeration value="English"/>
+                                <xsd:enumeration value="Finnish"/>
+                                <xsd:enumeration value="French"/>
+                                <xsd:enumeration value="German"/>
+                                <xsd:enumeration value="German2"/>
+                                <xsd:enumeration value="Italian"/>
+                                <xsd:enumeration value="Kp"/>
+                                <xsd:enumeration value="Lovins"/>
+                                <xsd:enumeration value="Norwegian"/>
+                                <xsd:enumeration value="Porter"/>
+                                <xsd:enumeration value="Portuguese"/>
+                                <xsd:enumeration value="Russian"/>
+                                <xsd:enumeration value="Spanish"/>
+                                <xsd:enumeration value="Swedish"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="filters" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A comma separated LuceneAnalyzerTokenFilterProviders lookup names to be used with the
+                                Analyzer.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="analyzerFilter" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures a LuceneAnalyzerTokenFilterProvider to be used within Compass.
+                        The LuceneAnalyzerTokenFilterProvider is registed under a lookup name, which can then be
+                        reference in in the analyzer definition (i.e. analyzer filters).
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name the analyzer filter will be registered under.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qulified class name of the LuceneAnalyzerTokenFilterProvider implementation.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="queryParser" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures a LuceneQueryParser to be used within Compass.
+                        The LuceneQueryParser is registed under a lookup name, which can then be
+                        reference when using query parsers builders.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name the query parser will be registered under.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qulified class name of the LuceneQueryParser implementation.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="optimizer" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Controls the optimizer that will be used to optimizer the search engine index. Optmizers are
+                        used to optimize the index for faster search. Optimizers can be controlled programatically, or
+                        scheduled.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="type" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Sets the type of the optimizer that will be used by the Compass instance. Defaults to
+                                the adaptive optimizer.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When the number of segments exceeds that specified mergeFactor, the segments
+                                            will be merged from the last segment, until a segment with a higher resource
+                                            count will be encountered.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.AggressiveOptimizer">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            When the number of segments exceeds that specified mergeFactor, all the
+                                            segments are merged into a single segment.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="org.compass.core.lucene.engine.optimizer.NullOptimizer">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Performs no optimization. Will not be scheduled even if the scheduled flag
+                                            is true.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="schedule" type="booleanType" use="optional" default="true">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                If the optimizer is going to be scheduled.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="scheduleInterval" type="xsd:float" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Determines the how often the optimizer will kick in (in seconds). Default is 10 seconds.
+                                Can be float number.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="mergeFactor" type="xsd:positiveInteger" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The merge factor for Adaptive and Aggressive optimizers.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="indexDeletionPolicy" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:choice minOccurs="1" maxOccurs="1">
+                        <xsd:element name="keepLastCommit"/>
+                        <xsd:element name="keepAll"/>
+                        <xsd:element name="keepLastN">
+                            <xsd:complexType>
+                                <xsd:attribute name="numToKeep" type="xsd:nonNegativeInteger" use="required"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="keepNoneOnInit"/>
+                        <xsd:element name="expirationTime">
+                            <xsd:complexType>
+                                <xsd:attribute name="expirationTimeSeconds" type="xsd:double" use="required"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="custom">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+                                </xsd:sequence>
+                                <xsd:attribute name="type" type="xsd:string" use="required"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="useCompoundFile" type="booleanType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Setting to turn on usage of a compound file. When on, multiple files for each segment are merged
+                    into a single file once the segment creation is finished. This is done regardless of what directory
+                    is in use.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="maxFieldLength" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The maximum number of terms that will be indexed for a single field in a document. This limits the
+                    amount of memory required for indexing, so that collections with very large files will not crash the
+                    indexing process by running out of memory. Note that this effectively truncates large documents,
+                    excluding from the index terms that occur further in the document. If you know your source documents
+                    are large, be sure to set this value high enough to accomodate the expected size. If you set it to
+                    Integer.MAX_VALUE, then the only limit is your memory, but you should anticipate an
+                    OutOfMemoryError. By default, no more than 10,000 terms will be indexed for a field.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="cacheInvalidationInterval" type="xsd:integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Sets how often (in milliseconds) the index manager will check if the index cache needs to be
+                    invalidated. Defaults to 5000. Setting it to 0 means that the cache will check if it needs to be
+                    invalidated all the time. Setting it to -1 means that the cache will never check if it needs to be
+                    invalidated, note, that it is perfectly fine if a single instance is manipulating the index. It
+                    works, since the cache is invalidated when a transaction is committed and a dirty operation has
+                    occured.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="indexManagerScheduleInterval" type="xsd:integer" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The index manager schedule interval (in seconds) where different actions related to index manager
+                    will happen (such as global cache interval checks).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="waitForCacheInvalidationOnIndexOperation" type="booleanType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Defaults to false. If set to true, will cause the index manager operation (including replace index)
+                    to wait for all other compass instances to invalidate their cache. The time to wait will be the
+                    indexManagerScheduledInterval configuration setting.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="defaultSearch" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The default search that will be used for non prefixed query values. Defaults to the value of the
+                    "all" property.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- Convertres -->
+    <xsd:complexType name="convertersType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures a set of converters to work with Compass.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="converter" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures a Converter bounded under the specified name with the given type.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Setting used to configure the Converter.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name of the Converter. Will be used as the converter lookup name. Can also be one of
+                                Compass default converter name, allowing to change default Converter types that comes
+                                with Compass.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qualified class name of the Converter. Must implement the Converter interface.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- Naming Strategy -->
+    <xsd:complexType name="propertyNamingStrategyType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures the naming strategy for paths Compass will use.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Setting used to configure the Naming Strategy (if needed). The Naming Strategy
+                        must implement the CompassConfigurable interface for the to be injected.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The type of the Property Naming Stratergy.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="org.compass.core.engine.naming.DefaultPropertyNamingStrategy"/>
+                    <xsd:enumeration value="org.compass.core.engine.naming.StaticPropertyNamingStrategy"/>
+                    <xsd:enumeration value="org.compass.core.engine.naming.DynamicPropertyNamingStrategy"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="typeClass" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The fully qualified class name of the naming strategy. Must implement the
+                    PropertyNamingStrategy interface.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- Property Accessor -->
+    <xsd:complexType name="propertyAccessorsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configures a set of converters to work with Compass.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="propertyAccessor" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures a custom property accessor
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Setting used to configure the Property Accessor (if needed). The Property Accessor
+                                    must implement the CompassConfigurable interface for the to be injected.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name of the Property Accessor. Will be used as the property accessor lookup name.
+                                Can also have the value deafult, which will be used as teh deafult property accessor
+                                when nothing is set in the mapping definitions.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="type" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qualified class name of the property accessor. Must implement the
+                                PropertyAccessor interface.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- Cache -->
+    <xsd:complexType name="cacheType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Controls compass cache settings.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="firstLevel" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        First level cache strategy and settings.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="type" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Type of the first level cache handling.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="org.compass.core.cache.first.NullFirstLevelCache">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            No first cache will be used.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="org.compass.core.cache.first.DefaultFirstLevelCache">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Default first level cache handling, storing Resource and Objects in the
+                                            cache per session.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- Transaction -->
+    <xsd:complexType name="transactionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Controls the search engine and global transaciton settings.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="readCommittedSettings" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Specialized settings for read_committed isolation level.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="transLog" use="optional" default="ram://">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The transactional log connection. Can be either ram:// or file://.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="optimizeTransLog" use="optional" default="true">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Should the transactional log be optimized before added to the actual index. Defaults
+                                    to true.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:choice>
+            <xsd:element name="jtaSettings" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Controls Jta lookup settings. Not requires since Compass will try and guess the environment its
+                        running in.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="userTransactionName" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The Jndi name of JTA UserTransaction object.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="cacheUserTransaction" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Set whether to cache the JTA UserTransaction object fetched from JNDI. Default is
+                                "true": UserTransaction lookup will only happen at startup, reusing the same
+                                UserTransaction handle for all transactions of all threads. This is the most efficient
+                                choice for all application servers that provide a shared UserTransaction object (the
+                                typical case). Turn this flag off to enforce a fresh lookup of the UserTransaction for
+                                every transaction. This is only necessary for application servers that return a new
+                                UserTransaction for every transaction, keeping state tied to the UserTransaction object
+                                itself rather than the current thread.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="managerLookup" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                TransactionManagerLookup build in implementations to use for obtaining JTA
+                                TransactionManager.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="org.compass.core.transaction.manager.BEST"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.JBoss"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.JOnAS"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.JOTM"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.JRun4"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.OC4J"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.Orion"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.Resin"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.SunONE"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.Weblogic"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.WebSphere"/>
+                                <xsd:enumeration value="org.compass.core.transaction.manager.Glassfish"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="managerLookupClass" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                User defined TransactionManagerLookup implementation to use for obtaining JTA
+                                TransactionManager.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="factory" use="optional" default="org.compass.core.transaction.LocalTransactionFactory">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Sets the transaciton integration strategy.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="org.compass.core.transaction.LocalTransactionFactory">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Uses a local transaction which does not interact with other transaction mechanisms.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="org.compass.core.transaction.JTASyncTransactionFactory">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Uses the JTA synchronization support to synchronize with the JTA transaction (not the
+                                same as two phase commit, meaning that if the transaction fails, the other resources
+                                that participate in the transaction will not roll back). If there is no existing JTA
+                                transaction, a new one will be started. Note, if using JTA with a Jdbc connection, be
+                                sure to set the commitBeforeCompletion to true. Can be tweaked using jtaSettings.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="org.compass.core.transaction.XATransactionFactory">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Uses the JTA Transaction to enlist a Compass implemented XAResource. This allows for
+                                Compass to participate in a two phase commit operation. Note, the JTA implementation
+                                should automatically delist the resource when the transaction commit/rollback. If there
+                                is no existing JTA transaction, a new one will be started.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="org.compass.spring.transaction.SpringSyncTransactionFactory">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Uses Spring synchronization support to synchronize with Spring transactions.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="org.compass.gps.device.hibernate.HibernateSyncTransactionFactory">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Uses Hibernate transaction abstraction to synchronize with its underlying transaciton.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="isolation" use="optional" default="read_committed">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Transaction isolation levels that Compass supports.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="read_committed">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The same read committed from data base systems. As fast for read only transactions.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="read_only_read_committed">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The same read committed from data base systems. Marks the transaciton as read only,
+                                which helps when integrating with transaction strageties that support read only flag.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="serializable">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The same as serializable from data base systems. Performance killer, basically results
+                                in transactions executed sequentially.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="batch_insert">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Same as Lucene transaction isolation level.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="lucene">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                An isolation level allowing for faster indexing at the expense of transactional
+                                sematics. Operations done during a transaction will not be visible to find/load/get
+                                operations within that transaction.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="commitBeforeCompletion" type="booleanType" use="optional" default="false">
+            <xsd:annotation>
+                <xsd:documentation>
+                    When using external transaciton managers (like JTA and Spring) synchronization, if the transaciton
+                    should be committed in the beforeCompletion phase. Very important to set to true when using Jdbc.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="lockTimeout" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The amount of time a transaction will wait in order to obtain it's specific lock (in seconds) for
+                    dirty operations. Defaults to 10 seconds.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="lockPollInterval" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The interval that the transaction will check to see if it can obtain the lock (in milliseconds). The
+                    default value is 100 milliseconds
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="disableAutoJoinSession" type="booleanType" use="optional" default="false">
+            <xsd:annotation>
+                <xsd:documentation>
+                    When opening a session, Compass tries to automatically start a transaction and join it. This might
+                    mean that transaction settings when running within a managed environemnt won't take affect. The
+                    settings allows to disable the auto joining of a session to a transaction.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- Connection -->
+    <xsd:complexType name="connectionType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Controls the search engine connection type and settings.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="file" type="fileConnType"/>
+                <xsd:element name="mmap" type="mmapConnType"/>
+                <xsd:element name="ram" type="ramConnType"/>
+                <xsd:element name="jdbc" type="jdbcConnType"/>
+                <xsd:element name="space" type="spaceConnType"/>
+                <xsd:element name="coherence" type="coherenceConnType"/>
+                <xsd:element name="tc" type="tcConnType"/>
+                <xsd:element name="custom" type="customConnType"/>
+            </xsd:choice>
+            <xsd:element name="lockFactory" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Allows to set lock factory to be used
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="type" type="xsd:string" use="required"/>
+                    <xsd:attribute name="path" type="xsd:string" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="directoryWrapperProvider" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Defines a Lucene directory wrapper (an implementation of DirectoryWrapperProvider)
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Allows to set additonal settings to a DirectoryWrapperProvider. Handy when using
+                                    user defined implementations.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                    <xsd:attribute name="name" type="xsd:string" use="required"/>
+                    <xsd:attribute name="type" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="localCache" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:attribute name="subIndex" type="xsd:string" use="required"/>
+                    <xsd:attribute name="connection" type="xsd:string" use="required"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="fileConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A file system based index.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="path" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The path to the index directory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="spaceConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A GigaSpace based index.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="indexName" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the index
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="url" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The url of the Space connecting to.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="bucketSize" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The bucket size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="flushRate" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The flush rate when writing buckets to the space.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="coherenceConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A Coherence based index.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="cacheName" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the cache
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="indexName" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The name of the index
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="bucketSize" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The bucket size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="flushRate" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The flush rate when writing buckets.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="type" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The type of the coherence directory. Defaults to invocable.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="datagrid"/>
+                    <xsd:enumeration value="invocable"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="tcConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A Terracota based index.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="bufferSize" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The buffer size of the index.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="flushRate" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The flush rate for the terracotta connection.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="mmapConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A file system based index using NIO MMAp Class. Considered slower than the general file system one, but
+                might have memory benefits (according to the Lucene documentation).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="path" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The path to the index directory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="ramConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Creates a memory based index, follows the Compass life-cycle. Created when the Compass is created, and
+                disposed when Compass is closed.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="path" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The logical path of the memory index. (Used to support multiple Compass instances with ram based
+                    index).
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="customConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A custom connection type. Uses the url and possibly additional settings to configure it.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="url" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The url for the custom connection type.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="jdbcConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Uses Jdbc to store the index in a database.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="dataSourceProvider">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Configures the Jdbc DataSource provider.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:choice>
+                        <xsd:element name="driverManager">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    A simple DataSource provider, with no other dependencies. Returns a new Jdbc
+                                    Connection for each getConnection DataSource call. Good for testing, but should not
+                                    be used for production since no pooling is performed.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="url" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The Jdbc url for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="username" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The user name for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="password" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The password for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="driverClass" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The driver class of Jdbc.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="c3p0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    A c3p0 data source provider. Creates a new C3P0 pooled data source. For
+                                    extra configuration, use a file called c3p0.properties and storing it as a top-level
+                                    resource in the same CLASSPATH / classloader that loads c3p0's jar file.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="url" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The Jdbc url for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="username" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The user name for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="password" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The password for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="driverClass" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The driver class of Jdbc.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="dbcp">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    A Jakarta Commons DBCP connection pool DataSource provider.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="url" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The Jdbc url for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="username" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The user name for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="password" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The password for the database connection.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="driverClass" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The driver class of Jdbc.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="defaultTransacitonIsolation" type="xsd:nonNegativeInteger"
+                                               use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The default TransactionIsolation state of connections created by this pool.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="initialSize" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The initial number of connections that are created when the pool is started.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="maxActive" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The maximum number of active connections that can be allocated from this
+                                            pool at the same time, or zero for no limit.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="maxIdle" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The maximum number of active connections that can remain idle in the pool,
+                                            without extra ones being released, or zero for no limit.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="minIdle" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The minimum number of active connections that can remain idle in the pool,
+                                            without extra ones being created, or 0 to create none.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="maxWait" type="xsd:nonNegativeInteger" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The maximum number of milliseconds that the pool will wait (when there are
+                                            no available connections) for a connection to be returned before throwing an
+                                            exception, or -1 to wait indefinitely.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="maxOpenPreparedStatements" type="xsd:integer" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The maximum number of open statements that can be allocated from the
+                                            statement pool at the same time, or zero for no limit.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="poolPreparedStatements" type="booleanType" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets if the pool will cache prepared statements.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="jndi">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Uses Jndi to lookup a Jdbc DataSource. If special Jndi configuration is needed, use
+                                    the jndi element to set it.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="lookup" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The Jndi lookup value. Will be used to lookup the DataSource.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="username" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The user name for the database connection. Optional since most of the time
+                                            will be set in Jndi.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="password" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The password for the database connection. Optional since most of the time
+                                            will be set in Jndi.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="external">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    A data source provider that can use an externally configured DataSource. In order
+                                    to set the external DataSource to be used, the
+                                    ExternalDataSourceProvider#setDataSource(javax.sql.DataSource) static method needs
+                                    to be called before the Compass instance is created.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="username" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The user name for the database connection. Optional since most of the time
+                                            will already be set.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="password" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The password for the database connection. Optional since most of the time
+                                            will already be set.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="autoCommit" type="xsd:string" use="optional" default="false">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Sets the auto commit mode for the Jdbc connection. Can be either false,
+                                            true, or external (will not set the auto commit on the connection)
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="ddl" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Control the database schema of the tables that will be created to store the index information.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="nameColumn" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The schema definition of the name column.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" default="name_">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The name of the name column.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="length" type="xsd:positiveInteger" default="50">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The length of the name column.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="valueColumn" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The schema definition of the value column.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" default="value_">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The name of the value column.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="length" type="xsd:positiveInteger">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The length (in K) of the value column (for databases that require it).
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="sizeColumn" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The schema definition of the size column.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" default="size_">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The name of the size column.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="lastModifiedColumn" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The schema definition of the last modified column.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" default="lf_">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The name of the last modified column.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                        <xsd:element name="deletedColumn" minOccurs="0">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    The schema definition of the deleted column.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" default="deleted_">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The name of the deleted column.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="fileEntries" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Allows for special configuration of file entries. Most of the times, the __default__ file entry
+                        name will be configured, usually using special bufferSize values for indexInput and bufferSize
+                        and threshold for indexOutput. Note, that Compass alreay comes with sensible defaults for the
+                        file entries.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="fileEntry" maxOccurs="unbounded">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Configures a file entry handling strategy.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="indexInput" minOccurs="0">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Configures the IndexInput settings (applies only for specific
+                                                FileEntryHandlers).
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:complexType>
+                                            <xsd:attribute name="type" use="optional">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        The type of the IndexInput implementation. Allows to configure
+                                                        one of the implementations that comes with Compass. If not set,
+                                                        will use the default implementation.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:simpleType>
+                                                    <xsd:restriction base="xsd:string">
+                                                        <xsd:enumeration
+                                                                value="org.apache.lucene.store.jdbc.index.FetchOnBufferReadJdbcIndexInput">
+                                                            <xsd:annotation>
+                                                                <xsd:documentation>
+                                                                    An IndexInput implementation, that for every buffer
+                                                                    refill will go and fetch the data from the database.
+                                                                </xsd:documentation>
+                                                            </xsd:annotation>
+                                                        </xsd:enumeration>
+                                                        <xsd:enumeration
+                                                                value="org.apache.lucene.store.jdbc.index.FetchOnOpenJdbcIndexInput">
+                                                            <xsd:annotation>
+                                                                <xsd:documentation>
+                                                                    An IndexInput implementation that will read all the
+                                                                    relevant data from the database when created, and
+                                                                    will cache it untill it is closed.
+                                                                </xsd:documentation>
+                                                            </xsd:annotation>
+                                                        </xsd:enumeration>
+                                                        <xsd:enumeration
+                                                                value="org.apache.lucene.store.jdbc.index.FetchPerTransactionJdbcIndexInput">
+                                                            <xsd:annotation>
+                                                                <xsd:documentation>
+                                                                    Caches blobs per transaction. Only supported for
+                                                                    dialects that supports blobs per transaction.
+                                                                </xsd:documentation>
+                                                            </xsd:annotation>
+                                                        </xsd:enumeration>
+                                                    </xsd:restriction>
+                                                </xsd:simpleType>
+                                            </xsd:attribute>
+                                            <xsd:attribute name="typeClass" type="xsd:string" use="optional">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        For user defined implementation of IndexInput, allows to set the
+                                                        fully qulified class name of the implementation.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:attribute>
+                                            <xsd:attribute name="bufferSize" type="xsd:positiveInteger" use="optional">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        For IndexInput implementation that support it, allows to set the
+                                                        memory based cached buffer size. A larger value will usually
+                                                        mean less hits to the database.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:attribute>
+                                        </xsd:complexType>
+                                    </xsd:element>
+                                    <xsd:element name="indexOutput" minOccurs="0">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Configures the IndexOutput settings (applies only for specific
+                                                FileEntryHandlers).
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:complexType>
+                                            <xsd:attribute name="type" use="optional">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        The type of the IndexOutput implementation. Allows to configure
+                                                        one of the implementations that comes with Compass. If not set,
+                                                        will use the default implementation.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:simpleType>
+                                                    <xsd:restriction base="xsd:string">
+                                                        <xsd:enumeration
+                                                                value="org.apache.lucene.store.jdbc.index.RAMAndFileJdbcIndexOutput">
+                                                            <xsd:annotation>
+                                                                <xsd:documentation>
+                                                                    An IndexOutput implementation that initially writes
+                                                                    the data to a memory buffer. Once it exceeds the
+                                                                    configured threshold, will start working with a
+                                                                    temporary file, releasing the previous buffer.
+                                                                </xsd:documentation>
+                                                            </xsd:annotation>
+                                                        </xsd:enumeration>
+                                                        <xsd:enumeration
+                                                                value="org.apache.lucene.store.jdbc.index.RAMJdbcIndexOutput">
+                                                            <xsd:annotation>
+                                                                <xsd:documentation>
+                                                                    An IndexOutput implemenation that stores all the
+                                                                    data written to it in memory, and flushes it to the
+                                                                    database when the output is closed.
+                                                                </xsd:documentation>
+                                                            </xsd:annotation>
+                                                        </xsd:enumeration>
+                                                    </xsd:restriction>
+                                                </xsd:simpleType>
+                                            </xsd:attribute>
+                                            <xsd:attribute name="typeClass" type="xsd:string" use="optional">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        For user defined implementation of IndexOutput, allows to set
+                                                        the fully qulified class name of the implementation.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:attribute>
+                                            <xsd:attribute name="bufferSize" type="xsd:positiveInteger" use="optional">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        For IndexOutput implementation that support it, allows to set
+                                                        the memory based cached buffer size.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:attribute>
+                                            <xsd:attribute name="threshold" type="xsd:positiveInteger" use="optional">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Allows to set the threshold for RAMAndFileJdbcIndexOutput.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:attribute>
+                                        </xsd:complexType>
+                                    </xsd:element>
+                                    <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Allows to set additonal settings to a FileEntryHanlder. Handy when using
+                                                user defined implementations.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:element>
+                                </xsd:sequence>
+                                <xsd:attribute name="name" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The name can be either __default__ which is used for all unmapped files, it
+                                            can be the full name of the file stored, or the suffix of the file (the last
+                                            3 charecters).
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                                <xsd:attribute name="type" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            The type of the file entry handler (implements FileEntryHandler
+                                            interface). Allows using one of FileEntryHandler implementations that come
+                                            with Compass.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                    <xsd:simpleType>
+                                        <xsd:restriction base="xsd:string">
+                                            <xsd:enumeration
+                                                    value="org.apache.lucene.store.jdbc.handler.NoOpFileEntryHandler">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        A No Operation file entry handler. Performs no actual dirty
+                                                        operations, and returns empty data for read operations.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration
+                                                    value="org.apache.lucene.store.jdbc.handler.MarkDeleteFileEntryHandler">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Does not delete entries from the database, just marks them for
+                                                        deletion by updating the deleted column to true. Allows for
+                                                        registration of IndexInput and IndexOutput handlers.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                            <xsd:enumeration
+                                                    value="org.apache.lucene.store.jdbc.handler.ActualDeleteFileEntryHandler">
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        Removes file entries from the database by deleting the relevant
+                                                        rows from the database. Allows for registration of IndexInput
+                                                        and IndexOutput handlers.
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                            </xsd:enumeration>
+                                        </xsd:restriction>
+                                    </xsd:simpleType>
+                                </xsd:attribute>
+                                <xsd:attribute name="typeClass" type="xsd:string" use="optional">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            For special user defined implementation of FileEntryHandler, allows to set
+                                            the fully qualified class name of the implementation.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="managed" type="booleanType" use="optional" default="false">
+            <xsd:annotation>
+                <xsd:documentation>
+                    If the connection is managed or not. Basically, if set to true, compass will commit and rollback the
+                    transaction. If set to false, compass will not perform it. Should be set to true if using external
+                    transaction managers (like JTA or Spring PlatformTransactionManager), and false if using
+                    LocalTransactionFactory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="disableSchemaOperations" type="booleanType" use="optional" default="false">
+            <xsd:annotation>
+                <xsd:documentation>
+                    If set to true, no database schema level operations will be performed (drop and create
+                    tables). When deleting the data in the index, the content will be deleted, but the table will not
+                    be dropped. Default to false.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="dialectClass" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The fully qualified user defined class name of the implementation of the Dialect class.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="dialect" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    A dialect allows to work with a specific database. One of Compass intenral provided dialects.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.DB2Dialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.DerbyDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.FirebirdDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.HSQLDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.H2Dialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.InterbaseDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLInnoDBDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.MySQLMyISAMDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.Oracle8Dialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.Oracle9Dialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.OracleDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.PostgreSQLDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.SQLServerDialect"/>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.dialect.SybaseDialect"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="deleteMarkDeletedDelta" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Some of the entries in the database are marked as deleted, and not actually gets to be deleted from
+                    the database. The settings controls the delta time of when they should be deleted. They will be
+                    deleted if they were marked for deleted "delta" time ago (base on database time, if possible by
+                    dialect). The value is in milliseconds.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="lockClass" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The fully qulified class name of a user defined Lock implementation.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="lock" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    A lock strategy implementation using one of Compass provided implementations.
+                </xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.lock.SelectForUpdateLock">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A lock based on select...for update. Note, that not all databases support select ... for
+                                update, if the database (dialect) does not support it, a exception will be thrown. Also
+                                note, that when using select for update locking, when the database is created, the
+                                commit and write locks will be created and the select for update will be performed on
+                                them. If one wishes to switch to PhantomReadLock, they must be manually deleted.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.lock.PhantomReadLock">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A lock based on phantom reads and table level locking. For most database and most
+                                transaction isolation levels this lock is suffecient. The existance of the lock in the
+                                database, marks it as being locked. The benefits of using this lock is the ability to
+                                release it.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                    <xsd:enumeration value="org.apache.lucene.store.jdbc.lock.NoOpLock">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                A simple no op lock. Performs no locking.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:enumeration>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- JNDI -->
+    <xsd:complexType name="jndiType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Jndi configuration. Used for both regstering Compass with Jndi, and configuring Jndi for different
+                lookups that Compass mightbe required to perform.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="environment" minOccurs="0">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Additional environment settings when constructing Jndi InitialContext.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="property" maxOccurs="unbounded">
+                            <xsd:complexType>
+                                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                                <xsd:attribute name="value" type="xsd:string" use="required"/>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="register" type="booleanType" default="false">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Controls if the Compass instance will register with Jndi. The registration will be under Compass
+                    name attribute.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="class" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The Jndi java.naming.factory.initial property.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="url" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The Jndi java.naming.provider.url property.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <!-- Mapping Types -->
+    <xsd:complexType name="mappingsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                Adds OSEM (Object to Search Engine Mapping) definition to the Compass instance.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="resource" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Loads mapping definition from the class path.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="location" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The location (in the classpath) of the resource.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="class" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Loads mapping definition for a fully qualified class name.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qualified class name.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="jar" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Loads all the OSEM definitions found in a Jar file.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="path" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The file system path of the Jar file.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="file" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Loads OSEM definition from a file.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="path" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The file system path of the file.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="dir" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Loads all the OSEM definitions found in a directory.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="path" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The file system path of the file.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="package" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The fully qualified package name to load annotations definitions from.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="name" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The fully qualified pacakge name.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="scan" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        A scan support requiring a base package and an optional ant style pattern.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:attribute name="basePackage" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The base package to search for mappings.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="pattern" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                An optioanl ant style matching pattern.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- Settings Types -->
+    <xsd:complexType name="settingsType">
+        <xsd:annotation>
+            <xsd:documentation>
+                General set of settings
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="setting" type="settingType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="settingType">
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="value" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    <xsd:simpleType name="booleanType">
+        <xsd:restriction base="xsd:NMTOKEN">
+            <xsd:enumeration value="true"/>
+            <xsd:enumeration value="false"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

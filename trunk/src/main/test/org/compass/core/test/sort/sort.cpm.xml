@@ -1,0 +1,38 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.sort">
+
+    <class name="A" alias="a">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">value</meta-data>
+        </property>
+
+        <property name="value2" managed-id-index="un_tokenized">
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">value2</meta-data>
+        </property>
+
+        <property name="floatValue">
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">floatValue</meta-data>
+        </property>
+
+        <property name="intValue">
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">intValue</meta-data>
+        </property>
+
+        <component name="b" />
+    </class>
+
+    <class name="B" alias="b">
+        <id name="id" accessor="field" />
+
+        <property name="value2" accessor="field" managed-id-index="un_tokenized">
+            <meta-data index="un_tokenized" exclude-from-all="no_analyzed">value2</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

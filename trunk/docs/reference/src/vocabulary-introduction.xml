@@ -1,0 +1,11 @@
+<chapter id="vocabulary-inroduction">
+  <title>Introduction</title>
+
+  <para>
+    Compass::Vocabulary aim is to provide common semantic meta-data based on several open forums for online meta-data standards (such as the <ulink url="http://dublincore.org/">Dublin Core Meta data initiative</ulink>.
+  </para>
+  <para>
+    Built on top of the general support for common meta-data, provided by Compass::Core, Compass::Vocabulary provides both a set of common meta data xml definitions files (*.cmd.xml) and the compiled Java version of them (using the common meta-data ant task).
+  </para>
+    
+</chapter>

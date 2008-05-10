@@ -1,0 +1,16 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.gps.device.hibernate.collection.nullid">
+
+    <class name="User" alias="user" root="true">
+        <id name="id"/>
+        <property name="version"/>
+        <property name="name">
+            <meta-data>name</meta-data>
+        </property>
+        <reference name="albums" ref-alias="album"/>
+    </class>
+
+</compass-core-mapping>

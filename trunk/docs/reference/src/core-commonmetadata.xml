@@ -1,0 +1,207 @@
+<chapter id="core-commonmetadata">
+  <title>Common Meta Data</title>
+
+  <sect1 id="commonmetadata-introduction">
+    <title>Introduction</title>
+
+    <para>
+      The common meta-data feature of Compass::Core provides a way to externalize the definition of meta-data names and aliases used in OSEM files, especially useful if your application has a large domain model with many OSEM files. Another advantage of this mechanism is the ability to add extra information to the meta data (i.e. a long description) and the ability to specify the format for the meta-data definition, removing the need to explicitly define formats in the OSEM file (like <literal>...format="yyyy/MM/dd"..</literal>).
+    </para>
+
+    <para>
+        By centralizing your meta-data, other tools can take advantage of this information and extend this knowledge (i.e. adding semantic meaning to the data). Compass::Core provides a common meta-data Ant task that generates a Java class containing constant values of the information described in the Common meta-data file, allowing programmatic access to this information from within the application (see Library class in sample application).
+    </para>
+    
+    <para>
+        Note, the common meta-data support in Compass is completely optional for applications.
+    </para>
+
+  </sect1>
+
+  <sect1 id="CommnonMetaDataDefinition">
+
+    <title>Commnon Meta Data Definition</title>
+    <para>
+
+      The common meta-data definition are defined in an XML document. Here is an example:
+
+<programlisting><![CDATA[<?xml version="1.0"?>
+<!DOCTYPE compass-core-meta-data PUBLIC
+    "-//Compass/Compass Core Meta Data DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-meta-data-2.0.dtd">
+
+<compass-core-meta-data>
+
+    <meta-data-group id="library" displayName="Library Meta Data">
+
+        <description>Library Meta Data</description>
+        <uri>http://compass/sample/library</uri>
+
+        <alias id="author" displayName="Author">
+            <description>Author alias</description>
+            <uri>http://compass/sample/library/alias/author</uri>
+            <name>author</name>
+        </alias>
+
+        <alias id="name" displayName="Name">
+            <description>Name alias</description>
+            <uri>http://compass/sample/library/alias/name</uri>
+            <name>name</name>
+        </alias>
+
+        <alias id="article" displayName="Article">
+            <description>Article alias</description>
+            <uri>http://compass/sample/library/alias/article</uri>
+            <name>article</name>
+        </alias>
+
+        <alias id="book" displayName="Book">
+            <description>Book alias</description>
+            <uri>http://compass/sample/library/alias/book</uri>
+            <name>book</name>
+        </alias>
+
+        <meta-data id="type" displayName="Type">
+            <description>Type of an entity in the system</description>
+            <uri>http://compass/sample/library/type</uri>
+            <name>type</name>
+            <value id="mdPerson">person</value>
+            <value id="mdAuthor">author</value>
+        </meta-data>
+
+        <meta-data id="keyword" displayName="Keyword">
+            <description>Keyword associated with an entity</description>
+            <uri>http://compass/sample/library/keyword</uri>
+            <name>keyword</name>
+        </meta-data>
+
+        <meta-data id="name" displayName="Name">
+            <description>The name of a person</description>
+            <uri>http://compass/sample/library/name</uri>
+            <name>name</name>
+        </meta-data>
+
+        <meta-data id="birthdate" displayName="Birthdate">
+            <description>The birthdate of a person</description>
+            <uri>http://compass/sample/library/birthdate</uri>
+            <name format="yyyy/MM/dd">birthdate</name>
+        </meta-data>
+
+        <meta-data id="isbn" displayName="ISBN">
+            <description>ISBN of the book</description>
+            <uri>http://compass/sample/library/isbn</uri>
+            <name>isbn</name>
+        </meta-data>
+
+        <meta-data id="title" displayName="Title">
+            <description>The title of a book or an article</description>
+            <uri>http://compass/sample/library/title</uri>
+            <name>title</name>
+        </meta-data>
+
+        ...
+
+    </meta-data-group>
+
+</compass-core-meta-data>
+]]></programlisting>
+
+    </para>
+
+  </sect1>
+
+  <sect1 id="Using the Definition">
+    <title>Using the Definition</title>
+
+    <para>
+      In order to use the Common meta-data definition, you need to specify the location of the file or files in the Compass configuration file (compass.cfg.xml). Compass will automatically replace labels used in OSEM files with the values contain in the Common meta-data file.
+    </para>
+
+        <programlisting><![CDATA[<meta-data resource=
+     "org/compass/sample/library/library.cmd.xml" />]]></programlisting>
+
+    <para>
+      Note: The common meta data reference needs to be BEFORE the mapping files that use them.
+    </para>
+
+    <para>
+      To use common meta data within a OSEM file, you use the familiar ${...} label (similar to Ant). An example of using the common meta data definitions in the mapping file is:
+<programlisting><![CDATA[<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.sample.library">
+
+    <class name="Author" alias="${library.author}">
+
+        <id name="id" />
+
+        <constant>
+            <meta-data>${library.type}</meta-data>
+            <meta-data-value>${library.type.mdPerson}</meta-data-value>
+            <meta-data-value>${library.type.mdAuthor}</meta-data-value>
+        </constant>
+
+        <property name="keywords">
+            <meta-data boost="2">${library.keyword}</meta-data>
+        </property>
+
+        <component name="name" ref-alias="${library.name}" />
+
+        <property name="birthdate">
+            <meta-data>${library.birthdate}</meta-data>
+        </property>
+
+        <component name="articles" ref-alias="${library.article}" />
+
+        <reference name="books" ref-alias="${library.book}" />
+
+    </class>
+
+    <class name="Name" alias="${library.name}" root="false">
+    <property name="title">
+      <meta-data>${library.titleName}</meta-data>
+    </property>
+    <property name="firstName">
+      <meta-data>${library.firstName}</meta-data>
+      <meta-data>${library.name}</meta-data>
+    </property>
+    <property name="lastName">
+      <meta-data>${library.lastName}</meta-data>
+      <meta-data>${library.name}</meta-data>
+    </property>
+    </class>
+
+</compass-core-mapping>
+]]></programlisting>
+
+    </para>
+
+  </sect1>
+
+  <sect1 id="Common Meta Data Ant Task">
+    <title>Commnon Meta Data Ant Task</title>
+
+    <para>
+      One of the benefits of using the common meta data definitions is the meta data Ant task, which generate Java classes with constant values of the defined definitions. The common meta data classes allows you to use the definition within your code.
+    </para>
+
+    <para>
+      The following is a snippet from an ant build script (or maven) which uses the common meta data ant task.
+
+<programlisting><![CDATA[<taskdef name="mdtask"
+     classname="org.compass.core.metadata.ant.MetaDataTask"
+     classpathref="classpathhref"/>
+<mdtask destdir="${java.src.dir}">
+    <fileset dir="${java.src.dir}">
+        <include name="**/*"/>
+    </fileset>
+</mdtask>
+]]></programlisting>
+
+    </para>
+
+  </sect1>
+
+</chapter>

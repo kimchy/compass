@@ -1,0 +1,63 @@
+<chapter id="gps-jdo">
+    <title>JDO (Java Data Objects)</title>
+
+    <sect1 id="jdo-introduction">
+      <title>Introduction</title>
+
+      <para>
+        The Jdo Gps Device provides support for database indexing through the use of Jdo ORM mappings. If your application uses Jdo, it couldn't be easier to integrate Compass into your application.
+      </para>
+
+      <para>
+        Jdo Gps Device utilizes Compass::Core OSEM feature (Object to Search Engine Mappings) and Jdo ORM feature (Object to Relational Mappings) to provide simple database indexing. As well as Jdo 2 new event based system to provide real time mirroring of data changes done through the Jdo 2 implementation. The path data travels through the system is:  Database -- Jdo -- Objects -- Compass::Gps -- Compass::Core (Search Engine).
+      </para>
+
+    </sect1>
+
+    <sect1 id="jdo-configuration">
+      <title>Configuration</title>
+
+      <para>
+        When configuring the Jdo device, one must instantiate either <literal>JdoGpsDevice</literal> (for Jdo 1 version) or <literal>Jdo2GpsDevice</literal> (for Jdo 2 version). After instantiating the device, it must be initialized Jdo <literal>PersistenceManagerFactory</literal>.
+      </para>
+
+      <para>
+        Here is a code sample of how to configure the hibernate device:
+<programlisting><![CDATA[Compass compass = // set compass instance
+CompassGps gps = new SingleCompassGps(compass);
+CompassGpsDevice jdoDevice =
+// If Jdo 1
+     new JdoGpsDevice("jdo", persistenceManagerFactory);
+// If Jdo 2
+     new Jdo2GpsDevice("jdo", persistenceManagerFactory);
+gps.addDevice(jdoDevice);
+.... // configure other devices
+gps.start();
+]]></programlisting>
+      </para>
+
+    </sect1>
+
+    <sect1 id="jdo-index">
+      <title>Index Operation</title>
+
+      <para>
+        Jdo Gps device provides the ability to index the database. It supports both Jdo and Jdo 2 versions. Compass will index objects (or their matching database tables in the Jdo mappings) specified in both the Jdo mappings and Compass::Core mappings (OSEM) file.
+      </para>
+
+    </sect1>
+
+    <sect1 id="jdo-datamirroring">
+      <title>Real Time Data Mirroring</title>
+
+      <para>
+        The Jdo 2 Gps Device, with Jdo 2 new event system, provides support for real time data mirroring. Data changes via Jdo are reflected in the Compass index. There is no need to configure anything in order to enable the feature, the device takes care for it all.
+      </para>
+
+      <para>
+        An important point when configuring the jdo device is that both the application and the jdo device must use the same <literal>PersistenceManagerFactory</literal>.
+      </para>
+
+    </sect1>
+
+</chapter>

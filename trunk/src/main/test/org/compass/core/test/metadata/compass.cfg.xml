@@ -1,0 +1,19 @@
+<!DOCTYPE compass-core-configuration PUBLIC
+    "-//Compass/Compass Core Configuration DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-configuration-2.0.dtd">
+
+<compass-core-configuration>
+
+    <compass>
+    
+        <setting name="compass.engine.connection">target/testindex</setting>
+        <setting name="compass.engine.optimizer">org.compass.core.lucene.engine.optimizer.type.NullOptimizer</setting>
+        <setting name="compass.engine.optimizer.schedule">false</setting>
+        
+        <meta-data resource="org/compass/core/test/metadata/test.cmd.xml" />
+        <mapping resource="org/compass/core/test/metadata/md.cpm.xml" />
+     
+    </compass>
+
+</compass-core-configuration>
+

@@ -1,0 +1,19 @@
+<para>
+  Compass Core provides the core of Compass simplification of search engine integration into an application. Compass is very simple to use, and you can start/enable a searchable application in a matter of hours, many times without knowing about Compass advance features and extendibility.
+</para>
+
+<para>
+  The two most important chapters are <xref linkend="core-introduction"/>, which explains the high level Compass API's (similar to your usual ORM framework), and <xref linkend="core-configuration"/> which explains how to configure a Compass instance. <xref linkend="core-searchengine"/> dives into details of Compass search engine abstraction, explaining concepts, index structure, and Lucene extensions (both Compass extensions and Compass enabling Lucene features simply). In order to start using Compass, reading this chapter is not required, though it does provide a good overview of how Compass abstracts Lucene, and explains how to configure advance search engine related features (Analyzers, Optimizers, Sub Index Hashing, and so on).
+</para>
+
+<para>
+  The following chapters dive into details of Compass different mapping technologies. <xref linkend="core-osem"/> explain how to use Compass OSEM (Object/Search Engine Mapping), <xref linkend="core-xsem"/> goes into details of how to use Compass XSEM (Xml/Search Engine Mapping), and <xref linkend="core-rsem"/> dives into Compass RSEM (Resource/Search Engine Mapping), which is a low level, Lucene like, mapping support.
+</para>
+
+<para> 
+  <xref linkend="core-commonmetadata"/> explains Compass support for creating a semantic model defined outside of the mapping definitions. Using it is, in the spirit of Compass, completely optional, and depends on the developers if they wish to use it within their Compass enabled application. 
+</para>
+
+<para>
+  <xref linkend="core-transaction"/> goes into details of the different ways to integrate Compass transaction support within different transaction managers. It explains both local (Compass managed) transaction, and JTA integration.
+</para>

@@ -1,0 +1,93 @@
+<chapter id="gps-embeddedhibernate">
+  <title>Embedded Hibernate</title>
+  
+  <sect1 id="embeddedhibernate-introduction">
+    <title>Introduction</title>
+    
+    <para>
+      Compass allows for embedded integration with Hibernate and Hibernate JPA. Using simple configuration, Compass will automatically perform mirroring operations (mirroring changes done through Hibernate to the search engine), as well as allow to simply index the content of the database using Hibernate.
+    </para>
+    
+    <para>
+      The integration involves few simple steps. The first is enabling Embedded Compass within Hibernate. If Hibernate Annotations or Hibernate EntityManager (JPA) are used, just dropping Compass jar file to the classpath will enable it (make sure you don't have Hibernate Search in the classpath, as it uses the same event class name :) ). If Hibernate Core is used, the following event listeners need to be configured:
+      
+<programlisting><![CDATA[<hibernate-configuration>
+<session-factory>
+  
+  <!-- ... -->
+  
+  <event type="post-update">
+      <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+  </event>
+  <event type="post-insert">
+      <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+  </event>
+  <event type="post-delete">
+      <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+  </event>
+  <event type="post-collection-recreate">
+      <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+  </event>
+  <event type="post-collection-remove">
+      <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+  </event>
+  <event type="post-collection-update">
+      <listener class="org.compass.gps.device.hibernate.embedded.CompassEventListener"/>
+  </event>
+</session-factory>
+</hibernate-configuration>
+]]></programlisting>
+    </para>  
+    
+    <para>
+      Now that Compass is enabled with Hibernate there is one required Compass property in order to configure it which is the location of where the search engine index will be stored. This is configured as a Hibernate property configuration using the key <literal>compass.engine.connection</literal> (for example, having the value <literal>file://tmp/index</literal>). When it is configured, Compass will automatically use the mapped Hibernate classes and check if one of them is searchable. If there is at least one, then the listener will be enabled. That is it!. Now, every operation done using Hibernate will be mirrored to the search engine.
+    </para>
+    
+    <para>
+      Direct access to the Compass (for example to execute search operations), either the <classname>HibernateHelper</classname> (when using pure Hibernate) or <classname>HibernateJpaHelper</classname> (when using Hibernate JPA) can be used to access it. For example:
+      
+<programlisting><![CDATA[Compass compass = HibernateHelper.getCompass(sessionFactory);
+CompassSession session = compass.openSession();
+CompassTransaction tr = session.beginTransaction();
+
+CompassHits hits = session.find("search something")
+
+tr.commit();
+session.close();
+]]></programlisting>
+    </para>
+    
+    <para>
+      In order to completely reindex the content of the database based on both the Hibernate and Compass mappings, a Compass Gps can be created. Here is an example of how to do it:
+
+<programlisting><![CDATA[CompassGps gps = HibernateHelper.getCompassGps(sessionFactory);
+gps.index();
+]]></programlisting>
+    </para>
+      
+  </sect1>
+  
+  <sect1 id="embeddedhibernate-configuration">
+    <title>Configuration</title>
+    
+    <para>
+      The basic configuration of embedded Hibernate is explained in the introduction section. Within the Hibernate (or JPA persistance xml) configuration, the Compass instance used for mirroring and searching can be configured using Compass usual properties (using the <literal>compass.</literal> prefix). If configuring Compass using external configuration is needed, the <literal>compass.hibernate.config</literal> can be used to point to Compass configuration file.
+    </para>
+    
+    <para>
+      An implementation of <classname>HibernateMirrorFilter</classname> can also be configured in order to allow for filtering out specific objects from the index (for example, based on their specific content). The <literal>compass.hibernate.mirrorFilter</literal> property should be configured having the fully qualified class name of the mirroring filter implementation.
+    </para>
+    
+    <para>
+      The Compass instance created automatically for the indexing operation can be also configured using specific properties. This properties should have the prefix of <literal>gps.index.</literal>. This is usually configured to have specific parameters for the indexing Compass, for example, having a different index storage location for it while indexing.
+    </para>
+  </sect1>
+  
+  <sect1 id="embeddedhiberante-transaction">
+    <title>Transaction Management</title>
+    
+    <para>
+      Compass will integrate with Hibernate transaction management (using whichever transaction management it does) by default. When configuring Compass to work with JTA Sync or XA, Compass will integrate with these transaction management.
+    </para>
+  </sect1>
+</chapter>

@@ -1,0 +1,22 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.samechild">
+
+    <class name="Parent" alias="parent">
+        <id name="id" accessor="field"/>
+        <property name="name" accessor="field">
+            <meta-data index="un_tokenized">name</meta-data>
+        </property>
+        <component name="children" ref-alias="child" accessor="field"/>
+    </class>
+
+    <class name="Child" alias="child">
+        <id name="id" accessor="field"/>
+        <property name="name" accessor="field">
+            <meta-data index="un_tokenized">name</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

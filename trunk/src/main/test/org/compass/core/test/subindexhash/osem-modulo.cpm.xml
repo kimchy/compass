@@ -1,0 +1,41 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.subindexhash">
+
+    <class name="A" alias="a">
+
+        <sub-index-hash type="org.compass.core.engine.subindex.ModuloSubIndexHash">
+            <setting name="prefix" value="index" />
+            <setting name="size" value="2" />
+        </sub-index-hash>
+
+        <id name="id" managed-id="false">
+            <meta-data store="yes" index="un_tokenized">id</meta-data>
+        </id>
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>    
+        
+    </class>
+
+    <class name="B" alias="b">
+
+        <sub-index-hash type="org.compass.core.engine.subindex.ModuloSubIndexHash">
+            <setting name="prefix" value="index" />
+            <setting name="size" value="2" />
+        </sub-index-hash>
+        
+        <id name="id" managed-id="false">
+            <meta-data store="yes" index="un_tokenized">id</meta-data>
+        </id>
+        
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>    
+        
+    </class>
+
+</compass-core-mapping>

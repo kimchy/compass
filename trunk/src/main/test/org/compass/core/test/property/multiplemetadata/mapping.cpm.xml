@@ -1,0 +1,29 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping>
+
+    <class name="org.compass.core.test.property.multiplemetadata.MultipleMetaData" alias="multiple-meta-data">
+    
+        <id name="id" />
+    
+        <property name="value1">
+            <meta-data>join1</meta-data>
+            <meta-data>join2</meta-data>
+            <meta-data>join3</meta-data>
+            <meta-data>value11</meta-data>
+            <meta-data>value12</meta-data>
+        </property>
+
+        <property name="value2">
+            <meta-data>join1</meta-data>
+            <meta-data>join2</meta-data>
+            <meta-data>join3</meta-data>
+            <meta-data>value21</meta-data>
+            <meta-data>value22</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>

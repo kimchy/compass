@@ -1,0 +1,40 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.highlighter">
+
+    <resource alias="a">
+        
+        <resource-id name="id" />
+        
+        <resource-property name="text" />
+
+    </resource>
+
+    <resource alias="a1">
+        
+        <resource-id name="id" />
+        
+        <resource-property name="text" term-vector="positions_offsets" />
+
+    </resource>
+
+    <class name="A" alias="parent">
+        
+        <id name="id" />
+        
+		<component name="b" ref-alias="child"/>
+
+    </class>
+	
+    <class name="B" alias="child" root="false">
+    
+		<property name="text" class="java.lang.String">
+			<meta-data index="un_tokenized" exclude-from-all="no_analyzed">text</meta-data>
+		</property>
+    
+    </class>
+    
+</compass-core-mapping>
+    

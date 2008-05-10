@@ -1,0 +1,30 @@
+<chapter id="spring-hibernate">
+  <title>Hibernate 3 Gps Device Support</title>
+
+  <sect1 id="spring-hibernate-dep">
+   <title>Deprecation Note</title>
+
+	<para>
+		This device has been deprecated and moved to <literal>org.compass.spring.device.hibernate.dep</literal> package. Please use the new <classname>HibernateGpsDevice</classname> which allows for a pluggable native Hibernate extractor.
+	</para>
+  </sect1>
+
+  <sect1 id="spring-hibernate-introduction">
+   <title>Introduction</title>
+
+    <para>
+      The device is built on top of Spring ORM support for Hiberante 3, and Compass::Gps support for Hibernate 3 device. It provides support for Spring generation of Hibernate <literal>SessionFactory</literal> proxy.
+    </para>
+
+  </sect1>
+
+  <sect1 id="spring-hibernate-device">
+    <title>SpringHibernate3GpsDevice</title>
+
+    <para>
+      An extension of the <literal>Hibernate3GpsDevice</literal> that can handle Spring's proxing the Hibernate <literal>SessionFactory</literal> in order to register event listeners for real time data changes mirroring.
+    </para>
+
+  </sect1>
+
+</chapter>

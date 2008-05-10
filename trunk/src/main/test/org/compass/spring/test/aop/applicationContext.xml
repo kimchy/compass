@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <!-- Compass-->
+    <bean id="compass" class="org.compass.spring.LocalCompassBean">
+        <property name="resourceLocations">
+            <list>
+                <value>classpath:org/compass/spring/test/aop/A.cpm.xml</value>
+            </list>
+        </property>
+        <property name="compassSettings">
+            <props>
+                <prop key="compass.engine.connection">target/testindex</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="compassCreateAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="advice">
+            <bean class="org.compass.spring.aop.CompassCreateAdvice">
+                <property name="compass" ref="compass" />
+            </bean>
+        </property>
+        <property name="pattern" value=".*create" />
+    </bean>
+
+    <bean id="compassSaveAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="advice">
+            <bean class="org.compass.spring.aop.CompassSaveAdvice">
+                <property name="compass" ref="compass" />
+            </bean>
+        </property>
+        <property name="pattern" value=".*save" />
+    </bean>
+
+    <bean id="compassDeleteAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="advice">
+            <bean class="org.compass.spring.aop.CompassDeleteAdvice">
+                <property name="compass" ref="compass" />
+            </bean>
+        </property>
+        <property name="pattern" value=".*delete" />
+    </bean>
+    
+    <bean id="mockDaoOrService" class="org.compass.spring.test.aop.MockDaoOrServiceImpl">
+    </bean>
+    
+    <bean id="proxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+        <property name="beanNames" value="mockDaoOrService"/>
+        <property name="interceptorNames">
+            <list>
+                <value>compassCreateAdvisor</value>
+                <value>compassSaveAdvisor</value>
+                <value>compassDeleteAdvisor</value>
+            </list>
+        </property>
+    </bean>
+
+</beans>

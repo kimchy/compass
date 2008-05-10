@@ -1,0 +1,120 @@
+<project name="Compass::Samples [library]" default="usage">
+    
+    
+    <property name="build.dir" location="target/classes" />
+
+    <property name="compass.root" value="../../"/>
+
+    <path id="classpath">
+        <fileset dir="${compass.root}/dist">
+            <include name="compass*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/lucene">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/jakarta-commons">
+            <include name="commons-logging.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/log4j">
+            <include name="log4j-*.jar"/>
+        </fileset>
+        <fileset dir="${compass.root}/lib/junit">
+            <include name="junit.jar"/>
+        </fileset>
+    </path>
+
+    <target name="usage">
+
+        <echo message=""/>
+        <echo message="Compass::Samples [library] build file"/>
+        <echo message="------------------------------------------------------"/>
+        <echo message=""/>
+        <echo message="Available targets are:"/>
+        <echo message=""/>
+        <echo message="clean    --> Clean output dirs"/>
+        <echo message="compile  --> Compile main Java sources, Also generated the common meta-data file"/>
+        <echo message="test     --> Run tests (which are also used as the sample usage)"/>
+        <echo message="search   --> Starts the sample in search mode (you search on the default data set)"/>
+        <echo message=""/>
+
+    </target>
+
+    <target name="clean" description="cleans the output directory (build)">
+        <delete dir="${build.dir}" />
+        <delete dir="${basedir}/target" />
+    </target>
+    
+    <target name="copy-resources" 
+        description="copies the resources (xml, properties) to the output directory (build)">
+        
+        <copy todir="${build.dir}">
+          <fileset dir="src/java">
+            <include name="**/*.xml"/>
+            <include name="**/*.properties"/>
+          </fileset>
+        </copy>
+        <copy todir="${build.dir}">
+          <fileset dir="src/test">
+            <include name="**/*.xml"/>
+            <include name="**/*.properties"/>
+          </fileset>
+        </copy>
+    </target>
+    
+    <target name="compile" depends="copy-resources" 
+        description="generates the common meta data and compiles the sample">
+        
+        <mkdir dir="${build.dir}" />
+        
+        <taskdef name="mdtask" classname="org.compass.core.metadata.ant.MetaDataTask" 
+            classpathref="classpath"/>
+        <mdtask destdir="src/java">
+            <fileset dir="src/java">
+                <include name="**/*"/>
+            </fileset>
+        </mdtask>
+        
+        <javac srcdir="src/java;src/test"
+               destdir="${build.dir}"
+               classpathref="classpath"
+               encoding="UTF8"
+               debug="on"
+               deprecation="on"
+        />
+    </target>
+    
+    <target name="test" depends="compile" description="runs the unit tests in the sample">
+        <junit errorProperty="test.failed"
+          failureProperty="test.failed"
+          reloading="false">
+          <classpath>
+            <path refid="classpath" />
+            <pathelement location="${build.dir}" />
+          </classpath>
+          <formatter type="brief" usefile="false"/>
+          <batchtest>
+            <fileset dir="${build.dir}" includes="**/*Tests.class"/>
+          </batchtest>
+        </junit>
+    
+        <fail if="test.failed">Test(s) failed!!!</fail>
+    </target>
+    
+    <target name="search" depends="compile" description="Executes the search sample">
+        <input message="Query: [jack]"
+               addProperty="query"
+               defaultValue="jack"
+        />
+        <echo />
+        <sequential>
+          <java classname="org.compass.sample.library.LibraryTests" fork="true" spawn="false">
+            <arg value="${query}" />
+            <classpath>
+              <path refid="classpath"/>
+              <pathelement location="${build.dir}"/>
+            </classpath>
+          </java>
+        </sequential>
+    </target>
+
+</project>

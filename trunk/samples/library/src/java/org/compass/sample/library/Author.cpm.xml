@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.sample.library">
+
+    <class name="Author" alias="${library.author}">
+
+        <id name="id" />
+
+        <constant>
+            <meta-data>${library.type}</meta-data>
+            <meta-data-value>${library.type.mdPerson}</meta-data-value>
+            <meta-data-value>${library.type.mdAuthor}</meta-data-value>
+        </constant>
+
+        <property name="keywords">
+            <meta-data boost="2">${library.keyword}</meta-data>
+        </property>
+
+        <component name="name" ref-alias="${library.name.md}" />
+
+        <property name="birthdate">
+            <meta-data>${library.birthdate}</meta-data>
+        </property>
+
+        <component name="articles" ref-alias="${library.article}" />
+
+        <reference name="books" ref-alias="${library.book}" />
+
+    </class>
+
+    <class name="Name" alias="${library.name}" root="false">
+            <property name="title">
+                <meta-data>${library.titleName}</meta-data>
+            </property>
+            <property name="firstName">
+                <meta-data>${library.firstName}</meta-data>
+                <meta-data>${library.name}</meta-data>
+            </property>
+            <property name="lastName">
+                <meta-data>${library.lastName}</meta-data>
+                <meta-data>${library.name}</meta-data>
+            </property>
+    </class>
+
+</compass-core-mapping>

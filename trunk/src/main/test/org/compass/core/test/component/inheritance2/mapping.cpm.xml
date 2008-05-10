@@ -1,0 +1,26 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.inheritance2">
+
+    <class name="Father" alias="father">
+        <id name="id" accessor="field"  />
+        <component name="child" accessor="field" />
+    </class>
+
+    <class name="Child" alias="child" root="false">
+        <component name="child" accessor="field" />
+    </class>
+
+    <class name="GrandChild" alias="gc1" root="false" poly="true">
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+    </class>
+
+    <class name="GrandChild1" alias="gc2" root="false" extends="gc1" poly="true">
+        
+    </class>
+
+</compass-core-mapping>

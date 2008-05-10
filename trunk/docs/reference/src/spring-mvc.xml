@@ -1,0 +1,72 @@
+<chapter id="spring-mvc">
+  <title>Spring MVC Support</title>
+
+  <sect1 id="spring-mvc-introduction">
+   <title>Introduction</title>
+
+    <para>
+    Compass::Spring provides helper and support classes that build and integrate with Spring web MVC support. It has several base class controller helpers, as well as search and index controllers.
+    </para>
+
+  </sect1>
+
+  <sect1 id="spring-mvc-support">
+   <title>Support Classes</title>
+
+    <para>
+        Two abstract command controllers are provided. The <literal> AbstractCompassCommandController</literal> is a general base class for Spring's MVC Command Controller that use <literal>Compass</literal>. The <literal>AbstractCompassGpsCommandController</literal> is a general base class for the Command Controller that use <literal>CompassGps</literal>.
+    </para>
+
+  </sect1>
+
+  <sect1 id="spring-mvc-index">
+   <title>Index Controller</title>
+
+    <para>
+            <literal>CompassIndexController</literal> is a Spring Command Controller that can handle <literal>index()</literal> operations to perform on a <literal>CompassGps</literal>.
+    </para>
+
+    <para>
+        The controller command is <literal>CompassIndexCommand</literal>. The <literal>CompassIndexController</literal> command controller will perform the <literal>index()</literal> operation only if the <literal>doIndex</literal> parameter is set.
+    </para>
+
+    <para>
+            The controller has two views to be set. The <literal>indexView</literal> is the view that holds the screen which initiates the index operation, and the <literal>indexResultsView</literal>, which shows the results of the index operation.
+    </para>
+
+    <para>
+        The results of the index operation will be saved under the <literal>indexResultsName</literal>, which defaults to "indexResults". The results use the <literal>CompassIndexResults</literal> class.
+    </para>
+
+  </sect1>
+
+  <sect1 id="spring-mvc-search">
+   <title>Search Controller</title>
+
+    <para>
+            <literal>CompassSearchController</literal> is a general Spring's MVC Controller that perform the search operation of <literal>Compass</literal>.
+    </para>
+
+    <para>
+        The Controller performs the search operation on the <literal>Compass</literal> instance using the query supplied by the <literal>CompassSearchCommand</literal>. The command holds the query that will be executed, as well as the page number (using the pagination feature).
+    </para>
+
+    <para>
+            If you wish to enable the pagination feature, you must set the <literal>pageSize</literal> property on the controller, as well as providing the <literal>page</literal> number property on the <literal>CompassSearchCommand</literal>.
+    </para>
+
+    <para>
+        The controller has two views to be set, the <literal>searchView</literal>, which is the view that holds the screen which the user will initiate the search operation, and the <literal>searchResultsView</literal>, which will show the results of the search operation (they can be the same page).
+    </para>
+
+    <para>
+            The results of the search operation will be saved under the <literal>searchResultsName</literal>, which defaults to "searchResults". The results use the <literal>CompassSearchResults</literal> class.
+    </para>
+
+    <para>
+        Note, that if using the <literal>SpringSyncTransactionFactory</literal>, the <literal>transactionManager</literal> must be set. Since when using the spring sync transaction setting, a spring managed transactions must be in progress already. The controller will start a transcation using the given transaction manager.
+    </para>
+
+  </sect1>
+
+</chapter>

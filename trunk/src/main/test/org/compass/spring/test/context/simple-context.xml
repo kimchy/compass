@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:compass="http://www.compass-project.org/schema/spring-core-config"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.compass-project.org/schema/spring-core-config http://www.compass-project.org/schema/spring-compass-core-config-2.0.xsd">
+
+    <!-- <bean class="org.compass.spring.support.CompassContextBeanPostProcessor"/> -->
+
+    <compass:context/>
+
+    <compass:compass name="compass">
+        <compass:connection>
+            <compass:file path="target/test-index"/>
+        </compass:connection>
+        <compass:mappings>
+            <compass:class name="org.compass.spring.test.context.A"/>
+        </compass:mappings>
+    </compass:compass>
+
+    <bean id="dao" class="org.compass.spring.test.context.CompassContextDao"/>
+
+    <compass:session id="session" />
+
+    <bean id="dao2" class="org.compass.spring.test.context.CompassContextDao2">
+        <property name="compass" ref="compass" />
+        <property name="compassSession" ref="session" />
+    </bean>
+</beans>

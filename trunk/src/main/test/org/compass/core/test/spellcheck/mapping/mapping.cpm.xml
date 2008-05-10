@@ -1,0 +1,40 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.spellcheck.mapping">
+
+    <class name="A" alias="a1">
+
+        <id name="id" accessor="field"/>
+
+        <property name="value1" accessor="field">
+            <meta-data spell-check="include">value1</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+
+        <property name="value3" accessor="field">
+            <meta-data spell-check="include">value3</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a2">
+
+        <id name="id" accessor="field"/>
+
+        <property name="value1" accessor="field">
+            <meta-data>value1</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data spell-check="exclude">value2</meta-data>
+        </property>
+
+        <property name="value3" accessor="field">
+            <meta-data>value3</meta-data>
+        </property>
+    </class>
+</compass-core-mapping>

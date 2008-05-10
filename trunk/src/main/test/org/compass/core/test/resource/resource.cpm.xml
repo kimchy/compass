@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping>
+
+    <resource alias="a">
+
+        <resource-id name="id"/>
+
+    </resource>
+
+    <resource alias="b">
+
+        <resource-id name="id1"/>
+        <resource-id name="id2"/>
+
+    </resource>
+
+    <resource alias="c">
+
+        <resource-id name="id"/>
+
+        <resource-property name="value1"/>
+
+        <resource-property name="value2" store="yes" index="tokenized"/>
+
+        <resource-property name="value3" store="compress" index="tokenized"/>
+
+        <resource-property name="value4" store="yes" index="un_tokenized"/>
+
+        <resource-property name="value5" store="yes" index="tokenized" converter="mydate"/>
+
+        <resource-property name="value6"/>
+    </resource>
+
+    <resource alias="d" extends="a">
+        <resource-property name="value1" />
+    </resource>
+
+    <resource-contract alias="cont1">
+        <resource-id name="id" />
+    </resource-contract>
+
+    <resource-contract alias="cont2">
+        <resource-property name="value1" />
+    </resource-contract>
+
+    <resource-contract alias="cont3" extends="cont1">
+        <resource-property name="value2" />
+    </resource-contract>
+
+    <resource alias="e" extends="cont2, cont3">
+        <resource-property name="value1" store="no" />
+    </resource>
+
+    <resource alias="f">
+        <resource-id name="id1" exclude-from-all="true"/>
+        <resource-id name="id2" exclude-from-all="false"/>
+        <resource-property name="value1" exclude-from-all="true" />
+        <resource-property name="value2" exclude-from-all="false" />
+    </resource>
+</compass-core-mapping>
+    

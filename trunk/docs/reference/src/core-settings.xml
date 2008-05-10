@@ -1,0 +1,1195 @@
+<appendix id="core-settings">
+  <title>Configuration Settings</title>
+
+  <sect1 id="CompassSettings">
+    <title>Compass Configuration Settings</title>
+
+    <para>
+        Compass's various settings have been logically grouped in the following section, with a short description of each setting. Note: the only mandatory setting is the index file location specified in <literal>compass.engine.connection</literal>.
+    </para>
+
+    <para>
+       Note, that configuring Compass is simpler when using a schema based configuration file. But in its core, all of Compass configuration is driven by the following settings. You can use only settings to configure Compass (either programatically or using the Compass configuration based on DTD).
+    </para>
+
+    <para>
+    </para>
+
+    <sect2 name="compass.engine.connection">
+      <title>compass.engine.connection</title>
+
+        <para>
+          Sets the Search engine index connecion string.
+
+          <table>
+            <tgroup cols="2">
+              <colspec colname="c1" colwidth="3*" />
+              <colspec colname="c2" colwidth="5*" />
+              <thead>
+                <row><entry>Connection</entry><entry>Description</entry></row>
+              </thead>
+              <tbody>
+                <row>
+                  <entry><literal>file://</literal> prefix or no prefix</entry>
+                  <entry>The path to the file system based index path, using default file handling. This is a JVM level setting for all the file based prefixes.</entry>
+                </row>
+                <row>
+                  <entry><literal>mmap://</literal> prefix</entry>
+                  <entry>Uses Java 1.4 nio MMAp class. Considered slower than the general file system one, but might have memory benefits (according to the Lucene documentation). This is a JVM level setting for all the file based prefixes.</entry>
+                </row>
+                <row>
+                  <entry><literal>ram://</literal> prefix</entry>
+                  <entry>Creates a memory based index, follows the <literal>Compass</literal> life-cycle. Created when the <literal>Compass</literal> is created, and disposed when <literal>Compass</literal> is closed.</entry>
+                </row>
+                <row>
+                  <entry><literal>jdbc://</literal> prefix</entry>
+                  <entry>Holds the Jdbc url or Jndi (based on the <literal>DataSourceProvider</literal> configured). Allows storing the index within a database. This setting requires additional mandatory settings, please refer to the Search Engine Jdbc section. It is very IMPORTANT to read the Search Engine Jdbc section, especially in term of performance considerations.</entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+
+        </para>
+
+    </sect2>
+
+    <sect2 id="JNDI">
+      <title>JNDI</title>
+
+        <para>
+          Controls <literal>Compass</literal> registration through JNDI, using Compass JNDI lookups.
+
+          <table>
+            <tgroup cols="2">
+              <colspec colname="c1" colwidth="3*" />
+              <colspec colname="c2" colwidth="5*" />
+              <thead>
+                <row><entry>Setting</entry><entry>Description</entry></row>
+              </thead>
+              <tbody>
+                <row>
+                  <entry>compass.name</entry>
+                  <entry>The name that <literal>Compass</literal> will be registered under. Note that you can specify it at the XML configuration file with a name attribute at the compass element.</entry>
+                </row>
+                <row>
+                  <entry>compass.jndi.enable</entry>
+                  <entry>Enables JNDI registration of compass under the given name. Default to <literal>false</literal>.</entry>
+                </row>
+                <row>
+                  <entry>compass.jndi.class</entry>
+                  <entry>JNDI initial context class, <literal>Context.INITIAL_CONTEXT_FACTORY</literal>.</entry>
+                </row>
+                <row>
+                  <entry>compass.jndi.url</entry>
+                  <entry>JNDI provider URL, <literal>Context.PROVIDER_URL</literal></entry>
+                </row>
+                <row>
+                  <entry>compass.jndi.*</entry>
+                  <entry>prefix for arbitrary JNDI <literal>InitialContext</literal> properties</entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+
+        </para>
+
+    </sect2>
+
+    <sect2 id="Property">
+      <title>Property</title>
+
+      <para>
+        Controls <literal>Compass</literal> automatic properties, and property names.
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="4*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Setting</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>compass.property.alias</entry>
+                <entry>The name of the "alias" property that Compass will use (a property that holds the alias property value of a resource). Defaults to <literal>alias</literal> (set it only if one of your mapped meta data is called alias).</entry>
+              </row>
+              <row>
+                <entry>compass.property.extendedAlias</entry>
+                <entry>The name of the property that extended aliased (if exists) of a given Resource will be stored. This allows for poly alias queries where one can query on a "base" alias, and get all the aliases the are extending it. Defaults to <literal>extendedAlias</literal> (set it only if one of your mapped meta data is called extendedAlias).</entry>
+              </row>
+              <row>
+                <entry>compass.property.all</entry>
+                <entry>The name of the "all" property that Compass will use (a property that accumulates all the properties/meta-data). Defaults to <literal>all</literal> (set it only if one of your mapped meta data is called all). Note that it can be overriden in the mapping files.</entry>
+              </row>
+              <row>
+                <entry>compass.property.all.termVector (defaults to <literal>no</literal>)</entry>
+                <entry>The default setting for the term vector of the all property. Can be one of <literal>no</literal>, <literal>yes</literal>, <literal>positions</literal>, <literal>offsets</literal>, or <literal>positions_offsets</literal>.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+      </para>
+
+    </sect2>
+
+    <sect2 id="TransactionLevel">
+     <title>Transaction Level</title>
+
+      <para>
+        Compass supports several transaction isolation levels. More information about them can be found in the Search Engine chapter.
+
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Transaction Level</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>none</entry>
+                <entry>Not supported, upgraded to <literal>read_committed</literal>.</entry>
+              </row>
+              <row>
+                <entry>read_uncommitted</entry>
+                <entry>Not supported, upgraded to <literal>read_committed</literal>.</entry>
+              </row>
+              <row>
+                <entry>read_committed</entry>
+                <entry>The same read committed from data base systems. As fast for read only transactions.</entry>
+              </row>
+              <row>
+                <entry>repeatable_read</entry>
+                <entry>Not supported, upgraded to <literal>serializable</literal>.</entry>
+              </row>
+              <row>
+                <entry>serializable</entry>
+                <entry>The same as serializable from data base systems. Performance killer, basically results in transactions executed sequentially.</entry>
+              </row>
+              <row>
+                <entry>lucene (batch_insert)</entry>
+                <entry>A special transaction level, <literal>lucene</literal> (previously known as <literal>batch_insert</literal>) isolation level is similar to the <literal>read_committed</literal> isolation level except dirty operations done during a transaction are not visible to get/load/find operations that occur within the same transaction. This isolation level is very handy for long running batch dirty operations and can be faster than <literal>read_committed</literal>. Most usage patterns of Compass (such as integration with ORM tools) can work perfectly well with the <literal>lucene</literal> isolation level.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </para>
+
+      <para>
+          Please read more about how Compass::Core implements it's transaction management in the <link linkend="core-searchengine">Search Engine</link> section.
+      </para>
+
+    </sect2>
+
+    <sect2 id="TransactionStrategy">
+      <title>Transaction Strategy</title>
+
+      <para>
+        When using the Compass::Core transaction API, you must specify a factory class for the <literal>CompassTransaction</literal> instances. This is done by setting the property <literal>compass.transaction.factory</literal>. The <literal>CompassTransaction</literal> API hides the underlying transaction mechanism, allowing Compass::Core code to run in a managed and non-managed environments. The two standard strategies are:
+
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Transaction Strategy</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>org.compass.core. transaction.LocalTransactionFactory</entry>
+                <entry>Manages a local transaction which does not interact with other transaction mechanisms.</entry>
+              </row>
+              <row>
+                <entry>org.compass.core. transaction.JTASyncTransactionFactory</entry>
+                <entry>Uses the JTA synchronization support to synchronize with the JTA transaction (not the same as two phase commit, meaning that if the transaction fails, the other resources that participate in the transaction will not roll back). If there is no existing JTA transaction, a new one will be started.</entry>
+              </row>
+              <row>
+                <entry>org.compass.core. transaction.XATransactionFactory</entry>
+                <entry>Uses the JTA Transaction to enlist a Compass implemented <classname>XAResource</classname> This allows for Compass to participate in a two phase commit operation. Note, the JTA implementation should automatically delist the resource when the transaction commit/rollback. If there is no existing JTA transaction, a new one will be started.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+      </para>
+
+      <para>
+        An important configuration setting is the <literal>compass.transaction.commitBeforeCompletion</literal>. It is used when using transaction factories that uses synchronization (like JTA and Spring). If set to <literal>true</literal>, will commit the transaction in the <literal>beforeCompletion</literal> stage. It is very important to set it to <literal>true</literal> when using a jdbc based index storage, and set it to <literal>false</literal> otherwise. Defaults to <literal>false</literal>.
+      </para>
+
+      <para>
+        Although the J2EE specification does not provide a standard way to reference a JTA <literal>TransactionManager</literal>, to register with a transaction synchronization service, Compass provides several lookups which can be set with a <literal>compass.transaction.managerLookup</literal> setting (thanks hibernate!). The setting is not required since Compass will try to auto-detect the JTA environment.
+      </para>
+
+      <para>
+        The following table lists them all:
+
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="5*" />
+            <colspec colname="c2" colwidth="3*" />
+            <thead>
+              <row><entry>Transaction Manager Lookup</entry><entry>Application Server</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>org.compass.core.transaction.manager.JBoss</entry>
+                <entry>JBoss</entry>
+              </row>
+              <row>
+                <entry>org.compass.core.transaction.manager.Weblogic</entry>
+                <entry>Weblogic</entry>
+              </row>
+              <row>
+                <entry>org.compass.core.transaction.manager.WebSphere</entry>
+                <entry>WebSphere</entry>
+              </row>
+              <row>
+                <entry>org.compass.core.transaction.manager.Orion</entry>
+                <entry>Orion</entry>
+              </row>
+              <row>
+                <entry>org.compass.core.transaction.manager.JOTM</entry>
+                <entry>JOTM</entry>
+              </row>
+              <row>
+                <entry>org.compass.core.transaction.manager.JOnaAS</entry>
+                <entry>JOnAS</entry>
+              </row>
+              <row>
+                <entry>org.compass.core.transaction.manager.JRun4</entry>
+                <entry>JRun4</entry>
+              </row>
+              <row>
+                <entry>org.compass.core.transaction.manager.BEST</entry>
+                <entry>Borland ES</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+      </para>
+
+      <para>
+        The JTA transaction mechanism will use the JNDI configuration to lookup the JTA <literal>UserTransaction</literal>. The transaction manager lookup provides the JNDI name, but if you wish to set it yourself, you can set the <literal>compass.transaction.userTransactionName</literal> setting. Also, the <literal>UserTransaction</literal> will be cached by default (fetched from JNDI on Compass startup), the caching can be controlled by <literal>compass.transaction.cacheUserTransaction</literal>.
+      </para>
+
+    </sect2>
+
+    <sect2 id="config-propertyAccessors">
+       <title>Property Accessor</title>
+
+       <para>
+          Property accessors are used for reading and writing Class properties. Compass comes with two implementations, field and property. field is used for directly accessing the Class property, and property is used for accessing the class property using the property getters/setters. Compass allows for registration of custom <literal>PropertyAccessor</literal> implementations under a lookup name, as well as changing the default property accessor used (which is property).
+       </para>
+
+       <para>
+          The configuration uses Compass support for group properties, with the <literal>compass.propertyAccessor</literal> group prefix. The name the property accessor will be registered under is the group name. In order to set the default property accessor, the <literal>default</literal> group name should be used.
+       </para>
+
+       <para>
+          Custom implementations of <literal>PropertyAccessor</literal> can optionally implement the <literal>CompassConfigurable</literal> interface, which allows for additional settings to be injected into the implementations.
+       </para>
+
+       <para>
+
+         <table><title>Property Accessor Settings</title><tgroup cols="2">
+           <colspec colname="c1" colwidth="3*" />
+           <colspec colname="c2" colwidth="5*" />
+           <thead>
+               <row><entry>Setting</entry><entry>Description</entry></row>
+           </thead>
+           <tbody>
+             <row>
+               <entry>compass.propertyAccessor.[property accessor name].type</entry>
+               <entry>The fully qualified class name of the property accessor.</entry>
+             </row>
+           </tbody>
+         </tgroup></table>
+
+       </para>
+
+    </sect2>
+
+    <sect2 id="config-converter">
+       <title>Converters</title>
+
+       <para>
+          Compass uses converters to convert all the different OSEM mappings into <literal>Resource</literal>s. Compass comes with a set of default converters that should be sufficient for most applications, but does allow the extendibility to define custom converters for all aspects related to marshaling Objects and Mappings (Compass internal mapping definitions) into a search engine.
+       </para>
+
+       <para>
+          Compass uses a registry of Converters. All Converters are registered under a registry name (converter lookup name). Compass registers all it's default Converters under lookup names (which allows for changing the default converters settings), and allows for registration of custom Converters.
+       </para>
+
+       <para>
+
+          The following lists all the default Converters that comes with Compass. The lookup name is the lookup name the Converter will be registered under, the Converter class is Compass implementation of the <literal>Converter</literal>, and the Converter Type acts as shorthand string for the <literal>Converter</literal> implementation (can be used with the <literal>compass.converter.[converter name].type</literal> instead of the fully qualified class name).
+
+          The default mapping converters are responsible for converting the meta-data mapping definitions.
+
+          <table>
+            <title>Default Compass Converters</title>
+            <tgroup cols="5">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="2*" />
+            <colspec colname="c3" colwidth="5*" />
+            <colspec colname="c4" colwidth="2*" />
+            <colspec colname="c5" colwidth="3*" />
+            <thead>
+                <row><entry>Java type</entry><entry>Lookup Name</entry><entry>Converter Class</entry><entry>Converter Type</entry><entry>Notes</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>java.lang.Boolean, boolean</entry>
+                <entry>boolean</entry>
+                <entry>org.compass.core.converter. simple.BooleanConveter</entry>
+                <entry>boolean</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.lang.Byte, byte</entry>
+                <entry>byte</entry>
+                <entry>org.compass.core.converter. simple.ByteConveter</entry>
+                <entry>byte</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.lang.Charecter, char</entry>
+                <entry>char</entry>
+                <entry>org.compass.core.converter. simple.CharConveter</entry>
+                <entry>char</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.lang.Float, float</entry>
+                <entry>float</entry>
+                <entry>org.compass.core.converter. simple.FloatConveter</entry>
+                <entry>float</entry>
+                <entry>Format-table converter</entry>
+              </row>
+              <row>
+                <entry>java.lang.Double, double</entry>
+                <entry>double</entry>
+                <entry>org.compass.core.converter. simple.DoubleConveter</entry>
+                <entry>double</entry>
+                <entry>Format-table converter</entry>
+              </row>
+              <row>
+                <entry>java.lang.Short, short</entry>
+                <entry>short</entry>
+                <entry>org.compass.core.converter. simple.ShortConveter</entry>
+                <entry>short</entry>
+                <entry>Format-table converter</entry>
+              </row>
+              <row>
+                <entry>java.lang.Integer, int</entry>
+                <entry>int</entry>
+                <entry>org.compass.core.converter. simple.IntConveter</entry>
+                <entry>int</entry>
+                <entry>Format-table converter</entry>
+              </row>
+              <row>
+                <entry>java.lang.Long, long</entry>
+                <entry>long</entry>
+                <entry>org.compass.core.converter. simple.LongConveter</entry>
+                <entry>long</entry>
+                <entry>Format-table converter</entry>
+              </row>
+              <row>
+                <entry>java.lang.Date</entry>
+                <entry>date</entry>
+                <entry>org.compass.core.converter. simple.DateConveter</entry>
+                <entry>date</entry>
+                <entry>Format-table converter, defaults to <literal>yyyy-MM-dd-HH-mm-ss-S-a</literal></entry>
+              </row>
+              <row>
+                <entry>java.lang.Calendar</entry>
+                <entry>calendar</entry>
+                <entry>org.compass.core.converter. simple.CalendarConveter</entry>
+                <entry>calendar</entry>
+                <entry>Format-table converter, defaults to <literal>yyyy-MM-dd-HH-mm-ss-S-a</literal></entry>
+              </row>
+              <row>
+                <entry>java.lang.String</entry>
+                <entry>string</entry>
+                <entry>org.compass.core.converter. simple.StringConveter</entry>
+                <entry>string</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.lang.StringBuffer</entry>
+                <entry>stringbuffer</entry>
+                <entry>org.compass.core.converter. simple.StringBufferConveter</entry>
+                <entry>stringbuffer</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.math.BigDecimal</entry>
+                <entry>bigdecimal</entry>
+                <entry>org.compass.core.converter. simple.BigDecimalConveter</entry>
+                <entry>bigdecimal</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.math.BigInteger</entry>
+                <entry>biginteger</entry>
+                <entry>org.compass.core.converter. simple.BigIntegerConveter</entry>
+                <entry>biginteger</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.net.URL</entry>
+                <entry>url</entry>
+                <entry>org.compass.core.converter. simple.URLConveter</entry>
+                <entry>url</entry>
+                <entry>Uses the <literal>URL#toString</literal></entry>
+              </row>
+              <row>
+                <entry>java.io.File</entry>
+                <entry>file</entry>
+                <entry>org.compass.core.converter. extended.FileConveter</entry>
+                <entry>file</entry>
+                <entry>Uses the file name</entry>
+              </row>
+              <row>
+                <entry>java.io.InputStream</entry>
+                <entry>inputstream</entry>
+                <entry>org.compass.core.converter. extended.InputStreamConveter</entry>
+                <entry>inputstream</entry>
+                <entry>Stores the content of the <literal>InputStream</literal> without performing any other search related operations.</entry>
+              </row>
+              <row>
+                <entry>java.io.Reader</entry>
+                <entry>reader</entry>
+                <entry>org.compass.core.converter. extended.ReaderConverter</entry>
+                <entry>reader</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.util.Locale</entry>
+                <entry>locale</entry>
+                <entry>org.compass.core.converter. extended.LocaleConveter</entry>
+                <entry>locale</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.sql.Date</entry>
+                <entry>sqldate</entry>
+                <entry>org.compass.core.converter. extended.SqlDateConveter</entry>
+                <entry>sqldate</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.sql.Time</entry>
+                <entry>sqltime</entry>
+                <entry>org.compass.core.converter. extended.SqlTimeConveter</entry>
+                <entry>sqltime</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>java.sql.Timestamp</entry>
+                <entry>sqltimestamp</entry>
+                <entry>org.compass.core.converter. extended.SqlTimestampConveter</entry>
+                <entry>sqltimestamp</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>byte[]</entry>
+                <entry>primitivebytearray</entry>
+                <entry>org.compass.core.converter. extended.PrimitiveByteArrayConverter</entry>
+                <entry>primitivebytearray</entry>
+                <entry>Stores the content of the byte array without performing any other search related operations.</entry>
+              </row>
+              <row>
+                <entry>Byte[]</entry>
+                <entry>objectbytearray</entry>
+                <entry>org.compass.core.converter. extended.ObjectByteArrayConverter</entry>
+                <entry>objectbytearray</entry>
+                <entry>Stores the content of the byte array without performing any other search related operations.</entry>
+              </row>
+            </tbody>
+            </tgroup>
+          </table>
+
+          <table>
+            <title>Compass Mapping Converters</title>
+            <tgroup cols="4">
+            <colspec colname="c1" colwidth="4*" />
+            <colspec colname="c2" colwidth="2*" />
+            <colspec colname="c3" colwidth="4*" />
+            <colspec colname="c4" colwidth="2*" />
+            <thead>
+                <row><entry>Mapping type</entry><entry>Lookup Name</entry><entry>Converter Class</entry><entry>Notes</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>org.compass.core.mapping. osem.ClassMapping</entry>
+                <entry>classMapping</entry>
+                <entry>org.compass.core.converter. mapping.ClassMappingConverter</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>org.compass.core.mapping. osem.ClassIdPropertyMapping</entry>
+                <entry>classIdPropertyMapping</entry>
+                <entry>org.compass.core.converter. mapping.ClassPropertyMappingConverter</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>org.compass.core.mapping. osem.ClassPropertyMapping</entry>
+                <entry>classPropertyMapping</entry>
+                <entry>org.compass.core.converter. mapping.ClassPropertyMappingConverter</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>org.compass.core.mapping. osem.ComponentMapping</entry>
+                <entry>componentMapping</entry>
+                <entry>org.compass.core.converter. mapping.ComponentMappingConverter</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>org.compass.core.mapping. osem.ReferenceMapping</entry>
+                <entry>referenceMapping</entry>
+                <entry>org.compass.core.converter. mapping.ReferenceMappingConverter</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>org.compass.core.mapping. osem.CollectionMapping</entry>
+                <entry>collectionMapping</entry>
+                <entry>org.compass.core.converter. mapping.CollectionMappingConverter</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>org.compass.core.mapping. osem.ArrayMapping</entry>
+                <entry>arrayMapping</entry>
+                <entry>org.compass.core.converter. mapping.ArrayMappingConverter</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>org.compass.core.mapping. osem.ConstantMapping</entry>
+                <entry>constantMapping</entry>
+                <entry>org.compass.core.converter. mapping.ConstantMappingConverter</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>org.compass.core.mapping. osem.ParentMapping</entry>
+                <entry>parentMapping</entry>
+                <entry>org.compass.core.converter. mapping.ParentMappingConverter</entry>
+                <entry></entry>
+              </row>
+            </tbody>
+            </tgroup>
+          </table>
+       </para>
+
+       <para>
+          Defining a new converter can be done using Compass support for group settings. <literal>compass.converter</literal> is the prefix for the group. In order to define new converter that will be registered under the "converter name" lookup, the <literal>compass.converter.[converter name]</literal> setting prefix should be used. The following lists all the settings that can apply to a converter definition.
+
+          <table><title>Converter Settings</title><tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+                <row><entry>Setting</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>compass.converter.[converter name].type</entry>
+                <entry>The type of the <literal>org.compass.converter.Converter</literal> implementation. Should either be the fully qualified class name, or the Converter Type (shorthand version for compass internal converter classes, defined in the previous table).</entry>
+              </row>
+              <row>
+                <entry>compass.converter.[converter name].format</entry>
+                <entry>Applies to format-able converters. The format that will be used to format the data converted (see Java <literal>java.text.DecimalFormat</literal> and <literal>java.text.SimpleDateFormat</literal>).</entry>
+              </row>
+              <row>
+                <entry>compass.converter.[converter name].format.locale</entry>
+                <entry>The <literal>Locale</literal> to be used when formatting.</entry>
+              </row>
+              <row>
+                <entry>compass.converter.[converter name].format.minPoolSize</entry>
+                <entry>Compass pools the formatters for greater performance. The value of the minimum pool size. Defaults to 4.</entry>
+              </row>
+              <row>
+                <entry>compass.converter.[converter name].format.maxPoolSize</entry>
+                <entry>Compass pools the formatters for greater performance. The value of the maximum pool size. Defaults to 20.</entry>
+              </row>
+            </tbody>
+            </tgroup>
+          </table>
+
+          Note, that any other setting can be defined after the <literal>compass.converter.[converter name]</literal>. If the <literal>Converter</literal> implements the <literal>org.compass.core.config.CompassConfigurable</literal>, it will be injected with the settings for the converter. The converter will get all the settings, with settings names without the <literal>compass.converter.[converter name]</literal> prefix.
+
+       </para>
+
+       <para>
+          For example, defining a new Date converter with a specific format can be done by setting two settings: <literal>compass.converter.mydate.type=date</literal> (same as <literal>compass.converter.mydate.type=org.compass.core.converter.basic.DateConverter</literal>), and <literal>compass.converter.mydate.format=yyyy-HH-dd</literal>. The converter will be registered under the "mydate" converter lookup name. It can than be used as a lookup name in the OSEM definitions.
+       </para>
+
+       <para>
+          In order to change the default converters, simply define a setting with the [converter name] of the default converter that comes with compass. For example, in order to override the format of all the dates in the system to "yyyy-HH-dd", simple set: <literal>compass.converter.date.format=yyyy-HH-dd</literal>.
+       </para>
+
+    </sect2>
+
+    <sect2 id="SearchEngine">
+      <title>Search Engine</title>
+
+      <para>
+        Controls the different settings for the search engine.
+
+        <table><title>Search Engine Settings</title><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Setting</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>compass.engine.connection</entry>
+              <entry>The index engine file system location.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.defaultsearch</entry>
+              <entry>When searching using a query string, the default property/meta-data that compass will use for non prefixed strings. Defaults to <literal>compass.property.all</literal> value.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.all.analyzer</entry>
+              <entry>The name of the analyzer to use for the all property (see the next section about Search Engine Analyzers).</entry>
+            </row>
+            <row>
+              <entry>compass.transaction.lockDir</entry>
+              <entry>The directory where the search engine will maintain it's locking file mechanism for inter and outer process transaction synchronization. Defaults to the <literal>java.io.tmpdir</literal> Java system property. This is a JVM level property.</entry>
+            </row>
+            <row>
+              <entry>compass.transaction.lockTimeout</entry>
+              <entry>The amount of time a transaction will wait in order to obtain it's specific lock (in seconds). Defaults to 10 seconds.</entry>
+            </row>
+            <row>
+              <entry>compass.transaction.lockPollInterval</entry>
+              <entry>The interval that the transaction will check to see if it can obtain the lock (in milliseconds). Defaults to 100 milliseconds. This is a JVM level proeprty.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.optimizer.type</entry>
+              <entry>The fully qualified class name of the search engine optimizer that will be used. Defaults to <literal>org.compass.core.lucene.engine. optimizer.AdaptiveOptimizer</literal>. Please see the following section for a list of optimizers.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.optimizer.schedule</entry>
+              <entry>Determines if the optimizer will be scheduled or not (<literal>true</literal> or <literal>false</literal>), defaults to <literal>true</literal>. If it is scheduled, it will run each period of time and check if the index need optimization, and if it does, it will optimize it.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.optimizer. schedule.period</entry>
+              <entry>The period that the optimizer will check if the index need optimization, and if it does, optimize it (in seconds, can be a float number). Defaults to 10 seconds. The setting applies if the optimizer is scheduled.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.optimizer. schedule.fixedRate</entry>
+              <entry>Determines if the schedule will run in a fixed rate or not. If it is set to <literal>false</literal> each execution is scheduled relative to the actual execution of the previous execution. If it is set to <literal>true</literal> each execution is scheduled relative to the execution time of the initial execution.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.optimizer. adaptive.mergeFactor</entry>
+              <entry>For the adaptive optimizer, determines how often the optimizer will optimize the index. With small values, the faster the searches will be, but the more often that the index will be optimized. Larger values will result in slower searches, and less optimizations.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.optimizer. aggressive.mergeFactor</entry>
+              <entry>For the aggressive optimizer, determines how often the optimizer will optimize the index. With small values, the faster the searches will be, but the more often that the index will be optimized. Larger values will result in slower searches, and less optimizations.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.mergeFactor</entry>
+              <entry>With smaller values, less RAM is used, but indexing is slower. With larger values, more RAM is used, and the indexing speed is faster. Defaults to 10.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.maxBufferedDocs</entry>
+              <entry>Determines the minimal number of documents required before the buffered in-memory documents are flushed as a new Segment.  Large values generally gives faster indexing. When this is set, the writer will flush every maxBufferedDocs added documents.  Pass in -1 to prevent triggering a flush due to number of buffered documents.  Note that if flushing by RAM usage is also enabled, then the flush will be triggered by whichever comes first. Disabled by default (writer flushes by RAM usage).
+              </entry>
+            </row>
+            <row>
+              <entry>compass.engine.maxBufferedDeletedTerms</entry>
+              <entry>Determines the minimal number of delete terms required before the buffered in-memory delete terms are applied and flushed. If there are documents buffered in memory at the time, they are merged and a new segment is created. Disabled by default (writer flushes by RAM usage).              
+              </entry>
+            </row>
+            <row>
+              <entry>compass.engine.ramBufferSize</entry>
+              <entry>Determines the amount of RAM that may be used for buffering added documents before they are flushed as a new Segment.  Generally for faster indexing performance it's best to flush by RAM usage instead of document count and use as large a RAM buffer as you can. When this is set, the writer will flush whenever buffered documents use this much RAM.  Pass in -1 to prevent triggering a flush due to RAM usage.  Note that if flushing by document count is also enabled, then the flush will be triggered by whichever comes first. The default value is 16 (M).
+              </entry>
+            </row>
+            <row>
+              <entry>compass.engine.termIndexInterval</entry>
+              <entry>Expert: Set the interval between indexed terms.  Large values cause less memory to be used by IndexReader, but slow random-access to terms.  Small values cause more memory to be used by an IndexReader, and speed random-access to terms. This parameter determines the amount of computation required per query term, regardless of the number of documents that contain that term.  In particular, it is the maximum number of other terms that must be scanned before a term is located and its frequency and position information may be processed.  In a large index with user-entered query terms, query processing time is likely to be dominated not by term lookup but rather by the processing of frequency and positional data.  In a small index or when many uncommon query terms are generated (e.g., by wildcard queries) term lookup may become a dominant cost. In particular, numUniqueTerms/interval terms are read into memory by an IndexReader, and, on average, interval/2 terms must be scanned for each random term access.
+              </entry>
+            </row>
+            <row>
+              <entry>compass.engine.maxFieldLength</entry>
+              <entry>The number of terms that will be indexed for a single property in a resource. This limits the amount of memory required for indexing, so that collections with very large resources will not crash the indexing process by running out of memory. Note, that this effectively truncates large resources, excluding from the index terms that occur further in the resource. Defaults to 10,000 terms.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.useCompoundFile</entry>
+              <entry>Turn on (<literal>true</literal>) or off (<literal>false</literal>) the use of compound files. If used lowers the number of files open, but have very small performance overhead. Defaults to <literal>true</literal>. Note, when compass starts up, it will validate that the current index structure maps the configured setting, and if it is not, it will automatically try and convert it to the correct structure.
+              </entry>
+            </row>
+            <row>
+              <entry>compass.engine.cacheIntervalInvalidation</entry>
+              <entry>Sets how often (in milliseconds) the index manager will check if the index cache needs to be invalidated. Defaults to <literal>5000</literal> milliseconds. Setting it to <literal>0</literal> means that the cache will check if it needs to be invalidated all the time. Setting it to <literal>-1</literal> means that the cache will not check the index for invalidation, it is perfectly fine if a single instance is working with the index, since the cache is automatically invalidated upon a dirty operation.
+              </entry>
+            </row>
+              <row>
+                <entry>compass.engine.indexManagerScheduleInterval</entry>
+                <entry>The index manager schedule interval (in seconds) where different actions related to index manager will happen (such as global cache interval invalidation checks - see <literal>SearchEngineIndexManager#notifyAllToClearCache</literal> and <literal>SearchEngineIndexManager#checkAndClearIfNotifiedAllToClearCache</literal>). Defaults to 60 seconds.
+                </entry>
+              </row>
+              <row>
+                <entry>compass.engine.waitForCacheInvalidationOnIndexOperation</entry>
+                <entry>Defaults to false. If set to true, will cause the index manager operation (including replace index) to wait for all other compass instances to invalidate their cache. The time to wait will be the indexManagerScheduledInterval configuration setting.</entry>
+              </row>
+          </tbody>
+        </tgroup></table>
+
+      </para>
+
+      <para>
+        The following section lists the different optimizers that are available with Compass::Core. Note that all the optimizers can be scheduled or not.
+
+        <table>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row><entry>Optimizer</entry><entry>Description</entry></row>
+            </thead>
+            <tbody>
+              <row>
+                <entry><literal>org.compass.core.lucene.engine. optimizer.AdaptiveOptimizer</literal></entry>
+                <entry>When the number of segments exceeds that specified <literal>mergeFactor</literal>, the segments will be merged from the last segment, until a segment with a higher resource count will be encountered.</entry>
+              </row>
+              <row>
+                <entry><literal>org.compass.core.lucene.engine. optimizer.AggressiveOptimizer</literal></entry>
+                <entry>When the number of segments exceeds that specified <literal>mergeFactor</literal>, all the segments are merged into a single segment.</entry>
+              </row>
+              <row>
+                <entry><literal>org.compass.core.lucene.engine. optimizer.NullOptimizer</literal></entry>
+                <entry>Does no optimization, starts no threads.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </para>
+    </sect2>
+
+    <sect2 id="core-configuration-searchenginejdbc">
+      <title>Search Engine Jdbc</title>
+
+      <para>
+        Compass allows storing the index in a database using Jdbc. When using Jdbc storage, additional settings are mandatory except for the connection setting. The value after the <literal>Jdbc://</literal> prefix in the <literal>compass.engine.connection</literal> setting can be the Jdbc url connection or the Jndi name of the <literal>DataSource</literal>, depending on the configured <literal>DataSourceProvider</literal>.
+      </para>
+
+      <para>
+        It is important also to read the Jdbc Directory Appendix. Two sections that should be read are the supported dialects, and the performance considerations (especially the compound structure).
+      </para>
+
+      <para>
+        The following is a list of all the Jdbc settings:
+
+        <table>
+          <title>Search Engine Jdbc Settings</title>
+          <tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Setting</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>compass.engine.store.jdbc. dialect</entry>
+              <entry>Optional. The fully qualified class name of the dialect (the database type) that the index will be stored at. Please refer to Lucene Jdbc Directory appendix for a list of the currently supported dialects. If not set, Compass will try to auto-detect it based on the Database meta-data.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. disableSchemaOperations</entry>
+              <entry>Optional. If set to <literal>true</literal>, no database schema level operations will be performed (drop and create tables). When deleting the data in the index, the content will be deleted, but the table will not be dropped. Default to <literal>false</literal>.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. managed</entry>
+              <entry>Optional (defaults to <literal>false</literal>). If the connection is managed or not. Basically, if set to <literal>false</literal>, compass will commit and rollback the transaction. If set to <literal>true</literal>, compass will not perform it. Defaults to <literal>false</literal>. Should be set to <literal>true</literal> if using external transaction managers (like JTA or Spring <literal>PlatformTransactionManager</literal>), and <literal>false</literal> if using compass <literal>LocalTransactionFactory</literal>. Note as well, that if using external transaction managers, the <literal>compass.transaction.commitBeforeCompletion</literal> should be set to <literal>true</literal>. If the connection is not managed (set to <literal>false</literal>), the created <literal>DataSource</literal> will be wrapped with Compass Jdbc directory <literal>TransactionAwareDataSourceProxy</literal>. Please refer to Lucene Jdbc Directory appendix for more information.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. connection.provider.class</entry>
+              <entry>The fully qualified name of the <literal>DataSourceProvider</literal>. The <literal>DataSourceProvider</literal> is responsible for getting/creating the Jdbc <literal>DataSource</literal> that will be used. Defaults to <literal>org.compass.core.lucene.engine .store.jdbc.DriverManagerDataSourceProvider</literal> (Poor performance). Please refer to next section for a list of the available providers.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. useCommitLocks</entry>
+              <entry>Optional (defaults to <literal>false</literal>). Determines if the index will use Lucene commit locks. Setting it to <literal>true</literal> makes sense only if the system will work in <literal>autoCommit</literal> mode (which is not recommended anyhow).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. deleteMarkDeletedDelta</entry>
+              <entry>Optional (defaults to an hour). Some of the entries in the database are marked as deleted, and not actually gets to be deleted from the database. The setting controls the delta time of when they should be deleted. They will be deleted if they were marked for deleted "delta" time ago (base on database time, if possible by dialect).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. lockType</entry>
+              <entry>Optional (defaults to <literal>PhantomReadLock</literal>). The fully qualified name of the <literal>Lock</literal> implementation that will be used.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. ddl.name.name</entry>
+              <entry>Optional (defaults to <literal>name_</literal>). The name of the name column.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. ddl.name.size</entry>
+              <entry>Optional (defaults to <literal>50</literal>). The size (charecters) of the name column.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. ddl.value.name</entry>
+              <entry>Optional (defaults to <literal>value_</literal>). The name of the value column.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. ddl.value.size</entry>
+              <entry>Optional (defaults to <literal>500 * 1000 K</literal>). The size (in K) of the value column. Only applies to databases that require it.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. ddl.size.name</entry>
+              <entry>Optional (defaults to <literal>size_</literal>). The name of the size column.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. ddl.lastModified.name</entry>
+              <entry>Optional (defaults to <literal>lf_</literal>). The name of the last modified column.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.store.jdbc. ddl.deleted.name</entry>
+              <entry>Optional (defaults to <literal>deleted_</literal>). The name of the deleted column.</entry>
+            </row>
+          </tbody>
+          </tgroup>
+        </table>
+
+      </para>
+
+      <sect3 id="core-configuration-searchenginejdbcds">
+        <title>Data Source Providers</title>
+
+          <para>
+            Compass comes with several built in <literal>DataSourceProvider</literal>s. They are all located at the <literal>org.compass.core.lucene.engine.store.jdbc</literal> package. The following table lists them:
+
+            <table>
+              <title>Search Engine Data Source Providers</title>
+              <tgroup cols="2">
+              <colspec colname="c1" colwidth="3*" />
+              <colspec colname="c2" colwidth="5*" />
+              <thead>
+                  <row><entry>Data Source Provider Class</entry><entry>Description</entry></row>
+              </thead>
+              <tbody>
+                <row>
+                  <entry>DriverManagerDataSourceProvider</entry>
+                  <entry>The default data source provider. Creates a simple <literal>DataSource</literal> that returns a new <literal>Connection</literal> for each request. Performs very poorly, and should not be used.</entry>
+                </row>
+                <row>
+                  <entry>DbcpDataSourceProvider</entry>
+                  <entry>Uses Jakarta Commons DBCP Connection pool. Compass provdes several additional configurations settings to configure DBCP, please refer to <literal>LuceneEnvironment#DataSourceProvider#Dbcp</literal> javadoc.</entry>
+                </row>
+                <row>
+                  <entry>C3P0DataSourceProvider</entry>
+                  <entry>Uses C3P0 Connection pool. Configring additional properties for the C3P0 connection pool uses C3p0 internal support for a <literal>c3p0.properties</literal> that should reside as a top-level resource in the same CLASSPATH / classloader that loads c3p0's jar file.</entry>
+                </row>
+                <row>
+                  <entry>JndiDataSourceProvider</entry>
+                  <entry>Gets a <literal>DataSource</literal> from JNDI. The JNDI name is the value after the <literal>jdbc://</literal> prefix in Compass connection setting.</entry>
+                </row>
+                <row>
+                  <entry>ExternalDataSourceProvider</entry>
+                  <entry>A data source provider that can use an externally configured data source. In order to set the external DataSource to be used, the <literal>ExternalDataSourceProvider#setDataSource(DataSource)</literal> static method needs to be called before the <literal>Compass</literal> instance if created.</entry>
+                </row>
+              </tbody>
+              </tgroup>
+            </table>
+          </para>
+
+          <para>
+            The <literal>DriverManagerDataSourceProvider</literal>, <literal>DbcpDataSourceProvider</literal>, and <literal>C3P0DataSourceProvider</literal> use the value after the <literal>jdbc://</literal> prefix in Compass connection setting as the Jdbc connection url. They also require the following settings to be set:
+
+            <table>
+              <title>Internal Data Source Providers Settings</title>
+              <tgroup cols="2">
+              <colspec colname="c1" colwidth="3*" />
+              <colspec colname="c2" colwidth="5*" />
+              <thead>
+                  <row><entry>Setting</entry><entry>Description</entry></row>
+              </thead>
+              <tbody>
+                <row>
+                  <entry>compass.engine.store.jdbc. connection.driverClass</entry>
+                  <entry>The Jdbc driver class.</entry>
+                </row>
+                <row>
+                  <entry>compass.engine.store.jdbc. connection.username</entry>
+                  <entry>The Jdbc connection user name.</entry>
+                </row>
+                <row>
+                  <entry>compass.engine.store.jdbc. connection.password</entry>
+                  <entry>The Jdbc connection password.</entry>
+                </row>
+              </tbody>
+              </tgroup>
+            </table>
+
+          </para>
+      </sect3>
+
+      <sect3 id="core-configuration-searchenginejdbcfe">
+        <title>File Entry Handlers</title>
+
+        <para>
+            Configuring the Jdbc store with Compass also allows defining <literal>FileEntryHandler</literal> settings for different file entries in the database. <literal>FileEntryHandler</literal>s are explained in the Lucene Jdbc Directory appendix (and require some Lucene knowledge). The Lucene Jdbc Directory implementation already comes with sensible defaults, but they can be changed using Compass configuration.
+        </para>
+
+        <para>
+            One of the things that come free with Compass it automatically using the more performant <literal>FetchPerTransactoinJdbcIndexInput</literal> if possible (based on the dialect). Special care need to be taken when using the mentioned index input, and it is done automatically by Compass.
+        </para>
+
+        <para>
+            Setting file entry handlers is done using the following setting prefix: <literal>compass.engine.store.jdbc.fe.[name]</literal>. The name can be either <literal>__default__</literal> which is used for all unmapped files, it can be the full name of the file stored, or the suffix of the file (the last 3 charecters). Some of the currently supported settings are:
+
+            <table>
+              <title>File Entry Handler Settings</title>
+              <tgroup cols="2">
+              <colspec colname="c1" colwidth="3*" />
+              <colspec colname="c2" colwidth="5*" />
+              <thead>
+                  <row><entry>Setting</entry><entry>Description</entry></row>
+              </thead>
+              <tbody>
+                <row>
+                  <entry>compass.engine.store.jdbc.fe. [name].type</entry>
+                  <entry>The fully qualified class name of the file entry handler.</entry>
+                </row>
+                <row>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexInput.type</entry>
+                  <entry>The fully qualified class name of the <literal>IndexInput</literal> implementation.</entry>
+                </row>
+                <row>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexOutput.type</entry>
+                  <entry>The fully qualified class name of the <literal>IndexInput</literal> implementation.</entry>
+                </row>
+                <row>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexInput.bufferSize</entry>
+                  <entry>The RAM buffer size of the index input. Note, it applies only to some of the <literal>IndexInput</literal> implementations.</entry>
+                </row>
+                <row>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexOutput.bufferSize</entry>
+                  <entry>The RAM buffer size of the index output. Note, it applies only to some of the <literal>IndexOutput</literal> implementations.</entry>
+                </row>
+                <row>
+                  <entry>compass.engine.store.jdbc.fe. [name].indexOutput.threshold</entry>
+                  <entry>The threshold value (in bytes) after which data will be temporarly written to a file (and them dumped into the database). Applies when using <literal>RAMAndFileJdbcIndexOutput</literal> (which is the default one). Defaults to <literal>16 * 1024</literal> bytes.</entry>
+                </row>
+              </tbody>
+              </tgroup>
+            </table>
+
+        </para>
+      </sect3>
+    </sect2>
+
+    <sect2 id="core-configuration-searchengineanalyzers">
+      <title>Search Engine Analyzers</title>
+
+      <para>
+        With Compass, multiple Analyzers can be defined (each under a different analyzer name) and than referenced in the configuration and mapping definitions. Compass defines two internal analyzers names called: <literal>default</literal> and <literal>search</literal>. The <literal>default</literal> analyzer is the one used when no other analyzer can be found, it defaults to the <literal>standard</literal> analyzer with English stop words. The <literal>search</literal> is the analyzer used to analyze search queries, and if not set, defaults to the <literal>default</literal> analyzer (Note that the search analyzer can also be set using the <literal>CompassQuery</literal> API). Changing the settings for the <literal>default</literal> analyzer can be done using the <literal>compass.engine.analyzer.default.*</literal> settings (as explained in the next table). Setting the <literal>search</literal> analyzer (so it will differ from the <literal>default</literal> analyzer) can be done using the <literal>compass.engine.analyzer.search.*</literal> settings. Also, you can set a list of filter to be applied to the given analyzers, please see the next section of how to configure analyzer filters, especially the synonym one.
+      </para>
+
+      <para>
+
+        <table><title>Search Engine Analyzer Settings</title><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Setting</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>compass.engine.analyzer.[analyzer name].type</entry>
+              <entry>The type of the search engine analyzer, please see the available analyzers types later in the section.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.analyzer.[analyzer name].filters</entry>
+              <entry>A comma separated list of <literal>LuceneAnalyzerTokenFilterProvider</literal>s registered under compass, to be applied for the given analyzer. For example, adding a synonym analyzer, you should register a synonym <literal>LuceneAnalyzerTokenFilterProvider</literal> under your own choice for filter name, and add it to the list of filters here.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.analyzer.[analyzer name].stopwords</entry>
+              <entry>A comma separated list of stop words to use with the chosen analyzer. If the string starts with <literal>+</literal>, the list of stop-words will be added to the default set of stop words defined for the analyzer. Note, that not all the analyzers type support this feature.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.analyzer.[analyzer name].factory</entry>
+              <entry>If the <literal>compass.engine.analyzer.[analyzer name].type</literal> setting is not enough to configure your analyzer, use it to define the fully qualified class name of your analyzer factory which implements <literal>LuceneAnalyzerFactory</literal> class.</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
+
+      </para>
+
+      <para>
+        Compass comes with core analyzers (Which are part of the <literal>lucene-core</literal> jar). They are: <literal>standard</literal>, <literal>simple</literal>, <literal>whitespace</literal>, and <literal>stop</literal>. See the <link linkend="searchegngine-analyzers">Analyzers Section</link>.
+      </para>
+
+      <para>
+        Compass also allows simple configuration of the <literal>snowball</literal> analyzer type (which comes with the <literal>lucene-snowball</literal> jar). An additional setting that must be set when using the <literal>snowball</literal> analyzer, is the <literal>compass.engine.analyzer.[analyzer name].name</literal> setting. The settings can have the following values: <literal>Danish</literal>, <literal>Dutch</literal>, <literal>English</literal>, <literal>Finnish</literal>, <literal>French</literal>, <literal>German</literal>, <literal>German2</literal>, <literal>Italian</literal>, <literal>Kp</literal>, <literal>Lovins</literal>, <literal>Norwegian</literal>, <literal>Porter</literal>, <literal>Portuguese</literal>, <literal>Russian</literal>, <literal>Spanish</literal>, and <literal>Swedish</literal>.
+      </para>
+
+      <para>
+        Another set of analyer types comes with the <literal>lucene-analyzers</literal> jar. They are: <literal>brazilian</literal>, <literal>cjk</literal>, <literal>chinese</literal>, <literal>czech</literal>, <literal>german</literal>, <literal>greek</literal>, <literal>french</literal>, <literal>dutch</literal>, and <literal>russian</literal>.
+      </para>
+
+    </sect2>
+
+    <sect2 id="core-configuration-searchengineanalyzersfilters">
+      <title>Search Engine Analyzer Filters</title>
+
+      <para>
+         You can specify a set of analyzer filters that can then be applied to all the different analyzers configured. It uses the group settings, so setting the analyzer filter need to be prefixed with <literal>compass.engine.analyzerfilter</literal>, and the value after it is the analyzer filter name, and then the setting for the analyzer filter.
+      </para>
+
+      <para>
+         Filters are provided for simpler support for additional filtering (or enrichment) of analyzed streams, without the hassle of creating your own analyzer. Also, filters, can be shared across different analyzers, potentially having different analyzer types.
+      </para>
+
+      <para>
+
+        <table><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Setting</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>compass.engine.analyzerfilter.[analyzer filter name].type</entry>
+              <entry>The type of the search engine analyzer filter provider, must implement the <literal>org.compass.core.lucene.engine.analyzer.LuceneAnalyzerTokenFilterProvider</literal> interface. Can also be the value <literal>synonym</literal>, which will automatically map to the <literal>org.compass.core.lucene.engine.analyzer.synonym.SynonymAnalyzerTokenFilterProvider</literal> class.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.analyzerfilter.[analyzer filter name].lookup</entry>
+              <entry>Only applies for synonym filters. The class that implements the <literal>org.compass.core.lucene.engine.analyzer.synonym.SynonymLookupProvider</literal> for providing synonyms for a given term.</entry>
+            </row>
+         </tbody>
+      </tgroup></table>
+      </para>
+
+   </sect2>
+
+    <sect2 id="core-configuration-searchenginehighlighters">
+      <title>Search Engine Highlighters</title>
+
+      <para>
+        With Compass, multiple Highlighters can be defined (each under a different highlighter name) and than referenced when using <literal>CompassHighlighter</literal>. Within Compass, an internal <literal>default</literal> highlighter is defined, and can be configured when using <literal>default</literal> as the highlighter name.
+      </para>
+
+      <para>
+
+        <table><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Setting</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].factory</entry>
+              <entry>Low level. Optional (defaults to <literal>DefaultLuceneHighlighterFactory</literal>). The fully qualified name of the class that creates highlighters settings. Must implement the <literal>LuceneHighlighterFactory</literal> interface.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].textTokenizer</entry>
+              <entry>Optional (default to <literal>auto</literal>). Defines how a text will be tokenized to be highlighted. Can be <literal>analyzer</literal> (use an analyzer to tokenize the text), <literal>term_vector</literal> (use the term vector info stored in the index), or <literal>auto</literal> (will first try <literal>term_vector</literal>, and if no info is stored, will try to use <literal>analyzer</literal>).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].rewriteQuery</entry>
+              <entry>Low level. Optional (defaults to <literal>true</literal>). If the query used to highlight the text will be rewritten or not.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].computeIdf</entry>
+              <entry>Low level. Optional (set according to the formatter used).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].maxNumFragments</entry>
+              <entry>Optional (default to <literal>3</literal>). Sets the maximum number of fragments that will be returned.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].separator</entry>
+              <entry>Optional (defaults to <literal>...</literal>). Sets the separator string between fragments if using the combined fragments highlight option.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].maxBytesToAnalyze</entry>
+              <entry>Optional (defaults to <literal>50*1024</literal>). Sets the maximum byes of text to analyze.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].fragmenter.type</entry>
+              <entry>Optional (default to <literal>simple</literal>). The type of the fragmenter that will be used, can be <literal>simple</literal>, <literal>null</literal>, or the fully qualified class name of the fragmenter (implements the <literal>org.apache.lucene.search.highlight.Fragmenter</literal>).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].fragmenter.simple.size</entry>
+              <entry>Optional (defaults to <literal>100</literal>). Sets the size (in bytes) of the fragments for the <literal>simple</literal> fragmenter.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].encoder.type</entry>
+              <entry>Optional (default to <literal>default</literal>). The type of the encoder that will be used to encode fragmented text. Can be <literal>default</literal> (does nothing), <literal>html</literal> (escapes html tags), or the fully qualifed class name of the encoder (implements <literal>org.apache.lucene.search.highlight.Encoder</literal>).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].formatter.type</entry>
+              <entry>Optional (default to <literal>simple</literal>). The type of the formatter that will be used to highlight the text. Can be <literal>simple</literal> (simply wraps the highlighted text with pre and post strings), <literal>htmlSpanGradient</literal> (wraps the highlighted text with an html span tag with an optional background and foreground gradient colors), or the fully qualified class name of the formatter (implements <literal>org.apache.lucene.search.highlight.Formatter</literal>).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].formatter.simple.pre</entry>
+              <entry>Optional (default to <literal>&lt;b&gt;</literal>). In case the highlighter uses the <literal>simple</literal> formatter, controlls the text that is appened before the highlighted text.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].formatter.simple.post</entry>
+              <entry>Optional (default to <literal>&lt;/b&gt;</literal>). In case the highlighter uses the <literal>simple</literal> formatter, controlls the text that is appened after the highlighted text.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].formatter.htmlSpanGradient.maxScore</entry>
+              <entry>In case the highlighter uses the <literal>htmlSpanGradient</literal> formatter, the score that above it is displayed as max color.</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].formatter.htmlSpanGradient.minForegroundColor</entry>
+              <entry>Optional (if not set, foreground will not be set on the span tag). In case the highlighter uses the <literal>htmlSpanGradient</literal> formatter, the hex color used for representing IDF scores of zero eg #FFFFFF (white).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].formatter.htmlSpanGradient.maxForegroundColor</entry>
+              <entry>Optional (if not set, foreground will not be set on the span tag). In case the highlighter uses the <literal>htmlSpanGradient</literal> formatter, the largest hex color used for representing IDF scores eg #000000 (black).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].formatter.htmlSpanGradient.minBackgroundColor</entry>
+              <entry>Optional (if not set, background will not be set on the span tag). In case the highlighter uses the <literal>htmlSpanGradient</literal> formatter, the hex color used for representing IDF scores of zero eg #FFFFFF (white).</entry>
+            </row>
+            <row>
+              <entry>compass.engine.highlighter.[highlighter name].formatter.htmlSpanGradient.maxBackgroundColor</entry>
+              <entry>Optional (if not set, background will not be set on the span tag). In case the highlighter uses the <literal>htmlSpanGradient</literal> formatter, The largest hex color used for representing IDF scores eg #000000 (black).</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
+
+      </para>
+
+    </sect2>
+
+    <sect2 id="OtherSettings">
+      <title>Other Settings</title>
+
+      <para>
+        Several other settings that control compass.
+
+        <table><tgroup cols="2">
+          <colspec colname="c1" colwidth="3*" />
+          <colspec colname="c2" colwidth="5*" />
+          <thead>
+              <row><entry>Setting</entry><entry>Description</entry></row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>compass.osem.managedId.index</entry>
+              <entry>Can be either <literal>un_tokenized</literal> or <literal>no</literal> (defaults to <literal>no</literal>). It is the index setting that will be used when creating an internal managed id for a class property mapping (if it is not a property id, if it is, it will always be <literal>un_tokenized</literal>).</entry>
+            </row>
+            <row>
+              <entry>compass.osem.supportUnmarshall</entry>
+              <entry>Controls if the default support for un-marshalling within the class mappings will default to <literal>true</literal> or <literal>false</literal> (unless it is explicitly set in the class mapping). Defaults to <literal>true</literal>. Controls if the searchable class will support unmarshalling from the search engine or using <literal>Resource</literal> is enough. Un-marshalling is the process of converting a raw <literal>Resource</literal> into the actual domain object. If support un-marshall is enabled extra information will be stored within the search engine, as well as consumes extra memory</entry>
+            </row>
+          </tbody>
+        </tgroup></table>
+      </para>
+    </sect2>
+
+
+  </sect1>
+
+</appendix>

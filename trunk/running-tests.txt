@@ -1,0 +1,22 @@
+Testing Compass Distribution
+=============================
+
+Compass allows running all its tests with the "with-dependencies" distribution.
+Simply executing "ant tests" (or build tests on windows) will run all the tests.
+
+Specifying different test settings for most of the core tests can be done by 
+adding a file called compass.test.properties. An example can be verifying that
+compass can work with a certain database and Jdbc driver. An example for running
+compass tests against MySql can be done by having the following properties in
+the compass.test.properties file:
+
+# BEGIN TEST PROPERTIES
+compass.engine.connection=jdbc://jdbc:mysql:///test?emulateLocators=true
+compass.engine.store.jdbc.dialect=org.apache.lucene.store.jdbc.dialect.MySQLInnoDBDialect
+compass.engine.store.jdbc.connection.driverClass=com.mysql.jdbc.Driver
+compass.engine.store.jdbc.connection.username=root
+compass.engine.store.jdbc.connection.password=
+compass.engine.useCompoundFile=false
+# END TEST PROPERTIES
+
+

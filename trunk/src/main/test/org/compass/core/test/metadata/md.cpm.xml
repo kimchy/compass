@@ -1,0 +1,27 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.metadata">
+
+    <class name="A" alias="${testMDG.testAlias}">
+    
+        <id name="id" />
+        
+        <property name="value">
+            <meta-data>${testMDG.testMD1}</meta-data>
+        </property>
+
+        <property name="dateValue">
+            <meta-data>${testMDG.testMD2}</meta-data>
+        </property>
+
+        <constant>
+            <meta-data>${testMDG.testMD3}</meta-data>
+            <meta-data-value>${testMDG.testMD3.id-cval1}</meta-data-value>
+            <meta-data-value>${testMDG.testMD3.id-cval2}</meta-data-value>
+        </constant>
+    
+    </class>
+
+</compass-core-mapping>

@@ -1,0 +1,48 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.managedid.nostore">
+
+    <class name="A" alias="a">
+    
+        <id name="id" accessor="field" />
+        
+        <property name="value1" accessor="field" managed-id="no_store">
+            <meta-data store="no">value1</meta-data>
+            <meta-data store="no">value2</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a1" managed-id="no_store">
+
+        <id name="id" accessor="field" />
+
+        <property name="value1" accessor="field">
+            <meta-data store="no">value1</meta-data>
+            <meta-data store="no">value2</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+    </class>
+
+    <class name="A" alias="a2" managed-id="auto">
+
+        <id name="id" accessor="field" />
+
+        <property name="value1" accessor="field">
+            <meta-data store="no">value1</meta-data>
+            <meta-data store="no">value2</meta-data>
+        </property>
+
+        <property name="value2" accessor="field">
+            <meta-data>value2</meta-data>
+        </property>
+    </class>
+</compass-core-mapping>

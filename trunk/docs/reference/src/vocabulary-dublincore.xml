@@ -1,0 +1,8 @@
+<chapter id="vocabulary-dublincore">
+  <title>Dublin Core</title>
+
+  <para>
+    The Compass::Vocabulary supports the <ulink url="http://dublincore.org/">Dublin Core Meta data initiative</ulink>. The common meta data xml mapping files can be found at: <literal>org/compass/vocabulary/dublinCore.cmd.xml</literal>. The generated classes are <literal>org.compass.vocabulary.DublinCore</literal> and <literal>org.compass.vocabulary.DublinCoreOthers</literal>. These classes can used in your application to use the static String values of the vocabulary.
+  </para>
+    
+</chapter>

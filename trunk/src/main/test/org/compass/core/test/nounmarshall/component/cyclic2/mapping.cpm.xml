@@ -1,0 +1,46 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.nounmarshall.component.cyclic2">
+
+    <class name="A" alias="a" support-unmarshall="false">
+
+        <id name="id" accessor="field"/>
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="b" accessor="field" />
+    </class>
+
+    <class name="B" alias="b" support-unmarshall="false" root="false">
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="c" accessor="field" />
+        <component name="d" accessor="field" />
+    </class>
+
+    <class name="C" alias="c" support-unmarshall="false" root="false">
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="a" accessor="field" />
+    </class>
+
+    <class name="D" alias="d" support-unmarshall="false" root="false">
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="b" accessor="field" />
+    </class>
+
+</compass-core-mapping>

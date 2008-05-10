@@ -1,0 +1,20 @@
+<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.0.xsd">
+
+    <compass name="default">
+
+        <connection>
+            <file path="target/test-index" />
+        </connection>
+
+        <converters>
+            <converter name="date" type="org.compass.core.converter.basic.DateConverter">
+                <setting name="format" value="yyyy-MM-dd" />
+            </converter>
+            <converter name="myConverter" type="test.Myconverter" />
+        </converters>
+
+    </compass>
+
+</compass-core-config>

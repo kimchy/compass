@@ -1,0 +1,30 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.gps.device.hibernate.eg">
+
+    <class name="User" alias="user">
+        <id name="id" />
+        <property name="userName">
+            <meta-data>username</meta-data>
+        </property>
+        <property name="email">
+            <meta-data>email</meta-data>
+        </property>
+        <component name="name" ref-alias="name" />        
+    </class>
+    
+    <class name="Name" alias="name" root="false">
+        <property name="firstName">
+            <meta-data>firstName</meta-data>
+        </property>
+        <property name="initial">
+            <meta-data>initial</meta-data>
+        </property>
+        <property name="lastName">
+            <meta-data>lastName</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

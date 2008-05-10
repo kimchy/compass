@@ -1,0 +1,32 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.inheritance">
+
+    <!-- Mappings for abstract base class set as not root -->
+
+    <class name="BaseA" alias="baseNotRoot" poly="true" root="false">
+
+        <id name="id" />
+
+        <property name="value">
+            <meta-data>mvalue</meta-data>
+        </property>
+    </class>
+
+    <class name="ExtendsA" alias="extendsBaseNotRoot" poly="true" extends="baseNotRoot">
+
+        <property name="extendsValue">
+            <meta-data>mextendsValue</meta-data>
+        </property>
+
+    </class>
+
+    <class name="C" alias="cExtendsBaseNotRoot">
+        <id name="id" accessor="field" />
+
+        <component name="a" accessor="field" ref-alias="extendsBaseNotRoot" />
+    </class>
+
+</compass-core-mapping>

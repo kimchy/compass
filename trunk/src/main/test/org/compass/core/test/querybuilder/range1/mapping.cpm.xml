@@ -1,0 +1,25 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.querybuilder.range1">
+
+    <class name="A" alias="a">
+
+        <id name="id" accessor="field"/>
+
+        <property name="value" accessor="field">
+            <meta-data format="0,000">value</meta-data>
+        </property>
+
+        <property name="date" accessor="field">
+            <meta-data>date</meta-data>
+        </property>
+
+        <property name="date2" accessor="field">
+            <meta-data format="yyyy-MM-dd||dd-MM-yyyy">date2</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>

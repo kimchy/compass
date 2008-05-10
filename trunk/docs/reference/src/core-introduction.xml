@@ -1,0 +1,102 @@
+<chapter id="core-introduction">
+  <title>Introduction</title>
+  <sect1 id="core-introduction-overview">
+    <title>Overview</title>
+
+    <sidebar>
+      <title>Compass API</title>
+      <para>
+        As you will learn in this chapter, Compass high level API looks strangely familiar. If you used an ORM framework (Hibernate, JDO or JPA), you should feel right at home. This is of-course, intentional. The aim is to let the developer learn as less as possible in terms of interaction with Compass. Also, there are so many design patterns of integrating this type of API with different applications models, that it is a shame that they won't be used with Compass as well.
+      </para>
+
+      <para>
+        For Hibernate users, <classname>Compass</classname> maps to <classname>SessionFactory</classname>, <classname>CompassSession</classname> maps to <classname>Session</classname>, and <classname>CompassTransaction</classname> maps to <classname>Transaction</classname>.
+      </para>
+    </sidebar>
+
+    <para>
+      Compass is built using a layered architecture. Applications interacts with the underlying Search Engine through three main Compass interfaces: <classname>Compass</classname>, <classname>CompassSession</classname> and <classname>CompassTransaction</classname>. These interfaces hide the implementation details of Compass Search Engine abstraction layer.
+    </para>
+
+    <para>
+      <emphasis>Compass</emphasis> provide access to search engine management functionality and <classname>CompassSession</classname>'s for managing data within the Search Engine. It is created using <classname>CompassConfiguration</classname> (loads configuration and mappings files). When <classname>Compass</classname> is created, it will either join an existing index or create a new one if none is available. After this, an application will use <classname>Compass</classname> to obtain a <classname>CompassSession</classname> in order to start managing the data with the Search Engine. <classname>Compass</classname> is a heavyweight object, usually created at application startup and shared within an application for <classname>CompassSession</classname> creation.
+    </para>
+
+    <para>
+      <emphasis>CompassSession</emphasis> as the name suggests, represents a working lightweight session within Compass (it is non thread safe). With a <classname>CompassSession</classname>, applications can save and retrieve any searchable data (declared in Compass mapping files) from the Search Engine. Applications work with <classname>CompassSession</classname> at either the Object level or Compass Resource level to save and retrieve data.  In order to work with Objects within Compass, they must be specified using either OSEM or XSEM (with XSEM <classname>XmlObject</classname>). In order to work with Resources, they must be specified using RSEM (Resource can still be used with OSEM/RSEM to display search results, since Objects/Xml end up being converted to Resources). Compass will then retrieve the declared searchable data from the Object automatically when saving Objects within Compass. When querying the Search Engine, Compass provides a <classname>CompassHits</classname> interface which one can use to work with the search engine results (getting scores, resources and mapped objects).
+    </para>
+
+    <para>
+      <emphasis>CompassTransaction</emphasis>, retrieved from the <classname>CompassSession</classname> and is used to manage transactions within Compass. You can configure Compass Core to use either local transactions or JTA synchronization. Note, that unlike JDBC, automatic transaction registration will not happen, so we strongly recommend using the <classname>CompassTransaction</classname> abstraction for easy (configuration based) replacement of the transaction strategy.
+    </para>
+
+    <para>
+      After so many words, lets see a code snippet that shows the usage of the main compass interfaces:
+<programlisting><![CDATA[CompassConfiguration conf =
+    new CompassConfiguration().configure().addClass(Author.class);
+Compass compass = conf.buildCompass();
+CompassSession session = compass.openSession();
+CompassTransaction tx = null;
+try {
+    tx = session.beginTransaction();
+    ...
+    session.save(author);
+    CompassHits hits = session.find("jack london");
+    Author a = (Author) hits.data(0);
+    Resource r = hits.resource(0);
+    ...
+    tx.commit();
+} catch (CompassException ce) {
+    if (tx != null) tx.rollback();
+} finally {
+    session.close();
+}
+]]></programlisting>
+    </para>
+
+  </sect1>
+
+  <sect1 id="core-introduction-sessionLifecycle">
+    <title>Session Lifecycle</title>
+
+    <para>
+      Compass::Core <literal>Compass</literal> interface manages the creation of <literal>CompassSession</literal> using the <literal>openSession()</literal> method. When <literal>beginTransaction()</literal> is called on the <literal>CompassTransaction</literal>, the session is bound to the created transaction (JTA, Spring or Local) and used throughout the life-cycle of the transaction. It means that if an additional session is opened within the current transaction, the originating session will be returned by the <literal>openSession()</literal> method.
+    </para>
+
+    <para>
+      When using the <literal>openSession</literal> method, Compass will automatically try and join an already running outer transaction. An outer transaction can be an already running local Compass transaction, a JTA transaction, or a Spring managed transaction. If Compass manages to join an existing outer transaction, the application does not need to call <literal>CompassSession#beginTransaction()</literal> or use <literal>CompassTransaction</literal> to manage the transaction (since it is already managed). This allows to simplify the usage of Compass within managed environments (CMT or Spring) where a transaction is already in progress by not requiring explicit Compass code to manage a Compass transaction.
+    </para>
+  </sect1>
+
+  <sect1 id="core-introduction-TemplateandCallback">
+    <title>Template and Callback</title>
+
+    <para>
+      Compass also provides a simple implementation of the template design pattern, using the <classname>CompassTemplate</classname> and the <classname>CompassCallback</classname> classes. Using it, one does not have to worry about the Compass session or transaction handling. The <classname>CompassTemplate</classname> provides all the
+      session operations, except that they are transactional (a new session is opened and a new transaction is created and committed when calling them). It also provides the <literal>execute</literal> method, which accepts a callback class (usually an anonymous inner class), to execute within it operations that are wrapped within the same transaction.
+    </para>
+
+    <para>
+      An example of using the template is provided:
+<programlisting><![CDATA[CompassConfiguration conf =
+    new CompassConfiguration().configure().addClass(Author.class);
+Compass compass = conf.buildCompass();
+CompassTemplate template = new CompassTemplate(compass);
+template.save(author); // open a session, transaction, and closes both
+Author a = (Author) template.execute(new CompassCallback() {
+    public Object doInCompass(CompassSession session) {
+    // all the actions here are within the same session
+    // and transaction
+        session.save(author);
+        CompassHits hits = session.find("london");
+        ...
+        return session.load(id);
+    }
+});
+]]></programlisting>
+    </para>
+
+  </sect1>
+</chapter>
+
+

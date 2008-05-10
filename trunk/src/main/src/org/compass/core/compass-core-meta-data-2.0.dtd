@@ -1,0 +1,54 @@
+<!-- Compass Meta Data DTD.
+
+<!DOCTYPE compass-core-meta-data PUBLIC 
+    "-//Compass/Compass Core Meta Data DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-meta-data-2.0.dtd">
+-->
+<!ELEMENT compass-core-meta-data (
+    meta-data-group* 
+)>
+
+<!ELEMENT meta-data-group (
+    description?,
+    uri?,
+    alias*,
+    meta-data* 
+)>
+    <!ATTLIST meta-data-group id CDATA #REQUIRED>
+    <!ATTLIST meta-data-group displayName CDATA #IMPLIED>
+
+<!ELEMENT alias (
+    description?,
+    uri?,
+    name
+)>
+    <!ATTLIST alias id CDATA #REQUIRED>
+    <!ATTLIST alias displayName CDATA #IMPLIED>
+
+<!ELEMENT meta-data (
+    description?,
+    uri?,
+    name,
+    value*
+)>
+    <!ATTLIST meta-data id CDATA #REQUIRED>
+    <!ATTLIST meta-data displayName CDATA #IMPLIED>
+
+<!ELEMENT description (
+    #PCDATA
+)>
+
+<!ELEMENT uri (
+    #PCDATA
+)>
+
+<!ELEMENT name (
+    #PCDATA
+)>
+    <!ATTLIST name format CDATA #IMPLIED>
+
+<!ELEMENT value (
+    #PCDATA
+)>
+    <!ATTLIST value id CDATA #REQUIRED>
+    

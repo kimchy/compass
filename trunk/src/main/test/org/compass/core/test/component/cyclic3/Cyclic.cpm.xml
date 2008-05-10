@@ -1,0 +1,53 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.cyclic3">
+
+    <class name="Cyclic1" alias="cyclic1">
+    
+        <id name="id" accessor="field" />
+        
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+        
+        <component name="cyclic2" accessor="field" ref-alias="cyclic2" />
+        
+    </class>
+
+    <class name="Cyclic2" alias="cyclic2" root="false">
+    
+        <parent name="cyclic1" accessor="field" />
+        
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+        
+    </class>
+
+    <class name="Cyclic1" alias="cyclic1c">
+
+        <id name="id" accessor="field" />
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+        <component name="cyclic2" accessor="field" ref-alias="cyclic2c" />
+
+    </class>
+
+    <class name="Cyclic2" alias="cyclic2c">
+
+        <id name="id" accessor="field" />
+        
+        <component name="cyclic1" ref-alias="cyclic1c" accessor="field" />
+
+        <property name="value" accessor="field">
+            <meta-data>value</meta-data>
+        </property>
+
+    </class>
+
+</compass-core-mapping>
