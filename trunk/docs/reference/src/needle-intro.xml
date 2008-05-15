@@ -1,3 +1,0 @@
-<para>
-  Compass::Needle provides integration of Compass and Lucene with distributed frameworks. The integration usually revolves around the ability to store the index within a distributed cache, as well as reflecting changes done to the data grid using Compass OSEM into the index.
-</para>
