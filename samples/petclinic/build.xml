@@ -25,7 +25,7 @@
     <path id="master-classpath">
 
         <fileset dir="${compass.root}/dist">
-            <include name="compass.jar"/>
+            <include name="compass-*.jar"/>
         </fileset>
         <fileset dir="${compass.root}/lib/lucene">
             <include name="*.jar"/>
