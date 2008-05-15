@@ -27,7 +27,7 @@ import org.compass.core.config.CompassConfiguration;
 public class AllAnnotationsTests extends AbstractAnnotationsTestCase {
 
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addClass(A1.class).addClass(A2.class).addClass(A3.class);
+        conf.addClass(A1.class).addClass(A2.class).addClass(A3.class).addClass(A4.class);
     }
 
     public void testDisableAll() {
@@ -71,6 +71,23 @@ public class AllAnnotationsTests extends AbstractAnnotationsTestCase {
         session.save(a);
 
         assertEquals(1, session.find("a3").length());
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testExcludePropertyFromAll() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A4 a = new A4();
+        a.id = 1;
+        a.value1 = "test";
+        a.value2 = "best";
+        session.save(a);
+
+        assertEquals(1, session.find("test").length());
+        assertEquals(0, session.find("best").length());
 
         tr.commit();
         session.close();
