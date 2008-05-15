@@ -144,7 +144,12 @@ public abstract class AbstractJTATransactionFactory extends AbstractTransactionF
         UserTransaction ut;
         try {
             ut = (UserTransaction) context.lookup(utName);
+            ut.getStatus();
         } catch (NamingException ne) {
+            ut = null;
+        } catch (IllegalStateException e) {
+            ut = null;
+        } catch (SystemException e) {
             ut = null;
         }
         if (ut == null) {
