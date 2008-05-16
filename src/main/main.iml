@@ -53,6 +53,7 @@
     <orderEntry type="library" name="jaxen" level="project" />
     <orderEntry type="library" name="stax" level="project" />
     <orderEntry type="library" name="woodstox" level="project" />
+    <orderEntry type="library" name="jdom" level="project" />
     <orderEntryProperties />
   </component>
 </module>

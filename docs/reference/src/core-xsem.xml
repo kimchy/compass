@@ -100,6 +100,14 @@ session.save(xmlObject);
                   <entry>org.compass.core.xml.dom4j.converter. STAXReaderXmlContentConverter</entry>
                   <entry>Support dom4j <literal>STAXEventReader</literal> for parsing, and <literal>XMLWriter</literal> to write the raw xml data.</entry>
                 </row>
+                <row>
+                  <entry>org.compass.core.xml.jdmo.converter. SAXBuilderXmlContentConverter</entry>
+                  <entry>Support JDOM <literal>SAXBuilder</literal> for parsing, and <literal>XMLOutputter</literal> to write the raw xml data.</entry>
+                </row>
+                <row>
+                  <entry>org.compass.core.xml.jdmo.converter. STAXBuilderXmlContentConverter</entry>
+                  <entry>Support JDOM <literal>STAXBuilder</literal> for parsing, and <literal>XMLOutputter</literal> to write the raw xml data.</entry>
+                </row>
               </tbody>
             </tgroup>
           </table>

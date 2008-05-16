@@ -29,6 +29,8 @@ import org.compass.core.xml.dom4j.converter.SAXReaderXmlContentConverter;
 import org.compass.core.xml.dom4j.converter.XPP3ReaderXmlContentConverter;
 import org.compass.core.xml.dom4j.converter.XPPReaderXmlContentConverter;
 import org.compass.core.xml.javax.converter.NodeXmlContentConverter;
+import org.compass.core.xml.jdom.converter.SAXBuilderXmlContentConverter;
+import org.compass.core.xml.jdom.converter.STAXBuilderXmlContentConverter;
 
 /**
  * @author kimchy
@@ -39,7 +41,7 @@ public class XmlContentConverterLoadTester {
 
         XmlContentConverter[] converters = new XmlContentConverter[]{new SAXReaderXmlContentConverter(),
                 new XPPReaderXmlContentConverter(), new XPP3ReaderXmlContentConverter(),
-                new NodeXmlContentConverter()};
+                new NodeXmlContentConverter(), new SAXBuilderXmlContentConverter(), new STAXBuilderXmlContentConverter()};
 
         for (int i = 0; i < converters.length; i++) {
             System.gc();
@@ -79,7 +81,7 @@ public class XmlContentConverterLoadTester {
     }
 
     private static Reader readData(String path) {
-        path = "org/compass/core/test/xml/" + path + ".xml";
+        path = "org/compass/core/load/xsem/" + path + ".xml";
         return new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(path));
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.xml.dom4j.converter;
+package org.compass.core.xml.jdom.converter;
 
 import java.io.Reader;
 
@@ -25,27 +25,27 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.xsem.SupportsXmlContentWrapper;
 import org.compass.core.xml.AliasedXmlObject;
-import org.compass.core.xml.dom4j.Dom4jAliasedXmlObject;
-import org.dom4j.Document;
-import org.dom4j.io.XPPReader;
+import org.compass.core.xml.jdom.JDomAliasedXmlObject;
+import org.jdom.Document;
+import org.jdom.input.SAXBuilder;
 
 /**
- * A dom4j xml content mapping converter, which uses dom4j <code>XPPReader</code> to
- * convert the xml string into a {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject}.
+ * A JDOM content mapping converter, which uses JDOM <code>SAXBuilder</code> to
+ * convert the xml string into a {@link org.compass.core.xml.jdom.JDomAliasedXmlObject}.
  *
  * @author kimchy
  */
-public class XPPReaderXmlContentConverter extends AbstractXmlWriterXmlContentConverter
+public class SAXBuilderXmlContentConverter extends AbstractXmlOutputterXmlContentConverter
         implements SupportsXmlContentWrapper, CompassConfigurable {
 
-    private XPPReader xppReader;
+    private SAXBuilder saxBuilder;
 
     public void configure(CompassSettings settings) throws CompassException {
-        xppReader = doCreateXPPReader(settings);
+        saxBuilder = doCreateSAXBuilder(settings);
     }
 
-    protected XPPReader doCreateXPPReader(CompassSettings settings) {
-        return new XPPReader();
+    protected SAXBuilder doCreateSAXBuilder(CompassSettings settings) {
+        return new SAXBuilder();
     }
 
     /**
@@ -56,20 +56,21 @@ public class XPPReaderXmlContentConverter extends AbstractXmlWriterXmlContentCon
     }
 
     /**
-     * Uses dom4j <code>XPPReader</code> to convert the given xml string into a {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject}.
+     * Uses JDOM <code>SAXBuilder</code> to convert the given xml string into a {@link org.compass.core.xml.jdom.JDomAliasedXmlObject}.
      *
      * @param alias The alias that will be associated with the {@link org.compass.core.xml.AliasedXmlObject}
-     * @param xml   The xml string to convert into an {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject}
-     * @return A {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject} parsed from the given xml string and associated with the given alias
-     * @throws ConversionException In case the xml parsing failed
+     * @param xml   The xml string to convert into an {@link org.compass.core.xml.jdom.JDomAliasedXmlObject}
+     * @return A {@link org.compass.core.xml.jdom.JDomAliasedXmlObject} parsed from the given xml string and associated with the given alias
+     * @throws org.compass.core.converter.ConversionException
+     *          In case the xml parsing failed
      */
     public AliasedXmlObject fromXml(String alias, Reader xml) throws ConversionException {
         Document doc;
         try {
-            doc = xppReader.read(xml);
+            doc = saxBuilder.build(xml);
         } catch (Exception e) {
             throw new ConversionException("Failed to parse alias[" + alias + "] xml[" + xml + "]", e);
         }
-        return new Dom4jAliasedXmlObject(alias, doc.getRootElement());
+        return new JDomAliasedXmlObject(alias, doc.getRootElement());
     }
 }

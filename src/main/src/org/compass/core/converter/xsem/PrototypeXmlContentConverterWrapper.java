@@ -43,4 +43,8 @@ public class PrototypeXmlContentConverterWrapper implements XmlContentConverter,
     public AliasedXmlObject fromXml(String alias, Reader xml) throws ConversionException {
         return XmlContentConverterUtils.createXmlContentConverter(settings).fromXml(alias, xml);
     }
+
+    public String toString() {
+        return "Prototype Xml Content Converter wrapping [" + XmlContentConverterUtils.createXmlContentConverter(settings) + "]";
+    }
 }
