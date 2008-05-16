@@ -26,9 +26,11 @@ import org.compass.core.converter.xsem.XmlContentConverter;
 import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.XmlXPathExpression;
 import org.compass.core.xml.dom4j.converter.SAXReaderXmlContentConverter;
+import org.compass.core.xml.dom4j.converter.STAXReaderXmlContentConverter;
 import org.compass.core.xml.dom4j.converter.XPP3ReaderXmlContentConverter;
 import org.compass.core.xml.dom4j.converter.XPPReaderXmlContentConverter;
 import org.compass.core.xml.javax.converter.NodeXmlContentConverter;
+import org.compass.core.xml.javax.converter.StaxNodeXmlContentConverter;
 import org.compass.core.xml.jdom.converter.SAXBuilderXmlContentConverter;
 import org.compass.core.xml.jdom.converter.STAXBuilderXmlContentConverter;
 
@@ -40,8 +42,9 @@ public class XmlContentConverterLoadTester {
     public static void main(String[] args) throws Exception {
 
         XmlContentConverter[] converters = new XmlContentConverter[]{new SAXReaderXmlContentConverter(),
-                new XPPReaderXmlContentConverter(), new XPP3ReaderXmlContentConverter(),
-                new NodeXmlContentConverter(), new SAXBuilderXmlContentConverter(), new STAXBuilderXmlContentConverter()};
+                new XPPReaderXmlContentConverter(), new XPP3ReaderXmlContentConverter(), new STAXReaderXmlContentConverter(),
+                new NodeXmlContentConverter(), new StaxNodeXmlContentConverter(),
+                new SAXBuilderXmlContentConverter(), new STAXBuilderXmlContentConverter()};
 
         for (int i = 0; i < converters.length; i++) {
             System.gc();

@@ -55,9 +55,9 @@ public class NodeXmlContentConverter implements XmlContentConverter, CompassConf
 
     private static Log log = LogFactory.getLog(NodeXmlContentConverter.class);
 
-    private DocumentBuilder documentBuilder;
+    protected DocumentBuilder documentBuilder;
 
-    private Transformer transformer;
+    protected Transformer transformer;
 
     public void configure(CompassSettings settings) throws CompassException {
         try {
