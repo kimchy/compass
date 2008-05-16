@@ -21,13 +21,14 @@ public class XPathXmlXPathExpression implements XmlXPathExpression {
     }
 
     public XmlObject[] select(XmlObject xmlObject) throws Exception {
-        NodeList nodeList = (NodeList) xPathExpression.evaluate(((NodeXmlObject) xmlObject).getNode(), XPathConstants.NODESET);
+        NodeXmlObject nodelXmlObject = (NodeXmlObject) xmlObject;
+        NodeList nodeList = (NodeList) xPathExpression.evaluate(nodelXmlObject.getNode(), XPathConstants.NODESET);
         if (nodeList == null) {
             return null;
         }
         XmlObject[] xmlObjects = new XmlObject[nodeList.getLength()];
         for (int i = 0; i < xmlObjects.length; i++) {
-            xmlObjects[i] = new NodeXmlObject(nodeList.item(i));
+            xmlObjects[i] = new NodeXmlObject(nodeList.item(i), nodelXmlObject.getNamespaces());
         }
         return xmlObjects;
     }

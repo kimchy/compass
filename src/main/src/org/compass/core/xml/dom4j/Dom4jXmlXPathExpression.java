@@ -37,10 +37,11 @@ public class Dom4jXmlXPathExpression implements XmlXPathExpression {
     }
 
     public XmlObject[] select(XmlObject xmlObject) {
-        List nodes = xpath.selectNodes(((Dom4jXmlObject) xmlObject).getNode());
+        Dom4jXmlObject dom4jXmlObject = (Dom4jXmlObject) xmlObject;
+        List nodes = xpath.selectNodes(dom4jXmlObject.getNode());
         XmlObject[] xmlObjects = new XmlObject[nodes.size()];
         for (int i = 0; i < xmlObjects.length; i++) {
-            xmlObjects[i] = new Dom4jXmlObject((Node) nodes.get(i));
+            xmlObjects[i] = new Dom4jXmlObject((Node) nodes.get(i), dom4jXmlObject.getNamespaces());
         }
         return xmlObjects;
     }

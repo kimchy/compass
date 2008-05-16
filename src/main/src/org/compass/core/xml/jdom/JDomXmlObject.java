@@ -16,6 +16,8 @@
 
 package org.compass.core.xml.jdom;
 
+import java.util.Map;
+
 import org.compass.core.xml.XmlObject;
 import org.compass.core.xml.XmlXPathExpression;
 import org.jdom.Attribute;
@@ -35,8 +37,15 @@ public class JDomXmlObject implements XmlObject {
 
     private Attribute attribute;
 
+    private Map<String, String> namespaces;
+
     public JDomXmlObject(Document document) {
         this.element = document.getRootElement();
+    }
+
+    public JDomXmlObject(Document document, Map<String, String> namespaces) {
+        this.element = document.getRootElement();
+        this.namespaces = namespaces;
     }
 
     /**
@@ -46,11 +55,29 @@ public class JDomXmlObject implements XmlObject {
         this.element = element;
     }
 
+    public JDomXmlObject(Element element, Map<String, String> namespaces) {
+        this.element = element;
+        this.namespaces = namespaces;
+    }
+
     /**
      * Constructs a new xml object based on a JDMO <code>Attribute</code>.
      */
     public JDomXmlObject(Attribute attribute) {
         this.attribute = attribute;
+    }
+
+    public JDomXmlObject(Attribute attribute, Map<String, String> namespaces) {
+        this.attribute = attribute;
+        this.namespaces = namespaces;
+    }
+
+    public void setNamespaces(Map<String, String> namespaces) {
+        this.namespaces = namespaces;
+    }
+
+    public Map<String, String> getNamespaces() {
+        return namespaces;
     }
 
     /**
@@ -88,7 +115,13 @@ public class JDomXmlObject implements XmlObject {
      * Compiles the given xpath expression using JDMO <code>XPath.newInstance()</code>.
      */
     public XmlXPathExpression compile(String path) throws JDOMException {
-        return new JDomXmlXPathExpression(XPath.newInstance(path));
+        XPath xpath = XPath.newInstance(path);
+        if (namespaces != null) {
+            for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+                xpath.addNamespace(entry.getKey(), entry.getValue());
+            }
+        }
+        return new JDomXmlXPathExpression(xpath);
     }
 
     /**

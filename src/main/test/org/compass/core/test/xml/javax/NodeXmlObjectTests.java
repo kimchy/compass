@@ -49,4 +49,7 @@ public class NodeXmlObjectTests extends AbstractXmlObjectTests {
         innerTestData4XmlContent();
     }
 
+    public void testData5() throws Exception {
+        innerTestData5WithoutNamespacePrefixXpath();
+    }
 }

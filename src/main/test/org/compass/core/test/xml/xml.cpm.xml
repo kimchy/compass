@@ -30,5 +30,19 @@
         <xml-content name="content" />
     </xml-object>
 
+    <xml-object alias="data5-1" xpath="/xml-fragment/test1:data">
+        <xml-id name="id" xpath="test1:id/@value" />
+        <xml-property xpath="test1:data1/@value" />
+        <xml-property name="eleText" xpath="test1:data1" />
+        <xml-content name="content" />
+    </xml-object>
+
+    <xml-object alias="data5-2" xpath="/xml-fragment/data">
+        <xml-id name="id" xpath="id/@value" />
+        <xml-property xpath="data1/@value" />
+        <xml-property name="eleText" xpath="data1" />
+        <xml-content name="content" />
+    </xml-object>
+
 </compass-core-mapping>
     

@@ -17,6 +17,7 @@
 package org.compass.core.xml;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * A wrapper for an Xml Object. Used with XSEM to support mapping between Xml
@@ -36,6 +37,13 @@ public interface XmlObject extends Serializable {
      */
     String getValue();
 
+    /**
+     * Sets a lookup map for given namespaces (prefix to uri).
+     */
+    void setNamespaces(Map<String, String> namespaces);
+
+    Map<String, String> getNamespaces();
+    
     /**
      * Returns a list of xml objects matching the given xpath expression.
      * Note, that the actual xml implementation might support only xpath

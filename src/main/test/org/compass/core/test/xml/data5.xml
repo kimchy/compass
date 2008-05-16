@@ -1,0 +1,12 @@
+<xml-fragment>
+    <data xmlns="http://test1">
+        <id value="1"/>
+        <data1 value="data11attr">data11</data1>
+        <data1 value="data12attr">data12</data1>
+    </data>
+    <data xmlns="http://test2">
+        <id value="2"/>
+        <data1 value="data21attr">data21</data1>
+        <data1 value="data22attr">data22</data1>
+    </data>
+</xml-fragment>

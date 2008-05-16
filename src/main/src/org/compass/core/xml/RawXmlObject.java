@@ -17,6 +17,7 @@
 package org.compass.core.xml;
 
 import java.io.Reader;
+import java.util.Map;
 
 import org.compass.core.CompassException;
 import org.compass.core.util.reader.StringReader;
@@ -57,23 +58,31 @@ public class RawXmlObject implements XmlObject {
         return this.xml;
     }
 
+    public void setNamespaces(Map<String, String> namespaces) {
+        throw new CompassException("Operation not allowed on RawXmlObject");
+    }
+
+    public Map<String, String> getNamespaces() {
+        return null;
+    }
+
     public String getName() {
-        throw new CompassException("Operation not allowed on StringXmlObject");
+        throw new CompassException("Operation not allowed on RawXmlObject");
     }
 
     public String getValue() {
-        throw new CompassException("Operation not allowed on StringXmlObject");
+        throw new CompassException("Operation not allowed on RawXmlObject");
     }
 
     public XmlObject[] selectPath(String path) throws Exception {
-        throw new CompassException("Operation not allowed on StringXmlObject");
+        throw new CompassException("Operation not allowed on RawXmlObject");
     }
 
     public boolean canCompileXpath() {
-        throw new CompassException("Operation not allowed on StringXmlObject");
+        throw new CompassException("Operation not allowed on RawXmlObject");
     }
 
     public XmlXPathExpression compile(String path) throws Exception {
-        throw new CompassException("Operation not allowed on StringXmlObject");
+        throw new CompassException("Operation not allowed on RawXmlObject");
     }
 }

@@ -40,14 +40,15 @@ public class JDomXmlXPathExpression implements XmlXPathExpression {
     }
 
     public XmlObject[] select(XmlObject xmlObject) throws JDOMException {
-        List nodes = xpath.selectNodes(((JDomXmlObject) xmlObject).getElement());
+        JDomXmlObject jdomXmlObject = (JDomXmlObject) xmlObject;
+        List nodes = xpath.selectNodes(jdomXmlObject.getElement());
         XmlObject[] xmlObjects = new XmlObject[nodes.size()];
         for (int i = 0; i < xmlObjects.length; i++) {
             Object node = nodes.get(i);
             if (node instanceof Element) {
-                xmlObjects[i] = new JDomXmlObject((Element) nodes.get(i));
+                xmlObjects[i] = new JDomXmlObject((Element) nodes.get(i), jdomXmlObject.getNamespaces());
             } else if (node instanceof Attribute) {
-                xmlObjects[i] = new JDomXmlObject((Attribute) nodes.get(i));
+                xmlObjects[i] = new JDomXmlObject((Attribute) nodes.get(i), jdomXmlObject.getNamespaces());
             } else {
                 throw new ConversionException("Type [" + node.getClass() + "] is not supported");
             }

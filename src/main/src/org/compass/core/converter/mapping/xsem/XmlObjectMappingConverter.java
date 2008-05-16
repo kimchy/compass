@@ -18,12 +18,16 @@ package org.compass.core.converter.mapping.xsem;
 
 import java.io.Reader;
 import java.lang.reflect.Array;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import org.compass.core.CompassException;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.mapping.Mapping;
@@ -47,7 +51,10 @@ import org.compass.core.xml.XmlObject;
  */
 public class XmlObjectMappingConverter implements ResourceMappingConverter {
 
+    private Map<String, String> namespace;
+
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
+        extractNamespace(context);
         // no need to marshall if it is null
         if (root == null && !context.handleNulls()) {
             return false;
@@ -56,6 +63,7 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
         XmlObject rootXmlObject = (XmlObject) root;
 
         rootXmlObject = getActualXmlObject(rootXmlObject, xmlObjectMapping, context, resource);
+        rootXmlObject.setNamespaces(namespace);
 
         if (xmlObjectMapping.getXPath() != null) {
             XmlObject[] xmlObjects = XmlConverterUtils.select(rootXmlObject, xmlObjectMapping);
@@ -88,21 +96,26 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
+        extractNamespace(context);
         XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) mapping;
         if (xmlObjectMapping.getXmlContentMapping() == null) {
             return null;
         }
         XmlContentMapping xmlContentMapping = xmlObjectMapping.getXmlContentMapping();
-        return xmlContentMapping.getConverter().unmarshall(resource, xmlContentMapping, context);
+        XmlObject xmlObject = (XmlObject) xmlContentMapping.getConverter().unmarshall(resource, xmlContentMapping, context);
+        xmlObject.setNamespaces(namespace);
+        return xmlObject;
     }
 
     public boolean marshallIds(Resource idResource, Object id, ResourceMapping resourceMapping, MarshallingContext context) throws ConversionException {
+        extractNamespace(context);
         ResourceFactory resourceFactory = context.getResourceFactory();
 
         XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) resourceMapping;
         Mapping[] ids = resourceMapping.getIdMappings();
         if (id instanceof XmlObject) {
             XmlObject rootXmlObject = getActualXmlObject((XmlObject) id, xmlObjectMapping, context, idResource);
+            rootXmlObject.setNamespaces(namespace);
             if (xmlObjectMapping.getXPath() != null) {
                 XmlObject[] xmlObjects = XmlConverterUtils.select(rootXmlObject, xmlObjectMapping);
                 if (xmlObjects == null || xmlObjects.length == 0) {
@@ -179,6 +192,20 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
             rootXmlObject = xmlContentMappingConverter.getXmlContentConverter().fromXml(resource.getAlias(), xml);
         }
         return rootXmlObject;
+    }
+
+
+    private void extractNamespace(MarshallingContext context) throws CompassException {
+        if (namespace != null) {
+            return;
+        }
+        namespace = new HashMap<String, String>();
+        Map<String, CompassSettings> namespaceSettings = context.getSession().getSettings().getSettingGroups(CompassEnvironment.Xsem.Namespace.PREFIX);
+        if (namespaceSettings != null && !namespaceSettings.isEmpty()) {
+            for (Map.Entry<String, CompassSettings> entry : namespaceSettings.entrySet()) {
+                namespace.put(entry.getKey(), entry.getValue().getSetting(CompassEnvironment.Xsem.Namespace.URI));
+            }
+        }
     }
 
 }

@@ -48,4 +48,8 @@ public class Dom4jXmlXPP3ReaderObjectTests extends AbstractXmlObjectTests {
     public void testData4XmlContent() throws Exception {
         innerTestData4XmlContent();
     }
+
+    public void testData5() throws Exception {
+        innerTestData5WithNamespacePrefixXpath();
+    }
 }

@@ -16,6 +16,12 @@
 
 package org.compass.core.xml.javax;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
@@ -34,11 +40,26 @@ public class NodeXmlObject implements XmlObject {
 
     private Node node;
 
+    private Map<String, String> namespaces;
+
     /**
      * Constructs a new xml object using the given {@link Node}.
      */
     public NodeXmlObject(Node node) {
         this.node = node;
+    }
+
+    public NodeXmlObject(Node node, Map<String, String> namespaces) {
+        this.node = node;
+        this.namespaces = namespaces;
+    }
+
+    public void setNamespaces(Map<String, String> namespaces) {
+        this.namespaces = namespaces;
+    }
+
+    public Map<String, String> getNamespaces() {
+        return namespaces;
     }
 
     /**
@@ -81,7 +102,11 @@ public class NodeXmlObject implements XmlObject {
      * Compiles the given xpath expression.
      */
     public XmlXPathExpression compile(String path) throws Exception {
-        XPathExpression xPathExpression = XPathFactory.newInstance().newXPath().compile(path);
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        if (namespaces != null) {
+            xpath.setNamespaceContext(new InternalNamespaceContext(namespaces));
+        }
+        XPathExpression xPathExpression = xpath.compile(path);
         return new XPathXmlXPathExpression(xPathExpression);
     }
 
@@ -92,4 +117,35 @@ public class NodeXmlObject implements XmlObject {
         return node;
     }
 
+    private class InternalNamespaceContext implements NamespaceContext {
+
+        private Map<String, String> namespaces;
+
+        private InternalNamespaceContext(Map<String, String> namespaces) {
+            this.namespaces = namespaces;
+        }
+
+        public String getNamespaceURI(String prefix) {
+            return namespaces.get(prefix);
+        }
+
+        public String getPrefix(String namespaceURI) {
+            for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+                if (namespaceURI.equals(entry.getValue())) {
+                    return entry.getKey();
+                }
+            }
+            return null;
+        }
+
+        public Iterator getPrefixes(String namespaceURI) {
+            List<String> prefixes = new ArrayList<String>();
+            for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+                if (namespaceURI.equals(entry.getValue())) {
+                    prefixes.add(entry.getKey());
+                }
+            }
+            return prefixes.iterator();
+        }
+    }
 }

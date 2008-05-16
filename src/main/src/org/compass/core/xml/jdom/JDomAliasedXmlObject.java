@@ -16,6 +16,8 @@
 
 package org.compass.core.xml.jdom;
 
+import java.util.Map;
+
 import org.compass.core.xml.AliasedXmlObject;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -36,6 +38,16 @@ public class JDomAliasedXmlObject extends JDomXmlObject implements AliasedXmlObj
 
     public JDomAliasedXmlObject(String alias, Element element) {
         super(element);
+        this.alias = alias;
+    }
+
+    public JDomAliasedXmlObject(String alias, Document document, Map<String, String> namespaces) {
+        super(document, namespaces);
+        this.alias = alias;
+    }
+
+    public JDomAliasedXmlObject(String alias, Element element, Map<String, String> namespaces) {
+        super(element, namespaces);
         this.alias = alias;
     }
 

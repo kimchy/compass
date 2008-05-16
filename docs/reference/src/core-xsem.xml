@@ -241,6 +241,32 @@ session.save(xmlObject);
        <para>
           The mapping definition here shows three different mappings (that will work with the sample xml). The different mappings are registered under different aliases, where the alias acts as the connection between the actual XML saved and the mappings definition.
        </para>
+       
+       <para>
+         The xml mapping also supports xpath with namespaces easily. For example, if we have the following xml fragment:
+<programlisting><![CDATA[<xml-fragment>
+    <data xmlns="http://mynamespace.org">
+        <id value="1"/>
+        <data1 value="data11attr">data11</data1>
+        <data1 value="data12attr">data12</data1>
+    </data>
+</xml-fragment>
+]]></programlisting>
+         We can define the following mapping:
+<programlisting><![CDATA[<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+     "-//Compass/Compass Core Mapping DTD 2.0//EN"
+     "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping>
+
+ <xml-object alias="data1" xpath="/xml-fragment/mynamespace:data">
+     <xml-id name="id" xpath="mynamespace:id/@value" />
+ </xml-object>
+</compass-core-mapping>
+]]></programlisting>
+         In this case, we need to define the mapping between the <literal>mynamespace</literal> prefix used in the xpath definition and the <literal>http://mynamespace.org</literal> URI. Within the Compass configuration, a simple setting should be set: <literal>compass.xsem.namespace.mynamespace.uri=http://mynamespace.org</literal>. Other namespaces can be added using similar settings: <literal>compass.xsem.namespace.[prefix].uri=[uri]</literal>.
+       </para>
 
        <para>
           An <literal>xml-object</literal> mapping can have an associated xpath expression with it, which will narrow down the actual xml elements that will represent the top level xml object which will be mapped to the search engine. A nice benefit here, is that the xpath can return multiple xml objects, which in turn will result in multiple <literal>Resources</literal> saved to the search engine.
@@ -253,7 +279,7 @@ session.save(xmlObject);
        <para>
           In the mapping definition associated with data3 alias, the <literal>xml-content</literal> mapping is used, which stores the actual xml content in the search engine as well. This will allow to unmarshall the xml back into an <literal>XmlObject</literal> representation. For the first two mappings (data1 and data2), search/read operations will only be able to work on the <literal>Resource</literal> level.
        </para>
-
+       
        <sect2 id="xsem-xmlobject">
           <title>xml-object</title>
 

@@ -16,6 +16,8 @@
 
 package org.compass.core.xml.dom4j;
 
+import java.util.Map;
+
 import org.compass.core.xml.AliasedXmlObject;
 import org.dom4j.Node;
 
@@ -30,6 +32,11 @@ public class Dom4jAliasedXmlObject extends Dom4jXmlObject implements AliasedXmlO
 
     public Dom4jAliasedXmlObject(String alias, Node node) {
         super(node);
+        this.alias = alias;
+    }
+
+    public Dom4jAliasedXmlObject(String alias, Node node, Map<String, String> namespaces) {
+        super(node, namespaces);
         this.alias = alias;
     }
 

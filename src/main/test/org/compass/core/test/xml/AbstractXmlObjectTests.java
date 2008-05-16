@@ -23,6 +23,8 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
+import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.test.AbstractTestCase;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.XmlObject;
@@ -34,6 +36,13 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"xml/xml.cpm.xml"};
+    }
+
+    protected void addExtraConf(CompassConfiguration conf) {
+        conf.getSettings().setGroupSettings(CompassEnvironment.Xsem.Namespace.PREFIX, "test1",
+                new String[] {CompassEnvironment.Xsem.Namespace.URI}, new String[] {"http://test1"});
+        conf.getSettings().setGroupSettings(CompassEnvironment.Xsem.Namespace.PREFIX, "test2",
+                new String[] {CompassEnvironment.Xsem.Namespace.URI}, new String[] {"http://test2"});
     }
 
     protected abstract AliasedXmlObject buildAliasedXmlObject(String alias, Reader data) throws Exception;
@@ -158,6 +167,58 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         ids = xmlObject.selectPath("/data/id/@value");
         assertEquals(1, ids.length);
         assertEquals("2", ids[0].getValue());
+
+        tr.commit();
+        session.close();
+    }
+
+    protected void innerTestData5WithNamespacePrefixXpath() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        AliasedXmlObject xmlObject = buildAliasedXmlObject("data5-1", readData("data5"));
+        session.save(xmlObject);
+
+        assertNotNull(session.get("data5-1", "1"));
+        assertNull(session.get("data5-2", "2"));
+
+        Resource resource = session.loadResource("data5-1", "1");
+        assertEquals("1", resource.getValue("$/data5-1/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        resource = session.loadResource("data5-1", xmlObject);
+        assertEquals("1", resource.getValue("$/data5-1/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        CompassHits hits = session.find("data11");
+        assertEquals(1, hits.length());
+        hits = session.find("data11attr");
+        assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
+    protected void innerTestData5WithoutNamespacePrefixXpath() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        AliasedXmlObject xmlObject = buildAliasedXmlObject("data5-2", readData("data5"));
+        session.save(xmlObject);
+
+        assertNotNull(session.get("data5-2", "1"));
+
+        Resource resource = session.loadResource("data5-2", "1");
+        assertEquals("1", resource.getValue("$/data5-2/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        CompassHits hits = session.find("data11");
+        assertEquals(1, hits.length());
+        hits = session.find("data11attr");
+        assertEquals(1, hits.length());
 
         tr.commit();
         session.close();

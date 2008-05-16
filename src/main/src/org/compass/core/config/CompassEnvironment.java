@@ -728,6 +728,16 @@ public class CompassEnvironment {
         public static final String SUPPORT_UNMARSHALL = "compass.osem.supportUnmarshall";
     }
 
+    public abstract class Xsem {
+
+        public abstract class Namespace {
+
+            public static final String PREFIX = "compass.xsem.namespace";
+
+            public static final String URI = "uri";
+        }
+    }
+
     /**
      * Settings for cascading operations.
      */
