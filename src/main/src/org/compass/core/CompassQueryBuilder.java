@@ -30,8 +30,8 @@ import org.compass.core.CompassQuery.CompassSpanQuery;
  *
  * <p>An example of building a query using the query builder:
  * <pre>
- * CompassQueryBuilder queryBuilder = session.createQueryBuilder();
- * queryBuilder.bool().addMust(queryBuilder.eq(&quot;name&quot;, &quot;jack&quot;)).addMust(queryBuilder.lt(&quot;birthdate&quot;, &quot;19500101&quot;))
+ * CompassQueryBuilder queryBuilder = session.queryBuilder();
+ * queryBuilder.bool().addMust(queryBuilder.term(&quot;name&quot;, &quot;jack&quot;)).addMust(queryBuilder.lt(&quot;birthdate&quot;, &quot;19500101&quot;))
  *      .toQuery().hits();
  * </pre>
  *
