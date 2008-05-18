@@ -223,4 +223,22 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testData6WhichTestsFormatters() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        AliasedXmlObject xmlObject = buildAliasedXmlObject("data6", readData("data6"));
+        session.save(xmlObject);
+
+        assertNotNull(session.get("data6", "1"));
+
+        Resource resource = session.loadResource("data6", "1");
+        assertEquals("1", resource.getValue("$/data6/id"));
+        assertEquals("2001-12-03", resource.getValue("eleText"));
+        assertEquals("000021.2000", resource.getValue("value"));
+
+        tr.commit();
+        session.close();
+    }
 }

@@ -120,6 +120,6 @@ public class SimpleXmlValueConverter implements Converter {
      * Not supported operation.
      */
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        return new ConversionException("Not supported");
+        throw new ConversionException("Not supported");
     }
 }

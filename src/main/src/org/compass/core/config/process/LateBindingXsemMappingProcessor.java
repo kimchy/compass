@@ -20,7 +20,11 @@ import java.util.Iterator;
 
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.converter.Converter;
 import org.compass.core.converter.ConverterLookup;
+import org.compass.core.converter.DelegateConverter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.converter.xsem.ResourcePropertyValueConverter;
 import org.compass.core.converter.xsem.SimpleXmlValueConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
@@ -40,7 +44,7 @@ public class LateBindingXsemMappingProcessor implements MappingProcessor {
     private ConverterLookup converterLookup;
 
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
-            ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
+                                  ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
         this.namingStrategy = namingStrategy;
         this.converterLookup = converterLookup;
 
@@ -68,17 +72,26 @@ public class LateBindingXsemMappingProcessor implements MappingProcessor {
             }
             if (mapping instanceof XmlPropertyMapping) {
                 XmlPropertyMapping xmlPropertyMapping = (XmlPropertyMapping) mapping;
+                Converter converter;
                 if (xmlPropertyMapping.getValueConverterName() != null) {
                     String converterName = xmlPropertyMapping.getValueConverterName();
-                    xmlPropertyMapping.setValueConverter(converterLookup.lookupConverter(converterName));
+                    converter = converterLookup.lookupConverter(converterName);
+                    if (xmlPropertyMapping.getValueConverter() instanceof DelegateConverter) {
+                        ((DelegateConverter) xmlPropertyMapping.getValueConverter()).setDelegatedConverter(converter);
+                        converter = xmlPropertyMapping.getValueConverter();
+                    }
+                    if (converter instanceof ResourcePropertyConverter) {
+                        converter = new ResourcePropertyValueConverter((ResourcePropertyConverter) converter);
+                    }
                     if (xmlPropertyMapping.getValueConverter() == null) {
                         throw new ConfigurationException("Failed to find converter [" + converterName
                                 + "] for mapping " + "[" + xmlPropertyMapping.getName() + "]");
                     }
                 } else {
                     // this should probably be handled in the actual converteres
-                    xmlPropertyMapping.setValueConverter(new SimpleXmlValueConverter());
+                    converter = new SimpleXmlValueConverter();
                 }
+                xmlPropertyMapping.setValueConverter(converter);
             }
         }
     }

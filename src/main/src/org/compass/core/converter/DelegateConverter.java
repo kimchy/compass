@@ -27,4 +27,6 @@ public interface DelegateConverter extends Converter {
      * Sets the delegated {@link Converter}.
      */
     void setDelegatedConverter(Converter delegatedConverter);
+
+    Converter getDelegatedConverter();
 }

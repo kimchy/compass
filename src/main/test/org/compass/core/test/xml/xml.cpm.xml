@@ -44,5 +44,12 @@
         <xml-content name="content" />
     </xml-object>
 
+    <xml-object alias="data6" xpath="/xml-fragment/data">
+        <xml-id name="id" xpath="id/@value" />
+        <xml-property xpath="data1/@value" format="000000.0000" value-converter="float" />
+        <xml-property name="eleText" xpath="data1" format="yyyy-MM-dd||dd-MM-yyyy" value-converter="date" />
+        <xml-content name="content" />
+    </xml-object>
+
 </compass-core-mapping>
     

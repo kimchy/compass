@@ -93,7 +93,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     }
 
     public String[] getSuffixes() {
-        return new String[] {".cpm.xml"};
+        return new String[]{".cpm.xml"};
     }
 
     protected boolean doAddConfiguration(ConfigurationHelper doc) throws ConfigurationException, MappingException {
@@ -252,6 +252,12 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         xmlPropertyMapping.setName(name);
         xmlPropertyMapping.setPath((name == null ? null : new StaticPropertyPath(name)));
         bindConverter(xmlPropConf, xmlPropertyMapping);
+
+        String format = xmlPropConf.getAttribute("format", null);
+        if (format != null) {
+            xmlPropertyMapping.setValueConverter(new FormatDelegateConverter(format));
+        }
+
 
         bindResourcePropertyMapping(xmlPropConf, xmlPropertyMapping, aliasMapping);
 

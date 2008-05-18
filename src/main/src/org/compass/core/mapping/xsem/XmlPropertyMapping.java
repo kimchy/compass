@@ -37,6 +37,8 @@ public class XmlPropertyMapping extends AbstractResourcePropertyMapping implemen
 
     private String valueConverterName;
 
+    private String format;
+
     private XmlXPathExpression xpathExpression;
 
     public Mapping copy() {
@@ -52,6 +54,7 @@ public class XmlPropertyMapping extends AbstractResourcePropertyMapping implemen
         copy.setValueConverter(getValueConverter());
         copy.setValueConverterName(getValueConverterName());
         copy.setXPathExpression(getXPathExpression());
+        copy.setFormat(getFormat());
     }
 
     public boolean isOverrideByName() {
@@ -84,6 +87,14 @@ public class XmlPropertyMapping extends AbstractResourcePropertyMapping implemen
 
     public void setValueConverterName(String valueConverterName) {
         this.valueConverterName = valueConverterName;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public XmlXPathExpression getXPathExpression() {

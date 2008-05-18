@@ -33,6 +33,7 @@
     <!ATTLIST xml-id analyzer CDATA #IMPLIED>
     <!ATTLIST xml-id converter CDATA #IMPLIED>
     <!ATTLIST xml-id value-converter CDATA #IMPLIED>
+    <!ATTLIST xml-id format CDATA #IMPLIED>
     <!ATTLIST xml-id omit-norms (true|false) "true">
     <!ATTLIST xml-id spell-check (include|exclude|na) "na">
 
@@ -51,6 +52,7 @@
     <!ATTLIST xml-property exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
     <!ATTLIST xml-property converter CDATA #IMPLIED>
     <!ATTLIST xml-property value-converter CDATA #IMPLIED>
+    <!ATTLIST xml-property format CDATA #IMPLIED>
     <!ATTLIST xml-property boost CDATA #IMPLIED>
     <!ATTLIST xml-property spell-check (include|exclude|na) "na">
 

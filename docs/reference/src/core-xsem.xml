@@ -288,6 +288,42 @@ session.save(xmlObject);
           In the mapping definition associated with data3 alias, the <literal>xml-content</literal> mapping is used, which stores the actual xml content in the search engine as well. This will allow to unmarshall the xml back into an <literal>XmlObject</literal> representation. For the first two mappings (data1 and data2), search/read operations will only be able to work on the <literal>Resource</literal> level.
        </para>
        
+       <sect2 id="xsem-converters">
+         <title>Converters</title>
+         
+         <para>
+           Actual value mappings (the <literal>xml-property</literal>) can use the extensive converters that come built in with Compass. Xml "value converter" are a special case since in their case, normalization needs to be done by converting a String to a normalized String. For example, a number with a certain format may need to be normalized into a number with a different (padded for example) format.
+         </para>
+         
+         <para>
+           For example, lets use the following xml:
+<programlisting><![CDATA[<xml-fragment>
+   <data>
+       <id value="1"/>
+       <data1 value="21.2">03-12-2001</data1>
+   </data>
+</xml-fragment>
+]]></programlisting>
+           We can define the following mapping:
+<programlisting><![CDATA[<?xml version="1.0"?>
+<!DOCTYPE compass-core-mapping PUBLIC
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.0.dtd">
+
+<compass-core-mapping>
+
+  <xml-object alias="data6" xpath="/xml-fragment/data">
+      <xml-id name="id" xpath="id/@value" />
+      <xml-property xpath="data1/@value" format="000000.00" value-converter="float" />
+      <xml-property name="eleText" xpath="data1" format="yyyy-MM-dd||dd-MM-yyyy" value-converter="date" />
+      <xml-content name="content" />
+  </xml-object>
+</compass-core-mapping>
+]]></programlisting>
+           In this case, we create a mapping under alias name <literal>data6</literal>. We can see the the <literal>value</literal> attribute of <literal>data1</literal> element is a float number. When we index it, we would like to convert it to the following format: <literal>000000.00</literal>. We can see, within the mappings, that we defined the converter to be of a <literal>float</literal> type and with the requested format. The actual <literal>data1</literal> element text is of type date, and again we configure the converter to be of type date, and we use the support for "format" based converters in Compass to accept several formats (the first is the one used when converting from an Object). So, in the date case, the converter will try and convert the <literal>03-12-2001</literal> date and will succeed thanks to the fact that the second date format match it. It will then convert the Date created back to a String using the first format, giving us a searchable date format indexed.
+          </para>
+       </sect2>
+       
        <sect2 id="xsem-xmlobject">
           <title>xml-object</title>
 
@@ -409,6 +445,7 @@ session.save(xmlObject);
       override="true|false"
       exclude-from-all="no|yes|no_analyzed"
       value-converter="value converter lookup name"
+      format="a format string for value converters that support this"
       converter="converter lookup name"
 />
 ]]></programlisting>

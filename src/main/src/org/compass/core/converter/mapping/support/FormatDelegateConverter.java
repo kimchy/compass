@@ -49,11 +49,15 @@ public class FormatDelegateConverter implements DelegateConverter, ResourcePrope
      */
     public void setDelegatedConverter(Converter delegatedConverter) {
         if (!(delegatedConverter instanceof FormatConverter)) {
-            throw new IllegalArgumentException("Meta data format attribute can only work on format converters. The " +
+            throw new IllegalArgumentException("Format delegate converter can only work on format converters. The " +
                     "converter [" + delegatedConverter.getClass().getName() + "] is not one.");
         }
         this.delegatedConverter = ((FormatConverter) delegatedConverter).copy();
         this.delegatedConverter.setFormat(format);
+    }
+
+    public Converter getDelegatedConverter() {
+        return this.delegatedConverter;
     }
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
