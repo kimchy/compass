@@ -1,7 +1,0 @@
-<para>
-One of the aims of Compass::Gps is to provide a common API for integrating multiple different indexable data sources (which we are calling Gps devices). An indexable data source could be a file system, ftp site, web page or a database (either via JDBC or ORM tool). A datasource accessed as a GPS device provides the ability to index it's data, either via batch mode or through real time data changes which are mirrored in the index.
-</para>
-
-<para>
-Compass::Gps provides an API for registering GPS devices and controlling their lifecycle, along with a set of base classes that implement popular data accessing technologies (i.e JDBC, JDO, Hibernate ORM and OJB). Developers can create their own GPS Device's simply, extending the capability of Compass::Gps.
-</para>
