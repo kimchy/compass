@@ -26,7 +26,7 @@ import org.compass.core.config.CommonMetaDataLookup;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
-import org.compass.core.converter.mapping.osem.MetaDataFormatDelegateConverter;
+import org.compass.core.converter.mapping.support.FormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
@@ -716,7 +716,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                 format = valueLookup.lookupMetaDataFormat(metadataConf.getValue().trim());
             }
             if (format != null) {
-                mdMapping.setConverter(new MetaDataFormatDelegateConverter(format));
+                mdMapping.setConverter(new FormatDelegateConverter(format));
             }
         } else {
             // just validate that both are not set, since it makes no sense

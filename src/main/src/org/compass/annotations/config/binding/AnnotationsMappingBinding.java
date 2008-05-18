@@ -39,7 +39,7 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.binding.AbstractClassMetaDataMappingBinding;
 import org.compass.core.config.binding.metadata.ClassMetaData;
 import org.compass.core.converter.Converter;
-import org.compass.core.converter.mapping.osem.MetaDataFormatDelegateConverter;
+import org.compass.core.converter.mapping.support.FormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
@@ -982,7 +982,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
                 format = valueLookup.lookupMetaDataFormat(name);
             }
             if (format != null) {
-                mdMapping.setConverter(new MetaDataFormatDelegateConverter(format));
+                mdMapping.setConverter(new FormatDelegateConverter(format));
             }
         }
     }
