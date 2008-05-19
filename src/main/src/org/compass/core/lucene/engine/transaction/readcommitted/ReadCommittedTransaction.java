@@ -129,10 +129,15 @@ public class ReadCommittedTransaction extends AbstractTransaction {
 
     protected void doCommit(boolean onePhase) throws SearchEngineException {
         releaseHolders();
+        // here, we issue doPrepare since if only one of the sub indexes failed with it, then
+        // it should fail.
+        if (onePhase) {
+            doPrepare();
+        }
         if (indexManager.supportsConcurrentOperations()) {
             ArrayList<Callable<Object>> commitCallables = new ArrayList<Callable<Object>>();
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
-                commitCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue(), onePhase)));
+                commitCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue(), false)));
             }
             indexManager.getExecutorManager().invokeAllWithLimitBailOnException(commitCallables, 1);
         } else {

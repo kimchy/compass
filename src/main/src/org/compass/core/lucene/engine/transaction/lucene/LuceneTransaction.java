@@ -101,6 +101,11 @@ public class LuceneTransaction extends AbstractTransaction {
         if (indexWriterBySubIndex.isEmpty()) {
             return;
         }
+        // here, we issue doPrepare since if only one of the sub indexes failed with it, then
+        // it should fail.
+        if (onePhase) {
+            doPrepare();
+        }
         if (indexManager.supportsConcurrentOperations()) {
             ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
