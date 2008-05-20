@@ -100,17 +100,17 @@ public class AllAnalyzer extends Analyzer {
                 resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
             }
             if (resourcePropertyMapping == null) {
-                if (searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(property.getName())) {
-                    continue;
-                }
-                if (property.getName().equals(searchEngine.getSearchEngineFactory().getAliasProperty())) {
-                    continue;
-                }
-                if (property.getName().equals(searchEngine.getSearchEngineFactory().getExtendedAliasProperty())) {
-                    continue;
-                }
-                // no mapping, need to add un_tokenized ones
                 if (property.isIndexed() && !property.isTokenized()) {
+                    if (searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(property.getName())) {
+                        continue;
+                    }
+                    if (property.getName().equals(searchEngine.getSearchEngineFactory().getAliasProperty())) {
+                        continue;
+                    }
+                    if (property.getName().equals(searchEngine.getSearchEngineFactory().getExtendedAliasProperty())) {
+                        continue;
+                    }
+                    // no mapping, need to add un_tokenized ones
                     Payload payload = null;
                     if (boostSupport) {
                         if (property.getBoost() != 1.0f) {
