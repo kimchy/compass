@@ -100,6 +100,25 @@ public class AllAnalyzer extends Analyzer {
                 resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
             }
             if (resourcePropertyMapping == null) {
+                // no mapping, need to add un_tokenized ones
+                if (property.isIndexed() && !property.isTokenized()) {
+                    Payload payload = null;
+                    if (boostSupport) {
+                        if (property.getBoost() != 1.0f) {
+                            payload = AllBoostUtils.writeFloat(property.getBoost());
+                        } else if (resource.getBoost() != 1.0f) {
+                            // we get the boost from the resource thus taking into account any resource property mapping
+                            // and/or resource mapping boost level
+                            payload = AllBoostUtils.writeFloat(resource.getBoost());
+                        }
+                    }
+                    String value = property.getStringValue();
+                    if (value != null) {
+                        Token t = new Token(value, 0, value.length());
+                        t.setPayload(payload);
+                        tokens.add(t);
+                    }
+                }
                 continue;
             }
             if (resourcePropertyMapping.isInternal()) {
@@ -111,9 +130,9 @@ public class AllAnalyzer extends Analyzer {
             if (resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED) {
                 Payload payload = null;
                 if (boostSupport) {
-                    if (resourcePropertyMapping.getBoost() != -1) {
+                    if (resourcePropertyMapping.getBoost() != 1.0f) {
                         payload = AllBoostUtils.writeFloat(resourcePropertyMapping.getBoost());
-                    } else if (resource.getBoost() != -1) {
+                    } else if (resource.getBoost() != 1.0f) {
                         // we get the boost from the resource thus taking into account any resource property mapping
                         // and/or resource mapping boost level
                         payload = AllBoostUtils.writeFloat(resource.getBoost());

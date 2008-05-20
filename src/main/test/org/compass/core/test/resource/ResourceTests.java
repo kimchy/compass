@@ -298,4 +298,23 @@ public class ResourceTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testDynamicPropertyWithAll() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Resource r = getResourceFactory().createResource("a");
+        r.addProperty("id", "1");
+        r.addProperty(getResourceFactory().createProperty("value1", "test1", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getResourceFactory().createProperty("value2", "test2", Property.Store.YES, Property.Index.UN_TOKENIZED));
+        session.save(r);
+
+        CompassHits hits = session.find("test1");
+        assertEquals(1, hits.length());
+        hits = session.find("test2");
+        assertEquals(1, hits.length());
+
+        tr.commit();
+        session.close();
+    }
 }
