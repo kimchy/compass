@@ -61,5 +61,10 @@
         <resource-property name="value1" exclude-from-all="true" />
         <resource-property name="value2" exclude-from-all="false" />
     </resource>
+
+    <resource alias="g">
+        <resource-id name="id"/>
+        <resource-property name="value" converter="int" format="000000.00" />
+    </resource>
 </compass-core-mapping>
     

@@ -112,6 +112,7 @@
     <!ATTLIST resource-id boost CDATA #IMPLIED>
     <!ATTLIST resource-id omit-norms (true|false) "true">
     <!ATTLIST resource-id spell-check (include|exclude|na) "na">
+    <!ATTLIST resource-id format CDATA #IMPLIED>
 
 <!ELEMENT resource-property EMPTY
 >
@@ -128,6 +129,7 @@
     <!ATTLIST resource-property converter CDATA #IMPLIED>
     <!ATTLIST resource-property boost CDATA #IMPLIED>
     <!ATTLIST resource-property spell-check (include|exclude|na) "na">
+    <!ATTLIST resource-property format CDATA #IMPLIED>
 
 <!ELEMENT resource-analyzer (
     #PCDATA

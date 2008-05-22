@@ -317,4 +317,20 @@ public class ResourceTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testResourcePropertyFormat() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Resource r = getResourceFactory().createResource("g");
+        r.addProperty("id", "1");
+        r.addProperty("value", 1);
+        session.save(r);
+
+        r = session.loadResource("g", 1);
+        assertEquals("000001.00", r.getValue("value"));
+
+        tr.commit();
+        session.close();
+    }
 }

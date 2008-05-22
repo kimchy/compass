@@ -355,6 +355,11 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         propertyMapping.setPath(new StaticPropertyPath(name));
         bindConverter(resourcePropConf, propertyMapping);
 
+        String format = resourcePropConf.getAttribute("format", null);
+        if (format != null) {
+            propertyMapping.setConverter(new FormatDelegateConverter(format));
+        }
+
         boolean override = resourcePropConf.getAttributeAsBoolean("override", true);
         propertyMapping.setOverrideByName(override);
 

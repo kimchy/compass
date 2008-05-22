@@ -44,20 +44,26 @@ public abstract class MappingProcessorUtils {
     }
 
     public static void lookupConverter(ConverterLookup converterLookup, Mapping mapping, boolean forceConverter) {
-        if (mapping.getConverter() == null) {
+        if (mapping.getConverter() == null || mapping.getConverter() instanceof DelegateConverter) {
+            Converter converter;
             if (mapping.getConverterName() != null) {
                 String converterName = mapping.getConverterName();
-                mapping.setConverter(converterLookup.lookupConverter(converterName));
-                if (mapping.getConverter() == null && forceConverter) {
+                converter = converterLookup.lookupConverter(converterName);
+                if (converter == null && forceConverter) {
                     throw new ConfigurationException("Failed to find converter [" + converterName + "] for mapping " +
                             "[" + mapping.getName() + "]");
                 }
             } else {
-                mapping.setConverter(converterLookup.lookupConverter(mapping.getClass()));
-                if (mapping.getConverter() == null && forceConverter) {
+                converter = converterLookup.lookupConverter(mapping.getClass());
+                if (converter == null && forceConverter) {
                     throw new ConfigurationException("Failed to find converter for class [" + mapping.getClass() + "]" +
                             " for mapping [" + mapping.getName() + "]");
                 }
+            }
+            if (mapping.getConverter() instanceof DelegateConverter) {
+                ((DelegateConverter) mapping.getConverter()).setDelegatedConverter(converter);
+            } else {
+                mapping.setConverter(converter);
             }
         }
     }
@@ -65,7 +71,6 @@ public abstract class MappingProcessorUtils {
     public static void lookupConverter(ConverterLookup converterLookup, ClassPropertyMetaDataMapping mdMapping,
                                        ClassPropertyMapping classPropertyMapping) {
         if (mdMapping.getConverter() == null) {
-
             if (mdMapping.getConverterName() != null) {
                 String converterName = mdMapping.getConverterName();
                 mdMapping.setConverter(converterLookup.lookupConverter(converterName));
