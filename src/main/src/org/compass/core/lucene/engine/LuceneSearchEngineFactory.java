@@ -134,7 +134,7 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         // build the index deletion policy manager
         indexDeletionPolicyManager = new IndexDeletionPolicyFactory(indexManager);
         indexDeletionPolicyManager.configure(settings);
-        
+
         try {
             ClassUtils.forName("org.apache.lucene.search.highlight.Highlighter", settings.getClassLoader());
             highlighterManager = new LuceneHighlighterManager();
@@ -147,15 +147,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         ((CompassConfigurable) searchEngineOptimizer).configure(settings);
 
         if (settings.getSettingAsBoolean(LuceneEnvironment.SpellCheck.ENABLE, false)) {
-            try {
-                ClassUtils.forName("org.apache.lucene.search.spell.SpellChecker", settings.getClassLoader());
-                spellCheckManager = new DefaultLuceneSpellCheckManager();
-                spellCheckManager.configure(this, settings, mapping);
-            } catch (ClassNotFoundException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("No spell checker jar file found in classpath, disabling spell checker");
-                }
-            }
+            spellCheckManager = (InternalLuceneSearchEngineSpellCheckManager) settings.getSettingAsInstance(LuceneEnvironment.SpellCheck.CLASS, DefaultLuceneSpellCheckManager.class.getName());
+            spellCheckManager.configure(this, settings, mapping);
         }
 
         // build the query parsers

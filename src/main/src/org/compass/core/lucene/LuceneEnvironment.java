@@ -651,6 +651,11 @@ public class LuceneEnvironment {
          * index will occur. Defaults to <b>10</b> minutes.
          */
         public static final String SCHEDULE_INTERVAL = PREFIX + "scheduleInterval";
+
+        /**
+         * The FQN of the spell check class.
+         */
+        public static final String CLASS = PREFIX + "class";
     }
 
     /**
