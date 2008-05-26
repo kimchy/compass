@@ -382,6 +382,17 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     }
 
     /**
+     * <p>Sets an index entity info that will control how the given entity will
+     * be indexed.
+     */
+    public void setIndexEntityInfo(JpaIndexEntityInfo indexEntityInfo) {
+        if (indexEntityInfo.getEntityName() == null) {
+            throw new IllegalArgumentException("entityName must not be null");
+        }
+        setIndexQueryProvider(indexEntityInfo.getEntityName(), indexEntityInfo.getQueryProvider());
+    }
+
+    /**
      * Sets a custom entities indexer that will be used to index the data. By default will
      * be detected automatically based on the actual implemenation of JPA used and will try
      * to use it.
