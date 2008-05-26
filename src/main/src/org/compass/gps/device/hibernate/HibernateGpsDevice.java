@@ -344,6 +344,18 @@ public class HibernateGpsDevice extends AbstractParallelGpsDevice implements Pas
     }
 
     /**
+     * Allows to set {@link org.compass.gps.device.hibernate.HibernateEntityIndexInfo} which results
+     * in either calling {@link #setIndexQueryProvider(String, HibernateQueryProvider)} or
+     * {@link #setIndexSelectQuery(String, String)}.
+     */
+    public void setindexEntityInfo(HibernateEntityIndexInfo indexInfo) {
+        if (indexInfo.getEntityName() == null) {
+            throw new IllegalArgumentException("entityName must be provided");
+        }
+        setIndexQueryProvider(indexInfo.getEntityName(), indexInfo.getQueryProvider());
+    }
+
+    /**
      * Returns a native Hibernate extractor to work with frameworks that wrap the actual
      * SessionFactory.
      */
