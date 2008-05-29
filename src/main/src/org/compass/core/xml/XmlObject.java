@@ -16,7 +16,6 @@
 
 package org.compass.core.xml;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -25,7 +24,7 @@ import java.util.Map;
  *
  * @author kimchy
  */
-public interface XmlObject extends Serializable {
+public interface XmlObject {
 
     /**
      * Returns the name of the xml object. Should be the element/attribute name.
@@ -42,6 +41,9 @@ public interface XmlObject extends Serializable {
      */
     void setNamespaces(Map<String, String> namespaces);
 
+    /**
+     * Returns a lookup map for namespaces (prefix to uri).
+     */
     Map<String, String> getNamespaces();
     
     /**
