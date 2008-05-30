@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.jdbc.JdbcDirectory;
 import org.apache.lucene.store.jdbc.JdbcDirectorySettings;
@@ -186,7 +187,17 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
         JdbcDirectory dir = new JdbcDirectory(dataSource, jdbcTable);
         if (!disableSchemaOperation) {
             try {
-                dir.create();
+                Boolean exists = indexExists(dir);
+                if (exists == null) {
+                    try {
+                        exists = IndexReader.indexExists(dir);
+                    } catch (IOException e) {
+                        exists = false;
+                    }
+                }
+                if (!exists) {
+                    dir.create();
+                }
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to create dir [" + totalPath + "]", e);
             }
