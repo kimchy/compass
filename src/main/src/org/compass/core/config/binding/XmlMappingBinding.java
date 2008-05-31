@@ -601,6 +601,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         if (commaSeparatedCascades == null) {
             return;
         }
+        if ("none".equals(commaSeparatedCascades)) {
+            return;
+        }
         ArrayList<CascadeMapping.Cascade> cascades = new ArrayList<CascadeMapping.Cascade>();
         StringTokenizer st = new StringTokenizer(commaSeparatedCascades, ",");
         while (st.hasMoreTokens()) {
