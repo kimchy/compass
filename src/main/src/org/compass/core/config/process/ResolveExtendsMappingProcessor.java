@@ -27,6 +27,7 @@ import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 
 /**
  * Goes over all the {@link org.compass.core.mapping.AliasMapping}s in Compass and resolves
@@ -41,19 +42,17 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
 
         ArrayList<AliasMapping> innerMappingsCopy = new ArrayList<AliasMapping>();
-        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-            AliasMapping origAliasMapping = (AliasMapping) it.next();
+        for (AliasMapping origAliasMapping : compassMapping.getMappings()) {
             AliasMapping aliasMapping = origAliasMapping.shallowCopy();
             resolveExtends(compassMapping, aliasMapping, origAliasMapping);
             innerMappingsCopy.add(aliasMapping);
         }
-        compassMapping.clearMappings();
+        ((InternalCompassMapping) compassMapping).clearMappings();
         for (AliasMapping anInnerMappingsCopy : innerMappingsCopy) {
-            compassMapping.addMapping(anInnerMappingsCopy);
+            ((InternalCompassMapping) compassMapping).addMapping(anInnerMappingsCopy);
         }
 
-        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-            AliasMapping aliasMapping = (AliasMapping) it.next();
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
             resolveExtending(compassMapping, aliasMapping, new HashSet<String>());
         }
 

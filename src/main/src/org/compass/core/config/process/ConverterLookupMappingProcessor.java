@@ -24,6 +24,7 @@ import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.basic.FormatConverter;
 import org.compass.core.converter.dynamic.DynamicConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
@@ -56,14 +57,13 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
         this.converterLookup = converterLookup;
         this.settings = settings;
 
-        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-            Mapping m = (Mapping) it.next();
-            if (m instanceof RawResourceMapping) {
-                lookupConverter((RawResourceMapping) m);
-            } else if (m instanceof XmlObjectMapping) {
-                lookupConverter((XmlObjectMapping) m);
-            } else if (m instanceof ClassMapping) {
-                lookupConverter((ClassMapping) m);
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (aliasMapping instanceof RawResourceMapping) {
+                lookupConverter((RawResourceMapping) aliasMapping);
+            } else if (aliasMapping instanceof XmlObjectMapping) {
+                lookupConverter((XmlObjectMapping) aliasMapping);
+            } else if (aliasMapping instanceof ClassMapping) {
+                lookupConverter((ClassMapping) aliasMapping);
             }
         }
 

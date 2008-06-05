@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.compass.core.config.binding.MappingBinding;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 
 /**
@@ -42,7 +42,7 @@ public class CompassMappingBinding implements MappingBinding {
 
     private List<MappingBinding> mappingBindings = new ArrayList<MappingBinding>();
 
-    private CompassMapping mapping;
+    private InternalCompassMapping mapping;
 
     private String[] suffixes;
 
@@ -50,7 +50,7 @@ public class CompassMappingBinding implements MappingBinding {
         this.mappingBindings.add(mappingBinding);
     }
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
+    public void setUpBinding(InternalCompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
         this.mapping = mapping;
         for (MappingBinding mappingBinding : mappingBindings) {
             (mappingBinding).setUpBinding(mapping, metaData, settings);

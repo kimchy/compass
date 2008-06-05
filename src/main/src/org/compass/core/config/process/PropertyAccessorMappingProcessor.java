@@ -24,6 +24,7 @@ import org.compass.core.accessor.PropertyAccessorFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
@@ -52,10 +53,9 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
         propertyAccessorFactory = new PropertyAccessorFactory();
         propertyAccessorFactory.configure(settings);
 
-        for (Iterator rIt = compassMapping.mappingsIt(); rIt.hasNext();) {
-            Mapping mapping = (Mapping) rIt.next();
-            if (mapping instanceof ClassMapping) {
-                ClassMapping classMapping = (ClassMapping) mapping;
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (aliasMapping instanceof ClassMapping) {
+                ClassMapping classMapping = (ClassMapping) aliasMapping;
 
                 // resolve the class mapping constructor
                 classMapping.setConstructor(ClassUtils.getDefaultConstructor(classMapping.getClazz()));

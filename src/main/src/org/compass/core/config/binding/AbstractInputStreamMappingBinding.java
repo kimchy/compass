@@ -32,9 +32,9 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.InputStreamMappingResolver;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 
 /**
@@ -44,13 +44,13 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    protected CompassMapping mapping;
+    protected InternalCompassMapping mapping;
 
     protected CompassMetaData metaData;
 
     protected CompassSettings settings;
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
+    public void setUpBinding(InternalCompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
         this.mapping = mapping;
         this.metaData = metaData;
         this.settings = settings;

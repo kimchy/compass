@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.core.mapping.support;
 
 import org.compass.core.converter.Converter;
 import org.compass.core.engine.naming.PropertyPath;
+import org.compass.core.mapping.Mapping;
 
 /**
  * @author kimchy

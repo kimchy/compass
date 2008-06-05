@@ -30,16 +30,15 @@ import org.compass.core.converter.mapping.support.FormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
-import org.compass.core.mapping.AbstractResourceMapping;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CascadeMapping;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
@@ -60,6 +59,7 @@ import org.compass.core.mapping.rsem.RawResourceMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
+import org.compass.core.mapping.support.AbstractResourceMapping;
 import org.compass.core.mapping.xsem.XmlBoostPropertyMapping;
 import org.compass.core.mapping.xsem.XmlContentMapping;
 import org.compass.core.mapping.xsem.XmlIdMapping;
@@ -83,7 +83,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
     private CommonMetaDataLookup valueLookup;
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
+    public void setUpBinding(InternalCompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
         super.setUpBinding(mapping, metaData, settings);
         this.valueLookup = new CommonMetaDataLookup(metaData);
     }

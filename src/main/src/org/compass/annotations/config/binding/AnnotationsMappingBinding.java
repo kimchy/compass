@@ -46,11 +46,11 @@ import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CascadeMapping;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
@@ -80,13 +80,13 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
 
     private CommonMetaDataLookup valueLookup;
 
-    private CompassMapping mapping;
+    private InternalCompassMapping mapping;
 
     private ClassMapping classMapping;
 
     private CompassSettings settings;
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
+    public void setUpBinding(InternalCompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
         super.setUpBinding(mapping, metaData, settings);
         this.mapping = mapping;
         this.valueLookup = new CommonMetaDataLookup(metaData);

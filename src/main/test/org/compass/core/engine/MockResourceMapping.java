@@ -21,7 +21,6 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
-import org.compass.core.mapping.AbstractMultipleMapping;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.BoostPropertyMapping;
@@ -34,6 +33,7 @@ import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalAllMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
+import org.compass.core.mapping.support.AbstractMultipleMapping;
 import org.compass.core.util.config.ConfigurationHelper;
 
 /**

@@ -16,20 +16,19 @@
 
 package org.compass.core.config.process;
 
-import java.util.Iterator;
-
 import org.compass.core.Property;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.InternalAllMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 
@@ -45,17 +44,16 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
 
-        compassMapping.setPath(namingStrategy.getRootPath());
-        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-            Mapping m = (Mapping) it.next();
-            if (m instanceof ClassMapping) {
-                ClassMapping classMapping = (ClassMapping) m;
+        ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (aliasMapping instanceof ClassMapping) {
+                ClassMapping classMapping = (ClassMapping) aliasMapping;
                 if (!classMapping.isSupportUnmarshallSet()) {
                     classMapping.setSupportUnmarshall(settings.getSettingAsBoolean(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, true));
                 }
             }
-            if (m instanceof ResourceMapping) {
-                ResourceMapping resourceMapping = (ResourceMapping) m;
+            if (aliasMapping instanceof ResourceMapping) {
+                ResourceMapping resourceMapping = (ResourceMapping) aliasMapping;
                 if (resourceMapping.getAllMapping().isSupported() == null) {
                     ((InternalAllMapping) resourceMapping.getAllMapping()).setSupported(settings.getSettingAsBoolean(CompassEnvironment.All.ENABLED, true));
                 }
@@ -73,8 +71,8 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
                             settings.getSetting(CompassEnvironment.All.TERM_VECTOR, Property.TermVector.NO.toString())));
                 }
             }
-            if (m instanceof InternalResourceMapping) {
-                InternalResourceMapping resourceMapping = (InternalResourceMapping) m;
+            if (aliasMapping instanceof InternalResourceMapping) {
+                InternalResourceMapping resourceMapping = (InternalResourceMapping) aliasMapping;
                 SpellCheckType globablSpellCheck = SpellCheckType.fromString(settings.getSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, "NA"));
                 if (resourceMapping.getSpellCheck() == SpellCheckType.NA) {
                     resourceMapping.setSpellCheck(globablSpellCheck);

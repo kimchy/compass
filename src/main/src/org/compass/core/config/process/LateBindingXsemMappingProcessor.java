@@ -27,9 +27,11 @@ import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.converter.xsem.ResourcePropertyValueConverter;
 import org.compass.core.converter.xsem.SimpleXmlValueConverter;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.xsem.XmlIdMapping;
 import org.compass.core.mapping.xsem.XmlObjectMapping;
 import org.compass.core.mapping.xsem.XmlPropertyMapping;
@@ -48,11 +50,10 @@ public class LateBindingXsemMappingProcessor implements MappingProcessor {
         this.namingStrategy = namingStrategy;
         this.converterLookup = converterLookup;
 
-        compassMapping.setPath(namingStrategy.getRootPath());
-        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-            Mapping m = (Mapping) it.next();
-            if (m instanceof XmlObjectMapping) {
-                secondPass((XmlObjectMapping) m, compassMapping);
+        ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (aliasMapping instanceof XmlObjectMapping) {
+                secondPass((XmlObjectMapping) aliasMapping, compassMapping);
             }
         }
 

@@ -22,12 +22,13 @@ import java.util.Iterator;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
-import org.compass.core.mapping.AbstractResourceMapping;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
+import org.compass.core.mapping.support.AbstractResourceMapping;
 
 /**
  * Goes over all the {@link org.compass.core.mapping.ResourceMapping}s mappings and
@@ -41,12 +42,11 @@ public class CascadingMappingProcessor implements MappingProcessor {
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
 
-        for (Iterator compIt = compassMapping.mappingsIt(); compIt.hasNext();) {
-            Object mapping = compIt.next();
-            if (!(mapping instanceof AbstractResourceMapping)) {
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (!(aliasMapping instanceof AbstractResourceMapping)) {
                 continue;
             }
-            AbstractResourceMapping resourceMapping = (AbstractResourceMapping) mapping;
+            AbstractResourceMapping resourceMapping = (AbstractResourceMapping) aliasMapping;
             ArrayList cascades = new ArrayList();
             for (Iterator it = resourceMapping.mappingsIt(); it.hasNext();) {
                 Mapping m = (Mapping) it.next();

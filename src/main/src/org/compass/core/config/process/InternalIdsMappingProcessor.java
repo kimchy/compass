@@ -25,8 +25,8 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
@@ -50,10 +50,9 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         this.settings = settings;
         this.converterLookup = converterLookup;
 
-        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-            Mapping m = (Mapping) it.next();
-            if (m instanceof ClassMapping) {
-                ClassMapping classMapping = (ClassMapping) m;
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (aliasMapping instanceof ClassMapping) {
+                ClassMapping classMapping = (ClassMapping) aliasMapping;
                 if (classMapping.isSupportUnmarshall()) {
                     buildClassMetaDataIds(classMapping);
                 } else {

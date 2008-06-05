@@ -16,16 +16,15 @@
 
 package org.compass.core.config.process;
 
-import java.util.Iterator;
-
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 
 /**
  * Reolves late attributes associated usually with {@link org.compass.core.mapping.osem.ClassMapping}, they are:
@@ -39,11 +38,10 @@ public class ResolveLateAttributesPostLateBindingMappingProcessor implements Map
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
 
-        compassMapping.setPath(namingStrategy.getRootPath());
-        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-            Mapping m = (Mapping) it.next();
-            if (m instanceof ResourceMapping) {
-                ResourceMapping resourceMapping = (ResourceMapping) m;
+        ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (aliasMapping instanceof ResourceMapping) {
+                ResourceMapping resourceMapping = (ResourceMapping) aliasMapping;
                 if (resourceMapping.isRoot()) {
                     for (ResourcePropertyMapping mapping : resourceMapping.getResourcePropertyMappings()) {
                         MappingProcessorUtils.applyResourcePropertySettings(mapping, settings);

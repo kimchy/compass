@@ -23,9 +23,9 @@ import java.net.URL;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.InputStreamMappingResolver;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 
 /**
@@ -33,7 +33,7 @@ import org.compass.core.metadata.CompassMetaData;
  */
 public interface MappingBinding {
 
-    void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings);
+    void setUpBinding(InternalCompassMapping mapping, CompassMetaData metaData, CompassSettings settings);
 
     boolean addResource(String path) throws ConfigurationException, MappingException;
 

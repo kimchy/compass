@@ -49,6 +49,8 @@ import org.compass.core.executor.DefaultExecutorManager;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.internal.DefaultCompassMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
 import org.compass.core.util.ClassUtils;
@@ -87,7 +89,7 @@ public class CompassConfiguration {
 
     private CompassMetaData metaData;
 
-    private CompassMapping mapping;
+    private InternalCompassMapping mapping;
 
     private CompassSettings settings;
 
@@ -100,7 +102,7 @@ public class CompassConfiguration {
     private HashMap<String, ConverterHolder> temporaryConvertersByName = new HashMap<String, ConverterHolder>();
 
     public CompassConfiguration() {
-        mapping = new CompassMapping();
+        mapping = new DefaultCompassMapping();
         metaData = new DefaultCompassMetaData();
 
         settings = new CompassSettings();

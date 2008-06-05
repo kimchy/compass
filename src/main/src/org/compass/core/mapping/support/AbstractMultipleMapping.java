@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.core.mapping.support;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.MultipleMapping;
+import org.compass.core.mapping.OverrideByNameMapping;
 
 /**
  * @author kimchy

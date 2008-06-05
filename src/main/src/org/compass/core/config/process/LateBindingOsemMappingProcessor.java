@@ -24,10 +24,12 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.StaticPropertyPath;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -74,12 +76,11 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         this.converterLookup = converterLookup;
         this.settings = settings;
 
-        compassMapping.setPath(namingStrategy.getRootPath());
-        for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-            Mapping m = (Mapping) it.next();
-            if (m instanceof ClassMapping) {
+        ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (aliasMapping instanceof ClassMapping) {
                 clearRootClassMappingState();
-                ClassMapping classMapping = (ClassMapping) m;
+                ClassMapping classMapping = (ClassMapping) aliasMapping;
                 if (classMapping.isSupportUnmarshall()) {
                     secondPass(classMapping, compassMapping);
                 } else {

@@ -25,6 +25,7 @@ import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.DefaultCompassMapping;
 import org.compass.core.spi.InternalResource;
 
 /**
@@ -99,7 +100,7 @@ public abstract class AbstractEngineTests extends TestCase {
         ((MockResourceMapping) multipleIdMapping).addId(id2);
         ((MockResourceMapping) multipleIdMapping).addId(id3);
 
-        CompassMapping mapping = new CompassMapping();
+        DefaultCompassMapping mapping = new DefaultCompassMapping();
         mapping.addMapping(singleIdMapping);
         mapping.addMapping(multipleIdMapping);
 

@@ -16,6 +16,8 @@
 
 package org.compass.core.mapping;
 
+import org.compass.core.mapping.support.AbstractMultipleMapping;
+
 /**
  * @author kimchy
  */

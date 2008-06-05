@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.core.mapping.support;
 
 import org.compass.core.Property;
+import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 
 /**

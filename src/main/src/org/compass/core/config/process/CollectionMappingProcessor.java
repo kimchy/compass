@@ -65,8 +65,7 @@ public class CollectionMappingProcessor implements MappingProcessor {
 
         ArrayList colMappingsToAdd = new ArrayList();
 
-        for (Iterator mappIt = compassMapping.mappingsIt(); mappIt.hasNext();) {
-            AliasMapping aliasMapping = (AliasMapping) mappIt.next();
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
             if (!(aliasMapping instanceof ClassMapping)) {
                 continue;
             }

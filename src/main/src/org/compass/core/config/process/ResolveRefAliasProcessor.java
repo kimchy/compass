@@ -43,10 +43,9 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
         this.compassMapping = compassMapping;
-        for (Iterator rIt = compassMapping.mappingsIt(); rIt.hasNext();) {
-            Mapping mapping = (Mapping) rIt.next();
-            if (mapping instanceof ClassMapping) {
-                ClassMapping classMapping = (ClassMapping) mapping;
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            if (aliasMapping instanceof ClassMapping) {
+                ClassMapping classMapping = (ClassMapping) aliasMapping;
                 for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
                     Mapping innerMapping = (Mapping) it.next();
                     if (innerMapping instanceof HasRefAliasMapping) {
@@ -81,10 +80,9 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
                         + "]. Please set the ref-alias explicitly.");
             }
             HashSet<String> aliases = new HashSet<String>();
-            for (Iterator it = compassMapping.mappingsIt(); it.hasNext();) {
-                Mapping iterateMapping = (Mapping) it.next();
-                if (iterateMapping instanceof ClassMapping) {
-                    ClassMapping iterateClassMapping = (ClassMapping) iterateMapping;
+            for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+                if (aliasMapping instanceof ClassMapping) {
+                    ClassMapping iterateClassMapping = (ClassMapping) aliasMapping;
                     if (clazz.isAssignableFrom(iterateClassMapping.getClazz())) {
                         aliases.add(iterateClassMapping.getAlias());
                     }

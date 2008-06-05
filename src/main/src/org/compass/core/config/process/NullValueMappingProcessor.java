@@ -22,6 +22,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
@@ -49,9 +50,8 @@ public class NullValueMappingProcessor implements MappingProcessor {
 
         globalNullValue = settings.getSetting(CompassEnvironment.NullValue.NULL_VALUE);
 
-        for (Iterator rIt = compassMapping.mappingsIt(); rIt.hasNext();) {
-            Mapping mapping = (Mapping) rIt.next();
-            processMapping(mapping);
+        for (AliasMapping aliasMapping : compassMapping.getMappings()) {
+            processMapping(aliasMapping);
         }
         return compassMapping;
     }

@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.compass.core.engine.naming.PropertyPath;
-import org.compass.core.mapping.AbstractResourceMapping;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.PostProcessingMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.support.AbstractResourceMapping;
 import org.compass.core.util.Assert;
 
 /**

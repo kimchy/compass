@@ -7,8 +7,8 @@ import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.binding.metadata.ClassMetaData;
 import org.compass.core.config.binding.metadata.MetaDataReader;
 import org.compass.core.config.binding.metadata.MetaDataReaderFactory;
-import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
 
@@ -19,7 +19,7 @@ public abstract class AbstractClassMetaDataMappingBinding extends AbstractInputS
 
     private MetaDataReader metaDataReader;
 
-    public void setUpBinding(CompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
+    public void setUpBinding(InternalCompassMapping mapping, CompassMetaData metaData, CompassSettings settings) {
         super.setUpBinding(mapping, metaData, settings);
         metaDataReader = MetaDataReaderFactory.getMetaDataReader(settings);
         if (metaDataReader == null) {

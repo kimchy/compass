@@ -18,7 +18,7 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
-import org.compass.core.mapping.AbstractMapping;
+import org.compass.core.mapping.support.AbstractMapping;
 
 /**
  * 

@@ -19,9 +19,9 @@ package org.compass.core.mapping.osem;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.compass.core.mapping.AbstractResourcePropertyMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 
 /**
  * 

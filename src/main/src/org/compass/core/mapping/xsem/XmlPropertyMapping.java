@@ -17,10 +17,10 @@
 package org.compass.core.mapping.xsem;
 
 import org.compass.core.converter.Converter;
-import org.compass.core.mapping.AbstractResourcePropertyMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 import org.compass.core.xml.XmlXPathExpression;
 
 /**

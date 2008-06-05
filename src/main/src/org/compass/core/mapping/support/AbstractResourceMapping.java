@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.core.mapping.support;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +24,17 @@ import java.util.Map;
 
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.engine.subindex.SubIndexHash;
+import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.AllMapping;
+import org.compass.core.mapping.BoostPropertyMapping;
+import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.PostProcessingMapping;
+import org.compass.core.mapping.ResourceAnalyzerController;
+import org.compass.core.mapping.ResourceIdMappingProvider;
+import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 

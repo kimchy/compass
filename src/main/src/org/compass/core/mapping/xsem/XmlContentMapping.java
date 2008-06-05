@@ -17,9 +17,9 @@
 package org.compass.core.mapping.xsem;
 
 import org.compass.core.Property;
-import org.compass.core.mapping.AbstractResourcePropertyMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 
 /**
  * @author kimchy
