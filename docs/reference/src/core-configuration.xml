@@ -77,6 +77,10 @@
               <entry>Loads all the files named <literal>*.cpm.xml</literal> or <literal>*.cmd.xml</literal> from within the specified Jar file.</entry>
             </row>
             <row>
+              <entry><literal>addResourceMapping(ResourceMapping)</literal></entry>
+              <entry>Programmatically add resource mapping (domain model that represents different mappings such as XSEM, OSEM, and RSEM).</entry>
+            </row>
+            <row>
               <entry><literal>addScan(String basePackage, String pattern)</literal></entry>
               <entry>Scans for all the mappings that exist wihtin the base backage recursively. An optioal ant style pattern can be provided as well. The mappings detected are all the xml based mappings. Annotation based mappings will be detected automatically if either ASM or Javassist exists within the classpath.</entry>
             </row>
@@ -345,6 +349,25 @@ xsi:schemaLocation="http://www.compass-project.org/schema/core-config
       <programlisting><![CDATA[Compass compass = cfg.buildCompass();
       ]]></programlisting>
       Note: It is possible to have multiple <classname>Compass</classname> instances within the same application, each with a different configuration.
+    </para>
+
+  </sect1>
+
+  <sect1 id="core-configuration-rebuild">
+    <title>Rebuilding Compass</title>
+
+    <para>
+      Compass allows to dynamically add and remove mappings using <literal>CompassConfigurartion</literal> that can be obtained from the <literal>Compass</literal> instance. Once all changes are done on the configuration object, <literal>Compass#rebuild</literal> operation. Here is an example:
+<programlisting><![CDATA[Compass compass = cfg.buildCompass();
+// ...
+compass.getConfig().removeMappingByClass(A.class);
+compass.getConifg().addClass(B.class);
+compass.rebuild();
+]]></programlisting>
+    </para>
+    
+    <para>
+      The "old" Compass instance is closed after a graceful time (default to 60 seconds). The time can be controlled using the following setting: <literal>compass.rebuild.sleepBeforeClose</literal>.
     </para>
 
   </sect1>

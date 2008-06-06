@@ -29,6 +29,7 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.ResourceFactory;
 import org.compass.core.cache.first.FirstLevelCache;
 import org.compass.core.cache.first.FirstLevelCacheFactory;
+import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
@@ -154,6 +155,14 @@ public class DefaultCompass implements InternalCompass {
         if (!duplicate) {
             start();
         }
+    }
+
+    public CompassConfiguration getConfig() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void rebuild() {
+        throw new UnsupportedOperationException();
     }
 
     public Compass clone(CompassSettings addedSettings) {

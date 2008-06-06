@@ -866,4 +866,18 @@ public class CompassEnvironment {
 
         public static final String READER = PREFIX + "reader";
     }
+
+    /**
+     * Settings allowing to contol the {@link org.compass.core.Compass#rebuild()} process.
+     */
+    public abstract static class Rebuild {
+
+        /**
+         * The time to sleep before closing a Compass instnace that was replaced by a rebuild
+         * process. Defaults to 60 seconds. Set in <b>milliseconds</b>.
+         */
+        public static final String SLEEP_BEFORE_CLOSE = "compass.rebuild.sleepBeforeClose";
+
+        public static final long DEFAULT_SLEEP_BEFORE_CLOSE = 60 * 1000;
+    }
 }

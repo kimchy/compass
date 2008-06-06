@@ -47,7 +47,9 @@ import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.naming.PropertyNamingStrategyFactory;
 import org.compass.core.executor.DefaultExecutorManager;
 import org.compass.core.impl.DefaultCompass;
+import org.compass.core.impl.RefreshableCompass;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.internal.DefaultCompassMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
@@ -235,6 +237,7 @@ public class CompassConfiguration {
                         throw new CompassException("Failed to find class [" + mapping + "]");
                     }
                 }
+                settings.removeSetting(setting);
             }
         }
 
@@ -263,8 +266,8 @@ public class CompassConfiguration {
         DefaultExecutorManager executorManager = new DefaultExecutorManager();
         executorManager.configure(settings);
 
-        return new DefaultCompass(copyCompassMapping, converterLookup, copyMetaData, propertyNamingStrategy,
-                executorManager, copySettings);
+        return new RefreshableCompass(this,
+                new DefaultCompass(copyCompassMapping, converterLookup, copyMetaData, propertyNamingStrategy, executorManager, copySettings));
     }
 
     protected void registerExtraConverters(ConverterLookup converterLookup) {
@@ -332,7 +335,40 @@ public class CompassConfiguration {
             throw new ConfigurationException("No mapping match resource mapping [" + resourceMapping.getAlias() + "]");
         }
         if (log.isInfoEnabled()) {
-            log.info("Resource Mapping [" + resourceMapping.getAlias() + "]");
+            log.info("Adding Resource Mapping [" + resourceMapping.getAlias() + "]");
+        }
+        return this;
+    }
+
+    /**
+     * Removes the mapping registered under the given alias.
+     */
+    public CompassConfiguration removeMappingByAlias(String alias) throws MappingException {
+        boolean removed = mapping.removeMappingByAlias(alias);
+        if (removed) {
+            if (log.isInfoEnabled()) {
+                log.info("Removing Resource Mapping with alias [" + alias + "]");
+            }
+        }
+        return this;
+    }
+
+    /**
+     * Removes all the mappings registered under the given class name.
+     */
+    public CompassConfiguration removeMappingByClass(Class clazz) throws MappingException {
+        return removeMappingByClass(clazz.getName());
+    }
+
+    /**
+     * Removes all the mappings registered under the given class name.
+     */
+    public CompassConfiguration removeMappingByClass(String className) throws MappingException {
+        boolean removed = mapping.removeMappingByClass(className);
+        if (removed) {
+            if (log.isInfoEnabled()) {
+                log.info("Removing Resource Mappings with class [" + className + "]");
+            }
         }
         return this;
     }

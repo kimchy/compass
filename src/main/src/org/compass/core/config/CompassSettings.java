@@ -120,6 +120,10 @@ public class CompassSettings {
         return settings.keySet();
     }
 
+    public void removeSetting(String setting) {
+        settings.remove(setting);
+    }
+
     public String getSetting(String setting) {
         return (String) settings.get(setting);
     }

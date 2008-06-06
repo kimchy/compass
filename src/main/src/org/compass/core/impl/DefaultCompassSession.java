@@ -158,6 +158,9 @@ public class DefaultCompassSession implements InternalCompassSession {
     public Resource getResource(Class clazz, Object id) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(clazz, id);
+        if (idResource == null) {
+            return null;
+        }
         return getResourceByIdResource(idResource);
     }
 
@@ -168,6 +171,9 @@ public class DefaultCompassSession implements InternalCompassSession {
     public Resource getResource(String alias, Object id) throws CompassException {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(alias, id);
+        if (idResource == null) {
+            return null;
+        }
         return getResourceByIdResource(idResource);
     }
 

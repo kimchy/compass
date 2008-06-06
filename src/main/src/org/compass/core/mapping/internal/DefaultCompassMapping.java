@@ -21,6 +21,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyPath;
@@ -38,11 +42,11 @@ import org.compass.core.mapping.support.NullResourceMapping;
  */
 public class DefaultCompassMapping implements InternalCompassMapping {
 
-    private final Map<String, AliasMapping> mappings = new HashMap<String, AliasMapping>();
+    private final Map<String, AliasMapping> mappings = new ConcurrentHashMap<String, AliasMapping>();
 
-    private final Map<String, ResourceMapping> rootMappingsByAlias = new HashMap<String, ResourceMapping>();
+    private final Map<String, ResourceMapping> rootMappingsByAlias = new ConcurrentHashMap<String, ResourceMapping>();
 
-    private final Map<String, ResourceMapping> nonRootMappingsByAlias = new HashMap<String, ResourceMapping>();
+    private final Map<String, ResourceMapping> nonRootMappingsByAlias = new ConcurrentHashMap<String, ResourceMapping>();
 
     private final ResourceMappingsByNameHolder mappingsByClass = new ResourceMappingsByNameHolder();
 
@@ -62,97 +66,184 @@ public class DefaultCompassMapping implements InternalCompassMapping {
 
     private final NullResourceMapping nullResourceMappingEntryInCache = new NullResourceMapping();
 
-    private final HashMap<String, ResourcePropertyMapping[]> resourcePropertyMappingByPath = new HashMap<String, ResourcePropertyMapping[]>();
+    private final Map<String, ResourcePropertyMapping[]> resourcePropertyMappingByPath = new ConcurrentHashMap<String, ResourcePropertyMapping[]>();
 
     private PropertyPath path;
+
+    private ReadWriteLock rwl = new ReentrantReadWriteLock();
+    private final Lock readLock = rwl.readLock();
+    private final Lock writeLock = rwl.writeLock();
 
     public DefaultCompassMapping() {
     }
 
     public InternalCompassMapping copy(ConverterLookup converterLookup) {
-        DefaultCompassMapping copy = new DefaultCompassMapping();
-        copy.converterLookup = converterLookup;
-        copy.setPath(getPath());
-        for (AliasMapping aliasMapping : mappings.values()) {
-            AliasMapping copyMapping = (AliasMapping) (aliasMapping).copy();
-            copy.addMapping(copyMapping);
+        writeLock.lock();
+        try {
+            DefaultCompassMapping copy = new DefaultCompassMapping();
+            copy.converterLookup = converterLookup;
+            copy.setPath(getPath());
+            for (AliasMapping aliasMapping : mappings.values()) {
+                AliasMapping copyMapping = (AliasMapping) (aliasMapping).copy();
+                copy.addMapping(copyMapping);
+            }
+            return copy;
+        } finally {
+            writeLock.unlock();
         }
-        return copy;
     }
 
     public void postProcess() {
-        ResourceMapping[] rootMappings = getRootMappings();
-        for (ResourceMapping rootMapping : rootMappings) {
-            // update the resource property mapping
-            ResourcePropertyMapping[] resourcePropertyMappings = rootMapping.getResourcePropertyMappings();
-            for (ResourcePropertyMapping rpm : resourcePropertyMappings) {
-                if (rpm.getPath() != null) {
-                    String path = rpm.getPath().getPath();
-                    ResourcePropertyMapping[] rpms = resourcePropertyMappingByPath.get(path);
-                    if (rpms == null) {
-                        resourcePropertyMappingByPath.put(path, new ResourcePropertyMapping[]{rpm});
-                    } else {
-                        ResourcePropertyMapping[] tmpRpms = new ResourcePropertyMapping[rpms.length + 1];
-                        System.arraycopy(rpms, 0, tmpRpms, 0, rpms.length);
-                        tmpRpms[tmpRpms.length - 1] = rpm;
-                        resourcePropertyMappingByPath.put(path, tmpRpms);
+        writeLock.lock();
+        try {
+            ResourceMapping[] rootMappings = getRootMappings();
+            for (ResourceMapping rootMapping : rootMappings) {
+                // update the resource property mapping
+                ResourcePropertyMapping[] resourcePropertyMappings = rootMapping.getResourcePropertyMappings();
+                for (ResourcePropertyMapping rpm : resourcePropertyMappings) {
+                    if (rpm.getPath() != null) {
+                        String path = rpm.getPath().getPath();
+                        ResourcePropertyMapping[] rpms = resourcePropertyMappingByPath.get(path);
+                        if (rpms == null) {
+                            resourcePropertyMappingByPath.put(path, new ResourcePropertyMapping[]{rpm});
+                        } else {
+                            ResourcePropertyMapping[] tmpRpms = new ResourcePropertyMapping[rpms.length + 1];
+                            System.arraycopy(rpms, 0, tmpRpms, 0, rpms.length);
+                            tmpRpms[tmpRpms.length - 1] = rpm;
+                            resourcePropertyMappingByPath.put(path, tmpRpms);
+                        }
                     }
                 }
             }
+        } finally {
+            writeLock.unlock();
         }
     }
 
     public void clearMappings() {
-        mappings.clear();
+        writeLock.lock();
+        try {
+            mappings.clear();
 
-        rootMappingsByAlias.clear();
-        nonRootMappingsByAlias.clear();
+            rootMappingsByAlias.clear();
+            nonRootMappingsByAlias.clear();
 
-        mappingsByClass.clear();
-        cachedMappingsByClass.clear();
+            mappingsByClass.clear();
 
-        rootMappingsByClass.clear();
-        cachedRootMappingsByClass.clear();
+            rootMappingsByClass.clear();
+            nonRootMappingsByClass.clear();
 
-        nonRootMappingsByClass.clear();
-        cachedNonRootMappingsByClass.clear();
+            rootMappingsArr = new ResourceMapping[0];
 
-        rootMappingsArr = new ResourceMapping[0];
+            resourcePropertyMappingByPath.clear();
 
-        resourcePropertyMappingByPath.clear();
+            clearCache();
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    public void clearCache() {
+        writeLock.lock();
+        try {
+            cachedMappingsByClass.clear();
+            cachedRootMappingsByClass.clear();
+            cachedNonRootMappingsByClass.clear();
+        } finally {
+            writeLock.unlock();
+        }
     }
 
     /**
      * Adds the given Alias mapping.
      */
     public void addMapping(AliasMapping mapping) throws MappingException {
-        if (mappings.get(mapping.getAlias()) != null) {
-            throw new MappingException("Compass does not allow multiple aliases for alias [" + mapping.getAlias() + "]");
-        }
-        mappings.put(mapping.getAlias(), mapping);
-        if (mapping instanceof ResourceMapping) {
-            ResourceMapping resourceMapping = (ResourceMapping) mapping;
-            if (resourceMapping.isRoot()) {
-                rootMappingsByAlias.put(mapping.getAlias(), resourceMapping);
-                if (resourceMapping instanceof ClassMapping) {
-                    rootMappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
-                    mappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
+        writeLock.lock();
+        try {
+            if (mappings.get(mapping.getAlias()) != null) {
+                throw new MappingException("Compass does not allow multiple aliases for alias [" + mapping.getAlias() + "]");
+            }
+            mappings.put(mapping.getAlias(), mapping);
+            if (mapping instanceof ResourceMapping) {
+                ResourceMapping resourceMapping = (ResourceMapping) mapping;
+                if (resourceMapping.isRoot()) {
+                    rootMappingsByAlias.put(mapping.getAlias(), resourceMapping);
+                    if (resourceMapping instanceof ClassMapping) {
+                        rootMappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
+                        mappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
 
-                }
-                ResourceMapping[] result = new ResourceMapping[rootMappingsArr.length + 1];
-                int i;
-                for (i = 0; i < rootMappingsArr.length; i++) {
-                    result[i] = rootMappingsArr[i];
-                }
-                result[i] = resourceMapping;
-                rootMappingsArr = result;
-            } else {
-                nonRootMappingsByAlias.put(mapping.getAlias(), resourceMapping);
-                if (resourceMapping instanceof ClassMapping) {
-                    mappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
-                    nonRootMappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
+                    }
+                    ResourceMapping[] result = new ResourceMapping[rootMappingsArr.length + 1];
+                    int i;
+                    for (i = 0; i < rootMappingsArr.length; i++) {
+                        result[i] = rootMappingsArr[i];
+                    }
+                    result[i] = resourceMapping;
+                    rootMappingsArr = result;
+                } else {
+                    nonRootMappingsByAlias.put(mapping.getAlias(), resourceMapping);
+                    if (resourceMapping instanceof ClassMapping) {
+                        mappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
+                        nonRootMappingsByClass.addMapping(resourceMapping.getName(), resourceMapping);
+                    }
                 }
             }
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    public boolean removeMappingByClass(String className) throws MappingException {
+        writeLock.lock();
+        try {
+            boolean result = false;
+            List<ResourceMapping> resourceMappings = mappingsByClass.getMappingsByName(className);
+            if (resourceMappings != null) {
+                ResourceMapping[] rm = resourceMappings.toArray(new ResourceMapping[resourceMappings.size()]);
+                for (ResourceMapping resourceMapping : rm) {
+                    result |= removeMappingByAlias(resourceMapping.getAlias());
+                }
+            }
+            return result;
+        } finally {
+            writeLock.unlock();
+        }
+    }
+
+    public boolean removeMappingByAlias(String alias) throws MappingException {
+        writeLock.lock();
+        try {
+            AliasMapping aliasMapping = mappings.remove(alias);
+            if (aliasMapping == null) {
+                return false;
+            }
+            if (aliasMapping instanceof ResourceMapping) {
+                ResourceMapping resourceMapping = (ResourceMapping) aliasMapping;
+                if (resourceMapping.isRoot()) {
+                    rootMappingsByAlias.remove(alias);
+                    if (resourceMapping instanceof ClassMapping) {
+                        rootMappingsByClass.removeMapping(resourceMapping);
+                        mappingsByClass.removeMapping(resourceMapping);
+                    }
+                    List<ResourceMapping> l = new ArrayList<ResourceMapping>(rootMappingsArr.length);
+                    for (ResourceMapping rm : rootMappingsArr) {
+                        if (rm != resourceMapping) {
+                            l.add(resourceMapping);
+                        }
+                    }
+                    rootMappingsArr = l.toArray(new ResourceMapping[l.size()]);
+                } else {
+                    nonRootMappingsByAlias.remove(alias);
+                    if (resourceMapping instanceof ClassMapping) {
+                        mappingsByClass.removeMapping(resourceMapping);
+                        nonRootMappingsByClass.removeMapping(resourceMapping);
+                    }
+                }
+            }
+            clearCache();
+            return true;
+        } finally {
+            writeLock.unlock();
         }
     }
 
@@ -418,25 +509,58 @@ public class DefaultCompassMapping implements InternalCompassMapping {
 
         private final HashMap<String, List<ResourceMapping>> mappings = new HashMap<String, List<ResourceMapping>>();
 
+        private ReadWriteLock rwl = new ReentrantReadWriteLock();
+
         void addMapping(String name, ResourceMapping resourceMapping) {
-            List<ResourceMapping> l = mappings.get(name);
-            if (l == null) {
-                l = new ArrayList<ResourceMapping>();
-                mappings.put(name, l);
+            rwl.writeLock().lock();
+            try {
+                List<ResourceMapping> l = mappings.get(name);
+                if (l == null) {
+                    l = new ArrayList<ResourceMapping>();
+                    mappings.put(name, l);
+                }
+                l.add(resourceMapping);
+            } finally {
+                rwl.writeLock().unlock();
             }
-            l.add(resourceMapping);
+        }
+
+        void removeMapping(ResourceMapping resourceMapping) {
+            rwl.writeLock().lock();
+            try {
+                for (List<ResourceMapping> l : mappings.values()) {
+                    l.remove(resourceMapping);
+                }
+            } finally {
+                rwl.writeLock().unlock();
+            }
         }
 
         public void clear() {
-            mappings.clear();
+            rwl.writeLock().lock();
+            try {
+                mappings.clear();
+            } finally {
+                rwl.writeLock().unlock();
+            }
         }
 
         public List<ResourceMapping> getMappingsByName(String name) {
-            return mappings.get(name);
+            rwl.readLock().lock();
+            try {
+                return mappings.get(name);
+            } finally {
+                rwl.readLock().unlock();
+            }
         }
 
         public List<ResourceMapping> getUnmodifiableMappingsByName(String name) {
-            return Collections.unmodifiableList(mappings.get(name));
+            rwl.readLock().lock();
+            try {
+                return Collections.unmodifiableList(mappings.get(name));
+            } finally {
+                rwl.readLock().unlock();
+            }
         }
 
         /**
@@ -444,16 +568,26 @@ public class DefaultCompassMapping implements InternalCompassMapping {
          * <code>null</code> of no mapping matches the name.
          */
         public ResourceMapping getResourceMappingByName(String name) {
-            List<ResourceMapping> l = getMappingsByName(name);
-            if (l == null) {
-                return null;
+            rwl.readLock().lock();
+            try {
+                List<ResourceMapping> l = getMappingsByName(name);
+                if (l == null) {
+                    return null;
+                }
+                return l.get(l.size() - 1);
+            } finally {
+                rwl.readLock().unlock();
             }
-            return l.get(l.size() - 1);
         }
 
         public boolean hasMultipleMappingsByName(String name) {
-            List<ResourceMapping> l = getMappingsByName(name);
-            return l != null && l.size() > 1;
+            rwl.readLock().lock();
+            try {
+                List<ResourceMapping> l = getMappingsByName(name);
+                return l != null && l.size() > 1;
+            } finally {
+                rwl.readLock().unlock();
+            }
         }
     }
 }

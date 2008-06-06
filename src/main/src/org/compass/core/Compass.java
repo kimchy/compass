@@ -19,6 +19,7 @@ package org.compass.core;
 import java.io.Serializable;
 import javax.naming.Referenceable;
 
+import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.compass.core.engine.SearchEngineOptimizer;
@@ -124,4 +125,19 @@ public interface Compass extends Referenceable, Serializable {
      * Returns <code>true</code> if the Compass instance is already closed
      */
     boolean isClosed();
+
+    /**
+     * Allows to get the configuraion object. One can add settings, and remove or add mappings.
+     * Once changes are done, {@link #rebuild()} should be called.
+     */
+    CompassConfiguration getConfig();
+
+    /**
+     * Rebuilds Compass. Taking into account any changes done on the configuration object since
+     * the current Compass instance was created.
+     *
+     * <p>If the rebuild fails, the Compass instance can still work and it will be based on the
+     * latest valid Compass instance that was rebuilt.
+     */
+    void rebuild();
 }
