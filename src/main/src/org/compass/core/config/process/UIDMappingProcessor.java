@@ -25,7 +25,10 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 
 /**
+ * Goes over all the root resource mappings and update the path where the internal UID is stored.
+ *
  * @author kimchy
+ * @see org.compass.core.mapping.internal.InternalResourceMapping#setUIDPath(String)
  */
 public class UIDMappingProcessor implements MappingProcessor {
 
