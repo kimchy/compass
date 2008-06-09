@@ -25,6 +25,9 @@ import org.compass.core.mapping.SpellCheckType;
  */
 public interface InternalResourceMapping extends ResourceMapping {
 
+    /**
+     * Sets the path under which the internal UID of the resource is stored. 
+     */
     void setUIDPath(String uid);
 
     void setAllMapping(AllMapping allMapping);
