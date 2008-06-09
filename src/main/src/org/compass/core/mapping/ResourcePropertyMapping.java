@@ -103,8 +103,18 @@ public interface ResourcePropertyMapping extends Mapping {
      */
     boolean isInternal();
 
+    /**
+     * Returns the boost level.
+     *
+     * @see Property#setBoost(float)  
+     */
     float getBoost();
 
+    /**
+     * Should the reosurce property omit norms or not.
+     *
+     * @see Property#setOmitNorms(boolean)
+     */
     Boolean isOmitNorms();
 
     ExcludeFromAllType getExcludeFromAll();
