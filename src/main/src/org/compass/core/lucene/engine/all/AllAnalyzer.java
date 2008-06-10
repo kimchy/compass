@@ -100,32 +100,34 @@ public class AllAnalyzer extends Analyzer {
                 resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(property.getName());
             }
             if (resourcePropertyMapping == null) {
-                if (property.isIndexed() && !property.isTokenized()) {
-                    if (searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(property.getName())) {
-                        continue;
-                    }
-                    if (property.getName().equals(searchEngine.getSearchEngineFactory().getAliasProperty())) {
-                        continue;
-                    }
-                    if (property.getName().equals(searchEngine.getSearchEngineFactory().getExtendedAliasProperty())) {
-                        continue;
-                    }
-                    // no mapping, need to add un_tokenized ones
-                    Payload payload = null;
-                    if (boostSupport) {
-                        if (property.getBoost() != 1.0f) {
-                            payload = AllBoostUtils.writeFloat(property.getBoost());
-                        } else if (resource.getBoost() != 1.0f) {
-                            // we get the boost from the resource thus taking into account any resource property mapping
-                            // and/or resource mapping boost level
-                            payload = AllBoostUtils.writeFloat(resource.getBoost());
+                if (allMapping.isIncludePropertiesWithNoMappings()) {
+                    if (property.isIndexed() && !property.isTokenized()) {
+                        if (searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(property.getName())) {
+                            continue;
                         }
-                    }
-                    String value = property.getStringValue();
-                    if (value != null) {
-                        Token t = new Token(value, 0, value.length());
-                        t.setPayload(payload);
-                        tokens.add(t);
+                        if (property.getName().equals(searchEngine.getSearchEngineFactory().getAliasProperty())) {
+                            continue;
+                        }
+                        if (property.getName().equals(searchEngine.getSearchEngineFactory().getExtendedAliasProperty())) {
+                            continue;
+                        }
+                        // no mapping, need to add un_tokenized ones
+                        Payload payload = null;
+                        if (boostSupport) {
+                            if (property.getBoost() != 1.0f) {
+                                payload = AllBoostUtils.writeFloat(property.getBoost());
+                            } else if (resource.getBoost() != 1.0f) {
+                                // we get the boost from the resource thus taking into account any resource property mapping
+                                // and/or resource mapping boost level
+                                payload = AllBoostUtils.writeFloat(resource.getBoost());
+                            }
+                        }
+                        String value = property.getStringValue();
+                        if (value != null) {
+                            Token t = new Token(value, 0, value.length());
+                            t.setPayload(payload);
+                            tokens.add(t);
+                        }
                     }
                 }
                 continue;
