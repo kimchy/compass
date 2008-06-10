@@ -311,8 +311,9 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     }
 
     public void addUID() {
-        Property uidProp = searchEngineFactory.getResourceFactory().createProperty(resourceMapping.getUIDPath(), resourceKey().buildUID(),
-                Property.Store.YES, Property.Index.UN_TOKENIZED);
+        removeProperties(resourceMapping.getUIDPath());
+        Property uidProp = searchEngineFactory.getResourceFactory().createProperty(resourceMapping.getUIDPath(),
+                resourceKey().buildUID(), Property.Store.YES, Property.Index.UN_TOKENIZED);
         uidProp.setOmitNorms(true);
         addProperty(uidProp);
     }

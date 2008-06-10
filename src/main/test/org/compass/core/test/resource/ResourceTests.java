@@ -72,6 +72,24 @@ public class ResourceTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testUIDResource() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Resource r = getResourceFactory().createResource("a");
+        r.addProperty("id", 1);
+        session.save(r);
+
+        r = session.loadResource("a", 1);
+        assertEquals(1, r.getProperties("$/uid").length);
+        session.save(r);
+        r = session.loadResource("a", 1);
+        assertEquals(1, r.getProperties("$/uid").length);
+
+        tr.commit();
+        session.close();
+    }
+
     public void testSingleIdResource() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
