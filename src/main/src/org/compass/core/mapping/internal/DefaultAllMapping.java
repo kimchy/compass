@@ -93,11 +93,11 @@ public class DefaultAllMapping implements InternalAllMapping {
         this.omitNorms = omitNorms;
     }
 
-    public Boolean isIncludePropertiesWithNoMappings() {
+    public boolean isIncludePropertiesWithNoMappings() {
         return includePropertiesWithNoMappings;
     }
 
-    public void setIncludePropertiesWithNoMappings(Boolean includePropertiesWithNoMappings) {
+    public void setIncludePropertiesWithNoMappings(boolean includePropertiesWithNoMappings) {
         this.includePropertiesWithNoMappings = includePropertiesWithNoMappings;
     }
 
