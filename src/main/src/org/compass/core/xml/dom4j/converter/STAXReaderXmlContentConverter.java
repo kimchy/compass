@@ -62,7 +62,7 @@ public class STAXReaderXmlContentConverter extends AbstractXmlWriterXmlContentCo
     }
 
     /**
-     * Uses dom4j <code>XPP3Reader</code> to convert the given xml string into a {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject}.
+     * Uses dom4j <code>STAXEventReader</code> to convert the given xml string into a {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject}.
      *
      * @param alias The alias that will be associated with the {@link org.compass.core.xml.AliasedXmlObject}
      * @param xml   The xml string to convert into an {@link org.compass.core.xml.dom4j.Dom4jAliasedXmlObject}
