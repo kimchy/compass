@@ -74,6 +74,14 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
 
     private Map<String, JdbcTable> cachedJdbcTables = new ConcurrentHashMap<String, JdbcTable>();
 
+    /**
+     * Jdbc storeage should not support concurrent operations on the index within a single session
+     * (such as concurrent commits on different sub indexes).
+     */
+    public boolean supportsConcurrentOperations() {
+        return false;
+    }
+
     public void configure(CompassSettings settings) throws CompassException {
         String connection = settings.getSetting(CompassEnvironment.CONNECTION);
         String url = connection.substring(PROTOCOL.length());
