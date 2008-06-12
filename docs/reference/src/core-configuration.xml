@@ -288,7 +288,7 @@ org.compass.converter.test.param2=value2
          </para>
       
          <para>
-            The next configuration uses batch_insert transaction, with a higher max buffered documents for faster batch indexing.
+            The next configuration uses lucene transaction isolation, with a higher ram buffer size for faster indexing.
 
 <programlisting><![CDATA[<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -301,9 +301,11 @@ xsi:schemaLocation="http://www.compass-project.org/schema/core-config
          <file path="target/test-index"/>
      </connection>
 
-     <transaction isolation="batch_insert">
-         <batchInsertSettings maxBufferedDocs="100" />
-     </transaction>
+     <transaction isolation="lucene" />
+     
+     <settings>
+       <setting name="compass.engine.ramBufferSize" value="64" />
+     </settings>
   </compass>
 </compass-core-config>
 ]]></programlisting>     
