@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -101,13 +102,13 @@ public class DefaultConverterLookup implements ConverterLookup {
 
     // not synchronized since the assumption is that no changes are made after
     // theh constructor
-    private final HashMap<String, Converter> convertersByClass = new HashMap<String, Converter>();
+    private final Map<String, Converter> convertersByClass = new HashMap<String, Converter>();
 
-    private final HashMap<Class, Converter> cachedConvertersByClassType = new HashMap<Class, Converter>();
+    private final Map<Class, Converter> cachedConvertersByClassType = new ConcurrentHashMap<Class, Converter>();
 
-    private final HashMap<String, Converter> convertersByName = new HashMap<String, Converter>();
+    private final Map<String, Converter> convertersByName = new HashMap<String, Converter>();
 
-    private final HashMap<String, Class> defaultConveterTypes = new HashMap<String, Class>();
+    private final Map<String, Class> defaultConveterTypes = new HashMap<String, Class>();
 
     private CompassSettings settings;
 
@@ -384,6 +385,9 @@ public class DefaultConverterLookup implements ConverterLookup {
     public Converter lookupConverter(String name) {
         Converter converter = convertersByName.get(name);
         if (converter == null) {
+            converter = convertersByClass.get(name);
+        }
+        if (converter == null) {
             throw new IllegalArgumentException("Failed to find converter by name [" + name + "]");
         }
         return converter;
@@ -401,11 +405,12 @@ public class DefaultConverterLookup implements ConverterLookup {
         if (c != null) {
             return c;
         }
-        synchronized (cachedConvertersByClassType) {
-            c = actualConverterLookup(type);
-            cachedConvertersByClassType.put(type, c);
+        c = actualConverterLookup(type);
+        if (c == null) {
             return c;
         }
+        cachedConvertersByClassType.put(type, c);
+        return c;
     }
 
     private Converter actualConverterLookup(Class type) {

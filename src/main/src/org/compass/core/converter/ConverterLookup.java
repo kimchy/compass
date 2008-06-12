@@ -38,7 +38,7 @@ public interface ConverterLookup extends CompassConfigurable {
     Converter lookupConverter(Class type);
 
     /**
-     * Looks up a converter based on the converter name. The converter
+     * Looks up a converter based on the converter name (or class name). The converter
      * should have been registered with the converter lookup using the
      * {@link #registerConverter(String, Converter)}.
      *
