@@ -143,7 +143,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         } else {
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
                 try {
-                    new CommitCallable(entry.getKey(), entry.getValue(), onePhase).call();
+                    new CommitCallable(entry.getKey(), entry.getValue(), false).call();
                 } catch (SearchEngineException e) {
                     throw e;
                 } catch (Exception e) {
