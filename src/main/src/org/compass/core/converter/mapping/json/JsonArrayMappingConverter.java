@@ -21,7 +21,7 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.json.JsonArray;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.json.JsonCompoundArrayMapping;
+import org.compass.core.mapping.json.JsonArrayMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -31,7 +31,7 @@ public class JsonArrayMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         JsonArray jsonArray = (JsonArray) root;
-        JsonCompoundArrayMapping jsonArrayMapping = (JsonCompoundArrayMapping) mapping;
+        JsonArrayMapping jsonArrayMapping = (JsonArrayMapping) mapping;
 
         Mapping elementMapping = jsonArrayMapping.getElementMapping();
 

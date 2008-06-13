@@ -41,7 +41,7 @@ import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
-import org.compass.core.mapping.json.JsonCompoundArrayMapping;
+import org.compass.core.mapping.json.JsonArrayMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
 import org.compass.core.mapping.json.JsonObjectMapping;
@@ -216,13 +216,13 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         for (ConfigurationHelper arr : jsonObjectConf.getChildren("json-array")) {
-            JsonCompoundArrayMapping jsonArrayMapping = new JsonCompoundArrayMapping();
+            JsonArrayMapping jsonArrayMapping = new JsonArrayMapping();
             bindJsonArray(arr, jsonArrayMapping, jsonRootObjectMapping);
             jsonRootObjectMapping.addMapping(jsonArrayMapping);
         }
     }
 
-    private void bindJsonArray(ConfigurationHelper jsonArrayConf, JsonCompoundArrayMapping jsonArrayMapping,
+    private void bindJsonArray(ConfigurationHelper jsonArrayConf, JsonArrayMapping jsonArrayMapping,
                                JsonRootObjectMapping jsonRootObjectMapping) {
         String name = jsonArrayConf.getAttribute("name", null);
         if (name != null) {
@@ -256,7 +256,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         conf = jsonArrayConf.getChild("json-array", false);
         if (conf != null) {
-            JsonCompoundArrayMapping intenralJsonArrayMapping = new JsonCompoundArrayMapping();
+            JsonArrayMapping intenralJsonArrayMapping = new JsonArrayMapping();
             bindJsonArray(conf, intenralJsonArrayMapping, jsonRootObjectMapping);
             if (intenralJsonArrayMapping.getName() == null) {
                 intenralJsonArrayMapping.setName(jsonArrayMapping.getName());
@@ -289,9 +289,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         for (ConfigurationHelper arr : jsonObjectConf.getChildren("json-array")) {
-            JsonCompoundArrayMapping jsonArrayMapping = new JsonCompoundArrayMapping();
+            JsonArrayMapping jsonArrayMapping = new JsonArrayMapping();
             bindJsonArray(arr, jsonArrayMapping, jsonRootObjectMapping);
-            jsonRootObjectMapping.addMapping(jsonArrayMapping);
+            jsonObjectMapping.addMapping(jsonArrayMapping);
         }
     }
 

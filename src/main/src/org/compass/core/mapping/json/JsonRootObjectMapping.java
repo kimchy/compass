@@ -95,7 +95,7 @@ public class JsonRootObjectMapping extends AbstractResourceMapping {
             resourcePropertyMappings.add(jsonPropertyMapping);
         }
 
-        public void onJsonArray(JsonCompoundArrayMapping jsonArrayMapping) {
+        public void onJsonArray(JsonArrayMapping jsonArrayMapping) {
         }
 
         public boolean onBeginMultipleMapping(Mapping mapping) {

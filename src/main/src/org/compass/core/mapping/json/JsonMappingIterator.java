@@ -36,7 +36,7 @@ public class JsonMappingIterator {
 
         void onJsonProperty(JsonPropertyMapping jsonPropertyMapping);
 
-        void onJsonArray(JsonCompoundArrayMapping jsonArrayMapping);
+        void onJsonArray(JsonArrayMapping jsonArrayMapping);
 
         boolean onBeginMultipleMapping(Mapping mapping);
 
@@ -74,8 +74,8 @@ public class JsonMappingIterator {
                 iterateMappings(callback, jsonObjectMapping, recursive);
             }
             callback.onEndMultipleMapping(jsonObjectMapping);
-        } else if (mapping instanceof JsonCompoundArrayMapping) {
-            JsonCompoundArrayMapping jsonArrayMapping = (JsonCompoundArrayMapping) mapping;
+        } else if (mapping instanceof JsonArrayMapping) {
+            JsonArrayMapping jsonArrayMapping = (JsonArrayMapping) mapping;
             callback.onJsonArray(jsonArrayMapping);
             iterateMapping(callback, jsonArrayMapping.getElementMapping(), recursive);
         }

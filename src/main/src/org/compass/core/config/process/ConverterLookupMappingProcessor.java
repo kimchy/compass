@@ -36,7 +36,7 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.json.JsonCompoundArrayMapping;
+import org.compass.core.mapping.json.JsonArrayMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonMappingIterator;
 import org.compass.core.mapping.json.JsonObjectMapping;
@@ -173,7 +173,7 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
             mapping.setValueConverter(converter);
         }
 
-        public void onJsonArray(JsonCompoundArrayMapping jsonArrayMapping) {
+        public void onJsonArray(JsonArrayMapping jsonArrayMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, jsonArrayMapping);
         }
 
