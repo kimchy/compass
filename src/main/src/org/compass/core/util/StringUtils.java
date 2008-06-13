@@ -112,7 +112,7 @@ public abstract class StringUtils {
         if (str.length() == 0) {
             return str;
         }
-        StringBuffer buf = new StringBuffer(str);
+        StringBuilder buf = new StringBuilder(str);
         while (buf.length() > 0 && Character.isWhitespace(buf.charAt(0))) {
             buf.deleteCharAt(0);
         }
@@ -130,7 +130,7 @@ public abstract class StringUtils {
         if (str.length() == 0) {
             return str;
         }
-        StringBuffer buf = new StringBuffer(str);
+        StringBuilder buf = new StringBuilder(str);
         while (buf.length() > 0 && Character.isWhitespace(buf.charAt(buf.length() - 1))) {
             buf.deleteCharAt(buf.length() - 1);
         }
@@ -220,7 +220,7 @@ public abstract class StringUtils {
             return inString;
         }
 
-        StringBuffer sbuf = new StringBuffer();
+        StringBuilder sbuf = new StringBuilder();
         // output StringBuffer we'll build up
         int pos = 0; // our position in the old string
         int index = inString.indexOf(oldPattern);
@@ -257,7 +257,7 @@ public abstract class StringUtils {
         if (inString == null || charsToDelete == null) {
             return inString;
         }
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         for (int i = 0; i < inString.length(); i++) {
             char c = inString.charAt(i);
             if (charsToDelete.indexOf(c) == -1) {
@@ -326,7 +326,7 @@ public abstract class StringUtils {
         if (str == null || str.length() == 0) {
             return str;
         }
-        StringBuffer buf = new StringBuffer(str.length());
+        StringBuilder buf = new StringBuilder(str.length());
         if (capitalize) {
             buf.append(Character.toUpperCase(str.charAt(0)));
         } else {
@@ -702,7 +702,7 @@ public abstract class StringUtils {
             return "";
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < arr.length; i++) {
             if (i > 0) {
                 sb.append(delim);
@@ -726,7 +726,7 @@ public abstract class StringUtils {
             return "";
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Iterator it = coll.iterator();
         int i = 0;
         while (it.hasNext()) {
@@ -779,7 +779,7 @@ public abstract class StringUtils {
      */
     public static String reverse(String str) {
         int length = str.length();
-        StringBuffer sb = new StringBuffer(length);
+        StringBuilder sb = new StringBuilder(length);
         for (int i = length - 1; i > -1; i--) {
             sb.append(str.charAt(i));
         }

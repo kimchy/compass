@@ -26,7 +26,7 @@ import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class JsonPropertyMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping,
+public class JsonPropertyMapping extends AbstractResourcePropertyMapping implements JsonMapping, ResourcePropertyMapping,
         OverrideByNameMapping {
 
     private boolean overrideByName;
@@ -36,6 +36,8 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
     private String valueConverterName;
 
     private String format;
+
+    private String fullPath;
 
     public Mapping copy() {
         JsonPropertyMapping xmlPropertyMapping = new JsonPropertyMapping();
@@ -49,6 +51,15 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
         copy.setValueConverter(getValueConverter());
         copy.setValueConverterName(getValueConverterName());
         copy.setFormat(getFormat());
+        copy.setFullPath(getFullPath());
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 
     public boolean isOverrideByName() {

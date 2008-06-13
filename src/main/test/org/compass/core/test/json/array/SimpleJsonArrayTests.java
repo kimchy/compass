@@ -15,6 +15,21 @@ public class SimpleJsonArrayTests extends AbstractTestCase {
         return new String[]{"json/array/mapping.cpm.xml"};
     }
 
+    public void testDotPath() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        RawAliasedJsonObject jsonObject = new RawAliasedJsonObject("a", "{id : 1, value : \"test\", arr : [1, 2]}");
+        session.save(jsonObject);
+
+        assertEquals(1, session.find("a.value:test").length());
+        assertEquals(1, session.find("a.arr:1").length());
+        assertEquals(1, session.find("a.arr:2").length());
+
+        tr.commit();
+        session.close();
+    }
+
     public void testSimpleJsonArray() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();

@@ -22,15 +22,26 @@ import org.compass.core.mapping.support.AbstractMapping;
 /**
  * @author kimchy
  */
-public class JsonArrayMapping extends AbstractMapping {
+public class JsonArrayMapping extends AbstractMapping implements JsonMapping {
 
     private Mapping elementMapping;
+
+    private String fullPath;
 
     public Mapping copy() {
         JsonArrayMapping copy = new JsonArrayMapping();
         super.copy(copy);
         copy.setElementMapping(getElementMapping().copy());
+        copy.setFullPath(getFullPath());
         return copy;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 
     public Mapping getElementMapping() {

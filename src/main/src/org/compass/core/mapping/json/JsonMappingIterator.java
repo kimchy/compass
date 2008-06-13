@@ -38,9 +38,9 @@ public class JsonMappingIterator {
 
         void onJsonArray(JsonArrayMapping jsonArrayMapping);
 
-        boolean onBeginMultipleMapping(Mapping mapping);
+        boolean onBeginMultipleMapping(JsonMapping mapping);
 
-        void onEndMultipleMapping(Mapping mapping);
+        void onEndMultipleMapping(JsonMapping mapping);
     }
 
     public static void iterateMappings(JsonMappingCallback callback, JsonRootObjectMapping rootObjectMapping, boolean recursive) {

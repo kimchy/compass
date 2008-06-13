@@ -16,6 +16,19 @@ public class SimpleJsonTests extends AbstractTestCase {
         return new String[]{"json/simple/mapping.cpm.xml"};
     }
 
+    public void testDotPath() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        RawAliasedJsonObject jsonObject = new RawAliasedJsonObject("a", "{id : 1, value : \"test\"}");
+        session.save(jsonObject);
+
+        assertEquals(1, session.find("a.value:test").length());
+
+        tr.commit();
+        session.close();
+    }
+
     public void testSimpleJson() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
@@ -67,6 +80,8 @@ public class SimpleJsonTests extends AbstractTestCase {
         assertEquals("0001.20", resource.getValue("float"));
         assertEquals(new Float(1.2), resource.getObject("float"));
         assertEquals(true, resource.getProperty("float").isCompressed());
+
+        assertEquals(1, session.find("c.int:2").length());
 
         tr.commit();
         session.close();

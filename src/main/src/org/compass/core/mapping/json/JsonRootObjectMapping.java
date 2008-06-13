@@ -15,9 +15,7 @@ import org.compass.core.mapping.support.AbstractResourceMapping;
 /**
  * @author kimchy
  */
-//TODO support recursive mappings using object (or array)
-//TODO support appending names based on deep level names
-public class JsonRootObjectMapping extends AbstractResourceMapping {
+public class JsonRootObjectMapping extends AbstractResourceMapping implements JsonMapping {
 
     private ResourcePropertyMapping[] resourcePropertyMappings;
 
@@ -25,16 +23,28 @@ public class JsonRootObjectMapping extends AbstractResourceMapping {
 
     private JsonContentMapping contentMapping;
 
+    private String fullPath;
+
     public Mapping copy() {
         JsonRootObjectMapping copy = new JsonRootObjectMapping();
         super.copy(copy);
+        setFullPath(getFullPath());
         return copy;
     }
 
     public AliasMapping shallowCopy() {
         JsonRootObjectMapping copy = new JsonRootObjectMapping();
         super.shallowCopy(copy);
+        setFullPath(getFullPath());
         return copy;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 
     public int addMapping(Mapping mapping) {
@@ -59,7 +69,15 @@ public class JsonRootObjectMapping extends AbstractResourceMapping {
         ResourcePropertyMappingGatherer resourcePropertyMappingGatherer = new ResourcePropertyMappingGatherer();
         JsonMappingIterator.iterateMappings(resourcePropertyMappingGatherer, this, true);
         resourcePropertyMappings = resourcePropertyMappingGatherer.getResourcePropertyMappings();
-        // TODO handle path names
+        for (ResourcePropertyMapping m : resourcePropertyMappings) {
+            if (m.isInternal()) {
+                continue;
+            }
+            if (m instanceof JsonMapping) {
+                JsonMapping jsonMapping = (JsonMapping) m;
+                resourcePropertyMappingsByPath.put(jsonMapping.getFullPath(), m);
+            }
+        }
     }
 
     public ResourcePropertyMapping[] getResourcePropertyMappings() {
@@ -98,11 +116,11 @@ public class JsonRootObjectMapping extends AbstractResourceMapping {
         public void onJsonArray(JsonArrayMapping jsonArrayMapping) {
         }
 
-        public boolean onBeginMultipleMapping(Mapping mapping) {
+        public boolean onBeginMultipleMapping(JsonMapping mapping) {
             return true;
         }
 
-        public void onEndMultipleMapping(Mapping mapping) {
+        public void onEndMultipleMapping(JsonMapping mapping) {
         }
     }
 }

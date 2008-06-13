@@ -237,9 +237,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
         private ArrayList<String> pathSteps = new ArrayList<String>();
 
-        private StringBuffer sb = new StringBuffer();
-
-        private Set<NoUnmarshallHolder> cyclicNoUnmarshallRefAliasMappings = new HashSet<NoUnmarshallHolder>();
+        private StringBuilder sb = new StringBuilder();
 
         private Set<String> cyclicClassMappings = new HashSet<String>();
 

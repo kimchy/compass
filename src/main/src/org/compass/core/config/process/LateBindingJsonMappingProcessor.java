@@ -16,6 +16,7 @@
 
 package org.compass.core.config.process;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.compass.core.config.CompassSettings;
@@ -26,7 +27,13 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.internal.InternalCompassMapping;
+import org.compass.core.mapping.json.JsonArrayMapping;
+import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
+import org.compass.core.mapping.json.JsonMapping;
+import org.compass.core.mapping.json.JsonMappingIterator;
+import org.compass.core.mapping.json.JsonObjectMapping;
+import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.JsonRootObjectMapping;
 
 /**
@@ -36,9 +43,12 @@ public class LateBindingJsonMappingProcessor implements MappingProcessor {
 
     private PropertyNamingStrategy namingStrategy;
 
+    private CompassMapping mapping;
+
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
         this.namingStrategy = namingStrategy;
+        this.mapping = compassMapping;
 
         ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
         for (AliasMapping aliasMapping : compassMapping.getMappings()) {
@@ -61,6 +71,82 @@ public class LateBindingJsonMappingProcessor implements MappingProcessor {
                 jsonIdMapping.setInternal(true);
                 jsonIdMapping.setPath(namingStrategy.buildPath(jsonRootObjectMapping.getPath(), jsonIdMapping.getName()));
             }
+        }
+        JsonMappingIterator.iterateMappings(new FullPathCallback(), jsonRootObjectMapping, true);
+    }
+
+    private class FullPathCallback implements JsonMappingIterator.JsonMappingCallback {
+
+        private ArrayList<String> pathSteps = new ArrayList<String>();
+
+        private StringBuilder sb = new StringBuilder();
+
+        public void onJsonRootObject(JsonRootObjectMapping jsonObjectMapping) {
+            jsonObjectMapping.setFullPath("");
+        }
+
+        public void onJsonObject(JsonObjectMapping jsonObjectMapping) {
+            addToPath(jsonObjectMapping);
+            jsonObjectMapping.setFullPath(currentPath());
+            removeFromPath(jsonObjectMapping);
+        }
+
+        public void onJsonContent(JsonContentMapping jsonContentMapping) {
+            addToPath(jsonContentMapping);
+            jsonContentMapping.setFullPath(currentPath());
+            removeFromPath(jsonContentMapping);
+        }
+
+        public void onJsonProperty(JsonPropertyMapping jsonPropertyMapping) {
+            addToPath(jsonPropertyMapping);
+            jsonPropertyMapping.setFullPath(currentPath());
+            removeFromPath(jsonPropertyMapping);
+        }
+
+        public void onJsonArray(JsonArrayMapping jsonArrayMapping) {
+            addToPath(jsonArrayMapping);
+            jsonArrayMapping.setFullPath(currentPath());
+            removeFromPath(jsonArrayMapping);
+        }
+
+        public boolean onBeginMultipleMapping(JsonMapping mapping) {
+            addToPath(mapping);
+            return true;
+        }
+
+        public void onEndMultipleMapping(JsonMapping mapping) {
+            removeFromPath(mapping);
+        }
+
+        private void addToPath(JsonMapping mapping) {
+            if (mapping instanceof JsonRootObjectMapping) {
+                return;
+            }
+            String name = mapping.getName();
+            if (name == null) {
+                throw new IllegalStateException("Internal error in Compass");
+            }
+            pathSteps.add(name);
+        }
+
+        private void removeFromPath(JsonMapping mapping) {
+            if (mapping instanceof JsonRootObjectMapping) {
+                return;
+            }
+            if (pathSteps.size() > 0) {
+                pathSteps.remove(pathSteps.size() - 1);
+            }
+        }
+
+        private String currentPath() {
+            sb.setLength(0);
+            for (int i = 0; i < pathSteps.size(); i++) {
+                if (i > 0) {
+                    sb.append('.');
+                }
+                sb.append(pathSteps.get(i));
+            }
+            return sb.toString();
         }
     }
 }

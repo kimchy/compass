@@ -25,12 +25,23 @@ import org.compass.core.mapping.support.AbstractMultipleMapping;
 /**
  * @author kimchy
  */
-public class JsonObjectMapping extends AbstractMultipleMapping {
+public class JsonObjectMapping extends AbstractMultipleMapping implements JsonMapping {
+
+    private String fullPath;
 
     public Mapping copy() {
         JsonObjectMapping copy = new JsonObjectMapping();
         super.copy(copy);
+        setFullPath(getFullPath());
         return copy;
+    }
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
 
     public int addMapping(Mapping mapping) {

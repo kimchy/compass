@@ -25,7 +25,17 @@ import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class JsonContentMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping {
+public class JsonContentMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping, JsonMapping {
+
+    private String fullPath;
+
+    public String getFullPath() {
+        return fullPath;
+    }
+
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
+    }
 
     /**
      * JSON content mapping is always {@link org.compass.core.Property.Index#NO}.
@@ -44,6 +54,7 @@ public class JsonContentMapping extends AbstractResourcePropertyMapping implemen
     public Mapping copy() {
         JsonContentMapping copy = new JsonContentMapping();
         copy(copy);
+        setFullPath(getFullPath());
         return copy;
     }
 
