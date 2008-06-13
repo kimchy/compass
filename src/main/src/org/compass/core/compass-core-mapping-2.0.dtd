@@ -26,7 +26,7 @@
 <!ELEMENT json-object (
     (json-property|json-array|json-object)*
 )>
-    <!ATTLIST json-object name CDATA #REQUIRED>
+    <!ATTLIST json-object name CDATA #IMPLIED>
     <!ATTLIST json-object converter CDATA #IMPLIED>
 
 <!ELEMENT json-array (
@@ -47,7 +47,7 @@
 
 <!ELEMENT json-property EMPTY
 >
-    <!ATTLIST json-property name CDATA #REQUIRED>
+    <!ATTLIST json-property name CDATA #IMPLIED>
     <!ATTLIST json-property store (no|yes|compress) #IMPLIED>
     <!ATTLIST json-property index (no|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST json-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>

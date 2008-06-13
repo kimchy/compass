@@ -53,4 +53,21 @@ public class SimpleJsonTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testSimpleJsonWithValueConverter() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        RawAliasedJsonObject jsonObject = new RawAliasedJsonObject("c", "{id : 1, int : 2, float: 1.2}");
+        session.save(jsonObject);
+
+        Resource resource = session.loadResource("c", 1);
+        assertEquals("0002", resource.getValue("int"));
+        assertEquals(new Integer(2), resource.getObject("int"));
+        assertEquals("0001.20", resource.getValue("float"));
+        assertEquals(new Float(1.2), resource.getObject("float"));
+
+        tr.commit();
+        session.close();
+    }
 }

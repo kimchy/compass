@@ -36,7 +36,7 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.json.JsonArrayMapping;
+import org.compass.core.mapping.json.JsonCompoundArrayMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonMappingIterator;
 import org.compass.core.mapping.json.JsonObjectMapping;
@@ -112,7 +112,7 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                     if (converter instanceof ResourcePropertyConverter) {
                         converter = new ResourcePropertyValueConverter((ResourcePropertyConverter) converter);
                     }
-                    if (xmlPropertyMapping.getValueConverter() == null) {
+                    if (converter == null) {
                         throw new ConfigurationException("Failed to find converter [" + converterName
                                 + "] for mapping " + "[" + xmlPropertyMapping.getName() + "]");
                     }
@@ -162,7 +162,7 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                 if (converter instanceof ResourcePropertyConverter) {
                     converter = new ResourcePropertyJsonValueConverter((ResourcePropertyConverter) converter);
                 }
-                if (mapping.getValueConverter() == null) {
+                if (converter == null) {
                     throw new ConfigurationException("Failed to find converter [" + converterName
                             + "] for mapping " + "[" + mapping.getName() + "]");
                 }
@@ -173,7 +173,7 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
             mapping.setValueConverter(converter);
         }
 
-        public void onJsonArray(JsonArrayMapping jsonArrayMapping) {
+        public void onJsonArray(JsonCompoundArrayMapping jsonArrayMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, jsonArrayMapping);
         }
 

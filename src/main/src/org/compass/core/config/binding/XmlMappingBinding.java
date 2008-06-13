@@ -41,7 +41,7 @@ import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
-import org.compass.core.mapping.json.JsonArrayMapping;
+import org.compass.core.mapping.json.JsonCompoundArrayMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
 import org.compass.core.mapping.json.JsonObjectMapping;
@@ -216,13 +216,13 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         for (ConfigurationHelper arr : jsonObjectConf.getChildren("json-array")) {
-            JsonArrayMapping jsonArrayMapping = new JsonArrayMapping();
+            JsonCompoundArrayMapping jsonArrayMapping = new JsonCompoundArrayMapping();
             bindJsonArray(arr, jsonArrayMapping, jsonRootObjectMapping);
             jsonRootObjectMapping.addMapping(jsonArrayMapping);
         }
     }
 
-    private void bindJsonArray(ConfigurationHelper jsonArrayConf, JsonArrayMapping jsonArrayMapping,
+    private void bindJsonArray(ConfigurationHelper jsonArrayConf, JsonCompoundArrayMapping jsonArrayMapping,
                                JsonRootObjectMapping jsonRootObjectMapping) {
         String name = jsonArrayConf.getAttribute("name", null);
         if (name != null) {
@@ -236,6 +236,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         if (conf != null) {
             JsonPropertyMapping jsonPropertyMapping = new JsonPropertyMapping();
             bindJsonProperty(conf, jsonPropertyMapping, jsonRootObjectMapping);
+            if (jsonPropertyMapping.getName() == null) {
+                jsonPropertyMapping.setName(jsonArrayMapping.getName());
+                jsonPropertyMapping.setPath(new StaticPropertyPath(jsonArrayMapping.getName()));
+            }
             jsonArrayMapping.setElementMapping(jsonPropertyMapping);
         }
 
@@ -243,13 +247,21 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         if (conf != null) {
             JsonObjectMapping jsonObjectMapping = new JsonObjectMapping();
             bindJsonObject(conf, jsonObjectMapping, jsonRootObjectMapping);
+            if (jsonObjectMapping.getName() == null) {
+                jsonObjectMapping.setName(jsonArrayMapping.getName());
+                jsonObjectMapping.setPath(new StaticPropertyPath(jsonArrayMapping.getName()));
+            }
             jsonArrayMapping.setElementMapping(jsonObjectMapping);
         }
 
         conf = jsonArrayConf.getChild("json-array", false);
         if (conf != null) {
-            JsonArrayMapping intenralJsonArrayMapping = new JsonArrayMapping();
+            JsonCompoundArrayMapping intenralJsonArrayMapping = new JsonCompoundArrayMapping();
             bindJsonArray(conf, intenralJsonArrayMapping, jsonRootObjectMapping);
+            if (intenralJsonArrayMapping.getName() == null) {
+                intenralJsonArrayMapping.setName(jsonArrayMapping.getName());
+                intenralJsonArrayMapping.setPath(new StaticPropertyPath(jsonArrayMapping.getName()));
+            }
             jsonArrayMapping.setElementMapping(intenralJsonArrayMapping);
         }
     }
@@ -277,7 +289,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         for (ConfigurationHelper arr : jsonObjectConf.getChildren("json-array")) {
-            JsonArrayMapping jsonArrayMapping = new JsonArrayMapping();
+            JsonCompoundArrayMapping jsonArrayMapping = new JsonCompoundArrayMapping();
             bindJsonArray(arr, jsonArrayMapping, jsonRootObjectMapping);
             jsonRootObjectMapping.addMapping(jsonArrayMapping);
         }
@@ -1024,11 +1036,6 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                                              AliasMapping aliasMapping) {
         bindResourcePropertyMapping(conf, mapping, 1.0f, ResourcePropertyMapping.ExcludeFromAllType.NO,
                 aliasMapping.getAnalyzer());
-    }
-
-    private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
-                                             String analyzer) {
-        bindResourcePropertyMapping(conf, mapping, 1.0f, ResourcePropertyMapping.ExcludeFromAllType.NO, analyzer);
     }
 
     private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,

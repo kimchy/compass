@@ -36,7 +36,7 @@ public class JsonMappingIterator {
 
         void onJsonProperty(JsonPropertyMapping jsonPropertyMapping);
 
-        void onJsonArray(JsonArrayMapping jsonArrayMapping);
+        void onJsonArray(JsonCompoundArrayMapping jsonArrayMapping);
 
         boolean onBeginMultipleMapping(Mapping mapping);
 
@@ -55,29 +55,29 @@ public class JsonMappingIterator {
     private static void iterateMappings(JsonMappingCallback callback, MultipleMapping mapping, boolean recursive) {
         for (Iterator<Mapping> mappingsIt = mapping.mappingsIt(); mappingsIt.hasNext();) {
             Mapping m = mappingsIt.next();
-            if (m instanceof JsonPropertyMapping) {
-                callback.onJsonProperty((JsonPropertyMapping) m);
-            } else if (m instanceof JsonContentMapping) {
-                callback.onJsonContent((JsonContentMapping) m);
-            } else if (m instanceof JsonObjectMapping) {
-                if (!callback.onBeginMultipleMapping(m)) {
-                    return;
-                }
-                callback.onJsonObject((JsonObjectMapping) m);
-                if (recursive) {
-                    iterateMappings(callback, mapping, recursive);
-                }
-                callback.onEndMultipleMapping(m);
-            } else if (m instanceof JsonArrayMapping) {
-                if (!callback.onBeginMultipleMapping(m)) {
-                    return;
-                }
-                callback.onJsonArray((JsonArrayMapping) m);
-                if (recursive) {
-                    iterateMappings(callback, mapping, recursive);
-                }
-                callback.onEndMultipleMapping(m);
+            iterateMapping(callback, m, recursive);
+        }
+    }
+
+    private static void iterateMapping(JsonMappingCallback callback, Mapping mapping, boolean recursive) {
+        if (mapping instanceof JsonPropertyMapping) {
+            callback.onJsonProperty((JsonPropertyMapping) mapping);
+        } else if (mapping instanceof JsonContentMapping) {
+            callback.onJsonContent((JsonContentMapping) mapping);
+        } else if (mapping instanceof JsonObjectMapping) {
+            JsonObjectMapping jsonObjectMapping = (JsonObjectMapping) mapping;
+            if (!callback.onBeginMultipleMapping(jsonObjectMapping)) {
+                return;
             }
+            callback.onJsonObject(jsonObjectMapping);
+            if (recursive) {
+                iterateMappings(callback, jsonObjectMapping, recursive);
+            }
+            callback.onEndMultipleMapping(jsonObjectMapping);
+        } else if (mapping instanceof JsonCompoundArrayMapping) {
+            JsonCompoundArrayMapping jsonArrayMapping = (JsonCompoundArrayMapping) mapping;
+            callback.onJsonArray(jsonArrayMapping);
+            iterateMapping(callback, jsonArrayMapping.getElementMapping(), recursive);
         }
     }
 }

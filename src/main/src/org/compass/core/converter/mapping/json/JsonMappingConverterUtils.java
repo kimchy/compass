@@ -22,8 +22,8 @@ public class JsonMappingConverterUtils {
             }
             Mapping entryMapping = mapping.getMapping(entry.getKey());
             if (entryMapping == null) {
-                // TODO need to do generic conversion
-                throw new UnsupportedOperationException("");
+                // we need to support dynamic creation as well
+                continue;
             } else {
                 store |= entryMapping.getConverter().marshall(resource, value, entryMapping, context);
             }

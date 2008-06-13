@@ -2,7 +2,6 @@ package org.compass.core.mapping.json;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.compass.core.mapping.AliasMapping;
@@ -57,16 +56,10 @@ public class JsonRootObjectMapping extends AbstractResourceMapping {
     }
 
     protected void doPostProcess() throws MappingException {
-        ArrayList<ResourcePropertyMapping> list = new ArrayList<ResourcePropertyMapping>();
-        for (Iterator<Mapping> it = mappingsIt(); it.hasNext();) {
-            Mapping m = it.next();
-            // TODO recurse over to JsonObjectMapping and JsonArrayMapping
-            if (m instanceof ResourcePropertyMapping) {
-                list.add((ResourcePropertyMapping) m);
-                resourcePropertyMappingsByPath.put(m.getPath().getPath(), (ResourcePropertyMapping) m);
-            }
-        }
-        resourcePropertyMappings = list.toArray(new ResourcePropertyMapping[list.size()]);
+        ResourcePropertyMappingGatherer resourcePropertyMappingGatherer = new ResourcePropertyMappingGatherer();
+        JsonMappingIterator.iterateMappings(resourcePropertyMappingGatherer, this, true);
+        resourcePropertyMappings = resourcePropertyMappingGatherer.getResourcePropertyMappings();
+        // TODO handle path names
     }
 
     public ResourcePropertyMapping[] getResourcePropertyMappings() {
@@ -79,5 +72,37 @@ public class JsonRootObjectMapping extends AbstractResourceMapping {
 
     public JsonContentMapping getContentMapping() {
         return this.contentMapping;
+    }
+
+    private class ResourcePropertyMappingGatherer implements JsonMappingIterator.JsonMappingCallback {
+
+        private ArrayList<ResourcePropertyMapping> resourcePropertyMappings = new ArrayList<ResourcePropertyMapping>();
+
+        public ResourcePropertyMapping[] getResourcePropertyMappings() {
+            return resourcePropertyMappings.toArray(new ResourcePropertyMapping[resourcePropertyMappings.size()]);
+        }
+
+        public void onJsonRootObject(JsonRootObjectMapping jsonObjectMapping) {
+        }
+
+        public void onJsonObject(JsonObjectMapping jsonObjectMapping) {
+        }
+
+        public void onJsonContent(JsonContentMapping jsonContentMapping) {
+        }
+
+        public void onJsonProperty(JsonPropertyMapping jsonPropertyMapping) {
+            resourcePropertyMappings.add(jsonPropertyMapping);
+        }
+
+        public void onJsonArray(JsonCompoundArrayMapping jsonArrayMapping) {
+        }
+
+        public boolean onBeginMultipleMapping(Mapping mapping) {
+            return true;
+        }
+
+        public void onEndMultipleMapping(Mapping mapping) {
+        }
     }
 }
