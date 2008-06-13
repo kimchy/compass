@@ -169,10 +169,7 @@ public abstract class MappingProcessorUtils {
 
     public static void applyResourcePropertySettings(ResourcePropertyMapping mapping, CompassSettings settings) {
         InternalResourcePropertyMapping intMapping = (InternalResourcePropertyMapping) mapping;
-        ResourcePropertyConverter converter = null;
-        if (mapping.getConverter() instanceof ResourcePropertyConverter) {
-            converter = (ResourcePropertyConverter) mapping.getConverter();
-        }
+        ResourcePropertyConverter converter = mapping.getResourcePropertyConverter();
         if (intMapping.getIndex() == null) {
             if (converter != null) {
                 intMapping.setIndex(converter.suggestIndex());

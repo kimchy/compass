@@ -17,6 +17,7 @@
 package org.compass.core.mapping.json;
 
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -80,5 +81,12 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
 
     public void setFormat(String format) {
         this.format = format;
+    }
+
+    public ResourcePropertyConverter getResourcePropertyConverter() {
+        if (valueConverter instanceof ResourcePropertyConverter) {
+            return (ResourcePropertyConverter) valueConverter;
+        }
+        return null;
     }
 }

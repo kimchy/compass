@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.osem;
 
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
@@ -77,5 +78,12 @@ public class DynamicMetaDataMapping extends AbstractResourcePropertyMapping impl
 
     public void setType(Class type) {
         this.type = type;
+    }
+
+    public ResourcePropertyConverter getResourcePropertyConverter() {
+        if (getConverter() instanceof ResourcePropertyConverter) {
+            return (ResourcePropertyConverter) getConverter();
+        }
+        return null;
     }
 }

@@ -6,9 +6,68 @@
 -->
 
 <!ELEMENT compass-core-mapping (
-    (contract|class|resource|resource-contract|xml-object)*
+    (contract|class|resource|resource-contract|xml-object|root-json-object)*
 )>
     <!ATTLIST compass-core-mapping package CDATA #IMPLIED>
+
+<!ELEMENT root-json-object (
+    all?,
+    sub-index-hash?,
+    json-id*,
+    (json-property|json-array|json-object)*,
+    (json-content?)
+)>
+    <!ATTLIST root-json-object alias CDATA #REQUIRED>
+    <!ATTLIST root-json-object sub-index CDATA #IMPLIED>
+    <!ATTLIST root-json-object analyzer CDATA #IMPLIED>
+    <!ATTLIST root-json-object boost CDATA #IMPLIED>
+    <!ATTLIST root-json-object spell-check (include|exclude|na) "na">
+
+<!ELEMENT json-object (
+    (json-property|json-array|json-object)*
+)>
+    <!ATTLIST json-object name CDATA #REQUIRED>
+    <!ATTLIST json-object converter CDATA #IMPLIED>
+
+<!ELEMENT json-array (
+    (json-property|json-object|json-array)
+)>
+    <!ATTLIST json-array name CDATA #REQUIRED>
+    <!ATTLIST json-array converter CDATA #IMPLIED>
+
+<!ELEMENT json-id EMPTY
+>
+    <!ATTLIST json-id name CDATA #REQUIRED>
+    <!ATTLIST json-id analyzer CDATA #IMPLIED>
+    <!ATTLIST json-id converter CDATA #IMPLIED>
+    <!ATTLIST json-id value-converter CDATA #IMPLIED>
+    <!ATTLIST json-id format CDATA #IMPLIED>
+    <!ATTLIST json-id omit-norms (true|false) "true">
+    <!ATTLIST json-id spell-check (include|exclude|na) "na">
+
+<!ELEMENT json-property EMPTY
+>
+    <!ATTLIST json-property name CDATA #REQUIRED>
+    <!ATTLIST json-property store (no|yes|compress) #IMPLIED>
+    <!ATTLIST json-property index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST json-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
+    <!ATTLIST json-property omit-norms (true|false) #IMPLIED>
+    <!ATTLIST json-property reverse (no|reader|string) "no">
+    <!ATTLIST json-property null-value CDATA #IMPLIED>
+    <!ATTLIST json-property analyzer CDATA #IMPLIED>
+    <!ATTLIST json-property override (true|false) "true">
+    <!ATTLIST json-property exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
+    <!ATTLIST json-property converter CDATA #IMPLIED>
+    <!ATTLIST json-property value-converter CDATA #IMPLIED>
+    <!ATTLIST json-property format CDATA #IMPLIED>
+    <!ATTLIST json-property boost CDATA #IMPLIED>
+    <!ATTLIST json-property spell-check (include|exclude|na) "na">
+
+<!ELEMENT json-content EMPTY
+>
+    <!ATTLIST json-content name CDATA #REQUIRED>
+    <!ATTLIST json-content store (yes|compress) "yes">
+    <!ATTLIST json-content converter CDATA #IMPLIED>
 
 <!ELEMENT xml-object (
     all?,

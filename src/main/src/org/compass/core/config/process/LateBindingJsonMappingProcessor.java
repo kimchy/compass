@@ -26,13 +26,13 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.internal.InternalCompassMapping;
-import org.compass.core.mapping.xsem.XmlIdMapping;
-import org.compass.core.mapping.xsem.XmlObjectMapping;
+import org.compass.core.mapping.json.JsonIdMapping;
+import org.compass.core.mapping.json.JsonRootObjectMapping;
 
 /**
  * @author kimchy
  */
-public class LateBindingXsemMappingProcessor implements MappingProcessor {
+public class LateBindingJsonMappingProcessor implements MappingProcessor {
 
     private PropertyNamingStrategy namingStrategy;
 
@@ -42,24 +42,24 @@ public class LateBindingXsemMappingProcessor implements MappingProcessor {
 
         ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
         for (AliasMapping aliasMapping : compassMapping.getMappings()) {
-            if (aliasMapping instanceof XmlObjectMapping) {
-                secondPass((XmlObjectMapping) aliasMapping, compassMapping);
+            if (aliasMapping instanceof JsonRootObjectMapping) {
+                secondPass((JsonRootObjectMapping) aliasMapping, compassMapping);
             }
         }
 
         return compassMapping;
     }
 
-    private void secondPass(XmlObjectMapping xmlObjectMapping, CompassMapping fatherMapping) {
-        xmlObjectMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), xmlObjectMapping.getAlias()));
-        for (Iterator it = xmlObjectMapping.mappingsIt(); it.hasNext();) {
+    private void secondPass(JsonRootObjectMapping jsonRootObjectMapping, CompassMapping fatherMapping) {
+        jsonRootObjectMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), jsonRootObjectMapping.getAlias()));
+        for (Iterator it = jsonRootObjectMapping.mappingsIt(); it.hasNext();) {
             Mapping mapping = (Mapping) it.next();
-            if (mapping instanceof XmlIdMapping) {
-                XmlIdMapping xmlIdMapping = (XmlIdMapping) mapping;
+            if (mapping instanceof JsonIdMapping) {
+                JsonIdMapping jsonIdMapping = (JsonIdMapping) mapping;
                 // in case of xml id mapping, we always use it as internal id
                 // and build its own internal path (because other xml properties names might be dynamic)
-                xmlIdMapping.setInternal(true);
-                xmlIdMapping.setPath(namingStrategy.buildPath(xmlObjectMapping.getPath(), xmlIdMapping.getName()));
+                jsonIdMapping.setInternal(true);
+                jsonIdMapping.setPath(namingStrategy.buildPath(jsonRootObjectMapping.getPath(), jsonIdMapping.getName()));
             }
         }
     }

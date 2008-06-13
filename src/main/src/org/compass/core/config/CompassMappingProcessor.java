@@ -41,6 +41,7 @@ public class CompassMappingProcessor implements MappingProcessor {
         // start late binding
         mappingProcessors.add(new LateBindingOsemMappingProcessor());
         mappingProcessors.add(new LateBindingXsemMappingProcessor());
+        mappingProcessors.add(new LateBindingJsonMappingProcessor());
         // end late binding
         mappingProcessors.add(new CascadingMappingProcessor());
         mappingProcessors.add(new InternalIdsMappingProcessor());

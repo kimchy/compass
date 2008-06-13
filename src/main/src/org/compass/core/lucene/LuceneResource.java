@@ -184,7 +184,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
             throw new SearchEngineException("No resource property mapping is defined for alias [" + alias
                     + "] and resource property [" + name + "]");
         }
-        ResourcePropertyConverter converter = (ResourcePropertyConverter) propertyMapping.getConverter();
+        ResourcePropertyConverter converter = propertyMapping.getResourcePropertyConverter();
         if (converter == null) {
             converter = (ResourcePropertyConverter) searchEngineFactory.getMapping().
                     getConverterLookup().lookupConverter(value.getClass());

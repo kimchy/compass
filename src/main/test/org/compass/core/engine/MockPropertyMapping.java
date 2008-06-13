@@ -19,6 +19,7 @@ package org.compass.core.engine;
 import org.compass.core.Property;
 import org.compass.core.Property.TermVector;
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -121,6 +122,10 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
     }
 
     public Converter getConverter() {
+        return null;
+    }
+
+    public ResourcePropertyConverter getResourcePropertyConverter() {
         return null;
     }
 

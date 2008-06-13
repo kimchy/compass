@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.xsem;
+package org.compass.core.mapping.json;
 
 import org.compass.core.Property;
 import org.compass.core.mapping.Mapping;
@@ -24,7 +24,7 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class XmlIdMapping extends XmlPropertyMapping implements ResourceIdMappingProvider {
+public class JsonIdMapping extends JsonPropertyMapping implements ResourceIdMappingProvider {
 
     public Mapping[] getIdMappings() {
         return getResourceIdMappings();
@@ -47,7 +47,7 @@ public class XmlIdMapping extends XmlPropertyMapping implements ResourceIdMappin
     }
 
     public Mapping copy() {
-        XmlIdMapping copy = new XmlIdMapping();
+        JsonIdMapping copy = new JsonIdMapping();
         copy(copy);
         return copy;
     }

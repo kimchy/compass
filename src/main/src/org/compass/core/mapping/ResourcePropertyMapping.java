@@ -17,6 +17,7 @@
 package org.compass.core.mapping;
 
 import org.compass.core.Property;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.util.Parameter;
 
 /**
@@ -132,4 +133,6 @@ public interface ResourcePropertyMapping extends Mapping {
     String getNullValue();
 
     boolean hasNullValue();
+
+    ResourcePropertyConverter getResourcePropertyConverter();
 }

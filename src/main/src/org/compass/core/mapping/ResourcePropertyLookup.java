@@ -1,7 +1,6 @@
 package org.compass.core.mapping;
 
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 
 /**
@@ -158,7 +157,7 @@ public final class ResourcePropertyLookup {
         }
         ResourcePropertyConverter converter = null;
         if (hasSpecificConverter()) {
-            converter = (ResourcePropertyConverter) resourcePropertyMapping.getConverter();
+            converter = resourcePropertyMapping.getResourcePropertyConverter();
         }
         if (converter == null) {
             converter = (ResourcePropertyConverter) compassMapping.getConverterLookup().lookupConverter(value.getClass());
@@ -177,7 +176,7 @@ public final class ResourcePropertyLookup {
     public Object fromString(String value) {
         ResourcePropertyConverter converter;
         if (hasSpecificConverter()) {
-            converter = (ResourcePropertyConverter) resourcePropertyMapping.getConverter();
+            converter = resourcePropertyMapping.getResourcePropertyConverter();
         } else {
             converter = (ResourcePropertyConverter) compassMapping.getConverterLookup().lookupConverter(value.getClass());
         }
@@ -215,14 +214,13 @@ public final class ResourcePropertyLookup {
         if (!hasSpecificConverter()) {
             return value;
         }
-        Converter converter = resourcePropertyMapping.getConverter();
-        if (!(converter instanceof ResourcePropertyConverter)) {
+        ResourcePropertyConverter converter = resourcePropertyMapping.getResourcePropertyConverter();
+        if (converter == null) {
             return value;
         }
-        ResourcePropertyConverter rpConverter = (ResourcePropertyConverter) converter;
-        if (!rpConverter.canNormalize()) {
+        if (!converter.canNormalize()) {
             return value;
         }
-        return rpConverter.toString(rpConverter.fromString(value, resourcePropertyMapping), resourcePropertyMapping);
+        return converter.toString(converter.fromString(value, resourcePropertyMapping), resourcePropertyMapping);
     }
 }

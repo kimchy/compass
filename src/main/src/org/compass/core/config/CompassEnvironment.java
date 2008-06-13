@@ -313,6 +313,18 @@ public class CompassEnvironment {
 
                 public static final String XML_CONTENT_MAPPING = "xmlContentMapping";
 
+                public static final String JSON_ROOT_OBJECT_MAPPING = "jsonRootObjectMapping";
+
+                public static final String JSON_OBJECT_MAPPING = "jsonObjectMapping";
+
+                public static final String JSON_ARRAY_MAPPING = "jsonArrayMapping";
+
+                public static final String JSON_PROPERTY_MAPPING = "jsonPropertyMapping";
+
+                public static final String JSON_ID_MAPPING = "jsonIdMapping";
+
+                public static final String JSON_CONTENT_MAPPING = "jsonContentMapping";
+
                 public static final String CLASS_MAPPING = "classMapping";
 
                 public static final String CLASS_PROPERTY_MAPPING = "classPropertyMapping";
@@ -370,6 +382,11 @@ public class CompassEnvironment {
              * The maximum pool size. Applies to pooled xml content converters.
              */
             public static final String MAX_POOL_SIZE = "xmlContentConverter.maxPoolSize";
+        }
+
+        public abstract class JsonContent {
+
+            public static final String TYPE = "jsonContentConverter.type";
         }
 
         /**

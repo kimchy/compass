@@ -58,6 +58,12 @@ import org.compass.core.converter.extended.ReaderConverter;
 import org.compass.core.converter.extended.SqlDateConverter;
 import org.compass.core.converter.extended.SqlTimeConverter;
 import org.compass.core.converter.extended.SqlTimestampConverter;
+import org.compass.core.converter.mapping.json.JsonArrayMappingConverter;
+import org.compass.core.converter.mapping.json.JsonContentMappingConverter;
+import org.compass.core.converter.mapping.json.JsonIdMappingConverter;
+import org.compass.core.converter.mapping.json.JsonObjectMappingConverter;
+import org.compass.core.converter.mapping.json.JsonPropertyMappingConverter;
+import org.compass.core.converter.mapping.json.JsonRootObjectMappingConverter;
 import org.compass.core.converter.mapping.osem.ArrayMappingConverter;
 import org.compass.core.converter.mapping.osem.ClassMappingConverter;
 import org.compass.core.converter.mapping.osem.ClassPropertyMappingConverter;
@@ -72,6 +78,12 @@ import org.compass.core.converter.mapping.xsem.XmlContentMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlIdMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlObjectMappingConverter;
 import org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter;
+import org.compass.core.mapping.json.JsonArrayMapping;
+import org.compass.core.mapping.json.JsonContentMapping;
+import org.compass.core.mapping.json.JsonIdMapping;
+import org.compass.core.mapping.json.JsonObjectMapping;
+import org.compass.core.mapping.json.JsonPropertyMapping;
+import org.compass.core.mapping.json.JsonRootObjectMapping;
 import org.compass.core.mapping.osem.ArrayMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -280,6 +292,18 @@ public class DefaultConverterLookup implements ConverterLookup {
                 XmlIdMapping.class, new XmlIdMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
                 XmlContentMapping.class, new XmlContentMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_ROOT_OBJECT_MAPPING,
+                JsonRootObjectMapping.class, new JsonRootObjectMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_OBJECT_MAPPING,
+                JsonObjectMapping.class, new JsonObjectMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_PROPERTY_MAPPING,
+                JsonPropertyMapping.class, new JsonPropertyMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_ID_MAPPING,
+                JsonIdMapping.class, new JsonIdMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_ARRAY_MAPPING,
+                JsonArrayMapping.class, new JsonArrayMappingConverter());
+        addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_CONTENT_MAPPING,
+                JsonContentMapping.class, new JsonContentMappingConverter());
 
         // now configure all the none default converters
         for (String converterName : converterGroups.keySet()) {

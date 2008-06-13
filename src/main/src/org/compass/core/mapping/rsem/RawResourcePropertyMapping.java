@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.rsem;
 
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -46,5 +47,9 @@ public class RawResourcePropertyMapping extends AbstractResourcePropertyMapping 
 
     public void setOverrideByName(boolean overrideByName) {
         this.overrideByName = overrideByName;
+    }
+
+    public ResourcePropertyConverter getResourcePropertyConverter() {
+        return (ResourcePropertyConverter) getConverter();
     }
 }

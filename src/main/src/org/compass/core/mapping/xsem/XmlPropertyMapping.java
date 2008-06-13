@@ -17,6 +17,7 @@
 package org.compass.core.mapping.xsem;
 
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -103,5 +104,12 @@ public class XmlPropertyMapping extends AbstractResourcePropertyMapping implemen
 
     public void setXPathExpression(XmlXPathExpression xpathExpression) {
         this.xpathExpression = xpathExpression;
+    }
+
+    public ResourcePropertyConverter getResourcePropertyConverter() {
+        if (valueConverter instanceof ResourcePropertyConverter) {
+            return (ResourcePropertyConverter) valueConverter;
+        }
+        return null;
     }
 }

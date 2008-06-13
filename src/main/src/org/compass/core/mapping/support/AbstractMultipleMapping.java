@@ -19,6 +19,7 @@ package org.compass.core.mapping.support;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MultipleMapping;
@@ -29,14 +30,14 @@ import org.compass.core.mapping.OverrideByNameMapping;
  */
 public abstract class AbstractMultipleMapping extends AbstractMapping implements MultipleMapping {
 
-    protected ArrayList mappings = new ArrayList();
+    protected ArrayList<Mapping> mappings = new ArrayList<Mapping>();
 
-    protected HashMap mappingsByNameMap = new HashMap();
+    protected Map<String, Mapping> mappingsByNameMap = new HashMap<String, Mapping>();
 
     public void removeExistingByName(Mapping mapping) {
         if (mappingsByNameMap.get(mapping.getName()) != null) {
             for (int i = 0; i < mappings.size(); i++) {
-                Mapping tempMapping = (Mapping) mappings.get(i);
+                Mapping tempMapping = mappings.get(i);
                 if (tempMapping.getName() != null && tempMapping.getName().equals(mapping.getName())) {
                     mappings.remove(i);
                     break;
@@ -68,7 +69,7 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
         addMappings(mapping);
     }
 
-    public Iterator mappingsIt() {
+    public Iterator<Mapping> mappingsIt() {
         return mappings.iterator();
     }
 
@@ -77,11 +78,11 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
     }
 
     public Mapping getMapping(String name) {
-        return (Mapping) mappingsByNameMap.get(name);
+        return mappingsByNameMap.get(name);
     }
 
     public Mapping getMapping(int index) {
-        return (Mapping) mappings.get(index);
+        return mappings.get(index);
     }
 
     public void clearMappings() {

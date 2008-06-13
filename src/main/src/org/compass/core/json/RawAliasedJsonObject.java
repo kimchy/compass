@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.json;
-
-import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.support.AbstractMultipleMapping;
+package org.compass.core.json;
 
 /**
+ * Extends {@link RawJsonObject} and adds association with an alias.
+ *
  * @author kimchy
  */
-public class JsonArrayMapping extends AbstractMultipleMapping {
+public class RawAliasedJsonObject extends RawJsonObject implements AliasedJsonObject {
 
-    private Mapping elementMapping;
+    private String alias;
 
-    public Mapping copy() {
-        JsonArrayMapping copy = new JsonArrayMapping();
-        super.copy(copy);
-        copy.setElementMapping(getElementMapping().copy());
-        return copy;
+    public RawAliasedJsonObject(String alias, String json) {
+        super(json);
+        this.alias = alias;
     }
 
-    public Mapping getElementMapping() {
-        return elementMapping;
-    }
-
-    public void setElementMapping(Mapping elementMapping) {
-        this.elementMapping = elementMapping;
+    public String getAlias() {
+        return this.alias;
     }
 }

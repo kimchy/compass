@@ -16,16 +16,16 @@
 
 package org.compass.core.json;
 
-import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author kimchy
  */
 public interface JsonObject {
 
-    Iterator keys();
-
-    boolean isNull(String key);
+    Map<String, Object> entries();
 
     Object get(String key);
+
+    boolean isNullValue(Object value);
 }

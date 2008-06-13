@@ -92,6 +92,21 @@ import org.compass.core.json.JsonObject;
  */
 public class JSONObject implements JsonObject {
 
+    // LIST OF CHANGES
+    // 1. Changed StringBuffer to StringBuilder
+    // 2. Generified
+
+
+    // COMPASS ADDITIONS
+
+    public Map<String, Object> entries() {
+        return myHashMap;
+    }
+
+    public boolean isNullValue(Object value) {
+        return NULL.equals(value);
+    }
+
     /**
      * JSONObject.NULL is equivalent to the value that JavaScript calls null,
      * whilst Java's null is equivalent to the value that JavaScript calls
@@ -136,7 +151,7 @@ public class JSONObject implements JsonObject {
     /**
      * The hash map where the JSONObject's properties are kept.
      */
-    private HashMap myHashMap;
+    private HashMap<String, Object> myHashMap;
 
 
     /**
@@ -152,7 +167,7 @@ public class JSONObject implements JsonObject {
      * Construct an empty JSONObject.
      */
     public JSONObject() {
-        this.myHashMap = new HashMap();
+        this.myHashMap = new HashMap<String, Object>();
     }
 
 
@@ -240,10 +255,10 @@ public class JSONObject implements JsonObject {
      * @param map A map object that can be used to initialize the contents of
      *            the JSONObject.
      */
-    public JSONObject(Map map) {
+    public JSONObject(Map<String, Object> map) {
         this.myHashMap = (map == null) ?
-                new HashMap() :
-                new HashMap(map);
+                new HashMap<String, Object>() :
+                new HashMap<String, Object>(map);
     }
 
 
@@ -976,7 +991,7 @@ public class JSONObject implements JsonObject {
      * @return this.
      * @throws JSONException
      */
-    public JSONObject put(String key, Map value) throws JSONException {
+    public JSONObject put(String key, Map<String, Object> value) throws JSONException {
         put(key, new JSONObject(value));
         return this;
     }
@@ -1045,7 +1060,7 @@ public class JSONObject implements JsonObject {
         char c = 0;
         int i;
         int len = string.length();
-        StringBuffer sb = new StringBuffer(len + 4);
+        StringBuilder sb = new StringBuilder(len + 4);
         String t;
 
         sb.append('"');
@@ -1083,7 +1098,7 @@ public class JSONObject implements JsonObject {
                     if (c < ' ' || (c >= '\u0080' && c < '\u00a0') ||
                             (c >= '\u2000' && c < '\u2100')) {
                         t = "000" + Integer.toHexString(c);
-                        sb.append("\\u" + t.substring(t.length() - 4));
+                        sb.append("\\u").append(t.substring(t.length() - 4));
                     } else {
                         sb.append(c);
                     }
@@ -1111,7 +1126,7 @@ public class JSONObject implements JsonObject {
      * @return An iterator of the keys.
      */
     public Iterator sortedKeys() {
-        return new TreeSet(this.myHashMap.keySet()).iterator();
+        return new TreeSet<String>(this.myHashMap.keySet()).iterator();
     }
 
     /**
@@ -1318,7 +1333,7 @@ public class JSONObject implements JsonObject {
         if (value instanceof Collection) {
             return new JSONArray((Collection) value).toString();
         }
-        if (value.getClass().isArray()) {
+        if (value instanceof Object[]) {
             return new JSONArray(value).toString();
         }
         return quote(value.toString());

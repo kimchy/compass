@@ -41,6 +41,12 @@ import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
+import org.compass.core.mapping.json.JsonArrayMapping;
+import org.compass.core.mapping.json.JsonContentMapping;
+import org.compass.core.mapping.json.JsonIdMapping;
+import org.compass.core.mapping.json.JsonObjectMapping;
+import org.compass.core.mapping.json.JsonPropertyMapping;
+import org.compass.core.mapping.json.JsonRootObjectMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -140,21 +146,185 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                 mapping.addMapping(classMapping);
             }
         }
-        ConfigurationHelper[] resourceArr = doc.getChildren("resource");
-        for (ConfigurationHelper aResourceArr : resourceArr) {
+        for (ConfigurationHelper conf : doc.getChildren("resource")) {
             RawResourceMapping rawResourceMapping = new RawResourceMapping();
-            bindResource(aResourceArr, rawResourceMapping);
+            bindResource(conf, rawResourceMapping);
             mapping.addMapping(rawResourceMapping);
         }
-        ConfigurationHelper[] xmlObjectArr = doc.getChildren("xml-object");
-        for (ConfigurationHelper aXmlObjectArr : xmlObjectArr) {
+        for (ConfigurationHelper conf : doc.getChildren("xml-object")) {
             XmlObjectMapping xmlObjectMapping = new XmlObjectMapping();
-            bindXmlObject(aXmlObjectArr, xmlObjectMapping);
+            bindXmlObject(conf, xmlObjectMapping);
             mapping.addMapping(xmlObjectMapping);
+        }
+        for (ConfigurationHelper conf : doc.getChildren("root-json-object")) {
+            JsonRootObjectMapping jsonRootObjectMapping = new JsonRootObjectMapping();
+            bindRootJsonObject(conf, jsonRootObjectMapping);
+            mapping.addMapping(jsonRootObjectMapping);
         }
 
         return true;
     }
+
+    private void bindRootJsonObject(ConfigurationHelper jsonObjectConf, JsonRootObjectMapping jsonRootObjectMapping)
+            throws ConfigurationException {
+        String aliasValue = jsonObjectConf.getAttribute("alias");
+        Alias alias = valueLookup.lookupAlias(aliasValue);
+        if (alias == null) {
+            jsonRootObjectMapping.setAlias(aliasValue);
+        } else {
+            jsonRootObjectMapping.setAlias(alias.getName());
+        }
+
+        bindSubIndexHash(jsonObjectConf, jsonRootObjectMapping);
+
+        bindExtends(jsonObjectConf, jsonRootObjectMapping);
+
+        bindAll(jsonObjectConf, jsonRootObjectMapping);
+        bindSpellCheck(jsonObjectConf, jsonRootObjectMapping);
+
+        String analyzer = jsonObjectConf.getAttribute("analyzer", null);
+        jsonRootObjectMapping.setAnalyzer(analyzer);
+
+        jsonRootObjectMapping.setRoot(true);
+        jsonRootObjectMapping.setBoost(getBoost(jsonObjectConf));
+
+        bindConverter(jsonObjectConf, jsonRootObjectMapping);
+
+        for (ConfigurationHelper id : jsonObjectConf.getChildren("json-id")) {
+            JsonIdMapping jsonIdMapping = new JsonIdMapping();
+            bindJsonProperty(id, jsonIdMapping, jsonRootObjectMapping);
+            jsonRootObjectMapping.addMapping(jsonIdMapping);
+        }
+
+        for (ConfigurationHelper prop : jsonObjectConf.getChildren("json-property")) {
+            JsonPropertyMapping jsonPropertyMapping = new JsonPropertyMapping();
+            bindJsonProperty(prop, jsonPropertyMapping, jsonRootObjectMapping);
+            jsonRootObjectMapping.addMapping(jsonPropertyMapping);
+        }
+
+        ConfigurationHelper jsonContentConf = jsonObjectConf.getChild("json-content", false);
+        if (jsonContentConf != null) {
+            JsonContentMapping jsonContentMapping = new JsonContentMapping();
+            bindJsonContent(jsonContentConf, jsonContentMapping);
+            jsonRootObjectMapping.addMapping(jsonContentMapping);
+        }
+
+        for (ConfigurationHelper obj : jsonObjectConf.getChildren("json-object")) {
+            JsonObjectMapping jsonObjectMapping = new JsonObjectMapping();
+            bindJsonObject(obj, jsonObjectMapping, jsonRootObjectMapping);
+            jsonRootObjectMapping.addMapping(jsonObjectMapping);
+        }
+
+        for (ConfigurationHelper arr : jsonObjectConf.getChildren("json-array")) {
+            JsonArrayMapping jsonArrayMapping = new JsonArrayMapping();
+            bindJsonArray(arr, jsonArrayMapping, jsonRootObjectMapping);
+            jsonRootObjectMapping.addMapping(jsonArrayMapping);
+        }
+    }
+
+    private void bindJsonArray(ConfigurationHelper jsonArrayConf, JsonArrayMapping jsonArrayMapping,
+                               JsonRootObjectMapping jsonRootObjectMapping) {
+        String name = jsonArrayConf.getAttribute("name", null);
+        if (name != null) {
+            name = valueLookup.lookupMetaDataName(name);
+        }
+        jsonArrayMapping.setName(name);
+        jsonArrayMapping.setPath(new StaticPropertyPath(name));
+        bindConverter(jsonArrayConf, jsonArrayMapping);
+
+        ConfigurationHelper conf = jsonArrayConf.getChild("json-property", false);
+        if (conf != null) {
+            JsonPropertyMapping jsonPropertyMapping = new JsonPropertyMapping();
+            bindJsonProperty(conf, jsonPropertyMapping, jsonRootObjectMapping);
+            jsonArrayMapping.setElementMapping(jsonPropertyMapping);
+        }
+
+        conf = jsonArrayConf.getChild("json-object", false);
+        if (conf != null) {
+            JsonObjectMapping jsonObjectMapping = new JsonObjectMapping();
+            bindJsonObject(conf, jsonObjectMapping, jsonRootObjectMapping);
+            jsonArrayMapping.setElementMapping(jsonObjectMapping);
+        }
+
+        conf = jsonArrayConf.getChild("json-array", false);
+        if (conf != null) {
+            JsonArrayMapping intenralJsonArrayMapping = new JsonArrayMapping();
+            bindJsonArray(conf, intenralJsonArrayMapping, jsonRootObjectMapping);
+            jsonArrayMapping.setElementMapping(intenralJsonArrayMapping);
+        }
+    }
+
+    private void bindJsonObject(ConfigurationHelper jsonObjectConf, JsonObjectMapping jsonObjectMapping,
+                                JsonRootObjectMapping jsonRootObjectMapping) {
+        String name = jsonObjectConf.getAttribute("name", null);
+        if (name != null) {
+            name = valueLookup.lookupMetaDataName(name);
+        }
+        jsonObjectMapping.setName(name);
+        jsonObjectMapping.setPath(new StaticPropertyPath(name));
+        bindConverter(jsonObjectConf, jsonObjectMapping);
+
+        for (ConfigurationHelper prop : jsonObjectConf.getChildren("json-property")) {
+            JsonPropertyMapping jsonPropertyMapping = new JsonPropertyMapping();
+            bindJsonProperty(prop, jsonPropertyMapping, jsonRootObjectMapping);
+            jsonObjectMapping.addMapping(jsonPropertyMapping);
+        }
+
+        for (ConfigurationHelper obj : jsonObjectConf.getChildren("json-object")) {
+            JsonObjectMapping intenralJsonObjectMapping = new JsonObjectMapping();
+            bindJsonObject(obj, intenralJsonObjectMapping, jsonRootObjectMapping);
+            jsonObjectMapping.addMapping(jsonObjectMapping);
+        }
+
+        for (ConfigurationHelper arr : jsonObjectConf.getChildren("json-array")) {
+            JsonArrayMapping jsonArrayMapping = new JsonArrayMapping();
+            bindJsonArray(arr, jsonArrayMapping, jsonRootObjectMapping);
+            jsonRootObjectMapping.addMapping(jsonArrayMapping);
+        }
+    }
+
+    private void bindJsonContent(ConfigurationHelper jsonContentConf, JsonContentMapping jsonContentMapping) {
+        String name = jsonContentConf.getAttribute("name", null);
+        if (name != null) {
+            name = valueLookup.lookupMetaDataName(name);
+        }
+        jsonContentMapping.setName(name);
+        jsonContentMapping.setPath(new StaticPropertyPath(name));
+        bindConverter(jsonContentConf, jsonContentMapping);
+        String storeType = jsonContentConf.getAttribute("store", null);
+        jsonContentMapping.setStore(Property.Store.fromString(storeType));
+        jsonContentMapping.setInternal(true);
+    }
+
+
+    private void bindJsonProperty(ConfigurationHelper jsonPropConf, JsonPropertyMapping jsonPropertyMapping,
+                                  AliasMapping aliasMapping) {
+        String name = jsonPropConf.getAttribute("name", null);
+        if (name != null) {
+            name = valueLookup.lookupMetaDataName(name);
+        }
+        jsonPropertyMapping.setBoost(getBoost(jsonPropConf));
+        jsonPropertyMapping.setName(name);
+        jsonPropertyMapping.setPath((name == null ? null : new StaticPropertyPath(name)));
+        bindConverter(jsonPropConf, jsonPropertyMapping);
+
+        String format = jsonPropConf.getAttribute("format", null);
+        if (format != null) {
+            jsonPropertyMapping.setValueConverter(new FormatDelegateConverter(format));
+        }
+
+
+        bindResourcePropertyMapping(jsonPropConf, jsonPropertyMapping, aliasMapping);
+
+
+        boolean override = jsonPropConf.getAttributeAsBoolean("override", true);
+        jsonPropertyMapping.setOverrideByName(override);
+
+        jsonPropertyMapping.setValueConverterName(jsonPropConf.getAttribute("value-converter", null));
+
+        bindSpellCheck(jsonPropConf, jsonPropertyMapping);
+    }
+
 
     private void bindXmlObject(ConfigurationHelper xmlObjectConf, XmlObjectMapping xmlObjectMapping)
             throws ConfigurationException {
@@ -695,8 +865,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String excludeFromAll = constantConf.getAttribute("exclude-from-all", "no");
         constantMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
 
-        bindResourcePropertyMapping(metadataConf, constantMapping, classMapping, 1.0f,
-                constantMapping.getExcludeFromAll(), classMapping.getAnalyzer());
+        bindResourcePropertyMapping(metadataConf, constantMapping, 1.0f, constantMapping.getExcludeFromAll(),
+                classMapping.getAnalyzer());
 
         bindSpellCheck(constantConf, constantMapping);
 
@@ -741,7 +911,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             }
         }
 
-        bindResourcePropertyMapping(metadataConf, mdMapping, aliasMapping, classPropertyMapping.getBoost(),
+        bindResourcePropertyMapping(metadataConf, mdMapping, classPropertyMapping.getBoost(),
                 classPropertyMapping.getExcludeFromAll(), classPropertyMapping.getAnalyzer());
         bindSpellCheck(metadataConf, mdMapping);
     }
@@ -852,12 +1022,17 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
     private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
                                              AliasMapping aliasMapping) {
-        bindResourcePropertyMapping(conf, mapping, aliasMapping, 1.0f, ResourcePropertyMapping.ExcludeFromAllType.NO,
+        bindResourcePropertyMapping(conf, mapping, 1.0f, ResourcePropertyMapping.ExcludeFromAllType.NO,
                 aliasMapping.getAnalyzer());
     }
 
     private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
-                                             AliasMapping aliasMapping, float defaultBoost,
+                                             String analyzer) {
+        bindResourcePropertyMapping(conf, mapping, 1.0f, ResourcePropertyMapping.ExcludeFromAllType.NO, analyzer);
+    }
+
+    private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
+                                             float defaultBoost,
                                              ResourcePropertyMapping.ExcludeFromAllType excludeFromAllType,
                                              String analyzer) {
         mapping.setBoost(getBoost(conf, defaultBoost));

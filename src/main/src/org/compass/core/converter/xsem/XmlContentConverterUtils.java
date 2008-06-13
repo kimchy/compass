@@ -21,7 +21,7 @@ public abstract class XmlContentConverterUtils {
         if (type == null) {
             throw new ConfigurationException("xmlContent type configuration can not be found, please set it in the configuration settings");
         }
-        XmlContentConverter xmlContentConverter = null;
+        XmlContentConverter xmlContentConverter;
         try {
             xmlContentConverter = (XmlContentConverter) ClassUtils.forName(type, settings.getClassLoader()).newInstance();
         } catch (Exception e) {

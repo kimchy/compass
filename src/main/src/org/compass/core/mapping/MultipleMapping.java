@@ -52,5 +52,5 @@ public interface MultipleMapping extends Mapping {
     /**
      * Returns an iterator over the stored mappings.
      */
-    Iterator mappingsIt();
+    Iterator<Mapping> mappingsIt();
 }

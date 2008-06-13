@@ -19,6 +19,7 @@ package org.compass.core.mapping.osem;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
@@ -28,11 +29,10 @@ import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
  * @author kimchy
  * 
  */
-
 public class ConstantMetaDataMapping extends AbstractResourcePropertyMapping
         implements OverrideByNameMapping, OsemMapping {
 
-    private ArrayList metaDataValues = new ArrayList();
+    private ArrayList<String> metaDataValues = new ArrayList<String>();
     
     private boolean overrideByName;
 
@@ -40,8 +40,8 @@ public class ConstantMetaDataMapping extends AbstractResourcePropertyMapping
         ConstantMetaDataMapping copy = new ConstantMetaDataMapping();
         super.copy(copy);
         copy.setOverrideByName(isOverrideByName());
-        for (Iterator it = metaDataValuesIt(); it.hasNext();) {
-            copy.addMetaDataValue((String) it.next());
+        for (Iterator<String> it = metaDataValuesIt(); it.hasNext();) {
+            copy.addMetaDataValue(it.next());
         }
         return copy;
     }
@@ -54,7 +54,7 @@ public class ConstantMetaDataMapping extends AbstractResourcePropertyMapping
         metaDataValues.add(value);
     }
 
-    public Iterator metaDataValuesIt() {
+    public Iterator<String> metaDataValuesIt() {
         return metaDataValues.iterator();
     }
 
@@ -64,5 +64,9 @@ public class ConstantMetaDataMapping extends AbstractResourcePropertyMapping
 
     public void setOverrideByName(boolean overrideByName) {
         this.overrideByName = overrideByName;
+    }
+
+    public ResourcePropertyConverter getResourcePropertyConverter() {
+        return null;
     }
 }

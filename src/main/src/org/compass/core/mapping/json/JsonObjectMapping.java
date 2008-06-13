@@ -16,18 +16,16 @@
 
 package org.compass.core.mapping.json;
 
-import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.InvalidMappingException;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.support.AbstractResourceMapping;
+import org.compass.core.mapping.support.AbstractMultipleMapping;
 
 /**
  * @author kimchy
  */
-//TODO support recursive mappings using object (or array)
-//TODO support appending names based on deep level names
-public class JsonObjectMapping extends AbstractResourceMapping {
+public class JsonObjectMapping extends AbstractMultipleMapping {
 
     public Mapping copy() {
         JsonObjectMapping copy = new JsonObjectMapping();
@@ -35,21 +33,18 @@ public class JsonObjectMapping extends AbstractResourceMapping {
         return copy;
     }
 
-    public AliasMapping shallowCopy() {
-        JsonObjectMapping copy = new JsonObjectMapping();
-        super.shallowCopy(copy);
-        return copy;
-    }
-
-    protected void doPostProcess() throws MappingException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public ResourcePropertyMapping[] getResourcePropertyMappings() {
-        return new ResourcePropertyMapping[0];  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public ResourcePropertyMapping getResourcePropertyMappingByDotPath(String path) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public int addMapping(Mapping mapping) {
+        // no duplicate mapping names are allowed
+        if (mapping instanceof ResourcePropertyMapping) {
+            ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
+            if (mappingsByNameMap.get(resourcePropertyMapping.getName()) != null) {
+                if (!(resourcePropertyMapping instanceof OverrideByNameMapping) ||
+                        !((OverrideByNameMapping) resourcePropertyMapping).isOverrideByName()) {
+                    throw new InvalidMappingException("Two resource property mappings are mapped to property path ["
+                            + resourcePropertyMapping.getPath().getPath() + "], it is not allowed");
+                }
+            }
+        }
+        return super.addMapping(mapping);
     }
 }

@@ -17,6 +17,7 @@
 package org.compass.core.mapping.json;
 
 import org.compass.core.Property;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
@@ -46,4 +47,7 @@ public class JsonContentMapping extends AbstractResourcePropertyMapping implemen
         return copy;
     }
 
+    public ResourcePropertyConverter getResourcePropertyConverter() {
+        return null;
+    }
 }

@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.json;
+package org.compass.core.converter.mapping.json;
 
+import org.compass.core.Resource;
+import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.support.AbstractMultipleMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
  */
-public class JsonArrayMapping extends AbstractMultipleMapping {
+public class JsonIdMappingConverter extends JsonPropertyMappingConverter {
 
-    private Mapping elementMapping;
-
-    public Mapping copy() {
-        JsonArrayMapping copy = new JsonArrayMapping();
-        super.copy(copy);
-        copy.setElementMapping(getElementMapping().copy());
-        return copy;
-    }
-
-    public Mapping getElementMapping() {
-        return elementMapping;
-    }
-
-    public void setElementMapping(Mapping elementMapping) {
-        this.elementMapping = elementMapping;
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
+        if (root == null) {
+            throw new ConversionException("Alias [" + resource.getAlias() + "] has null value for id [" + mapping.getName() + "]");
+        }
+        return super.marshall(resource, root, mapping, context);
     }
 }

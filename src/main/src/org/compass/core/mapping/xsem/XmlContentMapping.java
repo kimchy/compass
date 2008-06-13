@@ -17,6 +17,7 @@
 package org.compass.core.mapping.xsem;
 
 import org.compass.core.Property;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
@@ -46,4 +47,7 @@ public class XmlContentMapping extends AbstractResourcePropertyMapping implement
         return copy;
     }
 
+    public ResourcePropertyConverter getResourcePropertyConverter() {
+        return null;
+    }
 }
