@@ -66,6 +66,7 @@ public class SimpleJsonTests extends AbstractTestCase {
         assertEquals(new Integer(2), resource.getObject("int"));
         assertEquals("0001.20", resource.getValue("float"));
         assertEquals(new Float(1.2), resource.getObject("float"));
+        assertEquals(true, resource.getProperty("float").isCompressed());
 
         tr.commit();
         session.close();

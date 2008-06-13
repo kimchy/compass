@@ -19,7 +19,7 @@
     <root-json-object alias="c">
         <json-id name="id" />
         <json-property name="int" value-converter="int" format="0000" />
-        <json-property name="float" value-converter="float" format="0000.00" />
+        <json-property name="float" value-converter="float" format="0000.00" store="compress" />
     </root-json-object>
 
 </compass-core-mapping>
