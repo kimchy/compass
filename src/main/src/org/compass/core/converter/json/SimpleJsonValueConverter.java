@@ -20,6 +20,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -39,7 +40,7 @@ public class SimpleJsonValueConverter implements Converter {
         }
         String sValue = getNullValue(jsonPropertyMapping, context);
         if (root != null) {
-            sValue = toString(root, jsonPropertyMapping);
+            sValue = toString(root, jsonPropertyMapping, context);
         }
         PropertyPath path = jsonPropertyMapping.getPath();
         Property p = context.getResourceFactory().createProperty(path.getPath(), sValue, jsonPropertyMapping);
@@ -80,8 +81,8 @@ public class SimpleJsonValueConverter implements Converter {
 
     /**
      * A simple extension point that allows to set the boost value for the created {@link org.compass.core.Property}.
-     * <p/>
-     * The default implemenation uses the statically defined boost value in the mapping definition
+     *
+     * <p>The default implemenation uses the statically defined boost value in the mapping definition
      * ({@link org.compass.core.mapping.ResourcePropertyMapping#getBoost()}) to set the boost level
      * using {@link org.compass.core.Property#setBoost(float)}
      *
@@ -96,8 +97,9 @@ public class SimpleJsonValueConverter implements Converter {
         property.setBoost(resourcePropertyMapping.getBoost());
     }
 
-    public String toString(Object value, ResourcePropertyMapping resourcePropertyMapping) {
-        return value.toString();
+    protected String toString(Object value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        ResourcePropertyConverter converter = (ResourcePropertyConverter) context.getConverterLookup().lookupConverter(value.getClass());
+        return converter.toString(value, resourcePropertyMapping);
     }
 
     /**

@@ -17,14 +17,17 @@
 package org.compass.core.converter.json;
 
 import org.compass.core.Property;
+import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.marshall.MarshallingContext;
 
 /**
  * @author kimchy
  */
-public class ResourcePropertyJsonValueConverter extends SimpleJsonValueConverter implements ResourcePropertyConverter {
+public class ResourcePropertyJsonValueConverter implements ResourcePropertyConverter {
 
     private ResourcePropertyConverter converter;
 
@@ -32,7 +35,13 @@ public class ResourcePropertyJsonValueConverter extends SimpleJsonValueConverter
         this.converter = converter;
     }
 
-    // ResourcePropertyConverter methods
+    public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
+        return converter.marshall(resource, root, mapping, context);
+    }
+
+    public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
+        return converter.unmarshall(resource, mapping,  context);
+    }
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
         return converter.fromString(str, resourcePropertyMapping);
