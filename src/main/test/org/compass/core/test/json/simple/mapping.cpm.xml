@@ -22,5 +22,10 @@
         <json-property name="float" value-converter="float" format="0000.00" store="compress" />
     </root-json-object>
 
+    <root-json-object alias="d">
+        <json-id name="id" />
+        <json-property name="value" null-value="kablam" />
+    </root-json-object>
+    
 </compass-core-mapping>
     

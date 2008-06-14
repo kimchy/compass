@@ -86,4 +86,18 @@ public class SimpleJsonTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testNullValue() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        RawAliasedJsonObject jsonObject = new RawAliasedJsonObject("d", "{id : 1, value : null}");
+        session.save(jsonObject);
+
+        Resource resource = session.loadResource("d", 1);
+        assertEquals("kablam", resource.getValue("value"));
+
+        tr.commit();
+        session.close();
+    }
 }
