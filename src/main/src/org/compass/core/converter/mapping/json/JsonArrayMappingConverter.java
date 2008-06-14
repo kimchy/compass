@@ -30,7 +30,7 @@ import org.compass.core.marshall.MarshallingContext;
 public class JsonArrayMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
-        if (root == null && !context.handleNulls()) {
+        if (root == null) {
             return false;
         }
         JsonArray jsonArray = (JsonArray) root;
