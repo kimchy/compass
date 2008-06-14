@@ -28,7 +28,7 @@ public class JsonMappingIterator {
 
     public static interface JsonMappingCallback {
 
-        void onJsonRootObject(JsonRootObjectMapping jsonObjectMapping);
+        void onJsonRootObject(RootJsonObjectMapping jsonObjectMapping);
 
         void onJsonObject(PlainJsonObjectMapping jsonObjectMapping);
 
@@ -43,13 +43,13 @@ public class JsonMappingIterator {
         void onEndMultipleMapping(JsonMapping mapping);
     }
 
-    public static void iterateMappings(JsonMappingCallback callback, JsonRootObjectMapping rootObjectMapping, boolean recursive) {
-        if (!callback.onBeginMultipleMapping(rootObjectMapping)) {
+    public static void iterateMappings(JsonMappingCallback callback, RootJsonObjectMapping rootJsonObjectMapping, boolean recursive) {
+        if (!callback.onBeginMultipleMapping(rootJsonObjectMapping)) {
             return;
         }
-        callback.onJsonRootObject(rootObjectMapping);
-        iterateMappings(callback, (MultipleMapping) rootObjectMapping, recursive);
-        callback.onEndMultipleMapping(rootObjectMapping);
+        callback.onJsonRootObject(rootJsonObjectMapping);
+        iterateMappings(callback, (MultipleMapping) rootJsonObjectMapping, recursive);
+        callback.onEndMultipleMapping(rootJsonObjectMapping);
     }
 
     private static void iterateMappings(JsonMappingCallback callback, MultipleMapping mapping, boolean recursive) {

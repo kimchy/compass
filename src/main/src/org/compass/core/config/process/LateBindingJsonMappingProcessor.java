@@ -33,8 +33,8 @@ import org.compass.core.mapping.json.JsonIdMapping;
 import org.compass.core.mapping.json.JsonMapping;
 import org.compass.core.mapping.json.JsonMappingIterator;
 import org.compass.core.mapping.json.JsonPropertyMapping;
-import org.compass.core.mapping.json.JsonRootObjectMapping;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
+import org.compass.core.mapping.json.RootJsonObjectMapping;
 
 /**
  * @author kimchy
@@ -49,27 +49,27 @@ public class LateBindingJsonMappingProcessor implements MappingProcessor {
 
         ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
         for (AliasMapping aliasMapping : compassMapping.getMappings()) {
-            if (aliasMapping instanceof JsonRootObjectMapping) {
-                secondPass((JsonRootObjectMapping) aliasMapping, compassMapping);
+            if (aliasMapping instanceof RootJsonObjectMapping) {
+                secondPass((RootJsonObjectMapping) aliasMapping, compassMapping);
             }
         }
 
         return compassMapping;
     }
 
-    private void secondPass(JsonRootObjectMapping jsonRootObjectMapping, CompassMapping fatherMapping) {
-        jsonRootObjectMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), jsonRootObjectMapping.getAlias()));
-        for (Iterator it = jsonRootObjectMapping.mappingsIt(); it.hasNext();) {
+    private void secondPass(RootJsonObjectMapping rootJsonObjectMapping, CompassMapping fatherMapping) {
+        rootJsonObjectMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), rootJsonObjectMapping.getAlias()));
+        for (Iterator it = rootJsonObjectMapping.mappingsIt(); it.hasNext();) {
             Mapping mapping = (Mapping) it.next();
             if (mapping instanceof JsonIdMapping) {
                 JsonIdMapping jsonIdMapping = (JsonIdMapping) mapping;
                 // in case of xml id mapping, we always use it as internal id
                 // and build its own internal path (because other xml properties names might be dynamic)
                 jsonIdMapping.setInternal(true);
-                jsonIdMapping.setPath(namingStrategy.buildPath(jsonRootObjectMapping.getPath(), jsonIdMapping.getName()));
+                jsonIdMapping.setPath(namingStrategy.buildPath(rootJsonObjectMapping.getPath(), jsonIdMapping.getName()));
             }
         }
-        JsonMappingIterator.iterateMappings(new FullPathCallback(), jsonRootObjectMapping, true);
+        JsonMappingIterator.iterateMappings(new FullPathCallback(), rootJsonObjectMapping, true);
     }
 
     private class FullPathCallback implements JsonMappingIterator.JsonMappingCallback {
@@ -78,7 +78,7 @@ public class LateBindingJsonMappingProcessor implements MappingProcessor {
 
         private StringBuilder sb = new StringBuilder();
 
-        public void onJsonRootObject(JsonRootObjectMapping jsonObjectMapping) {
+        public void onJsonRootObject(RootJsonObjectMapping jsonObjectMapping) {
             jsonObjectMapping.setFullPath("");
         }
 
@@ -116,7 +116,7 @@ public class LateBindingJsonMappingProcessor implements MappingProcessor {
         }
 
         private void addToPath(JsonMapping mapping) {
-            if (mapping instanceof JsonRootObjectMapping) {
+            if (mapping instanceof RootJsonObjectMapping) {
                 return;
             }
             String name = mapping.getName();
@@ -127,7 +127,7 @@ public class LateBindingJsonMappingProcessor implements MappingProcessor {
         }
 
         private void removeFromPath(JsonMapping mapping) {
-            if (mapping instanceof JsonRootObjectMapping) {
+            if (mapping instanceof RootJsonObjectMapping) {
                 return;
             }
             if (pathSteps.size() > 0) {

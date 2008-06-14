@@ -41,8 +41,8 @@ import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonMapping;
 import org.compass.core.mapping.json.JsonMappingIterator;
 import org.compass.core.mapping.json.JsonPropertyMapping;
-import org.compass.core.mapping.json.JsonRootObjectMapping;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
+import org.compass.core.mapping.json.RootJsonObjectMapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
@@ -79,8 +79,8 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                 lookupConverter((XmlObjectMapping) aliasMapping);
             } else if (aliasMapping instanceof ClassMapping) {
                 lookupConverter((ClassMapping) aliasMapping);
-            } else if (aliasMapping instanceof JsonRootObjectMapping) {
-                lookupConverter((JsonRootObjectMapping) aliasMapping);
+            } else if (aliasMapping instanceof RootJsonObjectMapping) {
+                lookupConverter((RootJsonObjectMapping) aliasMapping);
             }
         }
 
@@ -131,14 +131,14 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
         OsemMappingIterator.iterateMappings(new OsemConverterLookup(), classMapping, false);
     }
 
-    private void lookupConverter(JsonRootObjectMapping jsonMapping) throws MappingException {
+    private void lookupConverter(RootJsonObjectMapping jsonMapping) throws MappingException {
         MappingProcessorUtils.lookupConverter(converterLookup, jsonMapping);
         JsonMappingIterator.iterateMappings(new JsonConverterLookup(), jsonMapping, true);
     }
 
     private class JsonConverterLookup implements JsonMappingIterator.JsonMappingCallback {
 
-        public void onJsonRootObject(JsonRootObjectMapping jsonObjectMapping) {
+        public void onJsonRootObject(RootJsonObjectMapping jsonObjectMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, jsonObjectMapping);
         }
 

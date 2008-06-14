@@ -61,9 +61,9 @@ import org.compass.core.converter.extended.SqlTimestampConverter;
 import org.compass.core.converter.mapping.json.JsonArrayMappingConverter;
 import org.compass.core.converter.mapping.json.JsonContentMappingConverter;
 import org.compass.core.converter.mapping.json.JsonIdMappingConverter;
-import org.compass.core.converter.mapping.json.JsonObjectMappingConverter;
 import org.compass.core.converter.mapping.json.JsonPropertyMappingConverter;
-import org.compass.core.converter.mapping.json.JsonRootObjectMappingConverter;
+import org.compass.core.converter.mapping.json.PlainJsonObjectMappingConverter;
+import org.compass.core.converter.mapping.json.RootJsonObjectMappingConverter;
 import org.compass.core.converter.mapping.osem.ArrayMappingConverter;
 import org.compass.core.converter.mapping.osem.ClassMappingConverter;
 import org.compass.core.converter.mapping.osem.ClassPropertyMappingConverter;
@@ -82,8 +82,8 @@ import org.compass.core.mapping.json.JsonArrayMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
 import org.compass.core.mapping.json.JsonPropertyMapping;
-import org.compass.core.mapping.json.JsonRootObjectMapping;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
+import org.compass.core.mapping.json.RootJsonObjectMapping;
 import org.compass.core.mapping.osem.ArrayMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -293,9 +293,9 @@ public class DefaultConverterLookup implements ConverterLookup {
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.XML_CONTENT_MAPPING,
                 XmlContentMapping.class, new XmlContentMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_ROOT_OBJECT_MAPPING,
-                JsonRootObjectMapping.class, new JsonRootObjectMappingConverter());
+                RootJsonObjectMapping.class, new RootJsonObjectMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_OBJECT_MAPPING,
-                PlainJsonObjectMapping.class, new JsonObjectMappingConverter());
+                PlainJsonObjectMapping.class, new PlainJsonObjectMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_PROPERTY_MAPPING,
                 JsonPropertyMapping.class, new JsonPropertyMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_ID_MAPPING,

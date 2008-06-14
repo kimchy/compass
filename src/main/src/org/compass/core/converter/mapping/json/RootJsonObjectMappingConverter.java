@@ -29,21 +29,21 @@ import org.compass.core.json.RawJsonObject;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
-import org.compass.core.mapping.json.JsonRootObjectMapping;
+import org.compass.core.mapping.json.RootJsonObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.spi.InternalResource;
 
 /**
  * @author kimchy
  */
-public class JsonRootObjectMappingConverter implements ResourceMappingConverter {
+public class RootJsonObjectMappingConverter implements ResourceMappingConverter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         // no need to marshall if it is null
         if (root == null && !context.handleNulls()) {
             return false;
         }
-        JsonRootObjectMapping jsonObjectMapping = (JsonRootObjectMapping) mapping;
+        RootJsonObjectMapping jsonObjectMapping = (RootJsonObjectMapping) mapping;
         JsonObject jsonObject = (JsonObject) root;
 
         jsonObject = getActualJsonObject(jsonObject, jsonObjectMapping, context, resource);
@@ -64,7 +64,7 @@ public class JsonRootObjectMappingConverter implements ResourceMappingConverter 
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        JsonRootObjectMapping jsonObjectMapping = (JsonRootObjectMapping) mapping;
+        RootJsonObjectMapping jsonObjectMapping = (RootJsonObjectMapping) mapping;
         if (jsonObjectMapping.getContentMapping() == null) {
             return null;
         }
@@ -75,10 +75,10 @@ public class JsonRootObjectMappingConverter implements ResourceMappingConverter 
     public boolean marshallIds(Resource idResource, Object id, ResourceMapping resourceMapping, MarshallingContext context) throws ConversionException {
         ResourceFactory resourceFactory = context.getResourceFactory();
 
-        JsonRootObjectMapping xmlObjectMapping = (JsonRootObjectMapping) resourceMapping;
+        RootJsonObjectMapping jsonObjectMapping = (RootJsonObjectMapping) resourceMapping;
         Mapping[] ids = resourceMapping.getIdMappings();
         if (id instanceof JsonObject) {
-            JsonObject jsonObject = getActualJsonObject((JsonObject) id, xmlObjectMapping, context, idResource);
+            JsonObject jsonObject = getActualJsonObject((JsonObject) id, jsonObjectMapping, context, idResource);
             for (Mapping id1 : ids) {
                 Object value = jsonObject.opt(id1.getName());
                 if (jsonObject.isNullValue(value)) {
@@ -128,7 +128,7 @@ public class JsonRootObjectMappingConverter implements ResourceMappingConverter 
         throw new ConversionException("Not supported, please use json-content mapping");
     }
 
-    private JsonObject getActualJsonObject(JsonObject jsonObject, JsonRootObjectMapping jsonObjectMapping, MarshallingContext context, Resource resource) {
+    private JsonObject getActualJsonObject(JsonObject jsonObject, RootJsonObjectMapping jsonObjectMapping, MarshallingContext context, Resource resource) {
         // in case it is an xml string value, convert it into an xml object
         if (jsonObject instanceof RawJsonObject) {
             String json = ((RawJsonObject) jsonObject).getJson();
