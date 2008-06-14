@@ -16,46 +16,10 @@
 
 package org.compass.core.mapping.json;
 
-import org.compass.core.mapping.InvalidMappingException;
-import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.OverrideByNameMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.support.AbstractMultipleMapping;
+import org.compass.core.mapping.MultipleMapping;
 
 /**
  * @author kimchy
  */
-public class JsonObjectMapping extends AbstractMultipleMapping implements JsonMapping {
-
-    private String fullPath;
-
-    public Mapping copy() {
-        JsonObjectMapping copy = new JsonObjectMapping();
-        super.copy(copy);
-        setFullPath(getFullPath());
-        return copy;
-    }
-
-    public String getFullPath() {
-        return fullPath;
-    }
-
-    public void setFullPath(String fullPath) {
-        this.fullPath = fullPath;
-    }
-
-    public int addMapping(Mapping mapping) {
-        // no duplicate mapping names are allowed
-        if (mapping instanceof ResourcePropertyMapping) {
-            ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-            if (mappingsByNameMap.get(resourcePropertyMapping.getName()) != null) {
-                if (!(resourcePropertyMapping instanceof OverrideByNameMapping) ||
-                        !((OverrideByNameMapping) resourcePropertyMapping).isOverrideByName()) {
-                    throw new InvalidMappingException("Two resource property mappings are mapped to property path ["
-                            + resourcePropertyMapping.getPath().getPath() + "], it is not allowed");
-                }
-            }
-        }
-        return super.addMapping(mapping);
-    }
+public interface JsonObjectMapping extends MultipleMapping, JsonMapping {
 }

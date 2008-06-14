@@ -100,4 +100,18 @@ public class SimpleJsonTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testDoubleMapping() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        RawAliasedJsonObject jsonObject = new RawAliasedJsonObject("e", "{id : 1, value : 2}");
+        session.save(jsonObject);
+
+        Resource resource = session.loadResource("e", 1);
+        assertEquals(2, resource.getValues("value").length);
+
+        tr.commit();
+        session.close();
+    }
 }

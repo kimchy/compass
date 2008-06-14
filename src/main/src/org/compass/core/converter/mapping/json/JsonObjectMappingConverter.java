@@ -21,7 +21,7 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.json.JsonObject;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.json.JsonObjectMapping;
+import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -30,8 +30,11 @@ import org.compass.core.marshall.MarshallingContext;
 public class JsonObjectMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
+        if (root == null && !context.handleNulls()) {
+            return false;
+        }
         JsonObject jsonObject = (JsonObject) root;
-        JsonObjectMapping jsonObjectMapping = (JsonObjectMapping) mapping;
+        PlainJsonObjectMapping jsonObjectMapping = (PlainJsonObjectMapping) mapping;
         return JsonMappingConverterUtils.marshall(resource, jsonObject, jsonObjectMapping, context);
     }
 

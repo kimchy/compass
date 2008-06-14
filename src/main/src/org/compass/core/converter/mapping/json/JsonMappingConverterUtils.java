@@ -1,11 +1,11 @@
 package org.compass.core.converter.mapping.json;
 
-import java.util.Map;
+import java.util.Iterator;
 
 import org.compass.core.Resource;
 import org.compass.core.json.JsonObject;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.MultipleMapping;
+import org.compass.core.mapping.json.JsonObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -13,21 +13,20 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public class JsonMappingConverterUtils {
 
-    public static boolean marshall(Resource resource, JsonObject jsonObject, MultipleMapping mapping, MarshallingContext context) {
+    public static boolean marshall(Resource resource, JsonObject jsonObject, JsonObjectMapping mapping, MarshallingContext context) {
         boolean store = false;
-        for (Map.Entry<String, Object> entry : jsonObject.entries().entrySet()) {
-            Object value = entry.getValue();
-            if (jsonObject.isNullValue(value)) {
+
+        for (Iterator<Mapping> it = mapping.mappingsIt(); it.hasNext();) {
+            Mapping m = it.next();
+            Object value = jsonObject.opt(m.getName());
+            if (value != null && jsonObject.isNullValue(value)) {
                 value = null;
             }
-            Mapping entryMapping = mapping.getMapping(entry.getKey());
-            if (entryMapping == null) {
-                // we need to support dynamic creation as well
-                continue;
-            } else {
-                store |= entryMapping.getConverter().marshall(resource, value, entryMapping, context);
-            }
+            store |= m.getConverter().marshall(resource, value, m, context);
         }
+
+        // still needs to go over unmapped ones...
+
         return store;
     }
 }

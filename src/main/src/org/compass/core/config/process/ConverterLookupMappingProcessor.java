@@ -40,9 +40,9 @@ import org.compass.core.mapping.json.JsonArrayMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonMapping;
 import org.compass.core.mapping.json.JsonMappingIterator;
-import org.compass.core.mapping.json.JsonObjectMapping;
 import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.JsonRootObjectMapping;
+import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
@@ -142,7 +142,7 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
             MappingProcessorUtils.lookupConverter(converterLookup, jsonObjectMapping);
         }
 
-        public void onJsonObject(JsonObjectMapping jsonObjectMapping) {
+        public void onJsonObject(PlainJsonObjectMapping jsonObjectMapping) {
             MappingProcessorUtils.lookupConverter(converterLookup, jsonObjectMapping);
         }
 

@@ -80,7 +80,7 @@ public class JsonRootObjectMappingConverter implements ResourceMappingConverter 
         if (id instanceof JsonObject) {
             JsonObject jsonObject = getActualJsonObject((JsonObject) id, xmlObjectMapping, context, idResource);
             for (Mapping id1 : ids) {
-                Object value = jsonObject.get(id1.getName());
+                Object value = jsonObject.opt(id1.getName());
                 if (jsonObject.isNullValue(value)) {
                     throw new ConversionException("Trying to load resource with id name [" + id1.getName() + "] null");
                 }

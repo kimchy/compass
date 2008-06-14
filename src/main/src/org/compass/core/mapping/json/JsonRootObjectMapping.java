@@ -5,17 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.compass.core.mapping.AliasMapping;
-import org.compass.core.mapping.InvalidMappingException;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.support.AbstractResourceMapping;
 
 /**
  * @author kimchy
  */
-public class JsonRootObjectMapping extends AbstractResourceMapping implements JsonMapping {
+public class JsonRootObjectMapping extends AbstractResourceMapping implements JsonObjectMapping {
 
     private ResourcePropertyMapping[] resourcePropertyMappings;
 
@@ -49,16 +47,16 @@ public class JsonRootObjectMapping extends AbstractResourceMapping implements Js
 
     public int addMapping(Mapping mapping) {
         // no duplicate mapping names are allowed
-        if (mapping instanceof ResourcePropertyMapping) {
-            ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
-            if (mappingsByNameMap.get(resourcePropertyMapping.getName()) != null) {
-                if (!(resourcePropertyMapping instanceof OverrideByNameMapping) ||
-                        !((OverrideByNameMapping) resourcePropertyMapping).isOverrideByName()) {
-                    throw new InvalidMappingException("Two resource property mappings are mapped to property path ["
-                            + resourcePropertyMapping.getPath().getPath() + "], it is not allowed");
-                }
-            }
-        }
+//        if (mapping instanceof ResourcePropertyMapping) {
+//            ResourcePropertyMapping resourcePropertyMapping = (ResourcePropertyMapping) mapping;
+//            if (mappingsByNameMap.get(resourcePropertyMapping.getName()) != null) {
+//                if (!(resourcePropertyMapping instanceof OverrideByNameMapping) ||
+//                        !((OverrideByNameMapping) resourcePropertyMapping).isOverrideByName()) {
+//                    throw new InvalidMappingException("Two resource property mappings are mapped to property path ["
+//                            + resourcePropertyMapping.getPath().getPath() + "], it is not allowed");
+//                }
+//            }
+//        }
         if (mapping instanceof JsonContentMapping) {
             contentMapping = (JsonContentMapping) mapping;
         }
@@ -103,7 +101,7 @@ public class JsonRootObjectMapping extends AbstractResourceMapping implements Js
         public void onJsonRootObject(JsonRootObjectMapping jsonObjectMapping) {
         }
 
-        public void onJsonObject(JsonObjectMapping jsonObjectMapping) {
+        public void onJsonObject(PlainJsonObjectMapping jsonObjectMapping) {
         }
 
         public void onJsonContent(JsonContentMapping jsonContentMapping) {

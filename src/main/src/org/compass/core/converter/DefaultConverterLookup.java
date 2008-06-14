@@ -81,9 +81,9 @@ import org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter;
 import org.compass.core.mapping.json.JsonArrayMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
-import org.compass.core.mapping.json.JsonObjectMapping;
 import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.JsonRootObjectMapping;
+import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.mapping.osem.ArrayMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -295,7 +295,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_ROOT_OBJECT_MAPPING,
                 JsonRootObjectMapping.class, new JsonRootObjectMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_OBJECT_MAPPING,
-                JsonObjectMapping.class, new JsonObjectMappingConverter());
+                PlainJsonObjectMapping.class, new JsonObjectMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_PROPERTY_MAPPING,
                 JsonPropertyMapping.class, new JsonPropertyMappingConverter());
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.JSON_ID_MAPPING,

@@ -25,7 +25,11 @@ public interface JsonObject {
 
     Map<String, Object> entries();
 
-    Object get(String key);
+    /**
+     * Returns the given object under the key. Returns <code>null</code> if nothing
+     * is registerd under the key.
+     */
+    Object opt(String key);
 
     boolean isNullValue(Object value);
 }

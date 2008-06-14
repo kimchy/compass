@@ -55,7 +55,7 @@ public class RawJsonObject implements JsonObject {
         throw new UnsupportedOperationException("Operation not allows on RawJsonObject");
     }
 
-    public Object get(String key) {
+    public Object opt(String key) {
         throw new UnsupportedOperationException("Operation not allows on RawJsonObject");
     }
 }

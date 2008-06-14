@@ -44,9 +44,9 @@ import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.json.JsonArrayMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
-import org.compass.core.mapping.json.JsonObjectMapping;
 import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.JsonRootObjectMapping;
+import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -210,7 +210,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         for (ConfigurationHelper obj : jsonObjectConf.getChildren("json-object")) {
-            JsonObjectMapping jsonObjectMapping = new JsonObjectMapping();
+            PlainJsonObjectMapping jsonObjectMapping = new PlainJsonObjectMapping();
             bindJsonObject(obj, jsonObjectMapping, jsonRootObjectMapping);
             jsonRootObjectMapping.addMapping(jsonObjectMapping);
         }
@@ -245,7 +245,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         conf = jsonArrayConf.getChild("json-object", false);
         if (conf != null) {
-            JsonObjectMapping jsonObjectMapping = new JsonObjectMapping();
+            PlainJsonObjectMapping jsonObjectMapping = new PlainJsonObjectMapping();
             bindJsonObject(conf, jsonObjectMapping, jsonRootObjectMapping);
             if (jsonObjectMapping.getName() == null) {
                 jsonObjectMapping.setName(jsonArrayMapping.getName());
@@ -266,7 +266,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
     }
 
-    private void bindJsonObject(ConfigurationHelper jsonObjectConf, JsonObjectMapping jsonObjectMapping,
+    private void bindJsonObject(ConfigurationHelper jsonObjectConf, PlainJsonObjectMapping jsonObjectMapping,
                                 JsonRootObjectMapping jsonRootObjectMapping) {
         String name = jsonObjectConf.getAttribute("name", null);
         if (name != null) {
@@ -283,7 +283,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
 
         for (ConfigurationHelper obj : jsonObjectConf.getChildren("json-object")) {
-            JsonObjectMapping intenralJsonObjectMapping = new JsonObjectMapping();
+            PlainJsonObjectMapping intenralJsonObjectMapping = new PlainJsonObjectMapping();
             bindJsonObject(obj, intenralJsonObjectMapping, jsonRootObjectMapping);
             jsonObjectMapping.addMapping(jsonObjectMapping);
         }

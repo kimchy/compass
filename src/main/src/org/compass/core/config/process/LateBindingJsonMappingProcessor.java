@@ -32,9 +32,9 @@ import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
 import org.compass.core.mapping.json.JsonMapping;
 import org.compass.core.mapping.json.JsonMappingIterator;
-import org.compass.core.mapping.json.JsonObjectMapping;
 import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.JsonRootObjectMapping;
+import org.compass.core.mapping.json.PlainJsonObjectMapping;
 
 /**
  * @author kimchy
@@ -85,7 +85,7 @@ public class LateBindingJsonMappingProcessor implements MappingProcessor {
             jsonObjectMapping.setFullPath("");
         }
 
-        public void onJsonObject(JsonObjectMapping jsonObjectMapping) {
+        public void onJsonObject(PlainJsonObjectMapping jsonObjectMapping) {
             addToPath(jsonObjectMapping);
             jsonObjectMapping.setFullPath(currentPath());
             removeFromPath(jsonObjectMapping);

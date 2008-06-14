@@ -55,7 +55,7 @@
     <!ATTLIST json-property reverse (no|reader|string) "no">
     <!ATTLIST json-property null-value CDATA #IMPLIED>
     <!ATTLIST json-property analyzer CDATA #IMPLIED>
-    <!ATTLIST json-property override (true|false) "true">
+    <!ATTLIST json-property override (true|false) "false">
     <!ATTLIST json-property exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
     <!ATTLIST json-property converter CDATA #IMPLIED>
     <!ATTLIST json-property value-converter CDATA #IMPLIED>

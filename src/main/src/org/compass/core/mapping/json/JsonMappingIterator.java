@@ -30,7 +30,7 @@ public class JsonMappingIterator {
 
         void onJsonRootObject(JsonRootObjectMapping jsonObjectMapping);
 
-        void onJsonObject(JsonObjectMapping jsonObjectMapping);
+        void onJsonObject(PlainJsonObjectMapping jsonObjectMapping);
 
         void onJsonContent(JsonContentMapping jsonContentMapping);
 
@@ -64,8 +64,8 @@ public class JsonMappingIterator {
             callback.onJsonProperty((JsonPropertyMapping) mapping);
         } else if (mapping instanceof JsonContentMapping) {
             callback.onJsonContent((JsonContentMapping) mapping);
-        } else if (mapping instanceof JsonObjectMapping) {
-            JsonObjectMapping jsonObjectMapping = (JsonObjectMapping) mapping;
+        } else if (mapping instanceof PlainJsonObjectMapping) {
+            PlainJsonObjectMapping jsonObjectMapping = (PlainJsonObjectMapping) mapping;
             if (!callback.onBeginMultipleMapping(jsonObjectMapping)) {
                 return;
             }
