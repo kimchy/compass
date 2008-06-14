@@ -42,8 +42,10 @@ import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.json.JsonArrayMapping;
+import org.compass.core.mapping.json.JsonBoostPropertyMapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
+import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
 import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.JsonRootObjectMapping;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
@@ -219,6 +221,25 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             JsonArrayMapping jsonArrayMapping = new JsonArrayMapping();
             bindJsonArray(arr, jsonArrayMapping, jsonRootObjectMapping);
             jsonRootObjectMapping.addMapping(jsonArrayMapping);
+        }
+
+        ConfigurationHelper analyzerConf = jsonObjectConf.getChild("xml-analyzer", false);
+        if (analyzerConf != null) {
+            JsonPropertyAnalyzerController analyzerController = new JsonPropertyAnalyzerController();
+            bindJsonProperty(analyzerConf, analyzerController, jsonRootObjectMapping);
+            analyzerController.setNullAnalyzer(analyzerConf.getAttribute("null-analyzer", null));
+            jsonRootObjectMapping.addMapping(analyzerController);
+        }
+
+        ConfigurationHelper boostConf = jsonObjectConf.getChild("xml-boost", false);
+        if (boostConf != null) {
+            JsonBoostPropertyMapping boostPropertyMapping = new JsonBoostPropertyMapping();
+            bindJsonProperty(boostConf, boostPropertyMapping, jsonRootObjectMapping);
+            String defaultBoost = boostConf.getAttribute("default", null);
+            if (defaultBoost != null) {
+                boostPropertyMapping.setDefaultBoost(Float.parseFloat(defaultBoost));
+            }
+            jsonRootObjectMapping.addMapping(boostPropertyMapping);
         }
     }
 

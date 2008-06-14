@@ -14,6 +14,8 @@
     all?,
     sub-index-hash?,
     json-id*,
+    (json-analyzer?),
+    (json-boost?),
     (json-property|json-array|json-object)*,
     (json-content?)
 )>
@@ -70,6 +72,20 @@
     <!ATTLIST json-content name CDATA #REQUIRED>
     <!ATTLIST json-content store (yes|compress) "yes">
     <!ATTLIST json-content converter CDATA #IMPLIED>
+
+<!ELEMENT json-analyzer (
+    #PCDATA
+)>
+    <!ATTLIST json-analyzer name CDATA #REQUIRED>
+    <!ATTLIST json-analyzer null-analyzer CDATA #IMPLIED>
+    <!ATTLIST json-analyzer converter CDATA #IMPLIED>
+
+<!ELEMENT json-boost (
+    #PCDATA
+)>
+    <!ATTLIST json-boost name CDATA #REQUIRED>
+    <!ATTLIST json-boost default CDATA #IMPLIED>
+    <!ATTLIST json-boost converter CDATA #IMPLIED>
 
 <!ELEMENT xml-object (
     all?,
