@@ -33,6 +33,7 @@
     (json-property|json-object|json-array)
 )>
     <!ATTLIST json-array name CDATA #REQUIRED>
+    <!ATTLIST json-array index-name CDATA #IMPLIED>
     <!ATTLIST json-array converter CDATA #IMPLIED>
 
 <!ELEMENT json-id EMPTY
@@ -48,6 +49,7 @@
 <!ELEMENT json-property EMPTY
 >
     <!ATTLIST json-property name CDATA #IMPLIED>
+    <!ATTLIST json-property index-name CDATA #IMPLIED>
     <!ATTLIST json-property store (no|yes|compress) #IMPLIED>
     <!ATTLIST json-property index (no|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST json-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>

@@ -43,12 +43,9 @@ public class LateBindingJsonMappingProcessor implements MappingProcessor {
 
     private PropertyNamingStrategy namingStrategy;
 
-    private CompassMapping mapping;
-
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
                                   ConverterLookup converterLookup, CompassSettings settings) throws MappingException {
         this.namingStrategy = namingStrategy;
-        this.mapping = compassMapping;
 
         ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
         for (AliasMapping aliasMapping : compassMapping.getMappings()) {

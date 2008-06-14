@@ -229,7 +229,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             name = valueLookup.lookupMetaDataName(name);
         }
         jsonArrayMapping.setName(name);
-        jsonArrayMapping.setPath(new StaticPropertyPath(name));
+
+        String indexName = jsonArrayConf.getAttribute("index-name", name);
+        jsonArrayMapping.setPath((indexName == null ? null : new StaticPropertyPath(indexName)));
+
         bindConverter(jsonArrayConf, jsonArrayMapping);
 
         ConfigurationHelper conf = jsonArrayConf.getChild("json-property", false);
@@ -238,7 +241,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             bindJsonProperty(conf, jsonPropertyMapping, jsonRootObjectMapping);
             if (jsonPropertyMapping.getName() == null) {
                 jsonPropertyMapping.setName(jsonArrayMapping.getName());
-                jsonPropertyMapping.setPath(new StaticPropertyPath(jsonArrayMapping.getName()));
+            }
+            if (jsonPropertyMapping.getPath() == null) {
+                jsonPropertyMapping.setPath(jsonArrayMapping.getPath());
             }
             jsonArrayMapping.setElementMapping(jsonPropertyMapping);
         }
@@ -249,7 +254,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             bindJsonObject(conf, jsonObjectMapping, jsonRootObjectMapping);
             if (jsonObjectMapping.getName() == null) {
                 jsonObjectMapping.setName(jsonArrayMapping.getName());
-                jsonObjectMapping.setPath(new StaticPropertyPath(jsonArrayMapping.getName()));
+            }
+            if (jsonObjectMapping.getPath() == null) {
+                jsonObjectMapping.setPath(jsonArrayMapping.getPath());
             }
             jsonArrayMapping.setElementMapping(jsonObjectMapping);
         }
@@ -260,7 +267,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             bindJsonArray(conf, intenralJsonArrayMapping, jsonRootObjectMapping);
             if (intenralJsonArrayMapping.getName() == null) {
                 intenralJsonArrayMapping.setName(jsonArrayMapping.getName());
-                intenralJsonArrayMapping.setPath(new StaticPropertyPath(jsonArrayMapping.getName()));
+            }
+            if (intenralJsonArrayMapping.getPath() == null) {
+                intenralJsonArrayMapping.setPath(jsonArrayMapping.getPath());
             }
             jsonArrayMapping.setElementMapping(intenralJsonArrayMapping);
         }
@@ -317,7 +326,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
         jsonPropertyMapping.setBoost(getBoost(jsonPropConf));
         jsonPropertyMapping.setName(name);
-        jsonPropertyMapping.setPath((name == null ? null : new StaticPropertyPath(name)));
+
+        String indexName = jsonPropConf.getAttribute("index-name", name);
+        jsonPropertyMapping.setPath((indexName == null ? null : new StaticPropertyPath(indexName)));
+
         bindConverter(jsonPropConf, jsonPropertyMapping);
 
         String format = jsonPropConf.getAttribute("format", null);
@@ -329,7 +341,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         bindResourcePropertyMapping(jsonPropConf, jsonPropertyMapping, aliasMapping);
 
 
-        boolean override = jsonPropConf.getAttributeAsBoolean("override", true);
+        boolean override = jsonPropConf.getAttributeAsBoolean("override", false);
         jsonPropertyMapping.setOverrideByName(override);
 
         jsonPropertyMapping.setValueConverterName(jsonPropConf.getAttribute("value-converter", null));

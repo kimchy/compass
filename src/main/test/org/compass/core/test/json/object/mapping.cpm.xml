@@ -14,6 +14,17 @@
                 <json-property value-converter="int" />
             </json-array>
         </json-object>
+    </root-json-object>
+
+    <root-json-object alias="b">
+        <json-id name="id" />
+        <json-property name="value" />
+        <json-object name="obj">
+            <json-property name="objValue1" value-converter="int" />
+            <json-array name="arr">
+                <json-property value-converter="int" />
+            </json-array>
+        </json-object>
         <json-object name="obj">
             <json-property name="objValue1" value-converter="int" />
             <json-array name="arr">
