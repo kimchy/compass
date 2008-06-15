@@ -24,7 +24,7 @@ public class SimpleJsonArrayTests extends AbstractTestCase {
 
         assertEquals(1, session.find("a.value:test").length());
         assertEquals(1, session.find("a.arr:1").length());
-        assertEquals(1, session.find("a.arr:2").length());
+        assertEquals(1, session.find("a.arr:2").length());    
 
         tr.commit();
         session.close();
