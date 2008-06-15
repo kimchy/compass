@@ -19,10 +19,15 @@ package org.compass.core.json;
 import java.util.Map;
 
 /**
+ * A generic interface for a Json Object.
+ *
  * @author kimchy
  */
 public interface JsonObject {
 
+    /**
+     * Returns a Map holding all the keys and value for the given Json Object.
+     */
     Map<String, Object> entries();
 
     /**
@@ -31,5 +36,8 @@ public interface JsonObject {
      */
     Object opt(String key);
 
+    /**
+     * Returns <code>true</code> if the given value is a null value.
+     */
     boolean isNullValue(Object value);
 }

@@ -40,8 +40,8 @@ public class JsonArrayMappingConverter implements Converter {
 
         boolean store = false;
         for (int i = 0; i < jsonArray.length(); i++) {
-            Object value = jsonArray.get(i);
-            if (jsonArray.isNull(i)) {
+            Object value = jsonArray.opt(i);
+            if (value != null && jsonArray.isNull(i)) {
                 value = null;
             }
             store |= elementMapping.getConverter().marshall(resource, value, elementMapping, context);

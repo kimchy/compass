@@ -17,13 +17,24 @@
 package org.compass.core.json;
 
 /**
+ * A generifc interface on top of a Json array.
+ *
  * @author kimchy
  */
 public interface JsonArray {
 
+    /**
+     * Return the length of the array.
+     */
     int length();
 
+    /**
+     * Returns <code>true</code> if the given index is a null value.
+     */
     boolean isNull(int index);
 
-    Object get(int index);
+    /**
+     * Returns the value for the given index.
+     */
+    Object opt(int index);
 }

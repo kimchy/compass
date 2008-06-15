@@ -19,6 +19,8 @@ package org.compass.core.json;
 import org.compass.core.spi.AliasedObject;
 
 /**
+ * A {@link org.compass.core.json.JsonObject} that also holds an alias value.
+ *
  * @author kimchy
  */
 public interface AliasedJsonObject extends JsonObject, AliasedObject {
