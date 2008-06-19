@@ -261,6 +261,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         } catch (Error e) {
             // do nothing
         }
+
         // add mapping converters
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Mapping.RAW_RESOURCE_MAPPING,
                 RawResourceMapping.class, new RawResourceMappingConverter());
@@ -366,6 +367,7 @@ public class DefaultConverterLookup implements ConverterLookup {
         CompassSettings converterSettings = converterGroups.remove(name);
         if (converterSettings == null) {
             converterSettings = new CompassSettings(settings.getClassLoader());
+            converterSettings.setGlobalSettings(settings);
         }
         String converterType = converterSettings.getSetting(CompassEnvironment.Converter.TYPE);
         if (converterType != null) {

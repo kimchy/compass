@@ -55,13 +55,13 @@ public class SimpleJsonTests extends AbstractTestCase {
 
         JsonObject obj = (JsonObject) session.load("b", 1);
         assertNotNull(obj);
-        assertEquals(2, obj.entries().size());
+        assertEquals(true, obj.keys().hasNext());
 
         // make another round, now without using RAW
         session.save("b", obj);
         obj = (JsonObject) session.load("b", 1);
         assertNotNull(obj);
-        assertEquals(2, obj.entries().size());
+        assertEquals(true, obj.keys().hasNext());
 
         tr.commit();
         session.close();

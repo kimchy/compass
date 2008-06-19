@@ -16,7 +16,7 @@
 
 package org.compass.core.json;
 
-import java.util.Map;
+import java.util.Iterator;
 
 /**
  * <p>An {@link JsonObject} that has an json string representation. Mainly used for simpliciy,
@@ -47,7 +47,7 @@ public class RawJsonObject implements JsonObject {
         return this.json;
     }
 
-    public Map<String, Object> entries() {
+    public Iterator<String> keys() {
         throw new UnsupportedOperationException("Operation not allows on RawJsonObject");
     }
 

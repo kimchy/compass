@@ -17,7 +17,6 @@
 package org.compass.core.converter.mapping.json;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import org.compass.core.Resource;
 import org.compass.core.json.JsonObject;
@@ -43,9 +42,10 @@ public abstract class AbstractJsonObjectMappingConverter extends AbstractDynamic
         }
 
         if (mapping.isDynamic()) {
-            for (Map.Entry<String, Object> entry : jsonObject.entries().entrySet()) {
-                if (mapping.getMapping(entry.getKey()) == null) {
-                    doConvertDynamicValue(resource, entry.getKey(), entry.getValue(), context);
+            for (Iterator<String> keyIt = jsonObject.keys(); keyIt.hasNext();) {
+                String key = keyIt.next();
+                if (mapping.getMapping(key) == null) {
+                    doConvertDynamicValue(resource, key, jsonObject.opt(key), context);
                 }
             }
         }

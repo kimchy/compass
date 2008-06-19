@@ -24,6 +24,9 @@ import org.compass.core.json.impl.AliasedJSONObject;
 import org.compass.core.json.impl.JSONTokener;
 
 /**
+ * Converts a {@link org.compass.core.json.JsonObject} to String and a String to
+ * {@link org.compass.core.json.RawJsonObject}.
+ *
  * @author kimchy
  */
 public class JSONContentConverterImpl implements JsonContentConverter {

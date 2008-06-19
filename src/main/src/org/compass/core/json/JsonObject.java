@@ -16,7 +16,7 @@
 
 package org.compass.core.json;
 
-import java.util.Map;
+import java.util.Iterator;
 
 /**
  * A generic interface for a Json Object.
@@ -28,7 +28,7 @@ public interface JsonObject {
     /**
      * Returns a Map holding all the keys and value for the given Json Object.
      */
-    Map<String, Object> entries();
+    Iterator<String> keys();
 
     /**
      * Returns the given object under the key. Returns <code>null</code> if nothing

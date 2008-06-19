@@ -39,6 +39,8 @@ public class CompassSettings {
 
     private ClassLoader classLoader;
 
+    private CompassSettings gloablSettings;
+
     public CompassSettings() {
         this.settings = new ConcurrentHashMap<String, Object>();
     }
@@ -51,6 +53,17 @@ public class CompassSettings {
     public CompassSettings(Map<String, Object> settings) {
         this();
         this.settings.putAll(settings);
+    }
+
+    public void setGlobalSettings(CompassSettings settings) {
+        this.gloablSettings = settings;
+    }
+
+    public CompassSettings getGloablSettings() {
+        if (gloablSettings == null) {
+            return this;
+        }
+        return gloablSettings;
     }
 
     public void addSettings(Properties settings) {
@@ -83,6 +96,7 @@ public class CompassSettings {
 
     public CompassSettings copy() {
         CompassSettings copySettings = new CompassSettings();
+        copySettings.gloablSettings = gloablSettings;
         copySettings.settings.putAll(settings);
         copySettings.registry = new ConcurrentHashMap<Object, Object>(registry);
         copySettings.classLoader = classLoader;
@@ -164,6 +178,7 @@ public class CompassSettings {
                 CompassSettings groupSettings = map.get(name);
                 if (groupSettings == null) {
                     groupSettings = new CompassSettings();
+                    groupSettings.setGlobalSettings(getGloablSettings());
                     groupSettings.setClassLoader(getClassLoader());
                     map.put(name, groupSettings);
                 }
