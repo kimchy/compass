@@ -133,8 +133,8 @@ public class DefaultMarshallingContext implements MarshallingContext {
         return attributes.get(key);
     }
 
-    public void setAttribute(Object key, Object value) {
-        attributes.put(key, value);
+    public Object setAttribute(Object key, Object value) {
+        return attributes.put(key, value);
     }
 
     public Object removeAttribute(Object key) {

@@ -18,7 +18,7 @@ package org.compass.core.converter.mapping.json;
 
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.Converter;
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.json.JsonArray;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.json.JsonArrayMapping;
@@ -27,7 +27,7 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class JsonArrayMappingConverter implements Converter {
+public class JsonArrayMappingConverter extends AbstractDynamicJsonMappingConverter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         if (root == null) {
@@ -44,7 +44,18 @@ public class JsonArrayMappingConverter implements Converter {
             if (value != null && jsonArray.isNull(i)) {
                 value = null;
             }
-            store |= elementMapping.getConverter().marshall(resource, value, elementMapping, context);
+            if (jsonArrayMapping.isDynamic()) {
+                String propertyName;
+                PropertyPath path = jsonArrayMapping.getPath();
+                if (path == null) {
+                    propertyName = (String) context.getAttribute(DYNAMIC_PATH_CONTEXT_KEY);
+                } else {
+                    propertyName = path.getPath();
+                }
+                store |= doConvertDynamicValue(resource, propertyName, value, context);
+            } else {
+                store |= elementMapping.getConverter().marshall(resource, value, elementMapping, context);
+            }
         }
         return store;
     }

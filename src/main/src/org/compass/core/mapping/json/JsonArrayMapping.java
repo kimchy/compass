@@ -28,11 +28,16 @@ public class JsonArrayMapping extends AbstractMapping implements JsonMapping {
 
     private String fullPath;
 
+    private boolean dynamic;
+
     public Mapping copy() {
         JsonArrayMapping copy = new JsonArrayMapping();
         super.copy(copy);
-        copy.setElementMapping(getElementMapping().copy());
+        if (getElementMapping() != null) {
+            copy.setElementMapping(getElementMapping().copy());
+        }
         copy.setFullPath(getFullPath());
+        copy.setDynamic(isDynamic());
         return copy;
     }
 
@@ -50,5 +55,13 @@ public class JsonArrayMapping extends AbstractMapping implements JsonMapping {
 
     public void setElementMapping(Mapping elementMapping) {
         this.elementMapping = elementMapping;
+    }
+
+    public boolean isDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(boolean dynamic) {
+        this.dynamic = dynamic;
     }
 }

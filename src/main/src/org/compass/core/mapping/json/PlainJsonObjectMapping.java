@@ -29,10 +29,13 @@ public class PlainJsonObjectMapping extends AbstractMultipleMapping implements J
 
     private String fullPath;
 
+    private boolean dynamic;
+
     public Mapping copy() {
         PlainJsonObjectMapping copy = new PlainJsonObjectMapping();
         super.copy(copy);
-        setFullPath(getFullPath());
+        copy.setFullPath(getFullPath());
+        copy.setDynamic(isDynamic());
         return copy;
     }
 
@@ -42,6 +45,14 @@ public class PlainJsonObjectMapping extends AbstractMultipleMapping implements J
 
     public void setFullPath(String fullPath) {
         this.fullPath = fullPath;
+    }
+
+    public boolean isDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(boolean dynamic) {
+        this.dynamic = dynamic;
     }
 
     public int addMapping(Mapping mapping) {

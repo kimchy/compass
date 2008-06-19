@@ -21,6 +21,7 @@ import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.converter.mapping.json.AbstractJsonObjectMappingConverter;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -28,10 +29,21 @@ import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
+ * A simple JSON value converter that supports marshalling. Uses built in registed converters for types such
+ * as int, float and String.
+ *
  * @author kimchy
  */
 public class SimpleJsonValueConverter implements Converter {
 
+    /**
+     * Marshals the given object value into a {@link org.compass.core.Property} which is added to the provided
+     * {@link org.compass.core.Resource}.
+     *
+     * <p>Handles null values based on the given null value mappings by calling {@link #getNullValue(org.compass.core.mapping.ResourcePropertyMapping, org.compass.core.marshall.MarshallingContext)}.
+     *
+     * <p>The value itself is converted from an Object to a String using {@link #toString(Object, org.compass.core.mapping.ResourcePropertyMapping, org.compass.core.marshall.MarshallingContext)}.
+     */
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         JsonPropertyMapping jsonPropertyMapping = (JsonPropertyMapping) mapping;
         // don't save a null value if the context does not states so
@@ -43,7 +55,13 @@ public class SimpleJsonValueConverter implements Converter {
             sValue = toString(root, jsonPropertyMapping, context);
         }
         PropertyPath path = jsonPropertyMapping.getPath();
-        Property p = context.getResourceFactory().createProperty(path.getPath(), sValue, jsonPropertyMapping);
+        String propertyName;
+        if (path == null) {
+            propertyName = (String) context.getAttribute(AbstractJsonObjectMappingConverter.DYNAMIC_PATH_CONTEXT_KEY);
+        } else {
+            propertyName = path.getPath();
+        }
+        Property p = context.getResourceFactory().createProperty(propertyName, sValue, jsonPropertyMapping);
         doSetBoost(p, root, jsonPropertyMapping, context);
         resource.addProperty(p);
 
@@ -97,6 +115,13 @@ public class SimpleJsonValueConverter implements Converter {
         property.setBoost(resourcePropertyMapping.getBoost());
     }
 
+    /**
+     * Converst a value to a String. Tryies to infer based on the type and use one of the registered converters
+     * based on the given type (in JSON we can have double, int, as well as Strings). Uses
+     * {@link org.compass.core.converter.ConverterLookup#lookupConverter(Class)}.
+     *
+     * <p>The resulting converter is then used and uses {@link org.compass.core.converter.mapping.ResourcePropertyConverter#toString(Object, org.compass.core.mapping.ResourcePropertyMapping)}.
+     */
     protected String toString(Object value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         ResourcePropertyConverter converter = (ResourcePropertyConverter) context.getConverterLookup().lookupConverter(value.getClass());
         return converter.toString(value, resourcePropertyMapping);

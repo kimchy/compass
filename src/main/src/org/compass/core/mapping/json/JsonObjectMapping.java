@@ -22,4 +22,8 @@ import org.compass.core.mapping.MultipleMapping;
  * @author kimchy
  */
 public interface JsonObjectMapping extends MultipleMapping, JsonMapping {
+
+    boolean isDynamic();
+
+    void setDynamic(boolean dyanmic);
 }

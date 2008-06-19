@@ -46,7 +46,7 @@ public interface MarshallingContext {
 
     PropertyNamingStrategy getPropertyNamingStrategy();
 
-    void setAttribute(Object key, Object value);
+    Object setAttribute(Object key, Object value);
 
     Object getAttribute(Object key);
 

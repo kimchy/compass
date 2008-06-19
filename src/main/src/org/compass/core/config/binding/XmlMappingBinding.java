@@ -160,14 +160,14 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
         for (ConfigurationHelper conf : doc.getChildren("root-json-object")) {
             RootJsonObjectMapping rootJsonObjectMapping = new RootJsonObjectMapping();
-            bindRootJsonObject(conf, rootJsonObjectMapping);
+            bindJsonRootObject(conf, rootJsonObjectMapping);
             mapping.addMapping(rootJsonObjectMapping);
         }
 
         return true;
     }
 
-    private void bindRootJsonObject(ConfigurationHelper jsonObjectConf, RootJsonObjectMapping rootJsonObjectMapping)
+    private void bindJsonRootObject(ConfigurationHelper jsonObjectConf, RootJsonObjectMapping rootJsonObjectMapping)
             throws ConfigurationException {
         String aliasValue = jsonObjectConf.getAttribute("alias");
         Alias alias = valueLookup.lookupAlias(aliasValue);
@@ -192,6 +192,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         bindConverter(jsonObjectConf, rootJsonObjectMapping);
 
+        rootJsonObjectMapping.setDynamic(jsonObjectConf.getAttributeAsBoolean("dynamic", false));
+
         for (ConfigurationHelper id : jsonObjectConf.getChildren("json-id")) {
             JsonIdMapping jsonIdMapping = new JsonIdMapping();
             bindJsonProperty(id, jsonIdMapping, rootJsonObjectMapping);
@@ -213,7 +215,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         for (ConfigurationHelper obj : jsonObjectConf.getChildren("json-object")) {
             PlainJsonObjectMapping jsonObjectMapping = new PlainJsonObjectMapping();
-            bindJsonObject(obj, jsonObjectMapping, rootJsonObjectMapping);
+            bindJsonPlainObject(obj, jsonObjectMapping, rootJsonObjectMapping);
             rootJsonObjectMapping.addMapping(jsonObjectMapping);
         }
 
@@ -223,7 +225,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             rootJsonObjectMapping.addMapping(jsonArrayMapping);
         }
 
-        ConfigurationHelper analyzerConf = jsonObjectConf.getChild("xml-analyzer", false);
+        ConfigurationHelper analyzerConf = jsonObjectConf.getChild("json-analyzer", false);
         if (analyzerConf != null) {
             JsonPropertyAnalyzerController analyzerController = new JsonPropertyAnalyzerController();
             bindJsonProperty(analyzerConf, analyzerController, rootJsonObjectMapping);
@@ -231,7 +233,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             rootJsonObjectMapping.addMapping(analyzerController);
         }
 
-        ConfigurationHelper boostConf = jsonObjectConf.getChild("xml-boost", false);
+        ConfigurationHelper boostConf = jsonObjectConf.getChild("json-boost", false);
         if (boostConf != null) {
             JsonBoostPropertyMapping boostPropertyMapping = new JsonBoostPropertyMapping();
             bindJsonProperty(boostConf, boostPropertyMapping, rootJsonObjectMapping);
@@ -254,6 +256,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String indexName = jsonArrayConf.getAttribute("index-name", name);
         jsonArrayMapping.setPath((indexName == null ? null : new StaticPropertyPath(indexName)));
 
+        jsonArrayMapping.setDynamic(jsonArrayConf.getAttributeAsBoolean("dynamic", false));
+
         bindConverter(jsonArrayConf, jsonArrayMapping);
 
         ConfigurationHelper conf = jsonArrayConf.getChild("json-property", false);
@@ -272,7 +276,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         conf = jsonArrayConf.getChild("json-object", false);
         if (conf != null) {
             PlainJsonObjectMapping jsonObjectMapping = new PlainJsonObjectMapping();
-            bindJsonObject(conf, jsonObjectMapping, rootJsonObjectMapping);
+            bindJsonPlainObject(conf, jsonObjectMapping, rootJsonObjectMapping);
             if (jsonObjectMapping.getName() == null) {
                 jsonObjectMapping.setName(jsonArrayMapping.getName());
             }
@@ -296,8 +300,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
     }
 
-    private void bindJsonObject(ConfigurationHelper jsonObjectConf, PlainJsonObjectMapping jsonObjectMapping,
-                                RootJsonObjectMapping rootJsonObjectMapping) {
+    private void bindJsonPlainObject(ConfigurationHelper jsonObjectConf, PlainJsonObjectMapping jsonObjectMapping,
+                                     RootJsonObjectMapping rootJsonObjectMapping) {
         String name = jsonObjectConf.getAttribute("name", null);
         if (name != null) {
             name = valueLookup.lookupMetaDataName(name);
@@ -305,6 +309,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         jsonObjectMapping.setName(name);
         jsonObjectMapping.setPath(new StaticPropertyPath(name));
         bindConverter(jsonObjectConf, jsonObjectMapping);
+
+        jsonObjectMapping.setDynamic(jsonObjectConf.getAttributeAsBoolean("dynamic", false));
 
         for (ConfigurationHelper prop : jsonObjectConf.getChildren("json-property")) {
             JsonPropertyMapping jsonPropertyMapping = new JsonPropertyMapping();
@@ -314,7 +320,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         for (ConfigurationHelper obj : jsonObjectConf.getChildren("json-object")) {
             PlainJsonObjectMapping intenralJsonObjectMapping = new PlainJsonObjectMapping();
-            bindJsonObject(obj, intenralJsonObjectMapping, rootJsonObjectMapping);
+            bindJsonPlainObject(obj, intenralJsonObjectMapping, rootJsonObjectMapping);
             jsonObjectMapping.addMapping(jsonObjectMapping);
         }
 

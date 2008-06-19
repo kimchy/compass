@@ -54,7 +54,7 @@ public class JsonContentMapping extends AbstractResourcePropertyMapping implemen
     public Mapping copy() {
         JsonContentMapping copy = new JsonContentMapping();
         copy(copy);
-        setFullPath(getFullPath());
+        copy.setFullPath(getFullPath());
         return copy;
     }
 

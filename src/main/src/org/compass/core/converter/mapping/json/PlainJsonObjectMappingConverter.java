@@ -18,7 +18,6 @@ package org.compass.core.converter.mapping.json;
 
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.Converter;
 import org.compass.core.json.JsonObject;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
@@ -27,7 +26,7 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class PlainJsonObjectMappingConverter implements Converter {
+public class PlainJsonObjectMappingConverter extends AbstractJsonObjectMappingConverter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         if (root == null) {
@@ -35,7 +34,7 @@ public class PlainJsonObjectMappingConverter implements Converter {
         }
         JsonObject jsonObject = (JsonObject) root;
         PlainJsonObjectMapping jsonObjectMapping = (PlainJsonObjectMapping) mapping;
-        return JsonMappingConverterUtils.marshall(resource, jsonObject, jsonObjectMapping, context);
+        return doMarshall(resource, jsonObject, jsonObjectMapping, context);
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

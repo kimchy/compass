@@ -23,6 +23,9 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
+ * Extends the {@link org.compass.core.converter.json.SimpleJsonValueConverter} by delegating all marhslaling
+ * operations to an intenral {@link org.compass.core.converter.mapping.ResourcePropertyConverter}.
+ *
  * @author kimchy
  */
 public class ResourcePropertyJsonValueConverter extends SimpleJsonValueConverter implements ResourcePropertyConverter {

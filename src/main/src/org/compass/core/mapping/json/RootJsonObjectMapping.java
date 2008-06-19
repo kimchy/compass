@@ -23,17 +23,21 @@ public class RootJsonObjectMapping extends AbstractResourceMapping implements Js
 
     private String fullPath;
 
+    private boolean dynamic;
+
     public Mapping copy() {
         RootJsonObjectMapping copy = new RootJsonObjectMapping();
         super.copy(copy);
-        setFullPath(getFullPath());
+        copy.setFullPath(getFullPath());
+        copy.setDynamic(isDynamic());
         return copy;
     }
 
     public AliasMapping shallowCopy() {
         RootJsonObjectMapping copy = new RootJsonObjectMapping();
         super.shallowCopy(copy);
-        setFullPath(getFullPath());
+        copy.setFullPath(getFullPath());
+        copy.setDynamic(isDynamic());
         return copy;
     }
 
@@ -43,6 +47,14 @@ public class RootJsonObjectMapping extends AbstractResourceMapping implements Js
 
     public void setFullPath(String fullPath) {
         this.fullPath = fullPath;
+    }
+
+    public boolean isDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(boolean dynamic) {
+        this.dynamic = dynamic;
     }
 
     public int addMapping(Mapping mapping) {

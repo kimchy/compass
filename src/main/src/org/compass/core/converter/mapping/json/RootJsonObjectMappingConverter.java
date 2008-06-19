@@ -36,7 +36,7 @@ import org.compass.core.spi.InternalResource;
 /**
  * @author kimchy
  */
-public class RootJsonObjectMappingConverter implements ResourceMappingConverter {
+public class RootJsonObjectMappingConverter extends AbstractJsonObjectMappingConverter implements ResourceMappingConverter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         // no need to marshall if it is null
@@ -48,16 +48,15 @@ public class RootJsonObjectMappingConverter implements ResourceMappingConverter 
 
         jsonObject = getActualJsonObject(jsonObject, jsonObjectMapping, context, resource);
 
-        boolean store = JsonMappingConverterUtils.marshall(resource, jsonObject, jsonObjectMapping, context);
-        if (store) {
-            JsonContentMapping contentMapping = jsonObjectMapping.getContentMapping();
-            if (contentMapping != null) {
-                Object content = jsonObject;
-                if (root instanceof RawJsonObject) {
-                    content = ((RawJsonObject) root).getJson();
-                }
-                contentMapping.getConverter().marshall(resource, content, contentMapping, context);
+        boolean store = doMarshall(resource, jsonObject, jsonObjectMapping, context);
+
+        JsonContentMapping contentMapping = jsonObjectMapping.getContentMapping();
+        if (contentMapping != null) {
+            Object content = jsonObject;
+            if (root instanceof RawJsonObject) {
+                content = ((RawJsonObject) root).getJson();
             }
+            contentMapping.getConverter().marshall(resource, content, contentMapping, context);
         }
         ((InternalResource) resource).addUID();
         return store;
