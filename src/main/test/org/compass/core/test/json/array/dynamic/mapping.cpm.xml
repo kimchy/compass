@@ -7,6 +7,7 @@
 
     <root-json-object alias="a">
         <json-id name="id"/>
+        <json-property name="value" />
         <json-array name="arr" dynamic="true"/>
     </root-json-object>
 

@@ -38,6 +38,14 @@ public class JsonArrayMappingConverter extends AbstractDynamicJsonMappingConvert
 
         Mapping elementMapping = jsonArrayMapping.getElementMapping();
 
+        String propertyName;
+        PropertyPath path = jsonArrayMapping.getPath();
+        if (path == null) {
+            propertyName = (String) context.getAttribute(DYNAMIC_PATH_CONTEXT_KEY);
+        } else {
+            propertyName = path.getPath();
+        }
+        
         boolean store = false;
         for (int i = 0; i < jsonArray.length(); i++) {
             Object value = jsonArray.opt(i);
@@ -45,13 +53,6 @@ public class JsonArrayMappingConverter extends AbstractDynamicJsonMappingConvert
                 value = null;
             }
             if (jsonArrayMapping.isDynamic()) {
-                String propertyName;
-                PropertyPath path = jsonArrayMapping.getPath();
-                if (path == null) {
-                    propertyName = (String) context.getAttribute(DYNAMIC_PATH_CONTEXT_KEY);
-                } else {
-                    propertyName = path.getPath();
-                }
                 store |= doConvertDynamicValue(resource, propertyName, value, context);
             } else {
                 store |= elementMapping.getConverter().marshall(resource, value, elementMapping, context);
