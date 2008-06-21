@@ -95,7 +95,11 @@ session.delete(Author.class, "12"); // Everything in the search engine is a Stri
                 <entry>Contain the term <literal>jack</literal> in the default search field</entry>
               </row>
               <row>
-                <entry>jack london (jack OR london)</entry>
+                <entry>jack london (jack AND london)</entry>
+                <entry>Contains the term <literal>jack</literal> and <literal>london</literal> in the default search field</entry>
+              </row>
+              <row>
+                <entry>jack OR london</entry>
                 <entry>Contains the term <literal>jack</literal> or <literal>london</literal>, or both, in the default search field</entry>
               </row>
               <row>
