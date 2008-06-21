@@ -23,6 +23,7 @@ import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.json.JsonFullPathHolder;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
 import org.compass.core.json.JsonObject;
 import org.compass.core.json.RawJsonObject;
@@ -47,6 +48,10 @@ public class RootJsonObjectMappingConverter extends AbstractJsonObjectMappingCon
         JsonObject jsonObject = (JsonObject) root;
 
         jsonObject = getActualJsonObject(jsonObject, jsonObjectMapping, context, resource);
+
+        // initialize full path
+        JsonFullPathHolder fullPathHolder = new JsonFullPathHolder();
+        context.setAttribute(JsonFullPathHolder.CONTEXT_KEY, fullPathHolder);
 
         boolean store = doMarshall(resource, jsonObject, jsonObjectMapping, context);
 

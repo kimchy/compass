@@ -22,12 +22,43 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
+import org.compass.core.util.Parameter;
 
 /**
  * @author kimchy
  */
 public class JsonPropertyMapping extends AbstractResourcePropertyMapping implements JsonMapping, ResourcePropertyMapping,
         OverrideByNameMapping {
+
+    public static final class NamingType extends Parameter {
+
+        private NamingType(String name) {
+            super(name);
+        }
+
+        public static final NamingType PLAIN = new NamingType("PLAIN");
+
+        public static final NamingType FULL = new NamingType("FULL");
+
+        public static String toString(NamingType namingType) {
+            if (namingType == NamingType.PLAIN) {
+                return "plain";
+            } else if (namingType == NamingType.FULL) {
+                return "full";
+            }
+            throw new IllegalArgumentException("Can't find naming type for [" + namingType + "]");
+        }
+
+        public static NamingType fromString(String namingType) {
+            if ("plain".equalsIgnoreCase(namingType)) {
+                return NamingType.PLAIN;
+            } else if ("full".equalsIgnoreCase(namingType)) {
+                return NamingType.FULL;
+            }
+            throw new IllegalArgumentException("Can't find naming type for [" + namingType + "]");
+        }
+
+    }
 
     private boolean overrideByName;
 
@@ -38,6 +69,8 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
     private String format;
 
     private String fullPath;
+
+    private NamingType namingType;
 
     public Mapping copy() {
         JsonPropertyMapping xmlPropertyMapping = new JsonPropertyMapping();
@@ -52,6 +85,7 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
         copy.setValueConverterName(getValueConverterName());
         copy.setFormat(getFormat());
         copy.setFullPath(getFullPath());
+        copy.setNamingType(getNamingType());
     }
 
     public String getFullPath() {
@@ -92,6 +126,14 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
 
     public void setFormat(String format) {
         this.format = format;
+    }
+
+    public NamingType getNamingType() {
+        return namingType;
+    }
+
+    public void setNamingType(NamingType namingType) {
+        this.namingType = namingType;
     }
 
     public ResourcePropertyConverter getResourcePropertyConverter() {

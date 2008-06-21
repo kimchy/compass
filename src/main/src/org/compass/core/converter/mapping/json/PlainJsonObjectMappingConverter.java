@@ -18,6 +18,7 @@ package org.compass.core.converter.mapping.json;
 
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.json.JsonFullPathHolder;
 import org.compass.core.json.JsonObject;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
@@ -34,7 +35,22 @@ public class PlainJsonObjectMappingConverter extends AbstractJsonObjectMappingCo
         }
         JsonObject jsonObject = (JsonObject) root;
         PlainJsonObjectMapping jsonObjectMapping = (PlainJsonObjectMapping) mapping;
-        return doMarshall(resource, jsonObject, jsonObjectMapping, context);
+
+        String name;
+        if (jsonObjectMapping.getName() == null) {
+            name = (String) context.getAttribute(AbstractJsonObjectMappingConverter.DYNAMIC_PATH_CONTEXT_KEY);
+        } else {
+            name = jsonObjectMapping.getName();
+        }
+
+        JsonFullPathHolder fullPathHolder = (JsonFullPathHolder) context.getAttribute(JsonFullPathHolder.CONTEXT_KEY);
+        fullPathHolder.addPath(name);
+
+        boolean store = doMarshall(resource, jsonObject, jsonObjectMapping, context);
+
+        fullPathHolder.removePath();
+
+        return store;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

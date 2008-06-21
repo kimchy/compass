@@ -55,6 +55,7 @@
 >
     <!ATTLIST json-property name CDATA #IMPLIED>
     <!ATTLIST json-property index-name CDATA #IMPLIED>
+    <!ATTLIST json-property naming-type (plain|full) #IMPLIED>
     <!ATTLIST json-property store (no|yes|compress) #IMPLIED>
     <!ATTLIST json-property index (no|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST json-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>

@@ -364,6 +364,9 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             jsonPropertyMapping.setValueConverter(new FormatDelegateConverter(format));
         }
 
+        String namingType = jsonPropConf.getAttribute("naming-type", JsonPropertyMapping.NamingType.PLAIN.toString());
+        jsonPropertyMapping.setNamingType(JsonPropertyMapping.NamingType.fromString(namingType));
+
 
         bindResourcePropertyMapping(jsonPropConf, jsonPropertyMapping, aliasMapping);
 

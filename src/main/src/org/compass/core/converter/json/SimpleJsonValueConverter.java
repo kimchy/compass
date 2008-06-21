@@ -54,12 +54,16 @@ public class SimpleJsonValueConverter implements Converter {
         if (root != null) {
             sValue = toString(root, jsonPropertyMapping, context);
         }
-        PropertyPath path = jsonPropertyMapping.getPath();
         String propertyName;
-        if (path == null) {
-            propertyName = (String) context.getAttribute(AbstractJsonObjectMappingConverter.DYNAMIC_PATH_CONTEXT_KEY);
+        if (jsonPropertyMapping.getNamingType() == JsonPropertyMapping.NamingType.FULL) {
+            propertyName = ((JsonFullPathHolder) context.getAttribute(JsonFullPathHolder.CONTEXT_KEY)).calculatePath();
         } else {
-            propertyName = path.getPath();
+            PropertyPath path = jsonPropertyMapping.getPath();
+            if (path == null) {
+                propertyName = (String) context.getAttribute(AbstractJsonObjectMappingConverter.DYNAMIC_PATH_CONTEXT_KEY);
+            } else {
+                propertyName = path.getPath();
+            }
         }
         Property p = context.getResourceFactory().createProperty(propertyName, sValue, jsonPropertyMapping);
         doSetBoost(p, root, jsonPropertyMapping, context);

@@ -19,6 +19,7 @@ package org.compass.core.converter.mapping.json;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.json.JsonFullPathHolder;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -30,7 +31,22 @@ public class JsonPropertyMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         JsonPropertyMapping jsonPropertyMapping = (JsonPropertyMapping) mapping;
-        return jsonPropertyMapping.getValueConverter().marshall(resource, root, jsonPropertyMapping, context);
+
+        String name;
+        if (jsonPropertyMapping.getName() == null) {
+            name = (String) context.getAttribute(AbstractJsonObjectMappingConverter.DYNAMIC_PATH_CONTEXT_KEY);
+        } else {
+            name = jsonPropertyMapping.getName();
+        }
+
+        JsonFullPathHolder fullPathHolder = (JsonFullPathHolder) context.getAttribute(JsonFullPathHolder.CONTEXT_KEY);
+        fullPathHolder.addPath(name);
+
+        boolean store = jsonPropertyMapping.getValueConverter().marshall(resource, root, jsonPropertyMapping, context);
+
+        fullPathHolder.removePath();
+
+        return store;
     }
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {

@@ -50,8 +50,6 @@ public abstract class AbstractJsonObjectMappingConverter extends AbstractDynamic
             }
         }
 
-        // still needs to go over unmapped ones...
-
         return store;
     }
 }

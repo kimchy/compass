@@ -33,5 +33,16 @@
         </json-object>
     </root-json-object>
 
+    <root-json-object alias="c">
+        <json-id name="id" />
+        <json-property name="value" />
+        <json-object name="obj">
+            <json-property name="objValue1" value-converter="int" naming-type="full" />
+            <json-array name="arr">
+                <json-property value-converter="int" naming-type="full" />
+            </json-array>
+        </json-object>
+    </root-json-object>
+
 </compass-core-mapping>
     
