@@ -61,6 +61,27 @@
     <para>
       The dynamic aspect can even be set on the <literal>root-json-object</literal> allows to create a completely generic JSON indexing service which requires only setting the id JSON element.
     </para>
+    
+    <para>
+      Now, in order to index, search, and load JSON objects, we can use the <classname>JsonObject</classname> API abstraction. Here is a simple example that uses a <classname>JsonObject</classname> implementation that is bundled with Compass called <classname>JSONObject</classname> and is based on the <literal>json.org</literal> site:
+<programlisting><![CDATA[JsonObject jsonObject = new AliasedJSONObject("addressbook", "json string goes here");
+// this will index the provided JSON
+session.save(jsonObject);
+
+// now we can load the Resource that represents it
+Resource resource = session.loadResource("addressbook", 1);
+resource.getValue("name"); // will get Mary Lebow
+
+// we can also get back the JSON content and actual object when using content mapping (see later)
+jsonObject = (JsonObject) session.load("addressbook", 1);
+
+// Last, we can search
+CompassHits hits = session.find("mary");
+hits.lenght() // will print one
+resource = hits.resource(0);
+jsonObject = (JsonObject) hits.data(0);
+]]></programlisting>      
+    </para>
 
   </sect1>
 
