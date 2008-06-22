@@ -11,6 +11,7 @@
 <!ENTITY core-osem  SYSTEM "core-osem.xml">
 <!ENTITY core-resourcemapping  SYSTEM "core-resourcemapping.xml">
 <!ENTITY core-xsem  SYSTEM "core-xsem.xml">
+<!ENTITY core-jsem  SYSTEM "core-jsem.xml">
 <!ENTITY core-commonmetadata  SYSTEM "core-commonmetadata.xml">
 <!ENTITY core-transaction  SYSTEM "core-transaction.xml">
 <!ENTITY core-workingwithobjects  SYSTEM "core-workingwithobjects.xml">
@@ -95,6 +96,7 @@
     &core-searchengine;
     &core-osem;
     &core-xsem;
+    &core-jsem;
     &core-resourcemapping;
     &core-commonmetadata;
     &core-transaction;

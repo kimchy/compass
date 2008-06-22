@@ -48,4 +48,21 @@ public class SimpleJsonArrayTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testSimpleJsonArrayWithIndexName() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        RawAliasedJsonObject jsonObject = new RawAliasedJsonObject("b", "{id : 1, value : \"test\", arr : [1, 2]}");
+        session.save(jsonObject);
+
+        Resource resource = session.loadResource("b", 1);
+        assertEquals("test", resource.getValue("value"));
+        assertEquals(2, resource.getProperties("xarr").length);
+        assertEquals("1", resource.getValues("xarr")[0]);
+        assertEquals("2", resource.getValues("xarr")[1]);
+
+        tr.commit();
+        session.close();
+    }
 }

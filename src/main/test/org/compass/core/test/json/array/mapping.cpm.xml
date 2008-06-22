@@ -13,5 +13,13 @@
         </json-array>
     </root-json-object>
 
+    <root-json-object alias="b">
+        <json-id name="id" />
+        <json-property name="value" />
+        <json-array name="arr" index-name="xarr">
+            <json-property value-converter="int" />
+        </json-array>
+    </root-json-object>
+
 </compass-core-mapping>
     
