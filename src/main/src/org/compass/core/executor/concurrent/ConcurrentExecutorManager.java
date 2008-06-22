@@ -22,10 +22,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -35,6 +33,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.executor.spi.InternalExecutorManager;
+import org.compass.core.util.concurrent.ScalingExecutros;
 import org.compass.core.util.concurrent.SingleThreadThreadFactory;
 
 /**
@@ -58,11 +57,11 @@ public class ConcurrentExecutorManager implements InternalExecutorManager, Compa
         int corePoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.CORE_POOL_SIZE, 10);
         int maximumPoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.MAXIMUM_POOL_SIZE, 30);
         long keepAliveTime = settings.getSettingAsLong(CompassEnvironment.ExecutorManager.Concurrent.KEEP_ALIVE_TIME, 60000);
-        executorService = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(), new SingleThreadThreadFactory("Compass Executor Thread", true));
+
+        executorService = ScalingExecutros.newScalingThreadPool(corePoolSize, maximumPoolSize, keepAliveTime, new SingleThreadThreadFactory("Compass Executor Thread", true));
 
         if (log.isDebugEnabled()) {
-            log.debug("Using concurrent executor manager with core size [" + corePoolSize + "], max size [" + maximumPoolSize + "], and keep alive time [" + keepAliveTime +"ms]");
+            log.debug("Using concurrent executor manager with core size [" + corePoolSize + "], max size [" + maximumPoolSize + "], and keep alive time [" + keepAliveTime + "ms]");
         }
 
         int scheduledCorePoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.SCHEDULED_CORE_POOL_SIZE, 1);
