@@ -37,7 +37,7 @@ public interface CompassHits extends CompassHitsOperations {
      * LONG time to load a large hits result set.
      *
      * @return A detached hits.
-     * @throws CompassException
+     * @throws CompassException 
      */
     CompassDetachedHits detach() throws CompassException;
 
