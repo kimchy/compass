@@ -30,7 +30,7 @@
     <para>
       Now, lets see different ways of how we can map this JSON into the search engine. The first option will be to use fully explicit mappings:
 <programlisting><![CDATA[<root-json-object alias="addressbook">
-    <json-id name="id" value-converter="int" />
+    <json-id name="id" />
     <json-property name="name" />
     <json-object name="address">
         <json-property name="street" />
@@ -51,7 +51,7 @@
     <para>
       Many times though, explicit mapping of all the JSON elements is a bit of a pain, and does not work when wanting to create a generic indexing service. In this case, Compass allows to dynamically and recursively map JSON element. Here is an example where the JSON <literal>address</literal> element is mapped dynamically, thus adding any element within it dynamically to the search engine:
 <programlisting><![CDATA[<root-json-object alias="addressbook">
-    <json-id name="id" value-converter="int" />
+    <json-id name="id" />
     <json-property name="name" />
     <json-object name="address" dynamic="true" />
 </root-json-object>
