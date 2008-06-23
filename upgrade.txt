@@ -5,6 +5,7 @@ VERSION 2.1.0 M1
 ================
 
 1. Change all DTD and Schema names from 2.0 suffix to 2.1 suffix.
+2. Upgraded Lucene version to 2.3.2 (from 2.3.1). Update the Lucene jar files.
 
 VERSION 2.0.0 (May 10, 2008)
 ============================
