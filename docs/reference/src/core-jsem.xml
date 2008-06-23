@@ -89,7 +89,11 @@ jsonObject = (JsonObject) hits.data(0);
     <title>JSON API Abstraction</title>
     
     <para>
-      Since there is no single object based API when working with JSON Compass has an interface based abstraction that can be used with any JSON implementation available. The APIs can be found under <literal>org.compass.core.json</literal> and include <classname>JsonObject</classname>, <classname>AliasedJsonObject</classname>, and <classname>JsonArray</classname>. Compass comes with two built in implementations. The first is taken from <literal>json.org</literal> site and is bundled with Compass under <literal>org.compass.core.json.imple</literal>. The second supports Grails JSON objects and has wrapper implementations around it under <literal>org.compass.core.json.grails</literal>.
+      Since there is no single object based API when working with JSON Compass has an interface based abstraction that can be used with any JSON implementation available. The APIs can be found under <literal>org.compass.core.json</literal> and include <classname>JsonObject</classname>, <classname>AliasedJsonObject</classname>, and <classname>JsonArray</classname>. Compass comes with several built in implementations. The first is taken from <literal>json.org</literal> site and is bundled with Compass under <literal>org.compass.core.json.impl</literal>. The second supports Grails JSON objects and has wrapper implementations around it under <literal>org.compass.core.json.grails</literal>. The last supports Jettison JSON objects and has a wrapper implementation around it under <literal>org.compass.core.json.jettison</literal>.
+    </para>
+    
+    <para>
+      Implementing support for another framework that bundles its own JSON object based implementation should be very simple. It should basically follow the API requirements (probably by wrapping the actual one). The jettison implementation can be used as a reference implementation on how this can be done. 
     </para>
   </sect1>
 
