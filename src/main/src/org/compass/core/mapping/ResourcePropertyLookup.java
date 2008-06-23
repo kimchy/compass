@@ -23,6 +23,7 @@ public final class ResourcePropertyLookup {
     private String dotPathAlias;
 
     private boolean convertOnlyWithDotPath = true;
+    
     private CompassMapping compassMapping;
 
     public ResourcePropertyLookup(CompassMapping compassMapping, String name) {
