@@ -84,5 +84,13 @@ jsonObject = (JsonObject) hits.data(0);
     </para>
 
   </sect1>
+  
+  <sect1 id="jsem-api-abstraction">
+    <title>JSON API Abstraction</title>
+    
+    <para>
+      Since there is no single object based API when working with JSON Compass has an interface based abstraction that can be used with any JSON implementation available. The APIs can be found under <literal>org.compass.core.json</literal> and include <classname>JsonObject</classname>, <classname>AliasedJsonObject</classname>, and <classname>JsonArray</classname>. Compass comes with two built in implementations. The first is taken from <literal>json.org</literal> site and is bundled with Compass under <literal>org.compass.core.json.imple</literal>. The second supports Grails JSON objects and has wrapper implementations around it under <literal>org.compass.core.json.grails</literal>.
+    </para>
+  </sect1>
 
 </chapter>

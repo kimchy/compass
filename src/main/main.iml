@@ -64,6 +64,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jettison" level="project" />
     <orderEntryProperties />
   </component>
 </module>
