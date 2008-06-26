@@ -90,10 +90,10 @@ public class JavassistClassMetaData implements ClassMetaData {
     }
 
     public boolean hasAnnotation(String annotationType) {
-        if (visible.getAnnotation(annotationType) != null) {
+        if (visible != null && visible.getAnnotation(annotationType) != null) {
             return true;
         }
-        if (invisible.getAnnotation(annotationType) != null) {
+        if (invisible != null && invisible.getAnnotation(annotationType) != null) {
             return true;
         }
         return false;
