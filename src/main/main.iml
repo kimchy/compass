@@ -55,15 +55,6 @@
     <orderEntry type="library" name="woodstox" level="project" />
     <orderEntry type="library" name="jdom" level="project" />
     <orderEntry type="library" name="grails" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../opt/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6-bin.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="jettison" level="project" />
     <orderEntryProperties />
   </component>
