@@ -333,5 +333,217 @@ session.save(jsonObject);
         </table>
       </para>
     </sect2>
+
+    <sect2 id="jsem-mapping-json-object">
+      <title>json-object</title>
+
+      <para>
+        Maps to an embedded JSON object.
+<programlisting><![CDATA[<json-object
+    name="the name of the json object element"
+    converter="optional converter lookup name"
+    dynamic="false|true"
+/>
+    (json-property|json-array|json-object)*
+]]></programlisting>
+      </para>
+
+      <para>
+        <table>
+          <title>json-object mapping</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row>
+                <entry>Attribute</entry><entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The name of the json object element. Not required when mapping <literal>json-object</literal> within the <literal>json-array</literal>.</entry>
+              </row>
+              <row>
+                <entry>dynamic (optional, default to <literal>false</literal>)</entry>
+                <entry>Should unmapped json elements be added to the search engine automatically (and recursively).</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </para>
+    </sect2>
+
+    <sect2 id="jsem-mapping-json-array">
+      <title>json-array</title>
+
+      <para>
+        Maps to an embedded JSON array.
+<programlisting><![CDATA[<json-array
+    name="the name of the json object element"
+    index-name="optional, the name of the internal mapping will be stored under"
+    converter="optional converter lookup name"
+    dynamic="false|true"
+/>
+    (json-property|json-array|json-object)*
+]]></programlisting>
+      </para>
+
+      <para>
+        <table>
+          <title>json-array mapping</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row>
+                <entry>Attribute</entry><entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The name of the json array element.</entry>
+              </row>
+              <row>
+                <entry>index-name</entry>
+                <entry>The name of the json array internal mapping will be store under. Note, when using json array, there is no need to name its internal element, it is controlled by the <literal>json-array</literal> name/index-name.</entry>
+              </row>
+              <row>
+                <entry>dynamic (optional, default to <literal>false</literal>)</entry>
+                <entry>Should unmapped json elements be added to the search engine automatically (and recursively).</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </para>
+    </sect2>
+
+    <sect2 id="jsem-mapping-json-content">
+      <title>json-content</title>
+
+      <para>
+        Maps the actual JSON string into a resource property to be store in the search engine.
+<programlisting><![CDATA[<json-content
+    name="the name to store the json content under"
+    store="yes|compress"
+    converte="optional converter lookup name"
+/>
+]]></programlisting>
+      </para>
+
+      <para>
+        <table>
+          <title>json-content mapping</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row>
+                <entry>Attribute</entry><entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The name to store the JSON string under in the resource.</entry>
+              </row>
+              <row>
+                <entry>store</entry>
+                <entry>How the JSON content will be stored. yes for plain storing, compress for compressed storing.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </para>
+    </sect2>
+
+    <sect2 id="jsem-mapping-json-boost">
+      <title>json-boost</title>
+
+      <para>
+        Declaring a dynamic boost mapping controlling the boost level using the <literal>json-boost</literal> element.
+<programlisting><![CDATA[<json-boost
+    name="the json element that holds the boost value"
+    default="the boost default value when no property value is present"
+    converter="converter lookup name"
+/>
+]]></programlisting>
+      </para>
+
+      <para>
+        <table>
+          <title>json-boost mapping</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row>
+                <entry>Attribute</entry><entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The name of json element that its value will be used as the boost value.</entry>
+              </row>
+              <row>
+                <entry>default (optional, defaults to <literal>1.0</literal>)</entry>
+                <entry>The default boost value if no value is found.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </para>
+    </sect2>
+
+    <sect2 id="jsem-mapping-json-analyzer">
+      <title>json-analyzer</title>
+
+      <para>
+        Declaring an analyzer controller property using the <literal>json-analyzer</literal> element.
+<programlisting><![CDATA[<json-analyzer
+    name="the json element that holds the analyzer value"
+    null-analyzer="analyzer name if value is null"
+    converter="converter lookup name"
+/>
+]]></programlisting>
+      </para>
+
+      <para>
+        <table>
+          <title>json-analyzer mapping</title>
+          <tgroup cols="2">
+            <colspec colname="c1" colwidth="3*" />
+            <colspec colname="c2" colwidth="5*" />
+            <thead>
+              <row>
+                <entry>Attribute</entry><entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>name</entry>
+                <entry>The name of json element that its value will be used as the analyzer lookup value.</entry>
+              </row>
+              <row>
+                <entry>null-analyzer (optional, defaults to error in case of a <literal>null</literal> value)</entry>
+                <entry>The name of the analyzer that will be used if the property has a <literal>null</literal> value.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        
+        <para>
+          The analyzer json property mapping, controls the analyzer that will be used when indexing the <literal>JsonObject</literal>. If the mapping is defined, it will override the json object mapping analyzer attribute setting.
+        </para>
+
+        <para>
+          If, for example, Compass is configured to have two additional analyzers, called <literal>an1</literal> (and have settings in the form of <literal>compass.engine.analyzer.an1.*</literal>), and another called <literal>an2</literal>. The values that the xml property can hold are: <literal>default</literal> (which is an internal Compass analyzer, that can be configured as well), <literal>an1</literal> and <literal>an2</literal>. If the analyzer will have a <literal>null</literal> value, and it is applicable with the application, a <literal>null-analyzer</literal> can be configured that will be used in that case. If the resource property has a value, but there is not matching analyzer, an exception will be thrown.
+        </para>
+        
+      </para>
+    </sect2>
+    
   </sect1>
 </chapter>
