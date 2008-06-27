@@ -29,7 +29,7 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.json.JsonContentConverter;
 import org.compass.core.json.JsonObject;
-import org.compass.core.json.impl.converter.JSONContentConverterImpl;
+import org.compass.core.json.impl.converter.DefaultJSONContentConverterImpl;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -47,7 +47,7 @@ public class JsonContentMappingConverter implements Converter, CompassConfigurab
     public void configure(CompassSettings settings) throws CompassException {
         String type = settings.getGloablSettings().getSetting(CompassEnvironment.Converter.JsonContent.TYPE);
         if (type == null) {
-            type = JSONContentConverterImpl.class.getName();
+            type = DefaultJSONContentConverterImpl.class.getName();
         }
 
         if (log.isDebugEnabled()) {

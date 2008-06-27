@@ -19,11 +19,11 @@ package org.compass.core.json.impl;
 import org.compass.core.json.AliasedJsonObject;
 
 /**
- * An aliased {@link org.compass.core.json.impl.JSONObject}.
+ * An aliased {@link DefaultJSONObject}.
  *
  * @author kimchy
  */
-public class AliasedJSONObject extends JSONObject implements AliasedJsonObject {
+public class AliasedDefaultJSONObject extends DefaultJSONObject implements AliasedJsonObject {
 
     private String alias;
 
@@ -32,7 +32,7 @@ public class AliasedJSONObject extends JSONObject implements AliasedJsonObject {
      *
      * @param alias The alias name
      */
-    public AliasedJSONObject(String alias) {
+    public AliasedDefaultJSONObject(String alias) {
         super();
         this.alias = alias;
     }
@@ -43,7 +43,7 @@ public class AliasedJSONObject extends JSONObject implements AliasedJsonObject {
      * @param alias The alias name
      * @param json  The JSON string
      */
-    public AliasedJSONObject(String alias, String json) {
+    public AliasedDefaultJSONObject(String alias, String json) {
         super(json);
         this.alias = alias;
     }
@@ -53,9 +53,9 @@ public class AliasedJSONObject extends JSONObject implements AliasedJsonObject {
      *
      * @param alias   The alias name
      * @param tokener The JSON tokener
-     * @throws JSONException
+     * @throws DefaultJSONException
      */
-    public AliasedJSONObject(String alias, JSONTokener tokener) throws JSONException {
+    public AliasedDefaultJSONObject(String alias, DefaultJSONTokener tokener) throws DefaultJSONException {
         super(tokener);
         this.alias = alias;
     }

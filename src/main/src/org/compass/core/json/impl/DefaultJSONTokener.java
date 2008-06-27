@@ -31,7 +31,7 @@ SOFTWARE.
  * @author JSON.org
  * @version 2
  */
-public class JSONTokener {
+public class DefaultJSONTokener {
 
     /**
      * The index of the next character.
@@ -50,7 +50,7 @@ public class JSONTokener {
      *
      * @param s     A source string.
      */
-    public JSONTokener(String s) {
+    public DefaultJSONTokener(String s) {
         this.myIndex = 0;
         this.mySource = s;
     }
@@ -119,9 +119,9 @@ public class JSONTokener {
      * character.
      * @param c The character to match.
      * @return The character.
-     * @throws JSONException if the character does not match.
+     * @throws DefaultJSONException if the character does not match.
      */
-    public char next(char c) throws JSONException {
+    public char next(char c) throws DefaultJSONException {
         char n = next();
         if (n != c) {
             throw syntaxError("Expected '" + c + "' and instead saw '" +
@@ -136,11 +136,11 @@ public class JSONTokener {
      *
      * @param n     The number of characters to take.
      * @return      A string of n characters.
-     * @throws JSONException
+     * @throws DefaultJSONException
      *   Substring bounds error if there are not
      *   n characters remaining in the source string.
      */
-     public String next(int n) throws JSONException {
+     public String next(int n) throws DefaultJSONException {
          int i = this.myIndex;
          int j = i + n;
          if (j >= this.mySource.length()) {
@@ -154,10 +154,10 @@ public class JSONTokener {
     /**
      * Get the next char in the string, skipping whitespace
      * and comments (slashslash, slashstar, and hash).
-     * @throws JSONException
+     * @throws DefaultJSONException
      * @return  A character, or 0 if there are no more characters.
      */
-    public char nextClean() throws JSONException {
+    public char nextClean() throws DefaultJSONException {
         for (;;) {
             char c = next();
             if (c == '/') {
@@ -205,9 +205,9 @@ public class JSONTokener {
      *      <code>"</code>&nbsp;<small>(double quote)</small> or
      *      <code>'</code>&nbsp;<small>(single quote)</small>.
      * @return      A String.
-     * @throws JSONException Unterminated string.
+     * @throws DefaultJSONException Unterminated string.
      */
-    public String nextString(char quote) throws JSONException {
+    public String nextString(char quote) throws DefaultJSONException {
         char c;
         StringBuffer sb = new StringBuffer();
         for (;;) {
@@ -302,11 +302,11 @@ public class JSONTokener {
     /**
      * Get the next value. The value can be a Boolean, Double, Integer,
      * JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
-     * @throws JSONException If syntax error.
+     * @throws DefaultJSONException If syntax error.
      *
      * @return An object.
      */
-    public Object nextValue() throws JSONException {
+    public Object nextValue() throws DefaultJSONException {
         char c = nextClean();
         String s;
 
@@ -316,11 +316,11 @@ public class JSONTokener {
                 return nextString(c);
             case '{':
                 back();
-                return new JSONObject(this);
+                return new DefaultJSONObject(this);
             case '[':
             case '(':
                 back();
-                return new JSONArray(this);
+                return new DefaultJSONArray(this);
         }
 
         /*
@@ -355,7 +355,7 @@ public class JSONTokener {
             return Boolean.FALSE;
         }
         if (s.equalsIgnoreCase("null")) {
-            return JSONObject.NULL;
+            return DefaultJSONObject.NULL;
         }
 
         /*
@@ -447,8 +447,8 @@ public class JSONTokener {
      * @param message The error message.
      * @return  A JSONException object, suitable for throwing
      */
-    public JSONException syntaxError(String message) {
-        return new JSONException(message + toString());
+    public DefaultJSONException syntaxError(String message) {
+        return new DefaultJSONException(message + toString());
     }
 
 

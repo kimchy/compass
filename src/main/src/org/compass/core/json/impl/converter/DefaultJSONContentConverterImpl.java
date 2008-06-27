@@ -20,8 +20,8 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.json.JsonContentConverter;
 import org.compass.core.json.AliasedJsonObject;
 import org.compass.core.json.JsonObject;
-import org.compass.core.json.impl.AliasedJSONObject;
-import org.compass.core.json.impl.JSONTokener;
+import org.compass.core.json.impl.AliasedDefaultJSONObject;
+import org.compass.core.json.impl.DefaultJSONTokener;
 
 /**
  * Converts a {@link org.compass.core.json.JsonObject} to String and a String to
@@ -29,13 +29,13 @@ import org.compass.core.json.impl.JSONTokener;
  *
  * @author kimchy
  */
-public class JSONContentConverterImpl implements JsonContentConverter {
+public class DefaultJSONContentConverterImpl implements JsonContentConverter {
 
     public String toJSON(JsonObject jsonObject) throws ConversionException {
         return jsonObject.toString();
     }
 
     public AliasedJsonObject fromJSON(String alias, String json) throws ConversionException {
-        return new AliasedJSONObject(alias, new JSONTokener(json));
+        return new AliasedDefaultJSONObject(alias, new DefaultJSONTokener(json));
     }
 }

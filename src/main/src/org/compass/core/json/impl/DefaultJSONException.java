@@ -8,7 +8,7 @@ import org.compass.core.util.NestedRuntimeException;
  * @author JSON.org
  * @version 2
  */
-public class JSONException extends NestedRuntimeException {
+public class DefaultJSONException extends NestedRuntimeException {
 
     private Throwable cause;
 
@@ -17,11 +17,11 @@ public class JSONException extends NestedRuntimeException {
      *
      * @param message Detail about the reason for the exception.
      */
-    public JSONException(String message) {
+    public DefaultJSONException(String message) {
         super(message);
     }
 
-    public JSONException(Throwable t) {
+    public DefaultJSONException(Throwable t) {
         super(t.getMessage());
         this.cause = t;
     }
