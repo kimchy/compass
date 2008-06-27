@@ -20,7 +20,7 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.json.JsonContentConverter;
 import org.compass.core.json.AliasedJsonObject;
 import org.compass.core.json.JsonObject;
-import org.compass.core.json.impl.AliasedDefaultJSONObject;
+import org.compass.core.json.impl.DefaultAliasedJSONObject;
 import org.compass.core.json.impl.DefaultJSONTokener;
 
 /**
@@ -36,6 +36,6 @@ public class DefaultJSONContentConverterImpl implements JsonContentConverter {
     }
 
     public AliasedJsonObject fromJSON(String alias, String json) throws ConversionException {
-        return new AliasedDefaultJSONObject(alias, new DefaultJSONTokener(json));
+        return new DefaultAliasedJSONObject(alias, new DefaultJSONTokener(json));
     }
 }

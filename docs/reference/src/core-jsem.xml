@@ -64,7 +64,7 @@
     
     <para>
       Now, in order to index, search, and load JSON objects, we can use the <classname>JsonObject</classname> API abstraction. Here is a simple example that uses a <classname>JsonObject</classname> implementation that is bundled with Compass called <classname>JSONObject</classname> and is based on the <literal>json.org</literal> site:
-<programlisting><![CDATA[JsonObject jsonObject = new AliasedJSONObject("addressbook", "json string goes here");
+<programlisting><![CDATA[JsonObject jsonObject = new DefaultAliasedJSONObject("addressbook", "json string goes here");
 // this will index the provided JSON
 session.save(jsonObject);
 
@@ -96,5 +96,50 @@ jsonObject = (JsonObject) hits.data(0);
       Implementing support for another framework that bundles its own JSON object based implementation should be very simple. It should basically follow the API requirements (probably by wrapping the actual one). The jettison implementation can be used as a reference implementation on how this can be done. 
     </para>
   </sect1>
-
+  
+  <sect1 id="jsem-content-mapping">
+    <title>Content Mapping</title>
+    
+    <para>
+      By default, when mapping JSON using Compass, the JSON content itself is not stored in the search engine. If the JSON content itself is not store, then when searching and getting back results from the search engine only <classname>Resource</classname> can be used. Within the mapping definition, the actual JSON content can be store. This allows to get the JSON itself from the search engine using the <classname>Resource</classname> API, as well as converting back the search results into the actual JSON object (jettison, grails, the default, or a custom one).
+    </para>
+    
+    <para>
+      The following mapping definition shows how to map JSON to also store its content:
+<programlisting><![CDATA[<root-json-object alias="addressbook">
+    <json-id name="id" />
+    <json-property name="name" />
+    <json-object name="address" dynamic="true" />
+    <json-content name="content" />
+</root-json-object>
+]]></programlisting>      
+    </para>
+    
+    <para>
+      This will cause Compass to store the actual JSON content under a Resource Property named content. Here is an example of how it can be retrieved back from the search engine:
+<programlisting><![CDATA[Resource resource = session.loadResource("addressbook", 1);
+resource.getValue("content"); // will get actual json string
+]]></programlisting>      
+    </para>
+    
+    <para>
+      In order to convert back to the actual JSON object, a converter instructing Compass how to convert the JSON string back to your favorite JSON object model should be registered with Compass. For example, to register the jettison based converter, the setting named <literal>compass.jsonContentConverter.type</literal> should be set to <literal>org.compass.core.json.jettison.converter.JettisonContentConverter</literal>. In order to register the grails converter the setting should be set to <literal>org.compass.core.json.grails.converter.GrailsContentConverter</literal>. And, in order to use the default build in Compass implementation the setting should be set to <literal>org.compass.core.json.impl.converter.DefaultJSONContentConverterImpl</literal>.
+    </para>
+    
+    <para>
+        By default, the content converter registered with Compass is the default one.
+    </para>
+  </sect1>
+  
+  <sect1 id="jsem-raw-json-object">
+    <title>Raw Json Object</title>
+    
+    <para>
+      When configuring a JSON content converter, Compass now knows how to convert a <classname>JsonObject</classname> to and from a JSON string. This allows to use Compass <classname>RawJsonObject</classname> and <classname>RawAliasedJsonObject</classname>. The raw json objects are simple JSON string holders that are then converted by Compass automatically when saved into the preferred <classname>JsonObject</classname>. This simplifies saving JSON objects by just constructing the raw objects based on json strings. Here is an example:
+<programlisting><![CDATA[JsonObject jsonObject = new RawAliasedJsonObject("addressbook", "json string goes here");
+// this will index the provided JSON
+session.save(jsonObject);
+]]></programlisting>      
+    </para>
+  </sect1>
 </chapter>
