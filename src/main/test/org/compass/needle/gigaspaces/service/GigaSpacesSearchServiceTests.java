@@ -34,9 +34,17 @@ public class GigaSpacesSearchServiceTests extends AbstractDependencyInjectionSpr
         assertEquals(1, results.getTotalLength());
         assertEquals("test", ((A) results.getResults()[0].getData()).getValue());
 
+        results = clientSearchService.search("noway");
+        assertEquals(0, results.getTotalLength());
+        assertEquals(0, results.getResults().length);
+
         SearchResourceResults resourceResults = clientSearchService.searchResource("test");
         assertEquals(1, resourceResults.getTotalLength());
         assertEquals("test", resourceResults.getResults()[0].getResource().getValue("value"));
+
+        resourceResults = clientSearchService.searchResource("noway");
+        assertEquals(0, resourceResults.getTotalLength());
+        assertEquals(9, resourceResults.getResults().length);
 
         a = new A();
         a.value = "best";
