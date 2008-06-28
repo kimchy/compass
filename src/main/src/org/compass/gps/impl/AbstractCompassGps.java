@@ -81,21 +81,11 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
     }
 
     protected boolean hasMappingForEntity(Class clazz, Compass checkedCompass, CascadeMapping.Cascade cascade) {
-        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getRootMappingByClass(clazz);
-        if (resourceMapping != null) {
-            return true;
-        }
-        resourceMapping = ((InternalCompass) checkedCompass).getMapping().getNonRootMappingByClass(clazz);
-        return resourceMapping != null && resourceMapping.operationAllowed(cascade);
+        return ((InternalCompass) checkedCompass).getMapping().hasMappingForClass(clazz, cascade);
     }
 
     protected boolean hasMappingForEntity(String name, Compass checkedCompass, CascadeMapping.Cascade cascade) {
-        ResourceMapping resourceMapping = ((InternalCompass) checkedCompass).getMapping().getRootMappingByAlias(name);
-        if (resourceMapping != null) {
-            return true;
-        }
-        resourceMapping = ((InternalCompass) checkedCompass).getMapping().getNonRootMappingByAlias(name);
-        return resourceMapping != null && resourceMapping.operationAllowed(cascade);
+        return ((InternalCompass) checkedCompass).getMapping().hasMappingForAlias(name, cascade);
     }
 
     protected ResourceMapping getRootMappingForEntity(Class clazz, Compass checkedCompass) {

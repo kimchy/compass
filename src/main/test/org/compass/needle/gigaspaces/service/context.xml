@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:os-core="http://www.openspaces.org/schema/core"
+       xmlns:os-events="http://www.openspaces.org/schema/events"
+       xmlns:os-remoting="http://www.openspaces.org/schema/remoting"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.openspaces.org/schema/core http://www.openspaces.org/schema/core/openspaces-core.xsd
+       http://www.openspaces.org/schema/events http://www.openspaces.org/schema/events/openspaces-events.xsd
+       http://www.openspaces.org/schema/remoting http://www.openspaces.org/schema/remoting/openspaces-remoting.xsd">
+
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <!-- Space 1 construction -->
+
+    <os-core:space id="space1" url="/./searchService" lookup-groups="${user.name}">
+        <os-core:filter-provider ref="serviceExporter1"/>
+    </os-core:space>
+
+    <os-core:giga-space id="gigaSpace1" space="space1"/>
+
+    <bean id="compass1" class="org.compass.spring.LocalCompassBean" depends-on="space1">
+        <property name="settings">
+            <map>
+                <entry key="compass.engine.connection" value="space://test:space1"/>
+                <entry key="space1" value-ref="space1"/>
+
+                <entry key="compass.osem.supportUnmarshall" value="false" />
+            </map>
+        </property>
+        <property name="mappingScan" value="org.compass.needle.gigaspaces.service" />
+    </bean>
+
+    <bean id="searchService1" class="org.compass.needle.gigaspaces.service.ServerCompassSearchService">
+        <property name="compass" ref="compass1"/>
+        <property name="gigaSpace" ref="gigaSpace1"/>
+    </bean>
+
+    <os-remoting:service-exporter id="serviceExporter1">
+        <os-remoting:service ref="searchService1"/>
+    </os-remoting:service-exporter>
+
+
+    <bean id="indexService1" class="org.compass.needle.gigaspaces.service.CompassIndexEventListener">
+        <constructor-arg ref="compass1"/>
+    </bean>
+
+    <os-events:notify-container id="eventContainer1" giga-space="gigaSpace1">
+        <os-events:notify write="true" lease-expire="true" take="true" update="true"/>
+
+        <os-core:template>
+            <bean class="org.compass.needle.gigaspaces.service.A"/>
+        </os-core:template>
+
+        <os-events:listener ref="indexService1"/>
+
+    </os-events:notify-container>
+
+
+    <!-- Client Side -->
+
+    <os-core:giga-space id="clusteredGigaSpace" space="space1" clustered="true"/>
+
+    <bean id="clientSearchService" class="org.compass.needle.gigaspaces.service.ClientCompassSearchService">
+        <constructor-arg ref="clusteredGigaSpace"/>
+    </bean>
+</beans>

@@ -30,6 +30,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.AbstractDirectoryStore;
 import org.compass.core.lucene.engine.store.CopyFromHolder;
+import org.openspaces.core.GigaSpace;
 
 /**
  * A plugin lucene store for Compass. Uses {@link GigaSpaceDirectory}
@@ -56,16 +57,28 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
     public void configure(CompassSettings settings) throws CompassException {
         String connection = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
         int index = connection.indexOf(':');
+        if (index == -1) {
+            throw new ConfigurationException("Must provide index name and space url in the format indexName:spaceUrl");
+        }
         this.indexName = connection.substring(0, index);
 
         String spaceUrl = connection.substring(index + 1);
+
+        Object spaceInstance = settings.getSettingAsObject(spaceUrl);
+        if (spaceInstance instanceof IJSpace) {
+            space = (IJSpace) spaceInstance;
+        } else if (spaceInstance instanceof GigaSpace) {
+            space = ((GigaSpace) spaceInstance).getSpace();
+        } else {
+            try {
+                space = (IJSpace) SpaceFinder.find(spaceUrl, settings.getProperties());
+            } catch (Exception e) {
+                throw new ConfigurationException("Failed to find Space [" + spaceUrl + "]", e);
+            }
+        }
+
         bucketSize = settings.getSettingAsInt(BUCKET_SIZE_PROP, GigaSpaceDirectory.DEFAULT_BUCKET_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, GigaSpaceDirectory.DEFAULT_FLUSH_RATE);
-        try {
-            space = (IJSpace) SpaceFinder.find(spaceUrl, settings.getProperties());
-        } catch (Exception e) {
-            throw new ConfigurationException("Failed to find Space [" + spaceUrl + "]", e);
-        }
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {

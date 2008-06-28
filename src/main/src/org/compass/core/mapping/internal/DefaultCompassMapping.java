@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.AliasMapping;
+import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyLookup;
@@ -383,6 +384,25 @@ public class DefaultCompassMapping implements InternalCompassMapping {
      */
     public List<ResourceMapping> getAllDirectMappingByClass(Class clazz) {
         return mappingsByClass.getUnmodifiableMappingsByName(clazz.getName());
+    }
+
+
+    public boolean hasMappingForClass(Class clazz, CascadeMapping.Cascade cascade) {
+        ResourceMapping resourceMapping = getRootMappingByClass(clazz);
+        if (resourceMapping != null) {
+            return true;
+        }
+        resourceMapping = getNonRootMappingByClass(clazz);
+        return resourceMapping != null && resourceMapping.operationAllowed(cascade);
+    }
+
+    public boolean hasMappingForAlias(String alias, CascadeMapping.Cascade cascade) {
+        ResourceMapping resourceMapping = getRootMappingByAlias(alias);
+        if (resourceMapping != null) {
+            return true;
+        }
+        resourceMapping = getNonRootMappingByAlias(alias);
+        return resourceMapping != null && resourceMapping.operationAllowed(cascade);
     }
 
     /**

@@ -162,8 +162,8 @@ public class CompassConfiguration {
      * @param value   The setting value
      * @return <code>CompassConfiguration</code> for method chaining
      */
-    public CompassConfiguration setSetting(String setting, String value) {
-        settings.setSetting(setting, value);
+    public CompassConfiguration setSetting(String setting, Object value) {
+        settings.setObjectSetting(setting, value);
         return this;
     }
 

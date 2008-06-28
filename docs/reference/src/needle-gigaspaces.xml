@@ -2,11 +2,19 @@
 	<title>GigaSpaces</title>
 	
 	<sect1 id="needle-gigaspaces-introduction">
-	    <title>Overview</title>
-	    
-	    <para>
-	        The Compass Needle <ulink url="http://www.gigaspaces.com">GigaSpaces</ulink> integration allows to store a Lucene index within GigaSpaces. It also allows to automatically index the data grid using Compass OSEM support and mirror changes done to the data grid into the search engine.
-	    </para>
+    <title>Overview</title>
+    
+    <para>
+        The Compass Needle <ulink url="http://www.gigaspaces.com">GigaSpaces</ulink> integration allows to store a Lucene index within GigaSpaces. It also allows to automatically index the data grid using Compass OSEM support and mirror changes done to the data grid into the search engine.
+    </para>
+    
+    <para>
+      On top of storing the index on GigaSpaces cluster, the integration allows for two automatic indexing and search integration. The first integrates with GigaSpaces mirror service which allows to replicate in a reliable asyncronous manner changes that occur on the space to an external data source implemented by Compass (which, in turn, can store the index on another Space). Searching in this scenario is simple as another Compass instance that connects to the remote Space where the index is stored can be created for search purposes.
+    </para>
+    
+    <para>
+      The seconds integration allows to perform a collocated indexing where each Space cluster member will have an embedded indexing service that will index changes done on the Space using notifications and store the index only on its local embedded Space. Searching is done using OpenSpaces sync remoting allowing to broadcast the search query to all partitions.
+    </para>
 	</sect1>
 	
 	<sect1 id="needle-gigasapces-directory">
@@ -14,6 +22,17 @@
 	    <para>
 	        Compass provides a <classname>GigaSpaceDirectory</classname> which is an implementation of Lucene <classname>Directory</classname> allowing to store the index within GigaSpaces data grid.
 	    </para>
+	    
+	    <para>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/needle-gigaspaces-store.png" format="PNG" align="center" />
+          </imageobject>
+          <caption>
+            <para>GigaSpaces Lucene Directory Based Store</para>
+          </caption>
+        </mediaobject>
+      </para>
 	    
 	    <para>
 	        Here is a simple example of how it can be used:
@@ -75,46 +94,153 @@ compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
 	</sect1>
 	
 	<sect1 id="needle-gigaspaces-mirror">
-	    <title>Searchable Space</title>
-	    
-	    <para>
-	        The GigaSpaces integration comes with a built in external data source that can be used with GigaSpaces <ulink url="http://www.gigaspaces.com/wiki/display/GS6/Mirror+Service+-+6.0">Mirror Service</ulink>. Basically, a mirror allows to mirror changes done to the Space (data grid) into the search engine in a reliable asynchronous manner. The following is an example of how it can be configured within a mirror processing unit (for more information see <ulink url="http://www.gigaspaces.com/wiki/display/GS6/Open+Spaces+Persistency+Scenarios+-+Mirror">here</ulink>)
-	    </para>
-	    
-	    <para>
-<programlisting><![CDATA[<beans xmlns="http://www.springframework.org/schema/beans" ...
+    <title>Searchable Space (Using Mirror Service)</title>
+
+    <para>
+        The GigaSpaces integration comes with a built in external data source that can be used with GigaSpaces <ulink url="http://www.gigaspaces.com/wiki/display/GS6/Mirror+Service+-+6.0">Mirror Service</ulink>. Basically, a mirror allows to mirror changes done to the Space (data grid) into the search engine in a reliable asynchronous manner.
+    </para>
+
+    <para>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/needle-gigaspaces-mirror.png" format="PNG" align="center" />
+        </imageobject>
+        <caption>
+          <para>GigaSpaces Mirror Compass Integration</para>
+        </caption>
+      </mediaobject>
+    </para>
     
-  <bean id="compass" class="org.compass.spring.LocalCompassBean">
-     <property name="classMappings">
-       <list>
-         <value>eg.Blog</value>
-         <value>eg.Post</value>
-         <value>eg.Comment</value>
-       </list>
-     </property>
-     <property name="compassSettings">
-       <props>
-         <prop key="compass.engine.connection">space://blog:jini://*/*/searchContent</prop>
-         <!--  Configure expiration time so other clients that 
-               haven't refreshed the cache will still see deleted files -->
-         <prop key="compass.engine.store.indexDeletionPolicy.type">expirationtime</prop>
-         <prop key="compass.engine.store.indexDeletionPolicy.expirationTimeInSeconds">300</prop>
-       </props>
-     </property>
-  </bean>
+    <para>
+      The following is an example of how it can be configured within a mirror processing unit (for more information see <ulink url="http://www.gigaspaces.com/wiki/display/GS6/Open+Spaces+Persistency+Scenarios+-+Mirror">here</ulink>):
+    </para>
+    
+    <para>
+<programlisting><![CDATA[<beans xmlns="http://www.springframework.org/schema/beans" ...
+  
+<bean id="compass" class="org.compass.spring.LocalCompassBean">
+   <property name="classMappings">
+     <list>
+       <value>eg.Blog</value>
+       <value>eg.Post</value>
+       <value>eg.Comment</value>
+     </list>
+   </property>
+   <property name="compassSettings">
+     <props>
+       <prop key="compass.engine.connection">space://blog:jini://*/*/searchContent</prop>
+       <!--  Configure expiration time so other clients that 
+             haven't refreshed the cache will still see deleted files -->
+       <prop key="compass.engine.store.indexDeletionPolicy.type">expirationtime</prop>
+       <prop key="compass.engine.store.indexDeletionPolicy.expirationTimeInSeconds">300</prop>
+     </props>
+   </property>
+</bean>
 
-  <bean id="compassDataSource" class="org.compass.needle.gigaspaces.CompassDataSource">
-    <property name="compass" ref="compass" />
-  </bean>
+<bean id="compassDataSource" class="org.compass.needle.gigaspaces.CompassDataSource">
+  <property name="compass" ref="compass" />
+</bean>
 
-  <os-core:space id="mirrodSpace" url="/./mirror-service" schema="mirror" 
-                 external-data-source="compassDataSource" />
+<os-core:space id="mirrodSpace" url="/./mirror-service" schema="mirror" 
+               external-data-source="compassDataSource" />
 </beans>
 ]]></programlisting>      	        
-	    </para>
-	    
-	    <para>
-	        The above configuration will mirror any changes done in the data grid into the search engine through the Compass instance. It will, further more, connect and store the index content on a specific Space called blog.
-	    </para>
+    </para>
+    
+    <para>
+        The above configuration will mirror any changes done in the data grid into the search engine through the Compass instance. It will, further more, connect and store the index content on a specific Space called blog.
+    </para>
 	</sect1>
+
+	<sect1 id="needle-gigaspaces-mirror">
+    <title>Searchable Space (Using Embedded Service)</title>
+
+    <para>
+      Compass and be integrated with GigaSpaces allows for seamless indexing of objects and search using an embedded indexing and search service. The integration runs an embedded indexing service within each cluster member that is responsible for indexing only the specific cluster data (and probably storing the relevant index on that embedded space for performance). Search is done by client applications by broadcasting the search request to all partitions and reducing the results back on the client side. Here is a diagram showing the process:
+    </para>
+
+    <para>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/needle-gigaspaces-service.png" format="PNG" align="center" />
+        </imageobject>
+        <caption>
+          <para>GigaSpaces Service Compass Integration</para>
+        </caption>
+      </mediaobject>
+    </para>
+    
+    <para>
+      The integrations builds on top of GigaSpaces OpenSpaces build in components. On the "server" side (the processing unit that starts up the relevant space cluster members), the following configuration should be added:
+<programlisting><![CDATA[<beans xmlns="http://www.springframework.org/schema/beans" ...
+
+  <os-core:space id="space" url="/./space"">
+      <os-core:filter-provider ref="serviceExporter"/>
+  </os-core:space>
+
+  <os-core:giga-space id="gigaSpace" space="space"/>
+
+  <bean id="compass" class="org.compass.spring.LocalCompassBean" depends-on="space">
+      <property name="settings">
+          <map>
+              <entry key="compass.engine.connection" value="space://test:space"/>
+              <entry key="space" value-ref="space"/>
+
+              <entry key="compass.osem.supportUnmarshall" value="false" />
+          </map>
+      </property>
+      <property name="mappingScan" value="com.mycompany" />
+  </bean>
+
+  <bean id="searchService" class="org.compass.needle.gigaspaces.service.ServerCompassSearchService">
+      <property name="compass" ref="compass"/>
+      <property name="gigaSpace" ref="gigaSpace"/>
+  </bean>
+
+  <os-remoting:service-exporter id="serviceExporter">
+      <os-remoting:service ref="searchService"/>
+  </os-remoting:service-exporter>
+
+
+  <bean id="indexService" class="org.compass.needle.gigaspaces.service.CompassIndexEventListener">
+      <constructor-arg ref="compass"/>
+  </bean>
+
+  <os-events:notify-container id="eventContainer" giga-space="gigaSpace">
+      <os-events:notify write="true" lease-expire="true" take="true" update="true"/>
+
+      <os-core:template>
+          <bean class="com.mycompany.model.Order"/>
+      </os-core:template>
+
+      <os-events:listener ref="indexService"/>
+
+  </os-events:notify-container>
+</beans>
+]]></programlisting>      	        
+    </para>
+    
+    <para>
+      The above configuration starts up an embedded space (the clustering model is chosen during deployment time). It creates a Compass instance that stores the index on the embedded local space cluster member. It uses the notify container to listen for notifications of changes happening on the embedded cluster member and index them using the Compass instance. It also exposes a sync remoting service that implements the <classname>CompassSearchService</classname> interface. The service performs a search using Compass on top of the collocated space and loads objects back from the collocated space. Note, all operations are done in memory in a collocated manner.
+    </para>
+    
+    <para>
+      On the client side, both programmatic and Spring based configuration can be used. Here is an example of the spring based configuration:
+<programlisting><![CDATA[<beans xmlns="http://www.springframework.org/schema/beans" ...
+
+  <os-core:space id="space" url="jini://*/*/space" />
+  
+  <os-core:giga-space id="gigaSpace" space="space"/>
+
+  <bean id="searchService" class="org.compass.needle.gigaspaces.service.ClientCompassSearchService">
+      <constructor-arg ref="clusteredGigaSpace"/>
+  </bean>
+</beans>
+]]></programlisting>      	        
+    </para>
+    
+    <para>
+      The above configuration connects to a remote space. It creates the client side search service that also implements <classname>CompassSearchService</classname>. The search operation is automatically broadcast to all relevant partitions, performed in a collocated manner on them, and then reduced back on the client side.
+    </para>
+  </sect1>
 </chapter>

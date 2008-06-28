@@ -58,6 +58,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     private Resource configLocation;
 
+    private String mappingScan;
+
     private Resource[] configLocations;
 
     private Resource[] resourceLocations;
@@ -131,6 +133,13 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
      */
     public void setConfigLocations(Resource[] configLocations) {
         this.configLocations = configLocations;
+    }
+
+    /**
+     * @see org.compass.core.config.CompassConfiguration#addScan(String) 
+     */
+    public void setMappingScan(String basePackage) {
+        this.mappingScan = basePackage;
     }
 
     public void setCompassSettings(Properties compassSettings) {
@@ -248,6 +257,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
             for (Resource configLocation1 : configLocations) {
                 config.configure(configLocation1.getURL());
             }
+        }
+
+        if (this.mappingScan != null) {
+            config.addScan(this.mappingScan);
         }
 
         if (this.compassSettings != null) {
