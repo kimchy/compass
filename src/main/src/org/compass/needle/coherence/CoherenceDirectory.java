@@ -1,7 +1,8 @@
 package org.compass.needle.coherence;
 
+import java.util.Map;
+
 import com.tangosol.net.NamedCache;
-import org.apache.lucene.store.Directory;
 
 /**
  * An extension on top of Lucene directory implemented by different Coherence
@@ -20,4 +21,7 @@ public abstract class CoherenceDirectory extends Directory {
     abstract public int getBucketSize();
 
     abstract public int getFlushRate();
+
+    abstract public Map<String, IndexOutput> getOnGoingIndexOutputs();
 }
+

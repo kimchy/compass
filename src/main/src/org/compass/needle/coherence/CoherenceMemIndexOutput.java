@@ -114,14 +114,18 @@ class CoherenceMemIndexOutput extends IndexOutput {
             return;
         }
         open = false;
-        // flush any bucket we might have
-        flushBucket();
-        flushBuckets.put(firstBucketKey, firstBucketValue);
-        flushBuckets.put(new FileHeaderKey(dir.getIndexName(), fileName), new FileHeaderValue(System.currentTimeMillis(), length));
-        forceFlushBuckets();
-        buffer = null;
-        firstBucketKey = null;
-        firstBucketValue = null;
+        try {
+            // flush any bucket we might have
+            flushBucket();
+            flushBuckets.put(firstBucketKey, firstBucketValue);
+            flushBuckets.put(new FileHeaderKey(dir.getIndexName(), fileName), new FileHeaderValue(System.currentTimeMillis(), length));
+            forceFlushBuckets();
+            buffer = null;
+            firstBucketKey = null;
+            firstBucketValue = null;
+        } finally {
+            dir.getOnGoingIndexOutputs().remove(fileName);
+        }
     }
 
     public long getFilePointer() {

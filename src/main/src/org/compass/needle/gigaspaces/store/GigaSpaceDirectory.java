@@ -17,13 +17,13 @@
 package org.compass.needle.gigaspaces.store;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.j_spaces.core.IJSpace;
 import net.jini.core.lease.Lease;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
-import org.apache.lucene.store.IndexOutput;
-import org.openspaces.core.GigaSpace;
 
 /**
  * GigaSpace Directory is a Lucene directory built on top of GigaSpaces.
@@ -48,6 +48,10 @@ public class GigaSpaceDirectory extends Directory {
     private int bucketSize = DEFAULT_BUCKET_SIZE;
 
     private int flushRate = DEFAULT_FLUSH_RATE;
+
+    // we store an on going list of created index outputs since Lucene needs them
+    // *before* it closes the index output. It calls fileExists in the middle.
+    private Map<String, IndexOutput> onGoingIndexOutputs = new ConcurrentHashMap<String, IndexOutput>();
 
     public GigaSpaceDirectory(GigaSpace gigaSpace, String indexName) {
         this(gigaSpace.getSpace(), indexName);
@@ -84,19 +88,23 @@ public class GigaSpaceDirectory extends Directory {
         }
     }
 
+    Map<String, IndexOutput> getOnGoingIndexOutputs() {
+        return onGoingIndexOutputs;
+    }
+
     public IJSpace getSpace() {
         return space;
     }
 
-    public String getIndexName() {
+    String getIndexName() {
         return indexName;
     }
 
-    public int getBucketSize() {
+    int getBucketSize() {
         return bucketSize;
     }
 
-    public int getFlushRate() {
+    int getFlushRate() {
         return flushRate;
     }
 
@@ -116,6 +124,9 @@ public class GigaSpaceDirectory extends Directory {
     }
 
     public boolean fileExists(String fileName) throws IOException {
+        if (onGoingIndexOutputs.containsKey(fileName)) {
+            return true;
+        }
         FileEntry fileEntry = new FileEntry(indexName, fileName);
         try {
             int count = space.count(fileEntry, null);
@@ -198,7 +209,9 @@ public class GigaSpaceDirectory extends Directory {
     }
 
     public IndexOutput createOutput(String fileName) throws IOException {
-        return new GigaSpaceMemIndexOutput(this, fileName);
+        IndexOutput out = new GigaSpaceMemIndexOutput(this, fileName);
+        onGoingIndexOutputs.put(fileName, out);
+        return out;
     }
 
     /**

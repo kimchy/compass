@@ -113,11 +113,15 @@ class GigaSpaceMemIndexOutput extends IndexOutput {
             return;
         }
         open = false;
-        // flush any bucket we might have
-        flushBucket();
-        forceFlushBuckets(firstBucketEntry, new FileEntry(dir.getIndexName(), fileName, length));
-        buffer = null;
-        firstBucketEntry = null;
+        try {
+            // flush any bucket we might have
+            flushBucket();
+            forceFlushBuckets(firstBucketEntry, new FileEntry(dir.getIndexName(), fileName, length));
+            buffer = null;
+            firstBucketEntry = null;
+        } finally {
+            dir.getOnGoingIndexOutputs().remove(fileName);
+        }
     }
 
     public long getFilePointer() {

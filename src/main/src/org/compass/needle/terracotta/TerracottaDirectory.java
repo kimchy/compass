@@ -54,6 +54,10 @@ public class TerracottaDirectory extends Directory {
 
     private final int flushRate;
 
+    // we store an on going list of created index outputs since Lucene needs them
+    // *before* it closes the index output. It calls fileExists in the middle.
+    private transient Map<String, IndexOutput> onGoingIndexOutputs = new ConcurrentHashMap<String, IndexOutput>();
+
     public TerracottaDirectory() {
         this(DEFAULT_BUFFER_SIZE, DEFAULT_FLUSH_RATE);
     }
@@ -112,6 +116,9 @@ public class TerracottaDirectory extends Directory {
      * Returns true iff the named file exists in this directory.
      */
     public final boolean fileExists(String name) {
+        if (onGoingIndexOutputs.containsKey(name)) {
+            return true;
+        }
         return fileMap.containsKey(name);
     }
 
@@ -197,7 +204,9 @@ public class TerracottaDirectory extends Directory {
      * Creates a new, empty file in the directory with the given name. Returns a stream writing this file.
      */
     public IndexOutput createOutput(String name) throws IOException {
-        return new TerracottaIndexOutput(this, name);
+        IndexOutput indexOutput = new TerracottaIndexOutput(this, name);
+        onGoingIndexOutputs.put(name, indexOutput);
+        return indexOutput;
     }
 
     /**
@@ -221,6 +230,10 @@ public class TerracottaDirectory extends Directory {
 
     int getFlushRate() {
         return flushRate;
+    }
+
+    Map<String, IndexOutput> getOnGoingIndexOutputs() {
+        return onGoingIndexOutputs;
     }
 
     /**
