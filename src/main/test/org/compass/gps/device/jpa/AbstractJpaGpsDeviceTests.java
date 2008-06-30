@@ -16,6 +16,9 @@
 
 package org.compass.gps.device.jpa;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -72,9 +75,15 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
 
     protected abstract void setUpCoreCompass(CompassConfiguration conf);
 
-    protected void setUpCompass() {
+    protected void setUpCompass() throws Exception {
         CompassConfiguration cpConf = new CompassAnnotationsConfiguration()
                 .setConnection("target/test-index");
+        File testPropsFile = new File("compass.test.properties");
+        if (testPropsFile.exists()) {
+            Properties testProps = new Properties();
+            testProps.load(new FileInputStream(testPropsFile));
+            cpConf.getSettings().addSettings(testProps);
+        }
         setUpCoreCompass(cpConf);
         compass = cpConf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
