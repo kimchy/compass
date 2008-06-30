@@ -19,7 +19,9 @@ package org.compass.needle.coherence;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
@@ -71,6 +73,9 @@ public class DataGridCoherenceDirectory extends CoherenceDirectory {
 
     private Filter listFilter;
 
+    // we store an on going list of created index outputs since Lucene needs them
+    // *before* it closes the index output. It calls fileExists in the middle.
+    private transient Map<String, IndexOutput> onGoingIndexOutputs = new ConcurrentHashMap<String, IndexOutput>();
 
     public DataGridCoherenceDirectory(String cacheName) {
         this(cacheName, cacheName, DEFAULT_BUCKET_SIZE);
@@ -131,6 +136,10 @@ public class DataGridCoherenceDirectory extends CoherenceDirectory {
         return this.flushRate;
     }
 
+    public Map<String, IndexOutput> getOnGoingIndexOutputs() {
+        return onGoingIndexOutputs;
+    }
+
     public ValueExtractor getIndexNameKeyExtractor() {
         return indexNameKeyExtractor;
     }
@@ -148,6 +157,9 @@ public class DataGridCoherenceDirectory extends CoherenceDirectory {
     }
 
     public boolean fileExists(String name) throws IOException {
+        if (onGoingIndexOutputs.containsKey(name)) {
+            return true;
+        }
         return cache.containsKey(new FileHeaderKey(indexName, name));
     }
 
@@ -216,7 +228,9 @@ public class DataGridCoherenceDirectory extends CoherenceDirectory {
     }
 
     public IndexOutput createOutput(String name) throws IOException {
-        return new CoherenceMemIndexOutput(this, name);
+        IndexOutput indexOutput = new CoherenceMemIndexOutput(this, name);
+        onGoingIndexOutputs.put(name, indexOutput);
+        return indexOutput;
     }
 
     public IndexInput openInput(String name) throws IOException {

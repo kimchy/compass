@@ -122,6 +122,7 @@ public class TerracottaIndexOutput extends IndexOutput {
         dir.addFile(name, file);
         buffer = null;
         firstBuffer = null;
+        dir.getOnGoingIndexOutputs().remove(name);
     }
 
     public long getFilePointer() {
