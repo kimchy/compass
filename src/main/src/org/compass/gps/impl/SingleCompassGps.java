@@ -55,11 +55,11 @@ public class SingleCompassGps extends AbstractCompassGps {
 
     private CompassTemplate compassTemplate;
 
-    private Compass indexCompass;
+    private volatile Compass indexCompass;
 
-    private CompassTemplate indexCompassTemplate;
+    private volatile CompassTemplate indexCompassTemplate;
 
-    private CompassTransaction.TransactionIsolation indexTransactionIsolation = CompassTransaction.TransactionIsolation.LUCENE;
+    private volatile CompassTransaction.TransactionIsolation indexTransactionIsolation = CompassTransaction.TransactionIsolation.LUCENE;
 
     private Map<String, Object> indexSettings;
 
