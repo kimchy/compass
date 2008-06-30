@@ -24,6 +24,8 @@ import com.j_spaces.core.IJSpace;
 import net.jini.core.lease.Lease;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
+import org.apache.lucene.store.IndexOutput;
+import org.openspaces.core.GigaSpace;
 
 /**
  * GigaSpace Directory is a Lucene directory built on top of GigaSpaces.
