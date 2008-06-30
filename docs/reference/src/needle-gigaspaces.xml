@@ -242,5 +242,9 @@ compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
     <para>
       The above configuration connects to a remote space. It creates the client side search service that also implements <classname>CompassSearchService</classname>. The search operation is automatically broadcast to all relevant partitions, performed in a collocated manner on them, and then reduced back on the client side.
     </para>
+    
+    <para>
+      Note, exposing other more advance forms of queries, or using other Compass APIs (such as term frequencies), can be done by exposing other remoting services in a similar manner to how the search API is done.
+    </para>
   </sect1>
 </chapter>
