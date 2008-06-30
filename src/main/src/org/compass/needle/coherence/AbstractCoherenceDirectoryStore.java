@@ -23,6 +23,7 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.ConfigurationException;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.AbstractDirectoryStore;
@@ -49,6 +50,9 @@ public abstract class AbstractCoherenceDirectoryStore extends AbstractDirectoryS
         String connection = findConnection(settings.getSetting(CompassEnvironment.CONNECTION));
         int index = connection.indexOf(':');
         this.indexName = connection.substring(0, index);
+        if (index == -1) {
+            throw new ConfigurationException("Must provide index name and space url in the format indexName:cacheName");
+        }
         String cacheName = connection.substring(index + 1);
 
         bucketSize = settings.getSettingAsInt(BUCKET_SIZE_PROP, DataGridCoherenceDirectory.DEFAULT_BUCKET_SIZE);
