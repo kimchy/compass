@@ -15,6 +15,7 @@ Release Process:
 * Upload the release files (zip files) to sourceforge.
 * Run "ant mvn" and Upload the jars into repo.compass-project.org.
 * Upload the new documentation to compass-project site.
+* Upload new schema and dtd files.
 * Update the Compass homepage with links to the new release.
 * Change project.properties compass-version to the next version
 * Change docs/reference/src/compass.xml releaseInfo to the next version

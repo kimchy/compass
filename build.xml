@@ -268,7 +268,7 @@
                 <include name="org/compass/**"/>
             </packageset>
             <link href="http://java.sun.com/j2se/1.5.0/docs/api"/>
-            <link href="http://lucene.apache.org/java/2_3_1/api/"/>
+            <link href="http://lucene.apache.org/java/2_3_2/api/"/>
             <link href="http://www.junit.org/junit/javadoc/"/>
             <link href="http://www.hibernate.org/hib_docs/v3/api/"/>
             <link href="http://www.hibernate.org/hib_docs/ejb3-api/"/>
