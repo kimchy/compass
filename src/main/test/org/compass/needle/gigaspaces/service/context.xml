@@ -25,7 +25,7 @@
         <property name="settings">
             <map>
                 <entry key="compass.engine.connection" value="space://test:space1"/>
-                <entry key="space1" value-ref="space1"/>
+                <entry key="space1" value-ref="gigaSpace1"/>
 
                 <entry key="compass.osem.supportUnmarshall" value="false" />
             </map>

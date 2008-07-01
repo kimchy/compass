@@ -184,7 +184,7 @@ compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
       <property name="settings">
           <map>
               <entry key="compass.engine.connection" value="space://test:space"/>
-              <entry key="space" value-ref="space"/>
+              <entry key="space" value-ref="gigaSpace"/>
 
               <entry key="compass.osem.supportUnmarshall" value="false" />
           </map>
