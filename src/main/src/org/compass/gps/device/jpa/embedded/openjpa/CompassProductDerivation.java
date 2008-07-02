@@ -174,11 +174,6 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         return false;
     }
 
-    @Override
-    public String getConfigurationPrefix() {
-        return "compass";
-    }
-
     /**
      * @deprecated This is only needed for pre-1.0 versions of OpenJPA.
      */
