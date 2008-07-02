@@ -38,7 +38,7 @@ public abstract class AbstractSimpleJpaGpsDeviceTests extends AbstractJpaGpsDevi
     }
 
     @Override
-    protected void setUpDB(EntityManager entityManager) {
+    protected void setUpDB(EntityManager entityManager) throws Exception {
         Simple simple = new Simple();
         simple.setId(1);
         simple.setValue("value1");

@@ -27,6 +27,8 @@ import junit.framework.TestCase;
 import org.compass.annotations.config.CompassAnnotationsConfiguration;
 import org.compass.core.Compass;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.optimizer.NullOptimizer;
 import org.compass.gps.CompassGps;
 import org.compass.gps.impl.SingleCompassGps;
 
@@ -77,7 +79,7 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
 
     protected void setUpCompass() throws Exception {
         CompassConfiguration cpConf = new CompassAnnotationsConfiguration()
-                .setConnection("target/test-index");
+                .setConnection("target/test-index").setSetting(LuceneEnvironment.Optimizer.TYPE, NullOptimizer.class.getName());
         File testPropsFile = new File("compass.test.properties");
         if (testPropsFile.exists()) {
             Properties testProps = new Properties();
@@ -100,14 +102,14 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
         jpaGpsDevice.setName("jdoDevice");
         jpaGpsDevice.setEntityManagerFactory(entityManagerFactory);
         addDeviceSettings(jpaGpsDevice);
-        ((SingleCompassGps) compassGps).addGpsDevice(jpaGpsDevice);
+        compassGps.addGpsDevice(jpaGpsDevice);
     }
 
     protected void addDeviceSettings(JpaGpsDevice device) {
 
     }
 
-    protected void setUpDB() {
+    protected void setUpDB() throws Exception {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction entityTransaction = entityManager.getTransaction();
         entityTransaction.begin();
@@ -116,7 +118,7 @@ public abstract class AbstractJpaGpsDeviceTests extends TestCase {
         entityManager.close();
     }
 
-    protected void setUpDB(EntityManager entityManager) {
+    protected void setUpDB(EntityManager entityManager) throws Exception {
     }
 
     protected void tearDownDB() {

@@ -31,6 +31,16 @@ public class NullOptimizer extends AbstractOptimizer {
         return false;
     }
 
+    @Override
+    public void optimize() throws SearchEngineException {
+        // do nothing
+    }
+
+    @Override
+    public void optimize(String subIndex) throws SearchEngineException {
+        // do nothing
+    }
+
     protected void doOptimize(String subIndex) throws SearchEngineException {
         // do nothing
     }
