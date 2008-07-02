@@ -40,6 +40,7 @@ import org.apache.openjpa.kernel.Broker;
 import org.apache.openjpa.kernel.BrokerFactory;
 import org.apache.openjpa.lib.conf.AbstractProductDerivation;
 import org.apache.openjpa.lib.conf.Configuration;
+import org.apache.openjpa.lib.conf.ConfigurationProvider;
 import org.apache.openjpa.persistence.EntityManagerFactoryImpl;
 import org.apache.openjpa.persistence.Extent;
 import org.apache.openjpa.persistence.OpenJPAEntityManager;
@@ -133,12 +134,13 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
     private boolean openJpaControlledTransaction;
 
-    private Properties compassProperties;
+    private Properties compassProperties = new Properties();
 
     public int getType() {
         return TYPE_FEATURE;
     }
 
+    @Override
     public boolean beforeConfigurationLoad(Configuration config) {
         if (!(config instanceof OpenJPAConfiguration)) {
             return false;
@@ -172,6 +174,11 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         return false;
     }
 
+    @Override
+    public String getConfigurationPrefix() {
+        return "compass";
+    }
+
     /**
      * @deprecated This is only needed for pre-1.0 versions of OpenJPA.
      */
@@ -185,20 +192,20 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         derivation.installIntoFactory(factory);
     }
 
+    @Override
+    public boolean beforeConfigurationConstruct(ConfigurationProvider cp) {
+        //noinspection unchecked
+        Map<String, Object> openJpaProps = cp.getProperties();
+        loadCompassProps(openJpaProps);
+        return super.beforeConfigurationConstruct(cp);
+    }
+
     private void installIntoFactory(BrokerFactory factory) {
         OpenJPAConfiguration openJpaConfig = factory.getConfiguration();
 
-        compassProperties = new Properties();
         //noinspection unchecked
         Map<String, Object> openJpaProps = openJpaConfig.toProperties(false);
-        for (Map.Entry<String, Object> entry : openJpaProps.entrySet()) {
-            if (entry.getKey().startsWith(COMPASS_PREFIX)) {
-                compassProperties.put(entry.getKey(), entry.getValue());
-            }
-            if (entry.getKey().startsWith(COMPASS_GPS_INDEX_PREFIX)) {
-                compassProperties.put(entry.getKey(), entry.getValue());
-            }
-        }
+        loadCompassProps(openJpaProps);
         if (compassProperties.isEmpty()) {
             return;
         }
@@ -299,6 +306,17 @@ public class CompassProductDerivation extends AbstractProductDerivation {
         }
 
         factory.putUserObject(COMPASS_GPS_USER_OBJECT_KEY, jpaCompassGps);
+    }
+
+    private void loadCompassProps(Map<String, Object> openJpaProps) {
+        for (Map.Entry<String, Object> entry : openJpaProps.entrySet()) {
+            if (entry.getKey().startsWith(COMPASS_PREFIX)) {
+                compassProperties.put(entry.getKey(), entry.getValue());
+            }
+            if (entry.getKey().startsWith(COMPASS_GPS_INDEX_PREFIX)) {
+                compassProperties.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     private OpenJPAEntityManagerFactory toEntityManagerFactory(BrokerFactory factory) {
