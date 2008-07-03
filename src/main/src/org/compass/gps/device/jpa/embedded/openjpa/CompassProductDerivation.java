@@ -134,7 +134,7 @@ public class CompassProductDerivation extends AbstractProductDerivation {
 
     private boolean openJpaControlledTransaction;
 
-    private Properties compassProperties = new Properties();
+    private Properties compassProperties;
 
     public int getType() {
         return TYPE_FEATURE;
@@ -190,20 +190,18 @@ public class CompassProductDerivation extends AbstractProductDerivation {
     @Override
     public boolean beforeConfigurationConstruct(ConfigurationProvider cp) {
         //noinspection unchecked
+        compassProperties = new Properties();
         Map<String, Object> openJpaProps = cp.getProperties();
         loadCompassProps(openJpaProps);
         return super.beforeConfigurationConstruct(cp);
     }
 
     private void installIntoFactory(BrokerFactory factory) {
-        OpenJPAConfiguration openJpaConfig = factory.getConfiguration();
-
-        //noinspection unchecked
-        Map<String, Object> openJpaProps = openJpaConfig.toProperties(false);
-        loadCompassProps(openJpaProps);
         if (compassProperties.isEmpty()) {
             return;
         }
+        
+        OpenJPAConfiguration openJpaConfig = factory.getConfiguration();
 
         CompassConfiguration compassConfiguration = CompassConfigurationFactory.newConfiguration();
         CompassSettings settings = compassConfiguration.getSettings();
