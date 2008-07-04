@@ -112,7 +112,7 @@ public class SqlMapClientGpsDevice extends AbstractParallelGpsDevice {
         IndexEntity[] entities = new IndexEntity[selectStatementsIds.length];
         for (int i = 0; i < selectStatementsIds.length; i++) {
             String statementId = selectStatementsIds[i];
-            MappedStatement statement = extSqlMapClient.getMappedStatement(statementId);
+            MappedStatement statement = extSqlMapClient.getDelegate().getMappedStatement(statementId);
             if (statement == null) {
                 throw new IllegalArgumentException("Failed to find statement for [" + statementId + "]");
             }
