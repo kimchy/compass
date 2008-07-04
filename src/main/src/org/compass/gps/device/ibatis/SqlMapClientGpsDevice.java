@@ -119,7 +119,7 @@ public class SqlMapClientGpsDevice extends AbstractParallelGpsDevice {
             Class resultClass = statement.getResultMap().getResultClass();
             ResourceMapping resourceMapping = ((CompassGpsInterfaceDevice) getGps()).getMappingForEntityForIndex(resultClass);
             if (resourceMapping == null) {
-                throw new IllegalArgumentException("Failed to find mapping for class [" + resultClass.getClass() + "]");
+                throw new IllegalArgumentException("Failed to find mapping for class [" + resultClass.getName() + "]");
             }
             Object parameterObject = null;
             if (statementsParameterObjects != null) {
