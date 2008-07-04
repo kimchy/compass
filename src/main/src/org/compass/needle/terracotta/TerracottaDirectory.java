@@ -56,7 +56,7 @@ public class TerracottaDirectory extends Directory {
 
     // we store an on going list of created index outputs since Lucene needs them
     // *before* it closes the index output. It calls fileExists in the middle.
-    private transient Map<String, IndexOutput> onGoingIndexOutputs = new ConcurrentHashMap<String, IndexOutput>();
+    private transient Map<String, Boolean> onGoingIndexOutputs = new ConcurrentHashMap<String, Boolean>();
 
     public TerracottaDirectory() {
         this(DEFAULT_BUFFER_SIZE, DEFAULT_FLUSH_RATE);
@@ -205,7 +205,7 @@ public class TerracottaDirectory extends Directory {
      */
     public IndexOutput createOutput(String name) throws IOException {
         IndexOutput indexOutput = new TerracottaIndexOutput(this, name);
-        onGoingIndexOutputs.put(name, indexOutput);
+        onGoingIndexOutputs.put(name, Boolean.TRUE);
         return indexOutput;
     }
 
@@ -232,7 +232,7 @@ public class TerracottaDirectory extends Directory {
         return flushRate;
     }
 
-    Map<String, IndexOutput> getOnGoingIndexOutputs() {
+    Map<String, Boolean> getOnGoingIndexOutputs() {
         return onGoingIndexOutputs;
     }
 
