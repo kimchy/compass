@@ -19,8 +19,8 @@ package org.compass.core;
 import org.compass.core.util.Parameter;
 
 /**
- * <p>A term and frequencies builder, allows to set different settings regaring
- * the avilable terms for certain properties and their respective frequencies.
+ * <p>A term and frequencies builder, allows to set different settings regarding
+ * the available terms for certain properties and their respective frequencies.
  *
  * <p>Allows to narrow down the sub indexes searched either by setting the aliases
  * or the sub indexes (or both of them).
