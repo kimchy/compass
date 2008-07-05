@@ -185,7 +185,7 @@ public abstract class LuceneHelper {
      */
     public static TermFreqVector[] getTermFreqVectors(CompassSession session, Resource resource)
             throws SearchEngineException {
-        resource = session.loadResource(resource.getAlias(), resource);
+        resource = ((InternalCompassSession) session).getResourceByIdResource(resource);
         String subIndex = ((InternalResource) resource).getSubIndex();
         LuceneSearchEngineInternalSearch internalSearch = getLuceneInternalSearch(session, new String[]{subIndex}, null);
         try {
@@ -206,7 +206,7 @@ public abstract class LuceneHelper {
      */
     public static TermFreqVector getTermFreqVector(CompassSession session, Resource resource, String propertyName)
             throws SearchEngineException {
-        resource = session.loadResource(resource.getAlias(), resource);
+        resource = ((InternalCompassSession) session).getResourceByIdResource(resource);
         String subIndex = ((InternalResource) resource).getSubIndex();
         LuceneSearchEngineInternalSearch internalSearch = getLuceneInternalSearch(session, new String[]{subIndex}, null);
         try {
