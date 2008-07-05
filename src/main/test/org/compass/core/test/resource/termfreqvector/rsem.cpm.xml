@@ -1,0 +1,18 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.1.dtd">
+
+<compass-core-mapping package="org.compass.core.test.resource.termfreqvector">
+
+    <resource alias="resource_a">
+        <resource-id name="id"/>
+        <resource-property name="code" exclude-from-all="false" store="yes" term-vector="yes"/>
+        <resource-property name="prop_all" exclude-from-all="false" store="yes" index="tokenized" term-vector="yes"/>
+    </resource>
+
+    <resource alias="resource_b">
+        <resource-id name="id"/>
+        <resource-property name="code" exclude-from-all="false" store="yes" term-vector="yes"/>
+        <resource-property name="prop_all" exclude-from-all="false" store="yes" index="tokenized" term-vector="yes"/>
+    </resource>
+</compass-core-mapping>
