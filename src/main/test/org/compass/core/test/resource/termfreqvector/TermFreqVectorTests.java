@@ -11,7 +11,7 @@ import org.compass.core.test.AbstractTestCase;
 public class TermFreqVectorTests extends AbstractTestCase {
 
     protected String[] getMappings() {
-        return new String[]{"resource/termfreqvector/Rsem.cpm.xml"};
+        return new String[]{"resource/termfreqvector/rsem.cpm.xml"};
     }
 
     public void testAllWithTermVectorRSEM() {
