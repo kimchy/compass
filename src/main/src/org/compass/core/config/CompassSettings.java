@@ -92,6 +92,10 @@ public class CompassSettings {
 
     public void addSettings(CompassSettings settings) {
         this.settings.putAll(settings.settings);
+        this.registry.putAll(settings.registry);
+        if (this.gloablSettings != null && settings.gloablSettings != null) {
+            this.gloablSettings.addSettings(settings.gloablSettings);
+        }
     }
 
     public CompassSettings copy() {

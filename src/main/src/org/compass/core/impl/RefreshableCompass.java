@@ -51,6 +51,7 @@ public class RefreshableCompass implements InternalCompass {
 
     public synchronized void rebuild() throws CompassException {
         compass.stop();
+        config.getSettings().addSettings(compass.getSettings());
         InternalCompass rebuiltCompass;
         try {
             rebuiltCompass = (InternalCompass) config.buildCompass();
