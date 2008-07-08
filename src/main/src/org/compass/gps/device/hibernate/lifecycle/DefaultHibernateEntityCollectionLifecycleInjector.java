@@ -119,7 +119,7 @@ public class DefaultHibernateEntityCollectionLifecycleInjector extends DefaultHi
     }
 
     protected Object doCreateListener(HibernateGpsDevice device) {
-        eventListener = new HibernateCollectionEventListener(device, marshallIds);
+        eventListener = new HibernateCollectionEventListener(device, marshallIds, pendingCascades);
         return eventListener;
     }
 }

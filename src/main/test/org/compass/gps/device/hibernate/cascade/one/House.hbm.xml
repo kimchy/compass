@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.compass.gps.device.hibernate.cascade.one">
+
+    <class name="org.compass.gps.device.hibernate.cascade.one.House" table="house">
+        <id name="id">
+            <generator class="native"/>
+        </id>
+        <property name="version" optimistic-lock="true" />
+        <property name="name" />
+        <one-to-one name="roof" class="org.compass.gps.device.hibernate.cascade.one.Roof" cascade="all" />
+        <one-to-one name="foundations" class="org.compass.gps.device.hibernate.cascade.one.Foundations" cascade="all" />
+    </class>
+
+</hibernate-mapping>

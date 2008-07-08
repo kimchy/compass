@@ -1,0 +1,29 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.1.dtd">
+
+<compass-core-mapping package="org.compass.gps.device.hibernate.cascade.many">
+
+    <class name='User' alias='user' root='true'>
+        <id name='id'/>
+        <reference ref-alias='album' name='albums'/>
+        <property name='name'>
+            <meta-data>name</meta-data>
+        </property>
+        <property name='version'>
+            <meta-data>version</meta-data>
+        </property>
+    </class>
+
+    <class name='Album' alias='album' root='true'>
+        <id name='id'/>
+        <component ref-alias='user' name='owner'/>
+        <property name='title'>
+            <meta-data boost='1.5'>title</meta-data>
+        </property>
+        <property name='version'>
+            <meta-data>version</meta-data>
+        </property>
+    </class>
+
+</compass-core-mapping>

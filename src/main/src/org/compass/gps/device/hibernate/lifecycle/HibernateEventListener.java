@@ -17,6 +17,11 @@
 package org.compass.gps.device.hibernate.lifecycle;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +32,8 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.event.EventSource;
 import org.hibernate.event.PostDeleteEvent;
 import org.hibernate.event.PostDeleteEventListener;
 import org.hibernate.event.PostInsertEvent;
@@ -50,10 +57,17 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
 
     protected final boolean marshallIds;
 
-    public HibernateEventListener(HibernateGpsDevice device, boolean marshallIds) {
+    protected final boolean pendingCascades;
+
+    private Map<Object, Collection> pendingCreate = Collections.synchronizedMap(new IdentityHashMap<Object, Collection>());
+
+    private Map<Object, Collection> pendingSave = Collections.synchronizedMap(new IdentityHashMap<Object, Collection>());
+
+    public HibernateEventListener(HibernateGpsDevice device, boolean marshallIds, boolean pendingCascades) {
         this.device = device;
         this.mirrorFilter = device.getMirrorFilter();
         this.marshallIds = marshallIds;
+        this.pendingCascades = pendingCascades;
     }
 
     public void onPostInsert(final PostInsertEvent postInsertEvent) {
@@ -61,7 +75,7 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             return;
         }
 
-        CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
+        final CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
 
         final Object entity = postInsertEvent.getEntity();
         if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
@@ -80,11 +94,7 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             }
             compassGps.executeForMirror(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    if (marshallIds) {
-                        Serializable id = postInsertEvent.getId();
-                        postInsertEvent.getPersister().setIdentifier(entity, id, postInsertEvent.getSession().getEntityMode());
-                    }
-                    session.create(entity);
+                    doInsert(session, postInsertEvent, entity, compassGps);
                 }
             });
         } catch (Exception e) {
@@ -96,12 +106,12 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         }
     }
 
-    public void onPostUpdate(PostUpdateEvent postUpdateEvent) {
+    public void onPostUpdate(final PostUpdateEvent postUpdateEvent) {
         if (!device.shouldMirrorDataChanges() || device.isPerformingIndexOperation()) {
             return;
         }
 
-        CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
+        final CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
 
         final Object entity = postUpdateEvent.getEntity();
         if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
@@ -120,7 +130,7 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             }
             compassGps.executeForMirror(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    session.save(entity);
+                    doUpdate(session, compassGps, entity, postUpdateEvent.getSession());
                 }
             });
         } catch (Exception e) {
@@ -165,6 +175,54 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             } else {
                 throw new HibernateGpsDeviceException(device.buildMessage("Failed while deleting [" + entity + "]"), e);
             }
+        }
+    }
+
+    protected void doInsert(CompassSession session, PostInsertEvent postInsertEvent, Object entity, CompassGpsInterfaceDevice compassGps) {
+        if (marshallIds) {
+            Serializable id = postInsertEvent.getId();
+            postInsertEvent.getPersister().setIdentifier(entity, id, postInsertEvent.getSession().getEntityMode());
+        }
+        if (pendingCascades) {
+            HibernateEventListenerUtils.registerRemovalHook(postInsertEvent.getSession(), pendingCreate, entity);
+            Collection dependencies = HibernateEventListenerUtils.getUnpersistedCascades(compassGps, entity,
+                    (SessionFactoryImplementor) device.getSessionFactory(), CascadeMapping.Cascade.CREATE, new HashSet());
+            if (!dependencies.isEmpty()) {
+                pendingCreate.put(entity, dependencies);
+            } else {
+                dependencies = HibernateEventListenerUtils.getAssociatedDependencies(entity, pendingCreate);
+                if (!dependencies.isEmpty()) {
+                    pendingCreate.put(entity, dependencies);
+                } else {
+                    session.create(entity);
+                }
+            }
+
+            HibernateEventListenerUtils.persistPending(session, entity, pendingCreate, true);
+        } else {
+            session.create(entity);
+        }
+    }
+
+    protected void doUpdate(CompassSession session, CompassGpsInterfaceDevice compassGps, Object entity, EventSource eventSource) {
+        if (pendingCascades) {
+            HibernateEventListenerUtils.registerRemovalHook(eventSource, pendingSave, entity);
+            Collection dependencies = HibernateEventListenerUtils.getUnpersistedCascades(compassGps, entity,
+                    (SessionFactoryImplementor) device.getSessionFactory(), CascadeMapping.Cascade.SAVE, new HashSet());
+            if (!dependencies.isEmpty()) {
+                pendingSave.put(entity, dependencies);
+            } else {
+                dependencies = HibernateEventListenerUtils.getAssociatedDependencies(entity, pendingSave);
+                if (!dependencies.isEmpty()) {
+                    pendingSave.put(entity, dependencies);
+                } else {
+                    session.save(entity);
+                }
+            }
+
+            HibernateEventListenerUtils.persistPending(session, entity, pendingSave, false);
+        } else {
+            session.save(entity);
         }
     }
 }

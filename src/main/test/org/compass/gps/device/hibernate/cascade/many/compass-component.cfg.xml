@@ -1,0 +1,22 @@
+<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.1.xsd">
+
+    <compass name="default">
+
+        <connection>
+            <file path="target/testindex" />
+        </connection>
+
+        <transaction factory="org.compass.gps.device.hibernate.HibernateSyncTransactionFactory" />
+
+        <mappings>
+            <resource location="org/compass/gps/device/hibernate/cascade/many/roots-with-component.cpm.xml" />
+        </mappings>
+
+        <settings>
+            <setting name="compass.engine.optimizer.type" value="org.compass.core.lucene.engine.optimizer.NullOptimizer" />
+        </settings>
+    </compass>
+
+</compass-core-config>

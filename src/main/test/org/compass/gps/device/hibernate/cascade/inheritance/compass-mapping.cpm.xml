@@ -1,0 +1,34 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.1.dtd">
+
+<compass-core-mapping package="org.compass.gps.device.hibernate.cascade.inheritance">
+
+    <class name='Location' alias='location' root='true' poly="true">
+        <id name='id' accessor="field"/>
+        <property name='version' accessor="field">
+            <meta-data>version</meta-data>
+        </property>
+        <!--<reference ref-alias='album' name='albums'/>-->
+        <property name='name' accessor="field">
+            <meta-data>name</meta-data>
+        </property>
+    </class>
+
+    <class name='City' alias='city' root='true' extends="location">
+        <!--<id name='id'/>-->
+        <!--<component ref-alias='user' name='owner'/>-->
+        <property name='population' accessor="field">
+            <meta-data>population</meta-data>
+        </property>
+    </class>
+
+    <class name='User' alias='user' root='true'>
+        <id name='id' accessor="field"/>
+        <property name="version" accessor="field"/>
+        <property name="name" accessor="field"/>
+        <reference name="favouritePlaces" accessor="field" ref-alias="location"/>
+        <!--<component ref-alias='user' name='owner'/>-->
+    </class>
+
+</compass-core-mapping>

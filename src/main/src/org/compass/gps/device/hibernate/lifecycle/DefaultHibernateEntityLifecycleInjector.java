@@ -43,6 +43,8 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
 
     protected boolean marshallIds = false;
 
+    protected boolean pendingCascades = true;
+
     public DefaultHibernateEntityLifecycleInjector() {
         this(false);
     }
@@ -66,6 +68,16 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
      */
     public void setMarshallIds(boolean marshallIds) {
         this.marshallIds = marshallIds;
+    }
+
+    /**
+     * Should the listener try and handle pending cascades avoiding trying to save/update relationships in Compass
+     * before they were processed by Hibernate. Default to <code>true<code>.
+     *
+     * <p>Note, if set, might cause Compass event processing to be a *tad* slower.
+     */
+    public void setPendingCascades(boolean pendingCascades) {
+        this.pendingCascades = pendingCascades;
     }
 
     public void injectLifecycle(SessionFactory sessionFactory, HibernateGpsDevice device) throws HibernateGpsDeviceException {
@@ -191,6 +203,6 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
     }
 
     protected Object doCreateListener(HibernateGpsDevice device) {
-        return new HibernateEventListener(device, marshallIds);
+        return new HibernateEventListener(device, marshallIds, pendingCascades);
     }
 }

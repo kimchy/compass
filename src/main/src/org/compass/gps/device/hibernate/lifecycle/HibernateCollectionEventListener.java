@@ -40,8 +40,8 @@ import org.hibernate.event.PostCollectionUpdateEventListener;
 public class HibernateCollectionEventListener extends HibernateEventListener implements PostCollectionRecreateEventListener,
         PostCollectionRemoveEventListener, PostCollectionUpdateEventListener {
 
-    public HibernateCollectionEventListener(HibernateGpsDevice device, boolean marshallIds) {
-        super(device, marshallIds);
+    public HibernateCollectionEventListener(HibernateGpsDevice device, boolean marshallIds, boolean pendingCascades) {
+        super(device, marshallIds, pendingCascades);
     }
 
     public void onPostRecreateCollection(PostCollectionRecreateEvent postCollectionRecreateEvent) {
@@ -56,7 +56,7 @@ public class HibernateCollectionEventListener extends HibernateEventListener imp
         processCollectionEvent(postCollectionUpdateEvent);
     }
 
-    private void processCollectionEvent(AbstractCollectionEvent event) {
+    private void processCollectionEvent(final AbstractCollectionEvent event) {
         final Object entity = event.getAffectedOwnerOrNull();
         if (entity == null) {
             //Hibernate cannot determine every single time the owner especially incase detached objects are involved
@@ -71,7 +71,7 @@ public class HibernateCollectionEventListener extends HibernateEventListener imp
             }
         }
 
-        CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
+        final CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
         if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
             return;
         }
@@ -87,7 +87,7 @@ public class HibernateCollectionEventListener extends HibernateEventListener imp
             }
             compassGps.executeForMirror(new CompassCallbackWithoutResult() {
                 protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
-                    session.save(entity);
+                    doUpdate(session, compassGps, entity, event.getSession());
                 }
             });
         } catch (Exception e) {

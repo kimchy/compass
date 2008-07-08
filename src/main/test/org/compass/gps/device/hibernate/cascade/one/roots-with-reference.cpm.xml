@@ -1,0 +1,20 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.1.dtd">
+
+<compass-core-mapping package="org.compass.gps.device.hibernate.cascade.one">
+
+    <class name="House" alias="house" root="true">
+        <id name="id" />
+        <property name="version"/>
+        <property name="name"/>
+        <reference name="roof" ref-alias="roof" />
+    </class>
+
+    <class name="Roof" alias="roof" root="true">
+        <id name="id" />
+        <property name="version"/>
+        <property name="name"/>
+    </class>
+
+</compass-core-mapping>

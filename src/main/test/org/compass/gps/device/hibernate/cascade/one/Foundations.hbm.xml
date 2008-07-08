@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.compass.gps.device.hibernate.cascade.one">
+
+    <class name="org.compass.gps.device.hibernate.cascade.one.Foundations" table="foundations">
+        <id name="id">
+            <generator class="native"/>
+        </id>
+        <property name="version" optimistic-lock="true" />
+        <property name="name" />
+    </class>
+
+</hibernate-mapping>
