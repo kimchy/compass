@@ -18,6 +18,8 @@ package org.compass.core.test.rebuildcompass;
 
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -29,7 +31,11 @@ public class RebuildCompassTests extends AbstractTestCase {
         return new String[]{"rebuildcompass/A.cpm.xml"};
     }
 
-    public void testRebuildCompass() {
+    protected void addSettings(CompassSettings settings) {
+        settings.setLongSetting(CompassEnvironment.Rebuild.SLEEP_BEFORE_CLOSE, 100);
+    }
+
+    public void testRebuildCompass() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
         A a = new A();
@@ -73,5 +79,7 @@ public class RebuildCompassTests extends AbstractTestCase {
         assertNotNull(session.get("b", 1));
         tr.commit();
         session.close();
+
+        Thread.sleep(200);
     }
 }
