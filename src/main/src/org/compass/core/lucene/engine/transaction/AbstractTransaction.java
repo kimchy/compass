@@ -25,6 +25,7 @@ import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.compass.core.engine.SearchEngineException;
@@ -117,25 +118,50 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
         ArrayList<LuceneIndexHolder> indexHoldersToClose = new ArrayList<LuceneIndexHolder>();
         try {
             String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(subIndexes, aliases);
-            ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
-            LuceneIndexHolder lastNonEmptyIndexHolder = null;
-            for (String subIndex : calcSubIndexes) {
-                LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
-                indexHoldersToClose.add(indexHolder);
-                if (indexHolder.getIndexReader().numDocs() > 0) {
-                    readers.add(indexHolder.getIndexReader());
-                    lastNonEmptyIndexHolder = indexHolder;
+            // currenly we disable search by multireader and do it with multisearcher so field cache
+            // will work correclty (as we won't create a new "outer" reader each time, which will cause
+            // the field cache to invalidate each time
+            if (false) {
+                ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
+                LuceneIndexHolder lastNonEmptyIndexHolder = null;
+                for (String subIndex : calcSubIndexes) {
+                    LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
+                    indexHoldersToClose.add(indexHolder);
+                    if (indexHolder.getIndexReader().numDocs() > 0) {
+                        readers.add(indexHolder.getIndexReader());
+                        lastNonEmptyIndexHolder = indexHolder;
+                    }
                 }
+                if (readers.size() == 0) {
+                    return new LuceneSearchEngineInternalSearch(null, null, null);
+                }
+                // if we have just one reader, no need to create a multi reader on top of it
+                if (readers.size() == 1) {
+                    return new LuceneSearchEngineInternalSearch(lastNonEmptyIndexHolder, indexHoldersToClose);
+                }
+                MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
+                return new LuceneSearchEngineInternalSearch(reader, new IndexSearcher(reader), indexHoldersToClose);
+            } else {
+                ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>(calcSubIndexes.length);
+                LuceneIndexHolder lastNonEmptyIndexHolder = null;
+                for (String subIndex : calcSubIndexes) {
+                    LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(subIndex);
+                    indexHoldersToClose.add(indexHolder);
+                    if (indexHolder.getIndexReader().numDocs() > 0) {
+                        searchers.add(indexHolder.getIndexSearcher());
+                        lastNonEmptyIndexHolder = indexHolder;
+                    }
+                }
+                if (searchers.size() == 0) {
+                    return new LuceneSearchEngineInternalSearch(null, null, null);
+                }
+                // if we have just one reader, no need to create a multi reader on top of it
+                if (searchers.size() == 1) {
+                    return new LuceneSearchEngineInternalSearch(lastNonEmptyIndexHolder, indexHoldersToClose);
+                }
+                MultiSearcher searcher = new MultiSearcher(searchers.toArray(new IndexSearcher[searchers.size()]));
+                return new LuceneSearchEngineInternalSearch(searcher, indexHoldersToClose);
             }
-            if (readers.size() == 0) {
-                return new LuceneSearchEngineInternalSearch(null, null, null);
-            }
-            // if we have just one reader, no need to create a multi reader on top of it
-            if (readers.size() == 1) {
-                return new LuceneSearchEngineInternalSearch(lastNonEmptyIndexHolder, indexHoldersToClose);
-            }
-            MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
-            return new LuceneSearchEngineInternalSearch(reader, new IndexSearcher(reader), indexHoldersToClose);
         } catch (Exception e) {
             for (LuceneIndexHolder indexHolder : indexHoldersToClose) {
                 indexHolder.release();
