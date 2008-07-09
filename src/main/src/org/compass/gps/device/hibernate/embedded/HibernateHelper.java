@@ -31,6 +31,9 @@ import org.hibernate.event.PostInsertEventListener;
 import org.hibernate.impl.SessionFactoryImpl;
 
 /**
+ * A helper class used when working with embedded Compass within Hibernate. Allows for access to the
+ * {@link org.compass.core.Compass} and {@link org.compass.gps.CompassGps} instances.
+ *
  * @author kimchy
  */
 public abstract class HibernateHelper {
@@ -38,35 +41,61 @@ public abstract class HibernateHelper {
     private HibernateHelper() {
     }
 
+    /**
+     * Returns the Compass instance associated with the given Hibernate from the Hibernate session.
+     */
     public static Compass getCompass(Session session) {
         return findEventListener(session).getCompass();
     }
 
+    /**
+     * Returns a CompassTemplate instance associated with the given Hibernate from the Hibernate session.
+     */
     public static CompassTemplate getCompassTempalte(Session session) {
         return new CompassTemplate(findEventListener(session).getCompass());
     }
 
+    /**
+     * Returns the Compass instance associated with the given Hibernate from the Hiberante session factory.
+     */
     public static Compass getCompass(SessionFactory sessionFactory) {
         return findEventListener(sessionFactory).getCompass();
     }
 
+    /**
+     * Returns the CompassTemplate instance associated with the given Hibernate from the Hiberante session factory.
+     */
     public static CompassTemplate getCompassTempalte(SessionFactory sessionFactory) {
         return new CompassTemplate(findEventListener(sessionFactory).getCompass());
     }
 
+    /**
+     * Returns the settings of the indexing Compass instance (from the CompassGps) associated with Hibernate
+     * based on the provided Hibernate session.
+     */
     public static Properties getIndexSettings(Session session) {
         return findEventListener(session).getIndexSettings();
     }
-
+    /**
+     * Returns the settings of the indexing Compass instance (from the CompassGps) associated with Hibernate
+     * based on the provided Hibernate session factory.
+     */
     public static Properties getIndexSettings(SessionFactory sessionFactory) {
         return findEventListener(sessionFactory).getIndexSettings();
     }
 
+    /**
+     * Retruns a {@link org.compass.gps.CompassGps} based on the Compass instance associated with the
+     * Hibernate session factory.
+     */
     public static CompassGps getCompassGps(SessionFactory sessionFactory) {
         HibernateGpsDevice device = new HibernateGpsDevice("hibernate", sessionFactory);
         return getCompassGps(device);
     }
 
+    /**
+     * Returns a {@link org.compass.gps.CompassGps} to wrap the provided Hibernat Gps device.
+     */
     public static CompassGps getCompassGps(HibernateGpsDevice device) {
         SingleCompassGps gps = new SingleCompassGps(getCompass(device.getSessionFactory()));
         device.setMirrorDataChanges(false);
