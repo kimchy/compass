@@ -109,7 +109,7 @@ public class TerracottaDirectory extends Directory {
      */
     public final String[] list() {
         Set<String> fileNames = fileMap.keySet();
-        return fileNames.toArray(new String[fileNames.size()]);
+        return fileNames.toArray(new String[0]);
     }
 
     /**
