@@ -76,6 +76,7 @@ public abstract class HibernateHelper {
     public static Properties getIndexSettings(Session session) {
         return findEventListener(session).getIndexSettings();
     }
+
     /**
      * Returns the settings of the indexing Compass instance (from the CompassGps) associated with Hibernate
      * based on the provided Hibernate session factory.
@@ -106,8 +107,17 @@ public abstract class HibernateHelper {
     }
 
     private static CompassEventListener findEventListener(SessionFactory sessionFactory) {
-        PostInsertEventListener[] listeners = ((SessionFactoryImpl) sessionFactory).getEventListeners().getPostInsertEventListeners();
-        return findEventListener(listeners);
+        if (sessionFactory instanceof SessionFactoryImpl) {
+            PostInsertEventListener[] listeners = ((SessionFactoryImpl) sessionFactory).getEventListeners().getPostInsertEventListeners();
+            return findEventListener(listeners);
+        } else {
+            Session session = sessionFactory.openSession();
+            try {
+                return findEventListener(session);
+            } finally {
+                session.close();
+            }
+        }
     }
 
     private static CompassEventListener findEventListener(Session session) {
