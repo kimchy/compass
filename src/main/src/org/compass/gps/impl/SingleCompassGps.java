@@ -28,6 +28,7 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.events.RebuildEventListener;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.mapping.CascadeMapping;
@@ -104,6 +105,16 @@ public class SingleCompassGps extends AbstractCompassGps {
         }
         indexCompassSettings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, true);
         this.compassTemplate = new CompassTemplate(compass);
+
+        // add a rebuild listener
+        ((InternalCompass) compass).addRebuildEventListener(new RebuildEventListener() {
+            public void onCompassRebuild(Compass compass) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Rebuild detected, restarting");
+                }
+                refresh();
+            }
+        });
     }
 
     protected void doStop() throws CompassGpsException {

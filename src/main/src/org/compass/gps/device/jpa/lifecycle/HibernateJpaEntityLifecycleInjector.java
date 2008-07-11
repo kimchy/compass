@@ -88,6 +88,10 @@ public class HibernateJpaEntityLifecycleInjector implements JpaEntityLifecycleIn
         this.registerPostCommitListeneres = registerPostCommitListeneres;
     }
 
+    public boolean requireRefresh() {
+        return false;
+    }
+
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device)
             throws JpaGpsDeviceException {
 

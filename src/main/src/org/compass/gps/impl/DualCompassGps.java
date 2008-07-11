@@ -20,6 +20,7 @@ import org.compass.core.Compass;
 import org.compass.core.CompassCallback;
 import org.compass.core.CompassException;
 import org.compass.core.CompassTemplate;
+import org.compass.core.events.RebuildEventListener;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
@@ -36,6 +37,7 @@ import org.compass.gps.IndexPlan;
  * disable cascading.
  *
  * @author kimchy
+ * @deprecated Please use {@link org.compass.gps.impl.SingleCompassGps}.
  */
 public class DualCompassGps extends AbstractCompassGps {
 
@@ -95,6 +97,24 @@ public class DualCompassGps extends AbstractCompassGps {
                 log.info("Spell check index failed, will rebuilt it next time", e);
             }
         }
+
+        // add a rebuild listener
+        ((InternalCompass) indexCompass).addRebuildEventListener(new RebuildEventListener() {
+            public void onCompassRebuild(Compass compass) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Rebuild detected, restarting");
+                }
+                refresh();
+            }
+        });
+        ((InternalCompass) mirrorCompass).addRebuildEventListener(new RebuildEventListener() {
+            public void onCompassRebuild(Compass compass) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Rebuild detected, restarting");
+                }
+                refresh();
+            }
+        });
     }
 
     public void executeForIndex(CompassCallback callback) throws CompassException {

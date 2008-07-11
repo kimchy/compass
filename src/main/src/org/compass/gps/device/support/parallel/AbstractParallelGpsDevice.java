@@ -57,7 +57,7 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
 
     private IndexEntitiesPartitioner indexEntitiesPartitioner = new SubIndexIndexEntitiesPartitioner();
 
-    private IndexEntity[][] entities;
+    private volatile IndexEntity[][] entities;
 
     private IndexEntitiesIndexer indexEntitiesIndexer;
 
@@ -71,7 +71,6 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
      */
     public synchronized void start() throws CompassGpsException {
         super.start();
-        entities = indexEntitiesPartitioner.partition(doGetIndexEntities());
         indexEntitiesIndexer = doGetIndexEntitiesIndexer();
     }
 
@@ -87,6 +86,8 @@ public abstract class AbstractParallelGpsDevice extends AbstractGpsDevice {
                     buildMessage("must be running in order to perform the index operation"));
         }
 
+        entities = indexEntitiesPartitioner.partition(doGetIndexEntities());
+        
         // here, we go over and filter out things that are not based on the index plan
         // we first get the sub indexes based on the index plan, and then filter out
         // entities[] that do not match.

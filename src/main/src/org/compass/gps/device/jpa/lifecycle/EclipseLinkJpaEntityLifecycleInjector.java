@@ -122,6 +122,10 @@ public class EclipseLinkJpaEntityLifecycleInjector implements JpaEntityLifecycle
         this.eventListener = eventListener;
     }
 
+    public boolean requireRefresh() {
+        return true;
+    }
+
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();

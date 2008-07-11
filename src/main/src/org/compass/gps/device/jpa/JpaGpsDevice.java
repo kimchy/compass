@@ -164,18 +164,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
             }
         }
 
-        if (injectEntityLifecycleListener && mirrorDataChanges) {
-            if (lifecycleInjector == null) {
-                lifecycleInjector = JpaEntityLifecycleInjectorDetector.detectInjector(nativeEntityManagerFactory, compassGps.getMirrorCompass().getSettings());
-            }
-            if (lifecycleInjector == null) {
-                throw new JpaGpsDeviceException(buildMessage("Failed to locate lifecycleInjector"));
-            }
-            if (log.isDebugEnabled()) {
-                log.debug(buildMessage("Using lifecycleInjector [" + lifecycleInjector.getClass().getName() + "]"));
-            }
-            lifecycleInjector.injectLifecycle(nativeEntityManagerFactory, this);
-        }
+        injectLifecycle();
 
         if (entitiesIndexer == null) {
             entitiesIndexer = JpaIndexEntitiesIndexerDetector.detectEntitiesIndexer(nativeEntityManagerFactory, compassGps.getMirrorCompass().getSettings());
@@ -187,8 +176,14 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
     }
 
     protected void doStop() throws CompassGpsException {
-        if (injectEntityLifecycleListener && mirrorDataChanges) {
-            lifecycleInjector.removeLifecycle(nativeEntityManagerFactory, this);
+        removeLifecycle();
+    }
+
+    @Override
+    public void refresh() throws CompassGpsException {
+        if (lifecycleInjector != null && lifecycleInjector.requireRefresh()) {
+            removeLifecycle();
+            injectLifecycle();
         }
     }
 
@@ -399,5 +394,26 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
      */
     public void setEntitiesIndexer(JpaIndexEntitiesIndexer entitiesIndexer) {
         this.entitiesIndexer = entitiesIndexer;
+    }
+
+    private void injectLifecycle() {
+        if (injectEntityLifecycleListener && mirrorDataChanges) {
+            if (lifecycleInjector == null) {
+                lifecycleInjector = JpaEntityLifecycleInjectorDetector.detectInjector(nativeEntityManagerFactory, compassGps.getMirrorCompass().getSettings());
+            }
+            if (lifecycleInjector == null) {
+                throw new JpaGpsDeviceException(buildMessage("Failed to locate lifecycleInjector"));
+            }
+            if (log.isDebugEnabled()) {
+                log.debug(buildMessage("Using lifecycleInjector [" + lifecycleInjector.getClass().getName() + "]"));
+            }
+            lifecycleInjector.injectLifecycle(nativeEntityManagerFactory, this);
+        }
+    }
+
+    private void removeLifecycle() {
+        if (injectEntityLifecycleListener && mirrorDataChanges) {
+            lifecycleInjector.removeLifecycle(nativeEntityManagerFactory, this);
+        }
     }
 }

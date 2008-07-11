@@ -122,6 +122,10 @@ public class TopLinkEssentialsJpaEntityLifecycleInjector implements JpaEntityLif
         this.eventListener = eventListener;
     }
 
+    public boolean requireRefresh() {
+        return true;
+    }
+
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();

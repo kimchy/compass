@@ -54,4 +54,10 @@ public interface JpaEntityLifecycleInjector {
      * @throws JpaGpsDeviceException
      */
     void removeLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException;
+
+    /**
+     * Does this injector requires refreshing (i.e. remove and inject) of new listeners upon
+     * {@link org.compass.gps.CompassGpsDevice#refresh()}.
+     */
+    boolean requireRefresh();
 }

@@ -70,6 +70,11 @@ public class AbstractGpsDeviceWrapper implements CompassGpsDevice {
         this.gpsDevice.stop();
     }
 
+    public void refresh() throws CompassGpsException {
+        checkDeviceSet();
+        this.gpsDevice.refresh();
+    }
+
     public void index(IndexPlan indexPlan) throws CompassGpsException, IllegalStateException {
         checkDeviceSet();
         this.gpsDevice.index(indexPlan);

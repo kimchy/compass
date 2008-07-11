@@ -96,6 +96,10 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
         this.eventListener = eventListener;
     }
 
+    public boolean requireRefresh() {
+        return true;
+    }
+
     public void injectLifecycle(EntityManagerFactory entityManagerFactory, JpaGpsDevice device) throws JpaGpsDeviceException {
 
         CompassGpsInterfaceDevice gps = (CompassGpsInterfaceDevice) device.getGps();

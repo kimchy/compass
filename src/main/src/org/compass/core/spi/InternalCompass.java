@@ -23,6 +23,7 @@ import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.events.CompassEventManager;
+import org.compass.core.events.RebuildEventListener;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
@@ -58,4 +59,8 @@ public interface InternalCompass extends Compass {
     PropertyNamingStrategy getPropertyNamingStrategy();
 
     CompassEventManager getEventManager();
+
+    void addRebuildEventListener(RebuildEventListener eventListener);
+
+    void removeRebuildEventListener(RebuildEventListener eventListener);
 }

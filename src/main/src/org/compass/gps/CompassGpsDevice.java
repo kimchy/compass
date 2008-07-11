@@ -80,6 +80,12 @@ public interface CompassGpsDevice {
     void stop() throws CompassGpsException;
 
     /**
+     * Refresh the given device. Mainly used to denote changes in the undeplying Compass
+     * instance and that they should be taken into account (such as new mappings).
+     */
+    void refresh() throws CompassGpsException;
+
+    /**
      * Returns if the device is running.
      * 
      * @return <code>true</code> if theh device is running

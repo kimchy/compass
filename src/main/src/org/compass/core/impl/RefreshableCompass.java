@@ -1,5 +1,7 @@
 package org.compass.core.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 
@@ -19,6 +21,7 @@ import org.compass.core.engine.SearchEngineOptimizer;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.events.CompassEventManager;
+import org.compass.core.events.RebuildEventListener;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.metadata.CompassMetaData;
@@ -39,6 +42,8 @@ public class RefreshableCompass implements InternalCompass {
     private final CompassConfiguration config;
 
     private volatile InternalCompass compass;
+
+    private List<RebuildEventListener> rebuildEventListeners = new ArrayList<RebuildEventListener>();
 
     public RefreshableCompass(CompassConfiguration config, InternalCompass compass) {
         this.config = config;
@@ -63,11 +68,23 @@ public class RefreshableCompass implements InternalCompass {
         Thread t = new Thread(new CloseCompassRunnable(compass), "Close Compass");
         t.start();
         compass = rebuiltCompass;
+
+        for (RebuildEventListener eventListener : rebuildEventListeners) {
+            eventListener.onCompassRebuild(compass);
+        }
     }
 
     public Compass clone(CompassSettings addedSettings) {
         InternalCompass clonedCompass = (InternalCompass) compass.clone(addedSettings);
         return new RefreshableCompass(config, clonedCompass);
+    }
+
+    public synchronized void addRebuildEventListener(RebuildEventListener eventListener) {
+        rebuildEventListeners.add(eventListener);
+    }
+
+    public synchronized void removeRebuildEventListener(RebuildEventListener eventListener) {
+        rebuildEventListeners.remove(eventListener);
     }
 
     // Delegate Methods

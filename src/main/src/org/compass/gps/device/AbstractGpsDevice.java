@@ -152,6 +152,13 @@ public abstract class AbstractGpsDevice implements CompassGpsDevice {
 
     }
 
+    /**
+     * A no op. Subclasses should overide only if needed.
+     */
+    public void refresh() throws CompassGpsException {
+
+    }
+
     public boolean isRunning() {
         return started;
     }

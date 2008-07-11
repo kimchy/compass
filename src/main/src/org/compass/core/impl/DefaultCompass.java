@@ -41,6 +41,7 @@ import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.engine.spi.InternalSearchEngineFactory;
 import org.compass.core.events.CompassEventManager;
+import org.compass.core.events.RebuildEventListener;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.id.IdentifierGenerator;
 import org.compass.core.id.UUIDGenerator;
@@ -162,6 +163,14 @@ public class DefaultCompass implements InternalCompass {
     }
 
     public void rebuild() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void addRebuildEventListener(RebuildEventListener eventListener) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void removeRebuildEventListener(RebuildEventListener eventListener) {
         throw new UnsupportedOperationException();
     }
 

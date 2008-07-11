@@ -183,6 +183,12 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         doStop();
     }
 
+    public synchronized void refresh() throws CompassGpsException {
+        for (CompassGpsDevice device : devices.values()) {
+            device.refresh();
+        }
+    }
+
     public boolean isRunning() {
         return started;
     }
