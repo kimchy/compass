@@ -77,8 +77,17 @@ public abstract class HibernateHelper {
     }
 
     private static CompassEventListener findEventListener(SessionFactory sessionFactory) {
-        PostInsertEventListener[] listeners = ((SessionFactoryImpl) sessionFactory).getEventListeners().getPostInsertEventListeners();
-        return findEventListener(listeners);
+        if (sessionFactory instanceof SessionFactoryImpl) {
+            PostInsertEventListener[] listeners = ((SessionFactoryImpl) sessionFactory).getEventListeners().getPostInsertEventListeners();
+            return findEventListener(listeners);
+        } else {
+            Session session = sessionFactory.openSession();
+            try {
+                return findEventListener(session);
+            } finally {
+                session.close();
+            }
+        }
     }
 
     private static CompassEventListener findEventListener(Session session) {
