@@ -38,6 +38,10 @@ public class InvocableCoherenceDirectory extends DataGridCoherenceDirectory {
         super(cache, indexName, bucketSize);
     }
 
+    public InvocableCoherenceDirectory(NamedCache cache, String indexName, int bucketSize, int flushRate) {
+        super(cache, indexName, bucketSize, flushRate);
+    }
+
     protected void doInit() {
         setLockFactory(new InvocableCoherenceLockFactory(getCache(), getIndexName()));
     }

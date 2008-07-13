@@ -74,6 +74,10 @@ public abstract class AbstractCoherenceDirectoryStore extends AbstractDirectoryS
         return bucketSize;
     }
 
+    protected int getFlushRate() {
+        return this.flushRate;
+    }
+
     public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
         cleanIndex(dir, subContext, subIndex);
     }

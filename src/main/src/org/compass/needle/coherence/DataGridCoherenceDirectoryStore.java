@@ -15,6 +15,6 @@ public class DataGridCoherenceDirectoryStore extends AbstractCoherenceDirectoryS
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
-        return new DataGridCoherenceDirectory(getCache(), getIndexName() + "/" + subContext + "/" + subIndex, getBucketSize());
+        return new DataGridCoherenceDirectory(getCache(), getIndexName() + "/" + subContext + "/" + subIndex, getBucketSize(), getFlushRate());
     }
 }

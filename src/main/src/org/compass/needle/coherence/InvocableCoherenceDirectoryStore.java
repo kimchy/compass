@@ -15,6 +15,6 @@ public class InvocableCoherenceDirectoryStore extends AbstractCoherenceDirectory
     }
 
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
-        return new InvocableCoherenceDirectory(getCache(), getIndexName() + "/" + subContext + "/" + subIndex, getBucketSize());
+        return new InvocableCoherenceDirectory(getCache(), getIndexName() + "/" + subContext + "/" + subIndex, getBucketSize(), getFlushRate());
     }
 }
