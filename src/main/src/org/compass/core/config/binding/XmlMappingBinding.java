@@ -1023,6 +1023,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             if (sExcludeAlias != null) {
                 allMapping.setExcludeAlias(sExcludeAlias.equalsIgnoreCase("true"));
             }
+            String sIncludeUnmappedProperties = allConf.getAttribute("include-unmapped-properties", null);
+            if (sIncludeUnmappedProperties != null) {
+                allMapping.setIncludePropertiesWithNoMappings(sIncludeUnmappedProperties.equalsIgnoreCase("true"));
+            }
             allMapping.setProperty(allConf.getAttribute("name", null));
             allMapping.setSpellCheck(SpellCheckType.fromString(allConf.getAttribute("spell-check", "na")));
         }

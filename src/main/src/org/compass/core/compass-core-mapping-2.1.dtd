@@ -479,6 +479,7 @@
     <!ATTLIST all omit-norms (true|false) #IMPLIED>
     <!ATTLIST all exclude-alias (true|false) #IMPLIED>
     <!ATTLIST all spell-check (include|exclude|na) "na">
+    <!ATTLIST all include-unmapped-properties (true|false) #IMPLIED>
 
 
 <!ELEMENT setting EMPTY
