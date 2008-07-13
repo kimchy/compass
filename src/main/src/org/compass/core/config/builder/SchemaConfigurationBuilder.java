@@ -169,6 +169,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.All.TERM_VECTOR, getElementAttribute(allPropertyEle, "termVector"));
             settings.setSetting(CompassEnvironment.All.ENABLED, getElementAttribute(allPropertyEle, "enabled"));
             settings.setSetting(CompassEnvironment.All.BOOST_SUPPORT, getElementAttribute(allPropertyEle, "boostSupport"));
+            settings.setSetting(CompassEnvironment.All.INCLUDE_UNMAPPED_PROPERTIES, getElementAttribute(allPropertyEle, "includeUnmappedProperties"));
         }
         child = DomUtils.getChildElementsByTagName(ele, "optimizer", true);
         if (child.size() == 1) {

@@ -70,6 +70,9 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
                     ((InternalAllMapping) resourceMapping.getAllMapping()).setTermVector(Property.TermVector.fromString(
                             settings.getSetting(CompassEnvironment.All.TERM_VECTOR, Property.TermVector.NO.toString())));
                 }
+                if (resourceMapping.getAllMapping().isIncludePropertiesWithNoMappings() == null) {
+                    ((InternalAllMapping) resourceMapping.getAllMapping()).setIncludePropertiesWithNoMappings(settings.getSettingAsBoolean(CompassEnvironment.All.INCLUDE_UNMAPPED_PROPERTIES, true));
+                }
             }
             if (aliasMapping instanceof InternalResourceMapping) {
                 InternalResourceMapping resourceMapping = (InternalResourceMapping) aliasMapping;

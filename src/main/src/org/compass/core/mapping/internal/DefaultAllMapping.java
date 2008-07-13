@@ -39,7 +39,7 @@ public class DefaultAllMapping implements InternalAllMapping {
 
     private SpellCheckType spellCheck;
 
-    private boolean includePropertiesWithNoMappings = true;
+    private Boolean includePropertiesWithNoMappings;
 
     public AllMapping copy() {
         DefaultAllMapping allMapping = new DefaultAllMapping();
@@ -93,11 +93,11 @@ public class DefaultAllMapping implements InternalAllMapping {
         this.omitNorms = omitNorms;
     }
 
-    public boolean isIncludePropertiesWithNoMappings() {
+    public Boolean isIncludePropertiesWithNoMappings() {
         return includePropertiesWithNoMappings;
     }
 
-    public void setIncludePropertiesWithNoMappings(boolean includePropertiesWithNoMappings) {
+    public void setIncludePropertiesWithNoMappings(Boolean includePropertiesWithNoMappings) {
         this.includePropertiesWithNoMappings = includePropertiesWithNoMappings;
     }
 

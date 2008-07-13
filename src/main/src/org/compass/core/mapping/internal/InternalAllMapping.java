@@ -36,4 +36,6 @@ public interface InternalAllMapping extends AllMapping {
     void setTermVector(Property.TermVector termVector);
 
     void setSpellCheck(SpellCheckType spellCheck);
+
+    void setIncludePropertiesWithNoMappings(Boolean includeUnmapped);
 }

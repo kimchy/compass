@@ -626,6 +626,12 @@ public class CompassEnvironment {
          * specific boost value, but searching experiance will be much improved.
          */
         public static final String BOOST_SUPPORT = "compass.property.all.boostSupport";
+
+        /**
+         * Should the all property include data from properties that do not have an explicit mapping.
+         * Defaults to <code>true</code>. 
+         */
+        public static final String INCLUDE_UNMAPPED_PROPERTIES = "compass.property.all.includeUnmappedProperties";
     }
 
     /**
