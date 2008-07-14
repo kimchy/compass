@@ -214,6 +214,14 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+                    <xsd:attribute name="includeUnmappedProperties" type="booleanType" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Should unmapped properties be included in the all property.
+                                Defaults to true.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="highlighter" minOccurs="0" maxOccurs="unbounded">
