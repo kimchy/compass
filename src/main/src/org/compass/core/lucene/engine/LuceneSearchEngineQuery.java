@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
@@ -120,6 +121,16 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
 
     public SearchEngineQuery addSort(SortImplicitType implicitType, SortDirection direction) {
         sortFields.add(new SortField(null, getImplicitSortField(implicitType), getSortReverse(direction)));
+        return this;
+    }
+
+    public SearchEngineQuery addSort(String propertyName, Locale locale, SortDirection direction) {
+        sortFields.add(new SortField(propertyName, locale, getSortReverse(direction)));
+        return this;
+    }
+
+    public SearchEngineQuery addSort(String propertyName, Locale locale) {
+        sortFields.add(new SortField(propertyName, locale));
         return this;
     }
 

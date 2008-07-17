@@ -96,6 +96,16 @@ public class DefaultCompassQuery implements CompassQuery, Cloneable {
         return this;
     }
 
+    public CompassQuery addSort(String propertyName, Locale locale, SortDirection direction) {
+        searchEngineQuery.addSort(propertyName, locale, direction);
+        return this;
+    }
+
+    public CompassQuery addSort(String propertyName, Locale locale) {
+        searchEngineQuery.addSort(propertyName, locale);
+        return this;
+    }
+
     public CompassQuery setSubIndexes(String... subIndexes) {
         searchEngineQuery.setSubIndexes(subIndexes);
         return this;

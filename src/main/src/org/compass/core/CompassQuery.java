@@ -16,6 +16,8 @@
 
 package org.compass.core;
 
+import java.util.Locale;
+
 import org.compass.core.util.Parameter;
 
 /**
@@ -226,6 +228,28 @@ public interface CompassQuery {
      * @param direction    The direction of the sorting.
      */
     CompassQuery addSort(SortImplicitType implicitType, SortDirection direction);
+
+    /**
+     * Adds sorting on the given property name, and using the given locale.
+     *
+     * Note, that the sort option will only work on the outer most query (i.e.
+     * the one that the <code>hits</code> is called on).
+     *
+     * @param propertyName The property name that will be sorted.
+     * @param locale       The locale.
+     * @param direction    The direction of the sorting.
+     * @return the query
+     */
+    CompassQuery addSort(String propertyName, Locale locale, SortDirection direction);
+
+    /**
+     * Adds sorting on the given property name, and using the given locale.
+     *
+     * @param propertyName The property name that will be sorted.
+     * @param locale       The locale.
+     * @return the query
+     */
+    CompassQuery addSort(String propertyName, Locale locale);
 
     /**
      * Narrows down the query to be executed only against the given sub indexes.
