@@ -16,6 +16,8 @@
 
 package org.compass.core.impl;
 
+import java.util.Locale;
+
 import org.compass.core.CompassException;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
