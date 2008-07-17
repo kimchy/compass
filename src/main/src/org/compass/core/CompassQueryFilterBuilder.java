@@ -59,6 +59,14 @@ public interface CompassQueryFilterBuilder {
     }
 
     /**
+     * Should Compass use a converter for value passed even if there is no specific direct dot
+     * path notation to it. It will try and derive the best converter to use. Defaults to <code>false</code>.
+     *
+     * @see org.compass.core.mapping.ResourcePropertyLookup#setConvertOnlyWithDotPath(boolean)
+     */
+    CompassQueryFilterBuilder convertOnlyWithDotPath(boolean convertOnlyWithDotPath);
+
+    /**
      * Creates a query filter where the resource proeprty is between the given values.
      * <p/>
      * The name can either be the actual resource property or meta-data value,

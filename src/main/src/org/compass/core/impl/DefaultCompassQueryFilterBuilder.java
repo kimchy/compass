@@ -49,37 +49,45 @@ public class DefaultCompassQueryFilterBuilder implements CompassQueryFilterBuild
 
     private SearchEngineQueryFilterBuilder filterBuilder;
 
+    private boolean convertOnlyWithDotPath = false;
+
+
     public DefaultCompassQueryFilterBuilder(SearchEngineQueryFilterBuilder filterBuilder, InternalCompassSession session) {
         this.filterBuilder = filterBuilder;
         this.session = session;
     }
 
+    public CompassQueryFilterBuilder convertOnlyWithDotPath(boolean convertOnlyWithDotPath) {
+        this.convertOnlyWithDotPath = convertOnlyWithDotPath;
+        return this;
+    }
+
     public CompassQueryFilter between(String name, Object low, Object high, boolean includeLow, boolean includeHigh) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = getLookup(name);
         return new DefaultCompassQueryFilter(
                 filterBuilder.between(lookup.getPath(), lookup.getValue(low), lookup.getValue(high), includeLow, includeHigh));
     }
 
     public CompassQueryFilter lt(String name, Object value) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = getLookup(name);
         return new DefaultCompassQueryFilter(
                 filterBuilder.lt(lookup.getPath(), lookup.getValue(value)));
     }
 
     public CompassQueryFilter le(String name, Object value) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = getLookup(name);
         return new DefaultCompassQueryFilter(
                 filterBuilder.le(lookup.getPath(), lookup.getValue(value)));
     }
 
     public CompassQueryFilter gt(String name, Object value) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = getLookup(name);
         return new DefaultCompassQueryFilter(
                 filterBuilder.gt(lookup.getPath(), lookup.getValue(value)));
     }
 
     public CompassQueryFilter ge(String name, Object value) {
-        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        ResourcePropertyLookup lookup = getLookup(name);
         return new DefaultCompassQueryFilter(
                 filterBuilder.ge(lookup.getPath(), lookup.getValue(value)));
     }
@@ -91,5 +99,11 @@ public class DefaultCompassQueryFilterBuilder implements CompassQueryFilterBuild
 
     public CompassBooleanQueryFilterBuilder bool() {
         return new DefaultCompassBooleanQueryFilterBuilder(filterBuilder.bool());
+    }
+
+    private ResourcePropertyLookup getLookup(String name) {
+        ResourcePropertyLookup lookup = session.getMapping().getResourcePropertyLookup(name);
+        lookup.setConvertOnlyWithDotPath(convertOnlyWithDotPath);
+        return lookup;
     }
 }
