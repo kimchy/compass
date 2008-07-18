@@ -38,6 +38,7 @@ import org.compass.core.marshall.MarshallingEnvironment;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.ClassUtils;
+import org.compass.core.util.proxy.extractor.ProxyExtractorHelper;
 
 /**
  * @author kimchy
@@ -442,10 +443,10 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
     /**
      * An extension point allowing to get the poly class name if need to be stored.
-     * By defaults uses {@link Class#getName()}.
+     * By defaults uses {@link org.compass.core.util.proxy.extractor.ProxyExtractorHelper#getTargetClass(Object)}.
      */
     protected String getPolyClassName(Object root) {
-        return root.getClass().getName();
+        return ProxyExtractorHelper.getTargetClass(root).getName();
     }
 
     /**
