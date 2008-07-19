@@ -45,7 +45,10 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.EntityEntry;
 import org.hibernate.event.*;
+import org.hibernate.mapping.Component;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.mapping.Property;
+import org.hibernate.mapping.Value;
 
 /**
  * An Hibernate event listener allowing to run Compass embedded within Hibernate. The embedded mode
@@ -241,7 +244,7 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             log.warn("Unable to reindex entity on collection change, id cannot be extracted: " + event.getAffectedOwnerEntityName());
             return;
         }
-        
+
         if (compassHolder.mirrorFilter != null) {
             if (compassHolder.mirrorFilter.shouldFilterCollection(event)) {
                 return;
@@ -347,6 +350,18 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
         for (Iterator it = cfg.getClassMappings(); it.hasNext();) {
             PersistentClass clazz = (PersistentClass) it.next();
             Class<?> mappedClass = clazz.getMappedClass();
+            for (Iterator propIt = clazz.getPropertyIterator(); propIt.hasNext();) {
+                Property prop = (Property) propIt.next();
+                Value value = prop.getValue();
+                if (value instanceof Component) {
+                    Component component = (Component) value;
+                    try {
+                        atleastOneClassAdded |= compassConfiguration.tryAddClass(ClassUtils.forName(component.getComponentClassName(), settings.getClassLoader()));
+                    } catch (ClassNotFoundException e) {
+                        log.warn("Failed to load component class [" + component.getComponentClassName() + "]", e);
+                    }
+                }
+            }
             atleastOneClassAdded |= compassConfiguration.tryAddClass(mappedClass);
         }
         if (!atleastOneClassAdded) {
