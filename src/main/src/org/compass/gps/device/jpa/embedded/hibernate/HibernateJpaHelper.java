@@ -26,47 +26,88 @@ import org.compass.gps.device.hibernate.embedded.HibernateHelper;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
+import org.compass.gps.device.jpa.support.NativeJpaHelper;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 
 /**
+ * A helper class allowing to get {@link org.compass.core.Compass} and {@link org.compass.gps.device.jpa.embedded.JpaCompassGps}
+ * when working with Hibernate JPA in an embedded mode.
+ *
  * @author kimchy
  */
 public abstract class HibernateJpaHelper {
 
-    private HibernateJpaHelper() {
-
-    }
-
+    /**
+     * Returns the Compass instance assoicated with the given Hibernate {@link javax.persistence.EntityManagerFactory}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
+     * transaction (for performance reasons, mostly there is no need to start a DB transaction).
+     */
     public static Compass getCompass(EntityManagerFactory emf) {
-        return HibernateHelper.getCompass(((HibernateEntityManagerFactory) emf).getSessionFactory());
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        return HibernateHelper.getCompass(((HibernateEntityManagerFactory) nativeEmf).getSessionFactory());
     }
 
+    /**
+     * Returns the CompassTemplate instance assoicated with the given Hibernate {@link javax.persistence.EntityManagerFactory}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
+     * transaction (for performance reasons, mostly there is no need to start a DB transaction).
+     */
     public static CompassTemplate getCompassTemplate(EntityManagerFactory emf) {
-        return HibernateHelper.getCompassTempalte(((HibernateEntityManagerFactory) emf).getSessionFactory());
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        return HibernateHelper.getCompassTempalte(((HibernateEntityManagerFactory) nativeEmf).getSessionFactory());
     }
 
+    /**
+     * Returns the Compass instance assoicated with the given OpenJPA {@link javax.persistence.EntityManager}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
+     * transaction (for performance reasons, mostly there is no need to start a DB transaction).
+     */
     public static Compass getCompass(EntityManager em) {
         return HibernateHelper.getCompass(((HibernateEntityManager) em).getSession());
     }
 
+    /**
+     * Returns the CompassTemplate instance assoicated with the given OpenJPA {@link javax.persistence.EntityManager}.
+     * This allows to get a Compass instnace in order to perform search operations for example outside of a JPA
+     * transaction (for performance reasons, mostly there is no need to start a DB transaction).
+     */
     public static CompassTemplate getCompassTemplate(EntityManager em) {
         return HibernateHelper.getCompassTempalte(((HibernateEntityManager) em).getSession());
     }
 
+    /**
+     * Returns the index settings that are configured within the {@link javax.persistence.EntityManagerFactory}
+     * configuration. Can be used to configure exteranally a {@link org.compass.gps.device.jpa.embedded.JpaCompassGps}
+     * instance.
+     */
     public static Properties getIndexSettings(EntityManagerFactory emf) {
-        return HibernateHelper.getIndexSettings(((HibernateEntityManagerFactory) emf).getSessionFactory());
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        return HibernateHelper.getIndexSettings(((HibernateEntityManagerFactory) nativeEmf).getSessionFactory());
     }
 
+    /**
+     * Returns the index settings that are configured within the {@link javax.persistence.EntityManager}
+     * configuration. Can be used to configure exteranally a {@link org.compass.gps.device.jpa.embedded.JpaCompassGps}
+     * instnace.
+     */
     public static Properties getIndexSettings(EntityManager em) {
         return HibernateHelper.getIndexSettings(((HibernateEntityManager) em).getSession());
     }
 
+    /**
+     * Returns a new instnacoef of a {@link org.compass.gps.device.jpa.embedded.JpaCompassGps} built on top
+     * of the embedded {@link org.compass.core.Compass} instance.
+     */
     public static JpaCompassGps getCompassGps(EntityManagerFactory emf) {
         JpaGpsDevice device = new JpaGpsDevice("jpadevice", emf);
         return getCompassGps(device);
     }
 
+    /**
+     * Returns a new instnacoef of a {@link org.compass.gps.device.jpa.embedded.JpaCompassGps} built on top
+     * of the embedded {@link org.compass.core.Compass} instance.
+     */
     public static JpaCompassGps getCompassGps(JpaGpsDevice device) {
         DefaultJpaCompassGps gps = new DefaultJpaCompassGps(getCompass(device.getEntityManagerFactory()));
         device.setMirrorDataChanges(false);
@@ -75,4 +116,9 @@ public abstract class HibernateJpaHelper {
         gps.start();
         return gps;
     }
+
+    private HibernateJpaHelper() {
+
+    }
+
 }
