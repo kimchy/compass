@@ -26,6 +26,7 @@ import org.compass.gps.device.hibernate.embedded.HibernateHelper;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
+import org.compass.gps.device.jpa.support.NativeJpaHelper;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 
@@ -43,7 +44,8 @@ public abstract class HibernateJpaHelper {
      * transaction (for performance reasons, mostly there is no need to start a DB transaction).
      */
     public static Compass getCompass(EntityManagerFactory emf) {
-        return HibernateHelper.getCompass(((HibernateEntityManagerFactory) emf).getSessionFactory());
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        return HibernateHelper.getCompass(((HibernateEntityManagerFactory) nativeEmf).getSessionFactory());
     }
 
     /**
@@ -52,7 +54,8 @@ public abstract class HibernateJpaHelper {
      * transaction (for performance reasons, mostly there is no need to start a DB transaction).
      */
     public static CompassTemplate getCompassTemplate(EntityManagerFactory emf) {
-        return HibernateHelper.getCompassTempalte(((HibernateEntityManagerFactory) emf).getSessionFactory());
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        return HibernateHelper.getCompassTempalte(((HibernateEntityManagerFactory) nativeEmf).getSessionFactory());
     }
 
     /**
@@ -79,7 +82,8 @@ public abstract class HibernateJpaHelper {
      * instance.
      */
     public static Properties getIndexSettings(EntityManagerFactory emf) {
-        return HibernateHelper.getIndexSettings(((HibernateEntityManagerFactory) emf).getSessionFactory());
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        return HibernateHelper.getIndexSettings(((HibernateEntityManagerFactory) nativeEmf).getSessionFactory());
     }
 
     /**
