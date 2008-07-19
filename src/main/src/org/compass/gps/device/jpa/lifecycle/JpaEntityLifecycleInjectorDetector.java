@@ -41,7 +41,7 @@ public abstract class JpaEntityLifecycleInjectorDetector {
     public static JpaEntityLifecycleInjector detectInjector(EntityManagerFactory entityManagerFactory, final CompassSettings settings)
             throws JpaGpsDeviceException {
         String injectorClassName =
-                NativeJpaHelper.detectNativeJpa(entityManagerFactory, settings, new NativeJpaHelper.NativeJpaCallback<String>() {
+                NativeJpaHelper.detectNativeJpa(entityManagerFactory, new NativeJpaHelper.NativeJpaCallback<String>() {
 
                     public String onHibernate() {
                         try {

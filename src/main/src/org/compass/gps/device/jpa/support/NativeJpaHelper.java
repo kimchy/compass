@@ -16,19 +16,46 @@
 
 package org.compass.gps.device.jpa.support;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.EntityManagerFactory;
 
-import org.compass.core.config.CompassSettings;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.NativeJpaExtractor;
+import org.compass.jboss.device.jpa.JBossNativeHibernateJpaExtractor;
+import org.compass.spring.device.jpa.SpringNativeJpaExtractor;
 
 /**
  * @author kimchy
  */
 public abstract class NativeJpaHelper {
+
+    private static final Log log = LogFactory.getLog(NativeJpaHelper.class);
+
+    private static final NativeJpaExtractor[] extractors;
+
+    static {
+        ArrayList<NativeJpaExtractor> extractorsList = new ArrayList<NativeJpaExtractor>();
+        try {
+            extractorsList.add(new SpringNativeJpaExtractor());
+        } catch (Throwable t) {
+            // not in classpath
+        }
+        try {
+            extractorsList.add(new JBossNativeHibernateJpaExtractor());
+        } catch (Throwable t) {
+            // not in classpath
+        }
+        extractors = extractorsList.toArray(new NativeJpaExtractor[extractorsList.size()]);
+        if (log.isDebugEnabled()) {
+            log.debug("Using native JPA extractors " + Arrays.toString(extractors));
+        }
+    }
 
     public static interface NativeJpaCallback<T> {
 
@@ -43,8 +70,8 @@ public abstract class NativeJpaHelper {
         T onUnknown();
     }
 
-    public static <T> T detectNativeJpa(EntityManagerFactory emf, CompassSettings settings, NativeJpaCallback<T> callback) throws JpaGpsDeviceException {
-        EntityManagerFactory nativeEmf = extractNativeJpa(emf, settings.getClassLoader());
+    public static <T> T detectNativeJpa(EntityManagerFactory emf, NativeJpaCallback<T> callback) throws JpaGpsDeviceException {
+        EntityManagerFactory nativeEmf = extractNativeJpa(emf);
 
         Set interfaces = ClassUtils.getAllInterfacesAsSet(nativeEmf);
         Set<String> interfacesAsStrings = new HashSet<String>();
@@ -70,49 +97,17 @@ public abstract class NativeJpaHelper {
     }
 
     public static EntityManagerFactory extractNativeJpa(EntityManagerFactory emf) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        if (classLoader == null) {
-            classLoader = NativeJpaHelper.class.getClassLoader();
+        if (extractors.length == 0) {
+            return emf;
         }
-        return extractNativeJpa(emf, classLoader);
-    }
-
-    public static EntityManagerFactory extractNativeJpa(EntityManagerFactory emf, CompassSettings settings) {
-        return extractNativeJpa(emf, settings.getClassLoader());
-    }
-
-    public static EntityManagerFactory extractNativeJpa(EntityManagerFactory emf, ClassLoader classLoader) {
-        Set interfaces = ClassUtils.getAllInterfacesAsSet(emf);
-        Set<String> interfacesAsStrings = new HashSet<String>();
-        for (Object anInterface : interfaces) {
-            interfacesAsStrings.add(((Class) anInterface).getName());
-        }
-        interfacesAsStrings.add(emf.getClass().getName());
-
-        NativeJpaExtractor extractor = null;
-        if (interfacesAsStrings.contains("org.springframework.orm.jpa.EntityManagerFactoryInfo")) {
-            try {
-                extractor = (NativeJpaExtractor)
-                        ClassUtils.forName("org.compass.spring.device.jpa.SpringNativeJpaExtractor", classLoader).newInstance();
-            } catch (Exception e) {
-                throw new JpaGpsDeviceException("Failed to load/create spring native extractor", e);
-            }
-        } else if (interfacesAsStrings.contains("org.jboss.ejb3.entity.InjectedEntityManagerFactory")) {
-            try {
-                extractor = (NativeJpaExtractor)
-                        ClassUtils.forName("org.compass.jboss.device.jpa.JBossNativeHibernateJpaExtractor", classLoader).newInstance();
-            } catch (Exception e) {
-                throw new JpaGpsDeviceException("Failed to load/create JBoss native extractor", e);
-            }
-        }
-        // possible else if ...
-
         EntityManagerFactory nativeEmf = emf;
-        if (extractor != null) {
-            nativeEmf = extractor.extractNative(emf);
-            // recursivly call in order to find
-            nativeEmf = extractNativeJpa(nativeEmf, classLoader);
-        }
+        do {
+            emf = nativeEmf;
+            for (NativeJpaExtractor extractor : extractors) {
+                nativeEmf = extractor.extractNative(nativeEmf);
+            }
+        } while (nativeEmf != emf);
+
         return nativeEmf;
     }
 }

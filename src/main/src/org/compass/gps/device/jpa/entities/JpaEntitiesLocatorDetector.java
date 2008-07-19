@@ -44,7 +44,7 @@ public abstract class JpaEntitiesLocatorDetector {
     public static JpaEntitiesLocator detectLocator(EntityManagerFactory entityManagerFactory, CompassSettings settings) {
 
         String locatorClassName =
-                NativeJpaHelper.detectNativeJpa(entityManagerFactory, settings, new NativeJpaHelper.NativeJpaCallback<String>() {
+                NativeJpaHelper.detectNativeJpa(entityManagerFactory, new NativeJpaHelper.NativeJpaCallback<String>() {
 
                     public String onHibernate() {
                         return "org.compass.gps.device.jpa.entities.HibernateJpaEntitiesLocator";

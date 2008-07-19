@@ -150,7 +150,7 @@ public class JpaGpsDevice extends AbstractParallelGpsDevice implements PassiveMi
                         + nativeJpaExtractor.getClass().getName() + "]"));
             }
         } else {
-            nativeEntityManagerFactory = NativeJpaHelper.extractNativeJpa(entityManagerFactory, compassGps.getMirrorCompass().getSettings());
+            nativeEntityManagerFactory = NativeJpaHelper.extractNativeJpa(entityManagerFactory);
             if (log.isDebugEnabled()) {
                 log.debug(buildMessage("Using native EntityManagerFactory ["
                         + nativeEntityManagerFactory.getClass().getName() + "] using default extractor"));
