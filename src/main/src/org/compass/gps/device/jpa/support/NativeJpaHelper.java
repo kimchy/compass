@@ -42,11 +42,13 @@ public abstract class NativeJpaHelper {
     static {
         ArrayList<NativeJpaExtractor> extractorsList = new ArrayList<NativeJpaExtractor>();
         try {
+            ClassUtils.forName("org.springframework.orm.jpa.EntityManagerFactoryInfo", NativeJpaHelper.class.getClassLoader());
             extractorsList.add(new SpringNativeJpaExtractor());
         } catch (Throwable t) {
             // not in classpath
         }
         try {
+            ClassUtils.forName("org.jboss.ejb3.entity.InjectedEntityManagerFactory", NativeJpaHelper.class.getClassLoader());
             extractorsList.add(new JBossNativeHibernateJpaExtractor());
         } catch (Throwable t) {
             // not in classpath
