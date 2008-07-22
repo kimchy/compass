@@ -362,6 +362,15 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
                     }
                 }
             }
+            Value idValue = clazz.getIdentifierProperty().getValue();
+            if (idValue instanceof Component) {
+                Component component = (Component) idValue;
+                try {
+                    atleastOneClassAdded |= compassConfiguration.tryAddClass(ClassUtils.forName(component.getComponentClassName(), settings.getClassLoader()));
+                } catch (ClassNotFoundException e) {
+                    log.warn("Failed to load component class [" + component.getComponentClassName() + "]", e);
+                }
+            }
             atleastOneClassAdded |= compassConfiguration.tryAddClass(mappedClass);
         }
         if (!atleastOneClassAdded) {
