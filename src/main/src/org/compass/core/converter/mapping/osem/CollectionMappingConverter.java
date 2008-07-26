@@ -32,8 +32,13 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.Resource;
 import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.accessor.Getter;
+import org.compass.core.converter.mapping.osem.collection.LazyReferenceCollection;
+import org.compass.core.converter.mapping.osem.collection.LazyReferenceEntry;
+import org.compass.core.converter.mapping.osem.collection.LazyReferenceList;
+import org.compass.core.converter.mapping.osem.collection.LazyReferenceSet;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
+import org.compass.core.mapping.osem.CollectionMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
 
@@ -81,23 +86,40 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
         }
     }
 
-    protected Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size) {
-        if (collectionType == AbstractCollectionMapping.CollectionType.LIST) {
-            return new ArrayList(size);
-        } else if (collectionType == AbstractCollectionMapping.CollectionType.ENUM_SET) {
-            return EnumSet.noneOf(AccessorUtils.getCollectionParameter(getter));
-        } else if (collectionType == AbstractCollectionMapping.CollectionType.SET) {
-            return new HashSet(size);
-        } else if (collectionType == AbstractCollectionMapping.CollectionType.SORTED_SET) {
-            return new TreeSet();
-        } else if (collectionType == AbstractCollectionMapping.CollectionType.LINKED_HASH_SET) {
-            return new LinkedHashSet(size);
+    protected Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size,
+                                     AbstractCollectionMapping mapping, MarshallingContext context) {
+        if (((CollectionMapping) mapping).isLazy()) {
+            if (collectionType == AbstractCollectionMapping.CollectionType.LIST) {
+                return new LazyReferenceList(context.getSession(), size);
+            } else if (collectionType == AbstractCollectionMapping.CollectionType.SET ||
+                    collectionType == AbstractCollectionMapping.CollectionType.SORTED_SET ||
+                    collectionType == AbstractCollectionMapping.CollectionType.LINKED_HASH_SET) {
+                return new LazyReferenceSet(context.getSession(), size, collectionType);
+            } else {
+                throw new IllegalStateException("Lazy not supported for this type of collection [" + collectionType + "]");
+            }
         } else {
-            throw new IllegalStateException("Should not happen, internal compass error");
+            if (collectionType == AbstractCollectionMapping.CollectionType.LIST) {
+                return new ArrayList(size);
+            } else if (collectionType == AbstractCollectionMapping.CollectionType.ENUM_SET) {
+                return EnumSet.noneOf(AccessorUtils.getCollectionParameter(getter));
+            } else if (collectionType == AbstractCollectionMapping.CollectionType.SET) {
+                return new HashSet(size);
+            } else if (collectionType == AbstractCollectionMapping.CollectionType.SORTED_SET) {
+                return new TreeSet();
+            } else if (collectionType == AbstractCollectionMapping.CollectionType.LINKED_HASH_SET) {
+                return new LinkedHashSet(size);
+            } else {
+                throw new IllegalStateException("Should not happen, internal compass error");
+            }
         }
     }
 
-    protected void addValue(Object col, int index, Object value) {
-        ((Collection) col).add(value);
+    protected void addValue(Object col, int index, Object value, AbstractCollectionMapping mapping, MarshallingContext context) {
+        if (((CollectionMapping) mapping).isLazy()) {
+            ((LazyReferenceCollection) col).addLazyEntry((LazyReferenceEntry) value);
+        } else {
+            ((Collection) col).add(value);
+        }
     }
 }

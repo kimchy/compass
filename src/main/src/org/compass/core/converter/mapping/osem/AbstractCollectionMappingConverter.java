@@ -118,7 +118,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
 
         int size = Integer.parseInt(sColSize);
 
-        Object col = createColObject(colMapping.getGetter(), collectionType, size);
+        Object col = createColObject(colMapping.getGetter(), collectionType, size, colMapping, context);
 
         // for null values in enteties within the collection, they must be saved
         // so the order will be maintained
@@ -140,7 +140,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, current);
             Object value = elementMapping.getConverter().unmarshall(crw, elementMapping, context);
             if (value != null) {
-                addValue(col, i, value);
+                addValue(col, i, value, colMapping, context);
             }
         }
 
@@ -153,7 +153,8 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         return col;
     }
 
-    protected abstract Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size);
+    protected abstract Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType,
+                                              int size, AbstractCollectionMapping mapping, MarshallingContext context);
 
-    protected abstract void addValue(Object col, int index, Object value);
+    protected abstract void addValue(Object col, int index, Object value, AbstractCollectionMapping mapping, MarshallingContext context);
 }

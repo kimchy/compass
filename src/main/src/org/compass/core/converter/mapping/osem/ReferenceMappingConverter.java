@@ -22,6 +22,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.mapping.osem.collection.LazyReferenceEntry;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.HasRefAliasMapping;
@@ -88,10 +89,15 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
             // the reference was not marshalled
             return null;
         }
-        Map<Object, Object> attributes = context.removeAttributes();
-        Object retVal = context.getSession().get(refMapping.getAlias(), ids, context);
-        context.restoreAttributes(attributes);
-        return retVal;
+        ReferenceMapping referenceMapping = (ReferenceMapping) hasRefAliasMapping;
+        if (referenceMapping.isLazy()) {
+            return new LazyReferenceEntry(refMapping.getAlias(), ids);
+        } else {
+            Map<Object, Object> attributes = context.removeAttributes();
+            Object retVal = context.getSession().get(refMapping.getAlias(), ids, context);
+            context.restoreAttributes(attributes);
+            return retVal;
+        }
     }
 
 

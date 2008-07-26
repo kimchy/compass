@@ -749,6 +749,12 @@ public class CompassEnvironment {
          * in the class mapping). Defaults to <code>true</code>.
          */
         public static final String SUPPORT_UNMARSHALL = "compass.osem.supportUnmarshall";
+
+        /**
+         * Controls if reference mappings for collections are lazy by default or not. Defaults to
+         * <code>false</code>. 
+         */
+        public static final String LAZY_REFERNCE = "compass.osem.lazyReference";
     }
 
     public abstract class Xsem {

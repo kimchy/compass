@@ -424,7 +424,7 @@ public class A {
       </para>
 
       <para>
-        Currently, Compass does not support lazy loading, this means that when loading a searchable class, all its referenced mappings will be loaded as well.
+        Lazy loading is supported when using reference mapping over a collection (either a <literal>Set</literal> or a <literal>List</literal>). In such a case, during the un-marshalling process, a lazy collection will be created that will load referenced objects on demand (using the current session). Any dirty operations on the collection (such as <literal>add</literal> or <literal>remove</literal> will cause Compass to load all the collection). In order to enable lazy loading, the lazy attribute should be set to <literal>true</literal>. A global setting, <literal>compass.osem.lazyReference</literal>, can control all the unmapped reference collection mapping lazy nature. It defaults to <literal>false</literal>.
       </para>
       
       <para>

@@ -38,6 +38,7 @@ import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.mapping.osem.ArrayMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.CollectionMapping;
+import org.compass.core.mapping.osem.LazyMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 
 /**
@@ -142,6 +143,9 @@ public class CollectionMappingProcessor implements MappingProcessor {
                 collectionMapping.setOverrideByName(((OverrideByNameMapping) objectMapping).isOverrideByName());
             } else {
                 collectionMapping.setOverrideByName(true);
+            }
+            if ((collectionMapping instanceof LazyMapping) && (objectMapping instanceof LazyMapping)) {
+                ((LazyMapping) collectionMapping).setLazy(((LazyMapping) objectMapping).isLazy());
             }
             return collectionMapping;
         } else {

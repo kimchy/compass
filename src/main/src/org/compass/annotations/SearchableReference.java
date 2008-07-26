@@ -76,11 +76,15 @@ public @interface SearchableReference {
 
     /**
      * The property accessor that will be fetch and write the property value.
-     * <p/>
-     * It is automatically set based on where the annotation is used, but can be
+     *
+     * <p>It is automatically set based on where the annotation is used, but can be
      * explicitly set. Compass also supports custom property accessors, registered
      * under a custom name, which can then be used here as well.
      */
     String accessor() default "";
-    
+
+    /**
+     * Should this refernce mapping (only in case of collection) will be lazy or not.
+     */
+    Lazy lazy() default Lazy.NA;
 }

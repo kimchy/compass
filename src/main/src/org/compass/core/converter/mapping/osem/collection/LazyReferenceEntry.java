@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.osem;
-
-import org.compass.core.mapping.Mapping;
+package org.compass.core.converter.mapping.osem.collection;
 
 /**
  * @author kimchy
  */
-public class CollectionMapping extends AbstractCollectionMapping implements LazyMapping {
+public class LazyReferenceEntry {
 
-    private Boolean lazy = false;
+    private String alias;
 
-    public Mapping copy() {
-        CollectionMapping copy = new CollectionMapping();
-        super.copy(copy);
-        copy.setLazy(isLazy());
-        return copy;
+    private Object[] ids;
+
+    public LazyReferenceEntry(String alias, Object[] ids) {
+        this.alias = alias;
+        this.ids = ids;
     }
 
-    public Boolean isLazy() {
-        return lazy;
+    public String getAlias() {
+        return alias;
     }
 
-    public void setLazy(Boolean lazy) {
-        this.lazy = lazy;
+    public Object[] getIds() {
+        return ids;
     }
 }

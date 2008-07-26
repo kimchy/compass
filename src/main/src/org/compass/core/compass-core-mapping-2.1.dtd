@@ -403,6 +403,7 @@
     <!ATTLIST reference converter CDATA #IMPLIED>
     <!ATTLIST reference accessor CDATA #IMPLIED>
     <!ATTLIST reference cascade CDATA  #IMPLIED>
+    <!ATTLIST reference lazy (true|false) #IMPLIED>
 
 <!ELEMENT parent EMPTY
 >

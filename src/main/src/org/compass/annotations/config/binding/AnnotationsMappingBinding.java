@@ -565,6 +565,13 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         if (StringUtils.hasLength(searchableReference.refComponentAlias())) {
             referenceMapping.setRefCompAlias(searchableReference.refComponentAlias());
         }
+
+        if (searchableReference.lazy() == Lazy.FALSE) {
+            referenceMapping.setLazy(false);
+        } else if (searchableReference.lazy() == Lazy.TRUE) {
+            referenceMapping.setLazy(true);
+        }
+
         bindCascades(searchableReference.cascade(), referenceMapping);
     }
 

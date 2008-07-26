@@ -806,6 +806,11 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         referenceMapping.setAccessor(referenceConf.getAttribute("accessor", null));
         referenceMapping.setPropertyName(name);
 
+        String sLazy = referenceConf.getAttribute("lazy", null);
+        if (sLazy != null) {
+            referenceMapping.setLazy(sLazy.equalsIgnoreCase("true"));
+        }
+
         bindCascade(referenceConf, referenceMapping, null);
     }
 

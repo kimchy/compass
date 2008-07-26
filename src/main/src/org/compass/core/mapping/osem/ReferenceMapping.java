@@ -23,16 +23,19 @@ import org.compass.core.mapping.OverrideByNameMapping;
 /**
  * @author kimchy
  */
-public class ReferenceMapping extends AbstractRefAliasMapping implements OverrideByNameMapping, HasRefAliasMapping {
+public class ReferenceMapping extends AbstractRefAliasMapping implements OverrideByNameMapping, HasRefAliasMapping, LazyMapping {
 
     private String refCompAlias;
 
     private ClassMapping refCompMapping;
 
+    private Boolean lazy = false;
+
     protected void copy(ReferenceMapping copy) {
         super.copy(copy);
         copy.setRefCompAlias(getRefCompAlias());
         copy.setRefCompMapping(getRefCompMapping());
+        copy.setLazy(isLazy());
     }
 
     public Mapping copy() {
@@ -51,6 +54,14 @@ public class ReferenceMapping extends AbstractRefAliasMapping implements Overrid
 
     public void setOverrideByName(boolean overrideByName) {
         throw new IllegalArgumentException("The reference mapping always overrides");
+    }
+
+    public Boolean isLazy() {
+        return lazy;
+    }
+
+    public void setLazy(Boolean lazy) {
+        this.lazy = lazy;
     }
 
     public String getRefCompAlias() {

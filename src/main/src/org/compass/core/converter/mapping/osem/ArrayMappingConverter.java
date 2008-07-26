@@ -31,7 +31,7 @@ import org.compass.core.marshall.MarshallingEnvironment;
 public class ArrayMappingConverter extends AbstractCollectionMappingConverter {
 
     protected int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
-            MarshallingContext context) {
+                                      MarshallingContext context) {
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         int count = 0;
         int size = Array.getLength(root);
@@ -54,11 +54,12 @@ public class ArrayMappingConverter extends AbstractCollectionMappingConverter {
         throw new IllegalStateException("Should not be called, internal compass error");
     }
 
-    protected Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size) {
+    protected Object createColObject(Getter getter, AbstractCollectionMapping.CollectionType collectionType, int size,
+                                     AbstractCollectionMapping mapping, MarshallingContext context) {
         return Array.newInstance(getter.getReturnType().getComponentType(), size);
     }
 
-    protected void addValue(Object col, int index, Object value) {
+    protected void addValue(Object col, int index, Object value, AbstractCollectionMapping mapping, MarshallingContext context) {
         Array.set(col, index, value);
     }
 }

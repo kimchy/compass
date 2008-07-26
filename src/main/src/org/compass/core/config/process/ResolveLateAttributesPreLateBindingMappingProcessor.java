@@ -16,6 +16,8 @@
 
 package org.compass.core.config.process;
 
+import java.util.Iterator;
+
 import org.compass.core.Property;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
@@ -24,6 +26,7 @@ import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.SpellCheckType;
@@ -31,6 +34,8 @@ import org.compass.core.mapping.internal.InternalAllMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.CollectionMapping;
+import org.compass.core.mapping.osem.LazyMapping;
 
 /**
  * Reolves late attributes associated usually with {@link ClassMapping}, they are:
@@ -51,6 +56,7 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
                 if (!classMapping.isSupportUnmarshallSet()) {
                     classMapping.setSupportUnmarshall(settings.getSettingAsBoolean(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, true));
                 }
+                processClassMappingProperties(classMapping, settings);
             }
             if (aliasMapping instanceof ResourceMapping) {
                 ResourceMapping resourceMapping = (ResourceMapping) aliasMapping;
@@ -84,5 +90,28 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
         }
 
         return compassMapping;
+    }
+
+    private void processClassMappingProperties(ClassMapping classMapping, CompassSettings settings) {
+        boolean defaultLazy = settings.getSettingAsBoolean(CompassEnvironment.Osem.LAZY_REFERNCE, false);
+        for (Iterator<Mapping> it = classMapping.mappingsIt(); it.hasNext();) {
+            Mapping m = it.next();
+            if (m instanceof LazyMapping) {
+                LazyMapping lazyMapping = (LazyMapping) m;
+                // only collection mapping are lazy
+                if (lazyMapping instanceof CollectionMapping) {
+                    CollectionMapping collectionMapping = (CollectionMapping) lazyMapping;
+                    if (collectionMapping.getElementMapping() instanceof LazyMapping) {
+                        LazyMapping elementMapping = (LazyMapping) collectionMapping.getElementMapping();
+                        if (elementMapping.isLazy() == null) {
+                            elementMapping.setLazy(defaultLazy);
+                            collectionMapping.setLazy(defaultLazy);
+                        }
+                    }
+                } else {
+                    lazyMapping.setLazy(false);
+                }
+            }
+        }
     }
 }
