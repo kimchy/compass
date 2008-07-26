@@ -66,10 +66,41 @@ public class AggressiveOptimizerTests extends AbstractOptimizerTests {
         session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        A a = session.load(A.class, new Long(2));
+        A a = session.load(A.class, 2);
         assertNotNull(a);
 
         tr.commit();
+        session.close();
+    }
+
+    public void testForceOptimizer() throws IOException {
+
+        addData(0, 1);
+
+        CompassSession session = openSession();
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
+        assertEquals(1, infos.size());
+        session.close();
+
+        addData(1, 2);
+
+        session = openSession();
+        infos = LuceneSubIndexInfo.getIndexInfo("a", session);
+        assertEquals(2, infos.size());
+        session.close();
+
+        getCompass().getSearchEngineOptimizer().optimize();
+
+        session = openSession();
+        infos = LuceneSubIndexInfo.getIndexInfo("a", session);
+        assertEquals(2, infos.size());
+        session.close();
+
+        getCompass().getSearchEngineOptimizer().forceOptimize();
+
+        session = openSession();
+        infos = LuceneSubIndexInfo.getIndexInfo("a", session);
+        assertEquals(1, infos.size());
         session.close();
     }
 

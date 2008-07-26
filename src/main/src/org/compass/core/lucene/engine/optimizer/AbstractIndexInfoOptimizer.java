@@ -28,6 +28,22 @@ import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 public abstract class AbstractIndexInfoOptimizer extends AbstractOptimizer {
 
     protected void doOptimize(String subIndex) throws SearchEngineException {
+        LuceneSubIndexInfo indexInfo = doGetIndexInfo(subIndex);
+        if (indexInfo == null) {
+            return;
+        }
+        doOptimize(subIndex, indexInfo);
+    }
+
+    protected void doForceOptimize(String subIndex) throws SearchEngineException {
+        LuceneSubIndexInfo indexInfo = doGetIndexInfo(subIndex);
+        if (indexInfo == null) {
+            return;
+        }
+        doForceOptimize(subIndex, indexInfo);
+    }
+
+    protected LuceneSubIndexInfo doGetIndexInfo(String subIndex) {
         LuceneSearchEngineIndexManager indexManager = getSearchEngineFactory().getLuceneIndexManager();
         LuceneSubIndexInfo indexInfo;
         try {
@@ -37,13 +53,15 @@ public abstract class AbstractIndexInfoOptimizer extends AbstractOptimizer {
         }
         if (indexInfo == null) {
             // no index data, simply continue
-            return;
+            return null;
         }
         if (!isRunning()) {
-            return;
+            return null;
         }
-        doOptimize(subIndex, indexInfo);
+        return indexInfo;
     }
 
     protected abstract void doOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
+
+    protected abstract void doForceOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException;
 }

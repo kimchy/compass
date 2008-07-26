@@ -30,6 +30,18 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 
 /**
+ * A {@link org.compass.core.engine.SearchEngineOptimizer} manager that manages the actual
+ * {@link org.compass.core.engine.SearchEngineOptimizer}.
+ *
+ * <p>When configured ({@link #configure(org.compass.core.config.CompassSettings)}, creates the optimizer
+ * that will be used based on the {@link org.compass.core.lucene.LuceneEnvironment.Optimizer#TYPE}. The default
+ * optimizer used is the {@link org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer}.
+ *
+ * <p>When started, will check the {@link org.compass.core.lucene.LuceneEnvironment.Optimizer#SCHEDULE} flag,
+ * and if set to <code>true</code> (the default) will schedule a periodic optimization process. The period
+ * is taken from the {@link org.compass.core.lucene.LuceneEnvironment.Optimizer#SCHEDULE_PERIOD} setting, which
+ * is set in <b>seconds</b> and defaults to <code>10</code>. 
+ *
  * @author kimchy
  */
 public class LuceneSearchEngineOptimizerManager implements CompassConfigurable, SearchEngineOptimizer {
@@ -103,6 +115,14 @@ public class LuceneSearchEngineOptimizerManager implements CompassConfigurable, 
 
     public void optimize(String subIndex) throws SearchEngineException {
         searchEngineOptimizer.optimize(subIndex);
+    }
+
+    public void forceOptimize() throws SearchEngineException {
+        searchEngineOptimizer.forceOptimize();
+    }
+
+    public void forceOptimize(String subIndex) throws SearchEngineException {
+        searchEngineOptimizer.forceOptimize(subIndex);
     }
 
     public SearchEngineOptimizer getOptimizer() {

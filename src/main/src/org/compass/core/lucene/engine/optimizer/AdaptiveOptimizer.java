@@ -30,6 +30,13 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 
 /**
+ * The Adaptive optimizer uses the configured {@link org.compass.core.lucene.LuceneEnvironment.Optimizer.Adaptive#MERGE_FACTOR}
+ * (which defaults to <code>10</code>). Basically, ends up calling Lucene {@link org.apache.lucene.index.IndexWriter#optimize(int)}
+ * with the provided merge factor which optimizes the index up to the given merge factor.
+ *
+ * <p>Forced optimization ends up optimizing the sub index up to a single segmend, overriding the merge factor (just
+ * for that call, with a merge factor of <code>1</code>).
+ *
  * @author kimchy
  */
 public class AdaptiveOptimizer extends AbstractOptimizer implements CompassConfigurable {
@@ -48,9 +55,17 @@ public class AdaptiveOptimizer extends AbstractOptimizer implements CompassConfi
         return false;
     }
 
+    protected void doForceOptimize(String subIndex) throws SearchEngineException {
+        doOptimize(subIndex, 1);
+    }
+
     protected void doOptimize(String subIndex) throws SearchEngineException {
+        doOptimize(subIndex, mergeFactor);
+    }
+
+    protected void doOptimize(String subIndex, int mergeFactor) throws SearchEngineException {
         if (log.isDebugEnabled()) {
-            log.debug("Optimizing sub-index [" + subIndex + "]");
+            log.debug("Optimizing sub-index [" + subIndex + "] with mergeFactor [" + mergeFactor + "]");
         }
         long time = System.currentTimeMillis();
         LuceneSearchEngineIndexManager indexManager = (LuceneSearchEngineIndexManager) getSearchEngineFactory().getIndexManager();
@@ -85,8 +100,7 @@ public class AdaptiveOptimizer extends AbstractOptimizer implements CompassConfi
         long optimizeTime = System.currentTimeMillis() - time;
 
         if (log.isDebugEnabled()) {
-            log.debug("Optimization of sub-index [" + subIndex + "] took [" + (optimizeTime)
-                    + "ms]");
+            log.debug("Optimization of sub-index [" + subIndex + "] took [" + (optimizeTime) + "ms]");
         }
     }
 }

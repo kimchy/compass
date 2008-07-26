@@ -29,6 +29,12 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 
 /**
+ * Agressive optimzer optimizes the index down to a single segment once it has more that the configured
+ * merge factor segments. The merge factor can be configured using {@link org.compass.core.lucene.LuceneEnvironment.Optimizer.Aggressive#MERGE_FACTOR}
+ * (which deftauls to <code>10</code>).
+ *
+ * <p>Forced optimization will optimize the index regardless of the number of segments.
+ *
  * @author kimchy
  */
 public class AggressiveOptimizer extends AbstractIndexInfoOptimizer implements CompassConfigurable {
@@ -62,9 +68,13 @@ public class AggressiveOptimizer extends AbstractIndexInfoOptimizer implements C
         if (!doNeedOptimizing(subIndex, indexInfo)) {
             return;
         }
+        doForceOptimize(subIndex, indexInfo);
+    }
+
+    protected void doForceOptimize(String subIndex, LuceneSubIndexInfo indexInfo) throws SearchEngineException {
         LuceneSearchEngineIndexManager indexManager = getSearchEngineFactory().getLuceneIndexManager();
         IndexWriter indexWriter = null;
-        Directory dir = null;
+        Directory dir;
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Optimizing sub-index [" + subIndex + "]");

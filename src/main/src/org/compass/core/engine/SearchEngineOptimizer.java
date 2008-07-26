@@ -64,10 +64,21 @@ public interface SearchEngineOptimizer {
     void optimize() throws SearchEngineException;
 
     /**
+     * Optimzies the search engine regardless if it required optimization or not.
+     */
+    void forceOptimize() throws SearchEngineException;
+
+    /**
      * Optimizes the sub index if it requires optimization.
      *
      * @param subIndex The sub index to optimize
-     * @throws SearchEngineException
      */
     void optimize(String subIndex) throws SearchEngineException;
+
+    /**
+     * Optimzies the sub index regardless if it required optimization or not.
+     *
+     * @param subIndex The sub index to optimize
+     */
+    void forceOptimize(String subIndex) throws SearchEngineException;
 }

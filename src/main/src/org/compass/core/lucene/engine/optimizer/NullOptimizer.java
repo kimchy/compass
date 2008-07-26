@@ -41,6 +41,17 @@ public class NullOptimizer extends AbstractOptimizer {
         // do nothing
     }
 
+    @Override
+    public void forceOptimize() throws SearchEngineException {
+        // do nothing
+    }
+
+    @Override
+    protected void doForceOptimize(String subIndex) throws SearchEngineException {
+        // do nothing
+    }
+
+    @Override
     protected void doOptimize(String subIndex) throws SearchEngineException {
         // do nothing
     }

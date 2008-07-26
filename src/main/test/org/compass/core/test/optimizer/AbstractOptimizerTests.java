@@ -34,7 +34,7 @@ public abstract class AbstractOptimizerTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
         for (int i = from; i < to; i++) {
             A a = new A();
-            a.setId(new Long(i));
+            a.setId((long) i);
             a.setValue("value");
             session.save(a);
         }
@@ -46,7 +46,7 @@ public abstract class AbstractOptimizerTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
         for (int i = from; i < to; i++) {
-            session.load(A.class, new Long(i));
+            session.load(A.class, i);
         }
         tr.commit();
         session.close();

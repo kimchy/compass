@@ -36,7 +36,6 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
 
     protected void addSettings(CompassSettings settings) {
         settings.setSetting(LuceneEnvironment.Optimizer.TYPE, AggressiveOptimizer.class.getName());
-        settings.setIntSetting(LuceneEnvironment.Optimizer.Aggressive.MERGE_FACTOR, 1);
     }
 
     public void testNoFreqs() {
@@ -86,7 +85,7 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         session.close();
 
         // only after optimization the term freqs are updated in Lucene
-        getCompass().getSearchEngineOptimizer().optimize();
+        getCompass().getSearchEngineOptimizer().forceOptimize();
 
         // verify that the deletion affected the termFreqs
         session = openSession();

@@ -58,6 +58,35 @@ public class AdaptiveOptimizerTests extends AbstractOptimizerTests {
         assertData(0, 8);
     }
 
+    public void testForceOptimizer() throws Exception {
+
+        addData(0, 1);
+        addData(1, 2);
+
+        assertData(0, 2);
+
+        CompassSession session = openSession();
+        LuceneSubIndexInfo infos = LuceneSubIndexInfo.getIndexInfo("a", session);
+        assertEquals(2, infos.size());
+        session.close();
+
+        getCompass().getSearchEngineOptimizer().optimize();
+
+        session = openSession();
+        infos = LuceneSubIndexInfo.getIndexInfo("a", session);
+        assertEquals(2, infos.size());
+        session.close();
+
+        getCompass().getSearchEngineOptimizer().forceOptimize();
+
+        session = openSession();
+        infos = LuceneSubIndexInfo.getIndexInfo("a", session);
+        assertEquals(1, infos.size());
+        session.close();
+
+        assertData(0, 2);
+    }
+
 
     public void testOptimizerMergeFactorSingleAdds() throws IOException {
         addData(0, 1);
