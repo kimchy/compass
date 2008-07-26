@@ -20,6 +20,9 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTermFreq;
 import org.compass.core.CompassTermFreqsBuilder;
 import org.compass.core.CompassTransaction;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.engine.optimizer.AggressiveOptimizer;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -31,15 +34,20 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         return new String[]{"termfreqs/simple/mapping.cpm.xml"};
     }
 
+    protected void addSettings(CompassSettings settings) {
+        settings.setSetting(LuceneEnvironment.Optimizer.TYPE, AggressiveOptimizer.class.getName());
+        settings.setIntSetting(LuceneEnvironment.Optimizer.Aggressive.MERGE_FACTOR, 1);
+    }
+
     public void testNoFreqs() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        CompassTermFreq[] termFreqs = session.termFreqsBuilder(new String[]{"value2"}).toTermFreqs();
+        CompassTermFreq[] termFreqs = session.termFreqsBuilder("value2").toTermFreqs();
         assertEquals(0, termFreqs.length);
 
         session.save(new A(1, "test"));
-        termFreqs = session.termFreqsBuilder(new String[]{"value2"}).toTermFreqs();
+        termFreqs = session.termFreqsBuilder("value2").toTermFreqs();
         assertEquals(0, termFreqs.length);
 
         tr.commit();
@@ -54,7 +62,7 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         session.save(new A(2, "aaa"));
         session.save(new A(3, "bbb"));
 
-        CompassTermFreq[] termFreqs = session.termFreqsBuilder(new String[]{"value"}).toTermFreqs();
+        CompassTermFreq[] termFreqs = session.termFreqsBuilder("value").toTermFreqs();
         assertEquals(2, termFreqs.length);
         assertEquals("bbb", termFreqs[0].getTerm());
         assertEquals("value", termFreqs[0].getPropertyName());
@@ -62,6 +70,32 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         assertEquals("aaa", termFreqs[1].getTerm());
         assertEquals(1, (int) termFreqs[1].getFreq());
         assertEquals("value", termFreqs[1].getPropertyName());
+
+        tr.commit();
+        session.close();
+
+        // delete the second A
+        session = openSession();
+        tr = session.beginTransaction();
+
+        session.delete(A.class, 2);
+        termFreqs = session.termFreqsBuilder("value").toTermFreqs();
+        assertEquals(2, termFreqs.length);
+
+        tr.commit();
+        session.close();
+
+        // only after optimization the term freqs are updated in Lucene
+        getCompass().getSearchEngineOptimizer().optimize();
+
+        // verify that the deletion affected the termFreqs
+        session = openSession();
+        tr = session.beginTransaction();
+
+        A a = session.get(A.class, 2);
+        assertNull(a);
+        termFreqs = session.termFreqsBuilder("value").toTermFreqs();
+        assertEquals(1, termFreqs.length);
 
         tr.commit();
         session.close();
@@ -75,7 +109,7 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         session.save(new A(2, "aaa"));
         session.save(new A(3, "bbb"));
 
-        CompassTermFreq[] termFreqs = session.termFreqsBuilder(new String[]{"value"}).setSort(CompassTermFreqsBuilder.Sort.TERM).toTermFreqs();
+        CompassTermFreq[] termFreqs = session.termFreqsBuilder("value").setSort(CompassTermFreqsBuilder.Sort.TERM).toTermFreqs();
         assertEquals(2, termFreqs.length);
         assertEquals("aaa", termFreqs[0].getTerm());
         assertEquals(1, (int) termFreqs[0].getFreq());
@@ -94,7 +128,7 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         session.save(new A(2, "test1"));
         session.save(new A(3, "test"));
 
-        CompassTermFreq[] termFreqs = session.termFreqsBuilder(new String[]{"value"}).setSize(1).toTermFreqs();
+        CompassTermFreq[] termFreqs = session.termFreqsBuilder("value").setSize(1).toTermFreqs();
         assertEquals(1, termFreqs.length);
         assertEquals("test", termFreqs[0].getTerm());
         assertEquals(2, (int) termFreqs[0].getFreq());
@@ -116,7 +150,7 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         session.save(new A(7, "test2"));
         session.save(new A(8, "test2"));
 
-        CompassTermFreq[] termFreqs = session.termFreqsBuilder(new String[]{"value"}).normalize(0, 1).toTermFreqs();
+        CompassTermFreq[] termFreqs = session.termFreqsBuilder("value").normalize(0, 1).toTermFreqs();
         assertEquals(3, termFreqs.length);
         assertEquals("test", termFreqs[0].getTerm());
         assertEquals(1.0, termFreqs[0].getFreq(), 0.001);
@@ -125,7 +159,7 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         assertEquals("test1", termFreqs[2].getTerm());
         assertEquals(0.0, termFreqs[2].getFreq(), 0.001);
 
-        termFreqs = session.termFreqsBuilder(new String[]{"value"}).normalize(1, 10).toTermFreqs();
+        termFreqs = session.termFreqsBuilder("value").normalize(1, 10).toTermFreqs();
         assertEquals(3, termFreqs.length);
         assertEquals("test", termFreqs[0].getTerm());
         assertEquals(10.0, termFreqs[0].getFreq(), 0.001);
@@ -146,7 +180,7 @@ public class SimpleTermFreqsTests extends AbstractTestCase {
         session.save(new A(2, "test1", "name2"));
         session.save(new A(3, "test", "name2"));
 
-        CompassTermFreq[] termFreqs = session.termFreqsBuilder(new String[]{"value", "name"}).toTermFreqs();
+        CompassTermFreq[] termFreqs = session.termFreqsBuilder("value", "name").toTermFreqs();
         assertEquals(4, termFreqs.length);
         assertEquals("test", termFreqs[0].getTerm());
         assertEquals(2, (int) termFreqs[0].getFreq());

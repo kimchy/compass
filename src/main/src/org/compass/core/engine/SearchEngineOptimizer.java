@@ -43,8 +43,8 @@ public interface SearchEngineOptimizer {
     /**
      * Stops the given optimizer. Will stop the scheduled optimizer if
      * configured.
-     * <p/>
-     * Note that if the optimizer is stopped while optimizing, it might take
+     *
+     * <p>Note that if the optimizer is stopped while optimizing, it might take
      * some time till the optimizer will actually stop.
      *
      * @throws SearchEngineException
@@ -53,8 +53,6 @@ public interface SearchEngineOptimizer {
 
     /**
      * Returns <code>true</code> if the optimizer is running.
-     *
-     * @return <code>true</code> if the optimizer is running
      */
     boolean isRunning();
 

@@ -47,8 +47,7 @@ public class LuceneSearchEngineTermFrequencies implements SearchEngineTermFreque
             }
         });
 
-        for (int i = 0; i < propertyNames.length; i++) {
-            String propertyName = propertyNames[i];
+        for (String propertyName : propertyNames) {
             TermEnum termEnum = null;
             try {
                 termEnum = internalSearch.getReader().terms(new Term(propertyName, ""));
@@ -76,7 +75,7 @@ public class LuceneSearchEngineTermFrequencies implements SearchEngineTermFreque
         }
         termFreqs = new CompassTermFreq[retSize];
         for (int i = 0; i < termFreqs.length; i++) {
-            termFreqs[i] = (CompassTermFreq) queue.poll();
+            termFreqs[i] = queue.poll();
         }
     }
 

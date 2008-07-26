@@ -121,6 +121,10 @@ public interface CompassSession extends CompassOperations {
      * Creates a new terms frequencies builder used to get terms names and
      * freqs for a list of property names.
      *
+     * <p>Note, term frequencies are updated to reflect latest changes to the index
+     * only after an optimization as take place (note, calling optimize might not
+     * cause optimization).
+     *
      * @param names The property names
      * @return A term freqs builder
      * @throws CompassException
