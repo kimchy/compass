@@ -38,17 +38,21 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
+import org.compass.core.transaction.JTASyncTransactionFactory;
 import org.compass.core.transaction.LocalTransactionFactory;
 import org.compass.core.util.ClassUtils;
 import org.compass.gps.device.hibernate.lifecycle.HibernateMirrorFilter;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.hibernate.engine.EntityEntry;
 import org.hibernate.event.*;
 import org.hibernate.mapping.Component;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.mapping.Value;
+import org.hibernate.transaction.CMTTransactionFactory;
+import org.hibernate.transaction.JTATransactionFactory;
 
 /**
  * An Hibernate event listener allowing to run Compass embedded within Hibernate. The embedded mode
@@ -385,8 +389,24 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
 
         compassHolder.commitBeforeCompletion = settings.getSettingAsBoolean(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, false);
 
+
         String transactionFactory = (String) compassProperties.get(CompassEnvironment.Transaction.FACTORY);
-        if (transactionFactory == null || LocalTransactionFactory.class.getName().equals(transactionFactory)) {
+        if (transactionFactory == null) {
+            String hibernateTransactionStrategy = cfg.getProperty(Environment.TRANSACTION_STRATEGY);
+            if (CMTTransactionFactory.class.getName().equals(hibernateTransactionStrategy) || JTATransactionFactory.class.getName().equals(hibernateTransactionStrategy)) {
+                // hibernate is configured with JTA, automatically configure Compass to use its JTASync (by default)
+                compassHolder.hibernateControlledTransaction = false;
+                compassConfiguration.setSetting(CompassEnvironment.Transaction.FACTORY, JTASyncTransactionFactory.class.getName());
+            } else {
+                // Hibernate JDBC transaction manager, let Compass use the local transaction manager
+                compassHolder.hibernateControlledTransaction = true;
+                // if the settings is configured to use local transaciton, disable thread bound setting since
+                // we are using Hibernate to managed transaction scope (using the transaction to holder map) and not thread locals
+                if (settings.getSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION) == null) {
+                    settings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_THREAD_BOUND_LOCAL_TRANSATION, true);
+                }
+            }
+        } else if (LocalTransactionFactory.class.getName().equals(transactionFactory)) {
             compassHolder.hibernateControlledTransaction = true;
             // if the settings is configured to use local transaciton, disable thread bound setting since
             // we are using Hibernate to managed transaction scope (using the transaction to holder map) and not thread locals
