@@ -16,6 +16,7 @@
 
 package org.compass.core.test.contract;
 
+import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
@@ -49,6 +50,26 @@ public class ContractTests extends AbstractTestCase {
         assertNotNull(r.getValue("mvalue1"));
         assertNotNull(r.getValue("mvalue2"));
         assertNotNull(r.getValue("mvalueA"));
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testContractQuery() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        Long id = new Long(1);
+        A a = new A();
+        a.setId(id);
+        a.setValue1("value1");
+        a.setValue2("value2");
+        a.setValueA("valueA");
+
+        session.save("a", a);
+
+        CompassHits hits = session.find("contract2.value2:value2");
+        assertEquals(1, hits.length());
 
         tr.commit();
         session.close();

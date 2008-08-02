@@ -272,12 +272,29 @@ public class DefaultCompassMapping implements InternalCompassMapping {
             return null;
         }
         String alias = path.substring(0, dotIndex);
-        ResourceMapping resourceMapping = getRootMappingByAlias(alias);
-        if (resourceMapping == null) {
-            throw new IllegalArgumentException("Failed to find class/resource mapping for alias [" + alias
-                    + "] from path [" + path + "]");
+        String propertyName = path.substring(dotIndex + 1);
+        AliasMapping aliasMapping = getAliasMapping(alias);
+        ResourcePropertyMapping resourcePropertyMapping = null;
+        if (aliasMapping instanceof ResourceMapping) {
+            resourcePropertyMapping = ((ResourceMapping) aliasMapping).getResourcePropertyMappingByDotPath(propertyName);
+        } else {
+            // go over alias mappings (such as contract mappings) and try and find if someone that extends it
+            // defines mappings for this dot path notation (since we only post process root resource mappings).
+            // note, if the extedning resource mapping also overrides the meta-data, then it will use it and
+            // not the one defined within the contract mapping.
+            String[] extendingAliases = aliasMapping.getExtendingAliases();
+            if (extendingAliases != null) {
+                for (String extendingAlias : extendingAliases) {
+                    ResourceMapping resourceMapping = getRootMappingByAlias(extendingAlias);
+                    if (resourceMapping != null) {
+                        resourcePropertyMapping = resourceMapping.getResourcePropertyMappingByDotPath(propertyName);
+                        if (resourcePropertyMapping != null) {
+                            break;
+                        }
+                    }
+                }
+            }
         }
-        ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getResourcePropertyMappingByDotPath(path.substring(dotIndex + 1));
         if (resourcePropertyMapping == null) {
             throw new IllegalArgumentException("Failed to find mapping for alias [" + alias + "] and path [" + path + "]");
         }
