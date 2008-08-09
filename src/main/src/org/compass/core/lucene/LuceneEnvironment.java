@@ -1324,4 +1324,15 @@ public class LuceneEnvironment {
 
         public static final String DEFAULT_NAME = "__default__";
     }
+
+    public static abstract class Query {
+
+        /**
+         * Sets Lucene <b>static</b> setting of the number of clauses a boolean query can hold.
+         * Defaults to <code>1024</code>.
+         *
+         * @see org.apache.lucene.search.BooleanQuery#setMaxClauseCount(int) 
+         */
+        public static final String MAX_CLAUSE_COUNT = "compass.query.maxClauseCount";
+    }
 }

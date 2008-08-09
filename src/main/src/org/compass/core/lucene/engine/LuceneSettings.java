@@ -19,6 +19,7 @@ package org.compass.core.lucene.engine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
@@ -208,6 +209,11 @@ public class LuceneSettings {
         waitForCacheInvalidationOnIndexOperation = settings.getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION, false);
         if (log.isDebugEnabled()) {
             log.debug("Wait for cahce invalidation on index operatrion is set to [" + waitForCacheInvalidationOnIndexOperation + "]");
+        }
+
+        BooleanQuery.setMaxClauseCount(settings.getSettingAsInt(LuceneEnvironment.Query.MAX_CLAUSE_COUNT, BooleanQuery.getMaxClauseCount()));
+        if (log.isDebugEnabled()) {
+            log.debug("Setting Lucene BooleanQuery maxClauseCount to [" + BooleanQuery.getMaxClauseCount() + "]");
         }
     }
 
