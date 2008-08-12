@@ -49,7 +49,7 @@ public class PropertyAccessException extends CompassException {
     }
 
     public String getMessage() {
-        return super.getMessage() + (wasSetter ? " setter of " : " getter of ")
+        return "[" + super.getMessage() + "]" + (wasSetter ? " setter of " : " getter of ")
                 + StringUtils.qualify(persistentClass.getName(), propertyName);
     }
 }

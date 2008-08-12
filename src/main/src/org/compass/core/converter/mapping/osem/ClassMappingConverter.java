@@ -245,6 +245,10 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                 }
             }
         }
+        // not root class mapping and does not support unamrhsalling, simply return null
+        if (!classMapping.isSupportUnmarshall()) {
+            return null;
+        }
 
         Object obj = constructObjectForUnmarshalling(classMapping, resource, context);
         context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, obj);

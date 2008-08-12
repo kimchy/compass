@@ -77,10 +77,6 @@ public class BasicPropertyAccessor implements PropertyAccessor {
                     throw new PropertyAccessException(iae, "Null value was assigned to a property of primitive type",
                             true, clazz, propertyName);
                 } else {
-                    log.error("IllegalArgumentException in class [" + clazz.getName() + "], setter method of property ["
-                            + propertyName + "]");
-                    log.error("expected type [" + method.getParameterTypes()[0].getName() + "], actual value ["
-                            + (value == null ? null : value.getClass().getName()) + "]");
                     throw new PropertyAccessException(iae, "IllegalArgumentException occurred while calling", true,
                             clazz, propertyName);
                 }
@@ -134,8 +130,6 @@ public class BasicPropertyAccessor implements PropertyAccessor {
                         propertyName);
                 // cannot occur
             } catch (IllegalArgumentException iae) {
-                log.error("IllegalArgumentException in class [" + clazz.getName() + "], getter method of property ["
-                        + propertyName + "]");
                 throw new PropertyAccessException(iae, "IllegalArgumentException occurred calling", false, clazz,
                         propertyName);
             }

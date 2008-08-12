@@ -1,0 +1,21 @@
+<!DOCTYPE compass-core-mapping PUBLIC
+        "-//Compass/Compass Core Mapping DTD 2.0//EN"
+        "http://www.compass-project.org/dtd/compass-core-mapping-2.1.dtd">
+
+<compass-core-mapping package="org.compass.core.test.component.unmarshallpoly">
+
+    <class name="Master" alias="master" root="false" poly="true" support-unmarshall="false">
+        <property name="masterProperty" >
+            <meta-data>masterProperty</meta-data>
+        </property>
+    </class>
+
+    <class name="Slave" alias="slave" poly="true" support-unmarshall="true">
+        <id name="id"/>
+        <property name="name" >
+            <meta-data>name</meta-data>
+        </property>
+        <component name="master" ref-alias="master"/>
+    </class>
+
+</compass-core-mapping>
