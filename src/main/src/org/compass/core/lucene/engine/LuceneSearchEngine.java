@@ -139,6 +139,8 @@ public class LuceneSearchEngine implements SearchEngine {
             transaction = new LuceneTransaction();
         } else if (transactionIsolation == TransactionIsolation.SERIALIZABLE) {
             transaction = new SerializableTransaction();
+        } else {
+            throw new IllegalStateException("Internal problem in Compass, failed to resolve transaction isolation [" + transactionIsolation + "]");
         }
         transaction.configure(this);
         eventManager.beforeBeginTransaction();
