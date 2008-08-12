@@ -81,6 +81,9 @@ public class ClassMappingConverter implements ResourceMappingConverter {
     protected boolean doMarshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
         ClassMapping classMapping = (ClassMapping) mapping;
+
+        Object disableInternalMapings = context.getAttribute(DISABLE_INTERNAL_MAPPINGS);
+
         // Note that even if a component is root, it will not be root when
         // treated as a component (the binding part of the configuration takes
         // care and "unroots" it)
@@ -182,6 +185,9 @@ public class ClassMappingConverter implements ResourceMappingConverter {
         if (classMapping.isRoot() && !context.hasAttribute(DISABLE_UID_MARSHALLING)) {
             ((InternalResource) resource).addUID();
         }
+
+        // resotore the disable intenral mappings flag
+        context.setAttribute(DISABLE_INTERNAL_MAPPINGS, disableInternalMapings);
 
         return store;
     }
