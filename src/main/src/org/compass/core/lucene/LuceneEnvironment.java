@@ -629,6 +629,11 @@ public class LuceneEnvironment {
         public static final String ACCURACY = PREFIX + "accuracy";
 
         /**
+         * The default number of suggestions.
+         */
+        public static final String NUMBER_OF_SUGGESTIONS = PREFIX + "numberOfSuggestions";
+        
+        /**
          * Sets the dictionary threshold, which controls the minimum
          * number of documents (of the total) where a term should appear. Defaults to <code>0.0f</code>.
          */

@@ -50,6 +50,7 @@ public class DefaultLuceneSearchEngineSpellCheckSuggestBuilder implements Search
         this.word = word;
         this.spellCheckerManager = spellCheckerManager;
         this.accuracy = spellCheckerManager.getDefaultAccuracy();
+        this.numberOfSuggestions = spellCheckerManager.getDefaultNumberOfSuggestions();
     }
 
     public SearchEngineSpellCheckSuggestBuilder subIndexes(String... subIndexes) {

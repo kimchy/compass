@@ -106,6 +106,8 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     private float defaultAccuracy = 0.5f;
 
+    private int defaultNumberOfSuggestions = 1;
+
     private float defaultDictionaryThreshold;
 
     private volatile boolean started = false;
@@ -200,6 +202,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         defaultProperty = settings.getSetting(LuceneEnvironment.SpellCheck.DEFAULT_PROPERTY, settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
 
         this.defaultAccuracy = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.ACCURACY, 0.5f);
+        this.defaultNumberOfSuggestions = spellCheckSettings.getSettingAsInt(LuceneEnvironment.SpellCheck.NUMBER_OF_SUGGESTIONS, 1);
         this.defaultDictionaryThreshold = spellCheckSettings.getSettingAsFloat(LuceneEnvironment.SpellCheck.DICTIONARY_THRESHOLD, 0.0f);
 
         for (final String subIndex : indexStore.getSubIndexes()) {
@@ -299,6 +302,10 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
     public float getDefaultAccuracy() {
         return defaultAccuracy;
+    }
+
+    public int getDefaultNumberOfSuggestions() {
+        return defaultNumberOfSuggestions;
     }
 
     public CompassMapping getMapping() {
@@ -490,7 +497,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         if (spellChecker == null) {
             return query;
         }
-
+        spellChecker.setAccuracy(getDefaultAccuracy());
         final AtomicBoolean suggestedQuery = new AtomicBoolean(false);
         try {
             Query replacedQ = QueryParserUtils.visit(searchEngineQuery.getQuery(), new QueryParserUtils.QueryTermVisitor() {
@@ -499,7 +506,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                         if (spellChecker.exist(term.text())) {
                             return term;
                         }
-                        String[] similarWords = spellChecker.suggestSimilar(term.text(), 1);
+                        String[] similarWords = spellChecker.suggestSimilar(term.text(), getDefaultNumberOfSuggestions());
                         if (similarWords.length == 0) {
                             return term;
                         }

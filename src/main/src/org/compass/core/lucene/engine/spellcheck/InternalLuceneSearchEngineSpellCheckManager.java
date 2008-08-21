@@ -33,6 +33,8 @@ public interface InternalLuceneSearchEngineSpellCheckManager extends InternalSea
 
     float getDefaultAccuracy();
 
+    int getDefaultNumberOfSuggestions();
+
     CompassMapping getMapping();
 
     CompassSpellChecker createSpellChecker(final String[] subIndexes, final String[] aliases);
