@@ -95,7 +95,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
             return;
         }
 
-        if (searchEngineFactory.getIndexManager().subIndexExists(subIndex)) {
+        if (!searchEngineFactory.getIndexManager().subIndexExists(subIndex)) {
             throw new SearchEngineException("Sub index [" + subIndex + "] does not exists");
         }
 
@@ -113,7 +113,7 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
             return;
         }
 
-        if (searchEngineFactory.getIndexManager().subIndexExists(subIndex)) {
+        if (!searchEngineFactory.getIndexManager().subIndexExists(subIndex)) {
             throw new SearchEngineException("Sub index [" + subIndex + "] does not exists");
         }
         
