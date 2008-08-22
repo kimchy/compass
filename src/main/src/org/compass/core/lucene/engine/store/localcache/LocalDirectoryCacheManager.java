@@ -50,6 +50,8 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
 
     private LuceneSearchEngineFactory searchEngineFactory;
 
+    private LockFactory lockFactory = new SingleInstanceLockFactory();
+
     public LocalDirectoryCacheManager(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
     }
@@ -108,7 +110,7 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
                 }
             }
             try {
-                localCacheDirectory = FSDirectory.getDirectory(path, new SingleInstanceLockFactory());
+                localCacheDirectory = FSDirectory.getDirectory(path, lockFactory);
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to create direcotry with path [" + path + "]", e);
             }
