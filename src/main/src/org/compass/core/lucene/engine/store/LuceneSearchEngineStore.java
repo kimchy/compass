@@ -54,6 +54,11 @@ public interface LuceneSearchEngineStore {
     String[] getSubIndexes();
 
     /**
+     * Returns <code>true</code> if the sub index exists.
+     */
+    boolean subIndexExists(String subIndex);
+
+    /**
      * Returns the number of aliases that map to the given sub index.
      */
     int getNumberOfAliasesBySubIndex(String subIndex);

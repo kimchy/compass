@@ -632,6 +632,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return searchEngineStore.getSubIndexes();
     }
 
+    public boolean subIndexExists(String subIndex) {
+        return searchEngineStore.subIndexExists(subIndex);
+    }
+
     public boolean isLocked() throws SearchEngineException {
         return searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Boolean>() {
             public Boolean doInTransaction() throws CompassException {

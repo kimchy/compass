@@ -210,6 +210,11 @@ public interface SearchEngineIndexManager {
     String[] getSubIndexes();
 
     /**
+     * Returns <code>true</code> if the sub index exists.
+     */
+    boolean subIndexExists(String subIndex);
+    
+    /**
      * Releases all the locks held over all the possbile sub indexes.
      */
     void releaseLocks() throws SearchEngineException;

@@ -95,6 +95,10 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
             return;
         }
 
+        if (searchEngineFactory.getIndexManager().subIndexExists(subIndex)) {
+            throw new SearchEngineException("Sub index [" + subIndex + "] does not exists");
+        }
+
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction() throws CompassException {
                 doOptimize(subIndex);
@@ -109,6 +113,10 @@ public abstract class AbstractOptimizer implements LuceneSearchEngineOptimizer {
             return;
         }
 
+        if (searchEngineFactory.getIndexManager().subIndexExists(subIndex)) {
+            throw new SearchEngineException("Sub index [" + subIndex + "] does not exists");
+        }
+        
         searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
             public Object doInTransaction() throws CompassException {
                 doForceOptimize(subIndex);

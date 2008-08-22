@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
@@ -76,6 +77,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     private String defaultSubContext;
 
     private String[] subIndexes;
+
+    private Set<String> subIndexesSet;
 
     private String connectionString;
 
@@ -159,7 +162,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
 
         // setup sub indexes and aliases
-        HashSet<String> subIndexesSet = new HashSet<String>();
+        subIndexesSet = new HashSet<String>();
         for (ResourceMapping resourceMapping : mapping.getRootMappings()) {
             String alias = resourceMapping.getAlias();
             String[] tempSubIndexes = resourceMapping.getSubIndexHash().getSubIndexes();
@@ -263,6 +266,10 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     public String[] getSubIndexes() {
         return subIndexes;
+    }
+
+    public boolean subIndexExists(String subIndex) {
+        return subIndexesSet.contains(subIndex);
     }
 
     public String[] calcSubIndexes(String[] subIndexes, String[] aliases, Class[] types) {
