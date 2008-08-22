@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.LockFactory;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.store.SingleInstanceLockFactory;
 import org.compass.core.CompassException;
@@ -49,6 +50,8 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
     private Map<String, CompassSettings> subIndexLocalCacheGroups;
 
     private LuceneSearchEngineFactory searchEngineFactory;
+
+    private LockFactory lockFactory = new SingleInstanceLockFactory();
 
     public LocalDirectoryCacheManager(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
@@ -108,7 +111,7 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
                 }
             }
             try {
-                localCacheDirectory = FSDirectory.getDirectory(path, new SingleInstanceLockFactory());
+                localCacheDirectory = FSDirectory.getDirectory(path, lockFactory);
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to create direcotry with path [" + path + "]", e);
             }
