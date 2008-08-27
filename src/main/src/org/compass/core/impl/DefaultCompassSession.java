@@ -189,6 +189,11 @@ public class DefaultCompassSession implements InternalCompassSession {
         return value;
     }
 
+    public Resource getResourceByIdResourceNoCache(Resource idResource) {
+        checkClosed();
+        return searchEngine.get(idResource);
+    }
+
     public <T> T get(Class<T> clazz, Object... ids) throws CompassException {
         return get(clazz, (Object) ids);
     }

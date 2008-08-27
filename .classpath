@@ -46,7 +46,6 @@
 	<classpathentry kind="lib" path="lib/junit/junit.jar"/>
 	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="lib/ojb/db-ojb-1.0.4.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/odmg/odmg-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/jboss-archive-browsing.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/javassist.jar"/>
@@ -77,7 +76,6 @@
 	<classpathentry kind="lib" path="lib/hibernate/hibernate-validator.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/jboss-ejb3.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-queries.jar"/>
-	<classpathentry kind="lib" path="lib/openjpa/openjpa-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/openjpa/serp-1.13.1.jar"/>
 	<classpathentry kind="lib" path="lib/coherence/coherence.jar"/>
 	<classpathentry kind="lib" path="lib/coherence/tangosol.jar"/>
@@ -92,12 +90,10 @@
 	<classpathentry kind="lib" path="lib/gigaspaces/start.jar"/>
 	<classpathentry kind="lib" path="lib/jgroups/jgroups-all.jar"/>
 	<classpathentry kind="lib" path="lib/mina/mina-core-1.1.5.jar"/>
-	<classpathentry kind="lib" path="lib/xom/xom-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-commons-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/asm/asm-util-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/grails/grails-web-1.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.0.677.jar"/>
 	<classpathentry kind="lib" path="lib/jaxen/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/jdom/jdom.jar"/>
 	<classpathentry kind="lib" path="lib/jettison/jettison-1.0.1.jar"/>
@@ -109,5 +105,8 @@
 	<classpathentry kind="lib" path="lib/stax/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/terracotta/terracotta-api-2.6-stable0-prealpha.jar"/>
 	<classpathentry kind="lib" path="lib/woodstox/wstx-asl-3.2.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/openjpa/openjpa-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.2.715.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
