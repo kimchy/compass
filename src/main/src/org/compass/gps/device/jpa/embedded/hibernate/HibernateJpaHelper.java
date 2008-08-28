@@ -64,7 +64,8 @@ public abstract class HibernateJpaHelper {
      * transaction (for performance reasons, mostly there is no need to start a DB transaction).
      */
     public static Compass getCompass(EntityManager em) {
-        return HibernateHelper.getCompass(((HibernateEntityManager) em).getSession());
+        EntityManager nativeEm = NativeJpaHelper.extractNativeJpa(em);
+        return HibernateHelper.getCompass(((HibernateEntityManager) nativeEm).getSession());
     }
 
     /**
@@ -73,7 +74,8 @@ public abstract class HibernateJpaHelper {
      * transaction (for performance reasons, mostly there is no need to start a DB transaction).
      */
     public static CompassTemplate getCompassTemplate(EntityManager em) {
-        return HibernateHelper.getCompassTempalte(((HibernateEntityManager) em).getSession());
+        EntityManager nativeEm = NativeJpaHelper.extractNativeJpa(em);
+        return HibernateHelper.getCompassTempalte(((HibernateEntityManager) nativeEm).getSession());
     }
 
     /**
@@ -92,7 +94,8 @@ public abstract class HibernateJpaHelper {
      * instnace.
      */
     public static Properties getIndexSettings(EntityManager em) {
-        return HibernateHelper.getIndexSettings(((HibernateEntityManager) em).getSession());
+        EntityManager nativeEm = NativeJpaHelper.extractNativeJpa(em);
+        return HibernateHelper.getIndexSettings(((HibernateEntityManager) nativeEm).getSession());
     }
 
     /**

@@ -26,6 +26,7 @@ import org.apache.openjpa.persistence.OpenJPAPersistence;
 import org.compass.core.Compass;
 import org.compass.core.CompassSession;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
+import org.compass.gps.device.jpa.support.NativeJpaHelper;
 
 /**
  * Helper class to get different Compass constructs embedded with Open JPA.
@@ -44,7 +45,8 @@ public abstract class OpenJPAHelper {
      * transaction (for performance reasons, mostly there is no need to start a DB transaction).
      */
     public static Compass getCompass(EntityManagerFactory emf) {
-        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(emf);
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(nativeEmf);
         return (Compass) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_USER_OBJECT_KEY);
     }
 
@@ -54,8 +56,9 @@ public abstract class OpenJPAHelper {
      * transaction (for performance reasons, mostly there is no need to start a DB transaction).
      */
     public static Compass getCompass(EntityManager em) {
+        EntityManager nativeEm = NativeJpaHelper.extractNativeJpa(em);
         OpenJPAEntityManagerFactory openJpaEmf =
-                OpenJPAPersistence.cast(em).getEntityManagerFactory();
+                OpenJPAPersistence.cast(nativeEm).getEntityManagerFactory();
         return (Compass) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_USER_OBJECT_KEY);
     }
 
@@ -65,7 +68,8 @@ public abstract class OpenJPAHelper {
      * operation should not be perfomed within a running transaction.
      */
     public static JpaCompassGps getCompassGps(EntityManagerFactory emf) {
-        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(emf);
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(nativeEmf);
         return (JpaCompassGps) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_GPS_USER_OBJECT_KEY);
     }
 
@@ -75,8 +79,9 @@ public abstract class OpenJPAHelper {
      * operation should not be perfomed within a running transaction.
      */
     public static JpaCompassGps getCompassGps(EntityManager em) {
+        EntityManager nativeEm = NativeJpaHelper.extractNativeJpa(em);
         OpenJPAEntityManagerFactory openJpaEmf =
-                OpenJPAPersistence.cast(em).getEntityManagerFactory();
+                OpenJPAPersistence.cast(nativeEm).getEntityManagerFactory();
         return (JpaCompassGps) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_GPS_USER_OBJECT_KEY);
     }
 
@@ -89,7 +94,8 @@ public abstract class OpenJPAHelper {
      * or to perform additional Compass operations that are not reflected by the mirroring feature.
      */
     public static CompassSession getCurrentCompassSession(EntityManager em) {
-        OpenJPAEntityManager openJPAEntityManager = OpenJPAPersistence.cast(em);
+        EntityManager nativeEm = NativeJpaHelper.extractNativeJpa(em);
+        OpenJPAEntityManager openJPAEntityManager = OpenJPAPersistence.cast(nativeEm);
         return (CompassSession) openJPAEntityManager.getUserObject(CompassProductDerivation.COMPASS_SESSION_USER_OBJECT_KEY);
     }
 
@@ -99,7 +105,8 @@ public abstract class OpenJPAHelper {
      * instance.
      */
     public Properties getIndexSettings(EntityManagerFactory emf) {
-        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(emf);
+        EntityManagerFactory nativeEmf = NativeJpaHelper.extractNativeJpa(emf);
+        OpenJPAEntityManagerFactory openJpaEmf = OpenJPAPersistence.cast(nativeEmf);
         return (Properties) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_INDEX_SETTINGS_USER_OBJECT_KEY);
     }
 
@@ -109,8 +116,9 @@ public abstract class OpenJPAHelper {
      * instnace.
      */
     public Properties getIndexSettings(EntityManager em) {
+        EntityManager nativeEm = NativeJpaHelper.extractNativeJpa(em);
         OpenJPAEntityManagerFactory openJpaEmf =
-                OpenJPAPersistence.cast(em).getEntityManagerFactory();
+                OpenJPAPersistence.cast(nativeEm).getEntityManagerFactory();
         return (Properties) openJpaEmf.getUserObject(CompassProductDerivation.COMPASS_INDEX_SETTINGS_USER_OBJECT_KEY);
     }
 }

@@ -27,6 +27,7 @@ import org.compass.core.CompassSession;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
+import org.compass.gps.device.jpa.support.NativeJpaHelper;
 import org.eclipse.persistence.jpa.JpaEntityManager;
 import org.eclipse.persistence.sessions.Session;
 
@@ -96,7 +97,7 @@ public abstract class EclipseLinkHelper {
      * or to perform additional Compass operations that are not reflected by the mirroring feature.
      */
     public static CompassSession getCurrentCompassSession(EntityManager em) {
-        Session serverSession = ((JpaEntityManager) em).getServerSession();
+        Session serverSession = ((JpaEntityManager) NativeJpaHelper.extractNativeJpa(em)).getServerSession();
         Session session = ((JpaEntityManager) em).getUnitOfWork();
         return findCompassSessionEventListener(serverSession).getCurrentCompassSession(session);
     }
@@ -148,7 +149,7 @@ public abstract class EclipseLinkHelper {
     }
 
     private static CompassSessionEventListener findCompassSessionEventListener(EntityManager em) throws CompassException {
-        return findCompassSessionEventListener(((JpaEntityManager) em).getServerSession());
+        return findCompassSessionEventListener(((JpaEntityManager) NativeJpaHelper.extractNativeJpa(em)).getServerSession());
     }
 
     private static CompassSessionEventListener findCompassSessionEventListener(Session session) throws CompassException {

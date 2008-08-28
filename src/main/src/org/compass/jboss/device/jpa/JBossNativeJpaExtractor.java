@@ -26,7 +26,7 @@ import org.jboss.ejb3.entity.InjectedEntityManagerFactory;
 /**
  * @author kimchy
  */
-public class JBossNativeHibernateJpaExtractor implements NativeJpaExtractor {
+public class JBossNativeJpaExtractor implements NativeJpaExtractor {
 
     /**
      * Extracts the native entity manager factory from a managed JBoss one. If JBoss

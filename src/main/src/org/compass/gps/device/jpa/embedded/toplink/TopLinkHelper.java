@@ -28,6 +28,7 @@ import org.compass.core.CompassSession;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.embedded.DefaultJpaCompassGps;
 import org.compass.gps.device.jpa.embedded.JpaCompassGps;
+import org.compass.gps.device.jpa.support.NativeJpaHelper;
 
 /**
  * Helper class to get different Compass constructs embedded with TopLink.
@@ -95,7 +96,7 @@ public abstract class TopLinkHelper {
      * or to perform additional Compass operations that are not reflected by the mirroring feature.
      */
     public static CompassSession getCurrentCompassSession(EntityManager em) {
-        Session serverSession = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) em).getServerSession();
+        Session serverSession = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) NativeJpaHelper.extractNativeJpa(em)).getServerSession();
         Session session = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) em).getUnitOfWork();
         return findCompassSessionEventListener(serverSession).getCurrentCompassSession(session);
     }
@@ -147,7 +148,7 @@ public abstract class TopLinkHelper {
     }
 
     private static CompassSessionEventListener findCompassSessionEventListener(EntityManager em) throws CompassException {
-        return findCompassSessionEventListener(((oracle.toplink.essentials.ejb.cmp3.EntityManager) em).getServerSession());
+        return findCompassSessionEventListener(((oracle.toplink.essentials.ejb.cmp3.EntityManager) NativeJpaHelper.extractNativeJpa(em)).getServerSession());
     }
 
     private static CompassSessionEventListener findCompassSessionEventListener(Session session) throws CompassException {

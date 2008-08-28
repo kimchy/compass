@@ -20,14 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.util.ClassUtils;
+import org.compass.glassfish.device.jpa.GlassfishNativeHibernateJpaExtractor;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.NativeJpaExtractor;
-import org.compass.jboss.device.jpa.JBossNativeHibernateJpaExtractor;
+import org.compass.jboss.device.jpa.JBossNativeJpaExtractor;
 import org.compass.spring.device.jpa.SpringNativeJpaExtractor;
 
 /**
@@ -49,7 +51,13 @@ public abstract class NativeJpaHelper {
         }
         try {
             ClassUtils.forName("org.jboss.ejb3.entity.InjectedEntityManagerFactory", NativeJpaHelper.class.getClassLoader());
-            extractorsList.add(new JBossNativeHibernateJpaExtractor());
+            extractorsList.add(new JBossNativeJpaExtractor());
+        } catch (Throwable t) {
+            // not in classpath
+        }
+        try {
+            ClassUtils.forName("com.sun.enterprise.util.EntityManagerFactoryWrapper", NativeJpaHelper.class.getClassLoader());
+            extractorsList.add(new GlassfishNativeHibernateJpaExtractor());
         } catch (Throwable t) {
             // not in classpath
         }
@@ -111,5 +119,20 @@ public abstract class NativeJpaHelper {
         } while (nativeEmf != emf);
 
         return nativeEmf;
+    }
+
+    public static EntityManager extractNativeJpa(EntityManager em) {
+        if (extractors.length == 0) {
+            return em;
+        }
+        EntityManager nativeEm = em;
+        do {
+            em = nativeEm;
+            for (NativeJpaExtractor extractor : extractors) {
+                nativeEm = extractor.extractNative(nativeEm);
+            }
+        } while (nativeEm != em);
+
+        return nativeEm;
     }
 }
