@@ -26,6 +26,9 @@ import org.compass.gps.device.jpa.JpaGpsDeviceException;
 import org.compass.gps.device.jpa.NativeJpaExtractor;
 
 /**
+ * A JPA native extractor that extracts the actual implementation of JPA EntityManagerFactory/EntityManager
+ * when running within Glassfish.
+ *
  * @author kimchy
  */
 public class GlassfishNativeHibernateJpaExtractor implements NativeJpaExtractor {
