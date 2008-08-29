@@ -36,6 +36,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
+import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
@@ -83,6 +84,10 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             try {
                 entry.getValue().abort();
+            } catch (AlreadyClosedException e) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
+                }
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(entry.getKey());
                 try {
