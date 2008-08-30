@@ -46,20 +46,26 @@ public abstract class NativeJpaHelper {
         try {
             ClassUtils.forName("org.springframework.orm.jpa.EntityManagerFactoryInfo", NativeJpaHelper.class.getClassLoader());
             extractorsList.add(new SpringNativeJpaExtractor());
-        } catch (Throwable t) {
+        } catch (ClassNotFoundException e) {
             // not in classpath
+        } catch (Throwable t) {
+            log.warn("Faiiled to regsiter Spring native JPA extractor", t);
         }
         try {
             ClassUtils.forName("org.jboss.ejb3.entity.InjectedEntityManagerFactory", NativeJpaHelper.class.getClassLoader());
             extractorsList.add(new JBossNativeJpaExtractor());
-        } catch (Throwable t) {
+        } catch (ClassNotFoundException e) {
             // not in classpath
+        } catch (Throwable t) {
+            log.warn("Faiiled to regsiter JBoss native JPA extractor", t);
         }
         try {
             ClassUtils.forName("com.sun.enterprise.util.EntityManagerFactoryWrapper", NativeJpaHelper.class.getClassLoader());
             extractorsList.add(new GlassfishNativeHibernateJpaExtractor());
-        } catch (Throwable t) {
+        } catch (ClassNotFoundException e) {
             // not in classpath
+        } catch (Throwable t) {
+            log.warn("Faiiled to regsiter Glassfish native JPA extractor", t);
         }
         extractors = extractorsList.toArray(new NativeJpaExtractor[extractorsList.size()]);
         if (log.isDebugEnabled()) {
