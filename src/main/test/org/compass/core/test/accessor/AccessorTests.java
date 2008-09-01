@@ -127,4 +127,17 @@ public class AccessorTests extends AbstractTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testUppercaseFieldName() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        D d = new D();
+        d.id = 1;
+        d.Name = "name";
+        session.save(d);
+
+        tr.commit();
+        session.close();
+    }
 }

@@ -66,4 +66,11 @@
             <meta-data>mvalue</meta-data>
         </property>
     </class>
+
+    <class name="D" alias="d1">
+
+        <id name="id" accessor="field" />
+
+        <property name="Name" accessor="field" />
+    </class>
 </compass-core-mapping>
