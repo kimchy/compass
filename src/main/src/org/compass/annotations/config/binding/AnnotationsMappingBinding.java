@@ -440,7 +440,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
 
         for (Field field : clazz.getDeclaredFields()) {
             for (Annotation annotation : field.getAnnotations()) {
-                processsAnnotatedElement(clazz, ClassUtils.getShortNameForField(field), "field", field.getType(),
+                processsAnnotatedElement(clazz, field.getName(), "field", field.getType(),
                         field.getGenericType(), annotation, field);
             }
         }
