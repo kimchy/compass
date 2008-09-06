@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import javax.sql.DataSource;
+
 import org.compass.gps.device.jdbc.JdbcGpsDeviceException;
 import org.compass.gps.device.jdbc.JdbcUtils;
 
@@ -109,7 +110,7 @@ public class TableToResourceMapping extends ResultSetToResourceMapping implement
         ResultSet pks = null;
         try {
             DatabaseMetaData metaData = con.getMetaData();
-            pks = metaData.getPrimaryKeys(null, null, getTableName().toUpperCase());
+            pks = metaData.getPrimaryKeys(null, null, getTableName());
             while (pks.next()) {
                 String pkColumnName = pks.getString("COLUMN_NAME");
                 addIdMapping(new IdColumnToPropertyMapping(pkColumnName, pkColumnName));

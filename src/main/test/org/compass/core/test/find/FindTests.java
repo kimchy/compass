@@ -136,16 +136,16 @@ public class FindTests extends AbstractTestCase {
         assertEquals(20, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
-                .setAliases(new String[]{"a1"}).hits();
+                .setAliases("a1").hits();
         assertEquals(10, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
-                .setSubIndexes(new String[]{"a1"}).hits();
+                .setSubIndexes("a1").hits();
         assertEquals(10, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
-                .setSubIndexes(new String[]{"a1"})
-                .setAliases(new String[]{"a1"}).hits();
+                .setSubIndexes("a1")
+                .setAliases("a1").hits();
         assertEquals(10, hits.getLength());
 
         tr.commit();
@@ -162,16 +162,16 @@ public class FindTests extends AbstractTestCase {
         assertEquals(20, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
-                .setTypes(new Class[]{A.class}).hits();
+                .setTypes(A.class).hits();
         assertEquals(10, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
-                .setSubIndexes(new String[]{"a1"}).hits();
+                .setSubIndexes("a1").hits();
         assertEquals(10, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
-                .setSubIndexes(new String[]{"a1"})
-                .setTypes(new Class[]{A.class}).hits();
+                .setSubIndexes("a1")
+                .setTypes(A.class).hits();
         assertEquals(10, hits.getLength());
 
         tr.commit();

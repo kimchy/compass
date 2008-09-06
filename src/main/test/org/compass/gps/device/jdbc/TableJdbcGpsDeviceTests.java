@@ -47,8 +47,8 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
     private SingleCompassGps gps;
 
     protected void tearDown() throws Exception {
-        gps.stop();
-        compass.close();
+        if (gps != null) gps.stop();
+        if (compass != null) compass.close();
         super.tearDown();
     }
 
@@ -101,11 +101,11 @@ public class TableJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
     protected void setUpAutomaticMapping() throws Exception {
         // set up the database mappings, since they are used both to generate
         // the resource mappings and configure the jdbc gps device
-        TableToResourceMapping parentMapping = new TableToResourceMapping("parent", "parent");
+        TableToResourceMapping parentMapping = new TableToResourceMapping("PARENT", "parent");
         parentMapping.addVersionMapping(new VersionColumnMapping("version"));
         parentMapping.setIndexUnMappedColumns(true);
 
-        TableToResourceMapping childMapping = new TableToResourceMapping("child", "child");
+        TableToResourceMapping childMapping = new TableToResourceMapping("CHILD", "child");
         childMapping.addVersionMapping(new VersionColumnMapping("version"));
         childMapping.setIndexUnMappedColumns(true);
 
