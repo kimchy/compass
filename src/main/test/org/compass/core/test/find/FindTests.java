@@ -140,7 +140,15 @@ public class FindTests extends AbstractTestCase {
         assertEquals(10, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
+                .setAliases("a1", "a1").hits();
+        assertEquals(10, hits.getLength());
+
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
                 .setSubIndexes("a1").hits();
+        assertEquals(10, hits.getLength());
+
+        hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()
+                .setSubIndexes("a1", "a1").hits();
         assertEquals(10, hits.getLength());
 
         hits = session.queryBuilder().queryString("alias:a1 OR alias:b1").toQuery()

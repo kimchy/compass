@@ -317,7 +317,10 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
             if (subIndexes == null) {
                 return getSubIndexes();
             }
-            return subIndexes;
+            // filter out any duplicates
+            HashSet<String> ret = new HashSet<String>();
+            ret.addAll(Arrays.asList(subIndexes));
+            return ret.toArray(new String[ret.size()]);
         }
         HashSet<String> ret = new HashSet<String>();
         for (String aliase : aliases) {
