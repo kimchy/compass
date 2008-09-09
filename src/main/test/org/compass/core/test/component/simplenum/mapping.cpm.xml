@@ -6,13 +6,13 @@
 
     <class name="A" alias="a">
         <id name="id" accessor="field"/>
-        <component name="b" accessor="field"/>
+        <!--<component name="b" accessor="field"/>-->
     </class>
 
-    <class name="B" alias="b" root="false">
-        <property name="value" accessor="field">
-            <meta-data>value</meta-data>
-        </property>
-    </class>
+    <!--<class name="B" alias="b" root="false">-->
+        <!--<property name="value" accessor="field">-->
+            <!--<meta-data>value</meta-data>-->
+        <!--</property>-->
+    <!--</class>-->
 
 </compass-core-mapping>
