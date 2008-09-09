@@ -243,6 +243,12 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
             classMapping.setSupportUnmarshall(false);
         }
 
+        if (searchable.filterDuplicates() == FilterDuplicates.TRUE) {
+            classMapping.setFilterDuplicates(true);
+        } else if (searchable.filterDuplicates() == FilterDuplicates.FALSE) {
+            classMapping.setFilterDuplicates(false);
+        }
+
         classMapping.setManagedId(AnnotationsBindingUtils.convert(searchable.managedId()));
 
         bindConverter(classMapping, searchable.converter());

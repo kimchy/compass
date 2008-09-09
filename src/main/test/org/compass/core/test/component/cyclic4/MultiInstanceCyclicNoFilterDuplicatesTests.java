@@ -26,14 +26,14 @@ import org.compass.core.test.AbstractTestCase;
 /**
  * @author kimchy
  */
-public class MultiInstanceCyclicTests extends AbstractTestCase {
+public class MultiInstanceCyclicNoFilterDuplicatesTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"component/cyclic4/mapping.cpm.xml"};
     }
 
     protected void addSettings(CompassSettings settings) {
-        settings.setBooleanSetting(CompassEnvironment.Osem.FILTER_DUPLICATES, true);
+        settings.setBooleanSetting(CompassEnvironment.Osem.FILTER_DUPLICATES, false);
     }
 
     public void testSameIdentityInstance() throws Exception {
@@ -56,8 +56,8 @@ public class MultiInstanceCyclicTests extends AbstractTestCase {
         assertNotNull(resource.getProperty("$/father/child1/value"));
         assertNotNull(resource.getProperty("$/father/child1/father/id"));
         assertNotNull(resource.getProperty("$/father/child2/id"));
-        assertNull(resource.getProperty("$/father/child2/value"));
-        assertNull(resource.getProperty("$/father/child2/father/id"));
+        assertNotNull(resource.getProperty("$/father/child2/value"));
+        assertNotNull(resource.getProperty("$/father/child2/father/id"));
 
         tr.commit();
         session.close();
@@ -88,8 +88,8 @@ public class MultiInstanceCyclicTests extends AbstractTestCase {
         assertNotNull(resource.getProperty("$/father/child1/value"));
         assertNotNull(resource.getProperty("$/father/child1/father/id"));
         assertNotNull(resource.getProperty("$/father/child2/id"));
-        assertNull(resource.getProperty("$/father/child2/value"));
-        assertNull(resource.getProperty("$/father/child2/father/id"));
+        assertNotNull(resource.getProperty("$/father/child2/value"));
+        assertNotNull(resource.getProperty("$/father/child2/father/id"));
 
         tr.commit();
         session.close();
@@ -123,10 +123,10 @@ public class MultiInstanceCyclicTests extends AbstractTestCase {
         Resource resource = session.loadResource("father", new Long(1));
         assertNotNull(resource.getProperty("$/father/id"));
         assertEquals(3, resource.getProperties("$/father/children/id").length);
-        assertEquals(2, resource.getProperties("$/father/children/value").length);
-        assertEquals(2, resource.getProperties("value").length);
-        // only two here, since we have duplicate childs
-        assertEquals(2, resource.getProperties("$/father/children/father/id").length);
+        assertEquals(3, resource.getProperties("$/father/children/value").length);
+        assertEquals(3, resource.getProperties("value").length);
+        // three here, since we have duplicate childs
+        assertEquals(3, resource.getProperties("$/father/children/father/id").length);
 
         tr.commit();
         session.close();

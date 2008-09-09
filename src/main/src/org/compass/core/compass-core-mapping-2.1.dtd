@@ -327,6 +327,8 @@
     -->
     <!ATTLIST class support-unmarshall (true|false) #IMPLIED>
 
+    <!ATTLIST class filter-duplicates (true|false) #IMPLIED>
+
     <!ATTLIST class managed-id (auto|true|false|no|no_store) #IMPLIED>
 
     <!ATTLIST class spell-check (include|exclude|na) "na">

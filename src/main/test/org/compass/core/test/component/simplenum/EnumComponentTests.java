@@ -32,6 +32,10 @@ public class EnumComponentTests extends AbstractTestCase {
     }
 
 
+    public void testX() {
+        
+    }
+
     public void XtestEnumComponentMapping() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();

@@ -56,6 +56,9 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
                 if (!classMapping.isSupportUnmarshallSet()) {
                     classMapping.setSupportUnmarshall(settings.getSettingAsBoolean(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, true));
                 }
+                if (classMapping.isFilterDuplicates() == null) {
+                    classMapping.setFilterDuplicates(settings.getSettingAsBoolean(CompassEnvironment.Osem.FILTER_DUPLICATES, false));
+                }
                 processClassMappingProperties(classMapping, settings);
             }
             if (aliasMapping instanceof ResourceMapping) {

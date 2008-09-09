@@ -27,7 +27,7 @@ public class Parent {
 
     String name;
 
-    List children;
+    List<Child> children;
 
     public int hashCode() {
         final int PRIME = 31;

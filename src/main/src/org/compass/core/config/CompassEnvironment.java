@@ -755,6 +755,13 @@ public class CompassEnvironment {
          * <code>false</code>. 
          */
         public static final String LAZY_REFERNCE = "compass.osem.lazyReference";
+
+        /**
+         * Should duplucates (object with the same ids) be filtered out when they have already
+         * been marshalled during the marshalling process of a root object. Defaults to
+         * <code>false</code>. 
+         */
+        public static final String FILTER_DUPLICATES = "compass.osem.filterDuplicates";
     }
 
     public abstract class Xsem {

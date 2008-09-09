@@ -26,16 +26,15 @@ import org.compass.core.test.AbstractTestCase;
 /**
  * @author kimchy
  */
-public class SimpleCyclicTests extends AbstractTestCase {
+public class SimpleCyclicNoFilterDuplicatesTests extends AbstractTestCase {
 
     protected String[] getMappings() {
         return new String[]{"component/cyclic3/Cyclic.cpm.xml"};
     }
 
     protected void addSettings(CompassSettings settings) {
-        settings.setBooleanSetting(CompassEnvironment.Osem.FILTER_DUPLICATES, true);
+        settings.setBooleanSetting(CompassEnvironment.Osem.FILTER_DUPLICATES, false);
     }
-
 
     public void testCyclicWithParent() throws Exception {
         CompassSession session = openSession();
@@ -121,13 +120,13 @@ public class SimpleCyclicTests extends AbstractTestCase {
 
         // check that we don't go into cyclic hell
         Resource resource = session.loadResource("cyclic1c", id);
-        assertEquals(2, resource.getProperties("value").length);
+        assertEquals(3, resource.getProperties("value").length);
         assertNotNull(resource.getProperty("$/cyclic1c/id"));
         assertNotNull(resource.getProperty("$/cyclic1c/value"));
         assertNotNull(resource.getProperty("$/cyclic1c/cyclic2/id"));
         assertNotNull(resource.getProperty("$/cyclic1c/cyclic2/value"));
         assertNotNull(resource.getProperty("$/cyclic1c/cyclic2/cyclic1/id"));
-        assertNull(resource.getProperty("$/cyclic1c/cyclic2/cyclic1/value"));
+        assertNotNull(resource.getProperty("$/cyclic1c/cyclic2/cyclic1/value"));
         assertNull(resource.getProperty("$/cyclic1c/cyclic2/cyclic1/cyclic2/id"));
         assertNull(resource.getProperty("$/cyclic1c/cyclic2/cyclic1/cyclic2/cyclic1/id"));
 

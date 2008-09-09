@@ -143,12 +143,14 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                     if (!classMapping.isSupportUnmarshall()) {
                         return true;
                     }
-                    Mapping[] ids = classMapping.getIdMappings();
-                    boolean store = false;
-                    for (int i = 0; i < ids.length; i++) {
-                        store |= ids[i].getConverter().marshall(resource, idObjKey.idsValues[i], ids[i], context);
+                    if (classMapping.isFilterDuplicates()) {
+                        Mapping[] ids = classMapping.getIdMappings();
+                        boolean store = false;
+                        for (int i = 0; i < ids.length; i++) {
+                            store |= ids[i].getConverter().marshall(resource, idObjKey.idsValues[i], ids[i], context);
+                        }
+                        return store;
                     }
-                    return store;
                 } else {
                     // we did not marshall this object, cache it for later checks
                     context.setMarshalled(idObjKey, root);

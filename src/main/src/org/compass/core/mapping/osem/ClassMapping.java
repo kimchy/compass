@@ -51,6 +51,8 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private Boolean supportUnmarshall;
 
+    private Boolean filterDuplicates;
+
     private ResourcePropertyMapping[] resourcePropertyMappings;
 
     private ClassPropertyMapping[] classPropertyMappings;
@@ -73,6 +75,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setConstructor(getConstructor());
         copy.setPolyConstructor(getPolyConstructor());
         copy.supportUnmarshall = supportUnmarshall;
+        copy.filterDuplicates = filterDuplicates;
         copy.setManagedId(getManagedId());
         return copy;
     }
@@ -87,6 +90,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.setConstructor(getConstructor());
         copy.setPolyConstructor(getPolyConstructor());
         copy.supportUnmarshall = supportUnmarshall;
+        copy.filterDuplicates = filterDuplicates;
         copy.setManagedId(getManagedId());
         return copy;
     }
@@ -213,6 +217,14 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public boolean isSupportUnmarshallSet() {
         return supportUnmarshall != null;
+    }
+
+    public Boolean isFilterDuplicates() {
+        return filterDuplicates;
+    }
+
+    public void setFilterDuplicates(Boolean filterDuplicates) {
+        this.filterDuplicates = filterDuplicates;
     }
 
     public Constructor getConstructor() {

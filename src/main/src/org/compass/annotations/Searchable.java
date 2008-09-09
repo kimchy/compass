@@ -167,11 +167,23 @@ public @interface Searchable {
      * of converting a raw {@link org.compass.core.Resource} into the actual domain object.
      * If support un-marshall is enabled extra information will be stored within the search
      * engine, as well as consumes extra memory.
-     * <p/>
-     * By default Compass global osem setting supportUnmarshall controls it unless exlicitly
+     *
+     * <p>By default Compass global osem setting supportUnmarshall controls it unless exlicitly
      * set here.
      */
     SupportUnmarshall supportUnmarshall() default SupportUnmarshall.NA;
+
+    /**
+     * Controls if the {@link org.compass.annotations.Searchable} class should filter duplciates. Duplciates
+     * are objects that have already been marshalled during the marshalling process of a single root object
+     * (and its object graph). Filtering them out means reducing the size of the index (content, of course,
+     * is still searchable), though object graph queries and possible "boost" information by having it several
+     * times is lost.
+     *
+     * <p>By default, controlled by global setting {@link org.compass.core.config.CompassEnvironment.Osem#FILTER_DUPLICATES}
+     * which defaults to <code>false</code>.
+     */
+    FilterDuplicates filterDuplicates() default FilterDuplicates.NA;
 
     /**
      * Controls the managed id value for all the mapped properties that have no explicit setting
@@ -179,7 +191,7 @@ public @interface Searchable {
      * globabl Compass settings and defaults to AUTO.
      */
     ManagedId managedId() default ManagedId.NA;
-                      
+
     /**
      * A list of aliases to extend. Extending the aliases allows to include other
      * mapping definitions, defined via annotations or xml.

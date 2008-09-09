@@ -665,6 +665,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
                 classMapping.setSupportUnmarshall(false);
             }
         }
+        String filterDuplicates = classConf.getAttribute("filter-duplicates", null);
+        if (filterDuplicates != null) {
+            classMapping.setFilterDuplicates(filterDuplicates.equalsIgnoreCase("true"));
+        }
 
         bindConverter(classConf, classMapping);
 
