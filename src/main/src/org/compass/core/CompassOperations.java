@@ -320,8 +320,8 @@ public interface CompassOperations {
     /**
      * Creates a NEW object in Compass. All the meta data defined in the Compass
      * mapping files will be indexed and saved for later searching. Note that if
-     * the same object (same alias and same id's already exists in the index, it
-     * won't be deleted).
+     * the same object (same alias and same id's) already exists in the index, it
+     * won't be deleted.
      *
      * @param obj The object to save.
      * @throws CompassException
@@ -331,7 +331,9 @@ public interface CompassOperations {
     /**
      * Creates a NEW object in Compass that shares mapping alais with multiple
      * objects. All the meta data defined in Compass mapping files will be
-     * indexed and saved for later searching.
+     * indexed and saved for later searching. Note that if
+     * the same object (same alias and same id's) already exists in the index, it
+     * won't be deleted.
      *
      * @param alias The alias that match the object mappings
      * @param obj   The object to save
