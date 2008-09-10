@@ -90,9 +90,9 @@ public class GlassfishNativeHibernateJpaExtractor implements NativeJpaExtractor 
             try {
                 return (EntityManager) emGetDelegateMethod.invoke(entityManager);
             } catch (IllegalAccessException e) {
-                throw new JpaGpsDeviceException("Failed to access _getDelegate method", e);
+                throw new JpaGpsDeviceException("Failed to access getDelegate method", e);
             } catch (InvocationTargetException e) {
-                throw new JpaGpsDeviceException("Failed to invoke _getDelegate method", e.getTargetException());
+                throw new JpaGpsDeviceException("Failed to invoke getDelegate method", e.getTargetException());
             }
         }
         return entityManager;
