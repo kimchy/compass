@@ -73,10 +73,10 @@ public class GlassfishNativeHibernateJpaExtractor implements NativeJpaExtractor 
         if (emfWrapperClass.isAssignableFrom(entityManagerFactory.getClass())) {
             try {
                 return (EntityManagerFactory) emfGetDelegateMethod.invoke(entityManagerFactory);
-            } catch (IllegalAccessException e) {
-                throw new JpaGpsDeviceException("Failed to access getDelegate method", e);
             } catch (InvocationTargetException e) {
-                throw new JpaGpsDeviceException("Failed to invoke getDelegate method", e.getTargetException());
+                throw new JpaGpsDeviceException("Failed to invoke getDelegate method on [" + entityManagerFactory + "]", e.getTargetException());
+            } catch (Exception e) {
+                throw new JpaGpsDeviceException("Failed to invoke getDelegate method on [" + entityManagerFactory + "]", e);
             }
         }
         return entityManagerFactory;
@@ -89,10 +89,10 @@ public class GlassfishNativeHibernateJpaExtractor implements NativeJpaExtractor 
         if (emWrapperClass.isAssignableFrom(entityManager.getClass())) {
             try {
                 return (EntityManager) emGetDelegateMethod.invoke(entityManager);
-            } catch (IllegalAccessException e) {
-                throw new JpaGpsDeviceException("Failed to access getDelegate method", e);
             } catch (InvocationTargetException e) {
-                throw new JpaGpsDeviceException("Failed to invoke getDelegate method", e.getTargetException());
+                throw new JpaGpsDeviceException("Failed to invoke getDelegate method on [" + entityManager + "]", e.getTargetException());
+            } catch (Exception e) {
+                throw new JpaGpsDeviceException("Failed to invoke getDelegate method on [" + entityManager + "]", e);
             }
         }
         return entityManager;
