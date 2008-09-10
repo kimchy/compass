@@ -57,7 +57,7 @@ public class GlassfishNativeHibernateJpaExtractor implements NativeJpaExtractor 
         }
         try {
             emWrapperClass = GlassfishNativeHibernateJpaExtractor.class.getClassLoader().loadClass(EM_WRAPPER_CLASS);
-            emGetDelegateMethod = emfWrapperClass.getDeclaredMethod("getDelegate");
+            emGetDelegateMethod = emWrapperClass.getDeclaredMethod("getDelegate");
             emGetDelegateMethod.setAccessible(true);
         } catch (ClassNotFoundException e) {
             throw new CompassException("Failed to find Glassfish EM wrapper class [" + EM_WRAPPER_CLASS + "]");
