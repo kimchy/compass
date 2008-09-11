@@ -16,6 +16,8 @@
 
 package org.compass.spring.test.config;
 
+import org.compass.core.Compass;
+import org.compass.core.config.CompassEnvironment;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
@@ -28,6 +30,7 @@ public class ConfigTests extends AbstractDependencyInjectionSpringContextTests {
     }
 
     public void testNamespaceHandler() throws Exception {
-        applicationContext.getBean("compass");
+        Compass compass = (Compass) applicationContext.getBean("compass");
+        assertEquals("file://target/test-index", compass.getSettings().getSetting(CompassEnvironment.CONNECTION));
     }
 }

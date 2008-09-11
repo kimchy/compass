@@ -13,10 +13,18 @@
       <property name="suppressClose"><value>true</value></property>
     </bean>
 
+    <bean id="propPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="conn">target/test-index</prop>
+            </props>
+        </property>
+    </bean>
+
 
     <compass:compass name="compass" dataSource="dataSource">
         <compass:connection>
-            <compass:file path="target/test-index" />
+            <compass:file path="${conn}" />
         </compass:connection>
     </compass:compass>
 </beans>

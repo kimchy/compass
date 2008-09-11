@@ -17,12 +17,15 @@
 package org.compass.spring;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
@@ -39,10 +42,14 @@ import org.compass.core.lucene.engine.store.jdbc.ExternalDataSourceProvider;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -50,7 +57,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 /**
  * @author kimchy
  */
-public class LocalCompassBean implements FactoryBean, InitializingBean, DisposableBean, BeanNameAware {
+public class LocalCompassBean implements FactoryBean, InitializingBean, DisposableBean, BeanNameAware, ApplicationContextAware {
 
     protected static final Log log = LogFactory.getLog(LocalCompassBean.class);
 
@@ -86,6 +93,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     private String beanName;
 
+    private ApplicationContext applicationContext;
+
     private CompassConfiguration config;
 
     private LocalCompassBeanPostProcessor postProcessor;
@@ -99,6 +108,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -136,7 +149,7 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
     }
 
     /**
-     * @see org.compass.core.config.CompassConfiguration#addScan(String) 
+     * @see org.compass.core.config.CompassConfiguration#addScan(String)
      */
     public void setMappingScan(String basePackage) {
         this.mappingScan = basePackage;
@@ -337,6 +350,35 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
         if (config.getSettings().getSetting(CompassEnvironment.CONNECTION) == null && connection != null) {
             config.getSettings().setSetting(CompassEnvironment.CONNECTION, connection.getFile().getAbsolutePath());
+        }
+
+        if (applicationContext != null) {
+            String[] names = applicationContext.getBeanNamesForType(PropertyPlaceholderConfigurer.class);
+            for (String name : names) {
+                PropertyPlaceholderConfigurer propConfigurer = (PropertyPlaceholderConfigurer) applicationContext.getBean(name);
+                Method method = propConfigurer.getClass().getSuperclass().getSuperclass().getDeclaredMethod("mergeProperties");
+                method.setAccessible(true);
+                Properties props = (Properties) method.invoke(propConfigurer);
+                method = propConfigurer.getClass().getSuperclass().getDeclaredMethod("convertProperties", Properties.class);
+                method.setAccessible(true);
+                method.invoke(propConfigurer, props);
+                method = propConfigurer.getClass().getDeclaredMethod("parseStringValue", String.class, Properties.class, Set.class);
+                method.setAccessible(true);
+                String nullValue = null;
+                try {
+                    Field field = propConfigurer.getClass().getDeclaredField("nullValue");
+                    field.setAccessible(true);
+                    nullValue = (String) field.get(propConfigurer);
+                } catch (NoSuchFieldException e) {
+                    // no field (old spring version)
+                }
+                for (Map.Entry entry : config.getSettings().getProperties().entrySet()) {
+                    String key = (String) entry.getKey();
+                    String value = (String) entry.getValue();
+                    value = (String) method.invoke(propConfigurer, value, props, new HashSet());
+                    config.getSettings().setSetting(key, value.equals(nullValue) ? null : value);
+                }
+            }
         }
 
         if (postProcessor != null) {
