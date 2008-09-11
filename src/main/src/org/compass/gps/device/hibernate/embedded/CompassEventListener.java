@@ -17,6 +17,8 @@
 package org.compass.gps.device.hibernate.embedded;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -45,6 +47,7 @@ import org.compass.gps.device.hibernate.lifecycle.HibernateMirrorFilter;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.hibernate.engine.CollectionEntry;
 import org.hibernate.engine.EntityEntry;
 import org.hibernate.event.*;
 import org.hibernate.mapping.Component;
@@ -136,9 +139,13 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
 
     public static final String COMPASS_MIRROR_FILTER = "compass.hibernate.mirrorFilter";
 
+    public static final String COMPASS_PROCESS_COLLECTIONS = "compass.hibernate.processCollections";
+
     private static ThreadLocal<WeakHashMap<Configuration, CompassHolder>> contexts = new ThreadLocal<WeakHashMap<Configuration, CompassHolder>>();
 
     private CompassHolder compassHolder;
+
+    private boolean processCollections = true;
 
     public void initialize(Configuration cfg) {
         compassHolder = getCompassHolder(cfg);
@@ -190,7 +197,19 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
         if (log.isTraceEnabled()) {
             log.trace("Creating [" + entity + "]");
         }
+        Collection<CollectionEntry> collectionsBefore = null;
+        if (processCollections) {
+            collectionsBefore = new HashSet<CollectionEntry>(event.getSession().getPersistenceContext().getCollectionEntries().values());
+        }
         holder.session.create(entity);
+        if (processCollections) {
+            Collection<CollectionEntry> collectionsAfter = event.getSession().getPersistenceContext().getCollectionEntries().values();
+            for (CollectionEntry collection : collectionsAfter) {
+                if (!collectionsBefore.contains(collection)) {
+                    collection.setProcessed(true);
+                }
+            }
+        }
         afterOperation(holder);
     }
 
@@ -211,7 +230,19 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
         if (log.isTraceEnabled()) {
             log.trace("Updating [" + entity + "]");
         }
+        Collection<CollectionEntry> collectionsBefore = null;
+        if (processCollections) {
+            collectionsBefore = new HashSet<CollectionEntry>(event.getSession().getPersistenceContext().getCollectionEntries().values());
+        }
         holder.session.save(entity);
+        if (processCollections) {
+            Collection<CollectionEntry> collectionsAfter = event.getSession().getPersistenceContext().getCollectionEntries().values();
+            for (CollectionEntry collection : collectionsAfter) {
+                if (!collectionsBefore.contains(collection)) {
+                    collection.setProcessed(true);
+                }
+            }
+        }
         afterOperation(holder);
     }
 
@@ -340,6 +371,8 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             }
             return null;
         }
+
+        processCollections = compassProperties.getProperty(COMPASS_PROCESS_COLLECTIONS, "true").equalsIgnoreCase("true");
 
         CompassConfiguration compassConfiguration = CompassConfigurationFactory.newConfiguration();
         CompassSettings settings = compassConfiguration.getSettings();

@@ -1,0 +1,15 @@
+<!DOCTYPE compass-core-mapping PUBLIC 
+    "-//Compass/Compass Core Mapping DTD 2.0//EN"
+    "http://www.compass-project.org/dtd/compass-core-mapping-2.1.dtd">
+
+<compass-core-mapping package="org.compass.gps.device.hibernate.collection.processinflush">
+
+    <class name="Folder" alias="folder" root="true">
+        <id name="id" accessor="field" />
+        <property name="name" accessor="field">
+            <meta-data>name</meta-data>
+        </property>
+        <reference name="bookmarks" ref-alias="bookmark" accessor="field"/>
+    </class>
+
+</compass-core-mapping>

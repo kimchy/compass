@@ -32,6 +32,7 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
+import org.hibernate.engine.CollectionEntry;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.event.EventSource;
 import org.hibernate.event.PostDeleteEvent;
@@ -59,15 +60,18 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
 
     protected final boolean pendingCascades;
 
+    protected final boolean processCollections;
+
     private Map<Object, Collection> pendingCreate = Collections.synchronizedMap(new IdentityHashMap<Object, Collection>());
 
     private Map<Object, Collection> pendingSave = Collections.synchronizedMap(new IdentityHashMap<Object, Collection>());
 
-    public HibernateEventListener(HibernateGpsDevice device, boolean marshallIds, boolean pendingCascades) {
+    public HibernateEventListener(HibernateGpsDevice device, boolean marshallIds, boolean pendingCascades, boolean processCollections) {
         this.device = device;
         this.mirrorFilter = device.getMirrorFilter();
         this.marshallIds = marshallIds;
         this.pendingCascades = pendingCascades;
+        this.processCollections = processCollections;
     }
 
     public void onPostInsert(final PostInsertEvent postInsertEvent) {
@@ -124,6 +128,10 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             }
         }
 
+        Collection<CollectionEntry> collectionsBefore = null;
+        if (processCollections) {
+            collectionsBefore = new HashSet<CollectionEntry>(postUpdateEvent.getSession().getPersistenceContext().getCollectionEntries().values());
+        }
         try {
             if (log.isTraceEnabled()) {
                 log.trace(device.buildMessage("Updating [" + entity + "]"));
@@ -138,6 +146,15 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
                 log.error(device.buildMessage("Failed while updating [" + entity + "]"), e);
             } else {
                 throw new HibernateGpsDeviceException(device.buildMessage("Failed while updating [" + entity + "]"), e);
+            }
+        } finally {
+            if (processCollections) {
+                Collection<CollectionEntry> collectionsAfter = postUpdateEvent.getSession().getPersistenceContext().getCollectionEntries().values();
+                for (CollectionEntry collection : collectionsAfter) {
+                    if (!collectionsBefore.contains(collection)) {
+                        collection.setProcessed(true);
+                    }
+                }
             }
         }
     }
@@ -183,6 +200,10 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             Serializable id = postInsertEvent.getId();
             postInsertEvent.getPersister().setIdentifier(entity, id, postInsertEvent.getSession().getEntityMode());
         }
+        Collection<CollectionEntry> collectionsBefore = null;
+        if (processCollections) {
+            collectionsBefore = new HashSet<CollectionEntry>(postInsertEvent.getSession().getPersistenceContext().getCollectionEntries().values());
+        }
         if (pendingCascades) {
             HibernateEventListenerUtils.registerRemovalHook(postInsertEvent.getSession(), pendingCreate, entity);
             Collection dependencies = HibernateEventListenerUtils.getUnpersistedCascades(compassGps, entity,
@@ -201,6 +222,14 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
             HibernateEventListenerUtils.persistPending(session, entity, pendingCreate, true);
         } else {
             session.create(entity);
+        }
+        if (processCollections) {
+            Collection<CollectionEntry> collectionsAfter = postInsertEvent.getSession().getPersistenceContext().getCollectionEntries().values();
+            for (CollectionEntry collection : collectionsAfter) {
+                if (!collectionsBefore.contains(collection)) {
+                    collection.setProcessed(true);
+                }
+            }
         }
     }
 

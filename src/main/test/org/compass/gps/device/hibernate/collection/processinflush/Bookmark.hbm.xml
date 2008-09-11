@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="org.compass.gps.device.hibernate.collection.processinflush">
+
+    <class name="Bookmark" table="bookmark">
+        <id name="id" access="field">
+            <generator class="native"/>
+        </id>
+        <property name="name" access="field"/>
+        <many-to-one name="folder" access="field" column="folder_id" not-null="true" />
+        <set name="tags" access="field" lazy="true" cascade="all">
+            <key column="bookmark_id"/>
+            <one-to-many class="Tag"/>
+        </set>
+    </class>
+
+</hibernate-mapping>

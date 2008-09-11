@@ -40,8 +40,8 @@ import org.hibernate.event.PostCollectionUpdateEventListener;
 public class HibernateCollectionEventListener extends HibernateEventListener implements PostCollectionRecreateEventListener,
         PostCollectionRemoveEventListener, PostCollectionUpdateEventListener {
 
-    public HibernateCollectionEventListener(HibernateGpsDevice device, boolean marshallIds, boolean pendingCascades) {
-        super(device, marshallIds, pendingCascades);
+    public HibernateCollectionEventListener(HibernateGpsDevice device, boolean marshallIds, boolean pendingCascades, boolean processCollections) {
+        super(device, marshallIds, pendingCascades, processCollections);
     }
 
     public void onPostRecreateCollection(PostCollectionRecreateEvent postCollectionRecreateEvent) {

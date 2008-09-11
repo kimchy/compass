@@ -45,6 +45,8 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
 
     protected boolean pendingCascades = true;
 
+    protected boolean processCollection = true;
+
     public DefaultHibernateEntityLifecycleInjector() {
         this(false);
     }
@@ -78,6 +80,14 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
      */
     public void setPendingCascades(boolean pendingCascades) {
         this.pendingCascades = pendingCascades;
+    }
+
+    /**
+     * Should the event listener automatically set the processed flag on collections that are created as a result
+     * of the marshalling process of Compass. Defaults to <code>true</code>.
+     */
+    public void setProcessCollection(boolean processCollection) {
+        this.processCollection = processCollection;
     }
 
     public void injectLifecycle(SessionFactory sessionFactory, HibernateGpsDevice device) throws HibernateGpsDeviceException {
@@ -203,6 +213,6 @@ public class DefaultHibernateEntityLifecycleInjector implements HibernateEntityL
     }
 
     protected Object doCreateListener(HibernateGpsDevice device) {
-        return new HibernateEventListener(device, marshallIds, pendingCascades);
+        return new HibernateEventListener(device, marshallIds, pendingCascades, processCollection);
     }
 }
