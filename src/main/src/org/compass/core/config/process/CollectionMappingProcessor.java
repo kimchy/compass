@@ -139,6 +139,7 @@ public class CollectionMappingProcessor implements MappingProcessor {
             collectionMapping.setName(objectMapping.getName());
             collectionMapping.setPath(objectMapping.getPath());
             collectionMapping.setPropertyName(objectMapping.getPropertyName());
+            collectionMapping.setDefinedInAlias(objectMapping.getDefinedInAlias());
             if (objectMapping instanceof OverrideByNameMapping) {
                 collectionMapping.setOverrideByName(((OverrideByNameMapping) objectMapping).isOverrideByName());
             } else {
