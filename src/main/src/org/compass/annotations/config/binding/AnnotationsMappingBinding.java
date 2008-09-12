@@ -958,13 +958,9 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         // the class, so we are using the FQN class name instead
         if (searchableClass.isAnnotationPresent(Searchable.class)) {
             Searchable searchable = searchableClass.getAnnotation(Searchable.class);
-            if (StringUtils.hasLength(searchable.alias())) {
-                objectMapping.setDefinedInAlias(searchable.alias());
-            } else {
-                objectMapping.setDefinedInAlias(searchableClass.getName());
-            }
+            objectMapping.setDefinedInAlias(getAliasFromSearchableClass(searchableClass, searchable));
         } else {
-            objectMapping.setDefinedInAlias(searchableClass.getName());
+            objectMapping.setDefinedInAlias(ClassUtils.getShortName(searchableClass));
         }
     }
 
