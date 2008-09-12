@@ -82,12 +82,24 @@ public class PolyAliasQueryStringTests extends AbstractAnnotationsTestCase {
         session.save(b);
 
         assertEquals(1, session.find("A.id:1").length());
-        assertEquals(0, session.find("A.id:2").length());
+        assertEquals(1, session.find("A.id:2").length());
+        assertEquals(0, session.find("B.id:1").length());
         assertEquals(1, session.find("B.id:2").length());
 
+        assertEquals(1, session.queryBuilder().term("A.id", 1).hits().length());
+        assertEquals(1, session.queryBuilder().term("A.id", 2).hits().length());
+        assertEquals(0, session.queryBuilder().term("B.id", 1).hits().length());
+        assertEquals(1, session.queryBuilder().term("B.id", 2).hits().length());
+
         assertEquals(1, session.find("A.value:test").length());
+        assertEquals(0, session.find("B.value:test").length());
         assertEquals(1, session.find("B.value:me").length());
         assertEquals(1, session.find("A.value:me").length());
+
+        assertEquals(1, session.queryBuilder().term("A.value", "test").hits().length());
+        assertEquals(0, session.queryBuilder().term("B.value", "test").hits().length());
+        assertEquals(1, session.queryBuilder().term("A.value", "me").hits().length());
+        assertEquals(1, session.queryBuilder().term("B.value", "me").hits().length());
 
         // check component
         assertEquals(1, session.find("A.component.cvalue:acomponent").length());
@@ -95,11 +107,21 @@ public class PolyAliasQueryStringTests extends AbstractAnnotationsTestCase {
         assertEquals(1, session.find("B.component.cvalue:bcomponent").length());
         assertEquals(1, session.find("A.component.cvalue:bcomponent").length());
 
+        assertEquals(1, session.queryBuilder().term("A.component.cvalue", "acomponent").hits().length());
+        assertEquals(0, session.queryBuilder().term("B.component.cvalue", "acomponent").hits().length());
+        assertEquals(1, session.queryBuilder().term("B.component.cvalue", "bcomponent").hits().length());
+        assertEquals(1, session.queryBuilder().term("A.component.cvalue", "bcomponent").hits().length());
+
         // check reference
         assertEquals(1, session.find("A.reference.id:2").length());
+        assertEquals(0, session.find("B.reference.id:2").length());
         assertEquals(1, session.find("B.reference.id:4").length());
-        // TODO MISSING FEATURE TEST: We should make this work
-        assertEquals(0, session.find("A.reference.id:4").length());
+        assertEquals(1, session.find("A.reference.id:4").length());
+
+        assertEquals(1, session.queryBuilder().term("A.reference.id", 2).hits().length());
+        assertEquals(0, session.queryBuilder().term("B.reference.id", 2).hits().length());
+        assertEquals(1, session.queryBuilder().term("B.reference.id", 4).hits().length());
+        assertEquals(1, session.queryBuilder().term("A.reference.id", 4).hits().length());
 
         tr.commit();
         session.close();

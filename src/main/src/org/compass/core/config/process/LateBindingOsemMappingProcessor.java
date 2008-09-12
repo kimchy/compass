@@ -23,6 +23,7 @@ import java.util.List;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
+import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
@@ -39,6 +40,7 @@ import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.IdComponentMapping;
+import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.OsemMappingIterator;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.PlainCascadeMapping;
@@ -100,16 +102,25 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private void secondPass(ClassMapping classMapping, CompassMapping fatherMapping) {
         classMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), classMapping.getAlias()));
-        secondPass(classMapping, false);
+        secondPass(classMapping, false, true);
     }
 
-    private void secondPass(ClassMapping classMapping, boolean onlyProperties) {
+    private void secondPass(ClassMapping classMapping, boolean onlyProperties, boolean topmost) {
         classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(), MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
         ArrayList<Mapping> innerMappingsCopy = new ArrayList<Mapping>();
         for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
             Mapping copyMapping = m.copy();
             boolean removeMapping = false;
+
+
+            if ((copyMapping instanceof ObjectMapping) && topmost) {
+                PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), ((ObjectMapping) copyMapping).getDefinedInAlias());
+                copyMapping.setPath(namingStrategy.buildPath(aliasedPath, copyMapping.getName()));
+            } else {
+                copyMapping.setPath(namingStrategy.buildPath(classMapping.getPath(), copyMapping.getName()));
+            }
+
             if (m instanceof ClassPropertyMapping) {
                 removeMapping = secondPass((ClassPropertyMapping) copyMapping, classMapping);
             } else if (m instanceof IdComponentMapping) {
@@ -127,6 +138,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
                     } else if (copyMapping instanceof AbstractCollectionMapping) {
                         removeMapping = secondPass((AbstractCollectionMapping) copyMapping, classMapping);
                     } else if (copyMapping instanceof DynamicMetaDataMapping) {
+                        removeMapping = secondPass((DynamicMetaDataMapping) copyMapping);
                     }
                 }
             }
@@ -142,7 +154,10 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private boolean secondPass(AbstractCollectionMapping collectionMapping, Mapping fatherMapping) {
         Mapping elementMapping = collectionMapping.getElementMapping();
+
         Mapping elementMappingCopy = elementMapping.copy();
+        elementMappingCopy.setPath(collectionMapping.getPath());
+
         boolean removeMapping = false;
         if (elementMappingCopy instanceof ClassPropertyMapping) {
             removeMapping = secondPass((ClassPropertyMapping) elementMappingCopy, fatherMapping);
@@ -154,7 +169,6 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
         collectionMapping.setElementMapping(elementMappingCopy);
 
-        collectionMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), collectionMapping.getName()));
         collectionMapping.setCollectionTypePath(namingStrategy.buildPath(collectionMapping.getPath(),
                 MarshallingEnvironment.PROPERTY_COLLECTION_TYPE).hintStatic());
         collectionMapping.setColSizePath(namingStrategy.buildPath(collectionMapping.getPath(),
@@ -179,7 +193,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             refClass.setPath(namingStrategy.buildPath(referenceMapping.getPath(), referenceMapping.getRefCompAlias()));
             // we do not want to create intenral ids, since we will never unmarshall it
             managedId = ClassPropertyMapping.ManagedId.FALSE;
-            secondPass(refClass, false);
+            secondPass(refClass, false, false);
             managedId = null;
             refClass.setRoot(false);
 
@@ -190,7 +204,6 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
     }
 
     private void secondPassJustReference(ReferenceMapping referenceMapping, Mapping fatherMapping) {
-        referenceMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), referenceMapping.getName()));
         ClassMapping[] refMappings = referenceMapping.getRefClassMappings();
 
         ClassMapping[] copyRefClassMappings = new ClassMapping[refMappings.length];
@@ -206,7 +219,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             }
 
             refClass.setPath(referenceMapping.getPath());
-            secondPass(refClass, true);
+            secondPass(refClass, true, false);
 
             for (ClassIdPropertyMapping mapping : refClass.findClassPropertyIdMappings()) {
                 mapping.clearMappings();
@@ -235,14 +248,12 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
         chainedComponents.add(compMapping);
 
-        compMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), compMapping.getName()));
-
         ClassMapping[] refClassMappings = compMapping.getRefClassMappings();
         ClassMapping[] copyRefClassMappings = new ClassMapping[refClassMappings.length];
         for (int i = 0; i < refClassMappings.length; i++) {
             ClassMapping refClassMapping = (ClassMapping) refClassMappings[i].copy();
             refClassMapping.setPath(compMapping.getPath());
-            secondPass(refClassMapping, false);
+            secondPass(refClassMapping, false, false);
             refClassMapping.setRoot(false);
             copyRefClassMappings[i] = refClassMapping;
         }
@@ -254,8 +265,6 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
     }
 
     private boolean secondPass(ClassPropertyMapping classPropertyMapping, Mapping fatherMapping) {
-        classPropertyMapping.setPath(namingStrategy.buildPath(fatherMapping.getPath(), classPropertyMapping.getName()));
-
         // we check if we override the managedId option
         if (managedId != null) {
             classPropertyMapping.setManagedId(managedId);
@@ -277,6 +286,11 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private boolean secondPass(ConstantMetaDataMapping constantMapping) {
         constantMapping.setPath(new StaticPropertyPath(constantMapping.getName()));
+        return false;
+    }
+
+    private boolean secondPass(DynamicMetaDataMapping dynamicMetaDataMapping) {
+        dynamicMetaDataMapping.setPath(new StaticPropertyPath(dynamicMetaDataMapping.getName()));
         return false;
     }
 
@@ -313,7 +327,8 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
         public void onClassPropertyMapping(ClassMapping classMapping, ClassPropertyMapping classPropertyMapping) {
             this.classPropertyMapping = classPropertyMapping;
-            classPropertyMapping.setPath(namingStrategy.buildPath(classMapping.getPath(), classPropertyMapping.getName()));
+            PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), classPropertyMapping.getDefinedInAlias());
+            classPropertyMapping.setPath(namingStrategy.buildPath(aliasedPath, classPropertyMapping.getName()));
         }
 
         public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {
@@ -339,6 +354,8 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         }
 
         public void onReferenceMapping(ClassMapping classMapping, ReferenceMapping referenceMapping) {
+            PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), classPropertyMapping.getDefinedInAlias());
+            referenceMapping.setPath(namingStrategy.buildPath(aliasedPath, referenceMapping.getName()));
             secondPassJustReference(referenceMapping, classMapping);
         }
 

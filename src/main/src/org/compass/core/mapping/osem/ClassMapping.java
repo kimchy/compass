@@ -43,6 +43,8 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private PropertyPath classPath;
 
+    private PropertyPath basePath;
+
     private Class clazz;
 
     private boolean poly;
@@ -77,6 +79,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.supportUnmarshall = supportUnmarshall;
         copy.filterDuplicates = filterDuplicates;
         copy.setManagedId(getManagedId());
+        copy.setBasePath(getBasePath());
         return copy;
     }
 
@@ -92,6 +95,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         copy.supportUnmarshall = supportUnmarshall;
         copy.filterDuplicates = filterDuplicates;
         copy.setManagedId(getManagedId());
+        copy.setBasePath(getBasePath());
         return copy;
     }
 
@@ -241,6 +245,14 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public void setPolyConstructor(Constructor polyConstructor) {
         this.polyConstructor = polyConstructor;
+    }
+
+    public PropertyPath getBasePath() {
+        return basePath;
+    }
+
+    public void setBasePath(PropertyPath basePath) {
+        this.basePath = basePath;
     }
 
     public class PostProcessMappingCallback extends OsemMappingIterator.ClassPropertyAndResourcePropertyGatherer {

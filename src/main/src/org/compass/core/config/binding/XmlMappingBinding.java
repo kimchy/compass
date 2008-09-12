@@ -748,17 +748,18 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         ConfigurationHelper[] cascadeConfs = classConf.getChildren("cascade");
         for (ConfigurationHelper cascadeConf : cascadeConfs) {
             PlainCascadeMapping cascadeMapping = new PlainCascadeMapping();
-            bindPlainCascading(cascadeConf, cascadeMapping);
+            bindPlainCascading(cascadeConf, classMapping, cascadeMapping);
             classMapping.addMapping(cascadeMapping);
         }
     }
 
-    private void bindPlainCascading(ConfigurationHelper conf, PlainCascadeMapping cascadeMapping) {
+    private void bindPlainCascading(ConfigurationHelper conf, AliasMapping aliasMapping, PlainCascadeMapping cascadeMapping) {
         String name = conf.getAttribute("name");
         cascadeMapping.setName(name);
 
         cascadeMapping.setAccessor(conf.getAttribute("accessor", null));
         cascadeMapping.setPropertyName(name);
+        cascadeMapping.setDefinedInAlias(aliasMapping.getAlias());
 
         bindConverter(conf, cascadeMapping);
         bindCascade(conf, cascadeMapping, "all");
