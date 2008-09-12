@@ -277,7 +277,7 @@ public class DefaultCompassMapping implements InternalCompassMapping {
         ResourcePropertyMapping resourcePropertyMapping = null;
         if (aliasMapping instanceof ResourceMapping) {
             resourcePropertyMapping = ((ResourceMapping) aliasMapping).getResourcePropertyMappingByDotPath(propertyName);
-        } else {
+        } else if (aliasMapping != null) {
             // go over alias mappings (such as contract mappings) and try and find if someone that extends it
             // defines mappings for this dot path notation (since we only post process root resource mappings).
             // note, if the extedning resource mapping also overrides the meta-data, then it will use it and
