@@ -16,9 +16,12 @@
 
 package org.compass.core.test.querybuilder.polyaliasquerystring;
 
+import org.compass.annotations.Cascade;
 import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableComponent;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
+import org.compass.annotations.SearchableReference;
 
 /**
  * @author kimchy
@@ -31,4 +34,10 @@ public class A {
 
     @SearchableProperty
     String value;
+
+    @SearchableComponent
+    C component;
+
+    @SearchableReference(cascade = Cascade.ALL)
+    C reference;
 }
