@@ -336,11 +336,11 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
             }
         }
 
-        private void addToPath(Mapping mapping) {
-            pathSteps.add(mapping.getName());
+        private void addToPath(String name) {
+            pathSteps.add(name);
         }
 
-        private void removeFromPath(Mapping mapping) {
+        private void removeFromPath() {
             if (pathSteps.size() > 0) {
                 pathSteps.remove(pathSteps.size() - 1);
             }
@@ -350,29 +350,42 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
          */
         public boolean onBeginMultipleMapping(ClassMapping classMapping, Mapping mapping) {
             boolean retVal = super.onBeginMultipleMapping(classMapping, mapping);
-            addToPath(mapping);
+            addToPath(mapping.getName());
             return retVal;
         }
 
         public void onEndMultiplMapping(ClassMapping classMapping, Mapping mapping) {
             super.onEndMultiplMapping(classMapping, mapping);
-            removeFromPath(mapping);
+            removeFromPath();
         }
 
         public void onClassPropertyMapping(ClassMapping classMapping, ClassPropertyMapping mapping) {
             super.onClassPropertyMapping(classMapping, mapping);
             ResourcePropertyMapping resourcePropertyMapping = mapping.getIdMapping();
+            if (resourcePropertyMapping == null && mapping.mappingsSize() > 0) {
+                resourcePropertyMapping = (ResourcePropertyMapping) mapping.mappingsIt().next();
+            }
             pathMappings.put(currentPath(), resourcePropertyMapping);
         }
 
         public void onResourcePropertyMapping(ResourcePropertyMapping mapping) {
             super.onResourcePropertyMapping(mapping);
             if (!mapping.isInternal()) {
-                addToPath(mapping);
+                addToPath(mapping.getName());
             }
             pathMappings.put(currentPath(), mapping);
             if (!mapping.isInternal()) {
-                removeFromPath(mapping);
+                removeFromPath();
+            }
+
+            if (mapping instanceof ClassPropertyMetaDataMapping) {
+                if (!mapping.isInternal()) {
+                    addToPath(((ClassPropertyMetaDataMapping) mapping).getOriginalName());
+                }
+                pathMappings.put(currentPath(), mapping);
+                if (!mapping.isInternal()) {
+                    removeFromPath();
+                }
             }
         }
 

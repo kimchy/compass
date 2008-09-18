@@ -31,6 +31,8 @@ public class ComponentMapping extends AbstractRefAliasMapping implements Overrid
     // set by configuration
     private int maxDepth = 5;
 
+    private String prefix;
+
     public Mapping copy() {
         ComponentMapping copy = new ComponentMapping();
         copy(copy);
@@ -41,6 +43,7 @@ public class ComponentMapping extends AbstractRefAliasMapping implements Overrid
         super.copy(componentMapping);
         componentMapping.setOverrideByName(isOverrideByName());
         componentMapping.setMaxDepth(getMaxDepth());
+        componentMapping.setPrefix(getPrefix());
     }
 
     public boolean canBeCollectionWrapped() {
@@ -61,5 +64,13 @@ public class ComponentMapping extends AbstractRefAliasMapping implements Overrid
 
     public void setMaxDepth(int maxDepth) {
         this.maxDepth = maxDepth;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 }

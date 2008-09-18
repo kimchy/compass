@@ -17,8 +17,11 @@
 package org.compass.core.config.process;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
@@ -64,6 +67,8 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private List<ComponentMapping> chainedComponents = new ArrayList<ComponentMapping>();
 
+    private LinkedList<String> prefixes = new LinkedList<String>();
+
     /**
      * Used to externaly control the managed id option (for example for ref-comp-mapping,
      * where we do not want internal ids being created, since we will never unmarshall it)
@@ -78,17 +83,27 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         this.converterLookup = converterLookup;
         this.settings = settings;
 
+        ArrayList<AliasMapping> mappings = new ArrayList<AliasMapping>();
         ((InternalCompassMapping) compassMapping).setPath(namingStrategy.getRootPath());
         for (AliasMapping aliasMapping : compassMapping.getMappings()) {
             if (aliasMapping instanceof ClassMapping) {
                 clearRootClassMappingState();
                 ClassMapping classMapping = (ClassMapping) aliasMapping;
                 if (classMapping.isSupportUnmarshall()) {
+                    classMapping = (ClassMapping) classMapping.copy();
                     secondPass(classMapping, compassMapping);
                 } else {
+//                    classMapping = (ClassMapping) classMapping.copy();
                     secondPassNoUnmarshalling(classMapping);
                 }
+                mappings.add(classMapping);
+            } else {
+                mappings.add(aliasMapping);
             }
+        }
+        ((InternalCompassMapping) compassMapping).clearMappings();
+        for (AliasMapping aliasMapping : mappings) {
+            ((InternalCompassMapping) compassMapping).addMapping(aliasMapping);
         }
 
         return compassMapping;
@@ -97,7 +112,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
     private void secondPassNoUnmarshalling(ClassMapping classMapping) {
         classMapping.setPath(namingStrategy.buildPath(compassMapping.getPath(), classMapping.getAlias()));
         classMapping.setClassPath(namingStrategy.buildPath(classMapping.getPath(), MarshallingEnvironment.PROPERTY_CLASS).hintStatic());
-        OsemMappingIterator.iterateMappings(new NoUnmarshallingCallback(), classMapping, false);
+        OsemMappingIterator.iterateMappings(new NoUnmarshallingCallback(classMapping), classMapping, true);
     }
 
     private void secondPass(ClassMapping classMapping, CompassMapping fatherMapping) {
@@ -113,7 +128,6 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             Mapping copyMapping = m.copy();
             boolean removeMapping = false;
 
-
             if ((copyMapping instanceof ObjectMapping) && topmost) {
                 PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), ((ObjectMapping) copyMapping).getDefinedInAlias());
                 copyMapping.setPath(namingStrategy.buildPath(aliasedPath, copyMapping.getName()));
@@ -121,9 +135,9 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
                 copyMapping.setPath(namingStrategy.buildPath(classMapping.getPath(), copyMapping.getName()));
             }
 
-            if (m instanceof ClassPropertyMapping) {
+            if (copyMapping instanceof ClassPropertyMapping) {
                 removeMapping = secondPass((ClassPropertyMapping) copyMapping, classMapping);
-            } else if (m instanceof IdComponentMapping) {
+            } else if (copyMapping instanceof IdComponentMapping) {
                 removeMapping = secondPass((IdComponentMapping) copyMapping, classMapping);
             } else {
                 if (!onlyProperties) {
@@ -248,6 +262,10 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
         chainedComponents.add(compMapping);
 
+        if (compMapping.getPrefix() != null) {
+            prefixes.add(compMapping.getPrefix());
+        }
+
         ClassMapping[] refClassMappings = compMapping.getRefClassMappings();
         ClassMapping[] copyRefClassMappings = new ClassMapping[refClassMappings.length];
         for (int i = 0; i < refClassMappings.length; i++) {
@@ -260,6 +278,10 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         compMapping.setRefClassMappings(copyRefClassMappings);
 
         chainedComponents.remove(compMapping);
+
+        if (compMapping.getPrefix() != null) {
+            prefixes.removeLast();
+        }
 
         return false;
     }
@@ -274,6 +296,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         for (Iterator it = classPropertyMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
             ClassPropertyMetaDataMapping metaDataMappingCopy = (ClassPropertyMetaDataMapping) m.copy();
+            metaDataMappingCopy.setName( buildFullName(metaDataMappingCopy.getName()) );
             MappingProcessorUtils.process(metaDataMappingCopy, classPropertyMapping, converterLookup);
             innerMappingsCopy.add(metaDataMappingCopy);
         }
@@ -296,27 +319,79 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
     private void clearRootClassMappingState() {
         chainedComponents.clear();
+        prefixes.clear();
+    }
+
+    private String buildFullName(String name) {
+        if (prefixes.isEmpty()) {
+            return name;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String prefix : prefixes) {
+            sb.append(prefix);
+        }
+        sb.append(name);
+        return sb.toString();
     }
 
     private class NoUnmarshallingCallback implements OsemMappingIterator.ClassMappingCallback {
 
+        private ClassMapping rootClassMapping;
+
+        private Set<String> cyclicClassMappings = new HashSet<String>();
+        
         private ClassPropertyMapping classPropertyMapping;
+
+        private NoUnmarshallingCallback(ClassMapping rootClassMapping) {
+            this.rootClassMapping = rootClassMapping;
+        }
 
         public NoUnmarshallingCallback() {
         }
 
+        /**
+         * In case we do not need to support unmarshalling, we need to perform simple cyclic detection
+         * and return <code>false</code> (won't iterate into this class mapping) if we already passed
+         * this class mapping. We will remove the marker in the {@link #onEndClassMapping(ClassMapping)}.
+         */
         public boolean onBeginClassMapping(ClassMapping classMapping) {
+            if (cyclicClassMappings.contains(classMapping.getAlias())) {
+                return false;
+            }
+            cyclicClassMappings.add(classMapping.getAlias());
             return true;
         }
 
+        /**
+         * If we do not support unmarshalling, we need to clean up our marker for this class mapping.
+         */
         public void onEndClassMapping(ClassMapping classMapping) {
+            if (classMapping.isSupportUnmarshall()) {
+                return;
+            }
+            cyclicClassMappings.remove(classMapping.getAlias());
         }
 
         public boolean onBeginMultipleMapping(ClassMapping classMapping, Mapping mapping) {
+            if ((mapping instanceof ReferenceMapping) && classMapping != rootClassMapping) {
+                return false;
+            }
+            if (mapping instanceof ComponentMapping) {
+                ComponentMapping componentMapping = (ComponentMapping) mapping;
+                if (componentMapping.getPrefix() != null) {
+                    prefixes.add(componentMapping.getPrefix());
+                }
+            }
             return true;
         }
 
         public void onEndMultiplMapping(ClassMapping classMapping, Mapping mapping) {
+            if (mapping instanceof ComponentMapping) {
+                ComponentMapping componentMapping = (ComponentMapping) mapping;
+                if (componentMapping.getPrefix() != null) {
+                    prefixes.removeLast();
+                }
+            }
         }
 
         public void onBeginCollectionMapping(AbstractCollectionMapping collectionMapping) {
@@ -327,8 +402,14 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
         public void onClassPropertyMapping(ClassMapping classMapping, ClassPropertyMapping classPropertyMapping) {
             this.classPropertyMapping = classPropertyMapping;
-            PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), classPropertyMapping.getDefinedInAlias());
-            classPropertyMapping.setPath(namingStrategy.buildPath(aliasedPath, classPropertyMapping.getName()));
+
+            if (classMapping == rootClassMapping) {
+                // only apply the path for class properties that belong to the class mapping we started with
+                // and not onces we iterate through recuresivly. This is because then we override (by mistake)
+                // intenral ids of other class mappings.
+                PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), classPropertyMapping.getDefinedInAlias());
+                classPropertyMapping.setPath(namingStrategy.buildPath(aliasedPath, classPropertyMapping.getName()));
+            }
         }
 
         public void onParentMapping(ClassMapping classMapping, ParentMapping parentMapping) {
@@ -341,9 +422,14 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             ClassMapping[] refClassMappings = componentMapping.getRefClassMappings();
             ClassMapping[] copyRefClassMappings = new ClassMapping[refClassMappings.length];
             for (int i = 0; i < refClassMappings.length; i++) {
-                // perform a shalow copy, and copy over the child mappings
-                ClassMapping refClassMapping = (ClassMapping) refClassMappings[i].shallowCopy();
-                refClassMapping.replaceMappings(refClassMappings[i]);
+                ClassMapping refClassMapping;
+                if (componentMapping.getPrefix() != null) {
+                    refClassMapping = (ClassMapping) refClassMappings[i].copy();
+                } else {
+                    // perform a shalow copy, and copy over the child mappings
+                    refClassMapping = (ClassMapping) refClassMappings[i].shallowCopy();
+                    refClassMapping.replaceMappings(refClassMappings[i]);
+                }
 
                 refClassMapping.setPath(componentMapping.getPath());
                 refClassMapping.setRoot(false);
@@ -354,7 +440,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         }
 
         public void onReferenceMapping(ClassMapping classMapping, ReferenceMapping referenceMapping) {
-            PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), classPropertyMapping.getDefinedInAlias());
+            PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), referenceMapping.getDefinedInAlias());
             referenceMapping.setPath(namingStrategy.buildPath(aliasedPath, referenceMapping.getName()));
             secondPassJustReference(referenceMapping, classMapping);
         }
@@ -368,6 +454,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         }
 
         public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {
+            classPropertyMetaDataMapping.setName( buildFullName(classPropertyMetaDataMapping.getName()) );
             MappingProcessorUtils.process(classPropertyMetaDataMapping, classPropertyMapping, converterLookup);
         }
 

@@ -17,7 +17,6 @@
 package org.compass.core.mapping.support;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -150,9 +149,17 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
             Mapping mapping = (Mapping) it.next();
             if (mapping instanceof ResourceIdMappingProvider) {
                 Mapping[] tempIds = ((ResourceIdMappingProvider) mapping).getIdMappings();
-                resourceIds.addAll(Arrays.asList(tempIds));
+                for (Mapping tempId : tempIds) {
+                    if (tempId != null) {
+                        resourceIds.add(tempId);
+                    }
+                }
                 ResourcePropertyMapping[] tempPropertyIds = ((ResourceIdMappingProvider) mapping).getResourceIdMappings();
-                resourceIdPropertyMappings.addAll(Arrays.asList(tempPropertyIds));
+                for (ResourcePropertyMapping tempPropertyId : tempPropertyIds) {
+                    if (tempPropertyId !=  null) {
+                        resourceIdPropertyMappings.add(tempPropertyId);
+                    }
+                }
             }
         }
         idMappings = resourceIds.toArray(new Mapping[resourceIds.size()]);

@@ -510,6 +510,60 @@ public class B {
 </class>
 ]]></programlisting>
       </para>
+      
+      <sect3 id="core-osem-component-prefix">
+        <title>Component Prefix</title>
+        
+        <para>
+          Many times, the same class mapping can act as component mapping for several fields within the same class and it is required to distinguish the searchable property names between the properties. The Searchable Component Prefix mapping attribute can be used for exactly that. Here is an example for prefix mappings:
+          
+<programlisting><![CDATA[
+@Searchable(root = false)
+public class Address {
+
+    @SearchableId
+    int id;
+
+    @SearchableProperty
+    String location;
+}
+
+@Searchable(root = false)
+public class Customer {
+
+    @SearchableId
+    int id;
+
+    @SearchableProperty
+    String name;
+
+    @SearchableComponent(prefix = "home_")
+    Address homeAddress;
+
+    @SearchableComponent(prefix = "work_")
+    Address workAddress;
+}
+
+@Searchable
+public class Order {
+
+    @SearchableId
+    int id;
+
+    @SearchableComponent(prefix = "first_")
+    Customer firstCustomer;
+
+    @SearchableComponent(prefix = "second_")
+    Customer secondCustomer;
+}
+]]></programlisting>
+        </para>
+        
+        <para>
+          In the above case, if we save a fully constructed <literal>Order</literal> object, the location of the home address of the first customer will be <literal>first_home_location</literal>. This means that we can search for: <literal>first_home_location:mylocation</literal> (which is equivalent for <literal>Order.firstCustomer.homeAddress.location:mylocation</literal>).
+        </para>
+      </sect3>
+      
     </sect2>    
 
     <sect2 id="core-osem-cascade">

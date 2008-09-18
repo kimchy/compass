@@ -78,6 +78,11 @@ public @interface SearchableIdComponent {
     public abstract int maxDepth() default 1;
 
     /**
+     * An optional prefix that will be appended to all the component referenced class mappings.
+     */
+    String prefix() default "";
+    
+    /**
      * The conveter lookup name that will convert the {@link org.compass.core.mapping.osem.ComponentMapping}.
      * Defaults to compass own intenral {@link org.compass.core.converter.mapping.osem.ComponentMappingConverter}.
      */

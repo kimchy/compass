@@ -830,6 +830,8 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         int maxDepth = componentConf.getAttributeAsInteger("max-depth", 1);
         compMapping.setMaxDepth(maxDepth);
 
+        compMapping.setPrefix(componentConf.getAttribute("prefix", null));
+
         bindConverter(componentConf, compMapping);
 
         compMapping.setAccessor(componentConf.getAttribute("accessor", null));
@@ -952,6 +954,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         }
         String name = valueLookup.lookupMetaDataName(metadataConf.getValue().trim());
         mdMapping.setName(name);
+        mdMapping.setOriginalName(name);
         mdMapping.setPath(new StaticPropertyPath(name));
 
         mdMapping.setAccessor(classPropertyMapping.getAccessor());

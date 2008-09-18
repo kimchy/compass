@@ -383,6 +383,7 @@
     <!ATTLIST id-component ref-alias CDATA #IMPLIED>
     <!ATTLIST id-component override (true|false) "true">
     <!ATTLIST id-component max-depth CDATA #IMPLIED>
+    <!ATTLIST id-component prefix CDATA #IMPLIED>
     <!ATTLIST id-component converter CDATA #IMPLIED>
     <!ATTLIST id-component accessor CDATA #IMPLIED>
     <!ATTLIST id-component cascade CDATA  #IMPLIED>
@@ -393,6 +394,7 @@
     <!ATTLIST component ref-alias CDATA #IMPLIED>
     <!ATTLIST component override (true|false) "true">
     <!ATTLIST component max-depth CDATA #IMPLIED>
+    <!ATTLIST component prefix CDATA #IMPLIED>
     <!ATTLIST component converter CDATA #IMPLIED>
     <!ATTLIST component accessor CDATA #IMPLIED>
     <!ATTLIST component cascade CDATA  #IMPLIED>

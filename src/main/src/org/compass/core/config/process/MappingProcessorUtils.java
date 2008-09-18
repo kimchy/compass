@@ -93,6 +93,7 @@ public abstract class MappingProcessorUtils {
         ClassPropertyMetaDataMapping internalIdMapping = new ClassPropertyMetaDataMapping();
         internalIdMapping.setInternal(true);
         internalIdMapping.setName(classPropertyMapping.getName());
+        internalIdMapping.setOriginalName(classPropertyMapping.getName());
         internalIdMapping.setStore(Property.Store.YES);
         internalIdMapping.setOmitNorms(true);
         Property.Index index;
