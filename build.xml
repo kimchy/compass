@@ -271,7 +271,6 @@
             <link href="http://lucene.apache.org/java/2_3_2/api/"/>
             <link href="http://www.junit.org/junit/javadoc/"/>
             <link href="http://www.hibernate.org/hib_docs/v3/api/"/>
-            <link href="http://www.hibernate.org/hib_docs/ejb3-api/"/>
             <link href="http://www.hibernate.org/hib_docs/annotations/api/"/>
             <link href="http://www.hibernate.org/hib_docs/entitymanager/api/"/>
             <link href="http://www.dom4j.org/apidocs/"/>
