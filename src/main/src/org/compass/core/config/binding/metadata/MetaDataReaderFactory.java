@@ -1,42 +1,37 @@
+/*
+ * Copyright 2004-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.compass.core.config.binding.metadata;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.util.ClassUtils;
 
 /**
+ * A factory for creating {@link org.compass.core.config.binding.metadata.MetaDataReader} based on the settings
+ * provided ({@link org.compass.core.config.CompassEnvironment.Scanner#READER}.
+ *
  * @author kimchy
  */
 public class MetaDataReaderFactory {
 
-    private static final Log log = LogFactory.getLog(MetaDataReaderFactory.class);
-
     /**
-     * Returns the {@link MetaDataReader} to use. Might return <code>null</code> if no supported library
-     * is found.
+     * Returns the {@link MetaDataReader} to use. The default one is the internal ASM one.
      */
     public static MetaDataReader getMetaDataReader(CompassSettings settings) throws CompassException {
-        String defaultMetaDataReader = null;
-        try {
-            ClassUtils.forName("org.objectweb.asm.Type", settings.getClassLoader());
-            defaultMetaDataReader = "org.compass.core.config.binding.metadata.AsmMetaDataReader";
-        } catch (ClassNotFoundException e) {
-            // ASM does not exists
-        }
-        if (defaultMetaDataReader == null) {
-            try {
-                ClassUtils.forName("javassist.bytecode.ClassFile", settings.getClassLoader());
-                defaultMetaDataReader = "org.compass.core.config.binding.metadata.JavassistMetaDataReader";
-            } catch (ClassNotFoundException e) {
-                // Javassist does not exists
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Default class meta data reader detected [" + defaultMetaDataReader + "]");
-        }
-        return (MetaDataReader) settings.getSettingAsInstance(CompassEnvironment.Scanner.READER, defaultMetaDataReader);
+        return (MetaDataReader) settings.getSettingAsInstance(CompassEnvironment.Scanner.READER, AsmMetaDataReader.class.getName());
     }
 }
