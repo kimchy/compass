@@ -21,8 +21,6 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.test.AbstractTestCase;
 
 /**
- * This test currently fails as we don't support enum as component mappings yet.
- *
  * @author kimchy
  */
 public class EnumComponentTests extends AbstractTestCase {
@@ -32,11 +30,7 @@ public class EnumComponentTests extends AbstractTestCase {
     }
 
 
-    public void testX() {
-        
-    }
-
-    public void XtestEnumComponentMapping() throws Exception {
+    public void testEnumComponentMapping() throws Exception {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 

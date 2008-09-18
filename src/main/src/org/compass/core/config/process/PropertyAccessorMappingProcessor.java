@@ -60,7 +60,7 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
                 // resolve the class mapping constructor
                 classMapping.setConstructor(ClassUtils.getDefaultConstructor(classMapping.getClazz()));
                 // if it is not abstract and not an interface, it must have a default constructor
-                if (!Modifier.isAbstract(classMapping.getClazz().getModifiers()) && !Modifier.isInterface(classMapping.getClazz().getModifiers())) {
+                if (!Modifier.isAbstract(classMapping.getClazz().getModifiers()) && !Modifier.isInterface(classMapping.getClazz().getModifiers()) && !classMapping.getClazz().isEnum()) {
                     if (classMapping.getConstructor() == null) {
                         throw new MappingException("No default constructor defined for class [" + classMapping.getName() + "]");
                     }

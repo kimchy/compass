@@ -41,6 +41,8 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private ClassPropertyMapping.ManagedId managedId;
 
+    private PropertyPath enumNamePath;
+
     private PropertyPath classPath;
 
     private PropertyPath basePath;
@@ -72,6 +74,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         super.copy(copy);
         copy.setPoly(isPoly());
         copy.setClassPath(getClassPath());
+        copy.setEnumNamePath(getEnumNamePath());
         copy.setClazz(getClazz());
         copy.setPolyClass(getPolyClass());
         copy.setConstructor(getConstructor());
@@ -88,6 +91,7 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         super.shallowCopy(copy);
         copy.setPoly(isPoly());
         copy.setClassPath(getClassPath());
+        copy.setEnumNamePath(getEnumNamePath());
         copy.setClazz(getClazz());
         copy.setPolyClass(getPolyClass());
         copy.setConstructor(getConstructor());
@@ -187,6 +191,14 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     public void setClassPath(PropertyPath classPath) {
         this.classPath = classPath;
+    }
+
+    public PropertyPath getEnumNamePath() {
+        return enumNamePath;
+    }
+
+    public void setEnumNamePath(PropertyPath enumNamePath) {
+        this.enumNamePath = enumNamePath;
     }
 
     public Class getClazz() {

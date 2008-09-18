@@ -125,6 +125,10 @@ public class ClassMappingConverter implements ResourceMappingConverter {
             }
         }
 
+        if (classMapping.isSupportUnmarshall() && root.getClass().isEnum()) {
+            storeEnumName(resource, root, classMapping, context);
+        }
+
         // check if we already marshalled this objecy under this alias
         // if we did, there is no need to completly marhsall it again
 
@@ -333,10 +337,22 @@ public class ClassMappingConverter implements ResourceMappingConverter {
 
         // create the object
         Object obj;
-        try {
-            obj = constructor.newInstance();
-        } catch (Exception e) {
-            throw new ConversionException("Failed to create class [" + clazz.getName() + "] for unmarshalling", e);
+        if (clazz.isEnum()) {
+            Property pEnumName = resource.getProperty(classMapping.getEnumNamePath().getPath());
+            if (pEnumName == null) {
+                return null;
+            }
+            String name = pEnumName.getStringValue();
+            if (name == null) {
+                return null;
+            }
+            obj = Enum.valueOf(clazz, name);
+        } else {
+            try {
+                obj = constructor.newInstance();
+            } catch (Exception e) {
+                throw new ConversionException("Failed to create class [" + clazz.getName() + "] for unmarshalling", e);
+            }
         }
         return obj;
     }
@@ -448,6 +464,17 @@ public class ClassMappingConverter implements ResourceMappingConverter {
     protected void storePolyClass(Resource resource, Object root, ClassMapping classMapping, MarshallingContext context) {
         String className = getPolyClassName(root);
         Property p = context.getResourceFactory().createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
+                Property.Index.UN_TOKENIZED);
+        p.setOmitNorms(true);
+        resource.addProperty(p);
+    }
+
+    /**
+     * Stores the {@link Enum#name()} in order to construct it afterwards.
+     */
+    protected void storeEnumName(Resource resource, Object root, ClassMapping classMapping, MarshallingContext context) {
+        String name = ((Enum) root).name();
+        Property p = context.getResourceFactory().createProperty(classMapping.getEnumNamePath().getPath(), name, Property.Store.YES,
                 Property.Index.UN_TOKENIZED);
         p.setOmitNorms(true);
         resource.addProperty(p);

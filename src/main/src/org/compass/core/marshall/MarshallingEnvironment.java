@@ -28,6 +28,8 @@ public class MarshallingEnvironment {
     public static final String PROPERTY_COLLECTION_TYPE = "colType";
 
     public static final String PROPERTY_COLLECTION_SIZE = "colSize";
+
+    public static final String PROPERTY_ENUM_NAME = "name";
     
 
     public static final String ATTRIBUTE_PARENT = "parent";
