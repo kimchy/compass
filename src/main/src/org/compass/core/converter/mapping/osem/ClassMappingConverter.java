@@ -17,8 +17,9 @@
 package org.compass.core.converter.mapping.osem;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -39,6 +40,8 @@ import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.ClassUtils;
 import org.compass.core.util.proxy.extractor.ProxyExtractorHelper;
+import org.compass.core.util.reflection.ReflectionConstructor;
+import org.compass.core.util.reflection.ReflectionFactory;
 
 /**
  * @author kimchy
@@ -62,6 +65,8 @@ public class ClassMappingConverter implements ResourceMappingConverter {
     private static final Object DISABLE_INTERNAL_MAPPINGS_MARK = new Object();
 
     public static final String DISABLE_UID_MARSHALLING = "$disableUID";
+
+    private Map<String, ReflectionConstructor> cachedConstructors = new ConcurrentHashMap<String, ReflectionConstructor>();
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
@@ -310,7 +315,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
     protected Object constructObjectForUnmarshalling(ClassMapping classMapping, Resource resource, MarshallingContext context) throws ConversionException {
         // resolve the actual class and constructor
         Class clazz = classMapping.getClazz();
-        Constructor constructor = classMapping.getConstructor();
+        ReflectionConstructor constructor = classMapping.getConstructor();
         if (classMapping.isPoly()) {
             if (classMapping.getPolyClass() != null) {
                 clazz = classMapping.getPolyClass();
@@ -326,12 +331,16 @@ public class ClassMappingConverter implements ResourceMappingConverter {
                     // if not poly class is stored, this means that it is probably a null class stored.
                     return null;
                 }
-                try {
-                    clazz = ClassUtils.forName(className, context.getSession().getCompass().getSettings().getClassLoader());
-                } catch (ClassNotFoundException e) {
-                    throw new ConversionException("Failed to create class [" + className + "] for unmarshalling", e);
+                constructor = cachedConstructors.get(className);
+                if (constructor == null) {
+                    try {
+                        clazz = ClassUtils.forName(className, context.getSession().getCompass().getSettings().getClassLoader());
+                    } catch (ClassNotFoundException e) {
+                        throw new ConversionException("Failed to create class [" + className + "] for unmarshalling", e);
+                    }
+                    constructor = ReflectionFactory.getDefaultConstructor(context.getSession().getCompass().getSettings(), clazz);
+                    cachedConstructors.put(className, constructor);
                 }
-                constructor = ClassUtils.getDefaultConstructor(clazz);
             }
         }
 

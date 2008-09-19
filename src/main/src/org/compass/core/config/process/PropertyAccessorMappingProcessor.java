@@ -31,7 +31,7 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.MultipleMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
-import org.compass.core.util.ClassUtils;
+import org.compass.core.util.reflection.ReflectionFactory;
 
 /**
  * <p>Goes through each {@link org.compass.core.mapping.osem.ClassMapping} and resolves
@@ -58,7 +58,7 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
                 ClassMapping classMapping = (ClassMapping) aliasMapping;
 
                 // resolve the class mapping constructor
-                classMapping.setConstructor(ClassUtils.getDefaultConstructor(classMapping.getClazz()));
+                classMapping.setConstructor(ReflectionFactory.getDefaultConstructor(settings, classMapping.getClazz()));
                 // if it is not abstract and not an interface, it must have a default constructor
                 if (!Modifier.isAbstract(classMapping.getClazz().getModifiers()) && !Modifier.isInterface(classMapping.getClazz().getModifiers()) && !classMapping.getClazz().isEnum()) {
                     if (classMapping.getConstructor() == null) {
@@ -67,7 +67,7 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
 
                 }
                 if (classMapping.getPolyClass() != null) {
-                    classMapping.setPolyConstructor(ClassUtils.getDefaultConstructor(classMapping.getPolyClass()));
+                    classMapping.setPolyConstructor(ReflectionFactory.getDefaultConstructor(settings, classMapping.getPolyClass()));
                 }
                 Class clazz = classMapping.getClazz();
                 if (classMapping.isPoly() && classMapping.getPolyClass() != null) {

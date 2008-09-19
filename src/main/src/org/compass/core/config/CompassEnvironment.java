@@ -629,7 +629,7 @@ public class CompassEnvironment {
 
         /**
          * Should the all property include data from properties that do not have an explicit mapping.
-         * Defaults to <code>true</code>. 
+         * Defaults to <code>true</code>.
          */
         public static final String INCLUDE_UNMAPPED_PROPERTIES = "compass.property.all.includeUnmappedProperties";
     }
@@ -752,14 +752,14 @@ public class CompassEnvironment {
 
         /**
          * Controls if reference mappings for collections are lazy by default or not. Defaults to
-         * <code>false</code>. 
+         * <code>false</code>.
          */
         public static final String LAZY_REFERNCE = "compass.osem.lazyReference";
 
         /**
          * Should duplucates (object with the same ids) be filtered out when they have already
          * been marshalled during the marshalling process of a root object. Defaults to
-         * <code>false</code>. 
+         * <code>false</code>.
          */
         public static final String FILTER_DUPLICATES = "compass.osem.filterDuplicates";
     }
@@ -915,5 +915,14 @@ public class CompassEnvironment {
         public static final String SLEEP_BEFORE_CLOSE = "compass.rebuild.sleepBeforeClose";
 
         public static final long DEFAULT_SLEEP_BEFORE_CLOSE = 60 * 1000;
+    }
+
+    public abstract static class Reflection {
+
+        public static final String TYPE = "compass.reflection.type";
+
+        public static final String PLAIN = "plain";
+
+        public static final String ASM = "asm";
     }
 }

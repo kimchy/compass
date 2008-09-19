@@ -21,7 +21,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
+import org.compass.core.util.reflection.ReflectionFactory;
+import org.compass.core.util.reflection.ReflectionField;
 
 /**
  * Accesses fields directly.
@@ -31,19 +35,25 @@ import org.compass.core.util.ClassUtils;
  *
  * @author kimchy
  */
-public class DirectPropertyAccessor implements PropertyAccessor {
+public class DirectPropertyAccessor implements PropertyAccessor, CompassConfigurable {
+
+    private CompassSettings settings;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        this.settings = settings;
+    }
 
     public static final class DirectGetter implements Getter {
 
         private static final long serialVersionUID = 3257848800692155955L;
 
-        private final transient Field field;
+        private final transient ReflectionField field;
 
         private final Class clazz;
 
         private final String name;
 
-        DirectGetter(Field field, Class clazz, String name) {
+        DirectGetter(ReflectionField field, Class clazz, String name) {
             this.field = field;
             this.clazz = clazz;
             this.name = name;
@@ -70,11 +80,7 @@ public class DirectPropertyAccessor implements PropertyAccessor {
         }
 
         public Field getField() {
-            return this.field;
-        }
-
-        Object readResolve() {
-            return new DirectGetter(resolveField(clazz, clazz, name), clazz, name);
+            return this.field.getField();
         }
 
         public String toString() {
@@ -86,13 +92,13 @@ public class DirectPropertyAccessor implements PropertyAccessor {
 
         private static final long serialVersionUID = 3832625071100277812L;
 
-        private final transient Field field;
+        private final transient ReflectionField field;
 
         private final Class clazz;
 
         private final String name;
 
-        DirectSetter(Field field, Class clazz, String name) {
+        DirectSetter(ReflectionField field, Class clazz, String name) {
             this.field = field;
             this.clazz = clazz;
             this.name = name;
@@ -121,10 +127,6 @@ public class DirectPropertyAccessor implements PropertyAccessor {
         public String toString() {
             return "DirectSetter(" + clazz.getName() + '.' + name + ')';
         }
-
-        Object readResolve() {
-            return new DirectSetter(resolveField(clazz, clazz, name), clazz, name);
-        }
     }
 
     private static Field resolveField(Class origClass, Class clazz, String name) throws PropertyNotFoundException {
@@ -143,11 +145,19 @@ public class DirectPropertyAccessor implements PropertyAccessor {
     }
 
     public Getter getGetter(Class theClass, String propertyName) throws PropertyNotFoundException {
-        return new DirectGetter(resolveField(theClass, theClass, propertyName), theClass, propertyName);
+        try {
+            return new DirectGetter(ReflectionFactory.getField(settings, resolveField(theClass, theClass, propertyName)), theClass, propertyName);
+        } catch (NoSuchFieldException e) {
+            throw new PropertyAccessException(e, "Failed to get field using reflection", false, theClass, propertyName);
+        }
     }
 
     public Setter getSetter(Class theClass, String propertyName) throws PropertyNotFoundException {
-        return new DirectSetter(resolveField(theClass, theClass, propertyName), theClass, propertyName);
+        try {
+            return new DirectSetter(ReflectionFactory.getField(settings, resolveField(theClass, theClass, propertyName)), theClass, propertyName);
+        } catch (NoSuchFieldException e) {
+            throw new PropertyAccessException(e, "Failed to get field using reflection", true, theClass, propertyName);
+        }
     }
 
 }

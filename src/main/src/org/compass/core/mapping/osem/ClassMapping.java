@@ -16,7 +16,6 @@
 
 package org.compass.core.mapping.osem;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +32,7 @@ import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.support.AbstractResourceMapping;
 import org.compass.core.util.Assert;
+import org.compass.core.util.reflection.ReflectionConstructor;
 
 /**
  * @author kimchy
@@ -65,9 +65,9 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
 
     private HashMap<String, ResourcePropertyMapping> pathMappings;
 
-    private Constructor constructor;
+    private ReflectionConstructor constructor;
 
-    private Constructor polyConstructor;
+    private ReflectionConstructor polyConstructor;
 
     public Mapping copy() {
         ClassMapping copy = new ClassMapping();
@@ -243,19 +243,19 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         this.filterDuplicates = filterDuplicates;
     }
 
-    public Constructor getConstructor() {
+    public ReflectionConstructor getConstructor() {
         return constructor;
     }
 
-    public void setConstructor(Constructor constructor) {
+    public void setConstructor(ReflectionConstructor constructor) {
         this.constructor = constructor;
     }
 
-    public Constructor getPolyConstructor() {
+    public ReflectionConstructor getPolyConstructor() {
         return polyConstructor;
     }
 
-    public void setPolyConstructor(Constructor polyConstructor) {
+    public void setPolyConstructor(ReflectionConstructor polyConstructor) {
         this.polyConstructor = polyConstructor;
     }
 

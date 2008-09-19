@@ -21,23 +21,30 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.util.ClassUtils;
+import org.compass.core.util.reflection.ReflectionFactory;
+import org.compass.core.util.reflection.ReflectionMethod;
 
 /**
  * Accesses property values via a get/set pair, which may be nonpublic. The
  * default (and recommended strategy).
+ *
  * <p>
  * Initial version taken from hibernate.
  * </p>
- * 
+ *
  * @author kimchy
  */
-public class BasicPropertyAccessor implements PropertyAccessor {
+public class BasicPropertyAccessor implements PropertyAccessor, CompassConfigurable {
 
-    private static final Log log = LogFactory.getLog(BasicPropertyAccessor.class);
+    private CompassSettings settings;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        this.settings = settings;
+    }
 
     public static final class BasicSetter implements Setter {
 
@@ -45,11 +52,11 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
         private Class clazz;
 
-        private final transient Method method;
+        private final transient ReflectionMethod method;
 
         private final String propertyName;
 
-        private BasicSetter(Class clazz, Method method, String propertyName) {
+        private BasicSetter(Class clazz, ReflectionMethod method, String propertyName) {
             this.clazz = clazz;
             this.method = method;
             this.propertyName = propertyName;
@@ -87,16 +94,8 @@ public class BasicPropertyAccessor implements PropertyAccessor {
             return propertyName;
         }
 
-        public Method getMethod() {
-            return method;
-        }
-
         public String getMethodName() {
             return method.getName();
-        }
-
-        Object readResolve() {
-            return createSetter(clazz, propertyName);
         }
 
         public String toString() {
@@ -110,11 +109,11 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
         private Class clazz;
 
-        private final transient Method method;
+        private final transient ReflectionMethod method;
 
         private final String propertyName;
 
-        private BasicGetter(Class clazz, Method method, String propertyName) {
+        private BasicGetter(Class clazz, ReflectionMethod method, String propertyName) {
             this.clazz = clazz;
             this.method = method;
             this.propertyName = propertyName;
@@ -147,16 +146,8 @@ public class BasicPropertyAccessor implements PropertyAccessor {
             return method.getGenericReturnType();
         }
 
-        public Method getMethod() {
-            return this.method;
-        }
-
         public String toString() {
             return "BasicGetter(" + clazz.getName() + '.' + propertyName + ')';
-        }
-
-        Object readResolve() {
-            return createGetter(clazz, propertyName);
         }
     }
 
@@ -164,16 +155,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
         return getSetterOrNull(theClass, propertyName);
     }
 
-    private static Setter createSetter(Class theClass, String propertyName) throws PropertyNotFoundException {
-        BasicSetter result = getSetterOrNull(theClass, propertyName);
-        if (result == null) {
-            throw new PropertyNotFoundException("Could not find a setter for property [" + propertyName + "] in class ["
-                    + theClass.getName() + "]");
-        }
-        return result;
-    }
-
-    private static BasicSetter getSetterOrNull(Class theClass, String propertyName) {
+    private BasicSetter getSetterOrNull(Class theClass, String propertyName) {
 
         if (theClass == Object.class || theClass == null)
             return null;
@@ -184,7 +166,11 @@ public class BasicPropertyAccessor implements PropertyAccessor {
             if (!ClassUtils.isPublic(theClass, method)) {
                 method.setAccessible(true);
             }
-            return new BasicSetter(theClass, method, propertyName);
+            try {
+                return new BasicSetter(theClass, ReflectionFactory.getMethod(settings, method), propertyName);
+            } catch (NoSuchMethodException e) {
+                throw new PropertyAccessException(e, "Failed to get method for reflection", true, theClass, method.getName());
+            }
         } else {
             BasicSetter setter = getSetterOrNull(theClass.getSuperclass(), propertyName);
             if (setter == null) {
@@ -198,7 +184,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
     }
 
-    private static Method setterMethod(Class theClass, String propertyName) {
+    private Method setterMethod(Class theClass, String propertyName) {
 
         BasicGetter getter = getGetterOrNull(theClass, propertyName);
         Class returnType = (getter == null) ? null : getter.getReturnType();
@@ -225,7 +211,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
         return createGetter(theClass, propertyName);
     }
 
-    public static Getter createGetter(Class theClass, String propertyName) throws PropertyNotFoundException {
+    public Getter createGetter(Class theClass, String propertyName) throws PropertyNotFoundException {
         BasicGetter result = getGetterOrNull(theClass, propertyName);
         if (result == null) {
             throw new PropertyNotFoundException("Could not find a getter for " + propertyName + " in class "
@@ -235,7 +221,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
 
     }
 
-    private static BasicGetter getGetterOrNull(Class theClass, String propertyName) {
+    private BasicGetter getGetterOrNull(Class theClass, String propertyName) {
 
         if (theClass == Object.class || theClass == null)
             return null;
@@ -245,7 +231,11 @@ public class BasicPropertyAccessor implements PropertyAccessor {
         if (method != null) {
             if (!ClassUtils.isPublic(theClass, method))
                 method.setAccessible(true);
-            return new BasicGetter(theClass, method, propertyName);
+            try {
+                return new BasicGetter(theClass, ReflectionFactory.getMethod(settings, method), propertyName);
+            } catch (NoSuchMethodException e) {
+                throw new PropertyAccessException(e, "Failed to get method for reflection", true, theClass, method.getName());
+            }
         } else {
             BasicGetter getter = getGetterOrNull(theClass.getSuperclass(), propertyName);
             if (getter == null) {
@@ -258,7 +248,7 @@ public class BasicPropertyAccessor implements PropertyAccessor {
         }
     }
 
-    private static Method getterMethod(Class theClass, String propertyName) {
+    private Method getterMethod(Class theClass, String propertyName) {
 
         // first try and find it directly
         try {
