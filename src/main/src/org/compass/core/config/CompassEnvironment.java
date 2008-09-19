@@ -917,12 +917,28 @@ public class CompassEnvironment {
         public static final long DEFAULT_SLEEP_BEFORE_CLOSE = 60 * 1000;
     }
 
+    /**
+     * Settins controlling how reflection is performed when invoking methods (getter/setter),
+     * fields, and constructors.
+     */
     public abstract static class Reflection {
 
+        /**
+         * The type of reflection used. Defaults to {@link #ASM}.
+         *
+         * @see #ASM
+         * @see #PLAIN
+         */
         public static final String TYPE = "compass.reflection.type";
 
+        /**
+         * Plain reflection using java reflection API.
+         */
         public static final String PLAIN = "plain";
 
+        /**
+         * Uses ASM based reflection.
+         */
         public static final String ASM = "asm";
     }
 }
