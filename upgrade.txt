@@ -1,8 +1,8 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.1.0 M3
-================
+VERSION 2.1.0 M3 (21 September, 2008)
+=====================================
 
 1. By default, Compass used to filter duplicates (same objects marshalled more than onces within a single root object
    object marshalling process). Now, Compass does not filter duplicates any more. A global setting: compass.osem.filterDuplicates
