@@ -1,8 +1,10 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.1.0 RC
+VERSION 2.1.0 M4
 ================
+
+NONE
 
 VERSION 2.1.0 M3 (21 September, 2008)
 =====================================
