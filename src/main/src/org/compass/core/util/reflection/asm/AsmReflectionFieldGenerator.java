@@ -20,13 +20,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import org.compass.core.util.asm.ClassVisitor;
+import org.compass.core.util.asm.ClassWriter;
+import org.compass.core.util.asm.MethodVisitor;
+import org.compass.core.util.asm.Opcodes;
+import org.compass.core.util.asm.Type;
 import org.compass.core.util.reflection.ReflectionField;
 import org.compass.core.util.reflection.plain.PlainReflectionField;
-import org.objectweb.gs.asm.ClassVisitor;
-import org.objectweb.gs.asm.ClassWriter;
-import org.objectweb.gs.asm.MethodVisitor;
-import org.objectweb.gs.asm.Opcodes;
-import org.objectweb.gs.asm.Type;
 
 /**
  * Allows to generate {@link org.compass.core.util.reflection.ReflectionField} implementation based on
