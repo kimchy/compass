@@ -355,28 +355,32 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         if (applicationContext != null) {
             String[] names = applicationContext.getBeanNamesForType(PropertyPlaceholderConfigurer.class);
             for (String name : names) {
-                PropertyPlaceholderConfigurer propConfigurer = (PropertyPlaceholderConfigurer) applicationContext.getBean(name);
-                Method method = propConfigurer.getClass().getSuperclass().getSuperclass().getDeclaredMethod("mergeProperties");
-                method.setAccessible(true);
-                Properties props = (Properties) method.invoke(propConfigurer);
-                method = propConfigurer.getClass().getSuperclass().getDeclaredMethod("convertProperties", Properties.class);
-                method.setAccessible(true);
-                method.invoke(propConfigurer, props);
-                method = propConfigurer.getClass().getDeclaredMethod("parseStringValue", String.class, Properties.class, Set.class);
-                method.setAccessible(true);
-                String nullValue = null;
                 try {
-                    Field field = propConfigurer.getClass().getDeclaredField("nullValue");
-                    field.setAccessible(true);
-                    nullValue = (String) field.get(propConfigurer);
-                } catch (NoSuchFieldException e) {
-                    // no field (old spring version)
-                }
-                for (Map.Entry entry : config.getSettings().getProperties().entrySet()) {
-                    String key = (String) entry.getKey();
-                    String value = (String) entry.getValue();
-                    value = (String) method.invoke(propConfigurer, value, props, new HashSet());
-                    config.getSettings().setSetting(key, value.equals(nullValue) ? null : value);
+                    PropertyPlaceholderConfigurer propConfigurer = (PropertyPlaceholderConfigurer) applicationContext.getBean(name);
+                    Method method = findMethod(propConfigurer.getClass(), "mergeProperties");
+                    method.setAccessible(true);
+                    Properties props = (Properties) method.invoke(propConfigurer);
+                    method = findMethod(propConfigurer.getClass(), "convertProperties", Properties.class);
+                    method.setAccessible(true);
+                    method.invoke(propConfigurer, props);
+                    method = findMethod(propConfigurer.getClass(), "parseStringValue", String.class, Properties.class, Set.class);
+                    method.setAccessible(true);
+                    String nullValue = null;
+                    try {
+                        Field field = propConfigurer.getClass().getDeclaredField("nullValue");
+                        field.setAccessible(true);
+                        nullValue = (String) field.get(propConfigurer);
+                    } catch (NoSuchFieldException e) {
+                        // no field (old spring version)
+                    }
+                    for (Map.Entry entry : config.getSettings().getProperties().entrySet()) {
+                        String key = (String) entry.getKey();
+                        String value = (String) entry.getValue();
+                        value = (String) method.invoke(propConfigurer, value, props, new HashSet());
+                        config.getSettings().setSetting(key, value.equals(nullValue) ? null : value);
+                    }
+                } catch (Exception e) {
+                    log.debug("Failed to apply property placeholder defined in bean [" + name + "]", e);
                 }
             }
         }
@@ -415,6 +419,17 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     protected ClassLoader getClassLoader() {
         return Thread.currentThread().getContextClassLoader();
+    }
+
+    private Method findMethod(Class clazz, String methodName, Class ... parameterTypes) {
+        if (clazz.equals(Object.class)) {
+            return null;
+        }
+        try {
+            return clazz.getDeclaredMethod(methodName, parameterTypes);
+        } catch (NoSuchMethodException e) {
+            return findMethod(clazz.getSuperclass(), methodName, parameterTypes);
+        }
     }
 
     /**
