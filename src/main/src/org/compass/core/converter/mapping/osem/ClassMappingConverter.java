@@ -21,10 +21,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.compass.core.CompassException;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.CollectionResourceWrapper;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
@@ -46,7 +49,7 @@ import org.compass.core.util.reflection.ReflectionFactory;
 /**
  * @author kimchy
  */
-public class ClassMappingConverter implements ResourceMappingConverter {
+public class ClassMappingConverter implements ResourceMappingConverter, CompassConfigurable {
 
     /**
      * Under this key within the context the root class mapping can be found.
@@ -67,6 +70,13 @@ public class ClassMappingConverter implements ResourceMappingConverter {
     public static final String DISABLE_UID_MARSHALLING = "$disableUID";
 
     private Map<String, ReflectionConstructor> cachedConstructors = new ConcurrentHashMap<String, ReflectionConstructor>();
+
+    private ProxyExtractorHelper proxyExtractorHelper;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        proxyExtractorHelper = new ProxyExtractorHelper();
+        proxyExtractorHelper.configure(settings);
+    }
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
@@ -494,7 +504,7 @@ public class ClassMappingConverter implements ResourceMappingConverter {
      * By defaults uses {@link org.compass.core.util.proxy.extractor.ProxyExtractorHelper#getTargetClass(Object)}.
      */
     protected String getPolyClassName(Object root) {
-        return ProxyExtractorHelper.getTargetClass(root).getName();
+        return proxyExtractorHelper.getTargetClass(root).getName();
     }
 
     /**

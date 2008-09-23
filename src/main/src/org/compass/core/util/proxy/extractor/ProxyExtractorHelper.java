@@ -18,6 +18,11 @@ package org.compass.core.util.proxy.extractor;
 
 import java.util.ArrayList;
 
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.util.ClassUtils;
+
 /**
  * A helper class that based on which jars exists in the classpath, tries to get the actual
  * class out of an object.
@@ -27,26 +32,29 @@ import java.util.ArrayList;
  *
  * @author kimchy
  */
-public class ProxyExtractorHelper {
+public class ProxyExtractorHelper implements CompassConfigurable {
 
-    static {
+    private ProxyExtractor[] extractors;
+
+    public void configure(CompassSettings settings) throws CompassException {
         ArrayList<ProxyExtractor> extractorsList = new ArrayList<ProxyExtractor>();
         try {
+            ClassUtils.forName("org.springframework.aop.support.AopUtils", settings.getClassLoader());
             extractorsList.add(new SpringProxyExtractor());
         } catch (Throwable e) {
             // not in the classpath
         }
         try {
+            ClassUtils.forName("org.hibernate.proxy.HibernateProxyHelper", settings.getClassLoader());
             extractorsList.add(new HibernateProxyExtractor());
         } catch (Throwable e) {
             // not in the classpath
         }
+        // TODO allow for pluing proxy extractor
         extractors = extractorsList.toArray(new ProxyExtractor[extractorsList.size()]);
     }
 
-    private static final ProxyExtractor[] extractors;
-
-    public static Class getTargetClass(Object obj) {
+    public Class getTargetClass(Object obj) {
         Class objClass = obj.getClass();
         for (ProxyExtractor extractor : extractors) {
             Class clazz = extractor.getTargetClass(obj);
