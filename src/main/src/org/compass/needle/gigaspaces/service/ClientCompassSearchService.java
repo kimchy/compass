@@ -21,10 +21,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.openspaces.core.GigaSpace;
+import org.openspaces.remoting.ExecutorRemotingProxyConfigurer;
 import org.openspaces.remoting.RemoteResultReducer;
 import org.openspaces.remoting.SpaceRemotingInvocation;
 import org.openspaces.remoting.SpaceRemotingResult;
-import org.openspaces.remoting.SyncRemotingProxyConfigurer;
 
 /**
  * A client side implementation of the compass search service. Uses sync remoting proxy
@@ -42,8 +42,8 @@ public class ClientCompassSearchService implements CompassSearchService {
     private CompassSearchService searchService;
 
     public ClientCompassSearchService(GigaSpace gigaSpace) {
-        this.searchService = (CompassSearchService) new SyncRemotingProxyConfigurer(gigaSpace, CompassSearchService.class)
-                .broadcast(new SearchReducer()).syncProxy();
+        this.searchService = (CompassSearchService) new ExecutorRemotingProxyConfigurer(gigaSpace, CompassSearchService.class)
+                .broadcast(new SearchReducer()).proxy();
     }
 
     public SearchResourceResults searchResource(String query) {

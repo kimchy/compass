@@ -13,7 +13,7 @@
     </para>
     
     <para>
-      The seconds integration allows to perform a collocated indexing where each Space cluster member will have an embedded indexing service that will index changes done on the Space using notifications and store the index only on its local embedded Space. Searching is done using OpenSpaces sync remoting allowing to broadcast the search query to all partitions.
+      The seconds integration allows to perform a collocated indexing where each Space cluster member will have an embedded indexing service that will index changes done on the Space using notifications and store the index only on its local embedded Space. Searching is done using OpenSpaces executor remoting allowing to broadcast the search query to all partitions.
     </para>
 	</sect1>
 	
@@ -174,9 +174,7 @@ compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
       The integrations builds on top of GigaSpaces OpenSpaces build in components. On the "server" side (the processing unit that starts up the relevant space cluster members), the following configuration should be added:
 <programlisting><![CDATA[<beans xmlns="http://www.springframework.org/schema/beans" ...
 
-  <os-core:space id="space" url="/./space"">
-      <os-core:filter-provider ref="serviceExporter"/>
-  </os-core:space>
+  <os-core:space id="space" url="/./space"" />
 
   <os-core:giga-space id="gigaSpace" space="space"/>
 
@@ -207,6 +205,7 @@ compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
   </bean>
 
   <os-events:notify-container id="eventContainer" giga-space="gigaSpace">
+      <os-events:batch size="100" time="2000" />
       <os-events:notify write="true" lease-expire="true" take="true" update="true"/>
 
       <os-core:template>
@@ -221,7 +220,7 @@ compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
     </para>
     
     <para>
-      The above configuration starts up an embedded space (the clustering model is chosen during deployment time). It creates a Compass instance that stores the index on the embedded local space cluster member. It uses the notify container to listen for notifications of changes happening on the embedded cluster member and index them using the Compass instance. It also exposes a sync remoting service that implements the <classname>CompassSearchService</classname> interface. The service performs a search using Compass on top of the collocated space and loads objects back from the collocated space. Note, all operations are done in memory in a collocated manner.
+      The above configuration starts up an embedded space (the clustering model is chosen during deployment time). It creates a Compass instance that stores the index on the embedded local space cluster member. It uses the notify container to listen for notifications of changes happening on the embedded cluster member and index them using the Compass instance. It also exposes a executor remoting service that implements the <classname>CompassSearchService</classname> interface. The service performs a search using Compass on top of the collocated space and loads objects back from the collocated space. Note, all operations are done in memory in a collocated manner.
     </para>
     
     <para>
@@ -233,7 +232,7 @@ compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
   <os-core:giga-space id="gigaSpace" space="space"/>
 
   <bean id="searchService" class="org.compass.needle.gigaspaces.service.ClientCompassSearchService">
-      <constructor-arg ref="clusteredGigaSpace"/>
+      <constructor-arg ref="gigaSpace"/>
   </bean>
 </beans>
 ]]></programlisting>      	        

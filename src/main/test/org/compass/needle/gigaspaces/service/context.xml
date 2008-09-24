@@ -15,9 +15,7 @@
 
     <!-- Space 1 construction -->
 
-    <os-core:space id="space1" url="/./searchService" lookup-groups="${user.name}">
-        <os-core:filter-provider ref="serviceExporter1"/>
-    </os-core:space>
+    <os-core:space id="space1" url="/./searchService" lookup-groups="${user.name}" />
 
     <os-core:giga-space id="gigaSpace1" space="space1"/>
 
@@ -48,6 +46,7 @@
     </bean>
 
     <os-events:notify-container id="eventContainer1" giga-space="gigaSpace1">
+        <os-events:batch size="10" time="200" />
         <os-events:notify write="true" lease-expire="true" take="true" update="true"/>
 
         <os-core:template>
