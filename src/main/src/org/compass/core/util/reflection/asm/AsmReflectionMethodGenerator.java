@@ -57,7 +57,7 @@ public class AsmReflectionMethodGenerator {
             if (declaredMethods[methodIndex].equals(refMethod))
                 break;
         }
-        String className = ownerClassName + "Reflection" + name + methodIndex;
+        String className = ownerClassName + "MethodReflection" + name + methodIndex;
 
         try {
             Class definedClass;
@@ -86,7 +86,7 @@ public class AsmReflectionMethodGenerator {
 
             return (ReflectionMethod) definedClass.getConstructor(Method.class).newInstance(refMethod);
         } catch (Exception e) {
-            NoSuchMethodException ex = new NoSuchMethodException("Can't create constructor helper");
+            NoSuchMethodException ex = new NoSuchMethodException("Can't create ASM method reflection helper for [" + refMethod + "]");
             ex.initCause(e);
             throw ex;
         }

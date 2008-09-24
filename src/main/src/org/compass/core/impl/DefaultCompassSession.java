@@ -45,6 +45,7 @@ import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingException;
 import org.compass.core.marshall.MarshallingStrategy;
 import org.compass.core.metadata.CompassMetaData;
+import org.compass.core.spi.DirtyOperationContext;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalResource;
@@ -185,7 +186,9 @@ public class DefaultCompassSession implements InternalCompassSession {
             return cachedValue;
         }
         Resource value = searchEngine.get(idResource);
-        firstLevelCache.setResource(key, value);
+        if (value != null) {
+            firstLevelCache.setResource(key, value);
+        }
         return value;
     }
 
@@ -312,6 +315,13 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void create(String alias, Object object) throws CompassException {
         checkClosed();
+        create(alias, object, new DirtyOperationContext());
+    }
+
+    public void create(String alias, Object object, DirtyOperationContext context) throws CompassException {
+        if (context.alreadyPerformedOperation(object)) {
+            return;
+        }
         if (compass.getEventManager().onPreCreate(alias, object) == FilterOperation.YES) {
             return;
         }
@@ -324,7 +334,8 @@ public class DefaultCompassSession implements InternalCompassSession {
             ResourceKey key = ((InternalResource) resource).resourceKey();
             firstLevelCache.set(key, object);
         }
-        boolean performedCascading = cascadingManager.cascade(alias, object, CascadeMapping.Cascade.CREATE);
+        context.addOperatedObjects(object);
+        boolean performedCascading = cascadingManager.cascade(alias, object, CascadeMapping.Cascade.CREATE, context);
         if (resource == null && !performedCascading) {
             throw new MarshallingException("Alias [" + alias + "] has no root mappings and no cascading defined, no operation was perfomed");
         }
@@ -336,6 +347,13 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void create(Object object) throws CompassException {
         checkClosed();
+        create(object, new DirtyOperationContext());
+    }
+
+    public void create(Object object, DirtyOperationContext context) throws CompassException {
+        if (context.alreadyPerformedOperation(object)) {
+            return;
+        }
         if (compass.getEventManager().onPreCreate(null, object) == FilterOperation.YES) {
             return;
         }
@@ -348,11 +366,13 @@ public class DefaultCompassSession implements InternalCompassSession {
             searchEngine.create(resource);
             ResourceKey key = ((InternalResource) resource).resourceKey();
             firstLevelCache.set(key, object);
+            context.addOperatedObjects(object);
             // if we found a resource, we perform the cascading based on its alias
-            performedCascading = cascadingManager.cascade(key.getAlias(), object, CascadeMapping.Cascade.CREATE);
+            performedCascading = cascadingManager.cascade(key.getAlias(), object, CascadeMapping.Cascade.CREATE, context);
         } else {
+            context.addOperatedObjects(object);
             // actuall, no root mapping to create a resource, try and create one based on the object
-            performedCascading = cascadingManager.cascade(object, CascadeMapping.Cascade.CREATE);
+            performedCascading = cascadingManager.cascade(object, CascadeMapping.Cascade.CREATE, context);
         }
         if (resource == null && !performedCascading) {
             throw new MarshallingException("Object [" + object.getClass().getName() + "] has no root mappings and no cascading defined, no operation was perfomed");
@@ -367,6 +387,13 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void save(String alias, Object object) throws CompassException {
         checkClosed();
+        save(alias, object, new DirtyOperationContext());
+    }
+
+    public void save(String alias, Object object, DirtyOperationContext context) throws CompassException {
+        if (context.alreadyPerformedOperation(object)) {
+            return;
+        }
         if (compass.getEventManager().onPreSave(alias, object) == FilterOperation.YES) {
             return;
         }
@@ -379,7 +406,8 @@ public class DefaultCompassSession implements InternalCompassSession {
             ResourceKey key = ((InternalResource) resource).resourceKey();
             firstLevelCache.set(key, object);
         }
-        boolean performedCascading = cascadingManager.cascade(alias, object, CascadeMapping.Cascade.SAVE);
+        context.addOperatedObjects(object);
+        boolean performedCascading = cascadingManager.cascade(alias, object, CascadeMapping.Cascade.SAVE, context);
         if (resource == null && !performedCascading) {
             throw new MarshallingException("Alias [" + alias + "] has no root mappings and no cascading defined, no operation was perfomed");
         }
@@ -391,6 +419,13 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void save(Object object) throws CompassException {
         checkClosed();
+        save(object, new DirtyOperationContext());
+    }
+
+    public void save(Object object, DirtyOperationContext context) throws CompassException {
+        if (context.alreadyPerformedOperation(object)) {
+            return;
+        }
         if (compass.getEventManager().onPreSave(null, object) == FilterOperation.YES) {
             return;
         }
@@ -403,9 +438,11 @@ public class DefaultCompassSession implements InternalCompassSession {
             searchEngine.save(resource);
             ResourceKey key = ((InternalResource) resource).resourceKey();
             firstLevelCache.set(key, object);
-            performedCascading = cascadingManager.cascade(key.getAlias(), object, CascadeMapping.Cascade.SAVE);
+            context.addOperatedObjects(object);
+            performedCascading = cascadingManager.cascade(key.getAlias(), object, CascadeMapping.Cascade.SAVE, context);
         } else {
-            performedCascading = cascadingManager.cascade(object, CascadeMapping.Cascade.SAVE);
+            context.addOperatedObjects(object);
+            performedCascading = cascadingManager.cascade(object, CascadeMapping.Cascade.SAVE, context);
         }
         if (resource == null && !performedCascading) {
             throw new MarshallingException("Object [" + object.getClass().getName() + "] has no root mappings and no cascading defined, no operation was perfomed");
@@ -424,17 +461,39 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(String alias, Object obj) throws CompassException {
         checkClosed();
+        delete(alias, obj, new DirtyOperationContext());
+    }
+
+    public void delete(String alias, Object obj, DirtyOperationContext context) throws CompassException {
+        if (context.alreadyPerformedOperation(obj)) {
+            return;
+        }
         if (compass.getEventManager().onPreDelete(alias, obj) == FilterOperation.YES) {
             return;
         }
+        boolean performedCascading = false;
         Resource idResource = marshallingStrategy.marshallIds(alias, obj);
         if (idResource != null) {
             if (compass.getEventManager().onPreDelete(idResource) == FilterOperation.YES) {
                 return;
             }
+            Object cascadeObj = null;
+            // in case we need to do cascading, we need to load the object to we can delete its cascaded objects
+            if (cascadingManager.shouldCascade(idResource.getAlias(), obj, CascadeMapping.Cascade.DELETE)) {
+                Resource resouce = getResourceByIdResource(idResource);
+                if (resouce != null) {
+                    cascadeObj = getByResource(resouce);
+                }
+            }
             delete(idResource);
+            if (cascadeObj != null) {
+                context.addOperatedObjects(cascadeObj);
+                performedCascading = cascadingManager.cascade(idResource.getAlias(), cascadeObj, CascadeMapping.Cascade.DELETE, context);
+            }
+        } else {
+            context.addOperatedObjects(obj);
+            performedCascading = cascadingManager.cascade(alias, obj, CascadeMapping.Cascade.DELETE, context);
         }
-        boolean performedCascading = cascadingManager.cascade(alias, obj, CascadeMapping.Cascade.DELETE);
         if (idResource == null && !performedCascading) {
             throw new MarshallingException("Alias [" + alias + "] has no root mappings and no cascading defined, no operation was perfomed");
         }
@@ -450,19 +509,38 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(Class clazz, Object obj) throws CompassException {
         checkClosed();
+        delete(clazz, obj, new DirtyOperationContext());
+    }
+
+    public void delete(Class clazz, Object obj, DirtyOperationContext context) throws CompassException {
+        if (context.alreadyPerformedOperation(obj)) {
+            return;
+        }
         if (compass.getEventManager().onPreDelete(clazz, obj) == FilterOperation.YES) {
             return;
         }
-        boolean performedCascading;
+        boolean performedCascading = false;
         Resource idResource = marshallingStrategy.marshallIds(clazz, obj);
         if (idResource != null) {
             if (compass.getEventManager().onPreDelete(idResource) == FilterOperation.YES) {
                 return;
             }
+            Object cascadeObj = null;
+            // in case we need to do cascading, we need to load the object to we can delete its cascaded objects
+            if (cascadingManager.shouldCascade(idResource.getAlias(), obj, CascadeMapping.Cascade.DELETE)) {
+                Resource resouce = getResourceByIdResource(idResource);
+                if (resouce != null) {
+                    cascadeObj = getByResource(resouce);
+                }
+            }
             delete(idResource);
-            performedCascading = cascadingManager.cascade(idResource.getAlias(), obj, CascadeMapping.Cascade.DELETE);
+            if (cascadeObj != null) {
+                context.addOperatedObjects(cascadeObj);
+                performedCascading = cascadingManager.cascade(idResource.getAlias(), cascadeObj, CascadeMapping.Cascade.DELETE, context);
+            }
         } else {
-            performedCascading = cascadingManager.cascade(clazz, obj, CascadeMapping.Cascade.DELETE);
+            context.addOperatedObjects(obj);
+            performedCascading = cascadingManager.cascade(clazz, obj, CascadeMapping.Cascade.DELETE, context);
         }
         if (idResource == null && !performedCascading) {
             throw new MarshallingException("Object [" + clazz + "] has no root mappings and no cascading defined, no operation was perfomed");
@@ -477,19 +555,38 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(Object obj) throws CompassException {
         checkClosed();
+        delete(obj, new DirtyOperationContext());
+    }
+
+    public void delete(Object obj, DirtyOperationContext context) throws CompassException {
+        if (context.alreadyPerformedOperation(obj)) {
+            return;
+        }
         if (compass.getEventManager().onPreDelete((String) null, obj) == FilterOperation.YES) {
             return;
         }
-        boolean performedCascading;
+        boolean performedCascading = false;
         Resource idResource = marshallingStrategy.marshallIds(obj);
         if (idResource != null) {
             if (compass.getEventManager().onPreDelete(idResource) == FilterOperation.YES) {
                 return;
             }
+            Object cascadeObj = null;
+            // in case we need to do cascading, we need to load the object to we can delete its cascaded objects
+            if (cascadingManager.shouldCascade(idResource.getAlias(), obj, CascadeMapping.Cascade.DELETE)) {
+                Resource resouce = getResourceByIdResource(idResource);
+                if (resouce != null) {
+                    cascadeObj = getByResource(resouce);
+                }
+            }
             delete(idResource);
-            performedCascading = cascadingManager.cascade(idResource.getAlias(), obj, CascadeMapping.Cascade.DELETE);
+            if (cascadeObj != null) {
+                context.addOperatedObjects(cascadeObj);
+                performedCascading = cascadingManager.cascade(idResource.getAlias(), cascadeObj, CascadeMapping.Cascade.DELETE, context);
+            }
         } else {
-            performedCascading = cascadingManager.cascade(obj, CascadeMapping.Cascade.DELETE);
+            context.addOperatedObjects(obj);
+            performedCascading = cascadingManager.cascade(obj, CascadeMapping.Cascade.DELETE, context);
         }
         if (idResource == null && !performedCascading) {
             throw new MarshallingException("Object [" + obj.getClass().getName() + "] has no root mappings and no cascading defined, no operation was perfomed");

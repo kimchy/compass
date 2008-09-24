@@ -53,6 +53,22 @@ public interface InternalCompassSession extends CompassSession {
 
     CompassMetaData getMetaData();
 
+    // context operations
+
+    void create(String alias, Object object, DirtyOperationContext context) throws CompassException;
+
+    void create(Object object, DirtyOperationContext context) throws CompassException;
+
+    void save(String alias, Object object, DirtyOperationContext context) throws CompassException;
+
+    void save(Object object, DirtyOperationContext context) throws CompassException;
+
+    void delete(String alias, Object obj, DirtyOperationContext context) throws CompassException;
+
+    void delete(Class clazz, Object obj, DirtyOperationContext context) throws CompassException;
+
+    void delete(Object obj, DirtyOperationContext context) throws CompassException;
+
     /**
      * Flushed the current transaction. Only supported for batch_insert (no op in others).
      */

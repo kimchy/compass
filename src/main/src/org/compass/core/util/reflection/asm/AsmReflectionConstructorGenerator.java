@@ -51,7 +51,7 @@ public class AsmReflectionConstructorGenerator {
             if (declaredCtors[ctorIndex].equals(originalCtor))
                 break;
         }
-        String className = ownerClassName + "Reflection" + ctorIndex;
+        String className = ownerClassName + "ConstReflection" + ctorIndex;
 
 
         try {
@@ -80,7 +80,7 @@ public class AsmReflectionConstructorGenerator {
 
             return (ReflectionConstructor) definedClass.newInstance();
         } catch (Exception e) {
-            NoSuchMethodException ex = new NoSuchMethodException("Can't create constructor helper");
+            NoSuchMethodException ex = new NoSuchMethodException("Can't create ASM constructor reflection helper for [" + originalCtor + "]");
             ex.initCause(e);
             throw ex;
         }

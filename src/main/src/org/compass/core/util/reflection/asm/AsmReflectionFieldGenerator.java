@@ -53,7 +53,7 @@ public class AsmReflectionFieldGenerator {
                 break;
         }
 
-        String className = ownerClassName + "Reflection" + methodIndex;
+        String className = ownerClassName + "FieldReflection" + methodIndex;
 
         try {
             Class definedClass;
@@ -81,7 +81,7 @@ public class AsmReflectionFieldGenerator {
             return (ReflectionField) ctor.newInstance(refField);
         }
         catch (Exception e) {
-            NoSuchFieldException err = new NoSuchFieldException("Can't create field helper");
+            NoSuchFieldException err = new NoSuchFieldException("Can't create ASM field reflection helper for [" + refField + "]");
             err.initCause(e);
             throw err;
         }
