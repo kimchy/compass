@@ -49,8 +49,8 @@ public class DefaultFirstLevelCache implements FirstLevelCache {
     }
 
     public void evict(ResourceKey key) {
-        objects.put(key, null);
-        resources.put(key, null);
+        objects.remove(key);
+        resources.remove(key);
     }
 
     public void evictAll() {
