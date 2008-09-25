@@ -97,8 +97,12 @@ public class DefaultLuceneSearchEngineHits implements LuceneSearchEngineHits {
 
     public void close() throws SearchEngineException {
         if (internalSearch != null) {
-            internalSearch.close();
-            internalSearch = null;
+            try {
+                internalSearch.close();
+            } finally {
+                searchEngine.removeDelegatedClose(this);
+                internalSearch = null;
+            }
         }
     }
 

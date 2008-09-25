@@ -22,6 +22,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineQuery;
+import org.compass.core.lucene.engine.LuceneDelegatedClose;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
@@ -62,4 +63,6 @@ public interface LuceneSearchEngineTransaction {
     Resource[] get(ResourceKey resourceKey) throws SearchEngineException;
 
     SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
+
+    void removeDelegatedClose(LuceneDelegatedClose closable);
 }

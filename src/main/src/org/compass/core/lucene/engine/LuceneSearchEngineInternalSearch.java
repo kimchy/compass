@@ -21,9 +21,11 @@ import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
  */
 public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSearch, LuceneDelegatedClose {
 
+    private LuceneSearchEngine searchEngine;
+
     private Searcher searcher;
 
-    protected IndexReader indexReader;
+    private IndexReader indexReader;
 
     private List<LuceneIndexHolder> indexHoldersToClose;
 
@@ -33,11 +35,12 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
 
     private boolean closed;
 
-    public LuceneSearchEngineInternalSearch() {
-        // do nothing, an empty internal search one
+    public LuceneSearchEngineInternalSearch(LuceneSearchEngine searchEngine) {
+        this.searchEngine = searchEngine;
     }
 
-    public LuceneSearchEngineInternalSearch(MultiSearcher searcher, List<LuceneIndexHolder> indexHolders) {
+    public LuceneSearchEngineInternalSearch(LuceneSearchEngine searchEngine, MultiSearcher searcher, List<LuceneIndexHolder> indexHolders) {
+        this.searchEngine = searchEngine;
         this.searcher = searcher;
         this.indexHoldersToClose = indexHolders;
         Searchable[] searchables = searcher.getSearchables();
@@ -50,7 +53,8 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
         this.closeSearcher = true;
     }
 
-    public LuceneSearchEngineInternalSearch(LuceneIndexHolder indexHolder, List<LuceneIndexHolder> indexHolders) {
+    public LuceneSearchEngineInternalSearch(LuceneSearchEngine searchEngine, LuceneIndexHolder indexHolder, List<LuceneIndexHolder> indexHolders) {
+        this.searchEngine = searchEngine;
         this.searcher = indexHolder.getIndexSearcher();
         this.indexReader = indexHolder.getIndexReader();
         this.indexHoldersToClose = indexHolders;
@@ -62,7 +66,8 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
      * Creates a new instance, with a searcher and index holders which will be used
      * to release when calling close.
      */
-    public LuceneSearchEngineInternalSearch(IndexReader indexReader, Searcher searcher, List<LuceneIndexHolder> indexHolders) {
+    public LuceneSearchEngineInternalSearch(LuceneSearchEngine searchEngine, IndexReader indexReader, Searcher searcher, List<LuceneIndexHolder> indexHolders) {
+        this.searchEngine = searchEngine;
         this.indexReader = indexReader;
         this.searcher = searcher;
         this.indexHoldersToClose = indexHolders;
@@ -101,6 +106,8 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
             return;
         }
         closed = true;
+
+        searchEngine.removeDelegatedClose(this);
 
         if (searcher != null && closeSearcher) {
             try {

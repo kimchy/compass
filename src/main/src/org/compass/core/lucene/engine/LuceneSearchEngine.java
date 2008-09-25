@@ -366,6 +366,12 @@ public class LuceneSearchEngine implements SearchEngine {
         return transaction.internalSearch(subIndexes, aliases);
     }
 
+    public void removeDelegatedClose(LuceneDelegatedClose closable) {
+        if (transaction != null) {
+            transaction.removeDelegatedClose(closable);
+        }
+    }
+
     public LuceneSearchEngineFactory getSearchEngineFactory() {
         return searchEngineFactory;
     }

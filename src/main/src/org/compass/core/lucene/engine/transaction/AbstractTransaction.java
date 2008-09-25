@@ -133,14 +133,14 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
                     }
                 }
                 if (readers.size() == 0) {
-                    return new LuceneSearchEngineInternalSearch(null, null, null);
+                    return new LuceneSearchEngineInternalSearch(searchEngine);
                 }
                 // if we have just one reader, no need to create a multi reader on top of it
                 if (readers.size() == 1) {
-                    return new LuceneSearchEngineInternalSearch(lastNonEmptyIndexHolder, indexHoldersToClose);
+                    return new LuceneSearchEngineInternalSearch(searchEngine, lastNonEmptyIndexHolder, indexHoldersToClose);
                 }
                 MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
-                return new LuceneSearchEngineInternalSearch(reader, new IndexSearcher(reader), indexHoldersToClose);
+                return new LuceneSearchEngineInternalSearch(searchEngine, reader, new IndexSearcher(reader), indexHoldersToClose);
             } else {
                 ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>(calcSubIndexes.length);
                 LuceneIndexHolder lastNonEmptyIndexHolder = null;
@@ -153,14 +153,14 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
                     }
                 }
                 if (searchers.size() == 0) {
-                    return new LuceneSearchEngineInternalSearch(null, null, null);
+                    return new LuceneSearchEngineInternalSearch(searchEngine);
                 }
                 // if we have just one reader, no need to create a multi reader on top of it
                 if (searchers.size() == 1) {
-                    return new LuceneSearchEngineInternalSearch(lastNonEmptyIndexHolder, indexHoldersToClose);
+                    return new LuceneSearchEngineInternalSearch(searchEngine, lastNonEmptyIndexHolder, indexHoldersToClose);
                 }
                 MultiSearcher searcher = new MultiSearcher(searchers.toArray(new IndexSearcher[searchers.size()]));
-                return new LuceneSearchEngineInternalSearch(searcher, indexHoldersToClose);
+                return new LuceneSearchEngineInternalSearch(searchEngine, searcher, indexHoldersToClose);
             }
         } catch (Exception e) {
             for (LuceneIndexHolder indexHolder : indexHoldersToClose) {
@@ -199,8 +199,13 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
         return dirty;
     }
 
+    public void removeDelegatedClose(LuceneDelegatedClose closable) {
+        delegateClose.remove(closable);
+    }
+
     protected void closeDelegateClosed() throws SearchEngineException {
-        for (LuceneDelegatedClose delegatedClose : delegateClose) {
+        LuceneDelegatedClose[] closeables = delegateClose.toArray(new LuceneDelegatedClose[delegateClose.size()]);
+        for (LuceneDelegatedClose delegatedClose : closeables) {
             try {
                 delegatedClose.close();
             } catch (Exception e) {
