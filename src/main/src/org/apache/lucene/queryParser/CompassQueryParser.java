@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.KeywordAnalyzer;
@@ -32,7 +31,6 @@ import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.MultiPhraseQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
@@ -184,118 +182,118 @@ public class CompassQueryParser extends QueryParser {
     }
 
 
-    /**
-     * @throws ParseException throw in overridden method to disallow
-     */
     // LUCENE MONITOR
     // Changed: Added boostAll flag
     // Extracted the creation of Terms to allow for overrides
-    protected Query getInternalFieldQuery(String field, String queryText) throws ParseException {
+    protected Query getInternalFieldQuery(String field, String queryText)  throws ParseException {
         boolean boostAll = false;
         if (searchEngineFactory.getLuceneSettings().isAllPropertyBoostSupport() &&
                 field.equals(searchEngineFactory.getLuceneSettings().getAllProperty())) {
             boostAll = true;
         }
-        // Use the analyzer to get all the tokens, and then build a TermQuery,
-        // PhraseQuery, or nothing based on the term count
+      // Use the analyzer to get all the tokens, and then build a TermQuery,
+      // PhraseQuery, or nothing based on the term count
 
-        TokenStream source = analyzer.tokenStream(field, new StringReader(queryText));
-        Vector v = new Vector();
-        org.apache.lucene.analysis.Token t;
-        int positionCount = 0;
-        boolean severalTokensAtSamePosition = false;
+      TokenStream source = analyzer.tokenStream(field, new StringReader(queryText));
+      List list = new ArrayList();
+      final org.apache.lucene.analysis.Token reusableToken = new org.apache.lucene.analysis.Token();
+      org.apache.lucene.analysis.Token nextToken;
+      int positionCount = 0;
+      boolean severalTokensAtSamePosition = false;
 
-        while (true) {
-            try {
-                t = source.next();
-            }
-            catch (IOException e) {
-                t = null;
-            }
-            if (t == null)
-                break;
-            v.addElement(t);
-            if (t.getPositionIncrement() != 0)
-                positionCount += t.getPositionIncrement();
-            else
-                severalTokensAtSamePosition = true;
-        }
+      while (true) {
         try {
-            source.close();
+          nextToken = source.next(reusableToken);
         }
         catch (IOException e) {
-            // ignore
+          nextToken = null;
         }
+        if (nextToken == null)
+          break;
+        list.add(nextToken.clone());
+        if (nextToken.getPositionIncrement() != 0)
+          positionCount += nextToken.getPositionIncrement();
+        else
+          severalTokensAtSamePosition = true;
+      }
+      try {
+        source.close();
+      }
+      catch (IOException e) {
+        // ignore
+      }
 
-        if (v.size() == 0)
-            return null;
-        else if (v.size() == 1) {
-            t = (org.apache.lucene.analysis.Token) v.elementAt(0);
-            if (boostAll) {
-                return new AllBoostingTermQuery(getTerm(field, t.termText()));
-            } else {
-                return new TermQuery(getTerm(field, t.termText()));
-            }
-        } else {
-            if (severalTokensAtSamePosition) {
-                if (positionCount == 1) {
-                    // no phrase query:
-                    BooleanQuery q = new BooleanQuery(true);
-                    for (int i = 0; i < v.size(); i++) {
-                        t = (org.apache.lucene.analysis.Token) v.elementAt(i);
-                        if (boostAll) {
-                            AllBoostingTermQuery currentQuery = new AllBoostingTermQuery(
-                                    getTerm(field, t.termText()));
-                            q.add(currentQuery, BooleanClause.Occur.SHOULD);
-                        } else {
-                            TermQuery currentQuery = new TermQuery(
-                                    getTerm(field, t.termText()));
-                            q.add(currentQuery, BooleanClause.Occur.SHOULD);
-                        }
-                    }
-                    return q;
+      if (list.size() == 0)
+        return null;
+      else if (list.size() == 1) {
+        nextToken = (org.apache.lucene.analysis.Token) list.get(0);
+          if (boostAll) {
+              return new AllBoostingTermQuery(getTerm(field, nextToken.term()));
+          } else {
+              return newTermQuery(getTerm(field, nextToken.term()));
+          }
+      } else {
+        if (severalTokensAtSamePosition) {
+          if (positionCount == 1) {
+            // no phrase query:
+            BooleanQuery q = newBooleanQuery(true);
+            for (int i = 0; i < list.size(); i++) {
+              nextToken = (org.apache.lucene.analysis.Token) list.get(i);
+                if (boostAll) {
+                    AllBoostingTermQuery currentQuery = new AllBoostingTermQuery(
+                            getTerm(field, nextToken.term()));
+                    q.add(currentQuery, BooleanClause.Occur.SHOULD);
                 } else {
-                    // phrase query:
-                    MultiPhraseQuery mpq = new MultiPhraseQuery();
-                    mpq.setSlop(phraseSlop);
-                    List multiTerms = new ArrayList();
-                    int position = -1;
-                    for (int i = 0; i < v.size(); i++) {
-                        t = (org.apache.lucene.analysis.Token) v.elementAt(i);
-                        if (t.getPositionIncrement() > 0 && multiTerms.size() > 0) {
-                            if (enablePositionIncrements) {
-                                mpq.add((Term[]) multiTerms.toArray(new Term[0]), position);
-                            } else {
-                                mpq.add((Term[]) multiTerms.toArray(new Term[0]));
-                            }
-                            multiTerms.clear();
-                        }
-                        position += t.getPositionIncrement();
-                        multiTerms.add(getTerm(field, t.termText()));
-                    }
-                    if (enablePositionIncrements) {
-                        mpq.add((Term[]) multiTerms.toArray(new Term[0]), position);
-                    } else {
-                        mpq.add((Term[]) multiTerms.toArray(new Term[0]));
-                    }
-                    return mpq;
+                  Query currentQuery = newTermQuery(
+                      getTerm(field, nextToken.term()));
+                  q.add(currentQuery, BooleanClause.Occur.SHOULD);
                 }
-            } else {
-                PhraseQuery pq = new PhraseQuery();
-                pq.setSlop(phraseSlop);
-                int position = -1;
-                for (int i = 0; i < v.size(); i++) {
-                    t = (org.apache.lucene.analysis.Token) v.elementAt(i);
-                    if (enablePositionIncrements) {
-                        position += t.getPositionIncrement();
-                        pq.add(getTerm(field, t.termText()), position);
-                    } else {
-                        pq.add(getTerm(field, t.termText()));
-                    }
-                }
-                return pq;
             }
+            return q;
+          }
+          else {
+            // phrase query:
+            MultiPhraseQuery mpq = newMultiPhraseQuery();
+            mpq.setSlop(phraseSlop);
+            List multiTerms = new ArrayList();
+            int position = -1;
+            for (int i = 0; i < list.size(); i++) {
+              nextToken = (org.apache.lucene.analysis.Token) list.get(i);
+              if (nextToken.getPositionIncrement() > 0 && multiTerms.size() > 0) {
+                if (enablePositionIncrements) {
+                  mpq.add((Term[])multiTerms.toArray(new Term[0]),position);
+                } else {
+                  mpq.add((Term[])multiTerms.toArray(new Term[0]));
+                }
+                multiTerms.clear();
+              }
+              position += nextToken.getPositionIncrement();
+              multiTerms.add(getTerm(field, nextToken.term()));
+            }
+            if (enablePositionIncrements) {
+              mpq.add((Term[])multiTerms.toArray(new Term[0]),position);
+            } else {
+              mpq.add((Term[])multiTerms.toArray(new Term[0]));
+            }
+            return mpq;
+          }
         }
+        else {
+          PhraseQuery pq = newPhraseQuery();
+          pq.setSlop(phraseSlop);
+          int position = -1;
+          for (int i = 0; i < list.size(); i++) {
+            nextToken = (org.apache.lucene.analysis.Token) list.get(i);
+            if (enablePositionIncrements) {
+              position += nextToken.getPositionIncrement();
+              pq.add(getTerm(field, nextToken.term()),position);
+            } else {
+              pq.add(getTerm(field, nextToken.term()));
+            }
+          }
+          return pq;
+        }
+      }
     }
 
     protected Term getTerm(String field, String text) throws ParseException {

@@ -145,7 +145,7 @@ public class TransIndex implements CompassConfigurable {
     private void refreshIfNeeded() throws IOException {
         if (flushRequired) {
             if (indexWriter != null) {
-                indexWriter.flush();
+                indexWriter.commit();
             }
             if (indexReader == null) {
                 indexReader = IndexReader.open(directory);

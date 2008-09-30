@@ -36,5 +36,4 @@ public class RAMLuceneReadCommittedTransactionEngineTests extends AbstractReadCo
         assertEquals(ReadCommittedTransaction.class.getName(), getSettings().getSetting(
                 CompassEnvironment.Transaction.ISOLATION_CLASS));
     }
-
 }

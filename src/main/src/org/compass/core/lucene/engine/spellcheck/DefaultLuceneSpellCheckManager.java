@@ -130,7 +130,8 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 spellCheckSettings.setSetting(key, value);
             }
         }
-        spellCheckSettings.setIntSetting(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, spellCheckSettings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, 3000));
+        spellCheckSettings.setIntSetting(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, spellCheckSettings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.MERGE_FACTOR, 300));
+        spellCheckSettings.setIntSetting(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, spellCheckSettings.getSettingAsInt(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, 50));
 
         if (spellCheckSettings.getSetting(CompassEnvironment.CONNECTION).equals(settings.getSetting(CompassEnvironment.CONNECTION))) {
             spellCheckStore = searchEngineFactory.getLuceneIndexManager().getStore();

@@ -17,11 +17,13 @@
 package org.compass.core.lucene.engine.transaction.readcommitted;
 
 import java.io.IOException;
-import java.util.BitSet;
 import java.util.HashMap;
 
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.DocIdSet;
+import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.util.OpenBitSet;
 
 /**
  * A Lucene filter which stored deletion (per alias), and filters them when
@@ -31,115 +33,40 @@ import org.apache.lucene.search.Filter;
  */
 public class BitSetByAliasFilter extends Filter {
 
-    public static class AllSetBitSet extends BitSet {
+    public static class AllSetBitSet extends DocIdSet {
 
-        public AllSetBitSet() {
+        private int size;
+
+        public AllSetBitSet(int size) {
+            this.size = size;
         }
 
-        public int cardinality() {
-            throw new UnsupportedOperationException();
+        public DocIdSetIterator iterator() {
+            return new AllDocIdSetIterator();
         }
 
-        public int hashCode() {
-            return System.identityHashCode(this);
-        }
+        private class AllDocIdSetIterator extends DocIdSetIterator {
 
-        public int length() {
-            throw new UnsupportedOperationException();
-        }
+            private int currentDoc = -1;
 
-        public int size() {
-            throw new UnsupportedOperationException();
-        }
+            public int doc() {
+                return currentDoc;
+            }
 
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
+            public boolean next() throws IOException {
+                return ++currentDoc < size;
+            }
 
-        public boolean isEmpty() {
-            return false;
-        }
-
-        public int nextClearBit(int fromIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        public int nextSetBit(int fromIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void clear(int bitIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void set(int bitIndex) {
-            // do nothing
-        }
-
-        public boolean get(int bitIndex) {
-            return true;
-        }
-
-        public void clear(int fromIndex, int toIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void flip(int fromIndex, int toIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void set(int fromIndex, int toIndex) {
-            // do nothing
-        }
-
-        public void set(int fromIndex, int toIndex, boolean value) {
-            // do nothing
-        }
-
-        public void set(int bitIndex, boolean value) {
-            // do nothing
-        }
-
-        public Object clone() {
-            return super.clone();    //To change body of overridden methods use File | Settings | File Templates.
-        }
-
-        public boolean equals(Object obj) {
-            throw new UnsupportedOperationException();
-        }
-
-        public String toString() {
-            return "AllBitSet";
-        }
-
-        public BitSet get(int fromIndex, int toIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void and(BitSet set) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void andNot(BitSet set) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void or(BitSet set) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void xor(BitSet set) {
-            throw new UnsupportedOperationException();
-        }
-
-        public boolean intersects(BitSet set) {
-            throw new UnsupportedOperationException();
+            public boolean skipTo(int target) throws IOException {
+                currentDoc += target;
+                return currentDoc < size;
+            }
         }
     }
 
-    private static final AllSetBitSet allSetBitSet = new AllSetBitSet();
+    private HashMap<IndexReader, DocIdSet> deletedBitSets = new HashMap<IndexReader, DocIdSet>();
 
-    private HashMap<IndexReader, BitSet> bitSets = new HashMap<IndexReader, BitSet>();
+    private HashMap<IndexReader, DocIdSet> allBitSets = new HashMap<IndexReader, DocIdSet>();
 
     private boolean hasDeletes = false;
 
@@ -147,7 +74,8 @@ public class BitSetByAliasFilter extends Filter {
     }
 
     public void clear() {
-        bitSets.clear();
+        deletedBitSets.clear();
+        allBitSets.clear();
         hasDeletes = false;
     }
 
@@ -156,21 +84,28 @@ public class BitSetByAliasFilter extends Filter {
     }
 
     public void markDelete(IndexReader indexReader, int docNum, int maxDoc) {
-        BitSet bitSet = bitSets.get(indexReader);
+        OpenBitSet bitSet = (OpenBitSet) deletedBitSets.get(indexReader);
         if (bitSet == null) {
-            bitSet = new BitSet(maxDoc);
-            bitSet.set(0, maxDoc, true);
-            bitSets.put(indexReader, bitSet);
+            // TODO we can implement our own DocIdSet for marked deleted ones
+            bitSet = new OpenBitSet(maxDoc);
+            bitSet.set(0, maxDoc);
+            deletedBitSets.put(indexReader, bitSet);
+            allBitSets.remove(indexReader);
         }
-        bitSet.set(docNum, false);
+        bitSet.fastClear(docNum);
         hasDeletes = true;
     }
 
-    public BitSet bits(IndexReader reader) throws IOException {
-        BitSet bitSet = bitSets.get(reader);
+    public DocIdSet getDocIdSet(IndexReader reader) throws IOException {
+        DocIdSet bitSet = deletedBitSets.get(reader);
         if (bitSet != null) {
             return bitSet;
         }
-        return allSetBitSet;
+        bitSet = allBitSets.get(reader);
+        if (bitSet == null) {
+            bitSet = new AllSetBitSet(reader.numDocs());
+            allBitSets.put(reader, bitSet);
+        }
+        return bitSet;
     }
 }

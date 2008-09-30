@@ -15,7 +15,7 @@
     </class>
 
     <class name="A" alias="a2">
-        <all enable="true" name="everything" />
+        <all enable="true" name="zzz-everything" />
         <id name="id" />
         <property name="value1">
             <meta-data>mvalue1</meta-data>

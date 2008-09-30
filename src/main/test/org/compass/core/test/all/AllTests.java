@@ -124,7 +124,7 @@ public class AllTests extends AbstractTestCase {
         a.setValue2("test2");
         session.save("a2", a);
 
-        CompassHits result = session.find("everything:test1");
+        CompassHits result = session.find("zzz-everything:test1");
         assertEquals(1, result.getLength());
         a = (A) result.data(0);
         assertEquals("test1", a.getValue1());
@@ -133,7 +133,7 @@ public class AllTests extends AbstractTestCase {
         result = session.find("test2");
         assertEquals(0, result.getLength());
 
-        result = session.find("everything:test2");
+        result = session.find("zzz-everything:test2");
         assertEquals(1, result.getLength());
         a = (A) result.data(0);
         assertEquals("test1", a.getValue1());
