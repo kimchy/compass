@@ -481,6 +481,8 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         child = DomUtils.getChildElementsByTagName(ele, "tc", true);
         if (child.size() == 1) {
             Element connEle = (Element) child.get(0);
+            String indexName = getElementAttribute(connEle, "indexName");
+            settings.setSetting(CompassEnvironment.CONNECTION, "tc://" + indexName);
             settings.setSetting("compass.engine.store.tc.bufferSize", getElementAttribute(connEle, "bufferSize"));
             settings.setSetting("compass.engine.store.tc.flushRate", getElementAttribute(connEle, "flushRate"));
             return;
