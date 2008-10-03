@@ -25,7 +25,6 @@ import java.util.concurrent.Callable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
@@ -70,7 +69,7 @@ public class LuceneTransaction extends AbstractTransaction {
         SearchEngineException exception = null;
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             try {
-                entry.getValue().abort();
+                entry.getValue().rollback();
             } catch (AlreadyClosedException e) {
                 if (log.isTraceEnabled()) {
                     log.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
@@ -78,8 +77,8 @@ public class LuceneTransaction extends AbstractTransaction {
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(entry.getKey());
                 try {
-                    if (IndexReader.isLocked(dir)) {
-                        IndexReader.unlock(dir);
+                    if (IndexWriter.isLocked(dir)) {
+                        IndexWriter.unlock(dir);
                     }
                 } catch (Exception e1) {
                     log.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
@@ -126,14 +125,15 @@ public class LuceneTransaction extends AbstractTransaction {
     }
 
     public void flush() throws SearchEngineException {
-        if (indexWriterBySubIndex.isEmpty()) {
-            return;
-        }
-        ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
-        for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
-            prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new FlushCallable(entry.getKey(), entry.getValue())));
-        }
-        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
+        // flush() deprecated in Lucene 2.4
+//        if (indexWriterBySubIndex.isEmpty()) {
+//            return;
+//        }
+//        ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
+//        for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
+//            prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new PrepareCommitCallable(entry.getKey(), entry.getValue())));
+//        }
+//        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
     }
 
     protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
@@ -218,19 +218,19 @@ public class LuceneTransaction extends AbstractTransaction {
         return indexWriter;
     }
 
-    private class FlushCallable implements Callable {
+    private class PrepareCommitCallable implements Callable {
 
         private String subIndex;
 
         private IndexWriter indexWriter;
 
-        private FlushCallable(String subIndex, IndexWriter indexWriter) {
+        private PrepareCommitCallable(String subIndex, IndexWriter indexWriter) {
             this.subIndex = subIndex;
             this.indexWriter = indexWriter;
         }
 
         public Object call() throws Exception {
-            indexWriter.flush();
+            indexWriter.prepareCommit();
             return null;
         }
     }
@@ -252,8 +252,8 @@ public class LuceneTransaction extends AbstractTransaction {
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(subIndex);
                 try {
-                    if (IndexReader.isLocked(dir)) {
-                        IndexReader.unlock(dir);
+                    if (IndexWriter.isLocked(dir)) {
+                        IndexWriter.unlock(dir);
                     }
                 } catch (Exception e1) {
                     log.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);

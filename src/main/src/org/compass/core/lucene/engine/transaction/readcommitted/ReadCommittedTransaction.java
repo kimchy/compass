@@ -83,7 +83,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
         SearchEngineException lastException = null;
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             try {
-                entry.getValue().abort();
+                entry.getValue().rollback();
             } catch (AlreadyClosedException e) {
                 if (log.isTraceEnabled()) {
                     log.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
@@ -91,8 +91,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(entry.getKey());
                 try {
-                    if (IndexReader.isLocked(dir)) {
-                        IndexReader.unlock(dir);
+                    if (IndexWriter.isLocked(dir)) {
+                        IndexWriter.unlock(dir);
                     }
                 } catch (Exception e1) {
                     log.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
@@ -415,8 +415,8 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(subIndex);
                 try {
-                    if (IndexReader.isLocked(dir)) {
-                        IndexReader.unlock(dir);
+                    if (IndexWriter.isLocked(dir)) {
+                        IndexWriter.unlock(dir);
                     }
                 } catch (Exception e1) {
                     log.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
