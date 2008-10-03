@@ -23,32 +23,40 @@
   </connection>
 </compass>
 ]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=file://target/test-index
+]]></programlisting>
     </para>
 
     <para>
-      Another option for file system based configuration is using Java 1.4 NIO feature. The NIO should perform better under certain environment/load then the default file based one. We recommend performing some performance tests (preferable as close to your production system configuration as possible), and check which one performs better. Here is an example of a simple file system based connection configuration that stores the index in the <literal>target/test-index</literal> path:
+      Another option for file system based configuration is using Java 1.4 NIO mmap feature. The NIO should perform better under certain environment/load then the default file based one. We recommend performing some performance tests (preferable as close to your production system configuration as possible), and check which one performs better. Here is an example of a simple file system based connection configuration that stores the index in the <literal>target/test-index</literal> path:
 <programlisting><![CDATA[<compass name="default">
   <connection>
       <mmap path="target/test-index"/>
   </connection>
 </compass>
 ]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=mmap://target/test-index
+]]></programlisting>
     </para>
+
+      <para>
+        Yet Another option for file system based configuration is using Java 1.4 NIO feature. The NIO should perform better under certain environment/load then the default file based one (especially under heavily concurrent systems). We recommend performing some performance tests (preferable as close to your production system configuration as possible), and check which one performs better. Note, there are known problems when using this under windows operating system due to a SUN JVM bug. Here is an example of a simple file system based connection configuration that stores the index in the <literal>target/test-index</literal> path:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <niofs path="target/test-index"/>
+  </connection>
+</compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=niofs://target/test-index
+]]></programlisting>
+      </para>
     
     <para>
       When using file system based index storage, locking (for transaction support) is done using lock files. The existence of the file means a certain sub index is locked. The default lock file directory is <literal>java.io.tmp</literal> system property.
     </para>
     
     <para>
-      Clustering support for file system based storage usually means sharing the file system between different machines (running different Compass instances). Current locking mechanism will require to set the locking directory on the shared file system, here is an example of how to set it:
-<programlisting><![CDATA[<compass name="default">
-  <connection>
-      <mmap path="/shared/index-data"/>
-  </connection>
-  
-  <transaction lockDir="/shared/index-lock" />
-</compass>
-]]></programlisting>
+      Clustering support for file system based storage usually means sharing the file system between different machines (running different Compass instances). Current locking mechanism will require to set the locking directory on the shared file system, see the LockFactory section for more information.
     </para>
     
     <para>
@@ -67,6 +75,8 @@
       <ram path="/index"/>
   </connection>
 </compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=ram://index
 ]]></programlisting>
     </para>
   </sect1>
@@ -308,9 +318,13 @@
 <programlisting><![CDATA[<compass name="default">
   <connection>
       <file path="target/test-index" />
-      <lockFactory type="nativefs" path="test/#subindex#" />
+      <lockFactory type="nativefs" path="test/#subContext#/#subindex#" />
   </connection>
 </compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=file://target/test-index
+compass.engine.store.lockFactory.type=nativefs
+compass.engine.store.lockFactory.path=test/#subContext#/#subindex#
 ]]></programlisting>
     </para>
     
@@ -319,7 +333,7 @@
     </para>
     
     <para>
-        The path allows to provide path parameter to the file system based locks. This is an optional parameter and defaults to the sub index location. The specialized keyword <literal>#subindex#</literal> can be used to be replaced with the actual sub index.
+        The path allows to provide path parameter to the file system based locks. This is an optional parameter and defaults to the sub index location. The specialized keyword <literal>#subindex#</literal> and <literal>#subContext#</literal> can be used to be replaced with the actual sub index and sub context.
     </para>
   </sect1>
   
