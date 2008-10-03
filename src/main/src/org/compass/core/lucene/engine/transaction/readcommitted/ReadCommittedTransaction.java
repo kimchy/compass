@@ -205,7 +205,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             if (query.getFilter() == null) {
                 qFilter = filter;
             } else {
-                qFilter = new ChainedFilter(new Filter[]{filter, query.getFilter().getFilter()}, ChainedFilter.ChainedFilterType.AND);
+                qFilter = new ChainedFilter(new Filter[]{filter, query.getFilter().getFilter()}, ChainedFilter.AND);
             }
         } else {
             if (query.getFilter() != null) {

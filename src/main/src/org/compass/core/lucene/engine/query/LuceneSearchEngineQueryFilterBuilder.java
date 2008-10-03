@@ -16,13 +16,13 @@
 
 package org.compass.core.lucene.engine.query;
 
-import org.apache.lucene.search.QueryFilter;
+import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.RangeFilter;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.engine.SearchEngineQueryFilter;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
-import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
+import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
 
 /**
  * @author kimchy
@@ -54,7 +54,7 @@ public class LuceneSearchEngineQueryFilterBuilder implements SearchEngineQueryFi
     }
 
     public SearchEngineQueryFilter query(SearchEngineQuery query) {
-        return new LuceneSearchEngineQueryFilter(new QueryFilter(((LuceneSearchEngineQuery) query).getQuery()));
+        return new LuceneSearchEngineQueryFilter(new QueryWrapperFilter(((LuceneSearchEngineQuery) query).getQuery()));
     }
 
     public SearchEngineBooleanQueryFilterBuilder bool() {

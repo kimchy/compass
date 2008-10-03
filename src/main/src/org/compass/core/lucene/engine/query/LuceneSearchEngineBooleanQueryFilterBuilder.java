@@ -18,42 +18,42 @@ package org.compass.core.lucene.engine.query;
 
 import java.util.ArrayList;
 
-import org.compass.core.engine.SearchEngineQueryFilterBuilder;
-import org.compass.core.engine.SearchEngineQueryFilter;
-import org.compass.core.lucene.util.ChainedFilter;
-import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
 import org.apache.lucene.search.Filter;
+import org.compass.core.engine.SearchEngineQueryFilter;
+import org.compass.core.engine.SearchEngineQueryFilterBuilder;
+import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
+import org.compass.core.lucene.util.ChainedFilter;
 
 /**
  * @author kimchy
  */
 public class LuceneSearchEngineBooleanQueryFilterBuilder implements SearchEngineQueryFilterBuilder.SearchEngineBooleanQueryFilterBuilder {
 
-    private ArrayList types = new ArrayList();
+    private ArrayList<Integer> types = new ArrayList<Integer>();
 
-    private ArrayList filters = new ArrayList();
+    private ArrayList<Filter> filters = new ArrayList<Filter>();
 
     public LuceneSearchEngineBooleanQueryFilterBuilder() {
 
     }
 
     public void and(SearchEngineQueryFilter filter) {
-        types.add(ChainedFilter.ChainedFilterType.AND);
+        types.add(ChainedFilter.AND);
         filters.add(((LuceneSearchEngineQueryFilter) filter).getFilter());
     }
 
     public void or(SearchEngineQueryFilter filter) {
-        types.add(ChainedFilter.ChainedFilterType.OR);
+        types.add(ChainedFilter.OR);
         filters.add(((LuceneSearchEngineQueryFilter) filter).getFilter());
     }
 
     public void andNot(SearchEngineQueryFilter filter) {
-        types.add(ChainedFilter.ChainedFilterType.ANDNOT);
+        types.add(ChainedFilter.ANDNOT);
         filters.add(((LuceneSearchEngineQueryFilter) filter).getFilter());
     }
 
     public void xor(SearchEngineQueryFilter filter) {
-        types.add(ChainedFilter.ChainedFilterType.XOR);
+        types.add(ChainedFilter.XOR);
         filters.add(((LuceneSearchEngineQueryFilter) filter).getFilter());
     }
 
@@ -61,8 +61,11 @@ public class LuceneSearchEngineBooleanQueryFilterBuilder implements SearchEngine
         if (filters.size() == 0) {
             throw new IllegalArgumentException("Must add at least one filter");
         }
-        Filter[] filtersArr = (Filter[]) filters.toArray(new Filter[filters.size()]);
-        ChainedFilter.ChainedFilterType[] typesArr = (ChainedFilter.ChainedFilterType[]) types.toArray(new ChainedFilter.ChainedFilterType[types.size()]);
+        Filter[] filtersArr = filters.toArray(new Filter[filters.size()]);
+        int[] typesArr = new int[types.size()];
+        for (int i = 0; i < typesArr.length; i++) {
+            typesArr[i] = types.get(i);
+        }
         return new LuceneSearchEngineQueryFilter(new ChainedFilter(filtersArr, typesArr));
     }
 }
