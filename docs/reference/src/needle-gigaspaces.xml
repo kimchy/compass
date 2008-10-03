@@ -152,7 +152,7 @@ compass.engine.store.lockFactory.path=jini://*/*/mySpace?groups=kimchy
     </para>
 	</sect1>
 
-	<sect1 id="needle-gigaspaces-mirror">
+	<sect1 id="needle-gigaspaces-searchablespace">
     <title>Searchable Space (Using Embedded Service)</title>
 
     <para>
