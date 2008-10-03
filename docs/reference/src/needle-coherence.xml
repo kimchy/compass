@@ -36,7 +36,7 @@ dir.close();
 	    </para>
 	    
 	    <para>
-	        Note, it is preferable to configure the directory not to use the compound index format as it yields better performance.
+	        Note, it is preferable to configure the directory not to use the compound index format as it yields better performance (note, by default, when using Compass, the non compound format will be used). Also, the merge factor for the directory (also applies to Compass optimizers) should be set to a higher value (than the default 10) since it mainly applies to file based optimizations.
 	    </para>
 	    
 	    <para>

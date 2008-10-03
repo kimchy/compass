@@ -23,6 +23,10 @@
 	  <para>
 	    Terracotta will automatically fetch required content from the server, and will evict content if memory thresholds break for an application. When constructing large files, the directory allows to set a flush rate when the file content will be flushed (and be allowed to be evicted) during its creation. The formula is that every <literal>bufferSize * flushRate</literal> bytes, it will be released by Compass and allow terracotta to move it to the server and reclaim the memory. The default flush rate is set to 10.
 	  </para>  
+
+    <para>
+        Note, it is preferable to configure the directory not to use the compound index format as it yields better performance (note, by default, when using Compass, the non compound format will be used). Also, the merge factor for the directory (also applies to Compass optimizers) should be set to a higher value (than the default 10) since it mainly applies to file based optimizations.
+    </para>
 	  
 	</sect1>
 	
