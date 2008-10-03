@@ -373,7 +373,7 @@
       <option name="MAIN_CLASS_NAME" value="" />
       <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="package" />
-      <option name="VM_PARAMETERS" value="-Xbootclasspath/p:/Users/kimchy/opt/terracotta/2.5.2/lib/dso-boot/dso-boot-hotspot_osx_150_13.jar  -Dtc.install-root=/Users/kimchy/opt/terracotta/2.5.2  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
+      <option name="VM_PARAMETERS" value="-Xbootclasspath/p:/Users/kimchy/opt/terracotta/2.7.0/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=/Users/kimchy/opt/terracotta/2.7.0  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
       <option name="PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
@@ -756,7 +756,7 @@
     </library>
     <library name="Terracota">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/terracotta/terracotta-api-2.6-stable0-prealpha.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/terracotta/terracotta-api-2.7.0-prealpha.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

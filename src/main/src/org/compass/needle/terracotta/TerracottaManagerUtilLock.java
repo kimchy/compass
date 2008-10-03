@@ -34,7 +34,7 @@ class TerracottaManagerUtilLock extends Lock {
     }
 
     public boolean obtain() throws IOException {
-        return ManagerUtil.tryBeginLock(lockName, LockLevel.WRITE);
+        return ManagerUtil.tryBeginLock(lockName, LockLevel.CONCURRENT);
     }
 
     public void release() {
@@ -46,7 +46,7 @@ class TerracottaManagerUtilLock extends Lock {
     }
 
     public boolean isLocked() {
-        return ManagerUtil.isLocked(lockName, LockLevel.WRITE);
+        return ManagerUtil.isLocked(lockName, LockLevel.CONCURRENT);
     }
 
     public String toString() {

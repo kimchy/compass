@@ -66,6 +66,8 @@ public class TerracottaDirectoryTests extends TestCase {
 
         try {
             ManagerUtil.tryBeginLock("test", LockLevel.WRITE);
+            // TODO not working for now
+//            dir.setLockFactory(new TerracottaManagerUtilLockFactory());
         } catch (UnsupportedOperationException e) {
             dir.setLockFactory(new TerracottaLockFactory());
         } finally {
