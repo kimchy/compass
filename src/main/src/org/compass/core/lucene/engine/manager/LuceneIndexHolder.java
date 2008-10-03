@@ -40,7 +40,7 @@ public class LuceneIndexHolder {
     private String subIndex;
 
     public LuceneIndexHolder(String subIndex, Directory dir) throws IOException {
-        this.indexReader = IndexReader.open(dir);
+        this.indexReader = IndexReader.open(dir, true);
         this.indexSearcher = new IndexSearcher(indexReader);
         this.subIndex = subIndex;
     }

@@ -148,7 +148,7 @@ public class TransIndex implements CompassConfigurable {
                 indexWriter.commit();
             }
             if (indexReader == null) {
-                indexReader = IndexReader.open(directory);
+                indexReader = IndexReader.open(directory, true);
                 indexSearcher = new IndexSearcher(indexReader);
             } else {
                 IndexReader tmpReader = indexReader.reopen();

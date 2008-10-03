@@ -468,7 +468,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (analyzer == null) {
             analyzer = searchEngineFactory.getAnalyzerManager().getDefaultAnalyzer();
         }
-        IndexWriter indexWriter = new IndexWriter(dir, autoCommit, analyzer, create, deletionPolicy);
+        IndexWriter indexWriter = new IndexWriter(dir, analyzer, create, deletionPolicy, new IndexWriter.MaxFieldLength(luceneSettings.getMaxFieldLength()));
 
         indexWriter.setMergePolicy(MergePolicyFactory.createMergePolicy(settings));
         indexWriter.setMergeScheduler(MergeSchedulerFactory.create(this, settings));
