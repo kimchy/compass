@@ -189,6 +189,16 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("mmap://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
     }
 
+    public void testNIOFSConnectionSchema() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/schema/niofs-connection.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+
+        assertEquals("default", settings.getSetting(CompassEnvironment.NAME));
+        assertEquals("niofs://target/test-index", settings.getSetting(CompassEnvironment.CONNECTION));
+    }
+
     public void testPropertiesSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/schema/properties.cfg.xml");

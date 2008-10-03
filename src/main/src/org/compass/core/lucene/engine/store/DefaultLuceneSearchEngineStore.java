@@ -110,6 +110,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
             directoryStore = new FSDirectoryStore();
         } else if (connection.startsWith(MMapDirectoryStore.PROTOCOL)) {
             directoryStore = new MMapDirectoryStore();
+        } else if (connection.startsWith(NIOFSDirectoryStore.PROTOCOL)) {
+            directoryStore = new NIOFSDirectoryStore();
         } else if (connection.startsWith(JdbcDirectoryStore.PROTOCOL)) {
             directoryStore = new JdbcDirectoryStore();
         } else if (connection.indexOf("://") > -1) {

@@ -1286,6 +1286,7 @@
             <xsd:choice>
                 <xsd:element name="file" type="fileConnType"/>
                 <xsd:element name="mmap" type="mmapConnType"/>
+                <xsd:element name="niofs" type="niofsConnType"/>
                 <xsd:element name="ram" type="ramConnType"/>
                 <xsd:element name="jdbc" type="jdbcConnType"/>
                 <xsd:element name="space" type="spaceConnType"/>
@@ -1367,7 +1368,7 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="bucketSize" type="xsd:string" use="optional">
+        <xsd:attribute name="bucketSize" type="xsd:positiveInteger" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The bucket size of the index.
@@ -1377,7 +1378,7 @@
         <xsd:attribute name="flushRate" type="xsd:positiveInteger" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    The flush rate when writing buckets.
+                    The flush rate when writing buckets to the space.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
@@ -1436,6 +1437,13 @@
                 A Terracota based index.
             </xsd:documentation>
         </xsd:annotation>
+        <xsd:attribute name="indexName" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The index name.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
         <xsd:attribute name="bufferSize" type="xsd:positiveInteger" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
@@ -1456,6 +1464,20 @@
             <xsd:documentation>
                 A file system based index using NIO MMAp Class. Considered slower than the general file system one, but
                 might have memory benefits (according to the Lucene documentation).
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="path" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The path to the index directory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    <xsd:complexType name="niofsConnType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A file system based index using NIOFS Class.
             </xsd:documentation>
         </xsd:annotation>
         <xsd:attribute name="path" type="xsd:string" use="required">

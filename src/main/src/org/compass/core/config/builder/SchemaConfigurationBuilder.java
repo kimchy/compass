@@ -454,6 +454,16 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.CONNECTION, path);
             return;
         }
+        child = DomUtils.getChildElementsByTagName(ele, "niofs", true);
+        if (child.size() == 1) {
+            Element connEle = (Element) child.get(0);
+            String path = getElementAttribute(connEle, "path");
+            if (!path.startsWith("niofs://")) {
+                path = "niofs://" + path;
+            }
+            settings.setSetting(CompassEnvironment.CONNECTION, path);
+            return;
+        }
         // --- RAM Connection ---
         child = DomUtils.getChildElementsByTagName(ele, "ram", true);
         if (child.size() == 1) {

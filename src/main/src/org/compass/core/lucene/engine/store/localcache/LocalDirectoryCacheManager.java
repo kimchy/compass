@@ -35,6 +35,7 @@ import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.store.FSDirectoryStore;
 import org.compass.core.lucene.engine.store.MMapDirectoryStore;
+import org.compass.core.lucene.engine.store.NIOFSDirectoryStore;
 import org.compass.core.lucene.engine.store.RAMDirectoryStore;
 import org.compass.core.lucene.util.LuceneUtils;
 
@@ -91,10 +92,19 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
             localCacheDirectory = new RAMDirectory();
         } else if (connection.startsWith(FSDirectoryStore.PROTOCOL) ||
                 connection.startsWith(MMapDirectoryStore.PROTOCOL) ||
+                connection.startsWith(NIOFSDirectoryStore.PROTOCOL) ||
                 connection.indexOf("://") == -1) {
             String path;
             if (connection.indexOf("://") != -1) {
-                path = connection.substring(FSDirectoryStore.PROTOCOL.length());
+                if (connection.startsWith(FSDirectoryStore.PROTOCOL)) {
+                    path = connection.substring(FSDirectoryStore.PROTOCOL.length());
+                } else if (connection.startsWith(MMapDirectoryStore.PROTOCOL)) {
+                    path = connection.substring(MMapDirectoryStore.PROTOCOL.length());
+                } else if (connection.startsWith(NIOFSDirectoryStore.PROTOCOL)) {
+                    path = connection.substring(NIOFSDirectoryStore.PROTOCOL.length());
+                } else {
+                    throw new RuntimeException("Internal error in Compass, should not happen");
+                }
             } else {
                 path = connection;
             }
