@@ -140,6 +140,14 @@ public class LuceneProperty implements InternalProperty {
         field.setOmitNorms(omitNorms);
     }
 
+    public boolean isOmitTf() {
+        return field.getOmitTf();
+    }
+
+    public void setOmitTf(boolean omitTf) {
+        field.setOmitTf(omitTf);
+    }
+
     public String toString() {
         return "[" + field + "]";
     }

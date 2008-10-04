@@ -61,6 +61,8 @@ public interface AllMapping {
      */
     Boolean isOmitNorms();
 
+    Boolean isOmitTf();
+
     /**
      * 
      */

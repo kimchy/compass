@@ -96,4 +96,8 @@ public class FormatDelegateConverter implements DelegateConverter, ResourcePrope
     public Boolean suggestOmitNorms() {
         return delegatedConverter.suggestOmitNorms();
     }
+
+    public Boolean suggestOmitTf() {
+        return delegatedConverter.suggestOmitTf();
+    }
 }

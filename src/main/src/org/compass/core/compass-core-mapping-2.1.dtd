@@ -49,6 +49,7 @@
     <!ATTLIST json-id value-converter CDATA #IMPLIED>
     <!ATTLIST json-id format CDATA #IMPLIED>
     <!ATTLIST json-id omit-norms (true|false) "true">
+    <!ATTLIST json-id omit-tf (true|false) "true">
     <!ATTLIST json-id spell-check (include|exclude|na) "na">
 
 <!ELEMENT json-property EMPTY
@@ -60,6 +61,7 @@
     <!ATTLIST json-property index (no|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST json-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST json-property omit-norms (true|false) #IMPLIED>
+    <!ATTLIST json-property omit-tf (true|false) #IMPLIED>
     <!ATTLIST json-property reverse (no|reader|string) "no">
     <!ATTLIST json-property null-value CDATA #IMPLIED>
     <!ATTLIST json-property analyzer CDATA #IMPLIED>
@@ -116,6 +118,7 @@
     <!ATTLIST xml-id value-converter CDATA #IMPLIED>
     <!ATTLIST xml-id format CDATA #IMPLIED>
     <!ATTLIST xml-id omit-norms (true|false) "true">
+    <!ATTLIST xml-id omit-tf (true|false) "true">
     <!ATTLIST xml-id spell-check (include|exclude|na) "na">
 
 <!ELEMENT xml-property EMPTY
@@ -126,6 +129,7 @@
     <!ATTLIST xml-property index (no|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST xml-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST xml-property omit-norms (true|false) #IMPLIED>
+    <!ATTLIST xml-property omit-tf (true|false) #IMPLIED>
     <!ATTLIST xml-property reverse (no|reader|string) "no">
     <!ATTLIST xml-property null-value CDATA #IMPLIED>
     <!ATTLIST xml-property analyzer CDATA #IMPLIED>
@@ -192,6 +196,7 @@
     <!ATTLIST resource-id exclude-from-all (true|false|yes|no|no_analyzed) #IMPLIED>
     <!ATTLIST resource-id boost CDATA #IMPLIED>
     <!ATTLIST resource-id omit-norms (true|false) "true">
+    <!ATTLIST resource-id omit-tf (true|false) "true">
     <!ATTLIST resource-id spell-check (include|exclude|na) "na">
     <!ATTLIST resource-id format CDATA #IMPLIED>
 
@@ -202,6 +207,7 @@
     <!ATTLIST resource-property index (no|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST resource-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST resource-property omit-norms (true|false) #IMPLIED>
+    <!ATTLIST resource-property omit-tf (true|false) #IMPLIED>
     <!ATTLIST resource-property reverse (no|reader|string) "no">
     <!ATTLIST resource-property analyzer CDATA #IMPLIED>
     <!ATTLIST resource-property null-value CDATA #IMPLIED>
@@ -440,6 +446,7 @@
     <!ATTLIST dynamic-meta-data index (no|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST dynamic-meta-data term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST dynamic-meta-data omit-norms (true|false) #IMPLIED>
+    <!ATTLIST dynamic-meta-data omit-tf (true|false) #IMPLIED>
     <!ATTLIST dynamic-meta-data override (true|false) "true">
     <!ATTLIST dynamic-meta-data reverse (no|reader|string) "no">
     <!ATTLIST dynamic-meta-data analyzer CDATA #IMPLIED>
@@ -458,6 +465,7 @@
     <!ATTLIST meta-data index (no|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST meta-data term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST meta-data omit-norms (true|false) #IMPLIED>
+    <!ATTLIST meta-data omit-tf (true|false) #IMPLIED>
     <!ATTLIST meta-data reverse (no|reader|string) "no">
     <!ATTLIST meta-data null-value CDATA #IMPLIED>
     <!ATTLIST meta-data analyzer CDATA #IMPLIED>
@@ -482,6 +490,7 @@
     <!ATTLIST all name CDATA  #IMPLIED>
     <!ATTLIST all term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST all omit-norms (true|false) #IMPLIED>
+    <!ATTLIST all omit-tf (true|false) #IMPLIED>
     <!ATTLIST all exclude-alias (true|false) #IMPLIED>
     <!ATTLIST all spell-check (include|exclude|na) "na">
     <!ATTLIST all include-unmapped-properties (true|false) #IMPLIED>

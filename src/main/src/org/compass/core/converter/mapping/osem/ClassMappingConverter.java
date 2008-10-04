@@ -485,6 +485,7 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
         Property p = context.getResourceFactory().createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
                 Property.Index.UN_TOKENIZED);
         p.setOmitNorms(true);
+        p.setOmitTf(true);
         resource.addProperty(p);
     }
 
@@ -496,6 +497,7 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
         Property p = context.getResourceFactory().createProperty(classMapping.getEnumNamePath().getPath(), name, Property.Store.YES,
                 Property.Index.UN_TOKENIZED);
         p.setOmitNorms(true);
+        p.setOmitTf(true);
         resource.addProperty(p);
     }
 

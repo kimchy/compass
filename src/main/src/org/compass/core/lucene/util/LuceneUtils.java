@@ -119,6 +119,7 @@ public abstract class LuceneUtils {
         AllMapping allMapping = resourceMapping.getAllMapping();
         Property property = ((LuceneResourceFactory) searchEngine.getSearchEngineFactory().getResourceFactory()).createProperty(allMapping.getProperty(), allAnalyzer.createAllTokenStream(), allMapping.getTermVector());
         property.setOmitNorms(allMapping.isOmitNorms());
+        property.setOmitTf(allMapping.isOmitTf());
         resource.addProperty(property);
         return allAnalyzer;
     }

@@ -321,4 +321,16 @@ public interface Property extends Serializable {
      * This effectively disables indexing boosts and length normalization for this field.
      */
     void setOmitNorms(boolean omitNorms);
+
+    /**
+     * True if tf is omitted for this indexed field
+     */
+    boolean isOmitTf();
+
+    /**
+     * Expert:
+     *
+     * If set, omit tf from postings of this indexed field.
+     */
+    void setOmitTf(boolean omitTf);
 }

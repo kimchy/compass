@@ -40,6 +40,8 @@ public interface InternalResourcePropertyMapping extends ResourcePropertyMapping
 
     void setOmitNorms(Boolean omitNorms);
 
+    void setOmitTf(Boolean omitTf);
+
     void setBoost(float boost);
 
     void setReverse(ReverseType reverseType);

@@ -76,4 +76,8 @@ public class ResourcePropertyValueConverter extends SimpleXmlValueConverter impl
     public Boolean suggestOmitNorms() {
         return converter.suggestOmitNorms();
     }
+
+    public Boolean suggestOmitTf() {
+        return converter.suggestOmitTf();
+    }
 }

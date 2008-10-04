@@ -96,6 +96,7 @@ public abstract class MappingProcessorUtils {
         internalIdMapping.setOriginalName(classPropertyMapping.getName());
         internalIdMapping.setStore(Property.Store.YES);
         internalIdMapping.setOmitNorms(true);
+        internalIdMapping.setOmitTf(true);
         Property.Index index;
         if (mustBeUntokenized) {
             index = Property.Index.UN_TOKENIZED;
@@ -197,10 +198,18 @@ public abstract class MappingProcessorUtils {
         }
         if (intMapping.isOmitNorms() == null) {
             if (converter != null) {
-                intMapping.setOmitNorms(intMapping.isOmitNorms());
+                intMapping.setOmitNorms(converter.suggestOmitNorms());
             }
             if (intMapping.isOmitNorms() == null) {
                 intMapping.setOmitNorms(settings.getSettingAsBoolean(CompassEnvironment.Mapping.GLOBAL_OMIT_NORMS, false));
+            }
+        }
+        if (intMapping.isOmitTf() == null) {
+            if (converter != null) {
+                intMapping.setOmitTf(converter.suggestOmitTf());
+            }
+            if (intMapping.isOmitTf() == null) {
+                intMapping.setOmitTf(settings.getSettingAsBoolean(CompassEnvironment.Mapping.GLOBAL_OMIT_TF, false));
             }
         }
     }

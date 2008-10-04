@@ -64,7 +64,12 @@ public class LuceneResourceFactory implements ResourceFactory {
             throw new SearchEngineException("Unsupported Reverse type [" + mapping.getReverse() + "]");
         }
         property.setBoost(mapping.getBoost());
-        property.setOmitNorms(mapping.isOmitNorms());
+        if (mapping.isOmitNorms() != null) {
+            property.setOmitNorms(mapping.isOmitNorms());
+        }
+        if (mapping.isOmitTf() != null) {
+            property.setOmitTf(mapping.isOmitTf());
+        }
         ((LuceneProperty) property).setPropertyMapping(mapping);
         return property;
     }

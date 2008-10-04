@@ -1032,6 +1032,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
             if (sOmitNorms != null) {
                 allMapping.setOmitNorms(sOmitNorms.equalsIgnoreCase("true"));
             }
+            String sOmitTf = allConf.getAttribute("omit-tf", null);
+            if (sOmitTf != null) {
+                allMapping.setOmitTf(sOmitTf.equalsIgnoreCase("true"));
+            }
             String sExcludeAlias = allConf.getAttribute("exclude-alias", null);
             if (sExcludeAlias != null) {
                 allMapping.setExcludeAlias(sExcludeAlias.equalsIgnoreCase("true"));
@@ -1112,6 +1116,11 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String omitNorms = conf.getAttribute("omit-norms", null);
         if (omitNorms != null) {
             mapping.setOmitNorms(Boolean.valueOf(omitNorms));
+        }
+
+        String omitTf = conf.getAttribute("omit-tf", null);
+        if (omitTf != null) {
+            mapping.setOmitTf(Boolean.valueOf(omitTf));
         }
 
         String reverseType = conf.getAttribute("reverse", "no");

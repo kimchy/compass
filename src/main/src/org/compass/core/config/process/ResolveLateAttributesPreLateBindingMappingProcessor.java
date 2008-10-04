@@ -72,6 +72,9 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
                 if (resourceMapping.getAllMapping().isOmitNorms() == null) {
                     ((InternalAllMapping) resourceMapping.getAllMapping()).setOmitNorms(settings.getSettingAsBoolean(CompassEnvironment.All.OMIT_NORMS, false));
                 }
+                if (resourceMapping.getAllMapping().isOmitTf() == null) {
+                    ((InternalAllMapping) resourceMapping.getAllMapping()).setOmitTf(settings.getSettingAsBoolean(CompassEnvironment.All.OMIT_TF, false));
+                }
                 if (resourceMapping.getAllMapping().getProperty() == null) {
                     ((InternalAllMapping) resourceMapping.getAllMapping()).setProperty(settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
                 }

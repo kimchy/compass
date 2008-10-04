@@ -154,4 +154,11 @@ public abstract class AbstractDynamicConverter extends AbstractBasicConverter im
         }
         return super.suggestOmitNorms();
     }
+
+    public Boolean suggestOmitTf() {
+        if (formatConverter != null) {
+            return formatConverter.suggestOmitTf();
+        }
+        return super.suggestOmitTf();
+    }
 }

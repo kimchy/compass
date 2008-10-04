@@ -140,6 +140,12 @@ public @interface SearchableId {
     OmitNorms omitNorms() default OmitNorms.YES;
 
     /**
+     * Expert:
+     * If set, omit tf from postings of this indexed field.
+     */
+    OmitTf omitTf() default OmitTf.YES;
+
+    /**
      * The reverse of the auto generated {@link SearchableMetaData}. Maps to
      * {@link org.compass.annotations.SearchableMetaData#reverse()}.
      * <p/>

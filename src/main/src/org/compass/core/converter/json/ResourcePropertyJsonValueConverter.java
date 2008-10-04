@@ -67,4 +67,8 @@ public class ResourcePropertyJsonValueConverter extends SimpleJsonValueConverter
     public Boolean suggestOmitNorms() {
         return converter.suggestOmitNorms();
     }
+
+    public Boolean suggestOmitTf() {
+        return converter.suggestOmitTf();
+    }
 }

@@ -37,6 +37,8 @@ public class DefaultAllMapping implements InternalAllMapping {
 
     private Boolean omitNorms;
 
+    private Boolean omitTf;
+
     private SpellCheckType spellCheck;
 
     private Boolean includePropertiesWithNoMappings;
@@ -46,6 +48,7 @@ public class DefaultAllMapping implements InternalAllMapping {
         allMapping.setExcludeAlias(isExcludeAlias());
         allMapping.setIncludePropertiesWithNoMappings(isIncludePropertiesWithNoMappings());
         allMapping.setOmitNorms(isOmitNorms());
+        allMapping.setOmitTf(isOmitTf());
         allMapping.setProperty(getProperty());
         allMapping.setSupported(isSupported());
         allMapping.setTermVector(getTermVector());
@@ -91,6 +94,14 @@ public class DefaultAllMapping implements InternalAllMapping {
 
     public void setOmitNorms(Boolean omitNorms) {
         this.omitNorms = omitNorms;
+    }
+
+    public Boolean isOmitTf() {
+        return omitTf;
+    }
+
+    public void setOmitTf(Boolean omitTf) {
+        this.omitTf = omitTf;
     }
 
     public Boolean isIncludePropertiesWithNoMappings() {

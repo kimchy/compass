@@ -49,6 +49,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
                 Property p = resourceFactory.createProperty(colMapping.getColSizePath().getPath(), resourceFactory.getNullValue(),
                         Property.Store.YES, Property.Index.UN_TOKENIZED);
                 p.setOmitNorms(true);
+                p.setOmitTf(true);
                 resource.addProperty(p);
                 return true;
             } else {
@@ -62,6 +63,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
                         AbstractCollectionMapping.CollectionType.toString(getRuntimeCollectionType(root)),
                         Property.Store.YES, Property.Index.UN_TOKENIZED);
                 p.setOmitNorms(true);
+                p.setOmitTf(true);
                 resource.addProperty(p);
             }
             // for null values in entities within the collection, they must be saved
@@ -76,6 +78,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
             Property p = resourceFactory.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
                     Property.Store.YES, Property.Index.UN_TOKENIZED);
             p.setOmitNorms(true);
+            p.setOmitTf(true);
             resource.addProperty(p);
         }
 

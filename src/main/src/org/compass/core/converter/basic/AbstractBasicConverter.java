@@ -240,4 +240,11 @@ public abstract class AbstractBasicConverter implements ResourcePropertyConverte
     public Boolean suggestOmitNorms() {
         return null;
     }
+
+    /**
+     * By default for all converters simply return <code>null</code>.
+     */
+    public Boolean suggestOmitTf() {
+        return null;
+    }
 }

@@ -73,6 +73,12 @@ public @interface SearchableAllMetaData {
     OmitNorms omitNorms() default OmitNorms.NO;
 
     /**
+     * Expert:
+     * If set, omit tf from postings of this indexed field.
+     */
+    OmitTf omitTf() default OmitTf.NO;
+    
+    /**
      * Should this propety be included in the spell check index.
      *
      * <p>Note, most times this is not requried to be configured, since by default, the

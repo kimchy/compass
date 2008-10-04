@@ -619,6 +619,14 @@ public class CompassEnvironment {
         public static final String OMIT_NORMS = "compass.property.all.omitNorms";
 
         /**
+         * Should the all property omit tf. Defaults to <code>false</code>.
+         *
+         * <p>Note, this can be explicitly set on the mapping level, which will then be used
+         * instead of this global setting.
+         */
+        public static final String OMIT_TF = "compass.property.all.omitTf";
+
+        /**
          * Should the all property honor boost settings on sepecific proeprties when searching.
          * Defaults to <code>true</code>.
          *
@@ -692,6 +700,12 @@ public class CompassEnvironment {
          * that have not explicitly set it. If not set, will be <code>false</code>.
          */
         public static final String GLOBAL_OMIT_NORMS = "compass.mapping.globalOmitNorms";
+
+        /**
+         * The default value of omit tf for mappings. If set, will be used for all the mappings
+         * that have not explicitly set it. If not set, will be <code>false</code>.
+         */
+        public static final String GLOBAL_OMIT_TF = "compass.mapping.globalOmitTf";
     }
 
     public abstract class NamingStrategy {

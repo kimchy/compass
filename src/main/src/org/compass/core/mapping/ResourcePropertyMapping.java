@@ -107,7 +107,7 @@ public interface ResourcePropertyMapping extends Mapping {
     /**
      * Returns the boost level.
      *
-     * @see Property#setBoost(float)  
+     * @see Property#setBoost(float)
      */
     float getBoost();
 
@@ -117,6 +117,15 @@ public interface ResourcePropertyMapping extends Mapping {
      * @see Property#setOmitNorms(boolean)
      */
     Boolean isOmitNorms();
+
+    /**
+     * Expert:
+     *
+     * If set, omit tf from postings of this indexed field.
+     *
+     * @see Property#setOmotTf(boolean)
+     */
+    Boolean isOmitTf();
 
     ExcludeFromAllType getExcludeFromAll();
 

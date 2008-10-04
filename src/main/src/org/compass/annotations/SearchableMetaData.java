@@ -93,6 +93,12 @@ public @interface SearchableMetaData {
     OmitNorms omitNorms() default OmitNorms.NA;
 
     /**
+     * Expert:
+     * If set, omit tf from postings of this indexed field.
+     */
+    OmitTf omitTf() default OmitTf.NA;
+
+    /**
      * Specifies whether and how the meta-data proeprty should value will be revered.
      */
     Reverse reverse() default Reverse.NO;
@@ -109,7 +115,7 @@ public @interface SearchableMetaData {
      * Specifies if this meta-data should be excluded from the generated
      * "all" meta-data.
      *
-     * @see SearchableAllMetaData#enable() 
+     * @see SearchableAllMetaData#enable()
      */
     ExcludeFromAll excludeFromAll() default ExcludeFromAll.NO;
 

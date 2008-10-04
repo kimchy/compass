@@ -164,6 +164,10 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
         return false;
     }
 
+    public Boolean isOmitTf() {
+        return false;
+    }
+
     public String getRootAlias() {
         return null;
     }

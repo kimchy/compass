@@ -81,4 +81,10 @@ public interface ResourcePropertyConverter extends Converter {
      * Can return <code>null</code> and will let global Compass defaults to be used.
      */
     Boolean suggestOmitNorms();
+
+    /**
+     * The converter can suggest if tf should be saved for this type in case no explicit one is configured.
+     * Can return <code>null</code> and will let global Compass defaults to be used.
+     */
+    Boolean suggestOmitTf();
 }

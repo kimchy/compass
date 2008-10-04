@@ -45,6 +45,8 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private Boolean omitNorms = false;
 
+    private Boolean omitTf = false;
+
     private ReverseType reverse = ReverseType.NO;
 
     private String nullValue = "";
@@ -62,6 +64,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         copy.setAnalyzer(getAnalyzer());
         copy.setReverse(getReverse());
         copy.setOmitNorms(isOmitNorms());
+        copy.setOmitTf(isOmitTf());
         copy.setRootAlias(getRootAlias());
         copy.setNullValue(getNullValue());
         copy.setSpellCheck(getSpellCheck());
@@ -149,6 +152,14 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     public String getNullValue() {
         return nullValue;
+    }
+
+    public Boolean isOmitTf() {
+        return omitTf;
+    }
+
+    public void setOmitTf(Boolean omitTf) {
+        this.omitTf = omitTf;
     }
 
     public void setNullValue(String nullValue) {

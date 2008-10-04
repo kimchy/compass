@@ -155,7 +155,7 @@ public @interface SearchableProperty {
     TermVector termVector() default TermVector.NA;
 
     /**
-     * The termVector of the auto generated {@link SearchableMetaData}. Maps to
+     * The omitNorms of the auto generated {@link SearchableMetaData}. Maps to
      * {@link SearchableMetaData#omitNorms()}.
      *
      * <p>The meta-data will NOT be auto generated if the field/property have
@@ -163,6 +163,16 @@ public @interface SearchableProperty {
      * {@link #name()} is not set.
      */
     OmitNorms omitNorms() default OmitNorms.NA;
+
+    /**
+     * The omitTf of the auto generated {@link SearchableMetaData}. Maps to
+     * {@link org.compass.annotations.SearchableMetaData#omitTf()}.
+     *
+     * <p>The meta-data will NOT be auto generated if the field/property have
+     * {@link SearchableMetaData}/{@link SearchableMetaDatas} AND the
+     * {@link #name()} is not set.
+     */
+    OmitTf omitTf() default OmitTf.NA;
 
     /**
      * The reverse of the auto generated {@link SearchableMetaData}. Maps to

@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.internal;
-
-import org.compass.core.Property;
-import org.compass.core.mapping.AllMapping;
-import org.compass.core.mapping.SpellCheckType;
+package org.compass.annotations;
 
 /**
+ *
  * @author kimchy
  */
-public interface InternalAllMapping extends AllMapping {
+public enum OmitTf {
+    /**
+     * Let Copmass derive the omit tf. By default, it will be NO.
+     */
+    NA,
 
-    void setSupported(Boolean supported);
+    /**
+     * Do not omit tf.
+     */
+    NO,
 
-    void setProperty(String property);
-
-    void setOmitNorms(Boolean omitNorms);
-
-    void setOmitTf(Boolean omitTf);
-
-    void setExcludeAlias(Boolean excludeAlias);
-
-    void setTermVector(Property.TermVector termVector);
-
-    void setSpellCheck(SpellCheckType spellCheck);
-
-    void setIncludePropertiesWithNoMappings(Boolean includeUnmapped);
+    /**
+     * Omit tf.
+     */
+    YES
 }

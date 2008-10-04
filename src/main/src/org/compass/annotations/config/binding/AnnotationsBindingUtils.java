@@ -26,6 +26,7 @@ import org.compass.annotations.Index;
 import org.compass.annotations.ManagedId;
 import org.compass.annotations.ManagedIdIndex;
 import org.compass.annotations.OmitNorms;
+import org.compass.annotations.OmitTf;
 import org.compass.annotations.Reverse;
 import org.compass.annotations.Store;
 import org.compass.annotations.TermVector;
@@ -125,6 +126,17 @@ public abstract class AnnotationsBindingUtils {
             return false;
         }
         throw new IllegalArgumentException("Failed to convert omitNorms [" + omitNorms + "]");
+    }
+
+    public static Boolean convert(OmitTf omitTf) {
+        if (omitTf == OmitTf.NA) {
+            return null;
+        } else if (omitTf == OmitTf.YES) {
+            return true;
+        } else if (omitTf == OmitTf.NO) {
+            return false;
+        }
+        throw new IllegalArgumentException("Failed to convert omitTf [" + omitTf + "]");
     }
 
     public static Property.Store convert(Store store) throws IllegalArgumentException {

@@ -74,6 +74,12 @@ public @interface SearchableConstant {
      * This effectively disables indexing boosts and length normalization for this field.
      */
     OmitNorms omitNorms() default OmitNorms.NA;
+
+    /**
+     * Expert:
+     * If set, omit tf from postings of this indexed field.
+     */
+    OmitTf omitTf() default OmitTf.NA;
     
     /**
      * Specifies a specialized analyzer lookup name that will be used to analyze

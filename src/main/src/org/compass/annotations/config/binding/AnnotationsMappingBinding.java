@@ -216,6 +216,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
                 allMapping.setSpellCheck(SpellCheckType.NA);
             }
             allMapping.setOmitNorms(AnnotationsBindingUtils.convert(allMetaData.omitNorms()));
+            allMapping.setOmitTf(AnnotationsBindingUtils.convert(allMetaData.omitTf()));
         }
         classMapping.setAllMapping(allMapping);
 
@@ -683,6 +684,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
             mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableProp.index()));
             mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableProp.termVector()));
             mdMapping.setOmitNorms(AnnotationsBindingUtils.convert(searchableProp.omitNorms()));
+            mdMapping.setOmitTf(AnnotationsBindingUtils.convert(searchableProp.omitTf()));
             mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableProp.reverse()));
 
             handleFormat(mdMapping, name, searchableProp.format());
@@ -761,6 +763,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
             mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableProp.index()));
             mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableProp.termVector()));
             mdMapping.setOmitNorms(AnnotationsBindingUtils.convert(searchableProp.omitNorms()));
+            mdMapping.setOmitTf(AnnotationsBindingUtils.convert(searchableProp.omitTf()));
             mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableProp.reverse()));
 
             handleFormat(mdMapping, name, searchableProp.format());
@@ -814,6 +817,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         mdMapping.setIndex(AnnotationsBindingUtils.convert(searchableMetaData.index()));
         mdMapping.setTermVector(AnnotationsBindingUtils.convert(searchableMetaData.termVector()));
         mdMapping.setOmitNorms(AnnotationsBindingUtils.convert(searchableMetaData.omitNorms()));
+        mdMapping.setOmitTf(AnnotationsBindingUtils.convert(searchableMetaData.omitTf()));
         mdMapping.setReverse(AnnotationsBindingUtils.convert(searchableMetaData.reverse()));
 
         handleFormat(mdMapping, name, searchableMetaData.format());
@@ -880,6 +884,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         constantMapping.setIndex(AnnotationsBindingUtils.convert(searchableConstant.index()));
         constantMapping.setTermVector(AnnotationsBindingUtils.convert(searchableConstant.termVector()));
         constantMapping.setOmitNorms(AnnotationsBindingUtils.convert(searchableConstant.omitNorms()));
+        constantMapping.setOmitTf(AnnotationsBindingUtils.convert(searchableConstant.omitTf()));
         if (StringUtils.hasLength(searchableConstant.analyzer())) {
             constantMapping.setAnalyzer(searchableConstant.analyzer());
         } else {

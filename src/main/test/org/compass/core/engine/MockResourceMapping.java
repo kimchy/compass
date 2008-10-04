@@ -88,6 +88,7 @@ public class MockResourceMapping extends AbstractMultipleMapping implements Inte
         this.alias = alias;
         ((InternalAllMapping) allMapping).setExcludeAlias(false);
         ((InternalAllMapping) allMapping).setOmitNorms(false);
+        ((InternalAllMapping) allMapping).setOmitTf(false);
         ((InternalAllMapping) allMapping).setSupported(true);
         ((InternalAllMapping) allMapping).setProperty(CompassEnvironment.All.DEFAULT_NAME);
         ((InternalAllMapping) allMapping).setTermVector(Property.TermVector.NO);
