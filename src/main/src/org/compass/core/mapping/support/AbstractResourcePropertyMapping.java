@@ -33,7 +33,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private Property.Store store = Property.Store.YES;
 
-    private Property.Index index = Property.Index.TOKENIZED;
+    private Property.Index index = Property.Index.ANALYZED;
 
     private Property.TermVector termVector = Property.TermVector.NO;
 

@@ -66,7 +66,7 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
                 // if the class is defined as poly, persist the class name as well
                 String className = root.getClass().getName();
                 Property p = resourceFactory.createProperty(refMapping.getClassPath().getPath(), className, Property.Store.YES,
-                        Property.Index.UN_TOKENIZED);
+                        Property.Index.NOT_ANALYZED);
                 p.setOmitNorms(true);
                 p.setOmitTf(true);
                 resource.addProperty(p);

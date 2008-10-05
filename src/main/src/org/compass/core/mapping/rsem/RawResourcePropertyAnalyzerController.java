@@ -44,7 +44,7 @@ public class RawResourcePropertyAnalyzerController extends RawResourcePropertyMa
     }
 
     public Index getIndex() {
-        return Property.Index.UN_TOKENIZED;
+        return Property.Index.NOT_ANALYZED;
     }
 
     public Store getStore() {

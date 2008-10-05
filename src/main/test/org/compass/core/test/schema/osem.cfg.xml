@@ -8,7 +8,7 @@
             <file path="target/test-index" />
         </connection>
 
-        <osem supportUnmarshall="false" managedIdIndex="tokenized" />
+        <osem supportUnmarshall="false" managedIdIndex="not_analyzed" />
     </compass>
 
 </compass-core-config>

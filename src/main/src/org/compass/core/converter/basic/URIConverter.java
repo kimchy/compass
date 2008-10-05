@@ -38,9 +38,9 @@ public class URIConverter extends AbstractBasicConverter {
     }
 
     /**
-     * URI is {@link org.compass.core.Property.Index#UN_TOKENIZED} by default.
+     * URI is {@link org.compass.core.Property.Index#NOT_ANALYZED} by default.
      */
     public Property.Index suggestIndex() {
-        return Property.Index.UN_TOKENIZED;
+        return Property.Index.NOT_ANALYZED;
     }
 }

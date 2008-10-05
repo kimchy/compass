@@ -40,7 +40,7 @@ public class ClassIdPropertyMapping extends ClassPropertyMapping implements Reso
      * to look it up.
      */
     public Index getManagedIdIndex() {
-        return Property.Index.UN_TOKENIZED;
+        return Property.Index.NOT_ANALYZED;
     }
 
     public Mapping copy() {

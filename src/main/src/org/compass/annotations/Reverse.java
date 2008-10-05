@@ -30,7 +30,7 @@ public enum Reverse {
     /**
      * A special reader will wrap the actual string value,
      * and reverse it. More performant than the {@link #STRING}
-     * option, but means that it will always be {@link Index#TOKENIZED}
+     * option, but means that it will always be {@link Index#ANALYZED}
      * and {@link Store#NO}.
      */
     READER,

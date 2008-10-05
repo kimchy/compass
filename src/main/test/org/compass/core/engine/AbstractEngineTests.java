@@ -182,11 +182,11 @@ public abstract class AbstractEngineTests extends TestCase {
         ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
         Resource singleId = resourceFactory.createResource(ALIAS_SINGLE);
         singleId.addProperty(resourceFactory.createProperty(PROPERTY_ID1, VALUE_ID1, Property.Store.YES,
-                Property.Index.UN_TOKENIZED));
+                Property.Index.NOT_ANALYZED));
         singleId.addProperty(resourceFactory.createProperty(PROPERTY_VAL1, VALUE_VAL1, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         singleId.addProperty(resourceFactory.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         ((InternalResource) singleId).addUID();
         return singleId;
     }
@@ -195,11 +195,11 @@ public abstract class AbstractEngineTests extends TestCase {
         ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
         Resource singleId = resourceFactory.createResource(ALIAS_SINGLE);
         singleId.addProperty(resourceFactory.createProperty(PROPERTY_ID1, VALUE_ID1_2, Property.Store.YES,
-                Property.Index.UN_TOKENIZED));
+                Property.Index.NOT_ANALYZED));
         singleId.addProperty(resourceFactory.createProperty(PROPERTY_VAL1, VALUE_VAL1, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         singleId.addProperty(resourceFactory.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         ((InternalResource) singleId).addUID();
         return singleId;
     }
@@ -208,15 +208,15 @@ public abstract class AbstractEngineTests extends TestCase {
         ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
         Resource multiId = resourceFactory.createResource(ALIAS_MUTLI);
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_ID2, VALUE_ID2, Property.Store.YES,
-                Property.Index.UN_TOKENIZED));
+                Property.Index.NOT_ANALYZED));
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_ID3, VALUE_ID3, Property.Store.YES,
-                Property.Index.UN_TOKENIZED));
+                Property.Index.NOT_ANALYZED));
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL2, VALUE_VAL2, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL3, VALUE_VAL3, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         ((InternalResource) multiId).addUID();
         return multiId;
     }
@@ -225,15 +225,15 @@ public abstract class AbstractEngineTests extends TestCase {
         ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
         Resource multiId = resourceFactory.createResource(ALIAS_MUTLI);
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_ID2, VALUE_ID2_2, Property.Store.YES,
-                Property.Index.UN_TOKENIZED));
+                Property.Index.NOT_ANALYZED));
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_ID3, VALUE_ID3_2, Property.Store.YES,
-                Property.Index.UN_TOKENIZED));
+                Property.Index.NOT_ANALYZED));
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL2, VALUE_VAL2, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL3, VALUE_VAL3, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         multiId.addProperty(resourceFactory.createProperty(PROPERTY_VAL4, VALUE_VAL4, Property.Store.YES,
-                Property.Index.TOKENIZED));
+                Property.Index.ANALYZED));
         ((InternalResource) multiId).addUID();
         return multiId;
     }

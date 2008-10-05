@@ -47,7 +47,7 @@ public class XmlBoostPropertyMapping extends XmlPropertyMapping implements Boost
     }
 
     public Property.Index getIndex() {
-        return Property.Index.UN_TOKENIZED;
+        return Property.Index.NOT_ANALYZED;
     }
 
     public Property.Store getStore() {

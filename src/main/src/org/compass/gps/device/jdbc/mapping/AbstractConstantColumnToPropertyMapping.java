@@ -47,7 +47,7 @@ public abstract class AbstractConstantColumnToPropertyMapping extends AbstractCo
     }
 
     public Index getPropertyIndex() {
-        return Property.Index.UN_TOKENIZED;
+        return Property.Index.NOT_ANALYZED;
     }
 
     public Store getPropertyStore() {

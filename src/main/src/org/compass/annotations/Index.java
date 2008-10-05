@@ -39,12 +39,22 @@ public enum Index {
      * tokenize and possibly further normalize the text before its terms will be stored
      * in the index. This is useful for common text.
      */
+    ANALYZED,
+
+    /**
+     * @deprecated use {@link #ANALYZED} instead.
+     */
     TOKENIZED,
 
     /**
      * Index the property's value without using an Analyzer, so it can be searched.
      * As no analyzer is used the value will be stored as a single term. This is
      * useful for unique Ids like product numbers.
+     */
+    NOT_ANALYZED,
+
+    /**
+     * @deprecated use {@link #NOT_ANALYZED}
      */
     UN_TOKENIZED
 }

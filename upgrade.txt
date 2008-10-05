@@ -5,6 +5,8 @@ VERSION 2.1.0 RC
 ================
 
 1. Upgraded to Lucene 2.4 RC2. Make sure to update the Lucene jars.
+2. TOKENIZED deprecated and renamed to ANALYZED. UN_TOKENIZED deprecated and renamed to NOT_ANALYZED. This applies to
+   mapping definitions (annotation or xml) and programmatic ones. This follows Lucene changes to the same values.
 
 
 VERSION 2.1.0 M4 (23 September, 2008)

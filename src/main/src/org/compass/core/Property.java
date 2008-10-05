@@ -112,20 +112,34 @@ public interface Property extends Serializable {
         public static final Index NO = new Index("NO");
 
         /**
+         * @deprecated renamed to {@link #ANALYZED}.
+         */
+        public static final Index TOKENIZED = new Index("TOKENIZED");
+
+        /**
          * Index the property's value so it can be searched. An Analyzer will be used to tokenize and possibly further
          * normalize the text before its terms will be stored in the index. This is useful for common text.
          */
-        public static final Index TOKENIZED = new Index("TOKENIZED");
+        public static final Index ANALYZED = new Index("ANALYZED");
+
+        /**
+         * @deprecated renamed to {@link #NOT_ANALYZED}
+         */
+        public static final Index UN_TOKENIZED = new Index("UN_TOKENIZED");
 
         /**
          * Index the property's value without using an Analyzer, so it can be searched. As no analyzer is used the value
          * will be stored as a single term. This is useful for unique Ids like product numbers.
          */
-        public static final Index UN_TOKENIZED = new Index("UN_TOKENIZED");
+        public static final Index NOT_ANALYZED = new Index("NOT_ANALYZED");
 
         public static String toString(Property.Index propertyIndex) {
             if (propertyIndex == Property.Index.NO) {
                 return "no";
+            } else if (propertyIndex == Property.Index.ANALYZED) {
+                return "analyzed";
+            } else if (propertyIndex == Property.Index.NOT_ANALYZED) {
+                return "not_analyzed";
             } else if (propertyIndex == Property.Index.TOKENIZED) {
                 return "tokenized";
             } else if (propertyIndex == Property.Index.UN_TOKENIZED) {
@@ -140,6 +154,10 @@ public interface Property extends Serializable {
             }
             if ("no".equalsIgnoreCase(propertyIndex)) {
                 return Property.Index.NO;
+            } else if ("analyzed".equalsIgnoreCase(propertyIndex)) {
+                return Property.Index.ANALYZED;
+            } else if ("not_analyzed".equalsIgnoreCase(propertyIndex)) {
+                return Property.Index.NOT_ANALYZED;
             } else if ("tokenized".equalsIgnoreCase(propertyIndex)) {
                 return Property.Index.TOKENIZED;
             } else if ("un_tokenized".equalsIgnoreCase(propertyIndex)) {

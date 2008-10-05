@@ -95,9 +95,9 @@ public class ResourceTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         Resource r = getResourceFactory().createResource("a");
-        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.NOT_ANALYZED);
         r.addProperty(id);
-        r.addProperty(getCompass().getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getCompass().getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.ANALYZED));
 
         session.save(r);
 
@@ -124,7 +124,7 @@ public class ResourceTests extends AbstractTestCase {
         assertEquals(1, session.queryBuilder().matchAll().count());
         r = getResourceFactory().createResource("a");
         r.addProperty("id", 1);
-        r.addProperty(getResourceFactory().createProperty("mvalue", "updatetests", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getResourceFactory().createProperty("mvalue", "updatetests", Property.Store.YES, Property.Index.ANALYZED));
         session.save(r);
         assertEquals(1, session.queryBuilder().matchAll().count());
         hits = session.find("updatetests");
@@ -143,9 +143,9 @@ public class ResourceTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         Resource r = getResourceFactory().createResource("a");
-        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.NOT_ANALYZED);
         r.addProperty(id);
-        r.addProperty(getCompass().getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getCompass().getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.ANALYZED));
 
         session.save(r);
 
@@ -165,11 +165,11 @@ public class ResourceTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         Resource r = getResourceFactory().createResource("b");
-        Property id1 = getResourceFactory().createProperty("id1", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
-        Property id2 = getResourceFactory().createProperty("id2", "2", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        Property id1 = getResourceFactory().createProperty("id1", "1", Property.Store.YES, Property.Index.NOT_ANALYZED);
+        Property id2 = getResourceFactory().createProperty("id2", "2", Property.Store.YES, Property.Index.NOT_ANALYZED);
         r.addProperty(id1);
         r.addProperty(id2);
-        r.addProperty(getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.ANALYZED));
 
         session.save(r);
 
@@ -323,8 +323,8 @@ public class ResourceTests extends AbstractTestCase {
 
         Resource r = getResourceFactory().createResource("a");
         r.addProperty("id", "1");
-        r.addProperty(getResourceFactory().createProperty("value1", "test1", Property.Store.YES, Property.Index.TOKENIZED));
-        r.addProperty(getResourceFactory().createProperty("value2", "test2", Property.Store.YES, Property.Index.UN_TOKENIZED));
+        r.addProperty(getResourceFactory().createProperty("value1", "test1", Property.Store.YES, Property.Index.ANALYZED));
+        r.addProperty(getResourceFactory().createProperty("value2", "test2", Property.Store.YES, Property.Index.NOT_ANALYZED));
         session.save(r);
 
         CompassHits hits = session.find("test1");

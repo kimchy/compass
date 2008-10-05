@@ -77,7 +77,7 @@ public class ConverterTests extends AbstractAnnotationsTestCase {
         CompassHits hits = session.queryBuilder().between("B.value", 1000.0, 2000.0, true).hits();
         assertEquals(2, hits.length());
 
-        assertEquals(Property.Index.UN_TOKENIZED,
+        assertEquals(Property.Index.NOT_ANALYZED,
                 getCompass().getMapping().getResourcePropertyLookup("B.value.value").getResourcePropertyMapping().getIndex());
 
         tr.commit();

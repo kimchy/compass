@@ -34,6 +34,6 @@ public class B {
         this.value = value;
     }
 
-    @SearchableProperty(name = "bValue", managedIdIndex = ManagedIdIndex.UN_TOKENIZED)
+    @SearchableProperty(name = "bValue", managedIdIndex = ManagedIdIndex.NOT_ANALYZED)
     String value;
 }

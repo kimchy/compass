@@ -135,7 +135,7 @@ public class SchemaSimpleTests extends TestCase {
         CompassSettings settings = conf.getSettings();
 
         assertEquals("false", settings.getSetting(CompassEnvironment.Osem.SUPPORT_UNMARSHALL));
-        assertEquals("tokenized", settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX));
+        assertEquals("not_analyzed", settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX));
     }
 
     public void testLocking() throws Exception {

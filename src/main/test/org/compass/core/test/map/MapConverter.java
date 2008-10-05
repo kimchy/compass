@@ -92,11 +92,11 @@ public class MapConverter implements Converter, CompassConfigurable {
             // save keys (under an internal name)
             String keyPath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "keys").getPath();
             Property p = resourceFactory.createProperty(keyPath, keys.toString(),
-                    Property.Store.YES, Property.Index.UN_TOKENIZED);
+                    Property.Store.YES, Property.Index.NOT_ANALYZED);
             resource.addProperty(p);
             // save values (under an internal name)
             String valuePath = propertyNamingStrategy.buildPath(resourcePropertyMapping.getPath(), "values").getPath();
-            p = resourceFactory.createProperty(valuePath, values.toString(), Property.Store.YES, Property.Index.UN_TOKENIZED);
+            p = resourceFactory.createProperty(valuePath, values.toString(), Property.Store.YES, Property.Index.NOT_ANALYZED);
             resource.addProperty(p);
         }
 

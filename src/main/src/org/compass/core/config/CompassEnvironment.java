@@ -683,9 +683,9 @@ public class CompassEnvironment {
 
         /**
          * The default value of index for mappings. If set, will be used for all the mappings
-         * that have not explicitly set it. If not set, will be {@link org.compass.core.Property.Index#TOKENIZED}
+         * that have not explicitly set it. If not set, will be {@link org.compass.core.Property.Index#ANALYZED}
          * for most properties unless the converer suggested otherwise (such as
-         * {@link org.compass.core.Property.Index#UN_TOKENIZED} for numbers.
+         * {@link org.compass.core.Property.Index#NOT_ANALYZED} for numbers.
          */
         public static final String GLOBAL_INDEX = "comapss.mapping.globalIndex";
 

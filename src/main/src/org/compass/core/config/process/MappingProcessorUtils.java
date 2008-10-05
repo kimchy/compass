@@ -89,7 +89,7 @@ public abstract class MappingProcessorUtils {
     }
 
     public static void addInternalId(CompassSettings settings, ConverterLookup converterLookup,
-                                     ClassPropertyMapping classPropertyMapping, boolean mustBeUntokenized) throws MappingException {
+                                     ClassPropertyMapping classPropertyMapping, boolean mustBeNotAnalyzed) throws MappingException {
         ClassPropertyMetaDataMapping internalIdMapping = new ClassPropertyMetaDataMapping();
         internalIdMapping.setInternal(true);
         internalIdMapping.setName(classPropertyMapping.getName());
@@ -98,12 +98,12 @@ public abstract class MappingProcessorUtils {
         internalIdMapping.setOmitNorms(true);
         internalIdMapping.setOmitTf(true);
         Property.Index index;
-        if (mustBeUntokenized) {
-            index = Property.Index.UN_TOKENIZED;
+        if (mustBeNotAnalyzed) {
+            index = Property.Index.NOT_ANALYZED;
         } else {
             index = classPropertyMapping.getManagedIdIndex();
             if (index == null) {
-                String indexSetting = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, "tokenized");
+                String indexSetting = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_INDEX, "analyzed");
                 index = Property.Index.fromString(indexSetting);
             }
         }
@@ -177,7 +177,7 @@ public abstract class MappingProcessorUtils {
                 intMapping.setIndex(converter.suggestIndex());
             }
             if (intMapping.getIndex() == null) {
-                intMapping.setIndex(Property.Index.fromString(settings.getSetting(CompassEnvironment.Mapping.GLOBAL_INDEX, Property.Index.TOKENIZED.toString())));
+                intMapping.setIndex(Property.Index.fromString(settings.getSetting(CompassEnvironment.Mapping.GLOBAL_INDEX, Property.Index.ANALYZED.toString())));
             }
         }
         if (intMapping.getStore() == null) {

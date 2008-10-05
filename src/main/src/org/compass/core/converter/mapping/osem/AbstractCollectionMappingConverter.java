@@ -47,7 +47,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         if (root == null) {
             if (context.handleNulls() && rootClassMapping.isSupportUnmarshall()) {
                 Property p = resourceFactory.createProperty(colMapping.getColSizePath().getPath(), resourceFactory.getNullValue(),
-                        Property.Store.YES, Property.Index.UN_TOKENIZED);
+                        Property.Store.YES, Property.Index.NOT_ANALYZED);
                 p.setOmitNorms(true);
                 p.setOmitTf(true);
                 resource.addProperty(p);
@@ -61,7 +61,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
             if (colMapping.getCollectionType() == AbstractCollectionMapping.CollectionType.UNKNOWN) {
                 Property p = resourceFactory.createProperty(colMapping.getCollectionTypePath().getPath(),
                         AbstractCollectionMapping.CollectionType.toString(getRuntimeCollectionType(root)),
-                        Property.Store.YES, Property.Index.UN_TOKENIZED);
+                        Property.Store.YES, Property.Index.NOT_ANALYZED);
                 p.setOmitNorms(true);
                 p.setOmitTf(true);
                 resource.addProperty(p);
@@ -76,7 +76,7 @@ public abstract class AbstractCollectionMappingConverter implements Converter {
         if (rootClassMapping.isSupportUnmarshall()) {
             context.removeHandleNulls(colMapping.getPath());
             Property p = resourceFactory.createProperty(colMapping.getColSizePath().getPath(), Integer.toString(size),
-                    Property.Store.YES, Property.Index.UN_TOKENIZED);
+                    Property.Store.YES, Property.Index.NOT_ANALYZED);
             p.setOmitNorms(true);
             p.setOmitTf(true);
             resource.addProperty(p);

@@ -38,6 +38,6 @@ public class LocaleConverter extends AbstractBasicConverter {
 
     protected Property createProperty(String value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         return context.getResourceFactory().createProperty(value, resourcePropertyMapping,
-                resourcePropertyMapping.getStore(), Property.Index.UN_TOKENIZED);
+                resourcePropertyMapping.getStore(), Property.Index.NOT_ANALYZED);
     }
 }

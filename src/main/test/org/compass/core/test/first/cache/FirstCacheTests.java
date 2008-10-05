@@ -45,9 +45,9 @@ public class FirstCacheTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         Resource r = getResourceFactory().createResource("r");
-        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.UN_TOKENIZED);
+        Property id = getResourceFactory().createProperty("id", "1", Property.Store.YES, Property.Index.NOT_ANALYZED);
         r.addProperty(id);
-        r.addProperty(getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.TOKENIZED));
+        r.addProperty(getResourceFactory().createProperty("mvalue", "this is a test", Property.Store.YES, Property.Index.ANALYZED));
 
         session.save(r);
 

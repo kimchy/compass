@@ -117,9 +117,9 @@ public abstract class AbstractFormatConverter extends AbstractBasicConverter imp
     }
 
     /**
-     * Formattable types should usually be {@link org.compass.core.Property.Index#UN_TOKENIZED}.
+     * Formattable types should usually be {@link org.compass.core.Property.Index#NOT_ANALYZED}.
      */
     public Property.Index suggestIndex() {
-        return Property.Index.UN_TOKENIZED;
+        return Property.Index.NOT_ANALYZED;
     }
 }

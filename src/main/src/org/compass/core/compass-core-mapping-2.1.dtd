@@ -58,7 +58,7 @@
     <!ATTLIST json-property index-name CDATA #IMPLIED>
     <!ATTLIST json-property naming-type (plain|full) #IMPLIED>
     <!ATTLIST json-property store (no|yes|compress) #IMPLIED>
-    <!ATTLIST json-property index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST json-property index (no|analyzed|not_analyzed|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST json-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST json-property omit-norms (true|false) #IMPLIED>
     <!ATTLIST json-property omit-tf (true|false) #IMPLIED>
@@ -126,7 +126,7 @@
     <!ATTLIST xml-property xpath CDATA #REQUIRED>
     <!ATTLIST xml-property name CDATA #IMPLIED>
     <!ATTLIST xml-property store (no|yes|compress) #IMPLIED>
-    <!ATTLIST xml-property index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST xml-property index (no|analyzed|not_analyzed|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST xml-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST xml-property omit-norms (true|false) #IMPLIED>
     <!ATTLIST xml-property omit-tf (true|false) #IMPLIED>
@@ -204,7 +204,7 @@
 >
     <!ATTLIST resource-property name CDATA #REQUIRED>
     <!ATTLIST resource-property store (no|yes|compress) #IMPLIED>
-    <!ATTLIST resource-property index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST resource-property index (no|analyzed|not_analyzed|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST resource-property term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST resource-property omit-norms (true|false) #IMPLIED>
     <!ATTLIST resource-property omit-tf (true|false) #IMPLIED>
@@ -361,7 +361,7 @@
     <!ATTLIST property override (true|false) "true">
     <!ATTLIST property accessor CDATA #IMPLIED>
     <!ATTLIST property managed-id (auto|true|false|no|no_store) #IMPLIED>
-    <!ATTLIST property managed-id-index (no|un_tokenized) #IMPLIED>
+    <!ATTLIST property managed-id-index (no|not_analyzed|un_tokenized) #IMPLIED>
     <!ATTLIST property managed-id-converter CDATA #IMPLIED>
     <!ATTLIST property exclude-from-all (true|false|yes|no|no_analyzed) "false">
     <!ATTLIST property converter CDATA #IMPLIED>
@@ -443,7 +443,7 @@
 )>
     <!ATTLIST dynamic-meta-data name CDATA #REQUIRED>
     <!ATTLIST dynamic-meta-data store (no|yes|compress) #IMPLIED>
-    <!ATTLIST dynamic-meta-data index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST dynamic-meta-data index (no|analyzed|not_analyzed|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST dynamic-meta-data term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST dynamic-meta-data omit-norms (true|false) #IMPLIED>
     <!ATTLIST dynamic-meta-data omit-tf (true|false) #IMPLIED>
@@ -462,7 +462,7 @@
     #PCDATA
 )>
     <!ATTLIST meta-data store (no|yes|compress) #IMPLIED>
-    <!ATTLIST meta-data index (no|tokenized|un_tokenized) #IMPLIED>
+    <!ATTLIST meta-data index (no|analyzed|not_analyzed|tokenized|un_tokenized) #IMPLIED>
     <!ATTLIST meta-data term-vector (no|yes|positions|offsets|positions_offsets) #IMPLIED>
     <!ATTLIST meta-data omit-norms (true|false) #IMPLIED>
     <!ATTLIST meta-data omit-tf (true|false) #IMPLIED>

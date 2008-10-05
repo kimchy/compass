@@ -27,5 +27,10 @@ public enum ManagedIdIndex {
      * As no analyzer is used the value will be stored as a single term. This is
      * useful for unique Ids like product numbers.
      */
+    NOT_ANALYZED,
+
+    /**
+     * @deprecated use {@link #NOT_ANALYZED} instead.
+     */
     UN_TOKENIZED
 }

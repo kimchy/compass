@@ -169,7 +169,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         }
     }
 
-    private void autoAddIfRequiredInternalId(HashMap<String, Integer> propertyMappingsMap, ClassPropertyMapping classPropertyMapping, boolean mustBeUnTokenized) {
+    private void autoAddIfRequiredInternalId(HashMap<String, Integer> propertyMappingsMap, ClassPropertyMapping classPropertyMapping, boolean mustBeNotAnalyzed) {
         boolean foundPropertyId = false;
         for (int i = 0; i < classPropertyMapping.mappingsSize(); i++) {
             ClassPropertyMetaDataMapping pMapping = (ClassPropertyMetaDataMapping) classPropertyMapping.getMapping(i);
@@ -185,7 +185,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
             // if there is only one mapping, and it is stored, use it as the id
             if (propertyMappingsMap.get(pMapping.getName()) == 1
                     && (pMapping.getStore() == Property.Store.YES || pMapping.getStore() == Property.Store.COMPRESS)) {
-                if (mustBeUnTokenized && pMapping.getIndex() != Property.Index.UN_TOKENIZED) {
+                if (mustBeNotAnalyzed && pMapping.getIndex() != Property.Index.UN_TOKENIZED && pMapping.getIndex() != Property.Index.NOT_ANALYZED) {
                     continue;
                 }
                 classPropertyMapping.setIdPropertyIndex(i);
@@ -195,7 +195,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
         }
 
         if (!foundPropertyId) {
-            MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping, mustBeUnTokenized);
+            MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping, mustBeNotAnalyzed);
         }
     }
 

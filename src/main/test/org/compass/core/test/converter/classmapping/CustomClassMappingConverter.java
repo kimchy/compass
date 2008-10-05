@@ -30,7 +30,7 @@ public class CustomClassMappingConverter extends ClassMappingConverter {
 
     protected boolean doMarshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
         boolean retVal = super.doMarshall(resource, root, mapping, context);
-        resource.addProperty(context.getResourceFactory().createProperty("specialprop", "test", Property.Store.YES, Property.Index.TOKENIZED));
+        resource.addProperty(context.getResourceFactory().createProperty("specialprop", "test", Property.Store.YES, Property.Index.ANALYZED));
         return retVal;
     }
 }

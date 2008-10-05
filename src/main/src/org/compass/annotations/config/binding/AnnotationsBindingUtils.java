@@ -157,6 +157,10 @@ public abstract class AnnotationsBindingUtils {
             return null;
         } else if (index == Index.NO) {
             return Property.Index.NO;
+        } else if (index == Index.ANALYZED) {
+            return Property.Index.ANALYZED;
+        } else if (index == Index.NOT_ANALYZED) {
+            return Property.Index.NOT_ANALYZED;
         } else if (index == Index.TOKENIZED) {
             return Property.Index.TOKENIZED;
         } else if (index == Index.UN_TOKENIZED) {
@@ -170,6 +174,8 @@ public abstract class AnnotationsBindingUtils {
             return null;
         } else if (index == ManagedIdIndex.NO) {
             return Property.Index.NO;
+        } else if (index == ManagedIdIndex.NOT_ANALYZED) {
+            return Property.Index.NOT_ANALYZED;
         } else if (index == ManagedIdIndex.UN_TOKENIZED) {
             return Property.Index.UN_TOKENIZED;
         }

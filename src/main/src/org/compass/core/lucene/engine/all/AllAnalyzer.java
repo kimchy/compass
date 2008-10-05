@@ -138,7 +138,7 @@ public class AllAnalyzer extends Analyzer {
             if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.YES) {
                 continue;
             }
-            if (resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED) {
+            if (resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED || resourcePropertyMapping.getIndex() == Property.Index.NOT_ANALYZED) {
                 Payload payload = null;
                 if (boostSupport) {
                     if (resourcePropertyMapping.getBoost() != 1.0f) {

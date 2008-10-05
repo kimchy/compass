@@ -14,10 +14,10 @@ public class A {
     @SearchableId
     int id;
 
-    @SearchableProperty(index = Index.UN_TOKENIZED)
+    @SearchableProperty(index = Index.NOT_ANALYZED)
     String untokenized;
 
-    @SearchableProperty(index = Index.TOKENIZED)
+    @SearchableProperty(index = Index.ANALYZED)
     String tokenized;
 
     @SearchableProperty(index = Index.NO)

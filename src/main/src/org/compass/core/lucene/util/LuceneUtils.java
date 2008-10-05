@@ -107,7 +107,7 @@ public abstract class LuceneUtils {
         resource.removeProperties(extendedAliasProperty);
         for (int i = 0; i < resourceMapping.getExtendedAliases().length; i++) {
             LuceneProperty extendedAliasProp = (LuceneProperty) searchEngineFactory.getResourceFactory().createProperty(extendedAliasProperty,
-                    resourceMapping.getExtendedAliases()[i], Property.Store.NO, Property.Index.UN_TOKENIZED);
+                    resourceMapping.getExtendedAliases()[i], Property.Store.NO, Property.Index.NOT_ANALYZED);
             extendedAliasProp.getField().setOmitNorms(true);
             resource.addProperty(extendedAliasProp);
         }
@@ -142,6 +142,14 @@ public abstract class LuceneUtils {
     }
 
     public static Field.Index getFieldIndex(Property.Index index) throws SearchEngineException {
+        if (index == Property.Index.ANALYZED) {
+            return Field.Index.ANALYZED;
+        }
+
+        if (index == Property.Index.NOT_ANALYZED) {
+            return Field.Index.NOT_ANALYZED;
+        }
+
         if (index == Property.Index.TOKENIZED) {
             return Field.Index.TOKENIZED;
         }

@@ -170,7 +170,7 @@ public class Hibernate3ScrollableResultsRowMarshallHelper {
                 if (value == null) {
                     continue;
                 }
-                Property p = ((InternalCompassSession) session).getCompass().getResourceFactory().createProperty(columnName, value, Property.Store.YES, Property.Index.TOKENIZED);
+                Property p = ((InternalCompassSession) session).getCompass().getResourceFactory().createProperty(columnName, value, Property.Store.YES, Property.Index.ANALYZED);
                 resource.addProperty(p);
             }
         }

@@ -483,7 +483,7 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
     protected void storePolyClass(Resource resource, Object root, ClassMapping classMapping, MarshallingContext context) {
         String className = getPolyClassName(root);
         Property p = context.getResourceFactory().createProperty(classMapping.getClassPath().getPath(), className, Property.Store.YES,
-                Property.Index.UN_TOKENIZED);
+                Property.Index.NOT_ANALYZED);
         p.setOmitNorms(true);
         p.setOmitTf(true);
         resource.addProperty(p);
@@ -495,7 +495,7 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
     protected void storeEnumName(Resource resource, Object root, ClassMapping classMapping, MarshallingContext context) {
         String name = ((Enum) root).name();
         Property p = context.getResourceFactory().createProperty(classMapping.getEnumNamePath().getPath(), name, Property.Store.YES,
-                Property.Index.UN_TOKENIZED);
+                Property.Index.NOT_ANALYZED);
         p.setOmitNorms(true);
         p.setOmitTf(true);
         resource.addProperty(p);

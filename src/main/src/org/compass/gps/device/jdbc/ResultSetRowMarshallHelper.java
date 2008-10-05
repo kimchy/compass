@@ -173,7 +173,7 @@ public class ResultSetRowMarshallHelper {
                 if (value == null) {
                     continue;
                 }
-                Property p = session.getCompass().getResourceFactory().createProperty(columnName, value, Property.Store.YES, Property.Index.TOKENIZED);
+                Property p = session.getCompass().getResourceFactory().createProperty(columnName, value, Property.Store.YES, Property.Index.ANALYZED);
                 resource.addProperty(p);
             }
         }

@@ -35,7 +35,7 @@ public class JsonIdMapping extends JsonPropertyMapping implements ResourceIdMapp
     }
 
     public Property.Index getIndex() {
-        return Property.Index.UN_TOKENIZED;
+        return Property.Index.NOT_ANALYZED;
     }
 
     public Property.Store getStore() {

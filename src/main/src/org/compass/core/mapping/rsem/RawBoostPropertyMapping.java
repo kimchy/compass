@@ -48,7 +48,7 @@ public class RawBoostPropertyMapping extends RawResourcePropertyMapping implemen
     }
 
     public Index getIndex() {
-        return Index.UN_TOKENIZED;
+        return Index.NOT_ANALYZED;
     }
 
     public Store getStore() {

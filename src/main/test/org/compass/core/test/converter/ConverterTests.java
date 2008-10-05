@@ -116,7 +116,7 @@ public class ConverterTests extends AbstractTestCase {
         o = (A) session.load("a3", 1);
         assertEquals(1, o.getIntVal());
 
-        assertEquals(Property.Index.UN_TOKENIZED, getCompass().getMapping().getResourcePropertyLookup("a3.intVal.intVal").getResourcePropertyMapping().getIndex());
+        assertEquals(Property.Index.NOT_ANALYZED, getCompass().getMapping().getResourcePropertyLookup("a3.intVal.intVal").getResourcePropertyMapping().getIndex());
 
         tr.commit();
         session.close();

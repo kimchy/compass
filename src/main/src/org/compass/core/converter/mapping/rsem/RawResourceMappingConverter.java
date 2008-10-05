@@ -66,7 +66,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
             } else {
                 for (int i = 0; i < ids.length; i++) {
                     idResource.addProperty(resourceFactory.createProperty(ids[i].getPath().getPath(), Array.get(id, i).toString(),
-                            Property.Store.YES, Property.Index.UN_TOKENIZED));
+                            Property.Store.YES, Property.Index.NOT_ANALYZED));
                 }
             }
         } else {
@@ -78,7 +78,7 @@ public class RawResourceMappingConverter implements ResourceMappingConverter {
                 idResource.addProperty((Property) id);
             } else {
                 idResource.addProperty(resourceFactory.createProperty(ids[0].getPath().getPath(), id.toString(), Property.Store.YES,
-                        Property.Index.UN_TOKENIZED));
+                        Property.Index.NOT_ANALYZED));
             }
         }
 

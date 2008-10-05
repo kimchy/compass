@@ -32,7 +32,7 @@ import org.compass.core.Property;
  */
 public class DataColumnToPropertyMapping extends AbstractColumnToPropertyMapping {
 
-    private Property.Index propertyIndex = Property.Index.TOKENIZED;
+    private Property.Index propertyIndex = Property.Index.ANALYZED;
 
     private Property.Store propertyStore = Property.Store.YES;
 
@@ -94,7 +94,7 @@ public class DataColumnToPropertyMapping extends AbstractColumnToPropertyMapping
      *            The Compass <code>Resource Property</code> name.
      */
     public DataColumnToPropertyMapping(String columnName, String propertyName) {
-        this(columnName, propertyName, Property.Index.TOKENIZED, Property.Store.YES, Property.TermVector.NO);
+        this(columnName, propertyName, Property.Index.ANALYZED, Property.Store.YES, Property.TermVector.NO);
     }
 
     /**

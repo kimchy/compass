@@ -23,12 +23,12 @@ package org.compass.annotations;
  */
 public enum ExcludeFromAll {
     /**
-     * The property will not be excluded from all. If this property is "un_tokenized"
+     * The property will not be excluded from all. If this property is "not_analyzed"
      * it will be added as is to the all property without being analyzed/tokenized.
      */
     NO,
     /**
-     * The property will not be excluded from all. If this property is "un_tokenized"
+     * The property will not be excluded from all. If this property is "not_analyzed"
      * it will be added as is to the all property after being analyzed.
      */
     NO_ANALYZED,

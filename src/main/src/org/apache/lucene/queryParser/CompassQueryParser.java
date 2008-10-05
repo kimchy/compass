@@ -117,7 +117,8 @@ public class CompassQueryParser extends QueryParser {
             if (analyzerName != null) {
                 analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerMustExist(analyzerName);
             } else {
-                if (lookup.getResourcePropertyMapping() != null && lookup.getResourcePropertyMapping().getIndex() == Property.Index.UN_TOKENIZED) {
+                if (lookup.getResourcePropertyMapping() != null &&
+                        (lookup.getResourcePropertyMapping().getIndex() == Property.Index.UN_TOKENIZED || lookup.getResourcePropertyMapping().getIndex() == Property.Index.NOT_ANALYZED)) {
                     analyzer = KEYWORD_ANALYZER;
                 }
             }

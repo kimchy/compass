@@ -31,7 +31,7 @@ public class Community {
         setName(s);
     }
 
-    @SearchableProperty(name = "communityName", managedIdIndex = ManagedIdIndex.UN_TOKENIZED)
+    @SearchableProperty(name = "communityName", managedIdIndex = ManagedIdIndex.NOT_ANALYZED)
     public String getName() {
         return name;
     }
