@@ -367,7 +367,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             try {
                 reader = indexHolder.getIndexReader().reopen();
             } catch (IOException e) {
-                throw new SearchEngineException("Failed to refresh sub index cache [" + subIndex + "]");
+                throw new SearchEngineException("Failed to refresh sub index cache [" + subIndex + "]", e);
             }
             if (reader != indexHolder.getIndexReader()) {
                 // if the reader was refreshed, mark the old one to close and replace the holder
