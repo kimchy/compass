@@ -53,7 +53,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     protected final static Log log = LogFactory.getLog(LuceneSearchEngine.class);
 
-    private static final int UNKNOWN = -1;
+    private static final int NOT_STARTED = -1;
 
     private static final int STARTED = 0;
 
@@ -77,7 +77,7 @@ public class LuceneSearchEngine implements SearchEngine {
         this.runtimeSettings = runtimeSettings;
         this.readOnly = true;
         this.searchEngineFactory = searchEngineFactory;
-        this.transactionState = UNKNOWN;
+        this.transactionState = NOT_STARTED;
         eventManager.registerLifecycleListener(searchEngineFactory.getEventManager());
         searchEngineFactory.getLuceneIndexManager().getStore().registerEventListeners(this, eventManager);
     }
@@ -102,7 +102,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
         Class transactionIsolationClass = searchEngineFactory.getLuceneSettings().getTransactionIsolationClass();
         if (transactionIsolationClass != null) {
-            transactionState = UNKNOWN;
+            transactionState = NOT_STARTED;
             try {
                 transaction = (LuceneSearchEngineTransaction) transactionIsolationClass.newInstance();
             } catch (Exception e) {
@@ -124,7 +124,7 @@ public class LuceneSearchEngine implements SearchEngine {
         if (transactionState == STARTED) {
             throw new SearchEngineException("Transaction already started, why start it again?");
         }
-        transactionState = UNKNOWN;
+        transactionState = NOT_STARTED;
         this.readOnly = true;
         if (transactionIsolation == null) {
             transactionIsolation = searchEngineFactory.getLuceneSettings().getTransactionIsolation();
@@ -151,8 +151,13 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void verifyWithinTransaction() throws SearchEngineException {
         if (transactionState != STARTED) {
-            throw new SearchEngineException(
-                    "Search engine transaction not successfully started or already committed/rolledback");
+            if (transactionState == COMMIT) {
+                throw new SearchEngineException("Search engine transaction already committed while trying to perform an operation");
+            } else if (transactionState == ROLLBACK) {
+                throw new SearchEngineException("Search engine transaction already rolled back while trying to perform an operation");
+            } else if (transactionState == NOT_STARTED) {
+                throw new SearchEngineException("Search engine transaction not stated, please call begin transaction in order to perform operations");
+            }
         }
     }
 
