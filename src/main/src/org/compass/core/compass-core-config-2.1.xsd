@@ -761,6 +761,13 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="cacheAsyncInvalidation" type="booleanType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Sets if invalidation of cache will happen in the background or not. By default set to true.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
         <xsd:attribute name="indexManagerScheduleInterval" type="xsd:integer" use="optional">
             <xsd:annotation>
                 <xsd:documentation>

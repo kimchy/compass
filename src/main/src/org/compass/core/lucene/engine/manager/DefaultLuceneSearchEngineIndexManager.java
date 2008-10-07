@@ -16,8 +16,11 @@
 
 package org.compass.core.lucene.engine.manager;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -61,17 +64,21 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
     private LuceneSettings luceneSettings;
 
     // holds the index cache per sub index
-    private HashMap<String, LuceneIndexHolder> indexHolders = new HashMap<String, LuceneIndexHolder>();
+    private Map<String, LuceneIndexHolder> indexHolders = new ConcurrentHashMap<String, LuceneIndexHolder>();
 
-    private HashMap<String, Object> indexHoldersLocks = new HashMap<String, Object>();
+    private Map<String, Object> indexHoldersLocks = new HashMap<String, Object>();
 
     private long[] lastModifiled;
 
     private long waitForCacheInvalidationBeforeSecondStep = 0;
 
+    private boolean cacheAsyncInvalidation;
+
     private volatile boolean isRunning = false;
 
-    private ScheduledFuture scheduledFuture;
+    private ScheduledFuture scheduledIndexManagerFuture;
+
+    private ScheduledFuture scheduledRefreshCacheFuture;
 
     public DefaultLuceneSearchEngineIndexManager(LuceneSearchEngineFactory searchEngineFactory,
                                                  final LuceneSearchEngineStore searchEngineStore) {
@@ -353,14 +360,22 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
-    public void refreshCache(String subIndex) throws SearchEngineException {
-        synchronized (indexHoldersLocks.get(subIndex)) {
-            internalRefreshCache(subIndex);
-        }
+    public void refreshCache(final String subIndex) throws SearchEngineException {
+        searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+            public Object doInTransaction() throws CompassException {
+                synchronized (indexHoldersLocks.get(subIndex)) {
+                    internalRefreshCache(subIndex);
+                }
+                return null;
+            }
+        });
     }
 
     // should be called within a lock
     private LuceneIndexHolder internalRefreshCache(String subIndex) throws SearchEngineException {
+        if (log.isTraceEnabled()) {
+            log.trace("Refreshing cache for sub index [" + subIndex + "]");
+        }
         LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
         if (indexHolder != null) {
             IndexReader reader;
@@ -401,8 +416,14 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         synchronized (indexHoldersLocks.get(subIndex)) {
             try {
                 LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
-                if (shouldInvalidateCache(indexHolder)) {
-                    indexHolder = internalRefreshCache(subIndex);
+                if (cacheAsyncInvalidation) {
+                    if (indexHolder == null) {
+                        indexHolder = internalRefreshCache(subIndex);
+                    }
+                } else {
+                    if (shouldInvalidateCache(indexHolder)) {
+                        indexHolder = internalRefreshCache(subIndex);
+                    }
                 }
                 indexHolder.acquire();
                 return indexHolder;
@@ -412,7 +433,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
     }
 
-    protected boolean shouldInvalidateCache(LuceneIndexHolder indexHolder) throws IOException, IllegalAccessException {
+    /**
+     * Checks if a an index holder should be invalidated.
+     */
+    protected boolean shouldInvalidateCache(LuceneIndexHolder indexHolder) throws IOException {
         long currentTime = System.currentTimeMillis();
         // we have not created an index holder, invalidated by default
         if (indexHolder == null) {
@@ -424,8 +448,13 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         }
         if ((currentTime - indexHolder.getLastCacheInvalidation()) > luceneSettings.getCacheInvalidationInterval()) {
             indexHolder.setLastCacheInvalidation(currentTime);
-            if (!indexHolder.getIndexReader().isCurrent()) {
-                return true;
+            try {
+                if (!indexHolder.getIndexReader().isCurrent()) {
+                    return true;
+                }
+            } catch (FileNotFoundException e) {
+                // no segments file, no index
+                return false;
             }
         }
         return false;
@@ -481,7 +510,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setUseCompoundFile(searchEngineStore.isUseCompoundFile());
         indexWriter.setMaxFieldLength(luceneSettings.getMaxFieldLength());
         indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
-        
+
         return indexWriter;
     }
 
@@ -503,7 +532,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 log.info("Starting scheduled index manager with period [" + indexManagerScheduleInterval + "ms]");
             }
             ScheduledIndexManagerRunnable scheduledIndexManagerRunnable = new ScheduledIndexManagerRunnable(this);
-            scheduledFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledIndexManagerRunnable, indexManagerScheduleInterval, indexManagerScheduleInterval, TimeUnit.MILLISECONDS);
+            scheduledIndexManagerFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledIndexManagerRunnable, indexManagerScheduleInterval, indexManagerScheduleInterval, TimeUnit.MILLISECONDS);
 
             // set the time to wait for clearing cache to 110% of the schedule time
             setWaitForCacheInvalidationBeforeSecondStep((long) (indexManagerScheduleInterval * 1.1));
@@ -511,6 +540,20 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             log.info("Not starting scheduled index manager");
             return;
         }
+
+        cacheAsyncInvalidation = luceneSettings.getSettings().getSettingAsBoolean(LuceneEnvironment.SearchEngineIndex.CACHE_ASYNC_INVALIDATION, true);
+        long cacheInvalidationInterval = luceneSettings.getCacheInvalidationInterval();
+        if (cacheInvalidationInterval > 0 && cacheAsyncInvalidation) {
+            if (log.isInfoEnabled()) {
+                log.info("Starting scheduled refresh cache with period [" + cacheInvalidationInterval + "ms]");
+            }
+            ScheduledRefreshCacheRunnable scheduledRefreshCacheRunnable = new ScheduledRefreshCacheRunnable();
+            scheduledRefreshCacheFuture = searchEngineFactory.getExecutorManager().scheduleWithFixedDelay(scheduledRefreshCacheRunnable, cacheInvalidationInterval, cacheInvalidationInterval, TimeUnit.MILLISECONDS);
+        } else {
+            log.info("Not starting scheduled refresh cache");
+            return;
+        }
+
 
         isRunning = true;
     }
@@ -520,9 +563,13 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             return;
         }
         isRunning = false;
-        if (scheduledFuture != null) {
-            scheduledFuture.cancel(true);
-            scheduledFuture = null;
+        if (scheduledIndexManagerFuture != null) {
+            scheduledIndexManagerFuture.cancel(true);
+            scheduledIndexManagerFuture = null;
+        }
+        if (scheduledRefreshCacheFuture != null) {
+            scheduledRefreshCacheFuture.cancel(true);
+            scheduledRefreshCacheFuture = null;
         }
     }
 
@@ -722,4 +769,32 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
 
     }
 
+    /**
+     * A scheduled task that refresh the cache periodically (if needed).
+     */
+    private class ScheduledRefreshCacheRunnable implements Runnable {
+
+        public void run() {
+            searchEngineFactory.getTransactionContext().execute(new TransactionContextCallback<Object>() {
+                public Object doInTransaction() throws CompassException {
+                    for (String subIndex : searchEngineStore.getSubIndexes()) {
+                        try {
+                            // we do the get/shouldInvalidateCache outside of a lock so we
+                            // won't block openIndexHolder operations while we do the check
+                            // if it should be invalidated
+                            LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
+                            if (shouldInvalidateCache(indexHolder)) {
+                                synchronized (indexHoldersLocks.get(subIndex)) {
+                                    internalRefreshCache(subIndex);
+                                }
+                            }
+                        } catch (Exception e) {
+                            log.error("Failed to open index searcher for sub-index [" + subIndex + "]", e);
+                        }
+                    }
+                    return null;
+                }
+            });
+        }
+    }
 }

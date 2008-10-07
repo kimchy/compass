@@ -803,6 +803,11 @@ public class LuceneEnvironment {
         public static final String CACHE_INTERVAL_INVALIDATION = "compass.engine.cacheIntervalInvalidation";
 
         /**
+         * Sets if invalidation of cache will happen in the background or not. By default set to <code>true</code>.
+         */
+        public static final String CACHE_ASYNC_INVALIDATION = "compass.engine.cacheAsyncInvalidation";
+
+        /**
          * The default cache interval invalidation.
          *
          * @see #CACHE_INTERVAL_INVALIDATION

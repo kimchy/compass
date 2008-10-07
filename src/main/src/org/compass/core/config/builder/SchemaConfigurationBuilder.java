@@ -154,6 +154,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, getElementAttribute(ele, "useCompoundFile"));
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.MAX_FIELD_LENGTH, getElementAttribute(ele, "maxFieldLength"));
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, getElementAttribute(ele, "cacheInvalidationInterval"));
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.CACHE_ASYNC_INVALIDATION, getElementAttribute(ele, "cacheAsyncInvalidation"));
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, getElementAttribute(ele, "indexManagerScheduleInterval"));
         settings.setSetting(LuceneEnvironment.SearchEngineIndex.WAIT_FOR_CACHE_INVALIDATION_ON_INDEX_OPERATION, getElementAttribute(ele, "waitForCacheInvalidationOnIndexOperation"));
         settings.setSetting(LuceneEnvironment.DEFAULT_SEARCH, getElementAttribute(ele, "defaultSearch"));
