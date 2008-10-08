@@ -40,7 +40,7 @@ public class MappingBindingSupport implements MappingBinding {
 
     }
 
-    public boolean addResoruceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
+    public boolean addResourceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
         return false;
     }
 

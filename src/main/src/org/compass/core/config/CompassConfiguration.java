@@ -330,7 +330,7 @@ public class CompassConfiguration {
      * implementation which allows for adding pre built mapping constructs.
      */
     public CompassConfiguration addResourceMapping(ResourceMapping resourceMapping) {
-        boolean hasAddedResource = getMappingBinding().addResoruceMapping(resourceMapping);
+        boolean hasAddedResource = getMappingBinding().addResourceMapping(resourceMapping);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match resource mapping [" + resourceMapping.getAlias() + "]");
         }

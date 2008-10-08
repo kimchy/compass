@@ -56,7 +56,7 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
         this.settings = settings;
     }
 
-    public boolean addResoruceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
+    public boolean addResourceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
         mapping.addMapping(resourceMapping);
         return true;
     }

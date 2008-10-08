@@ -64,7 +64,7 @@ public class CompassMappingBinding implements MappingBinding {
         this.suffixes = suffixes.toArray(new String[suffixes.size()]);
     }
 
-    public boolean addResoruceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
+    public boolean addResourceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
         mapping.addMapping(resourceMapping);
         return true;
     }
