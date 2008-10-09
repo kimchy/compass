@@ -58,13 +58,13 @@ public class LuceneSimilarityManager implements CompassConfigurable {
     }
 
     private Similarity createSimilarity(String type, CompassSettings settings) {
-        Class similarityClass = null;
+        Class similarityClass;
         try {
             similarityClass = ClassUtils.forName(type, settings.getClassLoader());
         } catch (ClassNotFoundException e) {
             throw new ConfigurationException("Failed to create class of type [" + type + "]", e);
         }
-        Object similarityInstance = null;
+        Object similarityInstance;
         try {
             similarityInstance = similarityClass.newInstance();
         } catch (Exception e) {
