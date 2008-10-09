@@ -575,7 +575,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
 
         MultiSearcher searcher;
         try {
-            searcher = new MultiSearcher(searchers.toArray(new Searchable[searchers.size()]));
+            searcher = searchEngineFactory.getLuceneIndexManager().openMultiSearcher(searchers.toArray(new Searchable[searchers.size()]));
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open searcher for spell check", e);
         }

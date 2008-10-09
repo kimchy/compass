@@ -149,13 +149,13 @@ public class TransIndex implements CompassConfigurable {
             }
             if (indexReader == null) {
                 indexReader = IndexReader.open(directory, true);
-                indexSearcher = new IndexSearcher(indexReader);
+                indexSearcher = searchEngineFactory.getLuceneIndexManager().openIndexSearcher(indexReader);
             } else {
                 IndexReader tmpReader = indexReader.reopen();
                 if (tmpReader != indexReader) {
                     indexReader.close();
                     indexSearcher.close();
-                    indexSearcher = new IndexSearcher(tmpReader);
+                    indexSearcher = searchEngineFactory.getLuceneIndexManager().openIndexSearcher(tmpReader);
                 }
                 indexReader = tmpReader;
             }

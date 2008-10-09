@@ -40,6 +40,7 @@ import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexMana
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.engine.optimizer.LuceneSearchEngineOptimizerManager;
 import org.compass.core.lucene.engine.queryparser.LuceneQueryParserManager;
+import org.compass.core.lucene.engine.similarity.LuceneSimilarityManager;
 import org.compass.core.lucene.engine.spellcheck.DefaultLuceneSpellCheckManager;
 import org.compass.core.lucene.engine.spellcheck.InternalLuceneSearchEngineSpellCheckManager;
 import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
@@ -74,6 +75,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
     private TransactionContext transactionContext;
 
     private LuceneAnalyzerManager analyzerManager;
+
+    private LuceneSimilarityManager similarityManager;
 
     private LuceneHighlighterManager highlighterManager;
 
@@ -154,6 +157,10 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         // build the query parsers
         queryParserManager = new LuceneQueryParserManager(this);
         queryParserManager.configure(settings);
+
+        // build the similarity manager
+        similarityManager = new LuceneSimilarityManager();
+        similarityManager.configure(settings);
     }
 
     public void start() {
@@ -222,6 +229,10 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     public LuceneAnalyzerManager getAnalyzerManager() {
         return analyzerManager;
+    }
+
+    public LuceneSimilarityManager getSimilarityManager() {
+        return similarityManager;
     }
 
     public SearchEngineEventManager getEventManager() {

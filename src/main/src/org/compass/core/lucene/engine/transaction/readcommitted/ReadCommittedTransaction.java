@@ -184,7 +184,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             if (searchers.size() == 0) {
                 return new LuceneSearchEngineInternalSearch(searchEngine);
             }
-            MultiSearcher indexSeracher = new MultiSearcher(searchers.toArray(new Searcher[searchers.size()]));
+            MultiSearcher indexSeracher = indexManager.openMultiSearcher(searchers.toArray(new Searcher[searchers.size()]));
             return new LuceneSearchEngineInternalSearch(searchEngine, indexSeracher, indexHoldersToClose);
         } catch (IOException e) {
             for (LuceneIndexHolder indexHolder : indexHoldersToClose) {
@@ -236,7 +236,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 indexReader = new MultiReader(new IndexReader[]{indexHolder.getIndexReader(), transIndexManager.getReader(subIndex)}, false);
                 // note, we need to create a multi searcher here instead of a searcher ontop of the MultiReader
                 // since our filter relies on specific reader per searcher
-                indexSearcher = new MultiSearcher(new Searcher[]{new IndexSearcher(indexHolder.getIndexReader()), transIndexManager.getSearcher(subIndex)});
+                indexSearcher = indexManager.openMultiSearcher(new Searcher[]{new IndexSearcher(indexHolder.getIndexReader()), transIndexManager.getSearcher(subIndex)});
             } else {
                 indexReader = indexHolder.getIndexReader();
                 indexSearcher = indexHolder.getIndexSearcher();

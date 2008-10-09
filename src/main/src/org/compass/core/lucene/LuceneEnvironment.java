@@ -32,6 +32,26 @@ public class LuceneEnvironment {
      */
     public static final String DEFAULT_SEARCH = "compass.engine.defaultsearch";
 
+    /**
+     * A set of configuration settings for similarity.
+     */
+    public static abstract class Similarity {
+
+        /**
+         * The prefix for the similarity settings.
+         */
+        public static final String PREFIX = "compass.engine.similarity";
+
+        public static final String DEFAULT_SIMILARITY_TYPE = PREFIX + ".default.type";
+        
+        public static final String INDEX_SIMILARITY_TYPE = PREFIX + ".index.type";
+
+        public static final String SEARCH_SIMILARITY_TYPE = PREFIX + ".search.type";
+    }
+
+    /**
+     * A set of configuration settings for analyzers.
+     */
     public static abstract class Analyzer {
 
         /**

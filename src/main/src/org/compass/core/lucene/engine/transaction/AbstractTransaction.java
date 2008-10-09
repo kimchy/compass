@@ -140,7 +140,8 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
                     return new LuceneSearchEngineInternalSearch(searchEngine, lastNonEmptyIndexHolder, indexHoldersToClose);
                 }
                 MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
-                return new LuceneSearchEngineInternalSearch(searchEngine, reader, new IndexSearcher(reader), indexHoldersToClose);
+                IndexSearcher searcher = indexManager.openIndexSearcher(reader);
+                return new LuceneSearchEngineInternalSearch(searchEngine, reader, searcher, indexHoldersToClose);
             } else {
                 ArrayList<IndexSearcher> searchers = new ArrayList<IndexSearcher>(calcSubIndexes.length);
                 LuceneIndexHolder lastNonEmptyIndexHolder = null;
@@ -159,7 +160,7 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
                 if (searchers.size() == 1) {
                     return new LuceneSearchEngineInternalSearch(searchEngine, lastNonEmptyIndexHolder, indexHoldersToClose);
                 }
-                MultiSearcher searcher = new MultiSearcher(searchers.toArray(new IndexSearcher[searchers.size()]));
+                MultiSearcher searcher = indexManager.openMultiSearcher(searchers.toArray(new IndexSearcher[searchers.size()]));
                 return new LuceneSearchEngineInternalSearch(searchEngine, searcher, indexHoldersToClose);
             }
         } catch (Exception e) {

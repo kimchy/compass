@@ -16,11 +16,8 @@
 
 package org.compass.core.lucene.engine.manager;
 
-import java.io.IOException;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.store.Directory;
 
 /**
  * @author kimchy
@@ -39,26 +36,10 @@ public class LuceneIndexHolder {
 
     private String subIndex;
 
-    public LuceneIndexHolder(String subIndex, Directory dir) throws IOException {
-        this.indexReader = IndexReader.open(dir, true);
-        this.indexSearcher = new IndexSearcher(indexReader);
-        this.subIndex = subIndex;
-    }
-
     public LuceneIndexHolder(String subIndex, IndexSearcher indexSearcher) {
         this.subIndex = subIndex;
         this.indexSearcher = indexSearcher;
         this.indexReader = indexSearcher.getIndexReader();
-    }
-
-    public void refresh(IndexReader indexReader) {
-        try {
-            indexSearcher.close();
-        } catch (IOException e) {
-            // do nothing
-        }
-        this.indexReader = indexReader;
-        indexSearcher = new IndexSearcher(indexReader);
     }
 
     public IndexSearcher getIndexSearcher() {

@@ -31,6 +31,8 @@ import org.apache.lucene.index.IndexDeletionPolicy;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiSearcher;
+import org.apache.lucene.search.Searchable;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassException;
@@ -387,12 +389,13 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
             if (reader != indexHolder.getIndexReader()) {
                 // if the reader was refreshed, mark the old one to close and replace the holder
                 indexHolder.markForClose();
-                indexHolder = new LuceneIndexHolder(subIndex, new IndexSearcher(reader));
+                indexHolder = new LuceneIndexHolder(subIndex, openIndexSearcher(reader));
                 indexHolders.put(subIndex, indexHolder);
             }
         } else {
             try {
-                indexHolder = new LuceneIndexHolder(subIndex, getDirectory(subIndex));
+                IndexReader reader = IndexReader.open(getDirectory(subIndex), true);
+                indexHolder = new LuceneIndexHolder(subIndex, openIndexSearcher(reader));
             } catch (IOException e) {
                 throw new SearchEngineException("Failed to open sub index cache [" + subIndex + "]", e);
             }
@@ -511,7 +514,21 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         indexWriter.setMaxFieldLength(luceneSettings.getMaxFieldLength());
         indexWriter.setTermIndexInterval(luceneSettings.getTermIndexInterval());
 
+        indexWriter.setSimilarity(searchEngineFactory.getSimilarityManager().getIndexSimilarity());
+
         return indexWriter;
+    }
+
+    public IndexSearcher openIndexSearcher(IndexReader reader) {
+        IndexSearcher searcher = new IndexSearcher(reader);
+        searcher.setSimilarity(searchEngineFactory.getSimilarityManager().getSearchSimilarity());
+        return searcher;
+    }
+
+    public MultiSearcher openMultiSearcher(Searchable[] searchers) throws IOException {
+        MultiSearcher searcher = new MultiSearcher(searchers);
+        searcher.setSimilarity(searchEngineFactory.getSimilarityManager().getSearchSimilarity());
+        return searcher;
     }
 
     public LuceneSearchEngineStore getStore() {

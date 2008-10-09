@@ -175,6 +175,23 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
     </sect2>
   </sect1>
 
+  <sect1 id="core-searchengine-similarity">
+    <title>Similarity</title>
+    
+    <para>
+      Compass can be configured with Lucene <literal>Similarity</literal> for both indexing and searching. This is advanced configuration level. By default, Lucene <literal>DefaultSimilarity</literal> is used for both searching and indexing.
+    </para>
+    
+    <para>
+      In order to globally change the <literal>Similarity</literal>, the type of the similarity can be set using <literal>compass.engine.similarity.default.type</literal>. The type can either be the actual class name of the <literal>Similarity</literal> implementation, or an the class name of <literal>SimilarityFactory</literal> implementation. Both can optionally implement <literal>CompassConfigurble</literal> in order to be injected with <literal>CompassSettings</literal>.
+    </para>
+    
+    <para>
+      Specifically, the index similarity can be set using <literal>compass.engine.similarity.index.type</literal>. The search similarity can be set using <literal>compass.engine.similarity.search.type</literal>.
+    </para>
+  </sect1>
+
+
   <sect1 id="core-searchengine-queryparser">
     <title>Query Parser</title>
 
