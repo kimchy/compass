@@ -43,6 +43,7 @@ import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
 import org.compass.spring.transaction.SpringSyncTransactionFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -57,7 +58,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 /**
  * @author kimchy
  */
-public class LocalCompassBean implements FactoryBean, InitializingBean, DisposableBean, BeanNameAware, ApplicationContextAware {
+public class LocalCompassBean implements FactoryBean, InitializingBean, DisposableBean, BeanNameAware, ApplicationContextAware, BeanClassLoaderAware {
 
     protected static final Log log = LogFactory.getLog(LocalCompassBean.class);
 
@@ -93,6 +94,8 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     private String beanName;
 
+    private ClassLoader classLoader;
+
     private ApplicationContext applicationContext;
 
     private CompassConfiguration config;
@@ -112,6 +115,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
     /**
@@ -260,6 +267,10 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
         CompassConfiguration config = this.config;
         if (config == null) {
             config = newConfiguration();
+        }
+
+        if (classLoader != null) {
+            config.setClassLoader(getClassLoader());
         }
 
         if (this.configLocation != null) {
@@ -418,6 +429,9 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
     }
 
     protected ClassLoader getClassLoader() {
+        if (classLoader != null) {
+            return classLoader;
+        }
         return Thread.currentThread().getContextClassLoader();
     }
 
