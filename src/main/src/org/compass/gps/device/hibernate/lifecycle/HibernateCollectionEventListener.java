@@ -25,6 +25,7 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
+import org.hibernate.engine.CollectionEntry;
 import org.hibernate.engine.EntityEntry;
 import org.hibernate.event.AbstractCollectionEvent;
 import org.hibernate.event.PostCollectionRecreateEvent;
@@ -62,6 +63,13 @@ public class HibernateCollectionEventListener extends HibernateEventListener imp
             //Hibernate cannot determine every single time the owner especially incase detached objects are involved
             // or property-ref is used
             //Should log really but we don't know if we're interested in this collection for indexing
+            return;
+        }
+
+        CollectionEntry collectionEntry = event.getSession().getPersistenceContext().getCollectionEntry(event.getCollection());
+        if (collectionEntry.getLoadedPersister() == null) {
+            // ignore this entry, since Hibernate will cause NPE when doing SAVE
+            // TODO is there a better way to solve this?
             return;
         }
 
