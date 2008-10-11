@@ -270,6 +270,13 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             return;
         }
 
+        CollectionEntry collectionEntry = event.getSession().getPersistenceContext().getCollectionEntry(event.getCollection());
+        if (collectionEntry.getLoadedPersister() == null) {
+            // ignore this entry, since Hibernate will cause NPE when doing SAVE
+            // TODO is there a better way to solve this?
+            return;
+        }
+        
         if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
             return;
         }
