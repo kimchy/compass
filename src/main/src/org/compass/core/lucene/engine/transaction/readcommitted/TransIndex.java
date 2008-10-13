@@ -77,6 +77,8 @@ public class TransIndex implements CompassConfigurable {
             } else {
                 if (transLogConnection.equals("file://")) {
                     transLogConnection = DEFAULT_LOCATION;
+                } else if (transLogConnection.startsWith("file://")) {
+                    transLogConnection = transLogConnection.substring("file://".length());
                 }
                 transLogConnection += "/" + transId.nextLong();
                 directory = FSDirectory.getDirectory(transLogConnection);
