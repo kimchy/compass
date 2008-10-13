@@ -61,6 +61,7 @@ public class FileBucketKey implements FileKey, ExternalizableLite {
 
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (o == null) return false;
         if (((FileKey) o).getType() != getType()) return false;
 
         FileBucketKey that = (FileBucketKey) o;
