@@ -226,16 +226,32 @@ public interface Resource extends AliasedObject, Serializable {
     Property[] getProperties();
 
     /**
-     * Returns the boost for the property.
+     * Returns, at indexing time, the boost factor as set by {@link #setBoost(float)}.
+     *
+     * <p>Note that once a document is indexed this value is no longer available
+     * from the index.  At search time, for retrieved documents, this method always
+     * returns 1. This however does not mean that the boost value set at  indexing
+     * time was ignored - it was just combined with other indexing time factors and
+     * stored elsewhere, for better indexing and search performance. (For more
+     * information see the "norm(t,d)" part of the scoring formula in
+     * {@link org.apache.lucene.search.Similarity Similarity}.)
      *
      * @return The boost value
      */
     float getBoost();
 
     /**
-     * Sets the boost level for the resource.
+     * /** Sets a boost factor for hits on any field of this document.  This value
+     * will be multiplied into the score of all hits on this document.
+     *
+     * <p>The default value is 1.0.
+     *
+     * <p>Values are multiplied into the value of {@link org.compass.core.Property#getBoost()} of
+     * each properties of the resource.  Thus, this method in effect sets a default
+     * boost for the fields of this document.
      *
      * @param boost The boost level for the resource
+     * @see org.compass.core.Property#setBoost(float)
      */
     Resource setBoost(float boost);
 
