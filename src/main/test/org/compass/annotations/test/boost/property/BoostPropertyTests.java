@@ -20,6 +20,7 @@ import org.compass.annotations.test.AbstractAnnotationsTestCase;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 
 /**
@@ -46,6 +47,11 @@ public class BoostPropertyTests extends AbstractAnnotationsTestCase {
         assertEquals(1, ((A) hits.data(0)).id);
         assertEquals(2, ((A) hits.data(1)).id);
 
+        Resource a1resource = session.loadResource(A.class, 1);
+        assertEquals(1.0f, a1resource.getBoost(), 0.0001);
+        Resource a2resource = session.loadResource(A.class, 2);
+        assertEquals(1.0f, a2resource.getBoost(), 0.0001);
+
         tr.commit();
         session.close();
     }
@@ -65,6 +71,13 @@ public class BoostPropertyTests extends AbstractAnnotationsTestCase {
         assertEquals(2, ((A) hits.data(0)).id);
         assertEquals(1, ((A) hits.data(1)).id);
 
+        // NOTE, we test it against one since the boost value is not stored in the index
+        // so, even though we see that it has taken affect, you still have 1
+        Resource a1resource = session.loadResource(A.class, 1);
+        assertEquals(1.0f, a1resource.getBoost(), 0.0001);
+        Resource a2resource = session.loadResource(A.class, 2);
+        assertEquals(1.0f, a2resource.getBoost(), 0.0001);
+        
         tr.commit();
         session.close();
     }
