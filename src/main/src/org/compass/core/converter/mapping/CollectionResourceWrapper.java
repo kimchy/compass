@@ -26,6 +26,10 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.engine.SearchEngineException;
 
 /**
+ * A wrapper around a Resouce that allows for a marshalled collection to be read from it. Call
+ * to {@link #getProperty(String)} will return the first (or next) property that is registered
+ * under that name. Calling {@link #getProperty(String)} again will return the next one.
+ *
  * @author kimchy
  */
 public class CollectionResourceWrapper implements Resource {
