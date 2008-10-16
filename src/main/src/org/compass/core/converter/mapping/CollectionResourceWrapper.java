@@ -18,6 +18,7 @@ package org.compass.core.converter.mapping;
 
 import java.io.Reader;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.compass.core.Property;
 import org.compass.core.Resource;
@@ -49,18 +50,20 @@ public class CollectionResourceWrapper implements Resource {
 
     private Resource resource;
 
-    private HashMap propertiesMap = new HashMap();
+    private Map<String, PropertiesWrapper> propertiesMap = new HashMap<String, PropertiesWrapper>();
 
     public CollectionResourceWrapper(Resource resource) {
         this.resource = resource;
     }
 
     public String getValue(String name) {
-        return computeProperty(name).getStringValue();
+        Property property = getProperty(name);
+        return property == null ? null : property.getStringValue();
     }
 
     public Object getObject(String name) {
-        return computeProperty(name).getObjectValue();
+        Property property = getProperty(name);
+        return property == null ? null : property.getObjectValue();
     }
 
     public String[] getValues(String name) {
@@ -128,7 +131,7 @@ public class CollectionResourceWrapper implements Resource {
     }
 
     private Property computeProperty(String name) {
-        PropertiesWrapper wrapper = (PropertiesWrapper) propertiesMap.get(name);
+        PropertiesWrapper wrapper = propertiesMap.get(name);
         if (wrapper == null) {
             wrapper = new PropertiesWrapper();
             wrapper.name = name;
@@ -148,7 +151,7 @@ public class CollectionResourceWrapper implements Resource {
     }
 
     public void rollbackGetProperty(String name) {
-        PropertiesWrapper wrapper = (PropertiesWrapper) propertiesMap.get(name);
+        PropertiesWrapper wrapper = propertiesMap.get(name);
         if (wrapper == null) {
             return;
         }
