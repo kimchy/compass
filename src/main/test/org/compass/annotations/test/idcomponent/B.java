@@ -18,6 +18,7 @@ package org.compass.annotations.test.idcomponent;
 
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
@@ -30,6 +31,9 @@ public class B {
 
     @SearchableId
     long id2;
+
+    @SearchableProperty
+    String value;
 
     public B() {
     }

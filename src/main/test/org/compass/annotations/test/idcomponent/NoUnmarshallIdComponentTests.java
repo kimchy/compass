@@ -20,17 +20,23 @@ import org.compass.annotations.test.AbstractAnnotationsTestCase;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassConfiguration;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 
 /**
  * @author kimchy
  */
-public class IdComponentTests extends AbstractAnnotationsTestCase {
+public class NoUnmarshallIdComponentTests extends AbstractAnnotationsTestCase {
 
     protected void addExtraConf(CompassConfiguration conf) {
         conf.addClass(A.class).addClass(B.class);
     }
 
-    public void testSimpleIdCompoent() {
+    protected void addSettings(CompassSettings settings) {
+        settings.setBooleanSetting(CompassEnvironment.Osem.SUPPORT_UNMARSHALL, false);
+    }
+
+    public void testIdComponentWithNoSupportUnmarshall() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
@@ -52,8 +58,9 @@ public class IdComponentTests extends AbstractAnnotationsTestCase {
 
         assertEquals(1, session.find("value1").length());
         assertEquals(1, session.find("test1").length());
-
+        
         tr.commit();
         session.close();
+
     }
 }

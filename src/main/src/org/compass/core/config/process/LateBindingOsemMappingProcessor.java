@@ -49,6 +49,7 @@ import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.PlainCascadeMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.marshall.MarshallingEnvironment;
+import org.compass.core.util.IdentityHashSet;
 
 /**
  * @author kimchy
@@ -340,15 +341,14 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
         private ClassMapping rootClassMapping;
 
+        private IdentityHashSet<ClassMapping> idComponents = new IdentityHashSet<ClassMapping>();
+
         private Set<String> cyclicClassMappings = new HashSet<String>();
         
         private ClassPropertyMapping classPropertyMapping;
 
         private NoUnmarshallingCallback(ClassMapping rootClassMapping) {
             this.rootClassMapping = rootClassMapping;
-        }
-
-        public NoUnmarshallingCallback() {
         }
 
         /**
@@ -411,6 +411,8 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
                 // intenral ids of other class mappings.
                 PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), classPropertyMapping.getDefinedInAlias());
                 classPropertyMapping.setPath(namingStrategy.buildPath(aliasedPath, classPropertyMapping.getName()));
+            } else if (idComponents.contains(classMapping)) {
+                classPropertyMapping.setPath(namingStrategy.buildPath(classMapping.getPath(), classPropertyMapping.getName()));
             }
         }
 
@@ -427,21 +429,32 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
                 ClassMapping refClassMapping;
                 if (componentMapping.getPrefix() != null) {
                     refClassMapping = (ClassMapping) refClassMappings[i].copy();
+                    refClassMapping.setPath(componentMapping.getPath());
+                    refClassMapping.setSupportUnmarshall(classMapping.isSupportUnmarshall());
+                } else if (componentMapping instanceof IdComponentMapping && (classMapping == rootClassMapping)) {
+                    refClassMapping = (ClassMapping) refClassMappings[i].copy();
+                    PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), componentMapping.getDefinedInAlias());
+                    refClassMapping.setPath(namingStrategy.buildPath(aliasedPath, componentMapping.getName()));
+                    idComponents.add(refClassMapping);
+                    // We set here that we support unmarshall since we need to marshall the internal ids of the
+                    // id component
+                    refClassMapping.setSupportUnmarshall(true);
                 } else {
                     // perform a shalow copy, and copy over the child mappings
                     refClassMapping = (ClassMapping) refClassMappings[i].shallowCopy();
                     refClassMapping.replaceMappings(refClassMappings[i]);
+                    refClassMapping.setPath(componentMapping.getPath());
+                    refClassMapping.setSupportUnmarshall(classMapping.isSupportUnmarshall());
                 }
 
-                refClassMapping.setPath(componentMapping.getPath());
                 refClassMapping.setRoot(false);
-                refClassMapping.setSupportUnmarshall(classMapping.isSupportUnmarshall());
                 copyRefClassMappings[i] = refClassMapping;
             }
             componentMapping.setRefClassMappings(copyRefClassMappings);
         }
 
         public void onReferenceMapping(ClassMapping classMapping, ReferenceMapping referenceMapping) {
+            // TODO why do we even process refernece mapping when we don't support unmarshall?
             PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), referenceMapping.getDefinedInAlias());
             referenceMapping.setPath(namingStrategy.buildPath(aliasedPath, referenceMapping.getName()));
             secondPassJustReference(referenceMapping, classMapping);
