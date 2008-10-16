@@ -123,7 +123,7 @@ public interface ResourcePropertyMapping extends Mapping {
      *
      * If set, omit tf from postings of this indexed field.
      *
-     * @see Property#setOmotTf(boolean)
+     * @see Property#setOmitTf(boolean) 
      */
     Boolean isOmitTf();
 
