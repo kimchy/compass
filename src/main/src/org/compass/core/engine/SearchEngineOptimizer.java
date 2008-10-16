@@ -18,15 +18,11 @@ package org.compass.core.engine;
 
 /**
  * Optimizes search engine index data.
- * <p/>
- * Using it, one can controll the lifecycle of the optimizer using the
+ *
+ * <p>Using it, one can controll the lifecycle of the optimizer using the
  * <code>start()</code> and <code>stop()</code> methods (note that does not
  * mean that it will start a scheduled optimizer, it depends on the
  * configuration supplied).
- * <p/>
- * You can also check if the search engine required optimization using the
- * <code>needOptimization()</code> method, and run the optimization process
- * using the <code>optimize()</code> method.
  *
  * @author kimchy
  */
