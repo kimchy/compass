@@ -105,28 +105,6 @@ public class ArrayTests extends AbstractTestCase {
         tr.commit();
     }
 
-    public void testABSingleNullB() {
-        CompassSession session = openSession();
-        CompassTransaction tr = session.beginTransaction();
-
-        Long id = new Long(1);
-        A a = new A();
-        a.setId(id);
-        a.setValue("test");
-        B b2 = new B();
-        b2.setValue("test");
-        a.setArrB(new B[] { null, b2 });
-
-        session.save(a);
-
-        a = (A) session.load(A.class, id);
-        assertEquals("test", a.getValue());
-        assertEquals(1, a.getArrB().length);
-        assertEquals("test", a.getArrB()[0].getValue());
-
-        tr.commit();
-    }
-
     public void testABWithPropertyNull() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();

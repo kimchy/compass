@@ -260,37 +260,6 @@ public class CollectionTests extends AbstractTestCase {
         tr.commit();
     }
 
-    public void testABWithSingleNull() {
-        CompassSession session = openSession();
-        CompassTransaction tr = session.beginTransaction();
-
-        Long id = new Long(1);
-        A a = new A();
-        a.setId(id);
-        a.setValue("test");
-        B b2 = new B();
-        b2.setValue("test");
-        Collection bs = new LinkedList();
-        bs.add(null);
-        bs.add(b2);
-        a.setCb(bs);
-        session.save("a", a);
-
-        a = (A) session.load("a", id);
-        assertEquals("test", a.getValue());
-        List list = (List) a.getCb();
-        assertNotNull(list);
-        assertEquals(1, list.size());
-        b2 = (B) list.get(0);
-        assertEquals("test", b2.getValue());
-
-        session.delete("a", a);
-        a = (A) session.get("a", id);
-        assertNull(a);
-
-        tr.commit();
-    }
-
     public void testABWithBPropertyNull() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();

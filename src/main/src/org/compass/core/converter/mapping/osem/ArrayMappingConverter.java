@@ -38,9 +38,6 @@ public class ArrayMappingConverter extends AbstractCollectionMappingConverter {
         Mapping elementMapping = colMapping.getElementMapping();
         for (int i = 0; i < size; i++) {
             Object value = Array.get(root, i);
-            if (value == null) {
-                continue;
-            }
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, current);
             boolean stored = elementMapping.getConverter().marshall(resource, value, elementMapping, context);
             if (stored) {

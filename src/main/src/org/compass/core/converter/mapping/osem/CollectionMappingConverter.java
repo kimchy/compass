@@ -57,9 +57,6 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
         Collection col = (Collection) root;
         for (Iterator it = col.iterator(); it.hasNext();) {
             Object value = it.next();
-            if (value == null) {
-                continue;
-            }
             context.setAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT, current);
             boolean stored = elementMapping.getConverter().marshall(resource, value, elementMapping, context);
             if (stored) {
