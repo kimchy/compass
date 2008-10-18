@@ -54,8 +54,12 @@ public class LuceneIndexHolder {
         return this.subIndex;
     }
 
-    public synchronized void acquire() {
+    public synchronized boolean acquire() {
+        if (markForClose) {
+            return false;
+        }
         count++;
+        return true;
     }
 
     public synchronized void release() {
