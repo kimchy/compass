@@ -261,7 +261,7 @@ public class LuceneTransaction extends AbstractTransaction {
                 throw new SearchEngineException("Failed commit transaction sub index [" + subIndex + "]", e);
             }
             if (indexManager.getSettings().isClearCacheOnCommit()) {
-                indexManager.refreshCache(subIndex);
+                indexManager.clearCache(subIndex);
             }
             return null;
         }

@@ -424,7 +424,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
                 throw new SearchEngineException("Failed to add transaction index to sub index [" + subIndex + "]", e);
             }
             if (indexManager.getSettings().isClearCacheOnCommit()) {
-                indexManager.refreshCache(subIndex);
+                indexManager.clearCache(subIndex);
             }
             try {
                 transIndexManager.close(subIndex);
