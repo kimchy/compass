@@ -43,7 +43,7 @@ public class AsmReflectionConstructorGenerator {
      */
     public static synchronized ReflectionConstructor generateConstructor(Constructor originalCtor) throws NoSuchMethodException {
         final Class declaringClass = originalCtor.getDeclaringClass();
-        String ownerClassName = declaringClass.getCanonicalName();
+        String ownerClassName = declaringClass.getName();
 
         Constructor[] declaredCtors = declaringClass.getDeclaredConstructors();
         int ctorIndex = 0;

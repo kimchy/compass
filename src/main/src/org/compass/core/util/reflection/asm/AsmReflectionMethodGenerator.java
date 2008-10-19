@@ -49,7 +49,7 @@ public class AsmReflectionMethodGenerator {
                                                                 Class interfaceClass, boolean argsParams,
                                                                 boolean returnValue) throws SecurityException, NoSuchMethodException {
         final Class declaringClass = refMethod.getDeclaringClass();
-        String ownerClassName = declaringClass.getCanonicalName();
+        String ownerClassName = declaringClass.getName();
 
         Method[] declaredMethods = declaringClass.getDeclaredMethods();
         int methodIndex = 0;

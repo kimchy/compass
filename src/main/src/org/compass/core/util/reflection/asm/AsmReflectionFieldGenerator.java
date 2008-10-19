@@ -44,7 +44,7 @@ public class AsmReflectionFieldGenerator {
      */
     public static synchronized ReflectionField generateField(Field refField) throws NoSuchFieldException {
         Class declaringClass = refField.getDeclaringClass();
-        String ownerClassName = declaringClass.getCanonicalName();
+        String ownerClassName = declaringClass.getName();
 
         Field[] declaredFields = declaringClass.getDeclaredFields();
         int methodIndex = 0;
