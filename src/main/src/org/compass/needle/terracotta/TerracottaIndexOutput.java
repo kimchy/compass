@@ -25,8 +25,6 @@ import org.apache.lucene.store.IndexOutput;
  */
 public class TerracottaIndexOutput extends IndexOutput {
 
-    private final TerracottaDirectory dir;
-
     private final int bufferSize;
 
     private final int flushRate;
@@ -55,11 +53,11 @@ public class TerracottaIndexOutput extends IndexOutput {
     private boolean seekOccured;
 
     TerracottaIndexOutput(TerracottaDirectory dir, String name) {
-        this.dir = dir;
         this.name = name;
         this.bufferSize = dir.getBufferSize();
         this.flushRate = dir.getFlushRate();
         file = new TerracottaFile();
+        dir.addFile(name, file);
         file.lock();
         // add a dummy buffer for the first one
         file.addBuffer(0);
@@ -119,10 +117,8 @@ public class TerracottaIndexOutput extends IndexOutput {
         file.setLength(length);
         file.setLastModified(System.currentTimeMillis());
         file.unlock();
-        dir.addFile(name, file);
         buffer = null;
         firstBuffer = null;
-        dir.getOnGoingIndexOutputs().remove(name);
     }
 
     public long getFilePointer() {

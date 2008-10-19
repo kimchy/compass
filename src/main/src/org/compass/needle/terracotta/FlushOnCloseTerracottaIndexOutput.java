@@ -53,6 +53,9 @@ public class FlushOnCloseTerracottaIndexOutput extends IndexOutput {
         this.bufferSize = dir.getBufferSize();
         file = new TerracottaFile();
 
+        // just add an empty file to mark the fact we created a file for this name
+        dir.addFile(name, TerracottaDirectory.EMPTY_FILE);
+        
         open = true;
         // make sure that we switch to the
         // first needed buffer lazily
@@ -103,7 +106,6 @@ public class FlushOnCloseTerracottaIndexOutput extends IndexOutput {
         file.setLastModified(System.currentTimeMillis());
         dir.addFile(name, file);
         currentBuffer = null;
-        dir.getOnGoingIndexOutputs().remove(name);
     }
 
     public long length() {
