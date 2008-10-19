@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.index.LuceneUtils;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IndexInput;
@@ -204,7 +205,12 @@ public class TerracottaDirectory extends Directory {
      * Creates a new, empty file in the directory with the given name. Returns a stream writing this file.
      */
     public IndexOutput createOutput(String name) throws IOException {
-        IndexOutput indexOutput = new TerracottaIndexOutput(this, name);
+        IndexOutput indexOutput;
+        if (LuceneUtils.isSegmentsFile(name)) {
+            indexOutput = new FlushOnCloseTerracottaIndexOutput(this, name);
+        } else {
+            indexOutput = new TerracottaIndexOutput(this, name);
+        }
         onGoingIndexOutputs.put(name, Boolean.TRUE);
         return indexOutput;
     }

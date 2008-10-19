@@ -42,7 +42,7 @@ public class TerracottaIndexInput extends IndexInput implements Cloneable {
         file = f;
         length = file.length;
         if (length / this.bufferSize >= Integer.MAX_VALUE) {
-            throw new IOException("Too large RAMFile! " + length);
+            throw new IOException("Too large File! " + length);
         }
 
         // make sure that we switch to the

@@ -148,4 +148,8 @@ public abstract class LuceneUtils {
         }
         return true;
     }
+
+    public static boolean isSegmentsFile(String name) {
+        return name.startsWith(IndexFileNames.SEGMENTS) || name.equals(IndexFileNames.SEGMENTS_GEN);
+    }
 }
