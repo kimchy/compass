@@ -1,8 +1,8 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.1.0 RC
-================
+VERSION 2.1.0 RC (19 October, 2008)
+===================================
 
 1. Upgraded to Lucene 2.4. Make sure to update the Lucene jars in your application as well.
 2. TOKENIZED deprecated and renamed to ANALYZED. UN_TOKENIZED deprecated and renamed to NOT_ANALYZED. This applies to
