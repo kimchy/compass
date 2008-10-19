@@ -77,6 +77,8 @@ public class TransIndex implements CompassConfigurable {
             } else {
                 if (transLogConnection.equals("file://")) {
                     transLogConnection = DEFAULT_LOCATION;
+                } else if (transLogConnection.startsWith("file://")) {
+                    transLogConnection = transLogConnection.substring("file://".length());
                 }
                 transLogConnection += "/" + transId.nextLong();
                 directory = FSDirectory.getDirectory(transLogConnection);
@@ -90,7 +92,7 @@ public class TransIndex implements CompassConfigurable {
             // TODO lucene23 we probably want to set a merge policy that will perform no merges
             optimize = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG, true);
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to open transactional index for sub index [" + subIndex + "]");
+            throw new SearchEngineException("Failed to open transactional index for sub index [" + subIndex + "]", e);
         }
     }
 

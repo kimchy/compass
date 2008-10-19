@@ -30,7 +30,7 @@ public class FSFsTransLuceneReadCommittedTransactionEngineTests extends Abstract
         CompassSettings settings = super.buildCompassSettings();
         settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
         settings.setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, ReadCommittedTransaction.class.getName());
-        settings.setSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, "file://");
+        settings.setSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, "file://target/test-index-trans");
         return settings;
     }
 
