@@ -73,10 +73,16 @@ public class CompassCacheStore extends Base implements CacheStore {
         compassTemplate = new CompassTemplate(compass);
     }
 
+    /**
+     * Returns <code>null</code>, just implemets store.
+     */
     public Object load(Object o) {
         return null;
     }
 
+    /**
+     * Returns an empty hash map, just implements store.
+     */
     public Map loadAll(Collection collection) {
         return new HashMap();
     }
