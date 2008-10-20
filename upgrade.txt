@@ -4,6 +4,12 @@ COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log
 VERSION 2.1.0 GA
 ================
 
+1. Added new time based notation for configuration. For example: 10millis is 10 milliseconds, 10S is also 10
+   milliseconds (as per SimpleDateFormat), 10s is 10 seconds, 10m is 10 minutes, 10H is 10 hours.
+2. compass.engine.indexManagerScheduleInterval is not set in new time notation, this means that if it is set explicitly
+   it will now be set in the default unit, which is milliseconds, and not the previous value for this setting,
+   which was seconds.
+
 VERSION 2.1.0 RC (19 October, 2008)
 ===================================
 

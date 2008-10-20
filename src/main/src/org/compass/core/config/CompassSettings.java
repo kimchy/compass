@@ -241,6 +241,8 @@ public class CompassSettings {
         }
         if (sValue.endsWith("S")) {
             return Long.parseLong(sValue.substring(0, sValue.length() - 1));
+        } else if (sValue.endsWith("millis")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - "millis".length())) * 1000);
         } else if (sValue.endsWith("s")) {
             return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 1000);
         } else if (sValue.endsWith("m")) {

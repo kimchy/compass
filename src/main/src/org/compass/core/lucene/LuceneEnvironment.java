@@ -43,7 +43,7 @@ public class LuceneEnvironment {
         public static final String PREFIX = "compass.engine.similarity";
 
         public static final String DEFAULT_SIMILARITY_TYPE = PREFIX + ".default.type";
-        
+
         public static final String INDEX_SIMILARITY_TYPE = PREFIX + ".index.type";
 
         public static final String SEARCH_SIMILARITY_TYPE = PREFIX + ".search.type";
@@ -652,7 +652,7 @@ public class LuceneEnvironment {
          * The default number of suggestions.
          */
         public static final String NUMBER_OF_SUGGESTIONS = PREFIX + "numberOfSuggestions";
-        
+
         /**
          * Sets the dictionary threshold, which controls the minimum
          * number of documents (of the total) where a term should appear. Defaults to <code>0.0f</code>.
@@ -835,8 +835,9 @@ public class LuceneEnvironment {
         public static final long DEFAULT_CACHE_INTERVAL_INVALIDATION = 5000;
 
         /**
-         * The index manager schedule interval (in seconds) where different actions related to index manager will happen (such
-         * as global cache interval checks. If set to <code>-1</code>, not scheduling will happen.
+         * The index manager schedule interval where different actions related to index manager will happen (such
+         * as global cache interval checks). Accepts time setting (10millis for 10 milliseconds, 10s for 10 seconds, and so on).
+         * If set to <code>-1</code>, not scheduling will happen. Defaults to 60 seconds.
          */
         public static final String INDEX_MANAGER_SCHEDULE_INTERVAL = "compass.engine.indexManagerScheduleInterval";
 
@@ -1361,7 +1362,7 @@ public class LuceneEnvironment {
          * Sets Lucene <b>static</b> setting of the number of clauses a boolean query can hold.
          * Defaults to <code>1024</code>.
          *
-         * @see org.apache.lucene.search.BooleanQuery#setMaxClauseCount(int) 
+         * @see org.apache.lucene.search.BooleanQuery#setMaxClauseCount(int)
          */
         public static final String MAX_CLAUSE_COUNT = "compass.query.maxClauseCount";
     }

@@ -542,7 +542,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         if (isRunning) {
             return;
         }
-        long indexManagerScheduleInterval = (long) (luceneSettings.getSettings().getSettingAsFloat(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60.0f) * 1000);
+        long indexManagerScheduleInterval = luceneSettings.getSettings().getSettingAsTimeInMillis(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, 60 * 1000);
         if (indexManagerScheduleInterval > 0) {
             if (log.isInfoEnabled()) {
                 log.info("Starting scheduled index manager with period [" + indexManagerScheduleInterval + "ms]");

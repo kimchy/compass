@@ -749,10 +749,10 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="cacheInvalidationInterval" type="xsd:integer" use="optional">
+        <xsd:attribute name="cacheInvalidationInterval" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    Sets how often (in milliseconds) the index manager will check if the index cache needs to be
+                    Sets how often (in time notation) the index manager will check if the index cache needs to be
                     invalidated. Defaults to 5000. Setting it to 0 means that the cache will check if it needs to be
                     invalidated all the time. Setting it to -1 means that the cache will never check if it needs to be
                     invalidated, note, that it is perfectly fine if a single instance is manipulating the index. It
@@ -768,11 +768,12 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="indexManagerScheduleInterval" type="xsd:integer" use="optional">
+        <xsd:attribute name="indexManagerScheduleInterval" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    The index manager schedule interval (in seconds) where different actions related to index manager
-                    will happen (such as global cache interval checks).
+                    The index manager schedule interval (in time notation) where different actions related to index
+                    manager will happen (such as global cache interval checks). Set to -1 in order to disable it.
+                    Defaults to 60 seconds.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

@@ -201,7 +201,7 @@ public class LuceneSettings {
         ramBufferSize = settings.getSettingAsDouble(LuceneEnvironment.SearchEngineIndex.RAM_BUFFER_SIZE, IndexWriter.DEFAULT_RAM_BUFFER_SIZE_MB);
 
         // cach invalidation settings
-        cacheInvalidationInterval = settings.getSettingAsLong(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, LuceneEnvironment.SearchEngineIndex.DEFAULT_CACHE_INTERVAL_INVALIDATION);
+        cacheInvalidationInterval = settings.getSettingAsTimeInMillis(LuceneEnvironment.SearchEngineIndex.CACHE_INTERVAL_INVALIDATION, LuceneEnvironment.SearchEngineIndex.DEFAULT_CACHE_INTERVAL_INVALIDATION);
         if (log.isDebugEnabled()) {
             log.debug("Using cache invalidation interval [" + cacheInvalidationInterval + "ms]");
         }
@@ -213,7 +213,7 @@ public class LuceneSettings {
 
         BooleanQuery.setMaxClauseCount(settings.getSettingAsInt(LuceneEnvironment.Query.MAX_CLAUSE_COUNT, BooleanQuery.getMaxClauseCount()));
         if (log.isDebugEnabled()) {
-            log.debug("Setting Lucene BooleanQuery maxClauseCount to [" + BooleanQuery.getMaxClauseCount() + "]");
+            log.debug("Setting *static* Lucene BooleanQuery maxClauseCount to [" + BooleanQuery.getMaxClauseCount() + "]");
         }
     }
 
