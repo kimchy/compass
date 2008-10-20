@@ -33,8 +33,7 @@ public class SearchEngineIndexManagerTests extends AbstractTestCase {
 
     protected void addSettings(CompassSettings settings) {
         super.addSettings(settings);
-        settings.setFloatSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL,
-                0.2f);
+        settings.setSetting(LuceneEnvironment.SearchEngineIndex.INDEX_MANAGER_SCHEDULE_INTERVAL, "0.2s");
     }
 
     public void testCleanIndex() {
