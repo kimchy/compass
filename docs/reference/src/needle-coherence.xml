@@ -77,4 +77,12 @@ compass.engine.store.lockFactory.path=cacheName
       </para>
       
 	  </sect1>
+	  
+	  <sect1 id="needle-coherence-cachestore">
+  	    <title>Compass Cache Store</title>
+  	    
+  	    <para>
+  	      Compass comes with a simple <literal>CacheStore</literal> implementation called <literal>CompassCacheStore</literal>. The implementation implements only the cache store API (cache load returns null) and relies on the fact that the key of the hash map is the key of the object (note, Compass supports composite ids using the <literal>id-component</literal> mapping). The implementation allows to simple write behind of changes happening in the cache to be reflected in the index (which, of course, can be stored in coherence as well).
+  	    </para>
+  	</sect1>
 	</chapter>
