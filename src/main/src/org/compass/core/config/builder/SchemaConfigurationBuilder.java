@@ -496,6 +496,9 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.CONNECTION, "tc://" + indexName);
             settings.setSetting("compass.engine.store.tc.bufferSize", getElementAttribute(connEle, "bufferSize"));
             settings.setSetting("compass.engine.store.tc.flushRate", getElementAttribute(connEle, "flushRate"));
+            settings.setSetting("compass.engine.store.tc.chm.initialCapacity", getElementAttribute(connEle, "chmInitialCapacity"));
+            settings.setSetting("compass.engine.store.tc.chm.loadFactor", getElementAttribute(connEle, "chmLoadFactor"));
+            settings.setSetting("compass.engine.store.tc.chm.concurrencyLevel", getElementAttribute(connEle, "chmConcurrencyLevel"));
             return;
         }
         // --- Coherence Connection ---

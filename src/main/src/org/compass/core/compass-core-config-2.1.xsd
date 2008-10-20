@@ -1387,6 +1387,27 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="chmInitialCapacity" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The inital capacity of the concurrent hash map for each sub index directory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="chmLoadFactor" type="xsd:float" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The load factor of the concurrent hash map for each sub index directory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="chmConcurrencyLevel" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The concurrency level of the concurrent hash map for each sub index directory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
     </xsd:complexType>
     <xsd:complexType name="mmapConnType">
         <xsd:annotation>

@@ -139,7 +139,7 @@
                 <xsd:documentation>
                     A setting for managed id index feature. When an internal managed id is created, it's index setting
                     will be created using this global setting (if not defined locally in the mapping file). Possible
-                    values are no and un_tokenized, with default value set to no.
+                    values are no and not_analyzed, with default value set to no.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
@@ -839,6 +839,13 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="cacheAsyncInvalidation" type="booleanType" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Sets if invalidation of cache will happen in the background or not. By default set to true.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
         <xsd:attribute name="indexManagerScheduleInterval" type="xsd:integer" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
@@ -1455,6 +1462,27 @@
             <xsd:annotation>
                 <xsd:documentation>
                     The flush rate for the terracotta connection.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="chmInitialCapacity" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The inital capacity of the concurrent hash map for each sub index directory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="chmLoadFactor" type="xsd:float" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The load factor of the concurrent hash map for each sub index directory.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="chmConcurrencyLevel" type="xsd:positiveInteger" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    The concurrency level of the concurrent hash map for each sub index directory.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>

@@ -49,9 +49,15 @@ public class TerracottaDirectory extends Directory {
 
     public static final transient int DEFAULT_FLUSH_RATE = 10;
 
+    public static final transient int DEFAULT_CHM_CONCURRENCY_LEVEL = 16 * 10;
+
+    public static final transient float DEFAULT_CHM_LOAD_FACTOR = 0.75f;
+
+    public static final transient int DEFAULT_CHM_INITIAL_CAPACITY = 16 * 10;
+
     private static final transient Log log = LogFactory.getLog(TerracottaDirectory.class);
 
-    private Map<String, TerracottaFile> fileMap = new ConcurrentHashMap<String, TerracottaFile>();
+    private final Map<String, TerracottaFile> fileMap;
 
     private final int bufferSize;
 
@@ -61,12 +67,17 @@ public class TerracottaDirectory extends Directory {
         this(DEFAULT_BUFFER_SIZE, DEFAULT_FLUSH_RATE);
     }
 
+    public TerracottaDirectory(int bufferSize, int flushRate) {
+        this(bufferSize, flushRate, DEFAULT_CHM_INITIAL_CAPACITY, DEFAULT_CHM_LOAD_FACTOR, DEFAULT_CHM_CONCURRENCY_LEVEL);
+    }
+
     /**
      * Constructs an empty {@link Directory}.
      */
-    public TerracottaDirectory(int bufferSize, int flushRate) {
+    public TerracottaDirectory(int bufferSize, int flushRate, int chmInitialCapacity, float chmLoadFactor, int chmConcurrencyLevel) {
         this.bufferSize = bufferSize;
         this.flushRate = flushRate;
+        this.fileMap = new ConcurrentHashMap<String, TerracottaFile>(chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
         try {
             Class.forName("com.tc.object.bytecode.ManagerUtil", true, Thread.currentThread().getContextClassLoader());
 //            setLockFactory(new TerracottaManagerUtilLockFactory());
