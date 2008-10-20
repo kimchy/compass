@@ -77,7 +77,7 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
             }
         }
 
-        bucketSize = settings.getSettingAsInt(BUCKET_SIZE_PROP, GigaSpaceDirectory.DEFAULT_BUCKET_SIZE);
+        bucketSize = (int) settings.getSettingAsBytes(BUCKET_SIZE_PROP, GigaSpaceDirectory.DEFAULT_BUCKET_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, GigaSpaceDirectory.DEFAULT_FLUSH_RATE);
     }
 

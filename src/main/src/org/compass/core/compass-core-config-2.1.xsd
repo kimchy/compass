@@ -1297,7 +1297,7 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="bucketSize" type="xsd:positiveInteger" use="optional">
+        <xsd:attribute name="bucketSize" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The bucket size of the index.
@@ -1373,7 +1373,7 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="bufferSize" type="xsd:positiveInteger" use="optional">
+        <xsd:attribute name="bufferSize" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The buffer size of the index.

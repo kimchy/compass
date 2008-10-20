@@ -18,6 +18,7 @@ package org.compass.core.config;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Runtime settings for Compass applies on the Session level. Reading settings
@@ -120,6 +121,22 @@ public class RuntimeCompassSettings extends CompassSettings {
         return globalSettings.getSettingAsBoolean(setting, defaultValue);
     }
 
+    public long getSettingAsTimeInMillis(String setting, long defaultValue) {
+        String value = runtimeSettings.getSetting(setting);
+        if (value != null) {
+            return runtimeSettings.getSettingAsTimeInMillis(setting, defaultValue);
+        }
+        return globalSettings.getSettingAsTimeInMillis(setting, defaultValue);
+    }
+
+    public long getSettingAsBytes(String setting, long defaultValue) {
+        String value = runtimeSettings.getSetting(setting);
+        if (value != null) {
+            return runtimeSettings.getSettingAsBytes(setting, defaultValue);
+        }
+        return globalSettings.getSettingAsBytes(setting, defaultValue);
+    }
+
     public double getSettingAsDouble(String setting, double defaultValue) {
         String value = runtimeSettings.getSetting(setting);
         if (value != null) {
@@ -179,6 +196,11 @@ public class RuntimeCompassSettings extends CompassSettings {
 
     public CompassSettings setLongSetting(String setting, long value) {
         runtimeSettings.setLongSetting(setting, value);
+        return this;
+    }
+
+    public CompassSettings setTimeSetting(String setting, long value, TimeUnit timeUnit) {
+        runtimeSettings.setTimeSetting(setting, value, timeUnit);
         return this;
     }
 

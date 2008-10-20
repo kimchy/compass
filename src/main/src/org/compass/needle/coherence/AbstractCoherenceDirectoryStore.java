@@ -55,7 +55,7 @@ public abstract class AbstractCoherenceDirectoryStore extends AbstractDirectoryS
         }
         String cacheName = connection.substring(index + 1);
 
-        bucketSize = settings.getSettingAsInt(BUCKET_SIZE_PROP, DataGridCoherenceDirectory.DEFAULT_BUCKET_SIZE);
+        bucketSize = (int) settings.getSettingAsBytes(BUCKET_SIZE_PROP, DataGridCoherenceDirectory.DEFAULT_BUCKET_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, DataGridCoherenceDirectory.DEFAULT_FLUSH_RATE);
         cache = CacheFactory.getCache(cacheName);
     }

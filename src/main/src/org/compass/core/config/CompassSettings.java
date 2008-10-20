@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.compass.core.util.ClassUtils;
 
@@ -233,6 +234,40 @@ public class CompassSettings {
         return Boolean.valueOf(sValue);
     }
 
+    public long getSettingAsTimeInMillis(String setting, long defaultValue) {
+        String sValue = getSetting(setting);
+        if (sValue == null) {
+            return defaultValue;
+        }
+        if (sValue.endsWith("S")) {
+            return Long.parseLong(sValue.substring(0, sValue.length() - 1));
+        } else if (sValue.endsWith("s")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 1000);
+        } else if (sValue.endsWith("m")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 60 * 1000);
+        } else if (sValue.endsWith("H")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 60 * 60 * 1000);
+        }
+        return Long.parseLong(sValue);
+    }
+
+    public long getSettingAsBytes(String setting, long defaultValue) {
+        String sValue = getSetting(setting);
+        if (sValue == null) {
+            return defaultValue;
+        }
+        if (sValue.endsWith("b")) {
+            return Long.parseLong(sValue.substring(0, sValue.length() - 1));
+        } else if (sValue.endsWith("k") || sValue.endsWith("K")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 1024);
+        } else if (sValue.endsWith("m") || sValue.endsWith("M")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 1024 * 1024);
+        } else if (sValue.endsWith("g") || sValue.endsWith("G")) {
+            return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 1024 * 1024 * 1024);
+        }
+        return Long.parseLong(sValue);
+    }
+
     public Class getSettingAsClass(String setting, Class clazz) throws ClassNotFoundException {
         String sValue = getSetting(setting);
         if (sValue == null) {
@@ -315,6 +350,14 @@ public class CompassSettings {
 
     public CompassSettings setLongSetting(String setting, long value) {
         setSetting(setting, String.valueOf(value));
+        return this;
+    }
+
+    /**
+     * Sets the given time setting based on the given time unit, converting it to milliseconds.
+     */
+    public CompassSettings setTimeSetting(String setting, long value, TimeUnit timeUnit) {
+        setLongSetting(setting, timeUnit.toMillis(value));
         return this;
     }
 
