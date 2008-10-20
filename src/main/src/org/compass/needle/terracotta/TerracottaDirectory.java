@@ -213,6 +213,7 @@ public class TerracottaDirectory extends Directory {
     public IndexOutput createOutput(String name) throws IOException {
         IndexOutput indexOutput;
         if (LuceneUtils.isSegmentsFile(name)) {
+            // segment files are seeked to the end, and we know they are small, so flush them when they close
             indexOutput = new FlushOnCloseTerracottaIndexOutput(this, name);
         } else {
             indexOutput = new TerracottaIndexOutput(this, name);
