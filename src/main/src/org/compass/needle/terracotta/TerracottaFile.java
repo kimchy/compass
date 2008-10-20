@@ -92,7 +92,7 @@ final class TerracottaFile {
         return new byte[size];
     }
 
-    private class BufferWrapper {
+    private static class BufferWrapper {
         public final Buffer buffer;
 
         private BufferWrapper(byte[] buffer) {
@@ -104,7 +104,7 @@ final class TerracottaFile {
         }
     }
 
-    private class Buffer {
+    private static class Buffer {
         public byte[] buffer;
 
         private Buffer(byte[] buffer) {
