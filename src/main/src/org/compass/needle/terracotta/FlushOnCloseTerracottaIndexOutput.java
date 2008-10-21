@@ -92,7 +92,6 @@ public class FlushOnCloseTerracottaIndexOutput extends IndexOutput {
     }
 
     public void flush() throws IOException {
-        file.setLastModified(System.currentTimeMillis());
         setFileLength();
     }
 

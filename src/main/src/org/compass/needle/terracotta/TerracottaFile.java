@@ -52,12 +52,11 @@ final class TerracottaFile {
         this.length = length;
     }
 
-    // Not syncronize on get/set lastModified, should be ok, but needs to be verified
-    long getLastModified() {
+    synchronized long getLastModified() {
         return lastModified;
     }
 
-    void setLastModified(long lastModified) {
+    synchronized void setLastModified(long lastModified) {
         this.lastModified = lastModified;
     }
 
