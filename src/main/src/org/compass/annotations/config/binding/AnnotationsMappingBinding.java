@@ -333,8 +333,8 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
     }
 
     private void bindConverter(SearchConverter searchConverter) throws ConfigurationException, MappingException {
-        String[] settingsNames = new String[searchConverter.settings().length + 1];
-        String[] settingsValues = new String[searchConverter.settings().length + 1];
+        String[] settingsNames = new String[searchConverter.settings().length + 2];
+        String[] settingsValues = new String[searchConverter.settings().length + 2];
         int i = 0;
         for (; i < searchConverter.settings().length; i++) {
             SearchSetting setting = searchConverter.settings()[i];
@@ -343,6 +343,10 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         }
         settingsNames[i] = CompassEnvironment.Converter.TYPE;
         settingsValues[i] = searchConverter.type().getName();
+        settingsNames[++i] = CompassEnvironment.Converter.REGISTER_CLASS;
+        if (!searchConverter.registerClass().equals(Object.class)) {
+            settingsValues[i] = searchConverter.registerClass().getName();
+        } // else, just leave it as null
         settings.setGroupSettings(CompassEnvironment.Converter.PREFIX, searchConverter.name(),
                 settingsNames, settingsValues);
     }

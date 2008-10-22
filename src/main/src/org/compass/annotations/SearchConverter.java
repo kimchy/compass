@@ -47,6 +47,12 @@ public @interface SearchConverter {
     Class<? extends Converter> type();
 
     /**
+     * Optional, the actual java type this converter will be used for. If used, this converter will be
+     * applies to all the types of this class.
+     */
+    Class registerClass() default Object.class;
+
+    /**
      * Settings for the {@link Converter} implemenation. If set,
      * the {@link Converter} should implement the {@link org.compass.core.config.CompassConfigurable}
      * interface.
