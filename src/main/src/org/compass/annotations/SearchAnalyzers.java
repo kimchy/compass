@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 public @interface SearchAnalyzers {
 
     /**
-     * A collection of analyzers to confiugre.
+     * A collection of analyzers to configure.
      */
     SearchAnalyzer[] value();
 }
