@@ -26,32 +26,32 @@ import org.apache.lucene.analysis.Analyzer;
 /**
  * Configure {@link Analyzer} to be used within Compass.
  * Set on package definition (<code>package-info.java</code>).
- * <p/>
- * The {@link Analyzer} is registed under a lookup name ({@link #name()}), which can then
+ *
+ * <p>The {@link Analyzer} is registed under a lookup name ({@link #name()}), which can then
  * be reference in the different mapping definitions.
- * <p/>
- * Allows for simple configuration of all analyzers that come with Compass using {@link #type()}.
+ *
+ * <p>Allows for simple configuration of all analyzers that come with Compass using {@link #type()}.
  * If the {@link #type()} is set to {@link AnalyzerType#Snowball}, the {@link #snowballType()}
  * can be used to further configure the snowball analyzer. If a custom converter needs to be
  * registered with Compass, the {@link AnalyzerType#CustomAnalyzer} needs to be set on {@link #type()},
  * and the {@link #analyzerClass()} needs to be configured with the class that implements it.
- * <p/>
- * A set of stop words can be added/replace the stop words the internal analyzers are configured
+ *
+ * <p>A set of stop words can be added/replace the stop words the internal analyzers are configured
  * with. The stop words will be added if the {@link #addStopWords()} is set to <code>true</code>.
- * <p/>
- * Further settings can be set for a specialized analyzer using {@link #settings()}. If the
+ *
+ * <p>Further settings can be set for a specialized analyzer using {@link #settings()}. If the
  * specialized {@link Analyzer} requires settings to be injected, it needs to implement the
  * {@link org.compass.core.config.CompassConfigurable} interface.
- * <p/>
- * To replace Compas default analyzer, the {@link #name()} should be set
+ *
+ * <p>To replace Compas default analyzer, the {@link #name()} should be set
  * {@link org.compass.core.lucene.LuceneEnvironment.Analyzer#DEFAULT_GROUP}.
- * <p/>
- * To replace Compass search analyzer (which defaults to the default analyzer if not set), the
+ *
+ * <p>To replace Compass search analyzer (which defaults to the default analyzer if not set), the
  * {@link #name()} should be set to {@link org.compass.core.lucene.LuceneEnvironment.Analyzer#SEARCH_GROUP}.
- * <p/>
- * Multiple analyzers can be defined using the {@link SearchAnalyzers} annotation.
- * <p/>
- * Note, that Analyzers can also be conifugred using Compass configuration mechanism.
+ *
+ * <p>Multiple analyzers can be defined using the {@link SearchAnalyzers} annotation.
+ *
+ * <p>Note, that Analyzers can also be conifugred using other Compass configuration mechanism.
  *
  * @author kimchy
  */
@@ -86,16 +86,16 @@ public @interface SearchAnalyzer {
     /**
      * A set of {@link org.compass.core.lucene.engine.analyzer.LuceneAnalyzerTokenFilterProvider}s
      * lookup names to be used with the {@link Analyzer}.
-     * <p/>
-     * Filters can be configured using {@link SearchAnalyzerFilter} or using Compass configuration.
+     *
+     * <p>Filters can be configured using {@link SearchAnalyzerFilter} or using Compass configuration.
      */
     String[] filters() default {};
 
     /**
      * A set of stop words that will be added/replace the stop words that comes with Compass intenral
      * analyzers.
-     * <p/>
-     * Only applies when using one of Compass internal analyzer types, and not the {@link AnalyzerType#CustomAnalyzer}.
+     *
+     * <p>Only applies when using one of Compass internal analyzer types, and not the {@link AnalyzerType#CustomAnalyzer}.
      */
     String[] stopWords() default {};
 
@@ -108,7 +108,7 @@ public @interface SearchAnalyzer {
     boolean addStopWords() default true;
 
     /**
-     * Futher settings for a custom {@link Analyzer} implementation.
+     * Further settings for a custom {@link Analyzer} implementation.
      */
     SearchSetting[] settings() default {};
 }

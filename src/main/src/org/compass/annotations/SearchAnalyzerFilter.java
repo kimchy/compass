@@ -26,12 +26,12 @@ import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerTokenFilterProvider
 /**
  * Configures a {@link LuceneAnalyzerTokenFilterProvider} to be used within Compass.
  * Set on package definition (<code>package-info.java</code>).
- * <p/>
- * The {@link LuceneAnalyzerTokenFilterProvider} is registed under a lookup
+ *
+ * <p>The {@link LuceneAnalyzerTokenFilterProvider} is registed under a lookup
  * name ({@link #name()}), which can then be reference in in the analyzer definition
  * (i.e. {@link org.compass.annotations.SearchAnalyzer#filters()}).
- * <p/>
- * Additional settings can be injected into the {@link LuceneAnalyzerTokenFilterProvider}
+ *
+ * <p>Additional settings can be injected into the {@link LuceneAnalyzerTokenFilterProvider}
  * implementation using {@link #settings()}.
  *
  * @author kimchy
