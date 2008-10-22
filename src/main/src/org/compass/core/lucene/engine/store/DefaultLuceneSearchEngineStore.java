@@ -162,7 +162,6 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
             log.debug("Support concurrent operations [" + supportsConcurrentOperations + "]");
         }
 
-
         // setup sub indexes and aliases
         subIndexesSet = new HashSet<String>();
         for (ResourceMapping resourceMapping : mapping.getRootMappings()) {
@@ -360,7 +359,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                 return dir;
             }
             dir = directoryStore.open(subContext, subIndex);
-            String lockFactoryType = settings.getSetting(LuceneEnvironment.LockFactory.TYPE);
+            Object lockFactoryType = settings.getSettingAsObject(LuceneEnvironment.LockFactory.TYPE);
             if (lockFactoryType != null) {
                 String path = settings.getSetting(LuceneEnvironment.LockFactory.PATH);
                 if (path != null) {
@@ -368,7 +367,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                     path = StringUtils.replace(path, "#subContext#", subContext);
                 }
                 LockFactory lockFactory;
-                if (LuceneEnvironment.LockFactory.Type.NATIVE_FS.equalsIgnoreCase(lockFactoryType)) {
+                if (lockFactoryType instanceof String && LuceneEnvironment.LockFactory.Type.NATIVE_FS.equalsIgnoreCase((String) lockFactoryType)) {
                     String lockDir = path;
                     if (lockDir == null) {
                         lockDir = connectionString + "/" + subContext + "/" + subIndex;
@@ -384,7 +383,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                     if (log.isDebugEnabled()) {
                         log.debug("Using native fs lock for sub index [" + subIndex + "] and lock directory [" + lockDir + "]");
                     }
-                } else if (LuceneEnvironment.LockFactory.Type.SIMPLE_FS.equalsIgnoreCase(lockFactoryType)) {
+                } else
+                if (lockFactoryType instanceof String && LuceneEnvironment.LockFactory.Type.SIMPLE_FS.equalsIgnoreCase((String) lockFactoryType)) {
                     String lockDir = path;
                     if (lockDir == null) {
                         lockDir = connectionString + "/" + subContext + "/" + subIndex;
@@ -401,17 +401,24 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                         log.debug("Using simple fs lock for sub index [" + subIndex + "] and lock directory [" + lockDir + "]");
                     }
 
-                } else if (LuceneEnvironment.LockFactory.Type.SINGLE_INSTANCE.equalsIgnoreCase(lockFactoryType)) {
+                } else
+                if (lockFactoryType instanceof String && LuceneEnvironment.LockFactory.Type.SINGLE_INSTANCE.equalsIgnoreCase((String) lockFactoryType)) {
                     lockFactory = new SingleInstanceLockFactory();
-                } else if (LuceneEnvironment.LockFactory.Type.NO_LOCKING.equalsIgnoreCase(lockFactoryType)) {
+                } else
+                if (lockFactoryType instanceof String && LuceneEnvironment.LockFactory.Type.NO_LOCKING.equalsIgnoreCase((String) lockFactoryType)) {
                     lockFactory = new NoLockFactory();
                 } else {
                     Object temp;
-                    try {
-                        temp = ClassUtils.forName(lockFactoryType, settings.getClassLoader()).newInstance();
-                    } catch (Exception e) {
-                        throw new SearchEngineException("Failed to create lock type [" + lockFactoryType + "]", e);
+                    if (lockFactoryType instanceof String) {
+                        try {
+                            temp = ClassUtils.forName((String) lockFactoryType, settings.getClassLoader()).newInstance();
+                        } catch (Exception e) {
+                            throw new SearchEngineException("Failed to create lock type [" + lockFactoryType + "]", e);
+                        }
+                    } else {
+                        temp = lockFactoryType;
                     }
+
                     if (temp instanceof LockFactory) {
                         lockFactory = (LockFactory) temp;
                     } else if (temp instanceof LockFactoryProvider) {
