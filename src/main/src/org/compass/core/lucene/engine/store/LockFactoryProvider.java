@@ -27,5 +27,15 @@ import org.compass.core.engine.SearchEngineException;
  */
 public interface LockFactoryProvider {
 
+    /**
+     * Creates the a lock factory.
+     *
+     * @param path      The path the lock factory will work with. Does not have to be an actual file system path.
+     * @param subContex The sub context the index is created with.
+     * @param subIndex  The sub index within the index (under the sub context).
+     * @param settings  Additional configuration settings
+     * @return The actual lock factory
+     * @throws SearchEngineException
+     */
     LockFactory createLockFactory(String path, String subContex, String subIndex, CompassSettings settings) throws SearchEngineException;
 }
