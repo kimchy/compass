@@ -78,6 +78,8 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
 
     public static final Log log = LogFactory.getLog(AnnotationsMappingBinding.class);
 
+    private static final Class[] applicableAnnotations = new Class[] {Searchable.class};
+
     private CommonMetaDataLookup valueLookup;
 
     private InternalCompassMapping mapping;
@@ -94,7 +96,10 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
     }
 
     protected boolean isApplicable(ClassMetaData classMetaData) {
-        return classMetaData.hasAnnotation(Searchable.class.getName());
+        for (Class applicableAnnotation : applicableAnnotations) {
+            if (classMetaData.hasAnnotation(applicableAnnotation.getName())) return true;
+        }
+        return false;
     }
 
     public boolean addPackage(String packageName) throws ConfigurationException, MappingException {
