@@ -26,8 +26,8 @@ import org.compass.core.converter.Converter;
 /**
  * Configure {@link Converter} to be used within Compass.
  * Set on package definition (<code>package-info.java</code>).
- * <p/>
- * The {@link Converter} is registed under a lookup name ({@link #name()}), which can then
+ *
+ * <p>The {@link Converter} is registed under a lookup name ({@link #name()}), which can then
  * be reference in the different mapping definitions.
  *
  * @author kimchy
