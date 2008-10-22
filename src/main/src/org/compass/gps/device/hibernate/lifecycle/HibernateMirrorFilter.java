@@ -24,6 +24,10 @@ import org.hibernate.event.PostUpdateEvent;
 /**
  * Allows to hook filtering of object during the mirroring process.
  *
+ * <p>Note, Compass event listeners (within {@link org.compass.core.events}) should be
+ * used instead of this filter for generic cases that do not require the actual Hibernate
+ * event objects.
+ *
  * @author kimchy
  */
 public interface HibernateMirrorFilter {
