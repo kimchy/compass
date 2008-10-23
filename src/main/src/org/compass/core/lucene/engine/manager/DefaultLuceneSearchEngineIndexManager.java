@@ -800,7 +800,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                                 internalRefreshCache(subIndex);
                             }
                         } catch (Exception e) {
-                            log.error("Failed to open index searcher for sub-index [" + subIndex + "]", e);
+                            log.error("Failed to perform background refresh of cache for for sub-index [" + subIndex + "]", e);
                         }
                     }
                     return null;
