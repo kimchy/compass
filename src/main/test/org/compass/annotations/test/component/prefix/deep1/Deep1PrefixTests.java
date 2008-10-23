@@ -66,11 +66,18 @@ public class Deep1PrefixTests extends AbstractAnnotationsTestCase {
         assertEquals("secondHome", resource.getValue("second_home_location"));
         assertEquals("secondWork", resource.getValue("second_work_location"));
 
+        assertEquals("firstHome", resource.getValue("first_home_dyn1"));
+        assertEquals("firstWork", resource.getValue("first_work_dyn1"));
+        assertEquals("secondHome", resource.getValue("second_home_dyn1"));
+        assertEquals("secondWork", resource.getValue("second_work_dyn1"));
+
+        assertEquals("addr", resource.getValue("first_work_const1"));
+        assertEquals("addr", resource.getValue("second_work_const1"));
+
         assertEquals(1, session.find("Order.firstCustomer.name:name1").length());
         assertEquals(1, session.find("Order.firstCustomer.homeAddress.location:firstHome").length());
         assertEquals(1, session.find("Order.firstCustomer.homeAddress.location.first_home_location:firstHome").length());
         assertEquals(1, session.find("Order.firstCustomer.homeAddress.location.location:firstHome").length());
-
 
         order = session.load(Order.class, 1);
         assertEquals("name1", order.firstCustomer.name);

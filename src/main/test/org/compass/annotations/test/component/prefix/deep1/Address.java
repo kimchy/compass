@@ -17,6 +17,8 @@
 package org.compass.annotations.test.component.prefix.deep1;
 
 import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableConstant;
+import org.compass.annotations.SearchableDynamicMetaData;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 
@@ -24,6 +26,8 @@ import org.compass.annotations.SearchableProperty;
  * @author kimchy
  */
 @Searchable(root = false)
+@SearchableDynamicMetaData(name = "dyn1", expression = "return data.location", converter = "groovy")
+@SearchableConstant(name = "const1", values = "addr")
 public class Address {
 
     @SearchableId
