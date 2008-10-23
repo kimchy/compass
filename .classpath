@@ -33,7 +33,6 @@
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-dbcp.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-collections.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring.jar"/>
 	<classpathentry kind="lib" path="lib/sunfsjndi/providerutil-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/sunfsjndi/fscontext-1.2.1.jar"/>
@@ -57,9 +56,7 @@
 	<classpathentry kind="lib" path="lib/lucene/lucene-core.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-analyzers.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-hibernate2.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring-hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-jdo.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring-jpa.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-ojb.jar"/>
 	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials.jar"/>
@@ -103,10 +100,12 @@
 	<classpathentry kind="lib" path="lib/jsr223/script-js.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-spellchecker.jar"/>
 	<classpathentry kind="lib" path="lib/stax/stax-api-1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/terracotta/terracotta-api-2.6-stable0-prealpha.jar"/>
 	<classpathentry kind="lib" path="lib/woodstox/wstx-asl-3.2.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/openjpa/openjpa-1.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.2.715.jar"/>
+	<classpathentry kind="lib" path="lib/terracotta/terracotta-api-2.7.0-prealpha.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-test.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-webmvc.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
