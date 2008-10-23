@@ -795,9 +795,13 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 public Object doInTransaction() throws CompassException {
                     for (String subIndex : searchEngineStore.getSubIndexes()) {
                         try {
-                            LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
-                            if (shouldInvalidateCache(indexHolder)) {
-                                internalRefreshCache(subIndex);
+                            if (true && searchEngineStore.indexExists(subIndex)) {
+                                LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
+                                if (shouldInvalidateCache(indexHolder)) {
+                                    internalRefreshCache(subIndex);
+                                }
+                            } else {
+                                log.trace("Sub index [" + subIndex + "] does not exists, no refresh perfomed");
                             }
                         } catch (Exception e) {
                             log.error("Failed to perform background refresh of cache for for sub-index [" + subIndex + "]", e);

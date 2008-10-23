@@ -130,10 +130,14 @@ public interface LuceneSearchEngineStore {
     boolean verifyIndex() throws SearchEngineException;
 
     /**
-     * Returns <code>true</code> if one of the sub indexes index does not
-     * exists.
+     * Returns <code>true</code> if one of the sub indexes index does exists.
      */
     boolean indexExists() throws SearchEngineException;
+
+    /**
+     * Returns <code>true</code> if the sub index index does exists as a legal Lucene index.
+     */
+    boolean indexExists(String subIndex) throws SearchEngineException;
 
     /**
      * Returns the sub indexes the intersect with the given sub indexes and aliases
