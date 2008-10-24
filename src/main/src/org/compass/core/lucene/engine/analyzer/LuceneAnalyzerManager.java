@@ -216,8 +216,7 @@ public class LuceneAnalyzerManager {
                 if (!StringUtils.hasText(filterProviderLookupName)) {
                     continue;
                 }
-                LuceneAnalyzerTokenFilterProvider provider =
-                        analyzersFilters.get(filterProviderLookupName);
+                LuceneAnalyzerTokenFilterProvider provider = analyzersFilters.get(filterProviderLookupName);
                 if (provider == null) {
                     throw new SearchEngineException("Failed to located filter provider [" + filterProviderLookupName
                             + "] for analyzer [" + analyzerName + "]");
