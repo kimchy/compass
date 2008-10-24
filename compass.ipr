@@ -486,7 +486,7 @@
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="file:///Users/kimchy/opt/lucene/2.4.0-rc2/src/java" />
+        <root url="file:///Users/kimchy/opt/lucene/2.4.0/src/java" />
       </SOURCES>
     </library>
     <library name="Ant">
