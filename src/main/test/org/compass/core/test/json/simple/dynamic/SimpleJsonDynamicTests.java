@@ -19,11 +19,16 @@ public class SimpleJsonDynamicTests extends AbstractTestCase {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
 
-        RawAliasedJsonObject jsonObject = new RawAliasedJsonObject("a", "{id : 1, value : \"test\"}");
+        RawAliasedJsonObject jsonObject = new RawAliasedJsonObject("a", "{id : 1, value : \"test\", value2 : \"test2\", value3 : 2}");
         session.save(jsonObject);
 
         Resource resource = session.loadResource("a", 1);
         assertEquals("test", resource.getValue("value"));
+        assertEquals("test2", resource.getValue("value2"));
+        assertEquals("2", resource.getValue("value3"));
+
+        assertTrue(resource.getProperty("value").isTokenized());
+        assertFalse(resource.getProperty("value3").isTokenized());
 
         tr.commit();
         session.close();

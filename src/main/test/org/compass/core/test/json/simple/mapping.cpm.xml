@@ -30,7 +30,7 @@
     <root-json-object alias="e">
         <json-id name="id" />
         <json-property name="value" />
-        <json-property name="value" converter="int" format="0000" />
+        <json-property name="value" value-converter="int" format="0000" />
     </root-json-object>
 
 </compass-core-mapping>

@@ -18,6 +18,7 @@ package org.compass.core;
 
 import java.io.Reader;
 
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
@@ -65,6 +66,12 @@ public interface ResourceFactory {
      */
     Property createProperty(String name, String value, ResourcePropertyMapping mapping)
             throws SearchEngineException;
+
+    /**
+     * Creates a property based on the converter, using the suggested values the converter has for
+     * index, store and so on. If they are not suggested, defaults to sensible values.
+     */
+    Property createProperty(String name, String value, ResourcePropertyConverter converter);
 
     /**
      * Creates a Property that is used with the actual Search Engine

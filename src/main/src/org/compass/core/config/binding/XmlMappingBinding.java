@@ -361,6 +361,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
         String format = jsonPropConf.getAttribute("format", null);
         if (format != null) {
+            jsonPropertyMapping.setFormat(format);
             jsonPropertyMapping.setValueConverter(new FormatDelegateConverter(format));
         }
 

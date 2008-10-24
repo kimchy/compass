@@ -73,6 +73,7 @@ public abstract class AbstractDynamicJsonMappingConverter implements Converter {
             if (propertyMappingConverter == null) {
                 propertyMappingConverter = new JsonPropertyMappingConverter();
                 propertyMapping = new JsonPropertyMapping();
+                propertyMapping.setDynamic(true);
                 propertyMapping.setValueConverter(new SimpleJsonValueConverter());
             }
             Object oldValue = context.setAttribute(DYNAMIC_PATH_CONTEXT_KEY, name);

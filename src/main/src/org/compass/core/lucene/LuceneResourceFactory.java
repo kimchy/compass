@@ -7,6 +7,7 @@ import org.apache.lucene.document.Field;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
@@ -49,6 +50,29 @@ public class LuceneResourceFactory implements ResourceFactory {
 
     public Property createProperty(String name, String value, ResourcePropertyMapping mapping) throws SearchEngineException {
         return createProperty(name, value, mapping, mapping.getStore(), mapping.getIndex());
+    }
+
+    public Property createProperty(String name, String value, ResourcePropertyConverter converter) {
+        Property.Store store = converter.suggestStore();
+        if (store == null) {
+            store = Property.Store.YES;
+        }
+        Property.Index index = converter.suggestIndex();
+        if (index == null) {
+            index = Property.Index.ANALYZED;
+        }
+        Property.TermVector termVector = converter.suggestTermVector();
+        if (termVector == null) {
+            termVector = Property.TermVector.NO;
+        }
+        Property property = createProperty(name, value, store, index, termVector);
+        if (converter.suggestOmitNorms() != null) {
+            property.setOmitNorms(converter.suggestOmitNorms());
+        }
+        if (converter.suggestOmitTf() != null) {
+            property.setOmitTf(converter.suggestOmitTf());
+        }
+        return property;
     }
 
     public Property createProperty(String name, String value, ResourcePropertyMapping mapping,

@@ -81,6 +81,9 @@ public class SimpleJsonTests extends AbstractTestCase {
         assertEquals(new Float(1.2), resource.getObject("float"));
         assertEquals(true, resource.getProperty("float").isCompressed());
 
+        // verify that the correct index was applied to numbers
+        assertFalse(resource.getProperty("int").isTokenized());
+
         assertEquals(1, session.find("c.int:2").length());
 
         tr.commit();
@@ -110,6 +113,10 @@ public class SimpleJsonTests extends AbstractTestCase {
 
         Resource resource = session.loadResource("e", 1);
         assertEquals(2, resource.getValues("value").length);
+        assertEquals("2", resource.getProperties("value")[0].getStringValue());
+        assertEquals("0002", resource.getProperties("value")[1].getStringValue());
+        assertTrue(resource.getProperties("value")[0].isTokenized());
+        assertFalse(resource.getProperties("value")[1].isTokenized());
 
         tr.commit();
         session.close();

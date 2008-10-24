@@ -72,6 +72,8 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
 
     private NamingType namingType;
 
+    private boolean dynamic = false;
+
     public Mapping copy() {
         JsonPropertyMapping xmlPropertyMapping = new JsonPropertyMapping();
         copy(xmlPropertyMapping);
@@ -86,6 +88,7 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
         copy.setFormat(getFormat());
         copy.setFullPath(getFullPath());
         copy.setNamingType(getNamingType());
+        copy.setDynamic(isDynamic());
     }
 
     public String getFullPath() {
@@ -134,6 +137,14 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
 
     public void setNamingType(NamingType namingType) {
         this.namingType = namingType;
+    }
+
+    public boolean isDynamic() {
+        return dynamic;
+    }
+
+    public void setDynamic(boolean dynamic) {
+        this.dynamic = dynamic;
     }
 
     public ResourcePropertyConverter getResourcePropertyConverter() {

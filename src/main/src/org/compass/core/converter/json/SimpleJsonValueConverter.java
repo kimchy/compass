@@ -65,9 +65,15 @@ public class SimpleJsonValueConverter implements Converter {
                 propertyName = path.getPath();
             }
         }
-        Property p = context.getResourceFactory().createProperty(propertyName, sValue, jsonPropertyMapping);
-        doSetBoost(p, root, jsonPropertyMapping, context);
-        resource.addProperty(p);
+        Property property;
+        if (jsonPropertyMapping.isDynamic() && root != null) {
+            ResourcePropertyConverter converter = (ResourcePropertyConverter) context.getConverterLookup().lookupConverter(root.getClass());
+            property = context.getResourceFactory().createProperty(propertyName, sValue, converter);
+        } else {
+            property = context.getResourceFactory().createProperty(propertyName, sValue, jsonPropertyMapping);
+        }
+        doSetBoost(property, root, jsonPropertyMapping, context);
+        resource.addProperty(property);
 
         return jsonPropertyMapping.getStore() != Property.Store.NO;
     }
