@@ -40,8 +40,8 @@ public class LuceneAnalyzerFilterWrapper extends Analyzer {
 
     public TokenStream tokenStream(String fieldName, Reader reader) {
         TokenStream result = analyzer.tokenStream(fieldName, reader);
-        for (int i = 0; i < filteresProviders.length; i++) {
-            result = filteresProviders[i].createTokenFilter(result);
+        for (LuceneAnalyzerTokenFilterProvider filteresProvider : filteresProviders) {
+            result = filteresProvider.createTokenFilter(result);
         }
         return result;
     }

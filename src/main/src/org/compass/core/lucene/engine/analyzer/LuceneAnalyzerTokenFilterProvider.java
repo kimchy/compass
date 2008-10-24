@@ -36,5 +36,5 @@ public interface LuceneAnalyzerTokenFilterProvider extends CompassConfigurable {
      * analysis should occur, so it would be nice to create any global level
      * data during the configuration process.
      */
-    TokenFilter createTokenFilter(TokenStream tokenStream);
+    TokenStream createTokenFilter(TokenStream tokenStream);
 }
