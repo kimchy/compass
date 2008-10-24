@@ -401,4 +401,66 @@ public abstract class AbstractTransactionEngineTests extends AbstractLuceneEngin
         assertEquals(1, hits.getLength());
         getSearchEngine().commit(true);
     }
+
+    public void testTwoPhaseCreatePrepareRollback() {
+        // create an index with data and commit it
+        getSearchEngine().begin();
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+
+        getSearchEngine().prepare();
+        getSearchEngine().rollback();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceNotExists(getSearchEngine());
+        assertMulitIdResourceNotExists(getSearchEngine());
+        getSearchEngine().rollback();
+    }
+
+    public void testTwoPhaseDeletePrepareRollback() {
+        // create an index with data and commit it
+        getSearchEngine().begin();
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+
+        getSearchEngine().prepare();
+        getSearchEngine().commit(false);
+
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().rollback();
+
+
+        getSearchEngine().begin();
+        getSearchEngine().delete(singleId);
+        getSearchEngine().prepare();
+        getSearchEngine().rollback();
+
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().rollback();
+    }
+
+    public void testTwoPhasePrepareCommit() {
+        // create an index with data and commit it
+        getSearchEngine().begin();
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+
+        getSearchEngine().prepare();
+        getSearchEngine().commit(false);
+
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().rollback();
+    }
 }

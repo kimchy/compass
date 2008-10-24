@@ -92,8 +92,23 @@ public class LuceneTransaction extends AbstractTransaction {
     }
 
     protected void doPrepare() throws SearchEngineException {
-        // same as flush
-        flush();
+        if (indexManager.supportsConcurrentOperations()) {
+            ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
+            for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
+                prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new PrepareCommitCallable(entry.getKey(), entry.getValue())));
+            }
+            indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
+        } else {
+            for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
+                try {
+                    new PrepareCommitCallable(entry.getKey(), entry.getValue()).call();
+                } catch (SearchEngineException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new SearchEngineException("Failed to commit transaction for sub index [" + entry.getKey() + "]", e);
+                }
+            }
+        }
     }
 
     protected void doCommit(boolean onePhase) throws SearchEngineException {
@@ -248,6 +263,7 @@ public class LuceneTransaction extends AbstractTransaction {
 
         public Object call() throws Exception {
             try {
+                indexWriter.commit();
                 indexWriter.close();
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(subIndex);
