@@ -1,4 +1,4 @@
-package org.compass.core.test.schema;
+package org.compass.core.test.config.schema;
 
 import java.util.Map;
 
