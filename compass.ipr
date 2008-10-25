@@ -85,6 +85,7 @@
       <entry name="?*.handlers" />
       <entry name="?*.schemas" />
       <entry name="?*.ProductDerivation" />
+      <entry name="?*.json" />
     </wildcardResourcePatterns>
   </component>
   <component name="DependenciesAnalyzeManager">

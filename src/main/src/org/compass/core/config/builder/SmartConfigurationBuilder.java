@@ -16,7 +16,12 @@
 
 package org.compass.core.config.builder;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.apache.commons.logging.Log;
@@ -33,18 +38,8 @@ public class SmartConfigurationBuilder implements ConfigurationBuilder {
     private static final Log log = LogFactory.getLog(SmartConfigurationBuilder.class);
 
     /**
-     * Indicates that DTD validation should be used.
-     */
-    public static final int VALIDATION_DTD = 1;
-
-    /**
-     * Indicates that XSD validation should be used.
-     */
-    public static final int VALIDATION_XSD = 2;
-
-    /**
      * The maximum number of lines the validation autodetection process should peek into
-     * a file looking for the <code>DOCTYPE</code> definition.
+     * a file looking for the <code>DOCTYPE</code> definition or <code>{</code> Json.
      */
     private static final int MAX_PEEK_LINES = 5;
 
@@ -53,12 +48,7 @@ public class SmartConfigurationBuilder implements ConfigurationBuilder {
         if (stream == null) {
             throw new ConfigurationException("Failed to open config resource [" + resource + "]");
         }
-        int mode = detectValidationMode(stream, resource);
-        if (mode == VALIDATION_XSD) {
-            new SchemaConfigurationBuilder().configure(resource, config);
-        } else {
-            new DTDConfigurationBuilder().configure(resource, config);
-        }
+        detect(stream, resource).configure(resource, config);
     }
 
     public void configure(URL url, CompassConfiguration config) throws ConfigurationException {
@@ -68,12 +58,7 @@ public class SmartConfigurationBuilder implements ConfigurationBuilder {
         } catch (IOException e) {
             throw new ConfigurationException("Failed to open url [" + url.toExternalForm() + "]", e);
         }
-        int mode = detectValidationMode(stream, url.toExternalForm());
-        if (mode == VALIDATION_XSD) {
-            new SchemaConfigurationBuilder().configure(url, config);
-        } else {
-            new DTDConfigurationBuilder().configure(url, config);
-        }
+        detect(stream, url.toExternalForm()).configure(url, config);
     }
 
     public void configure(File file, CompassConfiguration config) throws ConfigurationException {
@@ -84,15 +69,10 @@ public class SmartConfigurationBuilder implements ConfigurationBuilder {
             throw new ConfigurationException(
                     "Could not find configuration file [" + file.getAbsolutePath() + "]", e);
         }
-        int mode = detectValidationMode(stream, file.getAbsolutePath());
-        if (mode == VALIDATION_XSD) {
-            new SchemaConfigurationBuilder().configure(file, config);
-        } else {
-            new DTDConfigurationBuilder().configure(file, config);
-        }
+        detect(stream, file.getAbsolutePath()).configure(file, config);
     }
 
-    private int detectValidationMode(InputStream stream, String resourceName) {
+    private ConfigurationBuilder detect(InputStream stream, String resourceName) {
         //peek into the file to look for DOCTYPE
         BufferedReader reader = null;
         try {
@@ -104,12 +84,13 @@ public class SmartConfigurationBuilder implements ConfigurationBuilder {
                 if (line == null) {
                     // end of stream
                     break;
+                } else if (line.trim().startsWith("{")) {
+                    return new JsonConfigurationBuilder();
                 } else if (line.indexOf("DOCTYPE") > -1) {
-                    isDtdValidated = true;
-                    break;
+                    return new DTDConfigurationBuilder();
                 }
             }
-            return (isDtdValidated ? VALIDATION_DTD : VALIDATION_XSD);
+            return new SchemaConfigurationBuilder();
         }
         catch (IOException ex) {
             throw new ConfigurationException(

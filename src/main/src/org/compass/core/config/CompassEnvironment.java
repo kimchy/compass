@@ -40,6 +40,10 @@ public class CompassEnvironment {
      */
     public static final String NAME = "compass.name";
 
+    /**
+     * Allows to configure (can be confiugred multiple times) with a mapping to use. Can be either a classpath
+     * path to the resoruce to the name of the class used.
+     */
     public static final String MAPPING_PREFIX = "compass.mapping";
 
     /**

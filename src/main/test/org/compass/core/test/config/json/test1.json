@@ -1,0 +1,18 @@
+{
+    compass : {
+        engine : {
+            connection : "test-index"
+        },
+
+        event : {
+            preCreate : {
+                event1 : {
+                    type : "test.MyEvent1"
+                },
+                event2 : {
+                    type : "test.MyEvent2"
+                }
+            }
+        }
+    }
+}
