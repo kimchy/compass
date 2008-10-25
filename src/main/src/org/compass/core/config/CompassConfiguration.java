@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -226,7 +227,7 @@ public class CompassConfiguration {
         // add any mappings set in the properties
         for (Iterator it = settings.keySet().iterator(); it.hasNext();) {
             String setting = (String) it.next();
-            if (setting.startsWith(CompassEnvironment.MAPPING_PREFIX)) {
+            if (setting.startsWith(CompassEnvironment.Mapping.MAPPING_PREFIX)) {
                 String mapping = settings.getSetting(setting);
                 if (mapping.endsWith("cpm.xml") || mapping.endsWith("cmd.xml")) {
                     addResource(mapping);
@@ -239,6 +240,15 @@ public class CompassConfiguration {
                 }
                 settings.removeSetting(setting);
             }
+        }
+        // add any scans
+        Map<String, CompassSettings> scanGroups = settings.getSettingGroups(CompassEnvironment.Mapping.SCAN_MAPPING_PREFIX);
+        for (Map.Entry<String, CompassSettings> entry : scanGroups.entrySet()) {
+            String packageSetting = entry.getValue().getSetting(CompassEnvironment.Mapping.SCAN_MAPPING_PACKAGE);
+            if (packageSetting == null) {
+                throw new ConfigurationException("[" + CompassEnvironment.Mapping.SCAN_MAPPING_PACKAGE + "] must be set when scanning for [" + entry.getKey() + "] scan");
+            }
+            addScan(packageSetting, entry.getValue().getSetting(CompassEnvironment.Mapping.SCAN_MAPPING_PATTERN));
         }
 
         ConverterLookup converterLookup = new DefaultConverterLookup();

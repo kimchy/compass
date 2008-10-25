@@ -41,12 +41,6 @@ public class CompassEnvironment {
     public static final String NAME = "compass.name";
 
     /**
-     * Allows to configure (can be confiugred multiple times) with a mapping to use. Can be either a classpath
-     * path to the resoruce to the name of the class used.
-     */
-    public static final String MAPPING_PREFIX = "compass.mapping";
-
-    /**
      * Allows to set event listeners for Compas.
      */
     public abstract class Event {
@@ -710,6 +704,23 @@ public class CompassEnvironment {
          * that have not explicitly set it. If not set, will be <code>false</code>.
          */
         public static final String GLOBAL_OMIT_TF = "compass.mapping.globalOmitTf";
+
+        /**
+         * Allows to configure (can be confiugred multiple times) with a mapping to use. Can be either a classpath
+         * path to the resoruce to the name of the class used.
+         */
+        public static final String MAPPING_PREFIX = "compass.mapping";
+
+        /**
+         * A prefix for definting scanning. The "logical name" of this scan should be defiend after the prefix,
+         * and then at lease the {@link #SCAN_MAPPING_PACKAGE} must be defiend and optionally another setting
+         * with the same logical name and {@link @SCAN_MAPPING_PATTERN}.
+         */
+        public static final String SCAN_MAPPING_PREFIX = "compass.mapping.scan";
+
+        public static final String SCAN_MAPPING_PACKAGE = "package";
+
+        public static final String SCAN_MAPPING_PATTERN = "pattern";
     }
 
     public abstract class NamingStrategy {
