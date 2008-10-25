@@ -13,14 +13,7 @@
   </para>
 
   <para>
-    In order to create a <classname>Compass</classname> instance, it first must be configured. <classname>CompassConfiguration</classname> can be used in order to configure a <classname>Compass</classname> instance, by having the ability to add different mapping definitions, configure Compass based on xml configuration files, and expose a programmatic configuration options.
-  </para>
-  
-  <para>
-    For Java 5 based applications (mainly ones that use OSEM annotations), <classname>CompassAnnotationsConfiguration</classname> can be used (which extends <classname>CompassConfiguration</classname>). For simplicity, Compass comes with <classname>CompassConfigurationFactory</classname>, which tries to be smart and detect based on the JVM version and the included compass modules, which configuration to create. Here is an example of the preferred way to obtain a <classname>CompassConfiguration</classname> instance:
-    <programlisting><![CDATA[CompassConfiguration conf = 
-      CompassConfigurationFactory.newConfiguration();
-    ]]></programlisting>
+    In order to create a <classname>Compass</classname> instance, it first must be configured. <classname>CompassConfiguration</classname> can be used in order to configure a <classname>Compass</classname> instance, by having the ability to add different mapping definitions, configure Compass based on xml or JSON configuration files, and expose a programmatic configuration options.
   </para>
 
   <sect1 id="core-configuration-programmatic">
@@ -134,7 +127,7 @@ org.compass.converter.test.param2=value2
   </sect1>
 
   <sect1 id="core-configuration-xml">
-     <title>XML Configuration</title>
+     <title>XML/JSON Configuration</title>
 
      <para>
        All of Compass's operational configuration (apart from mapping definitions) can be defined in a single xml configuration file, with the default name <literal>compass.cfg.xml</literal>. You can define the environmental settings and mapping file locations within this file. The following table shows the different <classname>CompassConfiguration</classname> API's for locating the main configuration file:
@@ -312,6 +305,34 @@ xsi:schemaLocation="http://www.compass-project.org/schema/core-config
         </para>
         
     </sect2>
+
+  <sect2 id="core-configuration-xml-json">
+    <title>JSON Based Configuration</title>
+
+      <para>
+         Compass can be configured using JSON based configuration. Basically, the JSON configuration breaks the settings into JSON elements. The Configuration Settings are explained in <xref linkend="core-settings"/>. Here is an example:
+ <programlisting><![CDATA[
+   {
+       compass : {
+           engine : {
+               connection : "test-index"
+           },
+
+           event : {
+               preCreate : {
+                   event1 : {
+                       type : "test.MyEvent1"
+                   },
+                   event2 : {
+                       type : "test.MyEvent2"
+                   }
+               }
+           }
+       }
+   }
+]]></programlisting>
+      </para>
+  </sect2>
 
   <sect2 id="core-configuration-xml-dtd">
     <title>DTD Based Configuration</title>
