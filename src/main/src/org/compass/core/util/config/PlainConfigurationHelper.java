@@ -123,6 +123,14 @@ public class PlainConfigurationHelper extends AbstractConfigurationHelper implem
         }
     }
 
+    public String getAttributeOrValue(String paramName) {
+        String retVal = getAttribute(paramName, null);
+        if (retVal != null) {
+            return retVal;
+        }
+        return getValue();
+    }
+
     /**
      * Returns the value of the configuration element as a <code>String</code>.
      */

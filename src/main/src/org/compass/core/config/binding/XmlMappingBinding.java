@@ -773,7 +773,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         dynamicMetaDataMapping.setName(name);
         dynamicMetaDataMapping.setPath(new StaticPropertyPath(name));
 
-        dynamicMetaDataMapping.setExpression(dynamicConf.getValue().trim());
+        dynamicMetaDataMapping.setExpression(dynamicConf.getAttributeOrValue("expression").trim());
 
         dynamicMetaDataMapping.setFormat(dynamicConf.getAttribute("format", null));
         String type = dynamicConf.getAttribute("type", null);
@@ -923,10 +923,10 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
     private void bindConstant(ConfigurationHelper constantConf, AliasMapping classMapping,
                               ConstantMetaDataMapping constantMapping) {
         ConfigurationHelper metadataConf = constantConf.getChild("meta-data");
-        if (!StringUtils.hasText(metadataConf.getValue())) {
+        if (!StringUtils.hasText(metadataConf.getAttributeOrValue("name"))) {
             throw new MappingException("Alias mapping [" + classMapping.getAlias() + "] has a constant mapping with an empty meta-data value");
         }
-        String metaDataValue = metadataConf.getValue().trim();
+        String metaDataValue = metadataConf.getAttributeOrValue("name").trim();
         constantMapping.setName(valueLookup.lookupMetaDataName(metaDataValue));
 
         String excludeFromAll = constantConf.getAttribute("exclude-from-all", "no");
@@ -949,11 +949,12 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
 
     private void bindMetaData(ConfigurationHelper metadataConf, AliasMapping aliasMapping,
                               ClassPropertyMapping classPropertyMapping, ClassPropertyMetaDataMapping mdMapping) {
-        if (!StringUtils.hasText(metadataConf.getValue())) {
+        String value = metadataConf.getAttributeOrValue("name").trim();
+        if (!StringUtils.hasText(value)) {
             throw new MappingException("Alias mapping [" + aliasMapping.getAlias() + "] and property [" +
                     classPropertyMapping.getName() + "] has a meta-data mapping with no value");
         }
-        String name = valueLookup.lookupMetaDataName(metadataConf.getValue().trim());
+        String name = valueLookup.lookupMetaDataName(value);
         mdMapping.setName(name);
         mdMapping.setOriginalName(name);
         mdMapping.setPath(new StaticPropertyPath(name));
@@ -965,7 +966,7 @@ public class XmlMappingBinding extends AbstractXmlMappingBinding {
         String format = metadataConf.getAttribute("format", null);
         if (mdMapping.getConverter() == null) {
             if (format == null) {
-                format = valueLookup.lookupMetaDataFormat(metadataConf.getValue().trim());
+                format = valueLookup.lookupMetaDataFormat(value);
             }
             if (format != null) {
                 mdMapping.setConverter(new FormatDelegateConverter(format));

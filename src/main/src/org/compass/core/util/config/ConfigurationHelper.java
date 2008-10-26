@@ -93,6 +93,12 @@ public interface ConfigurationHelper {
     boolean getAttributeAsBoolean(String paramName) throws ConfigurationException;
 
     /**
+     * First tries to get the attribute based on hte parameter, and there is none, will return
+     * the value.
+     */
+    String getAttributeOrValue(String paramName);
+
+    /**
      * Return the <code>String</code> value of the node.
      */
     String getValue() throws ConfigurationException;
