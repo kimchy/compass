@@ -19,7 +19,6 @@ package org.compass.core.util.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,7 +46,7 @@ public class ConfigurationHelperUtil {
      * Convert a DOM Element tree into a configuration tree.
      */
     public static ConfigurationHelper toConfiguration(final Element element) {
-        final XmlConfigurationHelper configuration = new XmlConfigurationHelper(element.getNodeName(), "dom-created");
+        final PlainConfigurationHelper configuration = new PlainConfigurationHelper(element.getNodeName(), "dom-created");
         final NamedNodeMap attributes = element.getAttributes();
         final int length = attributes.getLength();
         for (int i = 0; i < length; i++) {

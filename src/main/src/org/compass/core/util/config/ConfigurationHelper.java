@@ -181,4 +181,6 @@ public interface ConfigurationHelper {
      * name exists or is empty.
      */
     boolean getAttributeAsBoolean(String name, boolean defaultValue);
+
+    void makeReadOnly();
 }

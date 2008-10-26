@@ -347,7 +347,7 @@ public abstract class AbstractConfigurationHelper implements ConfigurationHelper
             return children[0];
         } else {
             if (createNew) {
-                return new XmlConfigurationHelper(name, "-");
+                return new PlainConfigurationHelper(name, "-");
             } else {
                 return null;
             }

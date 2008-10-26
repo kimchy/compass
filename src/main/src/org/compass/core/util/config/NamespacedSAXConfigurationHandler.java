@@ -121,7 +121,7 @@ public class NamespacedSAXConfigurationHandler extends SAXConfigurationHandler {
      */
     public void endElement(final String namespaceURI, final String localName, final String rawName) throws SAXException {
         final int depth = m_elements.size() - 1;
-        final XmlConfigurationHelper finishedConfiguration = (XmlConfigurationHelper) m_elements.remove(depth);
+        final PlainConfigurationHelper finishedConfiguration = (PlainConfigurationHelper) m_elements.remove(depth);
         final String accumulatedValue = ((StringBuffer) m_values.remove(depth)).toString();
         final ArrayList prefixes = (ArrayList) m_prefixes.remove(depth);
         final Iterator i = prefixes.iterator();
@@ -157,13 +157,13 @@ public class NamespacedSAXConfigurationHandler extends SAXConfigurationHandler {
      * Create a new <code>DefaultConfiguration</code> with the specified local
      * name, namespace, and location.
      */
-    protected XmlConfigurationHelper createConfiguration(final String localName, final String namespaceURI,
+    protected PlainConfigurationHelper createConfiguration(final String localName, final String namespaceURI,
             final String location) {
         String prefix = m_namespaceSupport.getPrefix(namespaceURI);
         if (prefix == null) {
             prefix = "";
         }
-        return new XmlConfigurationHelper(localName, location, namespaceURI, prefix);
+        return new PlainConfigurationHelper(localName, location, namespaceURI, prefix);
     }
 
     /**
@@ -172,14 +172,14 @@ public class NamespacedSAXConfigurationHandler extends SAXConfigurationHandler {
     public void startElement(final String namespaceURI, final String localName, final String rawName,
             final Attributes attributes) throws SAXException {
         m_namespaceSupport.pushContext();
-        final XmlConfigurationHelper configuration = createConfiguration(localName, namespaceURI, getLocationString());
+        final PlainConfigurationHelper configuration = createConfiguration(localName, namespaceURI, getLocationString());
         // depth of new configuration (not decrementing here, configuration
         // is to be added)
         final int depth = m_elements.size();
         boolean preserveSpace = false; // top level element trims space by
         // default
         if (depth > 0) {
-            final XmlConfigurationHelper parent = (XmlConfigurationHelper) m_elements.get(depth - 1);
+            final PlainConfigurationHelper parent = (PlainConfigurationHelper) m_elements.get(depth - 1);
             parent.addChild(configuration);
             // inherits parent's space preservation policy
             preserveSpace = m_preserveSpace.get(depth - 1);

@@ -93,7 +93,7 @@ public class SAXConfigurationHandler extends DefaultHandler implements ErrorHand
      */
     public void endElement(final String namespaceURI, final String localName, final String rawName) throws SAXException {
         final int depth = m_elements.size() - 1;
-        final XmlConfigurationHelper finishedConfiguration = (XmlConfigurationHelper) m_elements.remove(depth);
+        final PlainConfigurationHelper finishedConfiguration = (PlainConfigurationHelper) m_elements.remove(depth);
         final String accumulatedValue = ((StringBuffer) m_values.remove(depth)).toString();
         if (finishedConfiguration.getChildren().length == 0) {
             // leaf node
@@ -122,8 +122,8 @@ public class SAXConfigurationHandler extends DefaultHandler implements ErrorHand
      * Create a new <code>DefaultConfiguration</code> with the specified local
      * name and location.
      */
-    protected XmlConfigurationHelper createConfiguration(final String localName, final String location) {
-        return new XmlConfigurationHelper(localName, location);
+    protected PlainConfigurationHelper createConfiguration(final String localName, final String location) {
+        return new PlainConfigurationHelper(localName, location);
     }
 
     /**
@@ -131,14 +131,14 @@ public class SAXConfigurationHandler extends DefaultHandler implements ErrorHand
      */
     public void startElement(final String namespaceURI, final String localName, final String rawName,
             final Attributes attributes) throws SAXException {
-        final XmlConfigurationHelper configuration = createConfiguration(rawName, getLocationString());
+        final PlainConfigurationHelper configuration = createConfiguration(rawName, getLocationString());
         // depth of new configuration (not decrementing here, configuration
         // is to be added)
         final int depth = m_elements.size();
         boolean preserveSpace = false; // top level element trims space by
         // default
         if (depth > 0) {
-            final XmlConfigurationHelper parent = (XmlConfigurationHelper) m_elements.get(depth - 1);
+            final PlainConfigurationHelper parent = (PlainConfigurationHelper) m_elements.get(depth - 1);
             parent.addChild(configuration);
             // inherits parent's space preservation policy
             preserveSpace = m_preserveSpace.get(depth - 1);

@@ -16,13 +16,13 @@
 
 package org.compass.core.config.binding;
 
+import java.io.InputStream;
+
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.util.config.ConfigurationHelper;
 import org.compass.core.util.config.XmlConfigurationHelperBuilder;
 import org.xml.sax.EntityResolver;
-
-import java.io.InputStream;
 
 /**
  * @author kimchy
@@ -39,6 +39,7 @@ public abstract class AbstractXmlMappingBinding extends AbstractInputStreamMappi
         XmlConfigurationHelperBuilder builder = new XmlConfigurationHelperBuilder();
         builder.setEntityResolver(entityResolver);
         ConfigurationHelper conf = builder.build(is, resourceName);
+        conf.makeReadOnly();
         return doAddConfiguration(conf);
     }
 
