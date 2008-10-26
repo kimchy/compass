@@ -9,9 +9,7 @@
                 event1 : {
                     type : "test.MyEvent1"
                 },
-                event2 : {
-                    type : "test.MyEvent2"
-                }
+                "event2.type" : "test.MyEvent2"
             }
         }
     }

@@ -79,16 +79,14 @@
     <!ATTLIST json-content store (yes|compress) "yes">
     <!ATTLIST json-content converter CDATA #IMPLIED>
 
-<!ELEMENT json-analyzer (
-    #PCDATA
-)>
+<!ELEMENT json-analyzer EMPTY
+>
     <!ATTLIST json-analyzer name CDATA #REQUIRED>
     <!ATTLIST json-analyzer null-analyzer CDATA #IMPLIED>
     <!ATTLIST json-analyzer converter CDATA #IMPLIED>
 
-<!ELEMENT json-boost (
-    #PCDATA
-)>
+<!ELEMENT json-boost EMPTY
+>
     <!ATTLIST json-boost name CDATA #REQUIRED>
     <!ATTLIST json-boost default CDATA #IMPLIED>
     <!ATTLIST json-boost converter CDATA #IMPLIED>
@@ -147,17 +145,15 @@
     <!ATTLIST xml-content store (yes|compress) "yes">
     <!ATTLIST xml-content converter CDATA #IMPLIED>
 
-<!ELEMENT xml-analyzer (
-    #PCDATA
-)>
+<!ELEMENT xml-analyzer EMPTY
+>
     <!ATTLIST xml-analyzer name CDATA #REQUIRED>
     <!ATTLIST xml-analyzer xpath CDATA #REQUIRED>
     <!ATTLIST xml-analyzer null-analyzer CDATA #IMPLIED>
     <!ATTLIST xml-analyzer converter CDATA #IMPLIED>
 
-<!ELEMENT xml-boost (
-    #PCDATA
-)>
+<!ELEMENT xml-boost EMPTY
+>
     <!ATTLIST xml-boost name CDATA #REQUIRED>
     <!ATTLIST xml-boost xpath CDATA #REQUIRED>
     <!ATTLIST xml-boost default CDATA #IMPLIED>
@@ -218,16 +214,14 @@
     <!ATTLIST resource-property spell-check (include|exclude|na) "na">
     <!ATTLIST resource-property format CDATA #IMPLIED>
 
-<!ELEMENT resource-analyzer (
-    #PCDATA
-)>
+<!ELEMENT resource-analyzer EMPTY
+>
     <!ATTLIST resource-analyzer name CDATA #REQUIRED>
     <!ATTLIST resource-analyzer null-analyzer CDATA #IMPLIED>
     <!ATTLIST resource-analyzer converter CDATA #IMPLIED>
 
-<!ELEMENT resource-boost (
-    #PCDATA
-)>
+<!ELEMENT resource-boost EMPTY
+>
     <!ATTLIST resource-boost name CDATA #REQUIRED>
     <!ATTLIST resource-boost default CDATA #IMPLIED>
     <!ATTLIST resource-boost converter CDATA #IMPLIED>
@@ -367,17 +361,15 @@
     <!ATTLIST property converter CDATA #IMPLIED>
     <!ATTLIST property boost CDATA #IMPLIED>
 
-<!ELEMENT boost (
-    #PCDATA
-)>
+<!ELEMENT boost EMPTY
+>
     <!ATTLIST boost name CDATA #REQUIRED>
     <!ATTLIST boost default CDATA #IMPLIED>
     <!ATTLIST boost accessor CDATA #IMPLIED>
     <!ATTLIST boost converter CDATA #IMPLIED>
 
-<!ELEMENT analyzer (
-    #PCDATA
-)>
+<!ELEMENT analyzer EMPTY
+>
     <!ATTLIST analyzer name CDATA #REQUIRED>
     <!ATTLIST analyzer null-analyzer CDATA #IMPLIED>
     <!ATTLIST analyzer accessor CDATA #IMPLIED>

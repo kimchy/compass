@@ -25,7 +25,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testSimpleSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/simple.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/simple.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -35,7 +35,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testLocalCacheSettings() {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/localcache.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/localcache.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("ram://", settings.getSetting(LuceneEnvironment.LocalCache.PREFIX + "." + LuceneEnvironment.LocalCache.DEFAULT_NAME + "." + LuceneEnvironment.LocalCache.CONNECTION));
@@ -44,7 +44,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testIndexDeletionPolicyKeepLastCommit() {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/idp-keeplastcommit.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/idp-keeplastcommit.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals(LuceneEnvironment.IndexDeletionPolicy.KeepLastCommit.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
@@ -52,7 +52,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testIndexDeletionPolicyKeepAll() {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/idp-keepall.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/idp-keepall.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals(LuceneEnvironment.IndexDeletionPolicy.KeepAll.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
@@ -60,7 +60,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testIndexDeletionPolicyKeepNoneOnInit() {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/idp-keepnoneoninit.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/idp-keepnoneoninit.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals(LuceneEnvironment.IndexDeletionPolicy.KeepNoneOnInit.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
@@ -68,7 +68,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testIndexDeletionPolicyExpirationTime() {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/idp-expirationtime.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/idp-expirationtime.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals(LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
@@ -77,7 +77,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testIndexDeletionPolicyKeepLastN() {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/idp-keeplastn.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/idp-keeplastn.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals(LuceneEnvironment.IndexDeletionPolicy.KeepLastN.NAME, settings.getSetting(LuceneEnvironment.IndexDeletionPolicy.TYPE));
@@ -86,7 +86,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testLockFactory() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/lockfactory.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/lockfactory.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -96,7 +96,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testRamTransLog() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/ramtranslog.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/ramtranslog.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -106,7 +106,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testFsTransLog() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/fstranslog.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/fstranslog.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -116,7 +116,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testQueryParser() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/queryParser.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/queryParser.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -130,7 +130,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testOsem() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/osem.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/osem.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -140,7 +140,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testLocking() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/locking.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/locking.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -150,7 +150,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testOptimizer() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/optimizer.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/optimizer.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -161,7 +161,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testDirectoryWrapperProvider() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/wrapper-connection.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/wrapper-connection.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("eg.DWPImpl", settings.getSetting(LuceneEnvironment.DirectoryWrapper.PREFIX + ".test."
@@ -171,7 +171,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testRamConnectionSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/ram-connection.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/ram-connection.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -181,7 +181,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testMmapConnectionSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/mmap-connection.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/mmap-connection.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -191,7 +191,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testNIOFSConnectionSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/niofs-connection.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/niofs-connection.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
 
@@ -201,7 +201,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testPropertiesSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/properties.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/properties.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("alias1", settings.getSetting(CompassEnvironment.Alias.NAME));
@@ -211,7 +211,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testPropertyNamingStrategySchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/propertyNamingStrategy.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/propertyNamingStrategy.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals(DynamicPropertyNamingStrategy.class.getName(), settings.getSetting(CompassEnvironment.NamingStrategy.TYPE));
@@ -219,7 +219,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testJtaSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/jta.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/jta.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals(JTASyncTransactionFactory.class.getName(), settings.getSetting(CompassEnvironment.Transaction.FACTORY));
@@ -229,7 +229,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testJdbcDriverManagerSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/jdbc-drivermanager.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/jdbc-drivermanager.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
@@ -243,7 +243,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testJdbcDbcp() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/jdbc-dbcp.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/jdbc-dbcp.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
@@ -265,7 +265,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testJdbcC3p0() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/jdbc-c3p0.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/jdbc-c3p0.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("true", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
@@ -280,7 +280,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testJdbcJndiSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/jdbc-jndi.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/jdbc-jndi.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("false", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
@@ -293,7 +293,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testJdbcExternalSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/jdbc-external.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/jdbc-external.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("false", settings.getSetting(LuceneEnvironment.JdbcStore.MANAGED));
@@ -306,7 +306,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testJdbcFESchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/jdbc-fe.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/jdbc-fe.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         String defaultPrefix = LuceneEnvironment.JdbcStore.FileEntry.PREFIX + ".__default__.";
@@ -316,7 +316,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testJdbcDDLSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/jdbc-ddl.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/jdbc-ddl.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         assertEquals("myname", settings.getSetting(LuceneEnvironment.JdbcStore.DDL.NAME_NAME));
@@ -326,7 +326,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testConvertersSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/converters.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/converters.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         Map groupSettings = settings.getSettingGroups(CompassEnvironment.Converter.PREFIX);
@@ -340,7 +340,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testPropertyAcessorsSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/property-accessors.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/property-accessors.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         Map groupSettings = settings.getSettingGroups(CompassEnvironment.PropertyAccessor.PREFIX);
@@ -353,7 +353,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testAnalyzersSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/analyzers.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/analyzers.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         Map groupSettings = settings.getSettingGroups(LuceneEnvironment.Analyzer.PREFIX);
@@ -375,7 +375,7 @@ public class SchemaSimpleTests extends TestCase {
 
     public void testHighlightersSchema() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
-                .configure("/org/compass/core/test/schema/highlighters.cfg.xml");
+                .configure("/org/compass/core/test/config/schema/highlighters.cfg.xml");
 
         CompassSettings settings = conf.getSettings();
         Map groupSettings = settings.getSettingGroups(LuceneEnvironment.Highlighter.PREFIX);
