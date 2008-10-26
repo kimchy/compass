@@ -51,18 +51,6 @@ public class XmlConfigurationHelper extends AbstractConfigurationHelper implemen
     private boolean m_readOnly;
 
     /**
-     * Shallow copy constructor, suitable for craeting a writable clone of a
-     * read-only configuration. To modify children, use <code>getChild()</code>,
-     * <code>removeChild()</code> and <code>addChild()</code>.
-     */
-    public XmlConfigurationHelper(ConfigurationHelper config) throws ConfigurationException {
-        this(config.getName(), config.getLocation(), config.getNamespace(),
-                ((config instanceof AbstractConfigurationHelper) ? ((AbstractConfigurationHelper) config).getPrefix()
-                        : ""));
-        addAll(config);
-    }
-
-    /**
      * Create a new <code>DefaultConfiguration</code> instance.
      */
     public XmlConfigurationHelper(final String name) {

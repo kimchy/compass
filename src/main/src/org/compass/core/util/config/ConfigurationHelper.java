@@ -31,13 +31,7 @@ public interface ConfigurationHelper {
      * "table:primary-key" for DB based configurations);
      */
     String getLocation();
-
-    /**
-     * Returns a string indicating which namespace this Configuration node
-     * belongs to.
-     */
-    String getNamespace() throws ConfigurationException;
-
+    
     /**
      * Return a new <code>Configuration</code> instance encapsulating the
      * specified child node.
@@ -187,10 +181,4 @@ public interface ConfigurationHelper {
      * name exists or is empty.
      */
     boolean getAttributeAsBoolean(String name, boolean defaultValue);
-
-    /**
-     * Add all child <code>Configuration</code> objects from specified
-     * configuration element to current configuration element.
-     */
-    public void addAllChildrenBefore(final ConfigurationHelper other);
 }
