@@ -29,6 +29,7 @@ public class TerracottaIndexInput extends IndexInput implements Cloneable {
 
     private TerracottaFile file;
     private long length;
+    private int numberOfBuffers;
 
     private byte[] currentBuffer;
     private int currentBufferIndex;
@@ -41,6 +42,7 @@ public class TerracottaIndexInput extends IndexInput implements Cloneable {
         this.bufferSize = bufferSize;
         file = f;
         length = file.length;
+        numberOfBuffers = file.getNumBuffers();
         if (length / this.bufferSize >= Integer.MAX_VALUE) {
             throw new IOException("Too large File! " + length);
         }
@@ -84,7 +86,7 @@ public class TerracottaIndexInput extends IndexInput implements Cloneable {
     }
 
     private void switchCurrentBuffer() throws IOException {
-        if (currentBufferIndex >= file.getNumBuffers()) {
+        if (currentBufferIndex >= numberOfBuffers) {
             // end of file reached, no more buffers left
             throw new IOException("Read past EOF");
         } else {
