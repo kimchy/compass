@@ -102,7 +102,7 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private String className;
 
-    private float boost;
+    private float boost = 1.0f;
 
     private int idPropertyIndex = ID_NOT_SET_VALUE;
 

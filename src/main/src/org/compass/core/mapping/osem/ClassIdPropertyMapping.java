@@ -36,7 +36,7 @@ public class ClassIdPropertyMapping extends ClassPropertyMapping implements Reso
     }
 
     /**
-     * The id of the class property id must be UN_TOKENIZED so we will be able
+     * The id of the class property id must be <code>NOT_ANALYZED</code> so we will be able
      * to look it up.
      */
     public Index getManagedIdIndex() {

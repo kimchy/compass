@@ -1,0 +1,128 @@
+{
+    "compass-core-mapping" : {
+        "resource-contract" : [
+            {
+                alias : "cont1",
+                id : {
+                    name : "id"
+                }
+            },
+            {
+                alias : "cont2",
+                property : {
+                    name : "value1"
+                }
+            },
+            {
+                alias : "cont3",
+                extends : "cont1",
+                property : {
+                    name : "value2"
+                }
+            }
+        ],
+        "resource" : [
+            {
+                alias : "a",
+                id : {
+                    name : "id"
+                }
+            },
+            {
+                alias : "b",
+                id : [
+                    {
+                        name : "id1"
+                    },
+                    {
+                        name : "id2"
+                    }
+                ]
+            },
+            {
+                alias : "c",
+                id : {
+                    name : "id"
+                },
+                property : [
+                    {
+                        name : "value1"
+                    },
+                    {
+                        name : "value2",
+                        store : "yes",
+                        index : "analyzed"
+                    },
+                    {
+                        name : "value3",
+                        store : "compress",
+                        index : "analyzed"
+                    },
+                    {
+                        name : "value4",
+                        store : "yes",
+                        index : "not_analyzed"
+                    },
+                    {
+                        name : "value5",
+                        store : "yes",
+                        index : "analyzed",
+                        converter : "mydate"
+                    },
+                    {
+                        name : "value6"
+                    }
+                ]
+            },
+            {
+                alias : "d",
+                extends : "a",
+                property : {
+                    name : "value1"
+                }
+            },
+            {
+                alias : "e",
+                extends : "cont2, cont3",
+                property : {
+                    name : "value1",
+                    store : "no"
+                }
+            },
+            {
+                alias : "f",
+                id : [
+                    {
+                        name : "id1",
+                        "exclude-from-all" : "true"
+                    },
+                    {
+                        name : "id2",
+                        "exclude-from-all" : "false"
+                    }
+                ],
+                property : [
+                    {
+                        name : "value1",
+                        "exclude-from-all" : "true"
+                    },
+                    {
+                        name : "value2",
+                        "exclude-from-all" : "false"
+                    }
+                ]
+            },
+            {
+                alias : "g",
+                id : {
+                    name : "id"
+                },
+                property : {
+                    name : "value",
+                    converter : "int",
+                    format : "000000.00"
+                }
+            }
+        ]
+    }
+}

@@ -28,11 +28,14 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.annotations.config.binding.AnnotationsMappingBinding;
-import org.compass.annotations.config.binding.OverrideAnnotationsWithCpmMappingBinding;
+import org.compass.annotations.config.binding.OverrideAnnotationsWithJsonCpmMappingBinding;
+import org.compass.annotations.config.binding.OverrideAnnotationsWithXmlCpmMappingBinding;
 import org.compass.core.Compass;
 import org.compass.core.CompassException;
-import org.compass.core.config.binding.XmlMappingBinding;
+import org.compass.core.config.binding.JsonMetaDataBinding;
+import org.compass.core.config.binding.JsonPlainMappingBinding;
 import org.compass.core.config.binding.XmlMetaDataBinding;
+import org.compass.core.config.binding.XmlPlainMappingBinding;
 import org.compass.core.config.binding.scanner.Filter;
 import org.compass.core.config.binding.scanner.ScanItem;
 import org.compass.core.config.binding.scanner.Scanner;
@@ -69,7 +72,7 @@ import org.compass.core.util.matcher.PathMatcher;
  * <p/>
  * There are several options to configure a <code>Compass</code> instance,
  * programmatically using the <code>CompassConfiguration</code> class, using
- * the xml configuration file (compass.cfg.xml), or a combination of both.
+ * the xml configuration file (compass.cfg.xml), or a json configuration file, or a combination of all.
  * </p>
  * <p/>
  * Usually the application will create a single
@@ -122,9 +125,12 @@ public class CompassConfiguration {
 
     protected void addMappingBindings(CompassMappingBinding mappingBinding) {
         mappingBinding.addMappingBinding(new XmlMetaDataBinding());
-        mappingBinding.addMappingBinding(new XmlMappingBinding());
+        mappingBinding.addMappingBinding(new JsonMetaDataBinding());
+        mappingBinding.addMappingBinding(new XmlPlainMappingBinding());
+        mappingBinding.addMappingBinding(new JsonPlainMappingBinding());
         mappingBinding.addMappingBinding(new AnnotationsMappingBinding());
-        mappingBinding.addMappingBinding(new OverrideAnnotationsWithCpmMappingBinding());
+        mappingBinding.addMappingBinding(new OverrideAnnotationsWithXmlCpmMappingBinding());
+        mappingBinding.addMappingBinding(new OverrideAnnotationsWithJsonCpmMappingBinding());
     }
 
     /**

@@ -60,7 +60,7 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
 
     }
 
-    private boolean overrideByName;
+    private boolean overrideByName = false;
 
     private Converter valueConverter;
 
@@ -70,9 +70,12 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
 
     private String fullPath;
 
-    private NamingType namingType;
+    private NamingType namingType = NamingType.PLAIN;
 
     private boolean dynamic = false;
+
+    public JsonPropertyMapping() {
+    }
 
     public Mapping copy() {
         JsonPropertyMapping xmlPropertyMapping = new JsonPropertyMapping();

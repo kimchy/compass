@@ -30,7 +30,7 @@ import org.compass.core.xml.XmlXPathExpression;
 public class XmlPropertyMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping,
         OverrideByNameMapping, XPathEnabledMapping {
 
-    private boolean overrideByName;
+    private boolean overrideByName = true;
 
     private String xpath;
 

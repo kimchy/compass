@@ -26,6 +26,11 @@ import org.compass.core.mapping.ResourcePropertyMapping;
  */
 public class XmlIdMapping extends XmlPropertyMapping implements ResourceIdMappingProvider {
 
+    public XmlIdMapping() {
+        setOmitNorms(true);
+        setOmitTf(true);
+    }
+
     public Mapping[] getIdMappings() {
         return getResourceIdMappings();
     }

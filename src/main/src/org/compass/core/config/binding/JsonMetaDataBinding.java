@@ -19,22 +19,20 @@ package org.compass.core.config.binding;
 import java.io.InputStream;
 
 import org.compass.core.config.ConfigurationException;
-import org.compass.core.util.DTDEntityResolver;
 import org.compass.core.util.config.ConfigurationHelper;
-import org.compass.core.util.config.XmlConfigurationHelperBuilder;
+import org.compass.core.util.config.JsonConfigurationHelperBuilder;
 
 /**
  * @author kimchy
  */
-public class XmlMetaDataBinding extends MetaDataBinding {
+public class JsonMetaDataBinding extends MetaDataBinding {
 
     public String[] getSuffixes() {
-        return new String[]{".cmd.xml"};
+        return new String[]{".cmd.json"};
     }
 
     protected ConfigurationHelper doParseConfigurationHelper(InputStream is, String resourceName) throws ConfigurationException {
-        XmlConfigurationHelperBuilder builder = new XmlConfigurationHelperBuilder();
-        builder.setEntityResolver(new DTDEntityResolver());
+        JsonConfigurationHelperBuilder builder = new JsonConfigurationHelperBuilder();
         return builder.build(is, resourceName);
     }
 }

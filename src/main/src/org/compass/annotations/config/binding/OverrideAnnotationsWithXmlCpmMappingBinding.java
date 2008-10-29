@@ -16,14 +16,14 @@
 
 package org.compass.annotations.config.binding;
 
-import org.compass.core.config.binding.XmlMappingBinding;
+import org.compass.core.config.binding.XmlPlainMappingBinding;
 
 /**
  * @author kimchy
  */
-public class OverrideAnnotationsWithCpmMappingBinding extends XmlMappingBinding {
+public class OverrideAnnotationsWithXmlCpmMappingBinding extends XmlPlainMappingBinding {
 
     public String[] getSuffixes() {
-        return new String[] {".cpm.ann.xml"};
+        return new String[]{".cpm.ann.xml"};
     }
 }

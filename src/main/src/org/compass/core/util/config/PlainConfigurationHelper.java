@@ -18,6 +18,7 @@ package org.compass.core.util.config;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.compass.core.config.ConfigurationException;
@@ -220,6 +221,14 @@ public class PlainConfigurationHelper extends AbstractConfigurationHelper implem
             }
             return children.toArray(new ConfigurationHelper[children.size()]);
         }
+    }
+
+    public ConfigurationHelper[] getChildren(String... names) {
+        final ArrayList<ConfigurationHelper> children = new ArrayList<ConfigurationHelper>();
+        for (String name : names) {
+            children.addAll(Arrays.asList(getChildren(name)));
+        }
+        return children.toArray(new ConfigurationHelper[children.size()]);
     }
 
     /**

@@ -1,0 +1,140 @@
+{
+    "compass-core-mapping" : {
+        "xml-object" : [
+            {
+                alias : "data1",
+                id : {
+                    name : "id",
+                    xpath : "/xml-fragment/data/id/@value"
+                },
+                property : [
+                    {
+                        xpath : "/xml-fragment/data/data1/@value"
+                    },
+                    {
+                        name : "eleText",
+                        xpath : "/xml-fragment/data/data1"
+                    }
+                ]
+            },
+            {
+                alias : "data2",
+                xpath : "/xml-fragment/data[1]",
+                id : {
+                    name : "id",
+                    xpath : "id/@value"
+                },
+                property : [
+                    {
+                        xpath : "data1/@value"
+                    },
+                    {
+                        name : "eleText",
+                        xpath : "data1"
+                    }
+                ]
+            },
+            {
+                alias : "data3",
+                xpath : "/xml-fragment/data",
+                id : {
+                    name : "id",
+                    xpath : "id/@value"
+                },
+                property : [
+                    {
+                        xpath : "data1/@value"
+                    },
+                    {
+                        name : "eleText",
+                        xpath : "data1"
+                    }
+                ]
+            },
+            {
+                alias : "data4",
+                xpath : "/xml-fragment/data",
+                id : {
+                    name : "id",
+                    xpath : "id/@value"
+                },
+                property : [
+                    {
+                        xpath : "data1/@value"
+                    },
+                    {
+                        name : "eleText",
+                        xpath : "data1"
+                    }
+                ],
+                content : {
+                    name : "content"
+                }
+            },
+            {
+                alias : "data5-1",
+                xpath : "/xml-fragment/test1:data",
+                id : {
+                    name : "id",
+                    xpath : "test1:id/@value"
+                },
+                property : [
+                    {
+                        xpath : "test1:data1/@value"
+                    },
+                    {
+                        name : "eleText",
+                        xpath : "test1:data1"
+                    }
+                ],
+                content : {
+                    name : "content"
+                }
+            },
+            {
+                alias : "data5-2",
+                xpath : "/xml-fragment/data",
+                id : {
+                    name : "id",
+                    xpath : "id/@value"
+                },
+                property : [
+                    {
+                        xpath : "data1/@value"
+                    },
+                    {
+                        name : "eleText",
+                        xpath : "data1"
+                    }
+                ],
+                content : {
+                    name : "content"
+                }
+            },
+            {
+                alias : "data6",
+                xpath : "/xml-fragment/data",
+                id : {
+                    name : "id",
+                    xpath : "id/@value"
+                },
+                property : [
+                    {
+                        xpath : "data1/@value",
+                        format : "000000.0000",
+                        "value-converter" : "float"
+                    },
+                    {
+                        name : "eleText",
+                        xpath : "data1",
+                        format : "yyyy-MM-dd||dd-MM-yyyy",
+                        "value-converter" : "date"
+                    }
+                ],
+                content : {
+                    name : "content"
+                }
+            }
+        ]
+    }
+}

@@ -29,6 +29,10 @@ public class JsonContentMapping extends AbstractResourcePropertyMapping implemen
 
     private String fullPath;
 
+    public JsonContentMapping() {
+        setStore(Property.Store.YES);
+    }
+
     public String getFullPath() {
         return fullPath;
     }
@@ -45,7 +49,28 @@ public class JsonContentMapping extends AbstractResourcePropertyMapping implemen
     }
 
     /**
-     * Xml content mapping is always excluded from all
+     * Json content mapping is alwasy {@link org.compass.core.Property.TermVector#NO}.
+     */
+    public Property.TermVector getTermVector() {
+        return Property.TermVector.NO;
+    }
+
+    /**
+     * Json content mapping is always <code>true</code>.
+     */
+    public Boolean isOmitNorms() {
+        return true;
+    }
+
+    /**
+     * Json content mapping is always <code>true</code>.
+     */
+    public Boolean isOmitTf() {
+        return true;
+    }
+
+    /**
+     * Json content mapping is always excluded from all
      */
     public boolean isExcludeFromAll() {
         return true;

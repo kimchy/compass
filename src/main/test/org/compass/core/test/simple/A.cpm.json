@@ -1,0 +1,18 @@
+{
+    "compass-core-mapping" : {
+        package : "org.compass.core.test.simple",
+        class : {
+            name : "A",
+            alias : "A",
+            id : {
+                name : "id"
+            },
+            property : {
+                name : "value",
+                "meta-data" : {
+                    name : "value"
+                }
+            }
+        }
+    }
+}

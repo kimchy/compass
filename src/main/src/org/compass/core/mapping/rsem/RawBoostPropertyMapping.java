@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.rsem;
 
+import org.compass.core.Property;
 import org.compass.core.Property.Index;
 import org.compass.core.Property.Store;
 import org.compass.core.mapping.BoostPropertyMapping;
@@ -53,5 +54,17 @@ public class RawBoostPropertyMapping extends RawResourcePropertyMapping implemen
 
     public Store getStore() {
         return Store.YES;
+    }
+
+    public Property.TermVector getTermVector() {
+        return Property.TermVector.NO;
+    }
+
+    public Boolean isOmitNorms() {
+        return true;
+    }
+
+    public Boolean isOmitTf() {
+        return true;
     }
 }

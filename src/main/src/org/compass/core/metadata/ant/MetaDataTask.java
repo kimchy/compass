@@ -16,7 +16,11 @@
 
 package org.compass.core.metadata.ant;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -24,8 +28,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
-import org.compass.core.config.binding.XmlMetaDataBinding;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.config.binding.XmlMetaDataBinding;
 import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.MetaData;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;

@@ -26,6 +26,11 @@ import org.compass.core.mapping.ResourcePropertyMapping;
  */
 public class JsonIdMapping extends JsonPropertyMapping implements ResourceIdMappingProvider {
 
+    public JsonIdMapping() {
+        setOmitNorms(true);
+        setOmitTf(true);
+    }
+
     public Mapping[] getIdMappings() {
         return getResourceIdMappings();
     }

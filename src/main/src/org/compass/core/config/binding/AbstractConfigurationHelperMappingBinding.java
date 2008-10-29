@@ -19,22 +19,21 @@ package org.compass.core.config.binding;
 import java.io.InputStream;
 
 import org.compass.core.config.ConfigurationException;
-import org.compass.core.util.DTDEntityResolver;
+import org.compass.core.mapping.MappingException;
 import org.compass.core.util.config.ConfigurationHelper;
-import org.compass.core.util.config.XmlConfigurationHelperBuilder;
 
 /**
  * @author kimchy
  */
-public class XmlMetaDataBinding extends MetaDataBinding {
+public abstract class AbstractConfigurationHelperMappingBinding extends AbstractInputStreamMappingBinding {
 
-    public String[] getSuffixes() {
-        return new String[]{".cmd.xml"};
+    protected boolean doAddInputStream(InputStream is, String resourceName) throws ConfigurationException, MappingException {
+        ConfigurationHelper conf = doParseConfigurationHelper(is, resourceName);
+        conf.makeReadOnly();
+        return doAddConfiguration(conf);
     }
 
-    protected ConfigurationHelper doParseConfigurationHelper(InputStream is, String resourceName) throws ConfigurationException {
-        XmlConfigurationHelperBuilder builder = new XmlConfigurationHelperBuilder();
-        builder.setEntityResolver(new DTDEntityResolver());
-        return builder.build(is, resourceName);
-    }
+    protected abstract ConfigurationHelper doParseConfigurationHelper(InputStream is, String resourceName) throws ConfigurationException;
+
+    protected abstract boolean doAddConfiguration(ConfigurationHelper conf) throws ConfigurationException, MappingException;
 }

@@ -1,0 +1,74 @@
+{
+    "compass-core-mapping" : {
+        "root-json-object" : [
+            {
+                alias : "a",
+                id : {
+                    name : "id"
+                },
+                property : {
+                    name : "value"
+                }
+            },
+
+            {
+                alias : "b",
+                id : {
+                    name : "id"
+                },
+                property : {
+                    name : "value"
+                },
+                content : {
+                    name : "test"
+                }
+            },
+
+            {
+                alias : "c",
+                id : {
+                    name : "id"
+                },
+                property : [
+                    {
+                        name : "int",
+                        "value-converter" : "int",
+                        format : "0000"
+                    },
+                    {
+                        name : "float",
+                        "value-converter" : "float",
+                        format : "0000.00",
+                        store : "compress"
+                    }]
+            },
+
+            {
+                alias : "d",
+                id : {
+                    name : "id"
+                },
+                property : {
+                    name : "value",
+                    "null-value" : "kablam"
+                }
+            },
+
+            {
+                alias : "e",
+                id : {
+                    name : "id"
+                },
+                property : [
+                    {
+                        name : "value"
+                    },
+                    {
+                        name : "value",
+                        "value-converter" : "int",
+                        format : "0000"
+                    }]
+            }
+        ]
+    }
+}

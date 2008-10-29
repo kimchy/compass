@@ -23,7 +23,7 @@ public class RootJsonObjectMapping extends AbstractResourceMapping implements Js
 
     private String fullPath;
 
-    private boolean dynamic;
+    private boolean dynamic = false;
 
     public Mapping copy() {
         RootJsonObjectMapping copy = new RootJsonObjectMapping();

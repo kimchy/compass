@@ -58,6 +58,8 @@ public interface ConfigurationHelper {
      */
     ConfigurationHelper[] getChildren(String name);
 
+    ConfigurationHelper[] getChildren(String ... names);
+
     /**
      * Return an array of all attribute names.
      */

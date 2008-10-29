@@ -31,11 +31,11 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private float boost = 1.0f;
 
-    private Property.Store store = Property.Store.YES;
+    private Property.Store store;
 
-    private Property.Index index = Property.Index.ANALYZED;
+    private Property.Index index;
 
-    private Property.TermVector termVector = Property.TermVector.NO;
+    private Property.TermVector termVector;
 
     private boolean isInternal = false;
 

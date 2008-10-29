@@ -27,6 +27,12 @@ import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
  */
 public class XmlContentMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping {
 
+    public Mapping copy() {
+        XmlContentMapping copy = new XmlContentMapping();
+        copy(copy);
+        return copy;
+    }
+    
     /**
      * Xml content mapping is always {@link Property.Index#NO}.
      */
@@ -41,10 +47,25 @@ public class XmlContentMapping extends AbstractResourcePropertyMapping implement
         return true;
     }
 
-    public Mapping copy() {
-        XmlContentMapping copy = new XmlContentMapping();
-        copy(copy);
-        return copy;
+    /**
+     * Xml content mapping is alwasy {@link org.compass.core.Property.TermVector#NO}.
+     */
+    public Property.TermVector getTermVector() {
+        return Property.TermVector.NO;
+    }
+
+    /**
+     * Xml content mapping is always <code>true</code>.
+     */
+    public Boolean isOmitNorms() {
+        return true;
+    }
+
+    /**
+     * Xml content mapping is always <code>true</code>.
+     */
+    public Boolean isOmitTf() {
+        return true;
     }
 
     public ResourcePropertyConverter getResourcePropertyConverter() {

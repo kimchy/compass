@@ -51,6 +51,18 @@ public class RawResourcePropertyAnalyzerController extends RawResourcePropertyMa
         return Property.Store.YES;
     }
 
+    public Property.TermVector getTermVector() {
+        return Property.TermVector.NO;
+    }
+
+    public Boolean isOmitNorms() {
+        return true;
+    }
+
+    public Boolean isOmitTf() {
+        return true;
+    }
+    
     public String getNullAnalyzer() {
         return nullAnalyzer;
     }

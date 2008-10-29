@@ -95,6 +95,7 @@ public abstract class MappingProcessorUtils {
         internalIdMapping.setName(classPropertyMapping.getName());
         internalIdMapping.setOriginalName(classPropertyMapping.getName());
         internalIdMapping.setStore(Property.Store.YES);
+        internalIdMapping.setTermVector(Property.TermVector.NO);
         internalIdMapping.setOmitNorms(true);
         internalIdMapping.setOmitTf(true);
         Property.Index index;

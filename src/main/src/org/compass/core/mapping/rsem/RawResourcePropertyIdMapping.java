@@ -27,6 +27,11 @@ import org.compass.core.mapping.ResourcePropertyMapping;
  */
 public class RawResourcePropertyIdMapping extends RawResourcePropertyMapping implements ResourceIdMappingProvider {
 
+    public RawResourcePropertyIdMapping() {
+        setOmitNorms(true);
+        setOmitTf(true);
+    }
+
     public ResourcePropertyMapping[] getIdMappings() {
         return getResourceIdMappings();
     }
