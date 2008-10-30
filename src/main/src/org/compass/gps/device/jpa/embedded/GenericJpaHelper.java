@@ -42,7 +42,7 @@ public class GenericJpaHelper {
      * Constructs a new helper and tries to autmoatically identify from which JPA provide
      * the embedded Compass can be extracted from.
      *
-     * @param entityManagerFactory
+     * @param entityManagerFactory The entity manager factory to get the Compass instance from
      */
     public GenericJpaHelper(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
