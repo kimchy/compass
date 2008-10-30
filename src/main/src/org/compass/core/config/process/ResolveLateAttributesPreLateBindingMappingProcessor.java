@@ -36,6 +36,7 @@ import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.CollectionMapping;
 import org.compass.core.mapping.osem.LazyMapping;
+import org.compass.core.mapping.osem.internal.InternalLazyMapping;
 
 /**
  * Reolves late attributes associated usually with {@link ClassMapping}, they are:
@@ -110,12 +111,12 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
                     if (collectionMapping.getElementMapping() instanceof LazyMapping) {
                         LazyMapping elementMapping = (LazyMapping) collectionMapping.getElementMapping();
                         if (elementMapping.isLazy() == null) {
-                            elementMapping.setLazy(defaultLazy);
+                            ((InternalLazyMapping) elementMapping).setLazy(defaultLazy);
                             collectionMapping.setLazy(defaultLazy);
                         }
                     }
                 } else {
-                    lazyMapping.setLazy(false);
+                    ((InternalLazyMapping) lazyMapping).setLazy(false);
                 }
             }
         }

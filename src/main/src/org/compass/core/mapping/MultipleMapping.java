@@ -26,14 +26,6 @@ import java.util.Iterator;
 public interface MultipleMapping extends Mapping {
 
     /**
-     * Adds the mapping. Returns the location that the mapping was added to.
-     *
-     * @param mapping The mapping to add
-     * @return The location the mapping was added to.
-     */
-    int addMapping(Mapping mapping);
-
-    /**
      * Returns the mapping associated with the given name. Don't be confused with
      * {@link #getName()}, since the mappings might be saved not under the mapping
      * name (it might be under the mapping path). It really depends on the actual

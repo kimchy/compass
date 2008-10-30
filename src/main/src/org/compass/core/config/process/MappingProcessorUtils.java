@@ -29,6 +29,7 @@ import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.InternalMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
@@ -63,7 +64,7 @@ public abstract class MappingProcessorUtils {
             if (mapping.getConverter() instanceof DelegateConverter) {
                 ((DelegateConverter) mapping.getConverter()).setDelegatedConverter(converter);
             } else {
-                mapping.setConverter(converter);
+                ((InternalMapping) mapping).setConverter(converter);
             }
         }
     }

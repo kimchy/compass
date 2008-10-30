@@ -40,6 +40,7 @@ import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.CollectionMapping;
 import org.compass.core.mapping.osem.LazyMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
+import org.compass.core.mapping.osem.internal.InternalLazyMapping;
 
 /**
  * Goes over all the OSEM {@link org.compass.core.mapping.osem.ClassMapping}s. For each
@@ -146,7 +147,7 @@ public class CollectionMappingProcessor implements MappingProcessor {
                 collectionMapping.setOverrideByName(true);
             }
             if ((collectionMapping instanceof LazyMapping) && (objectMapping instanceof LazyMapping)) {
-                ((LazyMapping) collectionMapping).setLazy(((LazyMapping) objectMapping).isLazy());
+                ((InternalLazyMapping) collectionMapping).setLazy(((LazyMapping) objectMapping).isLazy());
             }
             return collectionMapping;
         } else {

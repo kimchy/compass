@@ -17,11 +17,12 @@
 package org.compass.core.mapping.osem;
 
 import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.osem.internal.InternalLazyMapping;
 
 /**
  * @author kimchy
  */
-public class CollectionMapping extends AbstractCollectionMapping implements LazyMapping {
+public class CollectionMapping extends AbstractCollectionMapping implements InternalLazyMapping {
 
     private Boolean lazy = false;
 

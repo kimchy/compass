@@ -31,12 +31,13 @@ import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ContractMapping;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.InternalAliasMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
+import org.compass.core.mapping.internal.InternalMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.json.JsonArrayMapping;
@@ -408,7 +409,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindXmlObjectChildren(xmlObjectConf, xmlObjectMapping);
     }
 
-    private void bindXmlObjectChildren(ConfigurationHelper resourceConf, AliasMapping resourceMapping) {
+    private void bindXmlObjectChildren(ConfigurationHelper resourceConf, InternalAliasMapping resourceMapping) {
         ConfigurationHelper[] ids = resourceConf.getChildren("xml-id", "id");
         for (ConfigurationHelper id : ids) {
             XmlIdMapping xmlIdMapping = new XmlIdMapping();
@@ -435,7 +436,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
         ConfigurationHelper analyzerConf = resourceConf.getChild("xml-analyzer", false);
         if (analyzerConf == null) {
-            analyzerConf = resourceConf.getChild("analyzer", false);            
+            analyzerConf = resourceConf.getChild("analyzer", false);
         }
         if (analyzerConf != null) {
             XmlPropertyAnalyzerController analyzerController = new XmlPropertyAnalyzerController();
@@ -543,7 +544,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindResourceMappingChildren(resourceConf, rawResourceMapping);
     }
 
-    private void bindResourceMappingChildren(ConfigurationHelper resourceConf, AliasMapping resourceMapping) {
+    private void bindResourceMappingChildren(ConfigurationHelper resourceConf, InternalAliasMapping resourceMapping) {
         ConfigurationHelper[] ids = resourceConf.getChildren("resource-id", "id");
         for (ConfigurationHelper id : ids) {
             RawResourcePropertyIdMapping rawIdPropertyMapping = new RawResourcePropertyIdMapping();
@@ -688,7 +689,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindClassMappingChildren(classConf, classMapping);
     }
 
-    private void bindClassMappingChildren(ConfigurationHelper classConf, AliasMapping classMapping) {
+    private void bindClassMappingChildren(ConfigurationHelper classConf, InternalAliasMapping classMapping) {
         ConfigurationHelper[] ids = classConf.getChildren("id");
         for (ConfigurationHelper id : ids) {
             ClassIdPropertyMapping idMapping = new ClassIdPropertyMapping();
@@ -997,7 +998,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindSpellCheck(metadataConf, mdMapping);
     }
 
-    private void bindExtends(ConfigurationHelper conf, AliasMapping mapping) throws ConfigurationException {
+    private void bindExtends(ConfigurationHelper conf, InternalAliasMapping mapping) throws ConfigurationException {
         String extendsAliases = conf.getAttribute("extends", null);
         if (extendsAliases != null) {
             mapping.setExtendedAliases(getAliases(extendsAliases));
@@ -1025,7 +1026,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         return aliases.toArray(new String[aliases.size()]);
     }
 
-    private void bindConverter(ConfigurationHelper conf, Mapping mapping) {
+    private void bindConverter(ConfigurationHelper conf, InternalMapping mapping) {
         String converterName = conf.getAttribute("converter", null);
         mapping.setConverterName(converterName);
     }

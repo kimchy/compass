@@ -18,14 +18,13 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
+import org.compass.core.mapping.osem.internal.InternalObjectMapping;
 import org.compass.core.mapping.support.AbstractMapping;
 
 /**
- * 
  * @author kimchy
- *
  */
-public abstract class AbstractAccessorMapping extends AbstractMapping implements ObjectMapping {
+public abstract class AbstractAccessorMapping extends AbstractMapping implements InternalObjectMapping {
 
     private String accessor;
 

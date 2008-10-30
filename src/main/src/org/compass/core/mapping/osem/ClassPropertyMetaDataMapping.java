@@ -20,12 +20,13 @@ import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.osem.internal.InternalObjectMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
-public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMapping implements ObjectMapping {
+public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMapping implements InternalObjectMapping {
 
     private String accessor;
 

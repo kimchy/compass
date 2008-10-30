@@ -31,6 +31,7 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.MultipleMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
+import org.compass.core.mapping.osem.internal.InternalObjectMapping;
 import org.compass.core.util.reflection.ReflectionFactory;
 
 /**
@@ -89,8 +90,8 @@ public class PropertyAccessorMappingProcessor implements MappingProcessor {
         }
         ObjectMapping objectMapping = (ObjectMapping) mapping;
         PropertyAccessor pAccessor = propertyAccessorFactory.getPropertyAccessor(objectMapping.getAccessor(), settings);
-        objectMapping.setGetter(pAccessor.getGetter(clazz, objectMapping.getPropertyName()));
-        objectMapping.setSetter(pAccessor.getSetter(clazz, objectMapping.getPropertyName()));
+        ((InternalObjectMapping) objectMapping).setGetter(pAccessor.getGetter(clazz, objectMapping.getPropertyName()));
+        ((InternalObjectMapping) objectMapping).setSetter(pAccessor.getSetter(clazz, objectMapping.getPropertyName()));
 
         if (mapping instanceof MultipleMapping) {
             MultipleMapping multipleMapping = (MultipleMapping) mapping;

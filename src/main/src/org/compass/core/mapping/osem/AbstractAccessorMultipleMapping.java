@@ -18,12 +18,13 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
+import org.compass.core.mapping.osem.internal.InternalObjectMapping;
 import org.compass.core.mapping.support.AbstractMultipleMapping;
 
 /**
  * @author kimchy
  */
-public abstract class AbstractAccessorMultipleMapping extends AbstractMultipleMapping implements ObjectMapping {
+public abstract class AbstractAccessorMultipleMapping extends AbstractMultipleMapping implements InternalObjectMapping {
 
     private Getter getter;
 
@@ -34,7 +35,6 @@ public abstract class AbstractAccessorMultipleMapping extends AbstractMultipleMa
         copy.setGetter(getGetter());
         copy.setSetter(getSetter());
     }
-
 
     public boolean hasAccessors() {
         return true;

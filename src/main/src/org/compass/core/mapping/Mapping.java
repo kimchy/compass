@@ -23,8 +23,8 @@ import org.compass.core.engine.naming.PropertyPath;
  * A general interface for all things Mapping in compass. Has a name and a path, where the
  * name is usually the "logical name" of the mapping, and the path is the actual name which
  * it will be saved under in the search engine.
- * <p/>
- * Also provides general support for converters attached to the mappings, which can have
+ *
+ * <p>Also provides general support for converters attached to the mappings, which can have
  * parameters associated with them.
  *
  * @author kimchy
@@ -38,22 +38,10 @@ public interface Mapping {
     String getName();
 
     /**
-     * Sets the name of the mapping. Acts as the "logical" name of the mapping (think
-     * Java Bean Property name).
-     */
-    void setName(String name);
-
-    /**
      * Returns the path of the mapping. The path is the value under which it will
      * be saved in the Search Engine.
      */
     PropertyPath getPath();
-
-    /**
-     * Sets the path of the mapping. The path is the value under which it will
-     * be saved in the Search Engine.
-     */
-    void setPath(PropertyPath path);
 
     /**
      * Returns the conveter associated with the mapping. The converter is responsible for
@@ -62,24 +50,11 @@ public interface Mapping {
     Converter getConverter();
 
     /**
-     * Sets the conveter associated with the mapping. The converter is responsible for
-     * marshalling and unmarshalling the Mapping from and to the Search Engine.
-     */
-    void setConverter(Converter converter);
-
-    /**
      * Returns the converter name associated with the Mapping. The conveter name
      * can be the actual class name of the converter, or a lookup name that has a
      * converter associated with it.
      */
     String getConverterName();
-
-    /**
-     * Sets the converter name associated with the Mapping. The conveter name
-     * can be the actual class name of the converter, or a lookup name that has a
-     * converter associated with it.
-     */
-    void setConverterName(String name);
 
     /**
      * Returns <code>true</code> if the Mapping controlls the fact that if it has no value, it's

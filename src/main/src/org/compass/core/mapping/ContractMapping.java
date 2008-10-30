@@ -16,12 +16,13 @@
 
 package org.compass.core.mapping;
 
+import org.compass.core.mapping.internal.InternalAliasMapping;
 import org.compass.core.mapping.support.AbstractMultipleMapping;
 
 /**
  * @author kimchy
  */
-public class ContractMapping extends AbstractMultipleMapping implements AliasMapping {
+public class ContractMapping extends AbstractMultipleMapping implements InternalAliasMapping {
 
     private String alias;
 
@@ -32,12 +33,12 @@ public class ContractMapping extends AbstractMultipleMapping implements AliasMap
     private String analyzer;
 
     public Mapping copy() {
-        AliasMapping contractMapping = shallowCopy();
+        InternalAliasMapping contractMapping = shallowCopy();
         super.copy(contractMapping);
         return contractMapping;
     }
 
-    public AliasMapping shallowCopy() {
+    public InternalAliasMapping shallowCopy() {
         ContractMapping contractMapping = new ContractMapping();
         contractMapping.setAlias(getAlias());
         contractMapping.setExtendedAliases(getExtendedAliases());

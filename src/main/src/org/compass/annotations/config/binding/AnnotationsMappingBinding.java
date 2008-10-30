@@ -46,11 +46,11 @@ import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CascadeMapping;
-import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
+import org.compass.core.mapping.internal.InternalMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
@@ -62,10 +62,10 @@ import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.IdComponentMapping;
-import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.PlainCascadeMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
+import org.compass.core.mapping.osem.internal.InternalObjectMapping;
 import org.compass.core.metadata.Alias;
 import org.compass.core.metadata.CompassMetaData;
 import org.compass.core.util.ClassUtils;
@@ -908,7 +908,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         classMapping.addMapping(constantMapping);
     }
 
-    private void bindConverter(Mapping mapping, String converterName) {
+    private void bindConverter(InternalMapping mapping, String converterName) {
         bindConverter(mapping, converterName, null, null);
     }
 
@@ -922,7 +922,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         }
     }
 
-    private void bindConverter(Mapping mapping, String converterName, Class<?> clazz, Type type) {
+    private void bindConverter(InternalMapping mapping, String converterName, Class<?> clazz, Type type) {
         if (StringUtils.hasLength(converterName)) {
             mapping.setConverterName(converterName);
             return;
@@ -967,7 +967,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         return converter;
     }
 
-    private void bindObjectMapping(ObjectMapping objectMapping, String actualAccessor, String name,
+    private void bindObjectMapping(InternalObjectMapping objectMapping, String actualAccessor, String name,
                                    String annotationAccessor, Class<?> searchableClass) {
         if (!StringUtils.hasLength(annotationAccessor)) {
             objectMapping.setAccessor(actualAccessor);

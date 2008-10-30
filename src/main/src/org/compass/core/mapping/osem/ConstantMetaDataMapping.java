@@ -22,6 +22,7 @@ import java.util.Iterator;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.osem.internal.InternalOsemMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 
 /**
@@ -29,8 +30,7 @@ import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
  * @author kimchy
  * 
  */
-public class ConstantMetaDataMapping extends AbstractResourcePropertyMapping
-        implements OverrideByNameMapping, OsemMapping {
+public class ConstantMetaDataMapping extends AbstractResourcePropertyMapping implements OverrideByNameMapping, InternalOsemMapping {
 
     private ArrayList<String> metaDataValues = new ArrayList<String>();
     

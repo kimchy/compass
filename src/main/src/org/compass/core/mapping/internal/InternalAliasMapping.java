@@ -14,40 +14,36 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.core.mapping.internal;
+
+import org.compass.core.mapping.AliasMapping;
 
 /**
- * An alias mapping is a mapping that is associated with an alias.
+ * A mutable extension to {@link org.compass.core.mapping.AliasMapping}.
  *
  * @author kimchy
  */
-public interface AliasMapping extends MultipleMapping {
+public interface InternalAliasMapping extends AliasMapping, InternalMultipleMapping {
 
     /**
-     * Performs a shalow copy of this mapping, not including any internal mappings
-     * belonging to {@link MultipleMapping}.
+     * Sets the alias this mapping is associated with.
      */
-    AliasMapping shallowCopy();
+    void setAlias(String alias);
 
     /**
-     * Returns the alias this mapping is associated with.
+     * Sets a list of aliases that this alias extends.
      */
-    String getAlias();
+    void setExtendedAliases(String[] extendedMappings);
 
     /**
-     * Returns a list of aliases that this alias extends.
-     */
-    String[] getExtendedAliases();
-
-    /**
-     * Returns a list of all the aliases that extend this mapping. Note,
+     * Sets a list of all the aliases that extend this mapping. Note,
      * this is a list of all the aliases down the food chain, not just the
      * first ones.
      */
-    String[] getExtendingAliases();
-
+    void setExtendingAliases(String[] extendingAliases);
+    
     /**
-     * Returns the analyzer lookup name of this alias mapping.
+     * Sets the analyzer lookup name of this alias mapping.
      */
-    String getAnalyzer();
+    void setAnalyzer(String analyzer);
 }

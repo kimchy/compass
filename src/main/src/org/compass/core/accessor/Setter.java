@@ -22,9 +22,6 @@ import org.compass.core.CompassException;
 
 /**
  * Sets values to a particular attribute
- * <p>
- * Initial version taken from hibernate
- * </p>
  * 
  * @author kimchy
  */

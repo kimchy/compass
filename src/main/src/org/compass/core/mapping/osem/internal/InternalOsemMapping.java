@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.osem;
+package org.compass.core.mapping.osem.internal;
+
+import org.compass.core.mapping.internal.InternalMapping;
+import org.compass.core.mapping.osem.OsemMapping;
 
 /**
- * A mapping denoting that it can be lazily fetched.
- *
  * @author kimchy
  */
-public interface LazyMapping {
-
-    /**
-     * Returns <code>true</code> if this mapping is lazy.
-     */
-    Boolean isLazy();
+public interface InternalOsemMapping extends OsemMapping, InternalMapping {
 }

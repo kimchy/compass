@@ -34,6 +34,7 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
+import org.compass.core.mapping.internal.InternalMapping;
 import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
@@ -133,9 +134,9 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
 
             if ((copyMapping instanceof ObjectMapping) && topmost) {
                 PropertyPath aliasedPath = namingStrategy.buildPath(compassMapping.getPath(), ((ObjectMapping) copyMapping).getDefinedInAlias());
-                copyMapping.setPath(namingStrategy.buildPath(aliasedPath, copyMapping.getName()));
+                ((InternalMapping) copyMapping).setPath(namingStrategy.buildPath(aliasedPath, copyMapping.getName()));
             } else {
-                copyMapping.setPath(namingStrategy.buildPath(classMapping.getPath(), copyMapping.getName()));
+                ((InternalMapping) copyMapping).setPath(namingStrategy.buildPath(classMapping.getPath(), copyMapping.getName()));
             }
 
             if (copyMapping instanceof ClassPropertyMapping) {
@@ -173,7 +174,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         Mapping elementMapping = collectionMapping.getElementMapping();
 
         Mapping elementMappingCopy = elementMapping.copy();
-        elementMappingCopy.setPath(collectionMapping.getPath());
+        ((InternalMapping) elementMappingCopy).setPath(collectionMapping.getPath());
 
         boolean removeMapping = false;
         if (elementMappingCopy instanceof ClassPropertyMapping) {

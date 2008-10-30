@@ -24,11 +24,14 @@ import java.util.Map;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MultipleMapping;
 import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.internal.InternalMultipleMapping;
 
 /**
+ * A base class implementation of {@link org.compass.core.mapping.internal.InternalMultipleMapping}.
+ *
  * @author kimchy
  */
-public abstract class AbstractMultipleMapping extends AbstractMapping implements MultipleMapping {
+public abstract class AbstractMultipleMapping extends AbstractMapping implements InternalMultipleMapping {
 
     protected ArrayList<Mapping> mappings = new ArrayList<Mapping>();
 
@@ -90,14 +93,14 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
         mappingsByNameMap.clear();
     }
 
-    protected void copy(MultipleMapping mapping) {
+    protected void copy(InternalMultipleMapping mapping) {
         super.copy(mapping);
         for (Iterator it = mappingsIt(); it.hasNext();) {
             mapping.addMapping(((Mapping) it.next()).copy());
         }
     }
 
-    protected void shallowCopy(MultipleMapping mapping) {
+    protected void shallowCopy(InternalMultipleMapping mapping) {
         super.copy(mapping);
     }
 }

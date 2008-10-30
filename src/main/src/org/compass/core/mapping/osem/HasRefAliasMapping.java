@@ -16,10 +16,12 @@
 
 package org.compass.core.mapping.osem;
 
+import org.compass.core.mapping.osem.internal.InternalObjectMapping;
+
 /**
  * @author kimchy
  */
-public interface HasRefAliasMapping extends ObjectMapping {
+public interface HasRefAliasMapping extends InternalObjectMapping {
 
     boolean hasRefAlias(String refAlias);
     

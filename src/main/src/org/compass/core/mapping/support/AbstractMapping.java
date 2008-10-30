@@ -18,12 +18,14 @@ package org.compass.core.mapping.support;
 
 import org.compass.core.converter.Converter;
 import org.compass.core.engine.naming.PropertyPath;
-import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.internal.InternalMapping;
 
 /**
+ * A based implementation for basic mapping in Compass.
+ *
  * @author kimchy
  */
-public abstract class AbstractMapping implements Mapping {
+public abstract class AbstractMapping implements InternalMapping {
 
     private String name;
 
@@ -33,7 +35,7 @@ public abstract class AbstractMapping implements Mapping {
 
     private Converter converter;
 
-    protected void copy(Mapping copy) {
+    protected void copy(InternalMapping copy) {
         copy.setName(getName());
         copy.setPath(getPath());
         copy.setConverterName(getConverterName());

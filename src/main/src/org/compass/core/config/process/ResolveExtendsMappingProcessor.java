@@ -27,6 +27,7 @@ import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
+import org.compass.core.mapping.internal.InternalAliasMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 
 /**
@@ -43,7 +44,7 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
 
         ArrayList<AliasMapping> innerMappingsCopy = new ArrayList<AliasMapping>();
         for (AliasMapping origAliasMapping : compassMapping.getMappings()) {
-            AliasMapping aliasMapping = origAliasMapping.shallowCopy();
+            InternalAliasMapping aliasMapping = (InternalAliasMapping) origAliasMapping.shallowCopy();
             resolveExtends(compassMapping, aliasMapping, origAliasMapping);
             innerMappingsCopy.add(aliasMapping);
         }
@@ -67,7 +68,7 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
         if (aliasMapping.getExtendedAliases() != null) {
             for (int i = 0; i < aliasMapping.getExtendedAliases().length; i++) {
                 String extendedAlias = aliasMapping.getExtendedAliases()[i];
-                AliasMapping extendedAliasMapping = compassMapping.getAliasMapping(extendedAlias);
+                InternalAliasMapping extendedAliasMapping = (InternalAliasMapping) compassMapping.getAliasMapping(extendedAlias);
 
                 if (extendedAliasMapping.getExtendingAliases() != null) {
                     for (int j = 0; j < extendedAliasMapping.getExtendingAliases().length; j++) {
@@ -85,7 +86,7 @@ public class ResolveExtendsMappingProcessor implements MappingProcessor {
     /**
      * Resolves (recursivly) all the extended aliases and addes their mappings (copy) into the alias mapping.
      */
-    private void resolveExtends(CompassMapping compassMapping, AliasMapping aliasMapping, AliasMapping copyFromAliasMapping)
+    private void resolveExtends(CompassMapping compassMapping, InternalAliasMapping aliasMapping, AliasMapping copyFromAliasMapping)
             throws MappingException {
 
         if (copyFromAliasMapping.getExtendedAliases() != null) {

@@ -23,7 +23,7 @@ import org.compass.core.mapping.SpellCheckType;
 /**
  * @author kimchy
  */
-public interface InternalResourceMapping extends ResourceMapping {
+public interface InternalResourceMapping extends ResourceMapping, InternalAliasMapping {
 
     /**
      * Sets the path under which the internal UID of the resource is stored. 

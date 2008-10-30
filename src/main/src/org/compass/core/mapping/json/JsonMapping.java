@@ -28,5 +28,8 @@ public interface JsonMapping extends Mapping {
      */
     String getFullPath();
 
+    /**
+     * Sets the full path (dot path notation) of the given root.
+     */
     void setFullPath(String fullPath);
 }

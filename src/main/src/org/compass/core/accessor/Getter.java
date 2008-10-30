@@ -22,14 +22,12 @@ import java.lang.reflect.Type;
 import org.compass.core.CompassException;
 
 /**
- * Gets values of a particular attribute
- * <p>
- * Initial version taken from hibernate
- * </p>
+ * Gets values of a particular attribute.
  *
  * @author kimchy
  */
 public interface Getter extends Serializable {
+    
     /**
      * Get the property value from the given instance
      */

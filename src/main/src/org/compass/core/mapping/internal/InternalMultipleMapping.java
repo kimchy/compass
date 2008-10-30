@@ -14,17 +14,23 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.osem;
+package org.compass.core.mapping.internal;
+
+import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.MultipleMapping;
 
 /**
- * A mapping denoting that it can be lazily fetched.
+ * An extension to {@link org.compass.core.mapping.MultipleMapping} making it mutible.
  *
  * @author kimchy
  */
-public interface LazyMapping {
+public interface InternalMultipleMapping extends MultipleMapping, InternalMapping {
 
     /**
-     * Returns <code>true</code> if this mapping is lazy.
+     * Adds the mapping. Returns the location that the mapping was added to.
+     *
+     * @param mapping The mapping to add
+     * @return The location the mapping was added to.
      */
-    Boolean isLazy();
+    int addMapping(Mapping mapping);
 }

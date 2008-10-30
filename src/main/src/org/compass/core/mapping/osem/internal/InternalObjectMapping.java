@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,50 +14,43 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.osem;
+package org.compass.core.mapping.osem.internal;
 
 import org.compass.core.accessor.Getter;
 import org.compass.core.accessor.Setter;
+import org.compass.core.mapping.osem.ObjectMapping;
 
 /**
- * 
  * @author kimchy
- *
  */
-public interface ObjectMapping extends OsemMapping {
+public interface InternalObjectMapping extends ObjectMapping, InternalOsemMapping {
 
     /**
-     * Returns the accessor type for this mapping. The accessor type can be
+     * Sets the accessor type for this mapping. The accessor type can be
      * field, property or a custom implementation of {@link org.compass.core.accessor.PropertyAccessor}
      * (this can be either the FQN of the class name or a regsitered type in the configuration, see
      * {@link org.compass.core.accessor.PropertyAccessorFactory}.
      */
-    String getAccessor();
+    void setAccessor(String accessor);
 
     /**
-     * Returns the class property name of the object mapping.
+     * Sets the class property name of the object mapping.
      */
-    String getPropertyName();
+    void setPropertyName(String propertyName);
 
     /**
-     * Returns which alias (or if not present, the FQN of the class name)
+     * Sets which alias (or if not present, the FQN of the class name)
      * this object property is defined at.
      */
-    String getDefinedInAlias();
+    void setDefinedInAlias(String alias);
 
     /**
-     * Returns the getter of the property.
+     * Sests the getter for the property.
      */
-    Getter getGetter();
+    void setGetter(Getter getter);
 
     /**
-     * Returns the setter of the proeprty.
+     * Sets the setter for the property.
      */
-    Setter getSetter();
-
-    /**
-     * Returns <code>true</code> if this object mapping can be wrapped
-     * with a Collection or an Array.
-     */
-    boolean canBeCollectionWrapped();
+    void setSetter(Setter setter);
 }
