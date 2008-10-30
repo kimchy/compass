@@ -68,6 +68,9 @@ public class PaginationHibernateIndexEntitiesIndexer implements HibernateIndexEn
                     List values;
                     Criteria criteria = entityInfo.getQueryProvider().createCriteria(hibernateSession, entityInfo);
                     if (criteria != null) {
+                        criteria.setFetchSize(device.getFetchCount());
+                        criteria.setFirstResult(current);
+                        criteria.setMaxResults(fetchCount);
                         values = criteria.list();
                     } else {
                         Query query = entityInfo.getQueryProvider().createQuery(hibernateSession, entityInfo).setFirstResult(current).setMaxResults(fetchCount);
