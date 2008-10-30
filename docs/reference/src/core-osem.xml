@@ -106,20 +106,12 @@ public class Author {
         alias : "author"
         id : { name : "name" },
         constant : {
-          "meta-data" : {
-            name : "type"
-          }
+          "meta-data" : { name : "type" }
           "meta-data-value" : [ "person", "author" ]
         },
         property : [
-          {
-            name : "name",
-            "meta-data" : [{ name : "name" }, { name : "authorName"}]
-          },
-          {
-            name : "birthday",
-            "meta-data" : { name : "birthday", format : "yyyy-MM-dd" }
-          }
+          { name : "name", "meta-data" : [{ name : "name" }, { name : "authorName"}]},
+          { name : "birthday", "meta-data" : { name : "birthday", format : "yyyy-MM-dd" }}
         ]
       }
     ]
@@ -1023,7 +1015,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
-              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>analyzer</literal> mapping (a child mapping of class mapping) (for a property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
+              <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> (<literal>ANALYZED</literal>) properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>analyzer</literal> mapping (a child mapping of class mapping) (for a property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
             </row>
             <row>
               <entry>root (optional, defaults to <literal>true</literal>)</entry>
@@ -1165,7 +1157,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>exclude-from-all (optional, defaults to <literal>no</literal>)</entry>
-              <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+              <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level. If set to <literal>no_analyzed</literal>, <literal>not_analyzed</literal> (<literal>not_analyzed</literal>) properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
             </row>
             <row>
               <entry>converter (optional)</entry>
@@ -1194,7 +1186,7 @@ public class Daughter extends Child {
       analyzer="name of the analyzer"
       override="true|false"
       managed-id="auto|true|false"
-      managed-id-index="[compass.managedId.index setting]|no|un_tokenized"
+      managed-id-index="[compass.managedId.index setting]|no|not_analyzed"
       managed-id-converter="managed id converter lookup name"
       exclude-from-all="no|yes|no_analyzed"
       converter="converter lookup name"
@@ -1229,7 +1221,7 @@ public class Daughter extends Child {
               </row>
               <row>
                 <entry>analyzer (optional, defaults to the class mapping analyzer decision scheme)</entry>
-                <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data mappings defined for the given property. Defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+                <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> meta-data mappings defined for the given property. Defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
               </row>
               <row>
                 <entry>override (optional, defaults to <literal>true</literal>)</entry>
@@ -1241,7 +1233,7 @@ public class Daughter extends Child {
               </row>
               <row>
                 <entry>managed-id-index (optional, defaults to <literal>compass.managedId.index</literal> setting, which defaults to <literal>no</literal>)</entry>
-                <entry>Can be either <literal>un_tokenized</literal> or <literal>no</literal>. It is the index setting that will be used when creating an internal managed id for a class property mapping (if it is not a property id, if it is, it will always be <literal>un_tokenized</literal>).</entry>
+                <entry>Can be either <literal>not_analyzed</literal> or <literal>no</literal>. It is the index setting that will be used when creating an internal managed id for a class property mapping (if it is not a property id, if it is, it will always be <literal>not_analyzed</literal>).</entry>
               </row>
             <row>
               <entry>managed-id-converter (optional)</entry>
@@ -1249,7 +1241,7 @@ public class Daughter extends Child {
             </row>
               <row>
                 <entry>exclude-from-all (optional, defaults to <literal>no</literal>)</entry>
-                <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+                <entry>Excludes the class property from participating in the "all" meta-data, unless specified in the meta-data level. If set to <literal>no_analyzed</literal>, <literal>not_analyzed</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
               </row>
               <row>
                 <entry>converter (optional)</entry>
@@ -1383,7 +1375,7 @@ public class Daughter extends Child {
 
  <programlisting><![CDATA[<meta-data
       store="yes|no|compress"
-      index="tokenized|un_tokenized|no"
+      index="analyzed|not_analyzed|no"
       boost="boost value for the meta-data"
       analyzer="name of the analyzer"
       reverse="no|reader|string"
@@ -1409,9 +1401,9 @@ public class Daughter extends Child {
               <entry>If the value of the class property that the meta-data maps to, is going to be stored in the index.</entry>
             </row>
             <row>
-              <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
+              <entry>index (optional, defaults to <literal>analyzed</literal>)</entry>
               <entry>If the value of the class property that the meta-data maps to, is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analysed
-              (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+              (<literal>analyzed</literal>), or is going to be used as is (<literal>not_analyzed</literal>).</entry>
             </row>
             <row>
               <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
@@ -1419,7 +1411,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>analyzer (optional, defaults to the parent analyzer)</entry>
-              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+              <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
             </row>
             <row>
               <entry>term-vector (optional, defaults to <literal>no</literal>)</entry>
@@ -1431,7 +1423,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
-              <entry>Excludes the meta-data from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+              <entry>Excludes the meta-data from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>not_analyzed</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
             </row>
             <row>
               <entry>null-value (optional, defaults to not storing the anything on null)</entry>
@@ -1467,7 +1459,7 @@ public class Daughter extends Child {
 <programlisting><![CDATA[<dynamic-meta-data
       name="The name the meta data will be saved under"
       store="yes|no|compress"
-      index="tokenized|un_tokenized|no"
+      index="analyzed|not_analyzed|no"
       boost="boost value for the meta-data"
       analyzer="name of the analyzer"
       reverse="no|reader|string"
@@ -1496,9 +1488,9 @@ public class Daughter extends Child {
               <entry>If the value of the class property that the meta-data maps to, is going to be stored in the index.</entry>
             </row>
             <row>
-              <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
+              <entry>index (optional, defaults to <literal>analyzed</literal>)</entry>
               <entry>If the value of the class property that the meta-data maps to, is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analysed
-              (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+              (<literal>analyzed</literal>), or is going to be used as is (<literal>not_analyzed</literal>).</entry>
             </row>
             <row>
               <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
@@ -1506,7 +1498,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>analyzer (optional, defaults to the parent analyzer)</entry>
-              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
+              <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> meta-data. Defaults to the parent property mapping, which in turn defaults to the class mapping analyzer decision scheme based on the analyzer set, or the <literal>analyzer</literal> mapping property.</entry>.
             </row>
             <row>
               <entry>reverse (optional, defaults to <literal>no</literal>)</entry>
@@ -1514,7 +1506,7 @@ public class Daughter extends Child {
             </row>
             <row>
               <entry>exclude-from-all (optional, defaults to the parent's <literal>exclude-from-all</literal> value)</entry>
-              <entry>Excludes the meta-data from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+              <entry>Excludes the meta-data from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>not_analyzed</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
             </row>
             <row>
               <entry>null-value (optional, defaults to not saving the value)</entry>
@@ -1761,7 +1753,7 @@ public class Daughter extends Child {
             <tbody>
               <row>
                 <entry>exclude-from-all (optional, defaults to <literal>false</literal>)</entry>
-                <entry>Excludes the constant meta-data and all it's values from participating in the "all" feature. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+                <entry>Excludes the constant meta-data and all it's values from participating in the "all" feature. If set to <literal>no_analyzed</literal>, <literal>not_analyzed</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
               </row>
               <row>
                 <entry>override (optional, defaults to <literal>true</literal>)</entry>

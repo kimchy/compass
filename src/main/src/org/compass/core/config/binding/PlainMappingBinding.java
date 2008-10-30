@@ -139,12 +139,12 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
             bindResource(conf, rawResourceMapping);
             mapping.addMapping(rawResourceMapping);
         }
-        for (ConfigurationHelper conf : doc.getChildren("xml-object")) {
+        for (ConfigurationHelper conf : doc.getChildren("xml-object", "xml")) {
             XmlObjectMapping xmlObjectMapping = new XmlObjectMapping();
             bindXmlObject(conf, xmlObjectMapping);
             mapping.addMapping(xmlObjectMapping);
         }
-        for (ConfigurationHelper conf : doc.getChildren("root-json-object", "json-object")) {
+        for (ConfigurationHelper conf : doc.getChildren("root-json-object", "json-object", "json")) {
             RootJsonObjectMapping rootJsonObjectMapping = new RootJsonObjectMapping();
             bindJsonRootObject(conf, rootJsonObjectMapping);
             mapping.addMapping(rootJsonObjectMapping);

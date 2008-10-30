@@ -58,12 +58,46 @@
   <resource alias="c">
     <resource-id name="id" />
     <resource-property name="value1" />
-    <resource-property name="value2" store="yes" index="tokenized" />
-    <resource-property name="value3" store="compress" index="tokenized" />
-    <resource-property name="value4" store="yes" index="un_tokenized" />
+    <resource-property name="value2" store="yes" index="analyzed" />
+    <resource-property name="value3" store="compress" index="analyzed" />
+    <resource-property name="value4" store="yes" index="not_analyzed" />
     <resource-property name="value5" store="yes" index="no" converter="my-date" />
   </resource>
 </compass-core-mapping>
+]]></programlisting>
+
+      </para>
+
+      <para>
+        And here is the same example using JSON mapping configuration:
+
+<programlisting><![CDATA[{
+  "compass-core-mapping" : {
+    "resource" : [
+      {
+        alias : "a",
+        id : {name : " id"}
+      },
+      {
+        alias : "b",
+        id : [
+          {name : "id1"},
+          {name : "id2"}
+        ]
+      },
+      {
+        alias : "c",
+        property : [
+          { name : "value1"},
+          { name : "value2", store : "yes", index : "analyzed"},
+          { name : "value3", store : "compress", index : "analyzed"},
+          { name : "value4", store : "yes", index : not_analyzed""},
+          { name : "value5", store : "yes", index : "no", converter : "my-date"}
+        ]
+      }
+    ]
+  }
+}
 ]]></programlisting>
 
       </para>
@@ -76,10 +110,10 @@
 <programlisting><![CDATA[ResourceFactory resourceFactory = compass.getResourceFactory();
 Resource r = resourceFactory.createResource("a");
 Property id = resourceFactory.createProperty("id", "1",
-    Property.Store.YES, Property.Index.UN_TOKENIZED);
+    Property.Store.YES, Property.Index.NOT_ANALYZED);
 r.addProperty(id);
 r.addProperty(resourceFactory.createProperty("mvalue", "property test",
-    Property.Store.YES, Property.Index.TOKENIZED));
+    Property.Store.YES, Property.Index.ANALYZED));
 
 session.save(r);]]></programlisting>
       </para>
@@ -154,7 +188,7 @@ session.save(r);]]></programlisting>
                 </row>
                 <row>
                   <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
-                  <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>resource-analyzer</literal> mapping (a child mapping of resource mapping) (for a resource property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
+                  <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>resource-analyzer</literal> mapping (a child mapping of resource mapping) (for a resource property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
                 </row>
               </tbody>
             </tgroup>
@@ -200,7 +234,7 @@ session.save(r);]]></programlisting>
                   </row>
                   <row>
                     <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
-                    <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>resource-analyzer</literal> mapping (a child mapping of resource mapping) (for a resource property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
+                    <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>resource-analyzer</literal> mapping (a child mapping of resource mapping) (for a resource property value that controls the analyzer), the analyzer attribute will have no effects.</entry>
                   </row>
                 </tbody>
               </tgroup>
@@ -252,7 +286,7 @@ session.save(r);]]></programlisting>
  <programlisting><![CDATA[<resource-property
       name="property name"
       store="yes|no|compress"
-      index="tokenized|un_tokenized|no"
+      index="analyzed|not_analyzed|no"
       boost="boost value for the property"
       analyzer="name of the analyzer"
       reverse="no|reader|string"
@@ -278,8 +312,8 @@ session.save(r);]]></programlisting>
               <entry>If the value of the resource property is going to be stored in the index.</entry>
             </row>
             <row>
-              <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
-              <entry>If the value of the resource property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analyzed (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+              <entry>index (optional, defaults to <literal>analyzed</literal>)</entry>
+              <entry>If the value of the resource property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analyzed (<literal>analyzed</literal>), or is going to be used as is (<literal>not_analyzed</literal>).</entry>
             </row>
             <row>
               <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
@@ -287,11 +321,11 @@ session.save(r);]]></programlisting>
             </row>
             <row>
               <entry>analyzer (optional, defaults to the resource mapping analyzer decision scheme)</entry>
-              <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> resource property mappings defined for the given property. Defaults to the resource mapping analyzer decision scheme based on the analyzer set, or the <literal>resource-analyzer</literal> mapping.</entry>.
+              <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> resource property mappings defined for the given property. Defaults to the resource mapping analyzer decision scheme based on the analyzer set, or the <literal>resource-analyzer</literal> mapping.</entry>.
             </row>
             <row>
               <entry>exclude-from-all (optional, default to <literal>false</literal>)</entry>
-              <entry>Excludes the property from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+              <entry>Excludes the property from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>not_analyzed</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
             </row>
             <row>
               <entry>override (optional, defaults to <literal>true</literal>)</entry>

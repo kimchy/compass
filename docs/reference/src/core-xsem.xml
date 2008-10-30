@@ -215,7 +215,7 @@ session.save(xmlObject);
 ]]></programlisting>
        </para>
        <para>
-          We can map it using the following XSEM definition file:
+          We can map it using the following XSEM xml mapping definition file:
 <programlisting><![CDATA[<?xml version="1.0"?>
 <!DOCTYPE compass-core-mapping PUBLIC
       "-//Compass/Compass Core Mapping DTD 2.0//EN"
@@ -245,6 +245,44 @@ session.save(xmlObject);
 </compass-core-mapping>
 ]]></programlisting>
        </para>
+        <para>
+           Or using the following JSON based mapping configuration:
+<programlisting><![CDATA[{
+  "compass-core-mapping" : {
+    xml : [
+      {
+        alias : "data1",
+        xpath : "/xml-fragment/data[1]",
+        id : { name : "id", xpath : "id/@value" }.
+        property : [
+          { xpath : "data1/@value" },
+          { name : "eleText", xpath : "data1" }
+        ]
+      },
+      {
+        alias : "data2",
+        xpath : "/xml-fragment/data",
+        id : { name : "id", xpath : "id/@value" },
+        property : [
+          { xpath : "data1/@value" },
+          { name : "eleText", xpath : "data1" }
+        ]
+      },
+      {
+        alias : "data3",
+        xpath : "/xml-fragment/data",
+        id : { name : "id", xpath : "id/@value" }.
+        property : [
+          { xpath : "data1/@value" },
+          { name : "eleText", xpath : "data1" }
+        ],
+        content : { name : "content" }
+      }
+    ]
+  }   
+}
+]]></programlisting>
+        </para>
 
        <para>
           The mapping definition here shows three different mappings (that will work with the sample xml). The different mappings are registered under different aliases, where the alias acts as the connection between the actual XML saved and the mappings definition.
@@ -370,7 +408,7 @@ session.save(xmlObject);
                     </row>
                     <row>
                       <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
-                      <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>xml-analyzer</literal> mapping (a child mapping of xml object mapping) (for an xml element that controls the analyzer), the analyzer attribute will have no effects.</entry>
+                      <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>xml-analyzer</literal> mapping (a child mapping of xml object mapping) (for an xml element that controls the analyzer), the analyzer attribute will have no effects.</entry>
                     </row>
                   </tbody>
                 </tgroup>
@@ -438,7 +476,7 @@ session.save(xmlObject);
       xpath="xpath expression"
       name="optionally the name of the xml property"
       store="yes|no|compress"
-      index="tokenized|un_tokenized|no"
+      index="analyzed|not_analyzed|no"
       boost="boost value for the property"
       analyzer="name of the analyzer"
       reverse="no|reader|string"
@@ -474,8 +512,8 @@ session.save(xmlObject);
                      <entry>If the value of the xml property is going to be stored in the index.</entry>
                    </row>
                    <row>
-                     <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
-                     <entry>If the value of the xml property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analyzed (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+                     <entry>index (optional, defaults to <literal>analyzed</literal>)</entry>
+                     <entry>If the value of the xml property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analyzed (<literal>analyzed</literal>), or is going to be used as is (<literal>not_analyzed</literal>).</entry>
                    </row>
                    <row>
                      <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
@@ -483,11 +521,11 @@ session.save(xmlObject);
                    </row>
                    <row>
                      <entry>analyzer (optional, defaults to the xml mapping analyzer decision scheme)</entry>
-                     <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> xml property mappings defined for the given property. Defaults to the xml mapping analyzer decision scheme based on the analyzer set, or the <literal>xml-analyzer</literal> mapping.</entry>.
+                     <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> xml property mappings defined for the given property. Defaults to the xml mapping analyzer decision scheme based on the analyzer set, or the <literal>xml-analyzer</literal> mapping.</entry>.
                    </row>
                    <row>
                      <entry>exclude-from-all (optional, default to <literal>no</literal>)</entry>
-                     <entry>Excludes the property from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+                     <entry>Excludes the property from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>not_analyzed</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
                    </row>
                    <row>
                      <entry>override (optional, defaults to <literal>true</literal>)</entry>

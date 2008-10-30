@@ -35,12 +35,47 @@
     <json-object name="address">
         <json-property name="street" />
         <json-property name="city" />
-        <json-property name="zip" index="un_tokenized" />
+        <json-property name="zip" index="not_analyzed" />
         <json-array name="phoneNumbers" index-name="phoneNumber">
             <json-property />
         </json-array>
     </json-object>
 </root-json-object>
+]]></programlisting>      
+    </para>
+
+    <para>
+      Here is the same mapping configuration using JSON:
+<programlisting><![CDATA[{
+  "compass-core-mapping" : {
+    "json" : [
+      {
+        alias : "addressbook",
+        id : {
+          name : "id"
+        },
+        property : [
+          {name : "name"}
+        ],
+        object : [
+          {
+            name : "address",
+            property : [
+              {name : "street"},
+              {name : "city"},
+              {name : "zip", index : "not_analyzed"},
+            ]
+            array : {
+              name : "phoneNumbers"
+              "index-name" : "phoneNumber",
+              property : {}
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
 ]]></programlisting>      
     </para>
 
@@ -189,7 +224,7 @@ session.save(jsonObject);
               </row>
               <row>
                 <entry>analyzer (optional, defaults to the <literal>default</literal> analyzer)</entry>
-                <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>json-analyzer</literal> mapping (a child mapping of root json object mapping) (for a json element that controls the analyzer), the analyzer attribute will have no effects.</entry>
+                <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> properties. Defaults to the <literal>default</literal> analyzer which is one of the internal analyzers that comes with Compass. Note, that when using the <literal>json-analyzer</literal> mapping (a child mapping of root json object mapping) (for a json element that controls the analyzer), the analyzer attribute will have no effects.</entry>
               </row>
               <row>
                 <entry>dynamic (optional, default to <literal>false</literal>)</entry>
@@ -256,7 +291,7 @@ session.save(jsonObject);
     name="the name of the json id element"
     index-name="the name it will be store under, default to the element name"
     store="yes|no|compress"
-    index="tokenized|un_tokenized|no"
+    index="analyzed|not_analyzed|no"
     omit=-norms="false|true"
     null-value="a value to store the index in case the element value is null"
     boost="boost value for the property"
@@ -297,8 +332,8 @@ session.save(jsonObject);
                 <entry>If the value of the xml property is going to be stored in the index.</entry>
               </row>
               <row>
-                <entry>index (optional, defaults to <literal>tokenized</literal>)</entry>
-                <entry>If the value of the xml property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analyzed (<literal>tokenized</literal>), or is going to be used as is (<literal>un_tokenized</literal>).</entry>
+                <entry>index (optional, defaults to <literal>analyzed</literal>)</entry>
+                <entry>If the value of the xml property is going to be indexed (searchable). If it does, than controls if the value is going to be broken down and analyzed (<literal>analyzed</literal>), or is going to be used as is (<literal>not_analyzed</literal>).</entry>
               </row>
               <row>
                 <entry>boost (optional, defaults to <literal>1.0f</literal>)</entry>
@@ -306,11 +341,11 @@ session.save(jsonObject);
               </row>
               <row>
                 <entry>analyzer (optional, defaults to the xml mapping analyzer decision scheme)</entry>
-                <entry>The name of the analyzer that will be used to analyze <literal>TOKENIZED</literal> json property mappings defined for the given property. Defaults to the json mapping analyzer decision scheme based on the analyzer set, or the <literal>json-analyzer</literal> mapping.</entry>.
+                <entry>The name of the analyzer that will be used to analyze <literal>ANALYZED</literal> json property mappings defined for the given property. Defaults to the json mapping analyzer decision scheme based on the analyzer set, or the <literal>json-analyzer</literal> mapping.</entry>.
               </row>
               <row>
                 <entry>exclude-from-all (optional, default to <literal>no</literal>)</entry>
-                <entry>Excludes the property from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>un_tokenized</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
+                <entry>Excludes the property from participating in the "all" meta-data. If set to <literal>no_analyzed</literal>, <literal>not_analyzed</literal> properties will be analyzed when added to the all property (the analyzer can be controlled using the analyzer attribute).</entry>
               </row>
               <row>
                 <entry>override (optional, defaults to <literal>false</literal>)</entry>
