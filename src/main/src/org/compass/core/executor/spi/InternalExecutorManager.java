@@ -31,6 +31,9 @@ import java.util.concurrent.TimeUnit;
  */
 public interface InternalExecutorManager {
 
+    /**
+     * @see java.util.concurrent.ExecutorService#submit(Runnable)
+     */
     void submit(Runnable task);
 
     /**

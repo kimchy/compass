@@ -33,9 +33,13 @@ public interface ExecutorManager extends InternalExecutorManager {
 
     /**
      * Similar to {@link #invokeAll(java.util.Collection)}, but only uses it if the number of tasks passes
-     * the concurrent limit. Also, will check if any callable has an exception and will propagate it.
+     * the concurrent limit.
      */
     <T> List<Future<T>> invokeAllWithLimit(Collection<Callable<T>> tasks, int concurrencyThreshold);
 
+    /**
+     * Similar to {@link #invokeAllWithLimit(java.util.Collection, int)}, but if one task throws an exception
+     * will propogate the exception.
+     */
     <T> List<Future<T>> invokeAllWithLimitBailOnException(Collection<Callable<T>> tasks, int concurrencyThreshold);
 }
