@@ -47,6 +47,7 @@ import org.compass.core.converter.basic.atomic.AtomicLongConverter;
 import org.compass.core.converter.dynamic.GroovyDynamicConverter;
 import org.compass.core.converter.dynamic.JakartaElDynamicConverter;
 import org.compass.core.converter.dynamic.JexlDynamicConverter;
+import org.compass.core.converter.dynamic.MVELDynamicConverter;
 import org.compass.core.converter.dynamic.OgnlDynamicConverter;
 import org.compass.core.converter.dynamic.VelocityDynamicConverter;
 import org.compass.core.converter.extended.FileConverter;
@@ -226,6 +227,13 @@ public class DefaultConverterLookup implements ConverterLookup {
         addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Extendend.SQL_TIMESTAMP,
                 java.sql.Timestamp.class, new SqlTimestampConverter());
         // dynamic converters
+        try {
+            addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.MVEL,
+                    DynamicMetaDataMapping.class, new MVELDynamicConverter());
+            log.debug("Dynamic converter - MVEL found in the class path, registering it");
+        } catch (Error e) {
+            // do nothing
+        }
         try {
             addDefaultConverter(converterGroups, CompassEnvironment.Converter.DefaultTypeNames.Dynamic.JEXL,
                     DynamicMetaDataMapping.class, new JexlDynamicConverter());

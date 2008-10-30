@@ -680,6 +680,7 @@
                 <include name="lib/jsr223/**"/>
                 <include name="lib/log4j/**"/>
                 <include name="lib/lucene/**"/>
+                <include name="lib/mvel/**"/>
                 <include name="lib/odmg/**"/>
                 <include name="lib/ojb/**"/>
                 <include name="lib/openjpa/**"/>

@@ -348,6 +348,8 @@ public class CompassEnvironment {
 
                 public static final String JEXL = "jexl";
 
+                public static final String MVEL = "mvel";
+
                 public static final String VELOCITY = "velocity";
 
                 public static final String JAKARTA_EL = "el";

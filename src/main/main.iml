@@ -56,6 +56,7 @@
     <orderEntry type="library" name="jdom" level="project" />
     <orderEntry type="library" name="grails" level="project" />
     <orderEntry type="library" name="jettison" level="project" />
+    <orderEntry type="library" name="mvel" level="project" />
     <orderEntryProperties />
   </component>
 </module>

@@ -95,6 +95,39 @@ public class Author {
     </para>
     
     <para>
+      Last, the mapping can also be configured using JSON, here is the same mapping definition using JSON:
+
+<programlisting><![CDATA[{
+  "compass-core-mapping" : {
+    package : "eg"
+    class : [
+      {
+        name : "Author",
+        alias : "author"
+        id : { name : "name" },
+        constant : {
+          "meta-data" : {
+            name : "type"
+          }
+          "meta-data-value" : [ "person", "author" ]
+        },
+        property : [
+          {
+            name : "name",
+            "meta-data" : [{ name : "name" }, { name : "authorName"}]
+          },
+          {
+            name : "birthday",
+            "meta-data" : { name : "birthday", format : "yyyy-MM-dd" }
+          }
+        ]
+      }
+    ]
+  }
+}]]></programlisting>
+    </para>
+    
+    <para>
       Compass works non-intrusive with application Objects, these Objects must follow several rules:
       <itemizedlist>
         <listitem>

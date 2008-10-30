@@ -852,6 +852,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="mvel">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/mvel/mvel2-2.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
 
