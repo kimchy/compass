@@ -107,5 +107,6 @@
 	<classpathentry kind="lib" path="lib/terracotta/terracotta-api-2.7.0-prealpha.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/mvel/mvel2-2.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
