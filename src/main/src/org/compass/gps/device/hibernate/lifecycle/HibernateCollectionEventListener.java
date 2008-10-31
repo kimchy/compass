@@ -67,7 +67,7 @@ public class HibernateCollectionEventListener extends HibernateEventListener imp
         }
 
         CollectionEntry collectionEntry = event.getSession().getPersistenceContext().getCollectionEntry(event.getCollection());
-        if (collectionEntry.getLoadedPersister() == null) {
+        if (collectionEntry != null && collectionEntry.getLoadedPersister() == null) {
             // ignore this entry, since Hibernate will cause NPE when doing SAVE
             // TODO is there a better way to solve this?
             return;
