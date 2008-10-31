@@ -795,7 +795,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 public Object doInTransaction() throws CompassException {
                     for (String subIndex : searchEngineStore.getSubIndexes()) {
                         try {
-                            if (true && searchEngineStore.indexExists(subIndex)) {
+                            if (searchEngineStore.indexExists(subIndex)) {
                                 LuceneIndexHolder indexHolder = indexHolders.get(subIndex);
                                 if (shouldInvalidateCache(indexHolder)) {
                                     internalRefreshCache(subIndex);
