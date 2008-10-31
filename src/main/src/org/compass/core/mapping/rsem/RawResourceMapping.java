@@ -23,8 +23,8 @@ import org.compass.core.mapping.InvalidMappingException;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.OverrideByNameMapping;
-import org.compass.core.mapping.PostProcessingMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.PostProcessingMapping;
 import org.compass.core.mapping.support.AbstractResourceMapping;
 
 /**

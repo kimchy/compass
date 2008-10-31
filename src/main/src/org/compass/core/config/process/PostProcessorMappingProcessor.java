@@ -21,8 +21,8 @@ import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.PostProcessingMapping;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.internal.PostProcessingMapping;
 
 /**
  * @author kimchy

@@ -29,13 +29,13 @@ import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.PostProcessingMapping;
 import org.compass.core.mapping.ResourceAnalyzerController;
 import org.compass.core.mapping.ResourceIdMappingProvider;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
+import org.compass.core.mapping.internal.PostProcessingMapping;
 
 /**
  * @author kimchy
