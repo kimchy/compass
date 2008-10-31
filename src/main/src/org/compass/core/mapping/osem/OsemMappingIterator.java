@@ -104,8 +104,8 @@ public abstract class OsemMappingIterator {
         public boolean onBeginMultipleMapping(ClassMapping classMapping, Mapping mapping) {
             // if it is ref alias mapping, mark its multiple ref class mappings as ones
             // to be considered for ignoring inherited duplicates
-            if (mapping instanceof HasRefAliasMapping) {
-                ClassMapping[] classMappings = ((HasRefAliasMapping) mapping).getRefClassMappings();
+            if (mapping instanceof RefAliasObjectMapping) {
+                ClassMapping[] classMappings = ((RefAliasObjectMapping) mapping).getRefClassMappings();
                 if (classMappings.length > 1) {
                     HashMap<Object, HashMap<Object, ObjectMapping>> byAlias = new HashMap<Object, HashMap<Object, ObjectMapping>>();
                     for (ClassMapping classMapping1 : classMappings) {

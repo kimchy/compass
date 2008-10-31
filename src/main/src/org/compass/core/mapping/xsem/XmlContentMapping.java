@@ -43,8 +43,8 @@ public class XmlContentMapping extends AbstractResourcePropertyMapping implement
     /**
      * Xml content mapping is always excluded from all
      */
-    public boolean isExcludeFromAll() {
-        return true;
+    public ExcludeFromAllType getExcludeFromAll() {
+        return ExcludeFromAllType.YES;
     }
 
     /**

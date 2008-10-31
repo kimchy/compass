@@ -14,30 +14,19 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.osem;
+package org.compass.core.mapping.osem.internal;
 
-import org.compass.core.mapping.osem.internal.InternalObjectMapping;
+import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.RefAliasObjectMapping;
 
 /**
  * @author kimchy
  */
-public interface HasRefAliasMapping extends InternalObjectMapping {
-
-    boolean hasRefAlias(String refAlias);
-    
-    boolean hasAtLeastOneRefAlias(String[] refAliases);
-    
-    ClassMapping getRefClassMapping(String alias);
-    
-    String[] getRefAliases();
+public interface InternalRefAliasObjectMapping extends RefAliasObjectMapping, InternalObjectMapping {
 
     void setRefAliases(String[] refAliases);
 
-    ClassMapping[] getRefClassMappings();
-
     void setRefClassMappings(ClassMapping[] refClassMapping);
-
-    Class getRefClass();
 
     /**
      * Sets a reference class which will be used if no ref aliases are explicitly

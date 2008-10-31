@@ -17,14 +17,14 @@
 package org.compass.core.mapping.osem;
 
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
 import org.compass.core.mapping.osem.internal.InternalLazyMapping;
 
 
 /**
  * @author kimchy
  */
-public class ReferenceMapping extends AbstractRefAliasMapping implements OverrideByNameMapping, HasRefAliasMapping, InternalLazyMapping {
+public class ReferenceMapping extends AbstractRefAliasMapping implements InternalOverrideByNameMapping, RefAliasObjectMapping, InternalLazyMapping {
 
     private String refCompAlias;
 

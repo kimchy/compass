@@ -18,13 +18,13 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
 import org.compass.core.util.Parameter;
 
 /**
  * @author kimchy
  */
-public abstract class AbstractCollectionMapping extends AbstractAccessorMapping implements OverrideByNameMapping {
+public abstract class AbstractCollectionMapping extends AbstractAccessorMapping implements InternalOverrideByNameMapping {
 
     public static final class CollectionType extends Parameter {
 

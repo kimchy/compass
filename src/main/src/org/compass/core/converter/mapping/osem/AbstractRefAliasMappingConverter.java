@@ -23,7 +23,7 @@ import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.CollectionResourceWrapper;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.HasRefAliasMapping;
+import org.compass.core.mapping.osem.RefAliasObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
 import org.compass.core.util.ClassUtils;
@@ -35,7 +35,7 @@ import org.compass.core.util.StringUtils;
 public abstract class AbstractRefAliasMappingConverter implements Converter {
 
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context) throws ConversionException {
-        HasRefAliasMapping hasRefAliasMapping = (HasRefAliasMapping) mapping;
+        RefAliasObjectMapping hasRefAliasMapping = (RefAliasObjectMapping) mapping;
         ClassMapping[] classMappings = hasRefAliasMapping.getRefClassMappings();
         ClassMapping classMapping;
         if (root == null || classMappings.length == 1) {
@@ -48,11 +48,11 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
         return doMarshall(resource, root, hasRefAliasMapping, classMapping, context);
     }
 
-    protected abstract boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping,
+    protected abstract boolean doMarshall(Resource resource, Object root, RefAliasObjectMapping hasRefAliasMapping,
                                           ClassMapping refMapping, MarshallingContext context) throws ConversionException;
 
     public Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException {
-        HasRefAliasMapping hasRefAliasMapping = (HasRefAliasMapping) mapping;
+        RefAliasObjectMapping hasRefAliasMapping = (RefAliasObjectMapping) mapping;
         ClassMapping[] classMappings = hasRefAliasMapping.getRefClassMappings();
         ClassMapping classMapping = null;
         if (classMappings.length == 1) {
@@ -109,7 +109,7 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
      * and return the class mapping set against the ref-alias.
      */
     private ClassMapping extractClassMapping(MarshallingContext context, Class clazz, Resource resource,
-                                             HasRefAliasMapping hasRefAliasMapping) throws ConversionException {
+                                             RefAliasObjectMapping hasRefAliasMapping) throws ConversionException {
         ClassMapping classMapping;
         ClassMapping origClassMapping = (ClassMapping) context.getCompassMapping().getMappingByClass(clazz);
         if (origClassMapping == null) {
@@ -126,7 +126,7 @@ public abstract class AbstractRefAliasMappingConverter implements Converter {
         return classMapping;
     }
 
-    protected abstract Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping,
+    protected abstract Object doUnmarshall(Resource resource, RefAliasObjectMapping hasRefAliasMapping,
                                            ClassMapping refMapping, MarshallingContext context) throws ConversionException;
 
     protected boolean rollbackClassNameOnPoly() {

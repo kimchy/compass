@@ -72,8 +72,8 @@ public class JsonContentMapping extends AbstractResourcePropertyMapping implemen
     /**
      * Json content mapping is always excluded from all
      */
-    public boolean isExcludeFromAll() {
-        return true;
+    public ExcludeFromAllType getExcludeFromAll() {
+        return ExcludeFromAllType.YES;
     }
 
     public Mapping copy() {

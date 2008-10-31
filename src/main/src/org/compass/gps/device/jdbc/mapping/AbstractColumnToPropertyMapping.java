@@ -16,6 +16,8 @@
 
 package org.compass.gps.device.jdbc.mapping;
 
+import org.compass.core.mapping.ResourcePropertyMapping;
+
 /**
  * A helper base class for mappings from a jdbc column to a Compass
  * <code>Property</code>. Holds the property name that the column maps to.
@@ -26,7 +28,7 @@ public abstract class AbstractColumnToPropertyMapping extends AbstractColumnMapp
 
     private String propertyName;
 
-    private boolean excludeFromAll;
+    private ResourcePropertyMapping.ExcludeFromAllType excludeFromAll = ResourcePropertyMapping.ExcludeFromAllType.NO;
 
     private String analyzer;
 
@@ -54,12 +56,12 @@ public abstract class AbstractColumnToPropertyMapping extends AbstractColumnMapp
         this.propertyName = property;
     }
 
-    public boolean isExcludeFromAll() {
+    public ResourcePropertyMapping.ExcludeFromAllType getExcludeFromAll() {
         return excludeFromAll;
     }
 
-    public void setExcludeFromAll(boolean excludeFromAll) {
-        this.excludeFromAll = excludeFromAll;
+    public void setExcludeFromAll(String excludeFromAll) {
+        this.excludeFromAll = ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll);
     }
 
     public String getAnalyzer() {
@@ -90,7 +92,7 @@ public abstract class AbstractColumnToPropertyMapping extends AbstractColumnMapp
         sb.append("] termVector [");
         sb.append(getPropertyTermVector());
         sb.append("] excludeFromAll [");
-        sb.append(isExcludeFromAll());
+        sb.append(getExcludeFromAll());
         sb.append("] analyzer [");
         sb.append(getAnalyzer());
         sb.append("] converter [");

@@ -25,7 +25,7 @@ import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.osem.collection.LazyReferenceEntry;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.HasRefAliasMapping;
+import org.compass.core.mapping.osem.RefAliasObjectMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
@@ -37,7 +37,7 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
 
     private static final Object DISABLE_UID_MARK = new Object();
 
-    protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping,
+    protected boolean doMarshall(Resource resource, Object root, RefAliasObjectMapping hasRefAliasMapping,
                                  ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
 
@@ -83,7 +83,7 @@ public class ReferenceMappingConverter extends AbstractRefAliasMappingConverter 
         return stored;
     }
 
-    protected Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping,
+    protected Object doUnmarshall(Resource resource, RefAliasObjectMapping hasRefAliasMapping,
                                   ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         Object[] ids = context.getMarshallingStrategy().unmarshallIds(refMapping, resource, context);
         if (ids == null) {

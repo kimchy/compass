@@ -6,7 +6,7 @@ import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.HasRefAliasMapping;
+import org.compass.core.mapping.osem.RefAliasObjectMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.test.AbstractTestCase;
@@ -20,7 +20,7 @@ public class PolyCollectionTests extends AbstractTestCase {
     public void testClassBasedRefAliasIdentification() {
         CompassMapping compassMapping = ((InternalCompass) getCompass()).getMapping();
         ClassMapping classMapping = (ClassMapping) compassMapping.getMappingByAlias("cComponentNoRefAlias");
-        assertEquals(2, ((HasRefAliasMapping) classMapping.getMapping("a")).getRefAliases().length);
+        assertEquals(2, ((RefAliasObjectMapping) classMapping.getMapping("a")).getRefAliases().length);
     }
 
     public void testPolyComponentCollection() throws Exception {

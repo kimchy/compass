@@ -19,8 +19,8 @@ package org.compass.core.mapping.json;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 import org.compass.core.util.Parameter;
 
@@ -28,7 +28,7 @@ import org.compass.core.util.Parameter;
  * @author kimchy
  */
 public class JsonPropertyMapping extends AbstractResourcePropertyMapping implements JsonMapping, ResourcePropertyMapping,
-        OverrideByNameMapping {
+        InternalOverrideByNameMapping {
 
     public static final class NamingType extends Parameter {
 

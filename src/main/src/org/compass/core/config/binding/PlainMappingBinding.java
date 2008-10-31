@@ -30,13 +30,14 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CascadeMapping;
-import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.DefaultContractMapping;
 import org.compass.core.mapping.internal.InternalAliasMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
+import org.compass.core.mapping.internal.InternalContractMapping;
 import org.compass.core.mapping.internal.InternalMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
@@ -104,13 +105,13 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         }
         ConfigurationHelper[] contractArr = doc.getChildren("contract");
         for (ConfigurationHelper aContractArr : contractArr) {
-            ContractMapping contractMapping = new ContractMapping();
+            DefaultContractMapping contractMapping = new DefaultContractMapping();
             bindContract(aContractArr, contractMapping);
             mapping.addMapping(contractMapping);
         }
         ConfigurationHelper[] resourceContractArr = doc.getChildren("resource-contract");
         for (ConfigurationHelper aResourceContractArr : resourceContractArr) {
-            ContractMapping contractMapping = new ContractMapping();
+            DefaultContractMapping contractMapping = new DefaultContractMapping();
             bindResourceContract(aResourceContractArr, contractMapping);
             mapping.addMapping(contractMapping);
         }
@@ -504,7 +505,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindSpellCheck(xmlPropConf, xmlPropertyMapping);
     }
 
-    private void bindResourceContract(ConfigurationHelper contractConf, ContractMapping contractMapping)
+    private void bindResourceContract(ConfigurationHelper contractConf, InternalContractMapping contractMapping)
             throws ConfigurationException {
         String aliasValue = contractConf.getAttribute("alias");
         Alias alias = valueLookup.lookupAlias(aliasValue);
@@ -606,7 +607,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindSpellCheck(resourcePropConf, propertyMapping);
     }
 
-    private void bindContract(ConfigurationHelper contractConf, ContractMapping contractMapping)
+    private void bindContract(ConfigurationHelper contractConf, InternalContractMapping contractMapping)
             throws ConfigurationException {
         String aliasValue = contractConf.getAttribute("alias");
         Alias alias = valueLookup.lookupAlias(aliasValue);

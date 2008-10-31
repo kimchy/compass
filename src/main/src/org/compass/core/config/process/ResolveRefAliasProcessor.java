@@ -31,7 +31,7 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.HasRefAliasMapping;
+import org.compass.core.mapping.osem.internal.InternalRefAliasObjectMapping;
 
 /**
  * @author kimchy
@@ -48,8 +48,8 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
                 ClassMapping classMapping = (ClassMapping) aliasMapping;
                 for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
                     Mapping innerMapping = (Mapping) it.next();
-                    if (innerMapping instanceof HasRefAliasMapping) {
-                        processMapping(classMapping, (HasRefAliasMapping) innerMapping);
+                    if (innerMapping instanceof InternalRefAliasObjectMapping) {
+                        processMapping(classMapping, (InternalRefAliasObjectMapping) innerMapping);
                     }
                 }
             }
@@ -57,7 +57,7 @@ public class ResolveRefAliasProcessor implements MappingProcessor {
         return compassMapping;
     }
 
-    void processMapping(ClassMapping classMapping, HasRefAliasMapping mapping) throws MappingException {
+    void processMapping(ClassMapping classMapping, InternalRefAliasObjectMapping mapping) throws MappingException {
         // if there are no ref aliases, try to infer them from the class
         if (mapping.getRefAliases() == null) {
             Class clazz = mapping.getRefClass();

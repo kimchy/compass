@@ -19,7 +19,7 @@ package org.compass.core.converter.mapping.osem;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.HasRefAliasMapping;
+import org.compass.core.mapping.osem.RefAliasObjectMapping;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -27,12 +27,12 @@ import org.compass.core.marshall.MarshallingContext;
  */
 public class ComponentMappingConverter extends AbstractRefAliasMappingConverter {
 
-    protected boolean doMarshall(Resource resource, Object root, HasRefAliasMapping hasRefAliasMapping,
+    protected boolean doMarshall(Resource resource, Object root, RefAliasObjectMapping hasRefAliasMapping,
                                  ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         return refMapping.getConverter().marshall(resource, root, refMapping, context);
     }
 
-    protected Object doUnmarshall(Resource resource, HasRefAliasMapping hasRefAliasMapping,
+    protected Object doUnmarshall(Resource resource, RefAliasObjectMapping hasRefAliasMapping,
                                   ClassMapping refMapping, MarshallingContext context) throws ConversionException {
         return refMapping.getConverter().unmarshall(resource, refMapping, context);
     }

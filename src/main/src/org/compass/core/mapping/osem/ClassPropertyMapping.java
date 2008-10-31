@@ -19,14 +19,14 @@ package org.compass.core.mapping.osem;
 import org.compass.core.Property;
 import org.compass.core.converter.Converter;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
 import org.compass.core.util.Parameter;
 
 /**
  * @author kimchy
  */
-public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implements OverrideByNameMapping {
+public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implements InternalOverrideByNameMapping {
 
     private static final int ID_NOT_SET_VALUE = -1;
 
@@ -58,7 +58,7 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
         /**
          * The class proeprty will not create an internal managed id if
-         * all its meta data mappings have store=no 
+         * all its meta data mappings have store=no
          */
         public static final ManagedId NO_STORE = new ManagedId("NO_STORE");
 
@@ -117,7 +117,7 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
     private String analyzer;
 
     private boolean overrideByName = true;
-    
+
     private Property.Index managedIdIndex;
 
     private String colClassName;

@@ -20,12 +20,13 @@ import java.util.HashMap;
 
 import org.compass.core.CompassException;
 import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.osem.internal.InternalRefAliasObjectMapping;
 
 
 /**
  * @author kimchy
  */
-public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping implements HasRefAliasMapping, CascadeMapping {
+public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping implements InternalRefAliasObjectMapping, CascadeMapping {
 
     private String[] refAliases;
 

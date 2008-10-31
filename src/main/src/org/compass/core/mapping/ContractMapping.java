@@ -16,65 +16,9 @@
 
 package org.compass.core.mapping;
 
-import org.compass.core.mapping.internal.InternalAliasMapping;
-import org.compass.core.mapping.support.AbstractMultipleMapping;
-
 /**
  * @author kimchy
  */
-public class ContractMapping extends AbstractMultipleMapping implements InternalAliasMapping {
+public interface ContractMapping extends AliasMapping {
 
-    private String alias;
-
-    private String[] extendedAliases = new String[0];
-
-    private String[] extendingAliases = new String[0];
-
-    private String analyzer;
-
-    public Mapping copy() {
-        InternalAliasMapping contractMapping = shallowCopy();
-        super.copy(contractMapping);
-        return contractMapping;
-    }
-
-    public InternalAliasMapping shallowCopy() {
-        ContractMapping contractMapping = new ContractMapping();
-        contractMapping.setAlias(getAlias());
-        contractMapping.setExtendedAliases(getExtendedAliases());
-        contractMapping.setExtendingAliases(getExtendingAliases());
-        return contractMapping;
-    }
-
-    public String getAlias() {
-        return alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
-    public String[] getExtendedAliases() {
-        return extendedAliases;
-    }
-
-    public void setExtendedAliases(String[] extendedMappings) {
-        this.extendedAliases = extendedMappings;
-    }
-
-    public String[] getExtendingAliases() {
-        return extendingAliases;
-    }
-
-    public void setExtendingAliases(String[] extendingAliases) {
-        this.extendingAliases = extendingAliases;
-    }
-
-    public String getAnalyzer() {
-        return analyzer;
-    }
-
-    public void setAnalyzer(String analyzer) {
-        this.analyzer = analyzer;
-    }
 }

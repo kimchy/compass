@@ -1,12 +1,12 @@
 /*
  * Copyright 2004-2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping;
+package org.compass.core.mapping.osem;
 
 /**
- * A mapping inerface that controls if this mapping overrides other mappings by name within
- * the same multiple mapping container.
+ * A mapping that references other mappings.
  *
  * @author kimchy
  */
-public interface OverrideByNameMapping extends Mapping {
+public interface RefAliasObjectMapping extends ObjectMapping {
+
+    boolean hasRefAlias(String refAlias);
+
+    boolean hasAtLeastOneRefAlias(String[] refAliases);
+
+    ClassMapping getRefClassMapping(String alias);
+
+    String[] getRefAliases();
+
+    ClassMapping[] getRefClassMappings();
 
     /**
-     * Returns <code>true</code> to control of this mapping overrides by name anotehr mapping
-     * within the same multiple mapping container.
+     * Returns the reference class which will be used if no ref aliases are explicitly
+     * defined using {@link #getRefAliases()} to identify the alias.
      */
-    boolean isOverrideByName();
+    Class getRefClass();
 }

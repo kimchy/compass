@@ -18,23 +18,23 @@ package org.compass.core.mapping.rsem;
 
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.OverrideByNameMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
 
 
 /**
  * @author kimchy
  */
-public class RawResourcePropertyMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping, OverrideByNameMapping {
+public class RawResourcePropertyMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping, InternalOverrideByNameMapping {
 
     private boolean overrideByName = false;
-    
+
     protected void copy(RawResourcePropertyMapping rawResourcePropertyMapping) {
         super.copy(rawResourcePropertyMapping);
         rawResourcePropertyMapping.setOverrideByName(isOverrideByName());
     }
-    
+
     public Mapping copy() {
         RawResourcePropertyMapping copy = new RawResourcePropertyMapping();
         copy(copy);

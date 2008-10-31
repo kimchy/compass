@@ -17,13 +17,13 @@
 package org.compass.core.mapping.osem;
 
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.OverrideByNameMapping;
+import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
 
 
 /**
  * @author kimchy
  */
-public class ComponentMapping extends AbstractRefAliasMapping implements OverrideByNameMapping, HasRefAliasMapping {
+public class ComponentMapping extends AbstractRefAliasMapping implements InternalOverrideByNameMapping, RefAliasObjectMapping {
 
     private boolean overrideByName = true;
 

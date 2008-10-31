@@ -28,7 +28,7 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.HasRefAliasMapping;
+import org.compass.core.mapping.osem.RefAliasObjectMapping;
 
 /**
  * @author kimchy
@@ -73,8 +73,8 @@ public class ValidatorMappingProcessor implements MappingProcessor {
         ClassMapping classMapping = (ClassMapping) resourceMapping;
         for (Iterator it = classMapping.mappingsIt(); it.hasNext();) {
             Mapping innerMapping = (Mapping) it.next();
-            if (innerMapping instanceof HasRefAliasMapping) {
-                ClassMapping[] refMappings = ((HasRefAliasMapping) innerMapping).getRefClassMappings();
+            if (innerMapping instanceof RefAliasObjectMapping) {
+                ClassMapping[] refMappings = ((RefAliasObjectMapping) innerMapping).getRefClassMappings();
                 if (refMappings.length > 1) {
                     for (int i = 0; i < refMappings.length; i++) {
                         if (!refMappings[i].isPoly()) {
