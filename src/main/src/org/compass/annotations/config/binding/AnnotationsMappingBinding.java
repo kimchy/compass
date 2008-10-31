@@ -49,6 +49,7 @@ import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
+import org.compass.core.mapping.internal.InternalCascadeMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalMapping;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
@@ -633,7 +634,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         bindCascades(searchableComponent.cascade(), componentMapping);
     }
 
-    private void bindCascades(Cascade[] cascades, CascadeMapping cascadeMapping) {
+    private void bindCascades(Cascade[] cascades, InternalCascadeMapping cascadeMapping) {
         if (cascades == null || cascades.length == 0) {
             return;
         }

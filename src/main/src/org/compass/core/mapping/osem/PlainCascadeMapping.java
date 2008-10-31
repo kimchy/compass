@@ -17,14 +17,14 @@
 package org.compass.core.mapping.osem;
 
 import org.compass.core.CompassException;
-import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.Mapping;
+import org.compass.core.mapping.internal.InternalCascadeMapping;
 
 
 /**
  * @author kimchy
  */
-public class PlainCascadeMapping extends AbstractAccessorMapping implements CascadeMapping {
+public class PlainCascadeMapping extends AbstractAccessorMapping implements InternalCascadeMapping {
 
     private Cascade[] cascades;
 

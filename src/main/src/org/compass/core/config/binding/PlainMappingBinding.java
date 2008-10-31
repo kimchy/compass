@@ -36,6 +36,7 @@ import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.DefaultContractMapping;
 import org.compass.core.mapping.internal.InternalAliasMapping;
+import org.compass.core.mapping.internal.InternalCascadeMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalContractMapping;
 import org.compass.core.mapping.internal.InternalMapping;
@@ -858,7 +859,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindCascade(componentConf, compMapping, null);
     }
 
-    private void bindCascade(ConfigurationHelper refConf, CascadeMapping cascadeMapping, String defaultValue) {
+    private void bindCascade(ConfigurationHelper refConf, InternalCascadeMapping cascadeMapping, String defaultValue) {
         String commaSeparatedCascades = refConf.getAttribute("cascade", defaultValue);
         if (commaSeparatedCascades == null) {
             return;

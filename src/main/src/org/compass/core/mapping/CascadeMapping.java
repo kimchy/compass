@@ -81,8 +81,9 @@ public interface CascadeMapping {
      */
     Object getCascadeValue(Object root) throws CompassException;
 
-    void setCascades(Cascade[] cascades);
-
+    /**
+     * Returns the cascades of the mapping.
+     */
     Cascade[] getCascades();
 
     /**

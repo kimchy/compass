@@ -19,14 +19,14 @@ package org.compass.core.mapping.osem;
 import java.util.HashMap;
 
 import org.compass.core.CompassException;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.internal.InternalCascadeMapping;
 import org.compass.core.mapping.osem.internal.InternalRefAliasObjectMapping;
 
 
 /**
  * @author kimchy
  */
-public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping implements InternalRefAliasObjectMapping, CascadeMapping {
+public abstract class AbstractRefAliasMapping extends AbstractAccessorMapping implements InternalRefAliasObjectMapping, InternalCascadeMapping {
 
     private String[] refAliases;
 
