@@ -62,6 +62,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.queryparser.QueryParserUtils;
 import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
+import org.compass.core.lucene.util.CacheableMultiReader;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -579,7 +580,7 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open searcher for spell check", e);
         }
-        MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
+        MultiReader reader = new CacheableMultiReader(readers.toArray(new IndexReader[readers.size()]), false);
 
         return new CompassSpellChecker(searcher, reader);
     }

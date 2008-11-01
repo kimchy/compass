@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Searchable;
@@ -12,6 +11,7 @@ import org.apache.lucene.search.Searcher;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
+import org.compass.core.lucene.util.CacheableMultiReader;
 
 /**
  * A Lucene specific search "internals", allowing for Lucene {@link IndexReader} and {@link Searcher}
@@ -48,7 +48,7 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
         for (int i = 0; i < searchables.length; i++) {
             readers[i] = ((IndexSearcher) searchables[i]).getIndexReader();
         }
-        indexReader = new MultiReader(readers, false);
+        indexReader = new CacheableMultiReader(readers, false);
         this.closeReader = true;
         this.closeSearcher = true;
     }

@@ -40,6 +40,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.lucene.util.CacheableMultiReader;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalResource;
@@ -139,7 +140,7 @@ public abstract class AbstractTransaction implements LuceneSearchEngineTransacti
                 if (readers.size() == 1) {
                     return new LuceneSearchEngineInternalSearch(searchEngine, lastNonEmptyIndexHolder, indexHoldersToClose);
                 }
-                MultiReader reader = new MultiReader(readers.toArray(new IndexReader[readers.size()]), false);
+                MultiReader reader = new CacheableMultiReader(readers.toArray(new IndexReader[readers.size()]), false);
                 IndexSearcher searcher = indexManager.openIndexSearcher(reader);
                 return new LuceneSearchEngineInternalSearch(searchEngine, reader, searcher, indexHoldersToClose);
             } else {

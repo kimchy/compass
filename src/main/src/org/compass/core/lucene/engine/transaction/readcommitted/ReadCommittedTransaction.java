@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.search.Filter;
@@ -47,6 +46,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.transaction.AbstractTransaction;
+import org.compass.core.lucene.util.CacheableMultiReader;
 import org.compass.core.lucene.util.ChainedFilter;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.spi.InternalResource;
@@ -233,7 +233,7 @@ public class ReadCommittedTransaction extends AbstractTransaction {
             }
             if (transIndexManager.hasTransIndex(subIndex)) {
                 closeReaderAndSearcher = true;
-                indexReader = new MultiReader(new IndexReader[]{indexHolder.getIndexReader(), transIndexManager.getReader(subIndex)}, false);
+                indexReader = new CacheableMultiReader(new IndexReader[]{indexHolder.getIndexReader(), transIndexManager.getReader(subIndex)}, false);
                 // note, we need to create a multi searcher here instead of a searcher ontop of the MultiReader
                 // since our filter relies on specific reader per searcher
                 indexSearcher = indexManager.openMultiSearcher(new Searcher[]{new IndexSearcher(indexHolder.getIndexReader()), transIndexManager.getSearcher(subIndex)});
