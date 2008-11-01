@@ -408,7 +408,7 @@ public class Author {
       <title>Searchable Dynamic Meta Data</title>
       
       <para>
-          The dynamic meta data mapping allows to define meta-data saved into the search engine as a result of evaluating an expression. The mapping does not map to any class property and acts as a syntactic meta-data (similar to the constant mapping). The value of the dynamic meta-data tag is the expression evaluated by a Dynamic Converter. Compass comes with several built in dynamic converters: el (Jakarta commons el), jexl (Jakarta commons jexl), velocity, ognl, and groovy. When defining the expression, the root class is registered under the <literal>data</literal> key (for libraries that require it).
+          The dynamic meta data mapping allows to define meta-data saved into the search engine as a result of evaluating an expression. The mapping does not map to any class property and acts as a syntactic meta-data (similar to the constant mapping). The value of the dynamic meta-data tag is the expression evaluated by a Dynamic Converter. Compass comes with several built in dynamic converters: el (Jakarta commons el), jexl (Jakarta commons jexl), velocity, ognl, mvel, and groovy. When defining the expression, the root class is registered under the <literal>data</literal> key (for libraries that require it).
       </para>
       
       <para>
