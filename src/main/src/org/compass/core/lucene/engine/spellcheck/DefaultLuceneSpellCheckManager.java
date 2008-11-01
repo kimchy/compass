@@ -62,7 +62,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.queryparser.QueryParserUtils;
 import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
-import org.compass.core.lucene.util.CacheableMultiReader;
+import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;

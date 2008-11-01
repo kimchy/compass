@@ -11,7 +11,7 @@ import org.apache.lucene.search.Searcher;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
-import org.compass.core.lucene.util.CacheableMultiReader;
+import org.compass.core.lucene.search.CacheableMultiReader;
 
 /**
  * A Lucene specific search "internals", allowing for Lucene {@link IndexReader} and {@link Searcher}

@@ -40,7 +40,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
-import org.compass.core.lucene.util.CacheableMultiReader;
+import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalResource;
