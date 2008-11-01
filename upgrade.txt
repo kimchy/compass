@@ -1,8 +1,8 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.1.0 GA
-================
+VERSION 2.1.0 GA (1 November, 2008)
+===================================
 
 1. Added new time based notation for configuration. For example: 10millis is 10 milliseconds, 10S is also 10
    milliseconds (as per SimpleDateFormat), 10s is 10 seconds, 10m is 10 minutes, 10H is 10 hours.
