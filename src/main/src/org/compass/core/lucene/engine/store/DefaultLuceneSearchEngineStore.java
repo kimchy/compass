@@ -446,7 +446,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         return dir;
     }
 
-    public boolean indexExists() throws SearchEngineException {
+    public synchronized boolean indexExists() throws SearchEngineException {
         for (String subIndex : subIndexes) {
             if (!indexExists(subIndex)) {
                 return false;
@@ -455,11 +455,11 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         return true;
     }
 
-    public boolean indexExists(String subIndex) throws SearchEngineException {
+    public synchronized boolean indexExists(String subIndex) throws SearchEngineException {
         return indexExists(defaultSubContext, subIndex);
     }
 
-    public boolean indexExists(String subContext, String subIndex) throws SearchEngineException {
+    public synchronized boolean indexExists(String subContext, String subIndex) throws SearchEngineException {
         boolean closeDir = !directoryExists(subContext, subIndex);
         Directory dir = openDirectory(subContext, subIndex);
         Boolean retVal = directoryStore.indexExists(unwrapDir(dir));
@@ -477,17 +477,17 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         return retVal;
     }
 
-    public void createIndex() throws SearchEngineException {
+    public synchronized void createIndex() throws SearchEngineException {
         for (String subIndex : subIndexes) {
             createIndex(subIndex);
         }
     }
 
-    public void createIndex(String subIndex) throws SearchEngineException {
+    public synchronized void createIndex(String subIndex) throws SearchEngineException {
         createIndex(defaultSubContext, subIndex);
     }
 
-    public void createIndex(String subContext, String subIndex) throws SearchEngineException {
+    public synchronized void createIndex(String subContext, String subIndex) throws SearchEngineException {
         Directory dir = openDirectory(subContext, subIndex);
         try {
             IndexWriter indexWriter = new IndexWriter(dir, new StandardAnalyzer(), true);
@@ -497,23 +497,23 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         }
     }
 
-    public void deleteIndex() throws SearchEngineException {
+    public synchronized void deleteIndex() throws SearchEngineException {
         for (String subIndex : subIndexes) {
             deleteIndex(subIndex);
         }
     }
 
-    public void deleteIndex(String subIndex) throws SearchEngineException {
+    public synchronized void deleteIndex(String subIndex) throws SearchEngineException {
         deleteIndex(defaultSubContext, subIndex);
     }
 
-    public void deleteIndex(String subContext, String subIndex) throws SearchEngineException {
+    public synchronized void deleteIndex(String subContext, String subIndex) throws SearchEngineException {
         Directory dir = openDirectory(subContext, subIndex);
         directoryStore.deleteIndex(unwrapDir(dir), subContext, subIndex);
         closeDirectory(dir, subContext, subIndex);
     }
 
-    public boolean verifyIndex() throws SearchEngineException {
+    public synchronized boolean verifyIndex() throws SearchEngineException {
         boolean createdIndex = false;
         for (String subIndex : subIndexes) {
             if (verifyIndex(subIndex)) {
@@ -523,11 +523,11 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         return createdIndex;
     }
 
-    public boolean verifyIndex(String subIndex) throws SearchEngineException {
+    public synchronized boolean verifyIndex(String subIndex) throws SearchEngineException {
         return verifyIndex(defaultSubContext, subIndex);
     }
 
-    public boolean verifyIndex(String subContext, String subIndex) throws SearchEngineException {
+    public synchronized boolean verifyIndex(String subContext, String subIndex) throws SearchEngineException {
         if (!indexExists(subContext, subIndex)) {
             createIndex(subContext, subIndex);
             return true;
@@ -535,11 +535,11 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         return false;
     }
 
-    public void cleanIndex(String subIndex) throws SearchEngineException {
+    public synchronized void cleanIndex(String subIndex) throws SearchEngineException {
         cleanIndex(defaultSubContext, subIndex);
     }
 
-    public void cleanIndex(String subContext, String subIndex) throws SearchEngineException {
+    public synchronized void cleanIndex(String subContext, String subIndex) throws SearchEngineException {
         Directory dir = directoryStore.open(subContext, subIndex);
 
         Directory unwrapDir = unwrapDir(dir);
@@ -550,7 +550,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
     }
 
 
-    public boolean isLocked() throws SearchEngineException {
+    public synchronized boolean isLocked() throws SearchEngineException {
         for (String subIndex : getSubIndexes()) {
             if (isLocked(subIndex)) {
                 return true;
@@ -559,11 +559,11 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         return false;
     }
 
-    public boolean isLocked(String subIndex) throws SearchEngineException {
+    public synchronized boolean isLocked(String subIndex) throws SearchEngineException {
         return isLocked(defaultSubContext, subIndex);
     }
 
-    public boolean isLocked(String subContext, String subIndex) throws SearchEngineException {
+    public synchronized boolean isLocked(String subContext, String subIndex) throws SearchEngineException {
         try {
             return IndexReader.isLocked(openDirectory(subContext, subIndex));
         } catch (IOException e) {
@@ -571,19 +571,19 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         }
     }
 
-    public void releaseLocks() throws SearchEngineException {
+    public synchronized void releaseLocks() throws SearchEngineException {
         for (String subIndex : subIndexes) {
             releaseLock(subIndex);
         }
     }
 
-    public void releaseLock(String subIndex) throws SearchEngineException {
+    public synchronized void releaseLock(String subIndex) throws SearchEngineException {
         releaseLock(defaultSubContext, subIndex);
     }
 
-    public void releaseLock(String subContext, String subIndex) throws SearchEngineException {
+    public synchronized void releaseLock(String subContext, String subIndex) throws SearchEngineException {
         try {
-            IndexReader.unlock(openDirectory(subContext, subIndex));
+            IndexWriter.unlock(openDirectory(subContext, subIndex));
         } catch (IOException e) {
             throw new SearchEngineException("Failed to unlock index for sub context [" + subContext + "] and sub index [" + subIndex + "]", e);
         }
