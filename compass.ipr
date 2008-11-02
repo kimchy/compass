@@ -623,13 +623,6 @@
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="jdo">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/jdo/jdo2.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
     <library name="jgroups">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/jgroups/jgroups-all.jar!/" />
@@ -649,15 +642,6 @@
     <library name="jpa">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/jpa/persistence.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="jpox">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/jpox/bcel-5.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/jpox/jpox.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/jpox/jpox-enhancer.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

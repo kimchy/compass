@@ -308,20 +308,6 @@
             </fileset>
         </copy>
 
-        <!-- Enhance JDO using JPox -->
-        <path id="jpox.classpath">
-            <path refid="all-libs"/>
-            <path location="${target.testclasses.dir}"/>
-        </path>
-        <taskdef name="enhancer" classname="org.jpox.enhancer.tools.EnhancerTask">
-            <classpath refid="all-libs"/>
-        </taskdef>
-        <enhancer classpathref="jpox.classpath"
-                  dir="${target.testclasses.dir}"
-                  verbose="false">
-            <sysproperty key="log4j.configuration" value="file:${target.testclasses.dir}/log4j.properties"/>
-        </enhancer>
-
     </target>
 
     <target name="buildcoherencetests"
@@ -675,7 +661,6 @@
                 <include name="lib/jettison/**"/>
                 <include name="lib/jotm/**"/>
                 <include name="lib/jpa/**"/>
-                <include name="lib/jpox/**"/>
                 <include name="lib/junit/**"/>
                 <include name="lib/jsr223/**"/>
                 <include name="lib/log4j/**"/>
