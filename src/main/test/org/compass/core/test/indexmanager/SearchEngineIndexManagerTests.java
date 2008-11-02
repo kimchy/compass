@@ -116,7 +116,7 @@ public class SearchEngineIndexManagerTests extends AbstractTestCase {
         assertTrue(indexManager.isCached("a2"));
         Thread.sleep(3000);
         indexManager.notifyAllToClearCache();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 30; i++) {
             Thread.sleep(500);
             if (!indexManager.isCached()) {
                 break;
