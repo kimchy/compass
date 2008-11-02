@@ -251,8 +251,8 @@ public class LuceneSearchEngine implements SearchEngine {
             ResourceKey key = new ResourceKey(extendingMapping, resourceKey.getIds());
             transaction.delete(key);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("RESOURCE DELETE {" + resourceKey.getAlias() + "} " + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()));
+        if (log.isTraceEnabled()) {
+            log.trace("RESOURCE DELETE {" + resourceKey.getAlias() + "} " + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()));
         }
     }
 
@@ -281,13 +281,13 @@ public class LuceneSearchEngine implements SearchEngine {
                 Analyzer analyzer = enhanceResource(resourceMapping, resource1);
                 if (update) {
                     transaction.update(resource1, analyzer);
-                    if (log.isDebugEnabled()) {
-                        log.debug("RESOURCE SAVE " + resource1);
+                    if (log.isTraceEnabled()) {
+                        log.trace("RESOURCE SAVE " + resource1);
                     }
                 } else {
                     transaction.create(resource1, analyzer);
-                    if (log.isDebugEnabled()) {
-                        log.debug("RESOURCE CREATE " + resource1);
+                    if (log.isTraceEnabled()) {
+                        log.trace("RESOURCE CREATE " + resource1);
                     }
                 }
             }
@@ -296,13 +296,14 @@ public class LuceneSearchEngine implements SearchEngine {
             Analyzer analyzer = enhanceResource(resourceMapping, resource1);
             if (update) {
                 transaction.update(resource1, analyzer);
-                if (log.isDebugEnabled()) {
-                    log.debug("RESOURCE SAVE " + resource1);
+                if (log.isTraceEnabled()) {
+                    log.trace("RESOURCE SAVE " + resource1);
                 }
             } else {
                 transaction.create(resource1, analyzer);
-                if (log.isDebugEnabled()) {
-                    log.debug("RESOURCE CREATE " + resource1);
+                if (log.isTraceEnabled()) {
+                    log.trace("RESOURCE CREATE " + resource1);
+                    log.trace("RESOURCE CREATE " + resource1);
                 }
             }
         }
@@ -356,8 +357,8 @@ public class LuceneSearchEngine implements SearchEngine {
     public SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException {
         verifyWithinTransaction();
         SearchEngineHits hits = transaction.find(query);
-        if (log.isDebugEnabled()) {
-            log.debug("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
+        if (log.isTraceEnabled()) {
+            log.trace("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
         }
         return hits;
     }
