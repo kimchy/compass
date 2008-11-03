@@ -156,8 +156,7 @@ public class SingleCompassGps extends AbstractCompassGps {
 
     public void executeForIndex(CompassCallback callback) throws CompassException {
         if (indexCompassTemplate == null) {
-            compassTemplate.execute(indexTransactionIsolation, callback);
-            return;
+            throw new IllegalStateException("executeForIndex is called outside of an index operation");
         }
         indexCompassTemplate.execute(indexTransactionIsolation, callback);
     }
