@@ -53,7 +53,7 @@ import org.compass.core.spi.ResourceKey;
  *
  * @author kimchy
  */
-public abstract class AbstractTransaction implements LuceneSearchEngineTransaction {
+public abstract class AbstractTransactionProcessor implements TransactionProcessor {
 
     protected LuceneSearchEngine searchEngine;
 

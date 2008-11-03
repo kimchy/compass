@@ -41,7 +41,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
-import org.compass.core.lucene.engine.transaction.AbstractTransaction;
+import org.compass.core.lucene.engine.transaction.AbstractTransactionProcessor;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
@@ -55,9 +55,9 @@ import org.compass.core.util.StringUtils;
  *
  * @author kimchy
  */
-public class LuceneTransaction extends AbstractTransaction {
+public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
 
-    private static final Log log = LogFactory.getLog(LuceneTransaction.class);
+    private static final Log log = LogFactory.getLog(LuceneTransactionProcessor.class);
 
     private Map<String, IndexWriter> indexWriterBySubIndex = new HashMap<String, IndexWriter>();
 

@@ -35,10 +35,10 @@ import org.compass.core.engine.SearchEngineTermFrequencies;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
-import org.compass.core.lucene.engine.transaction.LuceneSearchEngineTransaction;
-import org.compass.core.lucene.engine.transaction.lucene.LuceneTransaction;
-import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransaction;
-import org.compass.core.lucene.engine.transaction.serializable.SerializableTransaction;
+import org.compass.core.lucene.engine.transaction.TransactionProcessor;
+import org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessor;
+import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessor;
+import org.compass.core.lucene.engine.transaction.serializable.SerializableTransactionProcessor;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalResource;
@@ -63,7 +63,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     private int transactionState;
 
-    private LuceneSearchEngineTransaction transaction;
+    private TransactionProcessor transactionProcessor;
 
     private LuceneSearchEngineFactory searchEngineFactory;
 
@@ -104,14 +104,14 @@ public class LuceneSearchEngine implements SearchEngine {
         if (transactionIsolationClass != null) {
             transactionState = NOT_STARTED;
             try {
-                transaction = (LuceneSearchEngineTransaction) transactionIsolationClass.newInstance();
+                transactionProcessor = (TransactionProcessor) transactionIsolationClass.newInstance();
             } catch (Exception e) {
-                throw new SearchEngineException("Failed to create an instance for transaction ["
+                throw new SearchEngineException("Failed to create an instance for transactionProcessor ["
                         + transactionIsolationClass.getName() + "]", e);
             }
-            transaction.configure(this);
+            transactionProcessor.configure(this);
             eventManager.beforeBeginTransaction();
-            transaction.begin();
+            transactionProcessor.begin();
             eventManager.afterBeginTransaction();
             transactionState = STARTED;
             return;
@@ -130,21 +130,21 @@ public class LuceneSearchEngine implements SearchEngine {
             transactionIsolation = searchEngineFactory.getLuceneSettings().getTransactionIsolation();
         }
         if (transactionIsolation == TransactionIsolation.READ_COMMITTED) {
-            transaction = new ReadCommittedTransaction();
+            transactionProcessor = new ReadCommittedTransactionProcessor();
         } else if (transactionIsolation == TransactionIsolation.READ_ONLY_READ_COMMITTED) {
-            transaction = new ReadCommittedTransaction();
+            transactionProcessor = new ReadCommittedTransactionProcessor();
         } else if (transactionIsolation == TransactionIsolation.BATCH_INSERT) {
-            transaction = new LuceneTransaction();
+            transactionProcessor = new LuceneTransactionProcessor();
         } else if (transactionIsolation == TransactionIsolation.LUCENE) {
-            transaction = new LuceneTransaction();
+            transactionProcessor = new LuceneTransactionProcessor();
         } else if (transactionIsolation == TransactionIsolation.SERIALIZABLE) {
-            transaction = new SerializableTransaction();
+            transactionProcessor = new SerializableTransactionProcessor();
         } else {
-            throw new IllegalStateException("Internal problem in Compass, failed to resolve transaction isolation [" + transactionIsolation + "]");
+            throw new IllegalStateException("Internal problem in Compass, failed to resolve transactionProcessor isolation [" + transactionIsolation + "]");
         }
-        transaction.configure(this);
+        transactionProcessor.configure(this);
         eventManager.beforeBeginTransaction();
-        transaction.begin();
+        transactionProcessor.begin();
         eventManager.afterBeginTransaction();
         transactionState = STARTED;
     }
@@ -152,11 +152,11 @@ public class LuceneSearchEngine implements SearchEngine {
     public void verifyWithinTransaction() throws SearchEngineException {
         if (transactionState != STARTED) {
             if (transactionState == COMMIT) {
-                throw new SearchEngineException("Search engine transaction already committed while trying to perform an operation");
+                throw new SearchEngineException("Search engine transactionProcessor already committed while trying to perform an operation");
             } else if (transactionState == ROLLBACK) {
-                throw new SearchEngineException("Search engine transaction already rolled back while trying to perform an operation");
+                throw new SearchEngineException("Search engine transactionProcessor already rolled back while trying to perform an operation");
             } else if (transactionState == NOT_STARTED) {
-                throw new SearchEngineException("Search engine transaction not stated, please call begin transaction in order to perform operations");
+                throw new SearchEngineException("Search engine transactionProcessor not stated, please call begin transactionProcessor in order to perform operations");
             }
         }
     }
@@ -167,42 +167,42 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void prepare() throws SearchEngineException {
         verifyWithinTransaction();
-        if (transaction != null) {
-            transaction.prepare();
+        if (transactionProcessor != null) {
+            transactionProcessor.prepare();
         }
         eventManager.afterPrepare();
     }
 
     public void commit(boolean onePhase) throws SearchEngineException {
         verifyWithinTransaction();
-        if (transaction != null) {
-            transaction.commit(onePhase);
+        if (transactionProcessor != null) {
+            transactionProcessor.commit(onePhase);
             eventManager.afterCommit(onePhase);
         }
-        transaction = null;
+        transactionProcessor = null;
         transactionState = COMMIT;
     }
 
     public void rollback() throws SearchEngineException {
         verifyWithinTransaction();
         try {
-            if (transaction != null) {
+            if (transactionProcessor != null) {
                 try {
-                    transaction.rollback();
+                    transactionProcessor.rollback();
                 } finally {
                     eventManager.afterRollback();
                 }
             }
         } finally {
-            transaction = null;
+            transactionProcessor = null;
             transactionState = ROLLBACK;
         }
     }
 
     public void flush() throws SearchEngineException {
         verifyWithinTransaction();
-        if (transaction != null) {
-            transaction.flush();
+        if (transactionProcessor != null) {
+            transactionProcessor.flush();
         }
     }
 
@@ -244,12 +244,12 @@ public class LuceneSearchEngine implements SearchEngine {
         if (resourceKey.getIds().length == 0) {
             throw new SearchEngineException("Cannot delete a resource with no ids and alias [" + resourceKey.getAlias() + "]");
         }
-        transaction.delete(resourceKey);
+        transactionProcessor.delete(resourceKey);
         String[] extendingAliases = resourceKey.getResourceMapping().getExtendingAliases();
         for (String extendingAlias : extendingAliases) {
             ResourceMapping extendingMapping = getSearchEngineFactory().getMapping().getMappingByAlias(extendingAlias);
             ResourceKey key = new ResourceKey(extendingMapping, resourceKey.getIds());
-            transaction.delete(key);
+            transactionProcessor.delete(key);
         }
         if (log.isTraceEnabled()) {
             log.trace("RESOURCE DELETE {" + resourceKey.getAlias() + "} " + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()));
@@ -280,12 +280,12 @@ public class LuceneSearchEngine implements SearchEngine {
                 InternalResource resource1 = (InternalResource) multiResource.resource(i);
                 Analyzer analyzer = enhanceResource(resourceMapping, resource1);
                 if (update) {
-                    transaction.update(resource1, analyzer);
+                    transactionProcessor.update(resource1, analyzer);
                     if (log.isTraceEnabled()) {
                         log.trace("RESOURCE SAVE " + resource1);
                     }
                 } else {
-                    transaction.create(resource1, analyzer);
+                    transactionProcessor.create(resource1, analyzer);
                     if (log.isTraceEnabled()) {
                         log.trace("RESOURCE CREATE " + resource1);
                     }
@@ -295,12 +295,12 @@ public class LuceneSearchEngine implements SearchEngine {
             InternalResource resource1 = (InternalResource) resource;
             Analyzer analyzer = enhanceResource(resourceMapping, resource1);
             if (update) {
-                transaction.update(resource1, analyzer);
+                transactionProcessor.update(resource1, analyzer);
                 if (log.isTraceEnabled()) {
                     log.trace("RESOURCE SAVE " + resource1);
                 }
             } else {
-                transaction.create(resource1, analyzer);
+                transactionProcessor.create(resource1, analyzer);
                 if (log.isTraceEnabled()) {
                     log.trace("RESOURCE CREATE " + resource1);
                     log.trace("RESOURCE CREATE " + resource1);
@@ -322,14 +322,14 @@ public class LuceneSearchEngine implements SearchEngine {
         if (resourceKey.getIds().length == 0) {
             throw new SearchEngineException("Cannot load a resource with no ids and alias [" + resourceKey.getAlias() + "]");
         }
-        Resource[] result = transaction.get(resourceKey);
+        Resource[] result = transactionProcessor.get(resourceKey);
         if (result.length == 0) {
             // none directly, try and load polymorphic ones
             String[] extendingAliases = resourceKey.getResourceMapping().getExtendingAliases();
             for (String extendingAlias : extendingAliases) {
                 ResourceMapping extendingMapping = getSearchEngineFactory().getMapping().getMappingByAlias(extendingAlias);
                 ResourceKey key = new ResourceKey(extendingMapping, resourceKey.getIds());
-                result = transaction.get(key);
+                result = transactionProcessor.get(key);
                 if (result.length > 0) {
                     return result[result.length - 1];
                 }
@@ -356,7 +356,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException {
         verifyWithinTransaction();
-        SearchEngineHits hits = transaction.find(query);
+        SearchEngineHits hits = transactionProcessor.find(query);
         if (log.isTraceEnabled()) {
             log.trace("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
         }
@@ -369,12 +369,12 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         verifyWithinTransaction();
-        return transaction.internalSearch(subIndexes, aliases);
+        return transactionProcessor.internalSearch(subIndexes, aliases);
     }
 
     public void removeDelegatedClose(LuceneDelegatedClose closable) {
-        if (transaction != null) {
-            transaction.removeDelegatedClose(closable);
+        if (transactionProcessor != null) {
+            transactionProcessor.removeDelegatedClose(closable);
         }
     }
 

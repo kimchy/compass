@@ -33,7 +33,7 @@ import org.compass.core.spi.ResourceKey;
  * 
  * @author kimchy
  */
-public interface LuceneSearchEngineTransaction {
+public interface TransactionProcessor {
 
     void configure(LuceneSearchEngine searchEngine);
 

@@ -3,12 +3,12 @@ package org.compass.core.lucene.engine.transaction.serializable;
 import java.io.IOException;
 
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransaction;
+import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessor;
 
 /**
  * @author kimchy
  */
-public class SerializableTransaction extends ReadCommittedTransaction {
+public class SerializableTransactionProcessor extends ReadCommittedTransactionProcessor {
 
     public void begin() throws SearchEngineException {
         super.begin();

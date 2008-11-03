@@ -18,7 +18,7 @@ package org.compass.core.test.engine.lucene;
 
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.lucene.engine.transaction.serializable.SerializableTransaction;
+import org.compass.core.lucene.engine.transaction.serializable.SerializableTransactionProcessor;
 
 /**
  * @author kimchy
@@ -27,12 +27,12 @@ public class LuceneSerializableTransactionEngineTests extends AbstractTransactio
 
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
-        settings.setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, SerializableTransaction.class.getName());
+        settings.setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, SerializableTransactionProcessor.class.getName());
         return settings;
     }
 
     public void testSettings() {
-        assertEquals(SerializableTransaction.class.getName(), getSettings().getSetting(
+        assertEquals(SerializableTransactionProcessor.class.getName(), getSettings().getSetting(
                 CompassEnvironment.Transaction.ISOLATION_CLASS));
     }
 }

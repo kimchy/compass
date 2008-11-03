@@ -45,7 +45,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
-import org.compass.core.lucene.engine.transaction.AbstractTransaction;
+import org.compass.core.lucene.engine.transaction.AbstractTransactionProcessor;
 import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.lucene.util.ChainedFilter;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -60,9 +60,9 @@ import org.compass.core.util.StringUtils;
  *
  * @author kimchy
  */
-public class ReadCommittedTransaction extends AbstractTransaction {
+public class ReadCommittedTransactionProcessor extends AbstractTransactionProcessor {
 
-    private static final Log log = LogFactory.getLog(ReadCommittedTransaction.class);
+    private static final Log log = LogFactory.getLog(ReadCommittedTransactionProcessor.class);
 
     private TransIndexManager transIndexManager;
 
