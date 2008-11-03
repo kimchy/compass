@@ -39,9 +39,6 @@ public interface CompassTransaction {
 
 		public static final TransactionIsolation READ_COMMITTED = new TransactionIsolation("READ_COMMITTED");
 
-		public static final TransactionIsolation READ_ONLY_READ_COMMITTED = new TransactionIsolation(
-				"READ_ONLY_READ_COMMITTED");
-
 		public static final TransactionIsolation SERIALIZABLE = new TransactionIsolation("SERIALIZABLE");
 
         /**

@@ -52,6 +52,19 @@ import org.compass.core.config.CompassSettings;
 public interface CompassSession extends CompassOperations {
 
     /**
+     * Indicates that the session will be used for read only operations. Allowing to optimize
+     * search and read.
+     */
+    void setReadOnly();
+
+    /**
+     * Returns <code>true</code> if the session is read only.
+     *
+     * @see #setReadOnly() 
+     */
+    boolean isReadOnly();
+
+    /**
      * Returns a resource factory allowing to create resources and properties.
      */
     ResourceFactory resourceFactory();

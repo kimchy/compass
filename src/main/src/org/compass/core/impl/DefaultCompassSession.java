@@ -106,6 +106,14 @@ public class DefaultCompassSession implements InternalCompassSession {
         return runtimeSettings;
     }
 
+    public void setReadOnly() {
+        searchEngine.setReadOnly();
+    }
+
+    public boolean isReadOnly() {
+        return searchEngine.isReadOnly();
+    }
+
     public CompassQueryBuilder queryBuilder() throws CompassException {
         checkClosed();
         SearchEngineQueryBuilder searchEngineQueryBuilder = searchEngine.queryBuilder();

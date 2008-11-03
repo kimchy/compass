@@ -46,6 +46,25 @@ public interface SearchEngine {
     SearchEngineFactory getSearchEngineFactory();
 
     /**
+     * Indicates that the search engine will be used for read only operations. Allowing to optimize
+     * search and read.
+     */
+    void setReadOnly();
+
+    /**
+     * Returns <code>true</code> if the session is read only.
+     *
+     * @see #setReadOnly()
+     */
+    boolean isReadOnly();
+    
+    /**
+     * Returns <code>true</code> if the search engine was used (up until now)
+     * for read only operations.
+     */
+    boolean onlyReadOperations();
+
+    /**
      * Begins the search engine transaction, using the configured transaction
      * isolation.
      */
@@ -83,12 +102,6 @@ public interface SearchEngine {
      * commit operation (the <code>prepare</code> operation).
      */
     void rollback() throws SearchEngineException;
-
-    /**
-     * Returns <code>true</code> if the search engine was used (up until now)
-     * for read only operations.
-     */
-    boolean isReadOnly();
 
     /**
      * Flushed the current transaction. Currently only works with batch insert transaction.

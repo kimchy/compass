@@ -25,7 +25,6 @@ import org.compass.core.CompassHits;
 import org.compass.core.CompassQuery;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTemplate;
-import org.compass.core.CompassTransaction;
 import org.compass.core.util.StringUtils;
 
 /**
@@ -76,9 +75,9 @@ public class CompassSearchHelper {
         if (!StringUtils.hasText(command.getQuery()) && command.getCompassQuery() == null) {
             return new CompassSearchResults(new CompassHit[0], 0, 0);
         }
-        return (CompassSearchResults) compassTemplate.execute(
-                CompassTransaction.TransactionIsolation.READ_ONLY_READ_COMMITTED, new CompassCallback() {
+        return (CompassSearchResults) compassTemplate.execute(new CompassCallback() {
             public Object doInCompass(CompassSession session) throws CompassException {
+                session.setReadOnly();
                 return performSearch(command, session);
             }
         });
@@ -90,6 +89,7 @@ public class CompassSearchHelper {
         }
         return (CompassSearchResults) compassTemplate.executeLocal(new CompassCallback() {
             public Object doInCompass(CompassSession session) throws CompassException {
+                session.setReadOnly();
                 return performSearch(command, session);
             }
         });

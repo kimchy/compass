@@ -69,13 +69,15 @@ public class LuceneSearchEngine implements SearchEngine {
 
     private SearchEngineEventManager eventManager = new SearchEngineEventManager();
 
+    private boolean onlyReadOnlyOperations;
+
     private boolean readOnly;
 
     private RuntimeCompassSettings runtimeSettings;
 
     public LuceneSearchEngine(RuntimeCompassSettings runtimeSettings, LuceneSearchEngineFactory searchEngineFactory) {
         this.runtimeSettings = runtimeSettings;
-        this.readOnly = true;
+        this.onlyReadOnlyOperations = true;
         this.searchEngineFactory = searchEngineFactory;
         this.transactionState = NOT_STARTED;
         eventManager.registerLifecycleListener(searchEngineFactory.getEventManager());
@@ -94,8 +96,16 @@ public class LuceneSearchEngine implements SearchEngine {
         return new LuceneSearchEngineAnalyzerHelper(this);
     }
 
-    public void begin() throws SearchEngineException {
+    public void setReadOnly() {
         this.readOnly = true;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void begin() throws SearchEngineException {
+        this.onlyReadOnlyOperations = true;
         if (transactionState == STARTED) {
             throw new SearchEngineException("Transaction already started, why start it again?");
         }
@@ -125,13 +135,11 @@ public class LuceneSearchEngine implements SearchEngine {
             throw new SearchEngineException("Transaction already started, why start it again?");
         }
         transactionState = NOT_STARTED;
-        this.readOnly = true;
+        this.onlyReadOnlyOperations = true;
         if (transactionIsolation == null) {
             transactionIsolation = searchEngineFactory.getLuceneSettings().getTransactionIsolation();
         }
         if (transactionIsolation == TransactionIsolation.READ_COMMITTED) {
-            transactionProcessor = new ReadCommittedTransactionProcessor();
-        } else if (transactionIsolation == TransactionIsolation.READ_ONLY_READ_COMMITTED) {
             transactionProcessor = new ReadCommittedTransactionProcessor();
         } else if (transactionIsolation == TransactionIsolation.BATCH_INSERT) {
             transactionProcessor = new LuceneTransactionProcessor();
@@ -147,6 +155,12 @@ public class LuceneSearchEngine implements SearchEngine {
         transactionProcessor.begin();
         eventManager.afterBeginTransaction();
         transactionState = STARTED;
+    }
+
+    public void verifyNotReadOnly() throws SearchEngineException {
+        if (readOnly) {
+            throw new SearchEngineException("Transaction is set as read only");
+        }
     }
 
     public void verifyWithinTransaction() throws SearchEngineException {
@@ -229,7 +243,8 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void delete(Resource resource) throws SearchEngineException {
         verifyWithinTransaction();
-        readOnly = false;
+        verifyNotReadOnly();
+        onlyReadOnlyOperations = false;
         if (resource instanceof MultiResource) {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
@@ -257,18 +272,19 @@ public class LuceneSearchEngine implements SearchEngine {
     }
 
     public void save(Resource resource) throws SearchEngineException {
-        readOnly = false;
+        onlyReadOnlyOperations = false;
         createOrUpdate(resource, true);
     }
 
     public void create(Resource resource) throws SearchEngineException {
-        readOnly = false;
+        onlyReadOnlyOperations = false;
         createOrUpdate(resource, false);
     }
 
     private void createOrUpdate(final Resource resource, boolean update) throws SearchEngineException {
         verifyWithinTransaction();
-        readOnly = false;
+        verifyNotReadOnly();
+        onlyReadOnlyOperations = false;
         String alias = resource.getAlias();
         ResourceMapping resourceMapping = searchEngineFactory.getMapping().getRootMappingByAlias(alias);
         if (resourceMapping == null) {
@@ -386,7 +402,7 @@ public class LuceneSearchEngine implements SearchEngine {
         return runtimeSettings;
     }
 
-    public boolean isReadOnly() {
-        return this.readOnly;
+    public boolean onlyReadOperations() {
+        return this.onlyReadOnlyOperations;
     }
 }

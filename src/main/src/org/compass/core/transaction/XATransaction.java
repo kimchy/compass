@@ -117,7 +117,7 @@ public class XATransaction extends AbstractJTATransaction {
                 log.error("Failed to prepare transaction [" + xid + "]", e);
                 throw new XAException(e.getMessage());
             }
-            if (searchEngine.isReadOnly()) {
+            if (searchEngine.onlyReadOperations()) {
                 commit(xid, false);
                 return XA_RDONLY;
             }

@@ -71,11 +71,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
             if (timeout != -1) {
                 transactionDefinition.setTimeout(timeout);
             }
-            boolean readOnly = false;
-            if (transactionIsolation == TransactionIsolation.READ_ONLY_READ_COMMITTED) {
-                readOnly = true;
-            }
-            transactionDefinition.setReadOnly(readOnly);
+            transactionDefinition.setReadOnly(session.isReadOnly());
             status = transactionManager.getTransaction(transactionDefinition);
         }
 

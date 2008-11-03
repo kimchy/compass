@@ -4,6 +4,8 @@ COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log
 VERSION 2.2.0 M1
 ================
 
+1. READ_ONLY_READ_COMMITTED transaction removed. CompassSession#setReadOnly() should be used instead.
+
 VERSION 2.1.0 GA (1 November, 2008)
 ===================================
 
