@@ -221,7 +221,7 @@
         <copy file="${main.src.dir}/org/compass/core/compass-core-mapping-2.1.dtd"
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
-        <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data-2.1.dtd"
+        <copy file="${main.src.dir}/org/compass/core/compass-core-meta-data-2.2.dtd"
               todir="${dist.dir}/dtd" preservelastmodified="true"/>
 
         <copy file="${main.src.dir}/org/compass/core/compass-core-config-2.1.xsd"
