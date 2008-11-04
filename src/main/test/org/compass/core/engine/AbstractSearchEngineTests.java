@@ -23,6 +23,7 @@ import org.compass.core.engine.naming.StaticPropertyNamingStrategy;
 import org.compass.core.executor.DefaultExecutorManager;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.impl.DefaultCompass;
+import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.metadata.impl.DefaultCompassMetaData;
 
@@ -44,6 +45,10 @@ public abstract class AbstractSearchEngineTests extends AbstractEngineTests {
 
     public SearchEngineFactory getSearchEngineFactory() {
         return searchEngineFactory;
+    }
+
+    public LuceneSearchEngine getLuceneSearchEngine() {
+        return (LuceneSearchEngine) getSearchEngine();
     }
 
     protected void setUp() throws Exception {

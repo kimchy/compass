@@ -272,14 +272,14 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
       </para>
     </sect2>
     
-    <sect2 id="core-searchengine-transaction-isolation">
-      <title>Isolation</title>
+    <sect2 id="core-searchengine-transaction-processor">
+      <title>Transaction Processors</title>
 
       <sect3 id="core-searchengine-transaction-read_committed">
         <title>read_committed</title>
   
         <para>
-			Read committed transaction isolation level allows to isolate changes done during a transaction from other transactions until commit. It also allows for load/get/find operations to take into account changes done during the current transaction. This means that a delete that occurs during a transaction will be filtered out if a search is executed within the same transaction just after the delete.
+			Read committed transaction processor allows to isolate changes done during a transaction from other transactions until commit. It also allows for load/get/find operations to take into account changes done during the current transaction. This means that a delete that occurs during a transaction will be filtered out if a search is executed within the same transaction just after the delete.
 		</para>
   
         <para>
@@ -295,7 +295,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         <title>serializable</title>
   
         <para>
-            The <literal>serializable</literal> transaction level operates the same as the <literal>read_committed</literal> transaction level, except that when the transaction is opened/started, a lock is acquired on all the sub-indexes. This causes the transactional operations to be sequential in nature (as well as being a performance killer).
+            The <literal>serializable</literal> transaction processor operates the same as the <literal>read_committed</literal> transaction level, except that when the transaction is opened/started, a lock is acquired on all the sub-indexes. This causes the transactional operations to be sequential in nature (as well as being a performance killer).
         </para>
       </sect3>
   
@@ -303,7 +303,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
         <title>lucene</title>
   
         <para>
-            A special transaction level, <literal>lucene</literal> (previously known as <literal>batch_insert</literal>) isolation level is similar to the <literal>read_committed</literal> isolation level except dirty operations done during a transaction are not visible to get/load/find operations that occur within the same transaction. This isolation level is very handy for long running batch dirty operations and can be faster than <literal>read_committed</literal>. Most usage patterns of Compass (such as integration with ORM tools) can work perfectly well with the <literal>lucene</literal> isolation level.
+            A special transaction processor, <literal>lucene</literal> (previously known as <literal>batch_insert</literal>) transaction processor is similar to the <literal>read_committed</literal> isolation level except dirty operations done during a transaction are not visible to get/load/find operations that occur within the same transaction. This isolation level is very handy for long running batch dirty operations and can be faster than <literal>read_committed</literal>. Most usage patterns of Compass (such as integration with ORM tools) can work perfectly well with the <literal>lucene</literal> isolation level.
         </para>
 		
 		<para>
@@ -328,11 +328,11 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
   <connection>
       <file path="target/test-index" />
   </connection>
-  <transaction isolation="lucene" />
+  <transaction processor="lucene" />
 </compass>
 ]]></programlisting>
 <programlisting><![CDATA[compass.engine.connection=target/test-index
-compass.transaction.isolation=lucene
+compass.transaction.processor=lucene
 ]]></programlisting>			
 		</para>
       </sect3>
@@ -343,7 +343,7 @@ compass.transaction.isolation=lucene
       <title>Transaction Log</title>
       
       <para>
-        For <literal>read_committed</literal> and <literal>serializable</literal> transaction isolation Compass uses a transaction log of the current transaction data running. Compass provides the following transaction log implementations:
+        For <literal>read_committed</literal> and <literal>serializable</literal> transaction processors Compass uses a transaction log of the current transaction data running. Compass provides the following transaction log implementations:
       </para>
       
       <sect3 id="core-searchengine-transaction-translog-ram">
@@ -359,8 +359,10 @@ compass.transaction.isolation=lucene
   <connection>
       <file path="target/test-index" />
   </connection>
-  <transaction isolation="read_committed">
-    <readCommittedSettings transLog="ram://" />
+  <transaction processor="read_committed">
+    <processors>
+        <readCommitted transLog="ram://" />
+    </processors>
   </transaction>
 </compass>
 ]]></programlisting>
@@ -384,8 +386,10 @@ compass.transaction.readcommitted.translog.connection=ram://
 <connection>
     <file path="target/test-index" />
 </connection>
-<transaction isolation="read_committed">
-  <readCommittedSettings transLog="file://" />
+<transaction processor="read_committed">
+  <processors>
+      <readCommitted transLog="file://" />
+  </processors>
 </transaction>
 </compass>
 ]]></programlisting>

@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package org.compass.core.config;
+package org.compass.core.lucene.engine.transaction.lucene;
+
+import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.transaction.TransactionProcessor;
+import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 
 /**
- * A set of settings constants that applies on the Compass session level.
+ * A transaction processor factory that creates {@link org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessor}
+ * instances.
  *
  * @author kimchy
- * @see org.compass.core.CompassSession#getSettings()
  */
-public abstract class RuntimeCompassEnvironment {
+public class LuceneTransactionProcessorFactory implements TransactionProcessorFactory {
 
-    /**
-     * Settings for cascading operations.
-     */
-    public abstract class Cascade {
-
-        /**
-         * Disable all cascading operations.
-         */
-        public static final String DISABLE = CompassEnvironment.Cascade.DISABLE;
+    public TransactionProcessor create(LuceneSearchEngine searchEngine) {
+        return new LuceneTransactionProcessor(searchEngine);
     }
 }

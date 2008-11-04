@@ -25,7 +25,6 @@ import org.compass.core.CompassQueryFilterBuilder;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTermFreqsBuilder;
 import org.compass.core.CompassTransaction;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.compass.core.cache.first.FirstLevelCache;
@@ -38,6 +37,7 @@ import org.compass.core.engine.SearchEngineAnalyzerHelper;
 import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.events.FilterOperation;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.marshall.DefaultMarshallingStrategy;
@@ -139,20 +139,18 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public CompassTransaction beginTransaction() throws CompassException {
         checkClosed();
-        return transactionFactory.beginTransaction(this, null);
-    }
-
-    public CompassTransaction beginTransaction(TransactionIsolation transactionIsolation) throws CompassException {
-        checkClosed();
-        if (transactionIsolation == TransactionIsolation.BATCH_INSERT) {
+        if (LuceneEnvironment.Transaction.Processor.Lucene.NAME.equalsIgnoreCase(getSettings().getSetting(LuceneEnvironment.Transaction.Processor.TYPE))) {
             firstLevelCache = new NullFirstLevelCache();
         }
-        return transactionFactory.beginTransaction(this, transactionIsolation);
+        return transactionFactory.beginTransaction(this);
     }
 
     public CompassTransaction beginLocalTransaction() throws CompassException {
         checkClosed();
-        return localTransactionFactory.beginTransaction(this, null);
+        if (LuceneEnvironment.Transaction.Processor.Lucene.NAME.equalsIgnoreCase(getSettings().getSetting(LuceneEnvironment.Transaction.Processor.TYPE))) {
+            firstLevelCache = new NullFirstLevelCache();
+        }
+        return localTransactionFactory.beginTransaction(this);
     }
 
     public void flush() throws CompassException {

@@ -16,8 +16,6 @@
 
 package org.compass.core;
 
-import org.compass.core.util.Parameter;
-
 /**
  * Allows the application to define units of work, while maintaining abstraction
  * from the underlying transaction implementation (eg. JTA, Local).
@@ -28,26 +26,6 @@ import org.compass.core.util.Parameter;
  * @author kimchy
  */
 public interface CompassTransaction {
-
-	public static final class TransactionIsolation extends Parameter {
-
-		private static final long serialVersionUID = -1263760938029345643L;
-
-		private TransactionIsolation(String name) {
-			super(name);
-		}
-
-		public static final TransactionIsolation READ_COMMITTED = new TransactionIsolation("READ_COMMITTED");
-
-		public static final TransactionIsolation SERIALIZABLE = new TransactionIsolation("SERIALIZABLE");
-
-        /**
-         * @deprecated use lucene transaction instead
-         */
-        public static final TransactionIsolation BATCH_INSERT = new TransactionIsolation("BATCH_INSERT");
-
-        public static final TransactionIsolation LUCENE = new TransactionIsolation("LUCENE");
-	}
 
 	/**
 	 * Ends the current unit of work. The transaction will be commited only if

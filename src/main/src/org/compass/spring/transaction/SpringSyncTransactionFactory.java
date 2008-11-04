@@ -23,7 +23,6 @@ import java.util.Map;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransactionFactory;
@@ -64,12 +63,11 @@ public class SpringSyncTransactionFactory extends AbstractTransactionFactory {
 //        return ExistingSpringTxCompassHelper.isExistingTransaction(transactionManager);
     }
 
-    protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-                                                            TransactionIsolation transactionIsolation) throws CompassException {
+    protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session) throws CompassException {
         SpringSyncTransaction tr = new SpringSyncTransaction(this);
         // transaction manager might be null, we rely then on the fact that the
         // transaction started before
-        tr.begin(transactionManager, session, transactionIsolation, commitBeforeCompletion);
+        tr.begin(transactionManager, session, commitBeforeCompletion);
         return tr;
     }
 

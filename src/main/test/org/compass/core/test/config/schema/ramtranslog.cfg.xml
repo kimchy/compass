@@ -8,8 +8,10 @@
             <file path="target/test-index"/>
         </connection>
 
-        <transaction isolation="batch_insert">
-            <readCommittedSettings transLog="ram://" optimizeTransLog="true" />
+        <transaction processor="lucene">
+            <processors>
+                <readCommitted transLog="ram://" optimizeTransLog="true" />
+            </processors>
         </transaction>
     </compass>
 

@@ -16,10 +16,8 @@
 
 package org.compass.core.test.engine.lucene;
 
-import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessor;
 
 /**
  * @author kimchy
@@ -29,12 +27,13 @@ public class UnCompoundFSRamTransLuceneReadCommittedTransactionEngineTests exten
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
         settings.setBooleanSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, false);
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
         return settings;
     }
 
     public void testSettings() {
-        assertEquals(ReadCommittedTransactionProcessor.class.getName(), getSettings().getSetting(
-                CompassEnvironment.Transaction.ISOLATION_CLASS));
+        assertEquals(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, getSettings().getSetting(
+                LuceneEnvironment.Transaction.Processor.TYPE));
     }
 
 }

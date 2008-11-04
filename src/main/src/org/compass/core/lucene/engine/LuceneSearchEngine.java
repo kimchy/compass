@@ -19,7 +19,6 @@ package org.compass.core.lucene.engine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
@@ -33,12 +32,11 @@ import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.engine.SearchEngineTermFrequencies;
 import org.compass.core.engine.event.SearchEngineEventManager;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.transaction.TransactionProcessor;
-import org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessor;
-import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessor;
-import org.compass.core.lucene.engine.transaction.serializable.SerializableTransactionProcessor;
+import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalResource;
@@ -110,47 +108,9 @@ public class LuceneSearchEngine implements SearchEngine {
             throw new SearchEngineException("Transaction already started, why start it again?");
         }
 
-        Class transactionIsolationClass = searchEngineFactory.getLuceneSettings().getTransactionIsolationClass();
-        if (transactionIsolationClass != null) {
-            transactionState = NOT_STARTED;
-            try {
-                transactionProcessor = (TransactionProcessor) transactionIsolationClass.newInstance();
-            } catch (Exception e) {
-                throw new SearchEngineException("Failed to create an instance for transactionProcessor ["
-                        + transactionIsolationClass.getName() + "]", e);
-            }
-            transactionProcessor.configure(this);
-            eventManager.beforeBeginTransaction();
-            transactionProcessor.begin();
-            eventManager.afterBeginTransaction();
-            transactionState = STARTED;
-            return;
-        }
-        TransactionIsolation transactionIsolation = searchEngineFactory.getLuceneSettings().getTransactionIsolation();
-        begin(transactionIsolation);
-    }
-
-    public void begin(TransactionIsolation transactionIsolation) throws SearchEngineException {
-        if (transactionState == STARTED) {
-            throw new SearchEngineException("Transaction already started, why start it again?");
-        }
-        transactionState = NOT_STARTED;
-        this.onlyReadOnlyOperations = true;
-        if (transactionIsolation == null) {
-            transactionIsolation = searchEngineFactory.getLuceneSettings().getTransactionIsolation();
-        }
-        if (transactionIsolation == TransactionIsolation.READ_COMMITTED) {
-            transactionProcessor = new ReadCommittedTransactionProcessor();
-        } else if (transactionIsolation == TransactionIsolation.BATCH_INSERT) {
-            transactionProcessor = new LuceneTransactionProcessor();
-        } else if (transactionIsolation == TransactionIsolation.LUCENE) {
-            transactionProcessor = new LuceneTransactionProcessor();
-        } else if (transactionIsolation == TransactionIsolation.SERIALIZABLE) {
-            transactionProcessor = new SerializableTransactionProcessor();
-        } else {
-            throw new IllegalStateException("Internal problem in Compass, failed to resolve transactionProcessor isolation [" + transactionIsolation + "]");
-        }
-        transactionProcessor.configure(this);
+        TransactionProcessorFactory transactionProcessorFactory = searchEngineFactory.getTransactionProcessorManager()
+                .getProcessorFactory(runtimeSettings.getSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME));
+        transactionProcessor = transactionProcessorFactory.create(this);
         eventManager.beforeBeginTransaction();
         transactionProcessor.begin();
         eventManager.afterBeginTransaction();
@@ -396,6 +356,10 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public LuceneSearchEngineFactory getSearchEngineFactory() {
         return searchEngineFactory;
+    }
+
+    public TransactionProcessor getTransactionProcessor() {
+        return transactionProcessor;
     }
 
     public CompassSettings getSettings() {

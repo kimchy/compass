@@ -827,10 +827,10 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="cacheInvalidationInterval" type="xsd:integer" use="optional">
+        <xsd:attribute name="cacheInvalidationInterval" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    Sets how often (in milliseconds) the index manager will check if the index cache needs to be
+                    Sets how often (in time notation) the index manager will check if the index cache needs to be
                     invalidated. Defaults to 5000. Setting it to 0 means that the cache will check if it needs to be
                     invalidated all the time. Setting it to -1 means that the cache will never check if it needs to be
                     invalidated, note, that it is perfectly fine if a single instance is manipulating the index. It
@@ -846,11 +846,12 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="indexManagerScheduleInterval" type="xsd:integer" use="optional">
+        <xsd:attribute name="indexManagerScheduleInterval" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
-                    The index manager schedule interval (in seconds) where different actions related to index manager
-                    will happen (such as global cache interval checks).
+                    The index manager schedule interval (in time notation) where different actions related to index
+                    manager will happen (such as global cache interval checks). Set to -1 in order to disable it.
+                    Defaults to 60 seconds.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
@@ -1056,28 +1057,34 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:choice>
-                <xsd:element name="readCommittedSettings" minOccurs="0">
-                    <xsd:annotation>
-                        <xsd:documentation>
-                            Specialized settings for read_committed isolation level.
-                        </xsd:documentation>
-                    </xsd:annotation>
+                <xsd:element name="processors" minOccurs="0">
                     <xsd:complexType>
-                        <xsd:attribute name="transLog" use="optional" default="ram://">
-                            <xsd:annotation>
-                                <xsd:documentation>
-                                    The transactional log connection. Can be either ram:// or file://.
-                                </xsd:documentation>
-                            </xsd:annotation>
-                        </xsd:attribute>
-                        <xsd:attribute name="optimizeTransLog" use="optional" default="true">
-                            <xsd:annotation>
-                                <xsd:documentation>
-                                    Should the transactional log be optimized before added to the actual index. Defaults
-                                    to true.
-                                </xsd:documentation>
-                            </xsd:annotation>
-                        </xsd:attribute>
+                        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                            <xsd:element name="readCommitted" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Specialized settings for read_committed isolation level.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="transLog" use="optional" default="ram://">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The transactional log connection. Can be either ram:// or file://.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="optimizeTransLog" use="optional" default="true">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Should the transactional log be optimized before added to the actual index. Defaults
+                                                to true.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:choice>
                     </xsd:complexType>
                 </xsd:element>
             </xsd:choice>
@@ -1198,7 +1205,7 @@
                 </xsd:restriction>
             </xsd:simpleType>
         </xsd:attribute>
-        <xsd:attribute name="isolation" use="optional" default="read_committed">
+        <xsd:attribute name="processor" use="optional" default="read_committed">
             <xsd:annotation>
                 <xsd:documentation>
                     Transaction isolation levels that Compass supports.
@@ -1213,26 +1220,11 @@
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:enumeration>
-                    <xsd:enumeration value="read_only_read_committed">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                The same read committed from data base systems. Marks the transaciton as read only,
-                                which helps when integrating with transaction strageties that support read only flag.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:enumeration>
                     <xsd:enumeration value="serializable">
                         <xsd:annotation>
                             <xsd:documentation>
                                 The same as serializable from data base systems. Performance killer, basically results
                                 in transactions executed sequentially.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:enumeration>
-                    <xsd:enumeration value="batch_insert">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                Same as Lucene transaction isolation level.
                             </xsd:documentation>
                         </xsd:annotation>
                     </xsd:enumeration>
@@ -1375,7 +1367,7 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="bucketSize" type="xsd:positiveInteger" use="optional">
+        <xsd:attribute name="bucketSize" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The bucket size of the index.
@@ -1451,7 +1443,7 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="bufferSize" type="xsd:positiveInteger" use="optional">
+        <xsd:attribute name="bufferSize" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
                     The buffer size of the index.

@@ -16,7 +16,6 @@
 
 package org.compass.core.engine;
 
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Resource;
 
 /**
@@ -57,7 +56,7 @@ public interface SearchEngine {
      * @see #setReadOnly()
      */
     boolean isReadOnly();
-    
+
     /**
      * Returns <code>true</code> if the search engine was used (up until now)
      * for read only operations.
@@ -69,12 +68,6 @@ public interface SearchEngine {
      * isolation.
      */
     void begin() throws SearchEngineException;
-
-    /**
-     * Begins the search engine transaction using the given transaction
-     * isolation.
-     */
-    void begin(TransactionIsolation transactionIsolation) throws SearchEngineException;
 
     /**
      * Prepares the transaction for a commit. The first phase of a two phase

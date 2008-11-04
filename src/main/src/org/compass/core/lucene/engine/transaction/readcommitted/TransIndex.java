@@ -71,7 +71,7 @@ public class TransIndex implements CompassConfigurable {
 
     public void configure(CompassSettings settings) throws CompassException {
         try {
-            String transLogConnection = settings.getSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, "ram://");
+            String transLogConnection = settings.getSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION, "ram://");
             if ("ram://".equals(transLogConnection)) {
                 directory = new RAMDirectory();
             } else {
@@ -90,7 +90,7 @@ public class TransIndex implements CompassConfigurable {
             indexWriter = searchEngineFactory.getLuceneIndexManager().openIndexWriter(settings, directory, true, true,
                     new KeepOnlyLastCommitDeletionPolicy());
             // TODO lucene23 we probably want to set a merge policy that will perform no merges
-            optimize = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG, true);
+            optimize = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG, true);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open transactional index for sub index [" + subIndex + "]", e);
         }

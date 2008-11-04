@@ -41,6 +41,7 @@ import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
@@ -71,6 +72,10 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
     private BitSetByAliasFilter filter;
 
     private Map<String, LuceneIndexHolder> indexHoldersBySubIndex = new HashMap<String, LuceneIndexHolder>();
+
+    public ReadCommittedTransactionProcessor(LuceneSearchEngine searchEngine) {
+        super(searchEngine);
+    }
 
     protected void doBegin() throws SearchEngineException {
         this.transIndexManager = new TransIndexManager(searchEngine.getSearchEngineFactory());

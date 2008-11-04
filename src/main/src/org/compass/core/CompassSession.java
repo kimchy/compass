@@ -16,7 +16,6 @@
 
 package org.compass.core;
 
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassSettings;
 
 /**
@@ -90,22 +89,6 @@ public interface CompassSession extends CompassOperations {
      * @see CompassTransaction
      */
     CompassTransaction beginTransaction() throws CompassException;
-
-    /**
-     * Begin a unit of work and return the associated CompassTranscation object.
-     * If a new underlying transaction is required, begin the transaction.
-     * Otherwise continue the new work in the context of the existing underlying
-     * transaction. The class of the returned CompassTransaction object is
-     * determined by the property <code>compass.transaction.factory</code>.
-     * <p>
-     * Also accepts the transcation isolation of the transaction.
-     *
-     * @param transactionIsolation
-     * @return a CompassTransaction instance
-     * @throws CompassException
-     * @see CompassTransaction
-     */
-    CompassTransaction beginTransaction(TransactionIsolation transactionIsolation) throws CompassException;
 
     /**
      * Begins a unit of work using a Compass local transaction. Very handy when using

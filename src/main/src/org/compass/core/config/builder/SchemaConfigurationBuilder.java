@@ -381,7 +381,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
 
     public void bindTransaction(Element ele, CompassConfiguration config) {
         CompassSettings settings = config.getSettings();
-        settings.setSetting(CompassEnvironment.Transaction.ISOLATION, getElementAttribute(ele, "isolation"));
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, getElementAttribute(ele, "processor"));
         settings.setSetting(CompassEnvironment.Transaction.FACTORY, getElementAttribute(ele, "factory"));
         settings.setSetting(CompassEnvironment.Transaction.COMMIT_BEFORE_COMPLETION, getElementAttribute(ele, "commitBeforeCompletion"));
         settings.setSetting(LuceneEnvironment.Transaction.LOCK_TIMEOUT, getElementAttribute(ele, "lockTimeout"));
@@ -395,11 +395,15 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, getElementAttribute(jtaSettingsEle, "managerLookup"));
             settings.setSetting(CompassEnvironment.Transaction.MANAGER_LOOKUP, getElementAttribute(jtaSettingsEle, "managerLookupClass"));
         }
-        child = DomUtils.getChildElementsByTagName(ele, "readCommittedSettings", true);
-        if (child.size() == 1) {
-            Element readCommittedSettingsEle = (Element) child.get(0);
-            settings.setSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, getElementAttribute(readCommittedSettingsEle, "transLog"));
-            settings.setSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG, getElementAttribute(readCommittedSettingsEle, "optimizeTransLog"));
+        child = DomUtils.getChildElementsByTagName(ele, "processors", true);
+        for (Iterator it = child.iterator(); it.hasNext();) {
+            Element prEle = (Element) it.next();
+            List child1 = DomUtils.getChildElementsByTagName(prEle, "readCommitted", true);
+            if (child1.size() == 1) {
+                Element readCommittedSettingsEle = (Element) child1.get(0);
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION, getElementAttribute(readCommittedSettingsEle, "transLog"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG, getElementAttribute(readCommittedSettingsEle, "optimizeTransLog"));
+            }
         }
     }
 

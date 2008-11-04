@@ -5,6 +5,11 @@ VERSION 2.2.0 M1
 ================
 
 1. READ_ONLY_READ_COMMITTED transaction removed. CompassSession#setReadOnly() should be used instead.
+2. Major refactoring perfomed in transaction management paving the way for pluggable and more robust implementations.
+   What was knows as transaction isolations are now knows as Transaction Processor(s). The schema file configuration
+   of isolation has been renamed to processor. The readCommittedSettings has been renamed to readCommitted and should
+   be placed within processors tag.
+
 
 VERSION 2.1.0 GA (1 November, 2008)
 ===================================

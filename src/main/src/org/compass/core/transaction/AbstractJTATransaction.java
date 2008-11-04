@@ -56,8 +56,7 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
         this.ut = ut;
     }
 
-    public void begin(InternalCompassSession session, TransactionManager transactionManager,
-                      TransactionIsolation transactionIsolation) throws CompassException {
+    public void begin(InternalCompassSession session, TransactionManager transactionManager) throws CompassException {
 
         try {
             this.session = session;
@@ -66,9 +65,9 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
             if (newTransaction) {
                 if (log.isDebugEnabled()) {
                     log.debug("Beginning new JTA transaction, and a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
+                            + Thread.currentThread().getName() + "]");
                 }
-                session.getSearchEngine().begin(transactionIsolation);
+                session.getSearchEngine().begin();
 
                 int timeout = session.getSettings().getSettingAsInt(CompassEnvironment.Transaction.TRANSACTION_TIMEOUT, -1);
                 if (timeout != -1) {
@@ -77,10 +76,10 @@ public abstract class AbstractJTATransaction extends AbstractTransaction {
                 ut.begin();
             } else {
                 // joining an exisiting transaction
-                session.getSearchEngine().begin(transactionIsolation);
+                session.getSearchEngine().begin();
                 if (log.isDebugEnabled()) {
                     log.debug("Joining an existing JTA transaction, starting a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "] and status [" + ut.getStatus() + "]");
+                            + Thread.currentThread().getName() + "] with status [" + ut.getStatus() + "]");
                 }
             }
             javax.transaction.Transaction tx = transactionManager.getTransaction();

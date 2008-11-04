@@ -17,7 +17,6 @@
 package org.compass.core.transaction;
 
 import org.compass.core.CompassException;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
@@ -28,10 +27,9 @@ import org.compass.core.spi.InternalCompassSession;
  */
 public class JTASyncTransactionFactory extends AbstractJTATransactionFactory {
 
-    public InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-                                                         TransactionIsolation transactionIsolation) throws CompassException {
+    public InternalCompassTransaction doBeginTransaction(InternalCompassSession session) throws CompassException {
         JTASyncTransaction tx = new JTASyncTransaction(getUserTransaction(), commitBeforeCompletion, this);
-        tx.begin(session, getTransactionManager(), transactionIsolation);
+        tx.begin(session, getTransactionManager());
         return tx;
     }
 

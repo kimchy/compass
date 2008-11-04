@@ -8,7 +8,7 @@
             <file path="target/test-index-index"/>
         </connection>
 
-        <transaction factory="org.compass.core.transaction.JTASyncTransactionFactory" isolation="batch_insert" />
+        <transaction factory="org.compass.core.transaction.JTASyncTransactionFactory" processor="lucene" />
 
         <converters>
             <converter name="date" type="org.compass.core.converter.basic.DateConverter">

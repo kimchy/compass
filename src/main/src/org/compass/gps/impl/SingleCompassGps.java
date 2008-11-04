@@ -24,13 +24,10 @@ import org.compass.core.Compass;
 import org.compass.core.CompassCallback;
 import org.compass.core.CompassException;
 import org.compass.core.CompassTemplate;
-import org.compass.core.CompassTransaction;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.events.RebuildEventListener;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
@@ -41,12 +38,6 @@ import org.compass.gps.IndexPlan;
  * <p>A {@link org.compass.gps.CompassGps} implementation that holds a
  * single <code>Compass</code> instance. The <code>Compass</code> instance
  * is used for both the index operation and the mirror operation.
- *
- * <p>When executing the mirror operation, the implementation will not use the
- * configured transaction isolation, but will use the
- * {@link #setIndexTransactionIsolation(CompassTransaction.TransactionIsolation)}
- * transaction isolation, which defaults to <code>lucene</code>. Cascading
- * will also be disabled.
  *
  * @author kimchy
  */
@@ -59,8 +50,6 @@ public class SingleCompassGps extends AbstractCompassGps {
     private volatile Compass indexCompass;
 
     private volatile CompassTemplate indexCompassTemplate;
-
-    private volatile CompassTransaction.TransactionIsolation indexTransactionIsolation = CompassTransaction.TransactionIsolation.LUCENE;
 
     private Map<String, Object> indexSettings;
 
@@ -78,14 +67,6 @@ public class SingleCompassGps extends AbstractCompassGps {
         if (compass == null) {
             throw new IllegalArgumentException("Must set the compass property");
         }
-        TransactionIsolation defaultIsolation = ((LuceneSearchEngineFactory) ((InternalCompass) compass)
-                .getSearchEngineFactory()).getLuceneSettings().getTransactionIsolation();
-        if (defaultIsolation == TransactionIsolation.BATCH_INSERT) {
-            throw new IllegalArgumentException(
-                    "The compass instance is configured with transaction isolation of batch_insert"
-                            + ", there is no need since this CompassGps will execute the index operation with batch_index automatically, "
-                            + " and mirroring with the configured transaction isolation");
-        }
         indexCompassSettings = new CompassSettings();
         if (indexSettings != null) {
             indexCompassSettings.addSettings(indexSettings);
@@ -102,6 +83,9 @@ public class SingleCompassGps extends AbstractCompassGps {
         }
         if (indexCompassSettings.getSetting(CompassEnvironment.Cascade.DISABLE) == null) {
             indexCompassSettings.setBooleanSetting(CompassEnvironment.Cascade.DISABLE, true);
+        }
+        if (indexCompassSettings.getSetting(LuceneEnvironment.Transaction.Processor.TYPE) == null) {
+            indexCompassSettings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.Lucene.NAME);
         }
         indexCompassSettings.setBooleanSetting(CompassEnvironment.Transaction.DISABLE_AUTO_JOIN_SESSION, true);
         this.compassTemplate = new CompassTemplate(compass);
@@ -158,7 +142,7 @@ public class SingleCompassGps extends AbstractCompassGps {
         if (indexCompassTemplate == null) {
             throw new IllegalStateException("executeForIndex is called outside of an index operation");
         }
-        indexCompassTemplate.execute(indexTransactionIsolation, callback);
+        indexCompassTemplate.execute(callback);
     }
 
     public void executeForMirror(CompassCallback callback) throws CompassException {
@@ -208,14 +192,6 @@ public class SingleCompassGps extends AbstractCompassGps {
      */
     public void setCompass(Compass compass) {
         this.compass = compass;
-    }
-
-    /**
-     * Sets the transaction isolation for the clones compass used for the index
-     * process.
-     */
-    public void setIndexTransactionIsolation(CompassTransaction.TransactionIsolation indexTransactionIsolation) {
-        this.indexTransactionIsolation = indexTransactionIsolation;
     }
 
     /**

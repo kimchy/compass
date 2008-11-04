@@ -22,7 +22,6 @@ import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.spi.InternalCompassSession;
@@ -59,19 +58,19 @@ public abstract class AbstractTransactionFactory implements TransactionFactory {
         if (!isWithinExistingTransaction(session)) {
             return false;
         }
-        beginTransaction(session, null);
+        beginTransaction(session);
         return true;
     }
 
     protected abstract boolean isWithinExistingTransaction(InternalCompassSession session) throws CompassException;
 
-    public CompassTransaction beginTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation)
+    public CompassTransaction beginTransaction(InternalCompassSession session)
             throws CompassException {
 
         CompassSession boundSession = getTransactionBoundSession();
         InternalCompassTransaction tr;
         if (boundSession == null || boundSession != session) {
-            tr = doBeginTransaction(session, transactionIsolation);
+            tr = doBeginTransaction(session);
             doBindSessionToTransaction(tr, session);
         } else {
             tr = doContinueTransaction(session);
@@ -80,8 +79,7 @@ public abstract class AbstractTransactionFactory implements TransactionFactory {
         return tr;
     }
 
-    protected abstract InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-                                                                     TransactionIsolation transactionIsolation) throws CompassException;
+    protected abstract InternalCompassTransaction doBeginTransaction(InternalCompassSession session) throws CompassException;
 
     protected abstract InternalCompassTransaction doContinueTransaction(InternalCompassSession session)
             throws CompassException;

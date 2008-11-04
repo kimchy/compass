@@ -45,6 +45,7 @@ import org.compass.core.lucene.engine.spellcheck.DefaultLuceneSpellCheckManager;
 import org.compass.core.lucene.engine.spellcheck.InternalLuceneSearchEngineSpellCheckManager;
 import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
+import org.compass.core.lucene.engine.transaction.TransactionProcessorManager;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.util.ClassUtils;
@@ -73,6 +74,8 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
     private ExecutorManager executorManager;
 
     private TransactionContext transactionContext;
+
+    private TransactionProcessorManager transactionProcessorManager;
 
     private LuceneAnalyzerManager analyzerManager;
 
@@ -161,6 +164,9 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
         // build the similarity manager
         similarityManager = new LuceneSimilarityManager();
         similarityManager.configure(settings);
+
+        // build the transaction processor manager
+        transactionProcessorManager = new TransactionProcessorManager(this);
     }
 
     public void start() {
@@ -217,6 +223,10 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
     public LuceneSearchEngineIndexManager getLuceneIndexManager() {
         return this.indexManager;
+    }
+
+    public TransactionProcessorManager getTransactionProcessorManager() {
+        return this.transactionProcessorManager;
     }
 
     public LuceneSettings getLuceneSettings() {

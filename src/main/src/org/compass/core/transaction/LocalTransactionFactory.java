@@ -19,10 +19,10 @@ package org.compass.core.transaction;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.spi.InternalCompassSession;
@@ -38,7 +38,7 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
      * the possibility for multiple Compass instances being used during execution
      * of the given thread.
      */
-    private static final ThreadLocal context = new ThreadLocal();
+    private static final ThreadLocal<Map<Compass, CompassSession>> context = new ThreadLocal<Map<Compass, CompassSession>>();
 
     private boolean disableThreadBoundTx = false;
 
@@ -50,15 +50,14 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
         return getTransactionBoundSession() == session;
     }
 
-    protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-                                                            TransactionIsolation transactionIsolation) throws CompassException {
-        LocalTransaction tx = new LocalTransaction(session, this, transactionIsolation);
+    protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session) throws CompassException {
+        LocalTransaction tx = new LocalTransaction(session, this);
         tx.begin();
         return tx;
     }
 
     protected InternalCompassTransaction doContinueTransaction(InternalCompassSession session) throws CompassException {
-        LocalTransaction tx = new LocalTransaction(session, this, null);
+        LocalTransaction tx = new LocalTransaction(session, this);
         tx.join(session);
         return tx;
     }
@@ -79,7 +78,7 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
         if (disableThreadBoundTx) {
             return;
         }
-        Map sessionMap = sessionMap();
+        Map<Compass, CompassSession> sessionMap = sessionMap();
         if (sessionMap != null) {
             sessionMap.remove(compass);
             if (sessionMap.isEmpty()) {
@@ -92,16 +91,16 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
         if (disableThreadBoundTx) {
             return;
         }
-        Map sessionMap = sessionMap();
+        Map<Compass, CompassSession> sessionMap = sessionMap();
         if (sessionMap == null) {
-            sessionMap = new HashMap();
+            sessionMap = new HashMap<Compass, CompassSession>();
             context.set(sessionMap);
         }
         sessionMap.put(compass, session);
     }
 
-    private static Map sessionMap() {
-        return (Map) context.get();
+    private static Map<Compass, CompassSession> sessionMap() {
+        return context.get();
     }
 
 }

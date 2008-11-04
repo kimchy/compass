@@ -20,22 +20,18 @@ import org.compass.core.Compass;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
- * 
  * @author kimchy
- * 
  */
 
 public interface TransactionFactory {
 
-	void configure(Compass compass, CompassSettings settings) throws CompassException;
+    void configure(Compass compass, CompassSettings settings) throws CompassException;
 
-	CompassTransaction beginTransaction(InternalCompassSession session, TransactionIsolation transactionIsolation)
-			throws CompassException;
+    CompassTransaction beginTransaction(InternalCompassSession session) throws CompassException;
 
     /**
      * Retuns a transaction bound session, or <code>null</code> if none is found.

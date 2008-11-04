@@ -37,6 +37,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
@@ -60,6 +61,10 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
     private static final Log log = LogFactory.getLog(LuceneTransactionProcessor.class);
 
     private Map<String, IndexWriter> indexWriterBySubIndex = new HashMap<String, IndexWriter>();
+
+    public LuceneTransactionProcessor(LuceneSearchEngine searchEngine) {
+        super(searchEngine);
+    }
 
     protected void doBegin() throws SearchEngineException {
         // nothing to do here

@@ -64,7 +64,7 @@ public class HibernateSyncTransaction extends AbstractTransaction {
         this.commitBeforeCompletion = commitBeforeCompletion;
     }
 
-    public void begin(InternalCompassSession session, TransactionIsolation transactionIsolation) throws CompassException {
+    public void begin(InternalCompassSession session) throws CompassException {
         this.session = session;
         try {
             controllingNewTransaction = true;
@@ -73,16 +73,16 @@ public class HibernateSyncTransaction extends AbstractTransaction {
             if (newTransaction) {
                 if (log.isDebugEnabled()) {
                     log.debug("Beginning new Hibernate transaction, and a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
+                            + Thread.currentThread().getName() + "]");
                 }
-                session.getSearchEngine().begin(transactionIsolation);
+                session.getSearchEngine().begin();
                 transaction.begin();
             } else {
                 // joining an exisiting transaction
-                session.getSearchEngine().begin(transactionIsolation);
+                session.getSearchEngine().begin();
                 if (log.isDebugEnabled()) {
                     log.debug("Joining an existing Hibernate transaction, starting a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
+                            + Thread.currentThread().getName() + "]");
                 }
             }
             transaction.registerSynchronization(new HibernateTransactionSynchronization(session, transaction, newTransaction, commitBeforeCompletion, transactionFactory));

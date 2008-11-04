@@ -26,12 +26,19 @@ import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
+import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessor;
 import org.compass.core.spi.InternalCompass;
 
 /**
  * @author kimchy
  */
 public abstract class AbstractReadCommittedTransactionTests extends AbstractTransactionEngineTests {
+
+    public void testSearchEngineTransactionProcessorInstance() {
+        getSearchEngine().begin();
+        assertTrue(getLuceneSearchEngine().getTransactionProcessor() instanceof ReadCommittedTransactionProcessor);
+        getSearchEngine().rollback();
+    }
 
     public void testCreateResourceReadCommitted() {
         getSearchEngine().begin();

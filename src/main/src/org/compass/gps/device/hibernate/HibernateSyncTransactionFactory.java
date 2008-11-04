@@ -22,7 +22,6 @@ import java.util.Map;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.transaction.AbstractTransactionFactory;
@@ -48,20 +47,20 @@ import org.hibernate.engine.SessionImplementor;
  */
 public class HibernateSyncTransactionFactory extends AbstractTransactionFactory {
 
-    private static ThreadLocal sessionFactoryHolder = new ThreadLocal();
+    private static ThreadLocal<SessionFactory> sessionFactoryHolder = new ThreadLocal<SessionFactory>();
 
     private static String sessionFactoryKey = HibernateSyncTransactionFactory.class.getName();
 
     private SessionFactory sessionFactory;
 
-    private transient Map currentSessionMap = new Hashtable();
+    private transient Map<Transaction, CompassSession> currentSessionMap = new Hashtable<Transaction, CompassSession>();
 
     public static void setSessionFactory(SessionFactory sessionFactory) {
         sessionFactoryHolder.set(sessionFactory);
     }
 
     protected void doConfigure(CompassSettings settings) {
-        this.sessionFactory = (SessionFactory) sessionFactoryHolder.get();
+        this.sessionFactory = sessionFactoryHolder.get();
         if (sessionFactory == null) {
             sessionFactory = (SessionFactory) settings.getRegistry(sessionFactoryKey);
         }
@@ -76,10 +75,9 @@ public class HibernateSyncTransactionFactory extends AbstractTransactionFactory 
         return ((SessionImplementor) sessionFactory.getCurrentSession()).isTransactionInProgress();
     }
 
-    protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session,
-                                                            TransactionIsolation transactionIsolation) throws CompassException {
+    protected InternalCompassTransaction doBeginTransaction(InternalCompassSession session) throws CompassException {
         HibernateSyncTransaction tr = new HibernateSyncTransaction(sessionFactory, commitBeforeCompletion, this);
-        tr.begin(session, transactionIsolation);
+        tr.begin(session);
         return tr;
     }
 
@@ -95,7 +93,7 @@ public class HibernateSyncTransactionFactory extends AbstractTransactionFactory 
         if (!((SessionImplementor) session).isTransactionInProgress()) {
             return null;
         }
-        return (CompassSession) currentSessionMap.get(session.getTransaction());
+        return currentSessionMap.get(session.getTransaction());
     }
 
     protected void doBindSessionToTransaction(CompassTransaction tr, CompassSession session) throws CompassException {

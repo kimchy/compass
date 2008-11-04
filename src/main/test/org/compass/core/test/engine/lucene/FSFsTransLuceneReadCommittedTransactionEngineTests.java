@@ -19,7 +19,6 @@ package org.compass.core.test.engine.lucene;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessor;
 
 /**
  * @author kimchy
@@ -29,14 +28,14 @@ public class FSFsTransLuceneReadCommittedTransactionEngineTests extends Abstract
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
         settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
-        settings.setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, ReadCommittedTransactionProcessor.class.getName());
-        settings.setSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, "file://target/test-index-trans");
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION, "file://target/test-index-trans");
         return settings;
     }
 
     public void testSettings() {
-        assertEquals(ReadCommittedTransactionProcessor.class.getName(), getSettings().getSetting(
-                CompassEnvironment.Transaction.ISOLATION_CLASS));
+        assertEquals(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, getSettings().getSetting(
+                LuceneEnvironment.Transaction.Processor.TYPE));
     }
 
 }

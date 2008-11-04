@@ -45,15 +45,11 @@ public class LocalTransaction extends AbstractTransaction {
 
     private InternalCompass compass;
 
-    private TransactionIsolation transactionIsolation;
-
-    public LocalTransaction(InternalCompassSession session, TransactionFactory transactionFactory,
-                            TransactionIsolation transactionIsolation) {
+    public LocalTransaction(InternalCompassSession session, TransactionFactory transactionFactory) {
         super(transactionFactory);
         state = UNKNOWN;
         this.session = session;
-        this.compass = (InternalCompass) session.getCompass();
-        this.transactionIsolation = transactionIsolation;
+        this.compass = session.getCompass();
     }
 
     public void join(InternalCompassSession session) throws CompassException {
@@ -67,10 +63,9 @@ public class LocalTransaction extends AbstractTransaction {
     public void begin() throws CompassException {
         if (log.isDebugEnabled()) {
             log.debug("Starting a new local transcation on thread [" + Thread.currentThread().getName() +
-                    "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) +
-                    "]  with isolation [" + transactionIsolation + "]");
+                    "] Compass [" + System.identityHashCode(compass) + "] Session [" + System.identityHashCode(session) + "]");
         }
-        session.getSearchEngine().begin(transactionIsolation);
+        session.getSearchEngine().begin();
         state = STARTED;
     }
 

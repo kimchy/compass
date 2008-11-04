@@ -17,21 +17,27 @@
 package org.compass.core.test.engine.lucene;
 
 import org.compass.core.Resource;
-import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessor;
 
 public abstract class AbstractLuceneTransactionEngineTests extends AbstractTransactionEngineTests {
 
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
-        settings.setSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, LuceneTransactionProcessor.class.getName());
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.Lucene.NAME);
         return settings;
     }
 
     public void testSettings() {
-        assertEquals(LuceneTransactionProcessor.class.getName(), getSettings().getSetting(
-                CompassEnvironment.Transaction.ISOLATION_CLASS));
+        assertEquals(LuceneEnvironment.Transaction.Processor.Lucene.NAME, getSettings().getSetting(
+                LuceneEnvironment.Transaction.Processor.TYPE));
+    }
+
+    public void testSearchEngineTransactionProcessorInstance() {
+        getSearchEngine().begin();
+        assertTrue(getLuceneSearchEngine().getTransactionProcessor() instanceof LuceneTransactionProcessor);
+        getSearchEngine().rollback();
     }
 
     public void testDualCreates() throws Exception {

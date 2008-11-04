@@ -100,8 +100,8 @@ public class SchemaSimpleTests extends TestCase {
 
         CompassSettings settings = conf.getSettings();
 
-        assertEquals("ram://", settings.getSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION));
-        assertEquals("true", settings.getSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG));
+        assertEquals("ram://", settings.getSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION));
+        assertEquals("true", settings.getSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG));
     }
 
     public void testFsTransLog() throws Exception {
@@ -110,8 +110,8 @@ public class SchemaSimpleTests extends TestCase {
 
         CompassSettings settings = conf.getSettings();
 
-        assertEquals("file://", settings.getSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION));
-        assertEquals("false", settings.getSetting(LuceneEnvironment.Transaction.ReadCommittedTransLog.OPTIMIZE_TRANS_LOG));
+        assertEquals("file://", settings.getSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION));
+        assertEquals("false", settings.getSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG));
     }
 
     public void testQueryParser() throws Exception {

@@ -489,67 +489,6 @@ public class CompassEnvironment {
         public static final String CACHE_USER_TRANSACTION = "compass.transaction.cacheUserTransaction";
 
         /**
-         * The transaction isolation, can be one of the 4 constants values.
-         */
-        public static final String ISOLATION = "compass.transaction.isolation";
-
-        /**
-         * The transaction isolation class name that will be used as the
-         * transaction. Overrides the TRANSACTION_ISOLATION if set.
-         */
-        public static final String ISOLATION_CLASS = "compass.transaction.isolation.class";
-
-        /**
-         * Used as the value for the TRANSACTION_ISOLATION setting. Configures the
-         * transaction isolation level to have no support for transactions.
-         */
-        public static final String ISOLATION_NONE = "none";
-
-        /**
-         * Used as the value for the TRANSACTION_ISOLATION setting. Configures the
-         * transaction isolation level to have a read uncommitted support for
-         * transactions. Dirty reads, non-repeatable reads and phantom reads can
-         * occur.
-         */
-        public static final String ISOLATION_READ_UNCOMMITTED = "read_uncommitted";
-
-        /**
-         * Used as the value for the TRANSACTION_ISOLATION setting. Configures the
-         * transaction isolation level to have a read committed support for
-         * transactions. Dirty reads are prevented, non-repeatable reads and phantom
-         * reads can occur.
-         */
-        public static final String ISOLATION_READ_COMMITTED = "read_committed";
-
-        /**
-         * Used as the value for the TRANSACTION_ISOLATION setting. Configures the
-         * transaction isolation level to have a repeatable read support for
-         * transactions. Dirty reads and non-repeatable reads are prevented, phantom
-         * reads can occur.
-         */
-        public static final String ISOLATION_REPEATABLE_READ = "repeatable_read";
-
-        /**
-         * Used as the value for the TRANSACTION_ISOLATION setting. Configures the
-         * transaction isolation level to have a serializable support for
-         * transactions. Dirty reads, non-repeatable reads and phantom reads are
-         * prevented.
-         */
-        public static final String ISOLATION_SERIALIZABLE = "serializable";
-
-        /**
-         * @deprecated Use LUCENE transaction isolation instead, defaults to it
-         */
-        public static final String ISOLATION_BATCH_INSERT = "batch_insert";
-
-        /**
-         * Used as the value for the TRANSACTION_ISOLATION setting. Configures the
-         * transaction isolation level to have a lucene isolation level allowing for
-         * fast Create/Update/Delete operations whild read/search operations won't
-         * "see" the operations done during the transaction.
-         */
-        public static final String ISOLATION_LUCENE = "lucene";
-        /**
          * When opening a session, Compass tries to automatically start a transaction
          * and join it. This might mean that transaction settings when running within
          * a managed environemnt won't take affect. The settings allows to disable

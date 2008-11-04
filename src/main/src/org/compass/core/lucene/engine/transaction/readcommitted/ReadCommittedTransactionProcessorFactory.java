@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.engine.lucene;
+package org.compass.core.lucene.engine.transaction.readcommitted;
 
-import org.compass.core.config.CompassEnvironment;
-import org.compass.core.config.CompassSettings;
+import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.transaction.TransactionProcessor;
+import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 
 /**
+ * A transaction processor factory that creates {@link ReadCommittedTransactionProcessor}
+ * instances.
+ *
  * @author kimchy
  */
-public class FSLuceneTransactionEngineTests extends AbstractLuceneTransactionEngineTests {
+public class ReadCommittedTransactionProcessorFactory implements TransactionProcessorFactory {
 
-    protected CompassSettings buildCompassSettings() {
-        CompassSettings settings = super.buildCompassSettings();
-        settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
-        return settings;
+    public TransactionProcessor create(LuceneSearchEngine searchEngine) {
+        return new ReadCommittedTransactionProcessor(searchEngine);
     }
 }

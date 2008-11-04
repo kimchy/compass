@@ -56,7 +56,9 @@
         </connection>
 
         <transaction>
-            <readCommittedSettings transLog="ram://" />
+            <processors>
+                <readCommitted transLog="ram://" />
+            </processors>
         </transaction>
 
         <cache>

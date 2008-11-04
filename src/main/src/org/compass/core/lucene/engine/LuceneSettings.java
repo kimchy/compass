@@ -21,13 +21,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.store.Lock;
-import org.compass.core.CompassTransaction.TransactionIsolation;
 import org.compass.core.Property;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.util.ClassUtils;
 
 /**
  * A helper methods that holds most of the Lucene specific properties, initlizes
@@ -56,10 +54,6 @@ public class LuceneSettings {
     private String aliasProperty;
 
     private String extendedAliasProperty;
-
-    private TransactionIsolation transactionIsolation;
-
-    private Class transactionIsolationClass;
 
     private int maxMergeDocs;
 
@@ -140,32 +134,6 @@ public class LuceneSettings {
         if (log.isDebugEnabled()) {
             log.debug("Using default search property [" + defaultSearchPropery + "]");
         }
-        // build the trasnaction
-        String transIsolationSetting = settings.getSetting(CompassEnvironment.Transaction.ISOLATION,
-                CompassEnvironment.Transaction.ISOLATION_READ_COMMITTED);
-        if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_NONE)) {
-            transactionIsolation = TransactionIsolation.READ_COMMITTED;
-        } else if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_READ_UNCOMMITTED)) {
-            transactionIsolation = TransactionIsolation.READ_COMMITTED;
-        } else if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_READ_COMMITTED)) {
-            transactionIsolation = TransactionIsolation.READ_COMMITTED;
-        } else if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_REPEATABLE_READ)) {
-            transactionIsolation = TransactionIsolation.READ_COMMITTED;
-        } else if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_SERIALIZABLE)) {
-            transactionIsolation = TransactionIsolation.SERIALIZABLE;
-        } else if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_BATCH_INSERT)) {
-            transactionIsolation = TransactionIsolation.BATCH_INSERT;
-        } else if (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_LUCENE)) {
-            transactionIsolation = TransactionIsolation.LUCENE;
-        }
-        String transIsolationClassSetting = settings.getSetting(CompassEnvironment.Transaction.ISOLATION_CLASS, null);
-        if (transIsolationClassSetting != null) {
-            try {
-                transactionIsolationClass = ClassUtils.forName(transIsolationClassSetting, settings.getClassLoader());
-            } catch (ClassNotFoundException e) {
-                throw new SearchEngineException("Can't find transaction class [" + transIsolationClassSetting + "]", e);
-            }
-        }
         // lucene specifics parameters
         transactionLockTimout = settings.getSettingAsLong(LuceneEnvironment.Transaction.LOCK_TIMEOUT, 10) * 1000;
         if (log.isDebugEnabled()) {
@@ -231,14 +199,6 @@ public class LuceneSettings {
 
     public String getExtendedAliasProperty() {
         return extendedAliasProperty;
-    }
-
-    public TransactionIsolation getTransactionIsolation() {
-        return transactionIsolation;
-    }
-
-    public Class getTransactionIsolationClass() {
-        return transactionIsolationClass;
     }
 
     public int getMaxMergeDocs() {

@@ -53,8 +53,7 @@ public class SpringSyncTransaction extends AbstractTransaction {
         super(transactionFactory);
     }
 
-    public void begin(PlatformTransactionManager transactionManager, InternalCompassSession session,
-                      TransactionIsolation transactionIsolation, boolean commitBeforeCompletion) {
+    public void begin(PlatformTransactionManager transactionManager, InternalCompassSession session, boolean commitBeforeCompletion) {
 
         this.session = session;
         this.transactionManager = transactionManager;
@@ -75,17 +74,17 @@ public class SpringSyncTransaction extends AbstractTransaction {
             status = transactionManager.getTransaction(transactionDefinition);
         }
 
-        session.getSearchEngine().begin(transactionIsolation);
+        session.getSearchEngine().begin();
 
         SpringTransactionSynchronization sync;
         if (transactionManager != null) {
             if (log.isDebugEnabled()) {
                 if (status.isNewTransaction()) {
                     log.debug("Beginning new Spring transaction, and a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
+                            + Thread.currentThread().getName() + "]");
                 } else {
                     log.debug("Joining Spring transaction, and starting a new compass transaction on thread ["
-                            + Thread.currentThread().getName() + "] with isolation [" + transactionIsolation + "]");
+                            + Thread.currentThread().getName() + "]");
                 }
             }
             sync = new SpringTransactionSynchronization(session, status.isNewTransaction(), commitBeforeCompletion, transactionFactory);

@@ -55,19 +55,19 @@ import org.compass.core.spi.ResourceKey;
  */
 public abstract class AbstractTransactionProcessor implements TransactionProcessor {
 
-    protected LuceneSearchEngine searchEngine;
+    protected final LuceneSearchEngine searchEngine;
 
-    protected LuceneSearchEngineIndexManager indexManager;
+    protected final LuceneSearchEngineIndexManager indexManager;
 
-    protected CompassMapping mapping;
+    protected final CompassMapping mapping;
 
-    protected LuceneAnalyzerManager analyzerManager;
+    protected final LuceneAnalyzerManager analyzerManager;
 
-    private ArrayList<LuceneDelegatedClose> delegateClose = new ArrayList<LuceneDelegatedClose>();
+    private final ArrayList<LuceneDelegatedClose> delegateClose = new ArrayList<LuceneDelegatedClose>();
 
     protected boolean dirty;
 
-    public void configure(LuceneSearchEngine searchEngine) {
+    protected AbstractTransactionProcessor(LuceneSearchEngine searchEngine) {
         this.searchEngine = searchEngine;
         this.indexManager = searchEngine.getSearchEngineFactory().getLuceneIndexManager();
         this.mapping = searchEngine.getSearchEngineFactory().getMapping();

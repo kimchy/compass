@@ -7,6 +7,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -19,15 +20,15 @@ public class FirstLevelCacheFactory implements CompassConfigurable {
     private Class firstLevelCacheClass;
 
     public void configure(CompassSettings settings) throws CompassException {
+        // TODO we need to create this based on some knowledge of the transaction processor to control it
         // create the first level cache based on the transaction isolation level
-        String transIsolationSetting = settings.getSetting(CompassEnvironment.Transaction.ISOLATION, null);
+        String transactionProcessorName = settings.getSetting(LuceneEnvironment.Transaction.Processor.TYPE, null);
 
-        if (transIsolationSetting != null
-                && (transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_BATCH_INSERT) || transIsolationSetting.equalsIgnoreCase(CompassEnvironment.Transaction.ISOLATION_LUCENE))) {
+        if (transactionProcessorName != null
+                && (transactionProcessorName.equalsIgnoreCase(LuceneEnvironment.Transaction.Processor.Lucene.NAME))) {
             firstLevelCacheClass = NullFirstLevelCache.class;
         } else {
-            String firstLevelCacheSetting = settings.getSetting(CompassEnvironment.Cache.FirstLevel.TYPE,
-                    DefaultFirstLevelCache.class.getName());
+            String firstLevelCacheSetting = settings.getSetting(CompassEnvironment.Cache.FirstLevel.TYPE, DefaultFirstLevelCache.class.getName());
             try {
                 firstLevelCacheClass = ClassUtils.forName(firstLevelCacheSetting, settings.getClassLoader());
             } catch (ClassNotFoundException e) {

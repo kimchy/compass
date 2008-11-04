@@ -19,8 +19,8 @@ package org.compass.core.test.transactionisolation.lucene;
 import org.compass.core.CompassHits;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.test.AbstractTestCase;
@@ -38,7 +38,7 @@ public class LuceneTransactionIsolationTests extends AbstractTestCase {
 
     protected void addSettings(CompassSettings settings) {
         super.addSettings(settings);
-        settings.setSetting(CompassEnvironment.Transaction.ISOLATION, CompassEnvironment.Transaction.ISOLATION_LUCENE);
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.Lucene.NAME);
     }
 
     public void testBatch() {
