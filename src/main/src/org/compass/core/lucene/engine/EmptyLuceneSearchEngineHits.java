@@ -16,11 +16,11 @@
 
 package org.compass.core.lucene.engine;
 
+import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Hits;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineHighlighter;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.Explanation;
 
 /**
  * @author kimchy
@@ -41,6 +41,10 @@ public class EmptyLuceneSearchEngineHits implements LuceneSearchEngineHits {
     }
 
     public void close() throws SearchEngineException {
+        // do nothing
+    }
+
+    public void closeDelegate() throws SearchEngineException {
         // do nothing
     }
 

@@ -338,7 +338,15 @@ public class LuceneSearchEngineHighlighter implements SearchEngineHighlighter, L
         return actualSeparator;
     }
 
+    public void closeDelegate() throws SearchEngineException {
+        close(true);
+    }
+
     public void close() throws SearchEngineException {
+        close(false);
+    }
+
+    private void close(boolean removeDelegate) throws SearchEngineException {
         if (closed) {
             return;
         }

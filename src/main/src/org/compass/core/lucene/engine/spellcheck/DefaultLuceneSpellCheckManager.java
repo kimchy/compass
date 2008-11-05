@@ -546,10 +546,14 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                 if (spellChecker == null) {
                     return callback.execute(null, null);
                 }
+                LuceneSearchEngineInternalSearch search = null;
                 try {
-                    LuceneSearchEngineInternalSearch search = (LuceneSearchEngineInternalSearch) tr.getSearchEngine().internalSearch(subIndexes, aliases);
+                    search = (LuceneSearchEngineInternalSearch) tr.getSearchEngine().internalSearch(subIndexes, aliases);
                     return callback.execute(spellChecker, search.getReader());
                 } finally {
+                    if (search != null) {
+                        search.close();
+                    }
                     spellChecker.close();
                 }
             }

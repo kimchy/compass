@@ -29,10 +29,7 @@ import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineHits;
-import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineQuery;
-import org.compass.core.lucene.engine.LuceneDelegatedClose;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
@@ -63,8 +60,6 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
 
     protected final LuceneAnalyzerManager analyzerManager;
 
-    private final ArrayList<LuceneDelegatedClose> delegateClose = new ArrayList<LuceneDelegatedClose>();
-
     protected boolean dirty;
 
     protected AbstractTransactionProcessor(LuceneSearchEngine searchEngine) {
@@ -75,14 +70,12 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
     }
 
     public void begin() throws SearchEngineException {
-        closeDelegateClosed();
         doBegin();
     }
 
     protected abstract void doBegin() throws SearchEngineException;
 
     public void rollback() throws SearchEngineException {
-        closeDelegateClosed();
         doRollback();
     }
 
@@ -95,24 +88,19 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
     protected abstract void doPrepare() throws SearchEngineException;
 
     public void commit(boolean onePhase) throws SearchEngineException {
-        closeDelegateClosed();
         doCommit(onePhase);
     }
 
     protected abstract void doCommit(boolean onePhase) throws SearchEngineException;
 
-    public SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException {
-        LuceneSearchEngineHits hits = doFind((LuceneSearchEngineQuery) query);
-        delegateClose.add(hits);
-        return hits;
+    public LuceneSearchEngineHits find(SearchEngineQuery query) throws SearchEngineException {
+        return doFind((LuceneSearchEngineQuery) query);
     }
 
     protected abstract LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException;
 
-    public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
-        LuceneSearchEngineInternalSearch internalSearch = doInternalSearch(subIndexes, aliases);
-        delegateClose.add(internalSearch);
-        return internalSearch;
+    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        return doInternalSearch(subIndexes, aliases);
     }
 
     protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
@@ -199,22 +187,6 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
 
     public boolean isDirty() {
         return dirty;
-    }
-
-    public void removeDelegatedClose(LuceneDelegatedClose closable) {
-        delegateClose.remove(closable);
-    }
-
-    protected void closeDelegateClosed() throws SearchEngineException {
-        LuceneDelegatedClose[] closeables = delegateClose.toArray(new LuceneDelegatedClose[delegateClose.size()]);
-        for (LuceneDelegatedClose delegatedClose : closeables) {
-            try {
-                delegatedClose.close();
-            } catch (Exception e) {
-                // swallow the exception
-            }
-        }
-        delegateClose.clear();
     }
 
     protected ResourceMapping getResourceMapping(String alias) {

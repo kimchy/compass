@@ -19,17 +19,16 @@ package org.compass.core.lucene.engine.transaction;
 import org.apache.lucene.analysis.Analyzer;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineHits;
-import org.compass.core.engine.SearchEngineInternalSearch;
 import org.compass.core.engine.SearchEngineQuery;
-import org.compass.core.lucene.engine.LuceneDelegatedClose;
+import org.compass.core.lucene.engine.LuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
 /**
  * A Lucene transaction interface. All Lucene based transactions must implement
  * the interface for the LuceneSearchEngine to work with them.
- * 
+ *
  * @author kimchy
  */
 public interface TransactionProcessor {
@@ -52,14 +51,12 @@ public interface TransactionProcessor {
     void create(final InternalResource resource, Analyzer analyzer) throws SearchEngineException;
 
     void update(final InternalResource resource, Analyzer analyzer) throws SearchEngineException;
-    
+
     void delete(final ResourceKey resourceKey) throws SearchEngineException;
 
-    SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException;
+    LuceneSearchEngineHits find(SearchEngineQuery query) throws SearchEngineException;
 
     Resource[] get(ResourceKey resourceKey) throws SearchEngineException;
 
-    SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
-
-    void removeDelegatedClose(LuceneDelegatedClose closable);
+    LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
 }

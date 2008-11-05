@@ -16,6 +16,8 @@
 
 package org.compass.core.lucene.engine;
 
+import java.util.ArrayList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -73,6 +75,9 @@ public class LuceneSearchEngine implements SearchEngine {
 
     private RuntimeCompassSettings runtimeSettings;
 
+    private final ArrayList<LuceneDelegatedClose> delegateClose = new ArrayList<LuceneDelegatedClose>();
+    
+
     public LuceneSearchEngine(RuntimeCompassSettings runtimeSettings, LuceneSearchEngineFactory searchEngineFactory) {
         this.runtimeSettings = runtimeSettings;
         this.onlyReadOnlyOperations = true;
@@ -108,6 +113,8 @@ public class LuceneSearchEngine implements SearchEngine {
             throw new SearchEngineException("Transaction already started, why start it again?");
         }
 
+        closeDelegateClosed();
+        
         TransactionProcessorFactory transactionProcessorFactory = searchEngineFactory.getTransactionProcessorManager()
                 .getProcessorFactory(runtimeSettings.getSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME));
         transactionProcessor = transactionProcessorFactory.create(this);
@@ -141,6 +148,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void prepare() throws SearchEngineException {
         verifyWithinTransaction();
+        closeDelegateClosed();
         if (transactionProcessor != null) {
             transactionProcessor.prepare();
         }
@@ -149,6 +157,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void commit(boolean onePhase) throws SearchEngineException {
         verifyWithinTransaction();
+        closeDelegateClosed();
         if (transactionProcessor != null) {
             transactionProcessor.commit(onePhase);
             eventManager.afterCommit(onePhase);
@@ -159,6 +168,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public void rollback() throws SearchEngineException {
         verifyWithinTransaction();
+        closeDelegateClosed();
         try {
             if (transactionProcessor != null) {
                 try {
@@ -332,10 +342,11 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException {
         verifyWithinTransaction();
-        SearchEngineHits hits = transactionProcessor.find(query);
+        LuceneSearchEngineHits hits = transactionProcessor.find(query);
         if (log.isTraceEnabled()) {
             log.trace("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
         }
+        delegateClose.add(hits);
         return hits;
     }
 
@@ -345,12 +356,24 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         verifyWithinTransaction();
-        return transactionProcessor.internalSearch(subIndexes, aliases);
+        LuceneSearchEngineInternalSearch internalSearch =  transactionProcessor.internalSearch(subIndexes, aliases);
+        delegateClose.add(internalSearch);
+        return internalSearch;
     }
 
     public void removeDelegatedClose(LuceneDelegatedClose closable) {
-        if (transactionProcessor != null) {
-            transactionProcessor.removeDelegatedClose(closable);
+        delegateClose.remove(closable);
+    }
+
+    protected void closeDelegateClosed() throws SearchEngineException {
+        LuceneDelegatedClose[] closeables = delegateClose.toArray(new LuceneDelegatedClose[delegateClose.size()]);
+        delegateClose.clear();
+        for (LuceneDelegatedClose delegatedClose : closeables) {
+            try {
+                delegatedClose.closeDelegate();
+            } catch (Exception e) {
+                // swallow the exception
+            }
         }
     }
 

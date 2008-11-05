@@ -47,7 +47,7 @@ public class ScheduledSpellCheckTests extends AbstractTestCase {
         getCompass().close();
 
         Compass compass = buildCompass();
-        Thread.sleep(500);
+        Thread.sleep(1500);
 
         SearchEngineSpellCheckManager spellCheckManager = compass.getSpellCheckManager();
 

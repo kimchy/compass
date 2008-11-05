@@ -97,17 +97,34 @@ public class LuceneSearchEngineInternalSearch implements SearchEngineInternalSea
     }
 
     /**
+     * [Intenral]: Closes without removing the delegate.
+     */
+    public void closeDelegate() throws SearchEngineException {
+        close(false);
+    }
+
+    /**
+     * Closes the internal search. Note, does not require to be called here since
+     * will automatically be called on transaction commit / rollback.
+     */
+    public void close() throws SearchEngineException {
+        close(true);
+    }
+
+    /**
      * Closes this instance of Lucene search "internals". This is an optional operation
      * since Compass will take care of closing it when commit/rollback is called on the
      * transaction.
      */
-    public void close() throws SearchEngineException {
+    private void close(boolean removeDelegate) throws SearchEngineException {
         if (closed) {
             return;
         }
         closed = true;
 
-        searchEngine.removeDelegatedClose(this);
+        if (removeDelegate) {
+            searchEngine.removeDelegatedClose(this);
+        }
 
         if (searcher != null && closeSearcher) {
             try {
