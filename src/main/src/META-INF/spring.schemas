@@ -1,2 +1,2 @@
-http\://www.compass-project.org/schema/spring-compass-core-config.xsd=org/compass/spring/config/spring-compass-core-config-2.1.xsd
-http\://www.compass-project.org/schema/spring-compass-core-config-2.1.xsd=org/compass/spring/config/spring-compass-core-config-2.1.xsd
+http\://www.compass-project.org/schema/spring-compass-core-config.xsd=org/compass/spring/config/spring-compass-core-config-2.2.xsd
+http\://www.compass-project.org/schema/spring-compass-core-config-2.2.xsd=org/compass/spring/config/spring-compass-core-config-2.2.xsd

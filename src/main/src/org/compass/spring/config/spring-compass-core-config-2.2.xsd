@@ -1,19 +1,97 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
-<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.1.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:compass="http://www.compass-project.org/schema/spring-core-config"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.compass-project.org/schema/spring-core-config http://www.compass-project.org/schema/spring-compass-core-config-2.2.xsd">
 -->
-<xsd:schema xmlns="http://www.compass-project.org/schema/core-config" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            targetNamespace="http://www.compass-project.org/schema/core-config" elementFormDefault="qualified"
+<xsd:schema xmlns="http://www.compass-project.org/schema/spring-core-config"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.compass-project.org/schema/spring-core-config"
+            elementFormDefault="qualified"
             attributeFormDefault="unqualified">
-    <xsd:element name="compass-core-config">
+
+    <xsd:element name="context" type="xsd:string">
+        <xsd:annotation>
+            <xsd:documentation>
+                Configues a post processor bean that enables @CompassContext annotation
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="session">
+        <xsd:annotation>
+            <xsd:documentation>
+                A factory for CompassSession that creates a special proxied session which can be used within code that
+                runs within an external transaction (Spring, JTA). The session can be used without using Compass
+                transaction management code or even without closing the session.
+            </xsd:documentation>
+        </xsd:annotation>
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="compass" type="compassType"/>
-            </xsd:sequence>
+            <xsd:attribute name="id" type="xsd:string" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The Spring id the Local Compass session bean will be registered under.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+            <xsd:attribute name="compass" type="xsd:string" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        The Compass instance used to create the Compass session. Optional since if there is a single
+                        Compass instance within the Spring application contex it will be automatically used.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:element name="compass">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="compassType">
+                    <xsd:attribute name="txManager" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                An optional bean reference to Spring platform transaction manager.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="dataSource" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                An optioanl Jdbc data source
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="postProcessor" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                An optional post processor implementation (LocalCompassBeanPostProcessor) allowing to
+                                hook an implementation for adding settings or mappings to the compass configuration.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="lazy-init" type="booleanType" default="false">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Spring beans lazy-init flag.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="scope" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Spring beans scope setting.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
     <xsd:complexType name="compassType">
         <xsd:annotation>
             <xsd:documentation>
