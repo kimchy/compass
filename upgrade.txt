@@ -9,6 +9,7 @@ VERSION 2.2.0 M1
    What was knows as transaction isolations are now knows as Transaction Processor(s). The schema file configuration
    of isolation has been renamed to processor. The readCommittedSettings has been renamed to readCommitted and should
    be placed within processors tag.
+3. Change all DTD and Schema names from 2.1 suffix to 2.2 suffix.
 
 
 VERSION 2.1.0 GA (1 November, 2008)
