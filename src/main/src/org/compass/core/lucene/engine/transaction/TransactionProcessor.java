@@ -32,25 +32,63 @@ import org.compass.core.spi.ResourceKey;
  */
 public interface TransactionProcessor {
 
+    /**
+     * Begin the transaction.
+     */
     void begin() throws SearchEngineException;
 
+    /**
+     * Prepare the transaction for commit.
+     */
     void prepare() throws SearchEngineException;
 
+    /**
+     * Commit the trnasction. If <code>onePhase</code> is set to <code>true</code> then
+     * should perform both the prepare phase and the commit phase. If it is set to
+     * <code>false</code> then just needs to perform the second phase of the commit process.
+     */
     void commit(boolean onePhase) throws SearchEngineException;
 
+    /**
+     * Rollback the transaction.
+     */
     void rollback() throws SearchEngineException;
 
+    /**
+     * Flush changes. Note, the implementation needs to strive for changes not to be visible
+     * to other transactions.
+     */
     void flush() throws SearchEngineException;
 
+    /**
+     * Creates a resource.
+     */
     void create(final InternalResource resource) throws SearchEngineException;
 
+    /**
+     * Updates a resource.
+     */
     void update(final InternalResource resource) throws SearchEngineException;
 
+    /**
+     * Deletes a resource based on the resource key.
+     */
     void delete(final ResourceKey resourceKey) throws SearchEngineException;
 
+    /**
+     * Perform a search for the given query and returns the hits for it.
+     */
     LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException;
 
+    /**
+     * Returns the resources tha match a resource key.
+     *
+     * <p>Note, should usually only return one resource.
+     */
     Resource[] get(ResourceKey resourceKey) throws SearchEngineException;
 
+    /**
+     * Performs an internal search operation.
+     */
     LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.lucene.engine.transaction;
+package org.compass.core.lucene.engine.transaction.support;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
+import org.compass.core.lucene.engine.transaction.TransactionProcessor;
 import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;

@@ -27,24 +27,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermDocs;
-import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
-import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneResource;
-import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
-import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
-import org.compass.core.lucene.engine.LuceneSearchEngineHits;
-import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
-import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
-import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
-import org.compass.core.lucene.engine.transaction.AbstractTransactionProcessor;
+import org.compass.core.lucene.engine.transaction.support.AbstractSearchTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
-import org.compass.core.lucene.support.ResourceHelper;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.transaction.context.TransactionalCallable;
@@ -57,7 +46,7 @@ import org.compass.core.util.StringUtils;
  *
  * @author kimchy
  */
-public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
+public class LuceneTransactionProcessor extends AbstractSearchTransactionProcessor {
 
     private static final Log log = LogFactory.getLog(LuceneTransactionProcessor.class);
 
@@ -155,52 +144,6 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
 //            prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new PrepareCommitCallable(entry.getKey(), entry.getValue())));
 //        }
 //        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
-    }
-
-    public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
-        LuceneSearchEngineInternalSearch internalSearch = internalSearch(query.getSubIndexes(), query.getAliases());
-        if (internalSearch.isEmpty()) {
-            return new EmptyLuceneSearchEngineHits();
-        }
-        Filter qFilter = null;
-        if (query.getFilter() != null) {
-            qFilter = query.getFilter().getFilter();
-        }
-        Hits hits = findByQuery(internalSearch, query, qFilter);
-        return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
-    }
-
-    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
-        // TODO somehow, we need to find a way to pass the useFieldCache parameter
-        return buildInternalSearch(subIndexes, aliases, true);
-    }
-
-    public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
-        LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(resourceKey.getSubIndex());
-        try {
-            Term t = new Term(resourceKey.getUIDPath(), resourceKey.buildUID());
-            TermDocs termDocs = null;
-            try {
-                termDocs = indexHolder.getIndexReader().termDocs(t);
-                if (termDocs != null) {
-                    return ResourceHelper.hitsToResourceArray(termDocs, indexHolder.getIndexReader(), searchEngine);
-                } else {
-                    return new Resource[0];
-                }
-            } catch (IOException e) {
-                throw new SearchEngineException("Failed to search for property [" + resourceKey + "]", e);
-            } finally {
-                try {
-                    if (termDocs != null) {
-                        termDocs.close();
-                    }
-                } catch (IOException e) {
-                    // swallow it
-                }
-            }
-        } finally {
-            indexHolder.release();
-        }
     }
 
     public void create(InternalResource resource) throws SearchEngineException {
