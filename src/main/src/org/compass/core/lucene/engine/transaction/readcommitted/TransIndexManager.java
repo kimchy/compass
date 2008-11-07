@@ -17,8 +17,8 @@
 package org.compass.core.lucene.engine.transaction.readcommitted;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
@@ -40,7 +40,7 @@ public class TransIndexManager implements CompassConfigurable {
 
     private CompassSettings settings;
 
-    private Map<String, TransIndex> transIndexMap = new HashMap<String, TransIndex>();
+    private final Map<String, TransIndex> transIndexMap = new ConcurrentHashMap<String, TransIndex>();
 
     public TransIndexManager(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
@@ -67,7 +67,7 @@ public class TransIndexManager implements CompassConfigurable {
     }
 
     public IndexReader getReader(String subIndex) throws IOException {
-        return transIndexMap.get(subIndex).getReader(); 
+        return transIndexMap.get(subIndex).getReader();
     }
 
     public IndexSearcher getSearcher(String subIndex) throws IOException {
@@ -106,9 +106,14 @@ public class TransIndexManager implements CompassConfigurable {
     private TransIndex getTransIndex(String subIndex) {
         TransIndex transIndex = transIndexMap.get(subIndex);
         if (transIndex == null) {
-            transIndex = new TransIndex(searchEngineFactory, subIndex);
-            transIndex.configure(settings);
-            transIndexMap.put(subIndex, transIndex);
+            synchronized (transIndexMap) {
+                transIndex = transIndexMap.get(subIndex);
+                if (transIndex == null) {
+                    transIndex = new TransIndex(searchEngineFactory, subIndex);
+                    transIndex.configure(settings);
+                    transIndexMap.put(subIndex, transIndex);
+                }
+            }
         }
         return transIndex;
     }

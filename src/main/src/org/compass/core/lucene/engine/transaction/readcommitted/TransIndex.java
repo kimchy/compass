@@ -60,7 +60,7 @@ public class TransIndex implements CompassConfigurable {
 
     private IndexSearcher indexSearcher;
 
-    private boolean flushRequired = false;
+    private volatile boolean flushRequired = false;
 
     private boolean optimize;
 
@@ -144,7 +144,7 @@ public class TransIndex implements CompassConfigurable {
         directory.close();
     }
 
-    private void refreshIfNeeded() throws IOException {
+    private synchronized void refreshIfNeeded() throws IOException {
         if (flushRequired) {
             if (indexWriter != null) {
                 indexWriter.commit();
