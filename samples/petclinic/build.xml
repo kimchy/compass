@@ -43,13 +43,9 @@
             <include name="jdbc2_0-stdext.jar"/>
             <include name="servlet-api.jar"/>
         </fileset>
-        <fileset dir="${compass.root}/lib/ojb">
-            <include name="db-ojb-*.jar"/>
-        </fileset>
         <fileset dir="${compass.root}/lib/spring">
             <include name="spring.jar"/>
             <include name="spring-hibernate3.jar"/>
-            <include name="spring-ojb.jar"/>
         </fileset>
 
     </path>
@@ -124,7 +120,6 @@
             <fileset dir="${webclasses.dir}">
                 <include name="*.hbm.xml"/>
                 <include name="*.cpm.xml"/>
-                <include name="OJB*.*"/>
             </fileset>
         </delete>
         <delete dir="${weblib.dir}"/>
@@ -160,7 +155,6 @@
             <fileset dir="${src.dir}">
                 <include name="*.hbm.xml"/>
                 <include name="*.cpm.xml"/>
-                <include name="OJB*.*"/>
             </fileset>
         </copy>
 
@@ -217,16 +211,9 @@
             <fileset dir="${compass.root}/lib/log4j">
                 <include name="log4j*.jar"/>
             </fileset>
-            <fileset dir="${compass.root}/lib/ojb">
-                <include name="db-ojb-*.jar"/>
-            </fileset>
-            <fileset dir="${compass.root}/lib/odmg">
-                <include name="odmg-*.jar"/>
-            </fileset>
             <fileset dir="${compass.root}/lib/spring">
                 <include name="spring.jar"/>
                 <include name="spring-hibernate3.jar"/>
-                <include name="spring-ojb.jar"/>
             </fileset>
         </copy>
 
@@ -332,7 +319,6 @@
             <formatter type="xml"/>
             <test name="org.compass.sample.petclinic.OwnerTests" todir="${testreports.dir}"/>
             <test name="org.compass.sample.petclinic.hibernate.HibernateClinicTests" todir="${testreports.dir}"/>
-            <test name="org.compass.sample.petclinic.ojb.PersistenceBrokerClinicTests" todir="${testreports.dir}"/>
             <test name="org.compass.sample.petclinic.jdbc.JdbcClinicTests" todir="${testreports.dir}"/>
             <classpath path="${build.dir}"/>
             <classpath path="${src.dir}"/>

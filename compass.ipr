@@ -686,23 +686,9 @@
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="odmg">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/odmg/odmg-3.0.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
     <library name="ognl">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/ognl/ognl-2.6.5.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-    <library name="ojb">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ojb/db-ojb-1.0.4.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
@@ -718,9 +704,7 @@
     <library name="spring">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/spring/spring.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/spring/spring-ojb.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/spring/spring-hibernate2.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/spring/spring-jdo.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/spring/spring-webmvc.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/spring/spring-test.jar!/" />
       </CLASSES>

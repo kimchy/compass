@@ -31,8 +31,6 @@
 <!ENTITY gps-embeddedopenjpa  SYSTEM "gps-embeddedopenjpa.xml">
 <!ENTITY gps-embeddedtoplink  SYSTEM "gps-embeddedtoplink.xml">
 <!ENTITY gps-embeddedeclipselink  SYSTEM "gps-embeddedeclipselink.xml">
-<!ENTITY gps-jdo  SYSTEM "gps-jdo.xml">
-<!ENTITY gps-ojb  SYSTEM "gps-ojb.xml">
 <!ENTITY gps-ibatis  SYSTEM "gps-ibatis.xml">
 
 <!ENTITY spring-intro  SYSTEM "spring-intro.xml">
@@ -40,7 +38,6 @@
 <!ENTITY spring-dao  SYSTEM "spring-dao.xml">
 <!ENTITY spring-transaction  SYSTEM "spring-transaction.xml">
 <!ENTITY spring-hibernate  SYSTEM "spring-hibernate.xml">
-<!ENTITY spring-ojb  SYSTEM "spring-ojb.xml">
 <!ENTITY spring-jdbc  SYSTEM "spring-jdbc.xml">
 <!ENTITY spring-aop  SYSTEM "spring-aop.xml">
 <!ENTITY spring-mvc  SYSTEM "spring-mvc.xml">
@@ -125,8 +122,6 @@
     &gps-embeddedopenjpa;
     &gps-embeddedtoplink;
     &gps-embeddedeclipselink;
-    &gps-jdo;
-    &gps-ojb;
     &gps-ibatis;
   </part>
 
@@ -139,7 +134,6 @@
     &spring-dao;
     &spring-transaction;
     &spring-hibernate;
-    &spring-ojb;
     &spring-jdbc;
     &spring-aop;
     &spring-mvc;

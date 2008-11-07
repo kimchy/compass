@@ -161,7 +161,7 @@
       </para>
 
       <para>
-        For more information, please read <xref linkend="gps-introduction"/>. Some of the ORM frameworks supports are: <xref linkend="gps-embeddedhibernate"/>, <xref linkend="gps-jpa"/>, <xref linkend="gps-embeddedopenjpa"/>, <xref linkend="gps-jdo"/>, <xref linkend="gps-ojb"/> and <xref linkend="gps-ibatis"/>.
+        For more information, please read <xref linkend="gps-introduction"/>. Some of the ORM frameworks supports are: <xref linkend="gps-embeddedhibernate"/>, <xref linkend="gps-jpa"/>, <xref linkend="gps-embeddedopenjpa"/>, and <xref linkend="gps-ibatis"/>.
       </para>
 
     </sect2>

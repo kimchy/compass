@@ -10,6 +10,8 @@ VERSION 2.2.0 M1
    of isolation has been renamed to processor. The readCommittedSettings has been renamed to readCommitted and should
    be placed within processors tag.
 3. Change all DTD and Schema names from 2.1 suffix to 2.2 suffix.
+4. Removed support for JDO.
+5. Removed support for Apache OJB.
 
 
 VERSION 2.1.0 GA (1 November, 2008)

@@ -191,19 +191,6 @@
 
         </sect2>
 
-        <sect2 id="samples-petclinic-dataaccess-ojb">
-            <title>Apache OJB</title>
-
-            <para>
-                <link linkend="gps-introduction">Compass::Gps</link> comes with the <link linkend="gps-ojb">OJB</link> device. The device can index the data mapped by OJB, and mirror any data changes made by OJB to the search engine index. Since we are using OJB with Spring, the device used is the <link linkend="spring-ojb">Spring OJB</link> device, which offers even simpler integration with OJB.
-            </para>
-
-            <para>
-                The integration uses the OSEM definitions, and works with Compass object level API to work with the search engine. The spring application context bean definitions for the <literal>compass</literal> (required by the OJB Gps device) instance is defined with OSEM definitions and spring based transaction support. The <literal>applicationContext-ojb.xml</literal> in the test package, and the <literal>applicationContext-ojb.xml</literal> in the WEB-INF directory define all the required definitions to work with OJB and compass. Note, that only the mentioned configuration has to be created in order to integrate compass to the data access layer.
-            </para>
-
-        </sect2>
-
         <sect2 id="samples-petclinic-dataaccess-jdbc">
             <title>JDBC</title>
 
