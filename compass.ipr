@@ -572,7 +572,6 @@
         <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate3.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-validator.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-annotations.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate2.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-commons-annotations.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hibernate/jboss-archive-browsing.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/hibernate/hibernate-entitymanager.jar!/" />
