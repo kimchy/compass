@@ -40,6 +40,12 @@ import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
 /**
+ * A transactional index holding a complete lucene index as the transactional index.
+ *
+ * <p>The transactional index can either be ram based one (default) or a file based one. If it is
+ * a file based one, the temporary index is created (by defualt) under the JAVA temporary location
+ * (with <code>compass/translog</code>) with a random generated transaction id.
+ *
  * @author kimchy
  */
 public class TransIndex implements CompassConfigurable {
