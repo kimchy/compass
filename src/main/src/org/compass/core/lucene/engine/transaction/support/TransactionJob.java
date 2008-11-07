@@ -64,4 +64,10 @@ public class TransactionJob {
         }
         return resource;
     }
+
+    @Override
+    public String toString() {
+        if (resource == null) return "Operation [" + type + "] Key [" + resourceKey + "]";
+        return "Operation [" + type + "] Key [" + resourceKey + "] Resource [" + resource + "]";
+    }
 }
