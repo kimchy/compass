@@ -33,7 +33,7 @@ import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
-import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.lucene.support.ResourceHelper;
 
 /**
  * @author kimchy
@@ -171,7 +171,7 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
             } else {
                 BooleanQuery boolQuery = new BooleanQuery();
                 boolQuery.add(moreLikeThis.like(resource.getDocNum()), BooleanClause.Occur.MUST);
-                boolQuery.add(LuceneUtils.buildResourceLoadQuery(resource.getResourceKey()), BooleanClause.Occur.MUST_NOT);
+                boolQuery.add(ResourceHelper.buildResourceLoadQuery(resource.getResourceKey()), BooleanClause.Occur.MUST_NOT);
                 query = boolQuery;
             }
             return new LuceneSearchEngineQuery(searchEngine, query);

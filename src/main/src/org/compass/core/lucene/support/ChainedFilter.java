@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.lucene.util;
+package org.compass.core.lucene.support;
 
 import java.io.IOException;
 

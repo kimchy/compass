@@ -17,8 +17,11 @@
 package org.compass.core.lucene.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.index.TermFreqVector;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
@@ -221,5 +224,26 @@ public abstract class LuceneHelper {
      */
     public static Directory getDirectory(Compass compass, String subIndex) {
         return ((LuceneSearchEngineIndexManager) ((InternalCompass) compass).getSearchEngineIndexManager()).getStore().openDirectory(subIndex);
+    }
+
+    /**
+     * Returns all the values of for the given propery name.
+     */
+    public static String[] findPropertyValues(CompassSession session, String propertyName) throws SearchEngineException {
+        LuceneSearchEngineInternalSearch internalSearch = getLuceneInternalSearch(session);
+        ArrayList<String> list = new ArrayList<String>();
+        try {
+            TermEnum te = internalSearch.getReader().terms(new Term(propertyName, ""));
+            while (propertyName.equals(te.term().field())) {
+                String value = te.term().text();
+                list.add(value);
+                if (!te.next()) {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to read property values for property [" + propertyName + "]");
+        }
+        return list.toArray(new String[list.size()]);
     }
 }

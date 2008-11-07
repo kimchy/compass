@@ -11,7 +11,7 @@ import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.lucene.support.FieldHelper;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.util.StringUtils;
 import org.compass.core.util.reader.ReverseStringReader;
@@ -105,15 +105,15 @@ public class LuceneResourceFactory implements ResourceFactory {
 
     public Property createProperty(String name, String value, Property.Store store, Property.Index index,
                                    Property.TermVector termVector) throws SearchEngineException {
-        Field.Store fieldStore = LuceneUtils.getFieldStore(store);
-        Field.Index fieldIndex = LuceneUtils.getFieldIndex(index);
-        Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(termVector);
+        Field.Store fieldStore = FieldHelper.getFieldStore(store);
+        Field.Index fieldIndex = FieldHelper.getFieldIndex(index);
+        Field.TermVector fieldTermVector = FieldHelper.getFieldTermVector(termVector);
         Field field = new Field(name, value, fieldStore, fieldIndex, fieldTermVector);
         return new LuceneProperty(field);
     }
 
     public Property createProperty(String name, TokenStream tokenStream, Property.TermVector termVector) {
-        Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(termVector);
+        Field.TermVector fieldTermVector = FieldHelper.getFieldTermVector(termVector);
         Field field = new Field(name, tokenStream, fieldTermVector);
         return new LuceneProperty(field);
     }
@@ -123,13 +123,13 @@ public class LuceneResourceFactory implements ResourceFactory {
     }
 
     public Property createProperty(String name, byte[] value, Property.Store store) throws SearchEngineException {
-        Field.Store fieldStore = LuceneUtils.getFieldStore(store);
+        Field.Store fieldStore = FieldHelper.getFieldStore(store);
         Field field = new Field(name, value, fieldStore);
         return new LuceneProperty(field);
     }
 
     public Property createProperty(String name, Reader value, Property.TermVector termVector) {
-        Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(termVector);
+        Field.TermVector fieldTermVector = FieldHelper.getFieldTermVector(termVector);
         Field field = new Field(name, value, fieldTermVector);
         if (value instanceof RepeatableReader) {
             return new LuceneProperty(field, (RepeatableReader) value);

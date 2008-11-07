@@ -44,7 +44,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.transaction.AbstractTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
-import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.lucene.support.ResourceHelper;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.transaction.context.TransactionalCallable;
@@ -179,7 +179,7 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
             try {
                 termDocs = indexHolder.getIndexReader().termDocs(t);
                 if (termDocs != null) {
-                    return LuceneUtils.hitsToResourceArray(termDocs, indexHolder.getIndexReader(), searchEngine);
+                    return ResourceHelper.hitsToResourceArray(termDocs, indexHolder.getIndexReader(), searchEngine);
                 } else {
                     return new Resource[0];
                 }

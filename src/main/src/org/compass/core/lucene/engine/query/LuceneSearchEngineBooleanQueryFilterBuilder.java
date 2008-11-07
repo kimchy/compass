@@ -22,7 +22,7 @@ import org.apache.lucene.search.Filter;
 import org.compass.core.engine.SearchEngineQueryFilter;
 import org.compass.core.engine.SearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.LuceneSearchEngineQueryFilter;
-import org.compass.core.lucene.util.ChainedFilter;
+import org.compass.core.lucene.support.ChainedFilter;
 
 /**
  * @author kimchy

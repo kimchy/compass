@@ -49,8 +49,8 @@ import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.transaction.AbstractTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
 import org.compass.core.lucene.search.CacheableMultiReader;
-import org.compass.core.lucene.util.ChainedFilter;
-import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.lucene.support.ChainedFilter;
+import org.compass.core.lucene.support.ResourceHelper;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.transaction.context.TransactionalCallable;
@@ -249,16 +249,16 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
             }
             if (filter.hasDeletes()) {
                 // TODO we can do better with HitCollector
-                Query query = LuceneUtils.buildResourceLoadQuery(resourceKey);
+                Query query = ResourceHelper.buildResourceLoadQuery(resourceKey);
                 Hits hits = indexSearcher.search(query, filter);
-                return LuceneUtils.hitsToResourceArray(hits, searchEngine);
+                return ResourceHelper.hitsToResourceArray(hits, searchEngine);
             } else {
                 Term t = new Term(resourceKey.getUIDPath(), resourceKey.buildUID());
                 TermDocs termDocs = null;
                 try {
                     termDocs = indexReader.termDocs(t);
                     if (termDocs != null) {
-                        return LuceneUtils.hitsToResourceArray(termDocs, indexReader, searchEngine);
+                        return ResourceHelper.hitsToResourceArray(termDocs, indexReader, searchEngine);
                     } else {
                         return new Resource[0];
                     }

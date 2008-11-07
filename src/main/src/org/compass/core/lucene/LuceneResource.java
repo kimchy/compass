@@ -33,7 +33,7 @@ import org.compass.core.Resource;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.lucene.support.FieldHelper;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.AliasedObject;
@@ -209,7 +209,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
                     + "] and resource property [" + name + "]");
         }
 
-        Field.TermVector fieldTermVector = LuceneUtils.getFieldTermVector(propertyMapping.getTermVector());
+        Field.TermVector fieldTermVector = FieldHelper.getFieldTermVector(propertyMapping.getTermVector());
         Field field = new Field(name, value, fieldTermVector);
         LuceneProperty property = new LuceneProperty(field);
         property.setBoost(propertyMapping.getBoost());
