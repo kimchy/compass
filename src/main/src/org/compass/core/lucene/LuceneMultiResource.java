@@ -26,6 +26,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.MultiResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.util.StringUtils;
@@ -60,8 +61,12 @@ public class LuceneMultiResource implements MultiResource, Map<String, Property[
         return currentResource;
     }
 
-    public ResourceKey resourceKey() {
-        return currentResource.resourceKey();
+    public ResourceKey getResourceKey() {
+        return currentResource.getResourceKey();
+    }
+
+    public ResourceMapping getResourceMapping() {
+        return currentResource.getResourceMapping();
     }
 
     public String getSubIndex() {

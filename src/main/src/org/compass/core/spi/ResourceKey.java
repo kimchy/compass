@@ -30,6 +30,8 @@ import org.compass.core.mapping.ResourceMapping;
  */
 public final class ResourceKey {
 
+    private static final char SEPARATOR = '#';
+
     private String alias;
 
     private String subIndex;
@@ -69,14 +71,14 @@ public final class ResourceKey {
 
     public String buildUID() throws CompassException {
         StringBuilder sb = new StringBuilder();
-        sb.append(getAlias()).append("#");
+        sb.append(getAlias()).append(SEPARATOR);
         for (Property idProp : getIds()) {
             String idValue = idProp.getStringValue();
             if (idValue == null) {
                 throw new CompassException("Missing id [" + idProp.getName() + "] for alias [" + getAlias() + "]");
             }
             sb.append(idValue);
-            sb.append("#");
+            sb.append(SEPARATOR);
         }
         return sb.toString();
     }
@@ -113,12 +115,12 @@ public final class ResourceKey {
 
     public int hashCode() {
         if (hashCode == Integer.MIN_VALUE) {
-            hashCode = getHashCode();
+            hashCode = computeHashCode();
         }
         return hashCode;
     }
     
-    private int getHashCode() {
+    private int computeHashCode() {
         int result = alias.hashCode();
         for (Property id : ids) {
             result = 29 * result + id.getStringValue().hashCode();

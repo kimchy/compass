@@ -27,7 +27,7 @@ public class SimpleUIDTests extends AbstractTestCase {
         Resource resource = session.loadResource("a1", 1);
         assertEquals("a1#1#", resource.getUID());
         // also check that the actual id is stored in the resource
-        assertEquals("a1#1#", resource.getValue( ((InternalResource) resource).resourceKey().getResourceMapping().getUIDPath() ));
+        assertEquals("a1#1#", resource.getValue( ((InternalResource) resource).getResourceKey().getResourceMapping().getUIDPath() ));
 
         tr.commit();
         session.close();
@@ -45,7 +45,7 @@ public class SimpleUIDTests extends AbstractTestCase {
         Resource resource = session.loadResource("a2", 1, 2);
         assertEquals("a2#1#2#", resource.getUID());
         // also check that the actual id is stored in the resource
-        assertEquals("a2#1#2#", resource.getValue( ((InternalResource) resource).resourceKey().getResourceMapping().getUIDPath() ));
+        assertEquals("a2#1#2#", resource.getValue( ((InternalResource) resource).getResourceKey().getResourceMapping().getUIDPath() ));
 
         tr.commit();
         session.close();

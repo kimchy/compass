@@ -19,7 +19,6 @@ package org.compass.core.lucene.engine.transaction;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.search.Filter;
@@ -161,12 +160,12 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
     }
 
 
-    public void create(final InternalResource resource, Analyzer analyzer) throws SearchEngineException {
+    public void create(final InternalResource resource) throws SearchEngineException {
         dirty = true;
-        doCreate(resource, analyzer);
+        doCreate(resource);
     }
 
-    protected abstract void doCreate(final InternalResource resource, Analyzer analyzer) throws SearchEngineException;
+    protected abstract void doCreate(final InternalResource resource) throws SearchEngineException;
 
     public void delete(final ResourceKey resourceKey) throws SearchEngineException {
         dirty = true;
@@ -175,14 +174,14 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
 
     protected abstract void doDelete(final ResourceKey resourceKey) throws SearchEngineException;
 
-    public void update(InternalResource resource, Analyzer analyzer) throws SearchEngineException {
+    public void update(InternalResource resource) throws SearchEngineException {
         dirty = true;
-        doUpdate(resource, analyzer);
+        doUpdate(resource);
     }
 
-    protected void doUpdate(InternalResource resource, Analyzer analyzer) throws SearchEngineException {
-        doDelete(resource.resourceKey());
-        doCreate(resource, analyzer);
+    protected void doUpdate(InternalResource resource) throws SearchEngineException {
+        doDelete(resource.getResourceKey());
+        doCreate(resource);
     }
 
     public boolean isDirty() {

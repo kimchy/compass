@@ -171,7 +171,7 @@ public class LuceneSearchEngineMoreLikeThisQueryBuilder implements SearchEngineQ
             } else {
                 BooleanQuery boolQuery = new BooleanQuery();
                 boolQuery.add(moreLikeThis.like(resource.getDocNum()), BooleanClause.Occur.MUST);
-                boolQuery.add(LuceneUtils.buildResourceLoadQuery(resource.resourceKey()), BooleanClause.Occur.MUST_NOT);
+                boolQuery.add(LuceneUtils.buildResourceLoadQuery(resource.getResourceKey()), BooleanClause.Occur.MUST_NOT);
                 query = boolQuery;
             }
             return new LuceneSearchEngineQuery(searchEngine, query);

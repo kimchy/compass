@@ -107,15 +107,19 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         return this.document;
     }
 
-    public ResourceKey resourceKey() {
+    public ResourceKey getResourceKey() {
         if (resourceKey == null) {
             resourceKey = new ResourceKey(resourceMapping, this);
         }
         return resourceKey;
     }
 
+    public ResourceMapping getResourceMapping() {
+        return this.resourceMapping;
+    }
+
     public String getSubIndex() {
-        return resourceKey().getSubIndex();
+        return getResourceKey().getSubIndex();
     }
 
     public String getValue(String name) {
@@ -148,7 +152,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     }
 
     public String getUID() {
-        return resourceKey().buildUID();
+        return getResourceKey().buildUID();
     }
 
     public String getId() {
@@ -173,7 +177,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     }
 
     public Property[] getIdProperties() {
-        return resourceKey().getIds();
+        return getResourceKey().getIds();
     }
 
     public Resource addProperty(String name, Object value) throws SearchEngineException {
@@ -313,7 +317,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     public void addUID() {
         removeProperties(resourceMapping.getUIDPath());
         Property uidProp = searchEngineFactory.getResourceFactory().createProperty(resourceMapping.getUIDPath(),
-                resourceKey().buildUID(), Property.Store.YES, Property.Index.NOT_ANALYZED);
+                getResourceKey().buildUID(), Property.Store.YES, Property.Index.NOT_ANALYZED);
         uidProp.setOmitNorms(true);
         uidProp.setOmitTf(true);
         addProperty(uidProp);

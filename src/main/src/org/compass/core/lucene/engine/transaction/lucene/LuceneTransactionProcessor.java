@@ -43,6 +43,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.transaction.AbstractTransactionProcessor;
+import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
 import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
@@ -198,9 +199,10 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         }
     }
 
-    protected void doCreate(InternalResource resource, Analyzer analyzer) throws SearchEngineException {
+    protected void doCreate(InternalResource resource) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
+            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
             indexWriter.addDocument(((LuceneResource) resource).getDocument(), analyzer);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()
@@ -218,10 +220,11 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         }
     }
 
-    protected void doUpdate(InternalResource resource, Analyzer analyzer) throws SearchEngineException {
+    protected void doUpdate(InternalResource resource) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
-            indexWriter.updateDocument(new Term(resource.resourceKey().getUIDPath(), resource.resourceKey().buildUID()), ((LuceneResource) resource).getDocument(), analyzer);
+            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
+            indexWriter.updateDocument(new Term(resource.getResourceKey().getUIDPath(), resource.getResourceKey().buildUID()), ((LuceneResource) resource).getDocument(), analyzer);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to update resource for alias [" + resource.getAlias()
                     + "] and resource " + resource, e);

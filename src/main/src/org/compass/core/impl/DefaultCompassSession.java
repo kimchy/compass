@@ -186,7 +186,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Resource getResourceByIdResource(Resource idResource) {
         checkClosed();
-        ResourceKey key = ((InternalResource) idResource).resourceKey();
+        ResourceKey key = ((InternalResource) idResource).getResourceKey();
         Resource cachedValue = firstLevelCache.getResource(key);
         if (cachedValue != null) {
             return cachedValue;
@@ -246,7 +246,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Object getByResource(Resource resource, MarshallingContext context) {
         checkClosed();
-        ResourceKey key = ((InternalResource) resource).resourceKey();
+        ResourceKey key = ((InternalResource) resource).getResourceKey();
         Object cachedValue = firstLevelCache.get(key);
         if (cachedValue != null) {
             return cachedValue;
@@ -283,7 +283,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public Resource loadResourceByIdResource(Resource idResource) {
         checkClosed();
-        ResourceKey key = ((InternalResource) idResource).resourceKey();
+        ResourceKey key = ((InternalResource) idResource).getResourceKey();
         Resource cachedValue = firstLevelCache.getResource(key);
         if (cachedValue != null) {
             return cachedValue;
@@ -337,7 +337,7 @@ public class DefaultCompassSession implements InternalCompassSession {
                 return;
             }
             searchEngine.create(resource);
-            ResourceKey key = ((InternalResource) resource).resourceKey();
+            ResourceKey key = ((InternalResource) resource).getResourceKey();
             firstLevelCache.set(key, object);
         }
         context.addOperatedObjects(object);
@@ -370,7 +370,7 @@ public class DefaultCompassSession implements InternalCompassSession {
                 return;
             }
             searchEngine.create(resource);
-            ResourceKey key = ((InternalResource) resource).resourceKey();
+            ResourceKey key = ((InternalResource) resource).getResourceKey();
             firstLevelCache.set(key, object);
             context.addOperatedObjects(object);
             // if we found a resource, we perform the cascading based on its alias
@@ -409,7 +409,7 @@ public class DefaultCompassSession implements InternalCompassSession {
                 return;
             }
             searchEngine.save(resource);
-            ResourceKey key = ((InternalResource) resource).resourceKey();
+            ResourceKey key = ((InternalResource) resource).getResourceKey();
             firstLevelCache.set(key, object);
         }
         context.addOperatedObjects(object);
@@ -442,7 +442,7 @@ public class DefaultCompassSession implements InternalCompassSession {
                 return;
             }
             searchEngine.save(resource);
-            ResourceKey key = ((InternalResource) resource).resourceKey();
+            ResourceKey key = ((InternalResource) resource).getResourceKey();
             firstLevelCache.set(key, object);
             context.addOperatedObjects(object);
             performedCascading = cascadingManager.cascade(key.getAlias(), object, CascadeMapping.Cascade.SAVE, context);
@@ -607,7 +607,7 @@ public class DefaultCompassSession implements InternalCompassSession {
 
     public void delete(Resource resource) throws CompassException {
         checkClosed();
-        firstLevelCache.evict(((InternalResource) resource).resourceKey());
+        firstLevelCache.evict(((InternalResource) resource).getResourceKey());
         if (compass.getEventManager().onPreDelete(resource) == FilterOperation.YES) {
             return;
         }
@@ -627,20 +627,20 @@ public class DefaultCompassSession implements InternalCompassSession {
     public void evict(Object obj) {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(obj.getClass(), obj);
-        ResourceKey key = ((InternalResource) idResource).resourceKey();
+        ResourceKey key = ((InternalResource) idResource).getResourceKey();
         firstLevelCache.evict(key);
     }
 
     public void evict(String alias, Object id) {
         checkClosed();
         Resource idResource = marshallingStrategy.marshallIds(alias, id);
-        ResourceKey key = ((InternalResource) idResource).resourceKey();
+        ResourceKey key = ((InternalResource) idResource).getResourceKey();
         firstLevelCache.evict(key);
     }
 
     public void evict(Resource resource) {
         checkClosed();
-        ResourceKey key = ((InternalResource) resource).resourceKey();
+        ResourceKey key = ((InternalResource) resource).getResourceKey();
         firstLevelCache.evict(key);
     }
 

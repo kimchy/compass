@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.Analyzer;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
@@ -39,7 +38,6 @@ import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.query.LuceneSearchEngineQueryFilterBuilder;
 import org.compass.core.lucene.engine.transaction.TransactionProcessor;
 import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
-import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.MultiResource;
@@ -76,7 +74,7 @@ public class LuceneSearchEngine implements SearchEngine {
     private RuntimeCompassSettings runtimeSettings;
 
     private final ArrayList<LuceneDelegatedClose> delegateClose = new ArrayList<LuceneDelegatedClose>();
-    
+
 
     public LuceneSearchEngine(RuntimeCompassSettings runtimeSettings, LuceneSearchEngineFactory searchEngineFactory) {
         this.runtimeSettings = runtimeSettings;
@@ -114,7 +112,7 @@ public class LuceneSearchEngine implements SearchEngine {
         }
 
         closeDelegateClosed();
-        
+
         TransactionProcessorFactory transactionProcessorFactory = searchEngineFactory.getTransactionProcessorManager()
                 .getProcessorFactory(runtimeSettings.getSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME));
         transactionProcessor = transactionProcessorFactory.create(this);
@@ -218,10 +216,10 @@ public class LuceneSearchEngine implements SearchEngine {
         if (resource instanceof MultiResource) {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
-                delete(((InternalResource) multiResource.resource(i)).resourceKey());
+                delete(((InternalResource) multiResource.resource(i)).getResourceKey());
             }
         } else {
-            delete(((InternalResource) resource).resourceKey());
+            delete(((InternalResource) resource).getResourceKey());
         }
     }
 
@@ -264,14 +262,13 @@ public class LuceneSearchEngine implements SearchEngine {
             MultiResource multiResource = (MultiResource) resource;
             for (int i = 0; i < multiResource.size(); i++) {
                 InternalResource resource1 = (InternalResource) multiResource.resource(i);
-                Analyzer analyzer = enhanceResource(resourceMapping, resource1);
                 if (update) {
-                    transactionProcessor.update(resource1, analyzer);
+                    transactionProcessor.update(resource1);
                     if (log.isTraceEnabled()) {
                         log.trace("RESOURCE SAVE " + resource1);
                     }
                 } else {
-                    transactionProcessor.create(resource1, analyzer);
+                    transactionProcessor.create(resource1);
                     if (log.isTraceEnabled()) {
                         log.trace("RESOURCE CREATE " + resource1);
                     }
@@ -279,32 +276,23 @@ public class LuceneSearchEngine implements SearchEngine {
             }
         } else {
             InternalResource resource1 = (InternalResource) resource;
-            Analyzer analyzer = enhanceResource(resourceMapping, resource1);
             if (update) {
-                transactionProcessor.update(resource1, analyzer);
+                transactionProcessor.update(resource1);
                 if (log.isTraceEnabled()) {
                     log.trace("RESOURCE SAVE " + resource1);
                 }
             } else {
-                transactionProcessor.create(resource1, analyzer);
+                transactionProcessor.create(resource1);
                 if (log.isTraceEnabled()) {
-                    log.trace("RESOURCE CREATE " + resource1);
                     log.trace("RESOURCE CREATE " + resource1);
                 }
             }
         }
     }
 
-    private Analyzer enhanceResource(ResourceMapping resourceMapping, InternalResource resource) throws SearchEngineException {
-        LuceneUtils.addExtendedProeprty(resource, resourceMapping, searchEngineFactory);
-        LuceneUtils.applyBoostIfNeeded(resource, searchEngineFactory);
-        Analyzer analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerByResource(resource);
-        return LuceneUtils.addAllProperty(resource, analyzer, resource.resourceKey().getResourceMapping(), this);
-    }
-
     public Resource get(Resource idResource) throws SearchEngineException {
         verifyWithinTransaction();
-        ResourceKey resourceKey = ((InternalResource) idResource).resourceKey();
+        ResourceKey resourceKey = ((InternalResource) idResource).getResourceKey();
         if (resourceKey.getIds().length == 0) {
             throw new SearchEngineException("Cannot load a resource with no ids and alias [" + resourceKey.getAlias() + "]");
         }
@@ -356,7 +344,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public SearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         verifyWithinTransaction();
-        LuceneSearchEngineInternalSearch internalSearch =  transactionProcessor.internalSearch(subIndexes, aliases);
+        LuceneSearchEngineInternalSearch internalSearch = transactionProcessor.internalSearch(subIndexes, aliases);
         delegateClose.add(internalSearch);
         return internalSearch;
     }

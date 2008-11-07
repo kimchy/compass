@@ -68,7 +68,7 @@ public class DefaultCompassHits extends AbstractCompassHits implements InternalC
 
     public Resource resource(int n) throws CompassException {
         Resource resource = hits.getResource(n);
-        ResourceKey key = ((InternalResource) resource).resourceKey();
+        ResourceKey key = ((InternalResource) resource).getResourceKey();
         Resource cachedResource = session.getFirstLevelCache().getResource(key);
         if (cachedResource != null) {
             return cachedResource;

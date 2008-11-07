@@ -17,13 +17,24 @@
 package org.compass.core.spi;
 
 import org.compass.core.Resource;
+import org.compass.core.mapping.ResourceMapping;
 
 /**
+ * An intenral SPI of Resource.
+ *
  * @author kimchy
  */
 public interface InternalResource extends Resource {
 
-    ResourceKey resourceKey();
+    /**
+     * Returns the resource key associated with this resource.
+     */
+    ResourceKey getResourceKey();
+
+    /**
+     * Returns the resource mapping associated with this resource.
+     */
+    ResourceMapping getResourceMapping();
 
     /**
      * Returns the sub index this resource is associated with.

@@ -21,11 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.TermEnum;
@@ -36,17 +33,8 @@ import org.apache.lucene.store.Lock;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineFactory;
-import org.compass.core.lucene.LuceneProperty;
 import org.compass.core.lucene.LuceneResource;
-import org.compass.core.lucene.LuceneResourceFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
-import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.all.AllAnalyzer;
-import org.compass.core.mapping.AllMapping;
-import org.compass.core.mapping.BoostPropertyMapping;
-import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
 /**
@@ -77,51 +65,6 @@ public abstract class LuceneUtils {
             }
         }
         return result;
-    }
-
-    public static void applyBoostIfNeeded(InternalResource resource, SearchEngineFactory searchEngineFactory) {
-        BoostPropertyMapping boostPropertyMapping = resource.resourceKey().getResourceMapping().getBoostPropertyMapping();
-        if (boostPropertyMapping == null) {
-            return;
-        }
-        float boostValue = boostPropertyMapping.getDefaultBoost();
-        String boostPropertyName = boostPropertyMapping.getBoostResourcePropertyName();
-        String sBoostValue = resource.getValue(boostPropertyName);
-        if (!searchEngineFactory.getResourceFactory().isNullValue(sBoostValue)) {
-            boostValue = Float.parseFloat(sBoostValue);
-        }
-        resource.setBoost(boostValue);
-    }
-
-    public static void createResource(IndexWriter indexWriter, Resource resource, Analyzer analyzer) throws SearchEngineException {
-        Document document = ((LuceneResource) resource).getDocument();
-        try {
-            indexWriter.addDocument(document, analyzer);
-        } catch (IOException e) {
-            throw new SearchEngineException("Failed to create resource " + resource, e);
-        }
-    }
-
-    public static void addExtendedProeprty(Resource resource, ResourceMapping resourceMapping, LuceneSearchEngineFactory searchEngineFactory) {
-        String extendedAliasProperty = searchEngineFactory.getExtendedAliasProperty();
-        resource.removeProperties(extendedAliasProperty);
-        for (int i = 0; i < resourceMapping.getExtendedAliases().length; i++) {
-            LuceneProperty extendedAliasProp = (LuceneProperty) searchEngineFactory.getResourceFactory().createProperty(extendedAliasProperty,
-                    resourceMapping.getExtendedAliases()[i], Property.Store.NO, Property.Index.NOT_ANALYZED);
-            extendedAliasProp.getField().setOmitNorms(true);
-            resource.addProperty(extendedAliasProp);
-        }
-
-    }
-
-    public static Analyzer addAllProperty(InternalResource resource, Analyzer analyzer, ResourceMapping resourceMapping, LuceneSearchEngine searchEngine) throws SearchEngineException {
-        AllAnalyzer allAnalyzer = new AllAnalyzer(analyzer, resource, searchEngine);
-        AllMapping allMapping = resourceMapping.getAllMapping();
-        Property property = ((LuceneResourceFactory) searchEngine.getSearchEngineFactory().getResourceFactory()).createProperty(allMapping.getProperty(), allAnalyzer.createAllTokenStream(), allMapping.getTermVector());
-        property.setOmitNorms(allMapping.isOmitNorms());
-        property.setOmitTf(allMapping.isOmitTf());
-        resource.addProperty(property);
-        return allAnalyzer;
     }
 
     public static List<String> findPropertyValues(IndexReader indexReader, String propertyName) throws SearchEngineException {

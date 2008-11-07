@@ -236,7 +236,7 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
                 }
                 return obj;
             }
-            resourceKey = ((InternalResource) resource).resourceKey();
+            resourceKey = ((InternalResource) resource).getResourceKey();
             // if it is cached, return the cached object
             Object cached = context.getUnmarshalled(resourceKey);
             if (cached != null) {

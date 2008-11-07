@@ -102,7 +102,7 @@ public class TransIndex implements CompassConfigurable {
     }
 
     public void update(InternalResource resource, Analyzer analyzer) throws IOException {
-        indexWriter.updateDocument(new Term(resource.resourceKey().getUIDPath(), resource.resourceKey().buildUID()),
+        indexWriter.updateDocument(new Term(resource.getResourceKey().getUIDPath(), resource.getResourceKey().buildUID()),
                 ((LuceneResource) resource).getDocument(), analyzer);
         flushRequired = true;
     }

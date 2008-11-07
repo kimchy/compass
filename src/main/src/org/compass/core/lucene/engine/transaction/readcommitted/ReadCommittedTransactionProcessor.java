@@ -47,6 +47,7 @@ import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.transaction.AbstractTransactionProcessor;
+import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
 import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.lucene.util.ChainedFilter;
 import org.compass.core.lucene.util.LuceneUtils;
@@ -295,9 +296,10 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    protected void doCreate(InternalResource resource, Analyzer analyzer) throws SearchEngineException {
+    protected void doCreate(InternalResource resource) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(resource.getSubIndex());
+            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
             transIndexManager.create(resource, analyzer);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()

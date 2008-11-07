@@ -28,7 +28,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.Payload;
 import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -58,7 +58,7 @@ public class AllAnalyzer extends Analyzer {
 
     private AllMapping allMapping;
 
-    private LuceneSearchEngine searchEngine;
+    private LuceneSearchEngineFactory searchEngineFactory;
 
     private ArrayList<Token> tokens = new ArrayList<Token>();
 
@@ -66,13 +66,13 @@ public class AllAnalyzer extends Analyzer {
 
     private boolean boostSupport;
 
-    public AllAnalyzer(Analyzer analyzer, InternalResource resource, LuceneSearchEngine searchEngine) {
+    public AllAnalyzer(Analyzer analyzer, InternalResource resource, LuceneSearchEngineFactory searchEngineFactory) {
         this.analyzer = analyzer;
         this.resource = resource;
-        this.resourceMapping = resource.resourceKey().getResourceMapping();
-        this.searchEngine = searchEngine;
+        this.resourceMapping = resource.getResourceKey().getResourceMapping();
+        this.searchEngineFactory = searchEngineFactory;
         this.allMapping = resourceMapping.getAllMapping();
-        this.boostSupport = searchEngine.getSearchEngineFactory().getLuceneSettings().isAllPropertyBoostSupport();
+        this.boostSupport = searchEngineFactory.getLuceneSettings().isAllPropertyBoostSupport();
 
         if (!allMapping.isSupported()) {
             return;
@@ -82,7 +82,7 @@ public class AllAnalyzer extends Analyzer {
             // add the alias to all prpoerty (lowecased, so finding it will be simple)
             tokens.add(new Token(resource.getAlias().toLowerCase(), 0, resource.getAlias().length()));
             // add the extended property
-            Property[] properties = resource.getProperties(searchEngine.getSearchEngineFactory().getExtendedAliasProperty());
+            Property[] properties = resource.getProperties(searchEngineFactory.getExtendedAliasProperty());
             if (properties != null) {
                 for (Property property : properties) {
                     tokens.add(new Token(property.getStringValue().toLowerCase(), 0, property.getStringValue().length()));
@@ -102,13 +102,13 @@ public class AllAnalyzer extends Analyzer {
             if (resourcePropertyMapping == null) {
                 if (allMapping.isIncludePropertiesWithNoMappings()) {
                     if (property.isIndexed() && !property.isTokenized()) {
-                        if (searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(property.getName())) {
+                        if (searchEngineFactory.getPropertyNamingStrategy().isInternal(property.getName())) {
                             continue;
                         }
-                        if (property.getName().equals(searchEngine.getSearchEngineFactory().getAliasProperty())) {
+                        if (property.getName().equals(searchEngineFactory.getAliasProperty())) {
                             continue;
                         }
-                        if (property.getName().equals(searchEngine.getSearchEngineFactory().getExtendedAliasProperty())) {
+                        if (property.getName().equals(searchEngineFactory.getExtendedAliasProperty())) {
                             continue;
                         }
                         // no mapping, need to add un_tokenized ones
@@ -161,10 +161,10 @@ public class AllAnalyzer extends Analyzer {
                     if (resourcePropertyMapping.getExcludeFromAll() == ResourcePropertyMapping.ExcludeFromAllType.NO_ANALYZED) {
                         Analyzer propAnalyzer;
                         if (resourcePropertyMapping.getAnalyzer() != null) {
-                            propAnalyzer = searchEngine.getSearchEngineFactory()
+                            propAnalyzer = searchEngineFactory
                                     .getAnalyzerManager().getAnalyzerMustExist(resourcePropertyMapping.getAnalyzer());
                         } else {
-                            propAnalyzer = searchEngine.getSearchEngineFactory().getAnalyzerManager().getAnalyzerByResource(resource);
+                            propAnalyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerByResource(resource);
                         }
                         TokenStream ts = propAnalyzer.tokenStream(property.getName(), new StringReader(value));
                         try {
@@ -207,7 +207,7 @@ public class AllAnalyzer extends Analyzer {
         }
         ResourcePropertyMapping resourcePropertyMapping = resourceMapping.getResourcePropertyMapping(fieldName);
         if (resourcePropertyMapping == null) {
-            if (!searchEngine.getSearchEngineFactory().getPropertyNamingStrategy().isInternal(fieldName)) {
+            if (!searchEngineFactory.getPropertyNamingStrategy().isInternal(fieldName)) {
                 if (allMapping.isIncludePropertiesWithNoMappings()) {
                     allTokenStreamCollector.setTokenStream(retVal);
                     allTokenStreamCollector.updateMapping(resource, resourcePropertyMapping);
