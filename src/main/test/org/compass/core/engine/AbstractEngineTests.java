@@ -71,6 +71,8 @@ public abstract class AbstractEngineTests extends TestCase {
 
     public static final String ALIAS_MUTLI = "multiid";
 
+    public static final String UPDATED_SUFFIX = "updated";
+
     private CompassSettings settings;
 
     private CompassMapping mapping;
@@ -131,12 +133,12 @@ public abstract class AbstractEngineTests extends TestCase {
         assertNotNull("single resource id don't exists", r);
     }
 
-    protected Resource getSingleId2Resource(SearchEngine searchEngine) {
+    protected Resource getSingleIdResource2(SearchEngine searchEngine) {
         return searchEngine.get(createSingleIdResource2(searchEngine));
     }
 
-    protected void assertSingleId2ResourceExists(SearchEngine searchEngine) {
-        Resource r = getSingleId2Resource(searchEngine);
+    protected void assertSingleIdResource2Exists(SearchEngine searchEngine) {
+        Resource r = getSingleIdResource2(searchEngine);
         assertNotNull("single resource id exists", r);
     }
 
@@ -149,12 +151,12 @@ public abstract class AbstractEngineTests extends TestCase {
         assertNotNull("multi resource id exists", r);
     }
 
-    protected Resource getMulitId2Resource(SearchEngine searchEngine) {
+    protected Resource getMulitIdResource2(SearchEngine searchEngine) {
         return searchEngine.get(createMultiIdResource2(searchEngine));
     }
 
-    protected void assertMulitId2ResourceExists(SearchEngine searchEngine) {
-        Resource r = getMulitId2Resource(searchEngine);
+    protected void assertMulitIdResource2Exists(SearchEngine searchEngine) {
+        Resource r = getMulitIdResource2(searchEngine);
         assertNotNull("multi resource 2 id exists", r);
     }
 
@@ -163,8 +165,8 @@ public abstract class AbstractEngineTests extends TestCase {
         assertNull("single resource id don't exists", r);
     }
 
-    protected void assertSingleId2ResourceNotExists(SearchEngine searchEngine) {
-        Resource r = getSingleId2Resource(searchEngine);
+    protected void assertSingleIdResource2NotExists(SearchEngine searchEngine) {
+        Resource r = getSingleIdResource2(searchEngine);
         assertNull("single resource id don't exists", r);
     }
 
@@ -173,9 +175,47 @@ public abstract class AbstractEngineTests extends TestCase {
         assertNull("multi resource id don't exists", r);
     }
 
-    protected void assertMulitId2ResourceNotExists(SearchEngine searchEngine) {
-        Resource r = getMulitId2Resource(searchEngine);
+    protected void assertMulitIdResource2NotExists(SearchEngine searchEngine) {
+        Resource r = getMulitIdResource2(searchEngine);
         assertNull("multi resource id don't exists", r);
+    }
+
+    protected void assertSingleIdResourceOriginal(SearchEngine searchEngine) {
+        Resource resource = getSingleIdResource(searchEngine);
+        assertEquals(VALUE_ID1, resource.getValue(PROPERTY_ID1));
+        assertEquals(VALUE_VAL1, resource.getValue(PROPERTY_VAL1));
+    }
+
+    protected void assertSingleIdResource2Original(SearchEngine searchEngine) {
+        Resource resource = getSingleIdResource(searchEngine);
+        assertEquals(VALUE_ID2, resource.getValue(PROPERTY_ID1));
+        assertEquals(VALUE_VAL1, resource.getValue(PROPERTY_VAL1));
+    }
+
+    protected void assertSingleIdResourceUpdated(SearchEngine searchEngine) {
+        Resource resource = getSingleIdResource(searchEngine);
+        assertEquals(VALUE_ID1, resource.getValue(PROPERTY_ID1));
+        assertEquals(VALUE_VAL1 + UPDATED_SUFFIX, resource.getValue(PROPERTY_VAL1));
+    }
+
+    protected void assertSingleId2ResourceUpdated(SearchEngine searchEngine) {
+        Resource resource = getSingleIdResource2(searchEngine);
+        assertEquals(VALUE_ID2, resource.getValue(PROPERTY_ID1));
+        assertEquals(VALUE_VAL1 + UPDATED_SUFFIX, resource.getValue(PROPERTY_VAL1));
+    }
+
+    protected void assertMulitIdResourceOriginal(SearchEngine searchEngine) {
+        Resource resource = getMulitIdResource(searchEngine);
+        assertEquals(VALUE_ID2, resource.getValue(PROPERTY_ID2));
+        assertEquals(VALUE_ID3, resource.getValue(PROPERTY_ID3));
+        assertEquals(VALUE_VAL2, resource.getValue(PROPERTY_VAL2));
+    }
+
+    protected void assertMulitIdResourceUpdated(SearchEngine searchEngine) {
+        Resource resource = getMulitIdResource(searchEngine);
+        assertEquals(VALUE_ID2, resource.getValue(PROPERTY_ID2));
+        assertEquals(VALUE_ID3, resource.getValue(PROPERTY_ID3));
+        assertEquals(VALUE_VAL2 + UPDATED_SUFFIX, resource.getValue(PROPERTY_VAL2));
     }
 
     protected Resource createSingleIdResource(SearchEngine searchEngine) {
@@ -191,6 +231,15 @@ public abstract class AbstractEngineTests extends TestCase {
         return singleId;
     }
 
+    protected Resource createUpdatedSingleIdResource(SearchEngine searchEngine) {
+        ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
+        Resource resource = createSingleIdResource(searchEngine);
+        resource.removeProperties(PROPERTY_VAL1);
+        resource.addProperty(resourceFactory.createProperty(PROPERTY_VAL1, VALUE_VAL1 + UPDATED_SUFFIX, Property.Store.YES,
+                Property.Index.ANALYZED));
+        return resource;
+    }
+
     protected Resource createSingleIdResource2(SearchEngine searchEngine) {
         ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
         Resource singleId = resourceFactory.createResource(ALIAS_SINGLE);
@@ -202,6 +251,15 @@ public abstract class AbstractEngineTests extends TestCase {
                 Property.Index.ANALYZED));
         ((InternalResource) singleId).addUID();
         return singleId;
+    }
+
+    protected Resource createUpdatedSingleIdResource2(SearchEngine searchEngine) {
+        ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
+        Resource resource = createSingleIdResource2(searchEngine);
+        resource.removeProperties(PROPERTY_VAL1);
+        resource.addProperty(resourceFactory.createProperty(PROPERTY_VAL1, VALUE_VAL1 + UPDATED_SUFFIX, Property.Store.YES,
+                Property.Index.ANALYZED));
+        return resource;
     }
 
     protected Resource createMultiIdResource(SearchEngine searchEngine) {
@@ -238,4 +296,12 @@ public abstract class AbstractEngineTests extends TestCase {
         return multiId;
     }
 
+    protected Resource createUpdatedMultiIdResource(SearchEngine searchEngine) {
+        ResourceFactory resourceFactory = searchEngine.getSearchEngineFactory().getResourceFactory();
+        Resource resource = createMultiIdResource(searchEngine);
+        resource.removeProperties(PROPERTY_VAL2);
+        resource.addProperty(resourceFactory.createProperty(PROPERTY_VAL2, VALUE_VAL2 + UPDATED_SUFFIX, Property.Store.YES,
+                Property.Index.ANALYZED));
+        return resource;
+    }
 }

@@ -312,43 +312,9 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         try {
             openIndexWriterIfNeeded(resourceKey.getSubIndex());
 
-            LuceneIndexHolder indexHolder = indexHoldersBySubIndex.get(resourceKey.getSubIndex());
-            if (indexHolder == null) {
-                indexManager.refreshCache(resourceKey.getSubIndex());
-                indexHolder = indexManager.openIndexHolderBySubIndex(resourceKey.getSubIndex());
-                indexHoldersBySubIndex.put(resourceKey.getSubIndex(), indexHolder);
-            }
-
-            // mark the deleted term in the filter
-            Term deleteTerm = new Term(resourceKey.getUIDPath(), resourceKey.buildUID());
-            TermDocs termDocs = null;
-            try {
-                termDocs = indexHolder.getIndexReader().termDocs(deleteTerm);
-                if (termDocs != null) {
-                    int maxDoc = indexHolder.getIndexReader().maxDoc();
-                    try {
-                        while (termDocs.next()) {
-                            filter.markDelete(indexHolder.getIndexReader(), termDocs.doc(), maxDoc);
-                        }
-                    } catch (IOException e) {
-                        throw new SearchEngineException("Failed to iterate data in order to delete", e);
-                    }
-                }
-            } catch (IOException e) {
-                throw new SearchEngineException("Failed to search for property [" + resourceKey + "]", e);
-            } finally {
-                try {
-                    if (termDocs != null) {
-                        termDocs.close();
-                    }
-                } catch (IOException e) {
-                    // swallow it
-                }
-            }
-
+            Term deleteTerm = markDeleted(resourceKey);
             // delete from the original index (autoCommit is false, so won't be committed
             indexWriterBySubIndex.get(resourceKey.getSubIndex()).deleteDocuments(deleteTerm);
-
             // and delete it (if there) from the transactional index
             transIndexManager.delete(resourceKey);
         } catch (IOException e) {
@@ -358,12 +324,60 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
     }
 
     public void update(InternalResource resource) throws SearchEngineException {
-        delete(resource.getResourceKey());
-        create(resource);
+        try {
+            openIndexWriterIfNeeded(resource.getSubIndex());
+
+            Term deleteTerm = markDeleted(resource.getResourceKey());
+            // delete from the original index (autoCommit is false, so won't be committed
+            indexWriterBySubIndex.get(resource.getResourceKey().getSubIndex()).deleteDocuments(deleteTerm);
+            // and update it in the transactional index
+            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
+            transIndexManager.update(resource, analyzer);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to update resource for alias [" + resource.getAlias()
+                    + "] and resource " + resource, e);
+        }
     }
 
     public void flush() throws SearchEngineException {
         // TODO maybe flush here the trans index manager?
+    }
+
+    private Term markDeleted(ResourceKey resourceKey) {
+        LuceneIndexHolder indexHolder = indexHoldersBySubIndex.get(resourceKey.getSubIndex());
+        if (indexHolder == null) {
+            indexManager.refreshCache(resourceKey.getSubIndex());
+            indexHolder = indexManager.openIndexHolderBySubIndex(resourceKey.getSubIndex());
+            indexHoldersBySubIndex.put(resourceKey.getSubIndex(), indexHolder);
+        }
+
+        // mark the deleted term in the filter
+        Term deleteTerm = new Term(resourceKey.getUIDPath(), resourceKey.buildUID());
+        TermDocs termDocs = null;
+        try {
+            termDocs = indexHolder.getIndexReader().termDocs(deleteTerm);
+            if (termDocs != null) {
+                int maxDoc = indexHolder.getIndexReader().maxDoc();
+                try {
+                    while (termDocs.next()) {
+                        filter.markDelete(indexHolder.getIndexReader(), termDocs.doc(), maxDoc);
+                    }
+                } catch (IOException e) {
+                    throw new SearchEngineException("Failed to iterate data in order to delete", e);
+                }
+            }
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to search for property [" + resourceKey + "]", e);
+        } finally {
+            try {
+                if (termDocs != null) {
+                    termDocs.close();
+                }
+            } catch (IOException e) {
+                // swallow it
+            }
+        }
+        return deleteTerm;
     }
 
     protected void openIndexWriterIfNeeded(String subIndex) throws IOException {

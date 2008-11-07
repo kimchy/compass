@@ -52,6 +52,26 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         getSearchEngine().rollback();
     }
 
+    public void testSaveResourceReadCommitted() {
+        getSearchEngine().begin();
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource multiId = createMultiIdResource(getSearchEngine());
+        getSearchEngine().create(multiId);
+        assertSingleIdResourceExists(getSearchEngine());
+        assertMulitIdResourceExists(getSearchEngine());
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
+        assertSingleIdResourceOriginal(getSearchEngine());
+        assertMulitIdResourceOriginal(getSearchEngine());
+        singleId = createUpdatedSingleIdResource(getSearchEngine());
+        getSearchEngine().save(singleId);
+        assertSingleIdResourceUpdated(getSearchEngine());
+        assertMulitIdResourceOriginal(getSearchEngine());
+        getSearchEngine().rollback();
+    }
+
     public void testDeleteResource() {
         getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
@@ -84,25 +104,25 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
     public void testMultiIdDoubleEntriesReadCommitted() throws Exception {
         getSearchEngine().begin();
         assertMulitIdResourceNotExists(getSearchEngine());
-        assertMulitId2ResourceNotExists(getSearchEngine());
+        assertMulitIdResource2NotExists(getSearchEngine());
 
         Resource multiId = createMultiIdResource(getSearchEngine());
         getSearchEngine().create(multiId);
         assertMulitIdResourceExists(getSearchEngine());
-        assertMulitId2ResourceNotExists(getSearchEngine());
+        assertMulitIdResource2NotExists(getSearchEngine());
 
         Resource multiId2 = createMultiIdResource2(getSearchEngine());
         getSearchEngine().create(multiId2);
         assertMulitIdResourceExists(getSearchEngine());
-        assertMulitId2ResourceExists(getSearchEngine());
+        assertMulitIdResource2Exists(getSearchEngine());
 
         getSearchEngine().delete(multiId2);
         assertMulitIdResourceExists(getSearchEngine());
-        assertMulitId2ResourceNotExists(getSearchEngine());
+        assertMulitIdResource2NotExists(getSearchEngine());
 
         getSearchEngine().delete(multiId);
         assertMulitIdResourceNotExists(getSearchEngine());
-        assertMulitId2ResourceNotExists(getSearchEngine());
+        assertMulitIdResource2NotExists(getSearchEngine());
         getSearchEngine().rollback();
     }
     
@@ -181,8 +201,8 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
         getSearchEngine().begin();
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceNotExists(getSearchEngine());
-        assertSingleId2ResourceNotExists(getSearchEngine());
-        assertMulitId2ResourceNotExists(getSearchEngine());
+        assertSingleIdResource2NotExists(getSearchEngine());
+        assertMulitIdResource2NotExists(getSearchEngine());
 
         Resource singleId = createSingleIdResource(getSearchEngine());
         getSearchEngine().create(singleId);
@@ -199,18 +219,18 @@ public abstract class AbstractReadCommittedTransactionTests extends AbstractTran
 
         assertSingleIdResourceExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
-        assertSingleId2ResourceExists(getSearchEngine());
-        assertMulitId2ResourceExists(getSearchEngine());
+        assertSingleIdResource2Exists(getSearchEngine());
+        assertMulitIdResource2Exists(getSearchEngine());
 
         getSearchEngine().delete(singleId);
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
-        assertSingleId2ResourceExists(getSearchEngine());
+        assertSingleIdResource2Exists(getSearchEngine());
 
         getSearchEngine().delete(singleId2);
         assertSingleIdResourceNotExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
-        assertSingleId2ResourceNotExists(getSearchEngine());
+        assertSingleIdResource2NotExists(getSearchEngine());
         getSearchEngine().commit(true);
 
     }

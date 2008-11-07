@@ -55,8 +55,8 @@ public abstract class AbstractLuceneTransactionEngineTests extends AbstractTrans
         getSearchEngine().begin();
         assertSingleIdResourceExists(getSearchEngine());
         assertMulitIdResourceExists(getSearchEngine());
-        assertSingleId2ResourceExists(getSearchEngine());
-        assertMulitId2ResourceExists(getSearchEngine());
+        assertSingleIdResource2Exists(getSearchEngine());
+        assertMulitIdResource2Exists(getSearchEngine());
         getSearchEngine().commit(true);
     }
 }
