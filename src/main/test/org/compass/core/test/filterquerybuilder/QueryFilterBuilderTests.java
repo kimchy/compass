@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2006 the original author or authors.
+ * Copyright 2004-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,11 @@ package org.compass.core.test.filterquerybuilder;
 
 import java.util.Calendar;
 
-import org.compass.core.*;
+import org.compass.core.CompassHits;
+import org.compass.core.CompassQueryBuilder;
+import org.compass.core.CompassQueryFilterBuilder;
+import org.compass.core.CompassSession;
+import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.test.AbstractTestCase;

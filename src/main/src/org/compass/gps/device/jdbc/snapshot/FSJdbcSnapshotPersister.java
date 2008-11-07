@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2006 the original author or authors.
+ * Copyright 2004-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.compass.gps.device.jdbc.JdbcGpsDeviceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.compass.gps.device.jdbc.JdbcGpsDeviceException;
 
 /**
  * A FS (File System) based snapshot persister. The persister will store and

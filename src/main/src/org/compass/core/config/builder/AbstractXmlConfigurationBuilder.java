@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2006 the original author or authors.
+ * Copyright 2004-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,11 @@ import org.apache.commons.logging.Log;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.ConfigurationException;
 import org.w3c.dom.Document;
-import org.xml.sax.*;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * @author kimchy

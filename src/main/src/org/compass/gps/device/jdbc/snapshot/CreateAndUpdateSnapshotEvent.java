@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2006 the original author or authors.
+ * Copyright 2004-2008 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package org.compass.gps.device.jdbc.snapshot;
 import java.sql.Connection;
 import java.util.List;
 
-import org.compass.gps.spi.CompassGpsInterfaceDevice;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 import org.compass.gps.device.jdbc.mapping.ResultSetToResourceMapping;
+import org.compass.gps.spi.CompassGpsInterfaceDevice;
 
 /**
  * A create and update snapshot event, works with

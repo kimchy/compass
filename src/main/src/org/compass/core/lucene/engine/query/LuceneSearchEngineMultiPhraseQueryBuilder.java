@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2006 the original author or authors.
+ * Copyright 2004-2008 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package org.compass.core.lucene.engine.query;
 
-import org.compass.core.engine.SearchEngineQueryBuilder;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.MultiPhraseQuery;
 import org.compass.core.engine.SearchEngineQuery;
+import org.compass.core.engine.SearchEngineQueryBuilder;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
-import org.apache.lucene.search.MultiPhraseQuery;
-import org.apache.lucene.index.Term;
 
 /**
  * @author kimchy
