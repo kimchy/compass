@@ -139,5 +139,5 @@ public interface Compass extends Referenceable, Serializable {
      * <p>If the rebuild fails, the Compass instance can still work and it will be based on the
      * latest valid Compass instance that was rebuilt.
      */
-    void rebuild();
+    void rebuild() throws CompassException;
 }
