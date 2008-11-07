@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
+import org.apache.lucene.store.Lock;
 
 /**
  * @author kimchy
@@ -149,7 +150,28 @@ public abstract class LuceneUtils {
         return true;
     }
 
+    /**
+     * Returns if the name is a segment file or not.
+     */
     public static boolean isSegmentsFile(String name) {
         return name.startsWith(IndexFileNames.SEGMENTS) || name.equals(IndexFileNames.SEGMENTS_GEN);
+    }
+
+    /**
+     * Clears all the locks within the array, ignoring any exceptions.
+     */
+    public static void clearLocks(Lock[] locks) {
+        if (locks == null) {
+            return;
+        }
+        for (Lock lock : locks) {
+            if (lock != null) {
+                try {
+                    lock.release();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
     }
 }

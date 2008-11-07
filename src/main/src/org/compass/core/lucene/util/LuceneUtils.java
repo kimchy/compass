@@ -28,7 +28,6 @@ import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.store.Lock;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
@@ -145,20 +144,5 @@ public abstract class LuceneUtils {
         }
 
         throw new SearchEngineException("No term vector type is defined for [" + termVector + "]");
-    }
-
-    public static void clearLocks(Lock[] locks) {
-        if (locks == null) {
-            return;
-        }
-        for (Lock lock : locks) {
-            if (lock != null) {
-                try {
-                    lock.release();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
     }
 }

@@ -30,6 +30,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexDeletionPolicy;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.LuceneUtils;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Searchable;
@@ -46,7 +47,6 @@ import org.compass.core.lucene.engine.LuceneSettings;
 import org.compass.core.lucene.engine.merge.policy.MergePolicyFactory;
 import org.compass.core.lucene.engine.merge.scheduler.MergeSchedulerFactory;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
-import org.compass.core.lucene.util.LuceneUtils;
 import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.transaction.context.TransactionContextCallback;
 
