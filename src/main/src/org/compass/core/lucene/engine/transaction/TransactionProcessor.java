@@ -42,9 +42,6 @@ public interface TransactionProcessor {
 
     void rollback() throws SearchEngineException;
 
-    /**
-     * Supported only in batch insert transacitons.
-     */
     void flush() throws SearchEngineException;
 
     void create(final InternalResource resource) throws SearchEngineException;
