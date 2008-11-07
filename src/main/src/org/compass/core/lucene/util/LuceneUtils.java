@@ -16,7 +16,6 @@
 
 package org.compass.core.lucene.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,26 +145,6 @@ public abstract class LuceneUtils {
         }
 
         throw new SearchEngineException("No term vector type is defined for [" + termVector + "]");
-    }
-
-    public static boolean deleteDir(File dir) {
-        boolean globalSuccess = true;
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            if (children != null) {
-                for (String aChildren : children) {
-                    boolean success = deleteDir(new File(dir, aChildren));
-                    if (!success) {
-                        globalSuccess = false;
-                    }
-                }
-            }
-        }
-        // The directory is now empty so delete it
-        if (!dir.delete()) {
-            globalSuccess = false;
-        }
-        return globalSuccess;
     }
 
     public static void clearLocks(Lock[] locks) {

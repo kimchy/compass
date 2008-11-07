@@ -25,6 +25,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.compass.core.util.FileSystemUtils;
 
 /**
  * @author kimchy
@@ -37,13 +38,13 @@ public class LuceneUtilsTests extends TestCase {
 
     protected void setUp() throws Exception {
         File indexFile = new File(indexFilePath);
-        org.compass.core.lucene.util.LuceneUtils.deleteDir(indexFile);
+        FileSystemUtils.deleteRecursively(indexFile);
         directory = FSDirectory.getDirectory(indexFile, true);
     }
 
     protected void tearDown() throws Exception {
         File indexFile = new File(indexFilePath);
-        org.compass.core.lucene.util.LuceneUtils.deleteDir(indexFile);
+        FileSystemUtils.deleteRecursively(indexFile);
     }
 
     public void testIsCompound() throws IOException {

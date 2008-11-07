@@ -28,7 +28,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.util.FileSystemUtils;
 
 /**
  * A directory store implemented using a file system. Uses Lucene {@link org.apache.lucene.store.FSDirectory}.
@@ -82,7 +82,7 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
             boolean deleted = false;
             // do this retries for windows...
             for (int i = 0; i < 10; i++) {
-                deleted = LuceneUtils.deleteDir(indexPathFile);
+                deleted = FileSystemUtils.deleteRecursively(indexPathFile);
                 if (deleted) {
                     break;
                 }
@@ -142,7 +142,7 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
     public void afterSuccessfulCopyFrom(String subContext, String subIndex, CopyFromHolder holder) throws SearchEngineException {
         File renameToIndexPathFile = (File) holder.data;
         try {
-            LuceneUtils.deleteDir(renameToIndexPathFile);
+            FileSystemUtils.deleteRecursively(renameToIndexPathFile);
         } catch (Exception e) {
             log.warn("Failed to delete backup directory", e);
         }

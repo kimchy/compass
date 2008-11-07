@@ -37,7 +37,7 @@ import org.compass.core.lucene.engine.store.FSDirectoryStore;
 import org.compass.core.lucene.engine.store.MMapDirectoryStore;
 import org.compass.core.lucene.engine.store.NIOFSDirectoryStore;
 import org.compass.core.lucene.engine.store.RAMDirectoryStore;
-import org.compass.core.lucene.util.LuceneUtils;
+import org.compass.core.util.FileSystemUtils;
 
 /**
  * @author kimchy
@@ -110,7 +110,7 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
             }
             path += "/" + subContext + "/" + subIndex;
             File filePath = new File(path);
-            LuceneUtils.deleteDir(filePath);
+            FileSystemUtils.deleteRecursively(filePath);
             if (!filePath.exists()) {
                 synchronized (this) {
                     // sync since there is a bug with mkdirs failing on reetrant code
