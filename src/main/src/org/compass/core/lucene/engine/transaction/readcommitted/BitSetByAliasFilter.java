@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine.transaction.readcommitted;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.DocIdSet;
@@ -64,9 +65,9 @@ public class BitSetByAliasFilter extends Filter {
         }
     }
 
-    private HashMap<IndexReader, DocIdSet> deletedBitSets = new HashMap<IndexReader, DocIdSet>();
+    private Map<IndexReader, DocIdSet> deletedBitSets = new HashMap<IndexReader, DocIdSet>();
 
-    private HashMap<IndexReader, DocIdSet> allBitSets = new HashMap<IndexReader, DocIdSet>();
+    private Map<IndexReader, DocIdSet> allBitSets = new HashMap<IndexReader, DocIdSet>();
 
     private boolean hasDeletes = false;
 

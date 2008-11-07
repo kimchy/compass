@@ -18,9 +18,9 @@ package org.compass.core.lucene.engine.transaction;
 
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
+import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
@@ -31,8 +31,6 @@ import org.compass.core.spi.ResourceKey;
  * @author kimchy
  */
 public interface TransactionProcessor {
-
-    boolean isDirty();
 
     void begin() throws SearchEngineException;
 
@@ -50,7 +48,7 @@ public interface TransactionProcessor {
 
     void delete(final ResourceKey resourceKey) throws SearchEngineException;
 
-    LuceneSearchEngineHits find(SearchEngineQuery query) throws SearchEngineException;
+    LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException;
 
     Resource[] get(ResourceKey resourceKey) throws SearchEngineException;
 

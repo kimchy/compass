@@ -330,7 +330,7 @@ public class LuceneSearchEngine implements SearchEngine {
 
     public SearchEngineHits find(SearchEngineQuery query) throws SearchEngineException {
         verifyWithinTransaction();
-        LuceneSearchEngineHits hits = transactionProcessor.find(query);
+        LuceneSearchEngineHits hits = transactionProcessor.find((LuceneSearchEngineQuery) query);
         if (log.isTraceEnabled()) {
             log.trace("RESOURCE QUERY [" + query + "] HITS [" + hits.getLength() + "]");
         }

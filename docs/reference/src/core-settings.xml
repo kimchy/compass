@@ -132,18 +132,18 @@
 
     </sect2>
 
-    <sect2 id="TransactionLevel">
+    <sect2 id="settings-transactionprocessor">
      <title>Transaction Level</title>
 
       <para>
-        Compass supports several transaction isolation levels. More information about them can be found in the Search Engine chapter.
+        Compass supports several transaction processors. More information about them can be found in the Search Engine chapter.
 
         <table>
           <tgroup cols="2">
             <colspec colname="c1" colwidth="3*" />
             <colspec colname="c2" colwidth="5*" />
             <thead>
-              <row><entry>Transaction Level</entry><entry>Description</entry></row>
+              <row><entry>Transaction Processor</entry><entry>Description</entry></row>
             </thead>
             <tbody>
               <row>
@@ -151,16 +151,8 @@
                 <entry>Not supported, upgraded to <literal>read_committed</literal>.</entry>
               </row>
               <row>
-                <entry>read_uncommitted</entry>
-                <entry>Not supported, upgraded to <literal>read_committed</literal>.</entry>
-              </row>
-              <row>
                 <entry>read_committed</entry>
                 <entry>The same read committed from data base systems. As fast for read only transactions.</entry>
-              </row>
-              <row>
-                <entry>repeatable_read</entry>
-                <entry>Not supported, upgraded to <literal>serializable</literal>.</entry>
               </row>
               <row>
                 <entry>serializable</entry>

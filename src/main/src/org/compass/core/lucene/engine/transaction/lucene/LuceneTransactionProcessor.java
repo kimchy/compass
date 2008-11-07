@@ -67,11 +67,11 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         super(searchEngine);
     }
 
-    protected void doBegin() throws SearchEngineException {
+    public void begin() throws SearchEngineException {
         // nothing to do here
     }
 
-    protected void doRollback() throws SearchEngineException {
+    public void rollback() throws SearchEngineException {
         SearchEngineException exception = null;
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             try {
@@ -97,7 +97,7 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         }
     }
 
-    protected void doPrepare() throws SearchEngineException {
+    public void prepare() throws SearchEngineException {
         if (indexManager.supportsConcurrentOperations()) {
             ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
@@ -117,14 +117,14 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         }
     }
 
-    protected void doCommit(boolean onePhase) throws SearchEngineException {
+    public void commit(boolean onePhase) throws SearchEngineException {
         if (indexWriterBySubIndex.isEmpty()) {
             return;
         }
         // here, we issue doPrepare since if only one of the sub indexes failed with it, then
         // it should fail.
         if (onePhase) {
-            doPrepare();
+            prepare();
         }
         if (indexManager.supportsConcurrentOperations()) {
             ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
@@ -157,9 +157,8 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
 //        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
     }
 
-    protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
-        LuceneSearchEngineInternalSearch internalSearch =
-                (LuceneSearchEngineInternalSearch) internalSearch(query.getSubIndexes(), query.getAliases());
+    public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
+        LuceneSearchEngineInternalSearch internalSearch = internalSearch(query.getSubIndexes(), query.getAliases());
         if (internalSearch.isEmpty()) {
             return new EmptyLuceneSearchEngineHits();
         }
@@ -169,6 +168,11 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         }
         Hits hits = findByQuery(internalSearch, query, qFilter);
         return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
+    }
+
+    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        // TODO somehow, we need to find a way to pass the useFieldCache parameter
+        return buildInternalSearch(subIndexes, aliases, true);
     }
 
     public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
@@ -199,7 +203,7 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         }
     }
 
-    protected void doCreate(InternalResource resource) throws SearchEngineException {
+    public void create(InternalResource resource) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
             Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
@@ -210,7 +214,7 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         }
     }
 
-    protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
+    public void delete(ResourceKey resourceKey) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resourceKey.getSubIndex());
             indexWriter.deleteDocuments(new Term(resourceKey.getUIDPath(), resourceKey.buildUID()));
@@ -220,7 +224,7 @@ public class LuceneTransactionProcessor extends AbstractTransactionProcessor {
         }
     }
 
-    protected void doUpdate(InternalResource resource) throws SearchEngineException {
+    public void update(InternalResource resource) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
             Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());

@@ -28,19 +28,14 @@ import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.engine.SearchEngineQuery;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
-import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
-import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
 import org.compass.core.lucene.engine.manager.LuceneSearchEngineIndexManager;
 import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.spi.InternalResource;
-import org.compass.core.spi.ResourceKey;
 
 /**
  * A base class for all Lucene based transactions. Provides helper methods for
@@ -57,59 +52,24 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
 
     protected final CompassMapping mapping;
 
-    protected final LuceneAnalyzerManager analyzerManager;
-
-    protected boolean dirty;
-
     protected AbstractTransactionProcessor(LuceneSearchEngine searchEngine) {
         this.searchEngine = searchEngine;
         this.indexManager = searchEngine.getSearchEngineFactory().getLuceneIndexManager();
         this.mapping = searchEngine.getSearchEngineFactory().getMapping();
-        this.analyzerManager = searchEngine.getSearchEngineFactory().getAnalyzerManager();
     }
 
-    public void begin() throws SearchEngineException {
-        doBegin();
+    protected ResourceMapping getResourceMapping(String alias) {
+        return mapping.getRootMappingByAlias(alias);
     }
-
-    protected abstract void doBegin() throws SearchEngineException;
-
-    public void rollback() throws SearchEngineException {
-        doRollback();
-    }
-
-    protected abstract void doRollback() throws SearchEngineException;
-
-    public void prepare() throws SearchEngineException {
-        doPrepare();
-    }
-
-    protected abstract void doPrepare() throws SearchEngineException;
-
-    public void commit(boolean onePhase) throws SearchEngineException {
-        doCommit(onePhase);
-    }
-
-    protected abstract void doCommit(boolean onePhase) throws SearchEngineException;
-
-    public LuceneSearchEngineHits find(SearchEngineQuery query) throws SearchEngineException {
-        return doFind((LuceneSearchEngineQuery) query);
-    }
-
-    protected abstract LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException;
-
-    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
-        return doInternalSearch(subIndexes, aliases);
-    }
-
-    protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+    
+    protected LuceneSearchEngineInternalSearch buildInternalSearch(String[] subIndexes, String[] aliases, boolean useFieldCache) throws SearchEngineException {
         ArrayList<LuceneIndexHolder> indexHoldersToClose = new ArrayList<LuceneIndexHolder>();
         try {
             String[] calcSubIndexes = indexManager.getStore().calcSubIndexes(subIndexes, aliases);
             // currenly we disable search by multireader and do it with multisearcher so field cache
             // will work correclty (as we won't create a new "outer" reader each time, which will cause
             // the field cache to invalidate each time
-            if (false) {
+            if (!useFieldCache) {
                 ArrayList<IndexReader> readers = new ArrayList<IndexReader>(calcSubIndexes.length);
                 LuceneIndexHolder lastNonEmptyIndexHolder = null;
                 for (String subIndex : calcSubIndexes) {
@@ -157,39 +117,6 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
             }
             throw new SearchEngineException("Failed to open Lucene reader/searcher", e);
         }
-    }
-
-
-    public void create(final InternalResource resource) throws SearchEngineException {
-        dirty = true;
-        doCreate(resource);
-    }
-
-    protected abstract void doCreate(final InternalResource resource) throws SearchEngineException;
-
-    public void delete(final ResourceKey resourceKey) throws SearchEngineException {
-        dirty = true;
-        doDelete(resourceKey);
-    }
-
-    protected abstract void doDelete(final ResourceKey resourceKey) throws SearchEngineException;
-
-    public void update(InternalResource resource) throws SearchEngineException {
-        dirty = true;
-        doUpdate(resource);
-    }
-
-    protected void doUpdate(InternalResource resource) throws SearchEngineException {
-        doDelete(resource.getResourceKey());
-        doCreate(resource);
-    }
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    protected ResourceMapping getResourceMapping(String alias) {
-        return mapping.getRootMappingByAlias(alias);
     }
 
     protected Hits findByQuery(LuceneSearchEngineInternalSearch internalSearch,

@@ -78,13 +78,13 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         super(searchEngine);
     }
 
-    protected void doBegin() throws SearchEngineException {
+    public void begin() throws SearchEngineException {
         this.transIndexManager = new TransIndexManager(searchEngine.getSearchEngineFactory());
         this.transIndexManager.configure(searchEngine.getSettings());
         this.filter = new BitSetByAliasFilter();
     }
 
-    protected void doRollback() throws SearchEngineException {
+    public void rollback() throws SearchEngineException {
         releaseHolders();
         SearchEngineException lastException = null;
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
@@ -111,7 +111,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    protected void doPrepare() throws SearchEngineException {
+    public void prepare() throws SearchEngineException {
         releaseHolders();
         if (indexManager.supportsConcurrentOperations()) {
             ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
@@ -138,12 +138,12 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    protected void doCommit(boolean onePhase) throws SearchEngineException {
+    public void commit(boolean onePhase) throws SearchEngineException {
         releaseHolders();
         // here, we issue doPrepare since if only one of the sub indexes failed with it, then
         // it should fail.
         if (onePhase) {
-            doPrepare();
+            prepare();
         }
         if (indexManager.supportsConcurrentOperations()) {
             ArrayList<Callable<Object>> commitCallables = new ArrayList<Callable<Object>>();
@@ -164,10 +164,11 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         // if there are no ongoing dirty operations, simply return the default one which is faster
         if (indexHoldersBySubIndex.isEmpty() && !transIndexManager.hasTransactions()) {
-            return super.doInternalSearch(subIndexes, aliases);
+            // TODO somehow, we need to find a way to pass the useFieldCache parameter 
+            return super.buildInternalSearch(subIndexes, aliases, true);
         }
         // we have a transaction, take it into account
         ArrayList<LuceneIndexHolder> indexHoldersToClose = new ArrayList<LuceneIndexHolder>();
@@ -200,9 +201,8 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
-        LuceneSearchEngineInternalSearch internalSearch =
-                (LuceneSearchEngineInternalSearch) internalSearch(query.getSubIndexes(), query.getAliases());
+    public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
+        LuceneSearchEngineInternalSearch internalSearch = internalSearch(query.getSubIndexes(), query.getAliases());
         if (internalSearch.isEmpty()) {
             return new EmptyLuceneSearchEngineHits();
         }
@@ -296,7 +296,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    protected void doCreate(InternalResource resource) throws SearchEngineException {
+    public void create(InternalResource resource) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(resource.getSubIndex());
             Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
@@ -308,7 +308,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
 
     }
 
-    protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
+    public void delete(ResourceKey resourceKey) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(resourceKey.getSubIndex());
 
@@ -355,6 +355,11 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
             throw new SearchEngineException("Failed to delete alias [" + resourceKey.getAlias() + "] and ids ["
                     + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]", e);
         }
+    }
+
+    public void update(InternalResource resource) throws SearchEngineException {
+        delete(resource.getResourceKey());
+        create(resource);
     }
 
     public void flush() throws SearchEngineException {
