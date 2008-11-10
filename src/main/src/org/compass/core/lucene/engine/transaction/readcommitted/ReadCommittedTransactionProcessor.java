@@ -449,7 +449,10 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
                 }
                 throw new SearchEngineException("Failed to add transaction index to sub index [" + subIndex + "]", e);
             }
-            if (indexManager.getSettings().isClearCacheOnCommit()) {
+            if (isClearCacheOnCommit()) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Clearing cache after commit for sub index [" + subIndex + "]");
+                }
                 indexManager.clearCache(subIndex);
             }
             try {

@@ -373,6 +373,9 @@ public class LuceneSearchEngine implements SearchEngine {
         return transactionProcessor;
     }
 
+    /**
+     * Returns the runtime settings of the session / search engine.
+     */
     public CompassSettings getSettings() {
         return runtimeSettings;
     }

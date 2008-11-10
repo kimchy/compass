@@ -28,6 +28,7 @@ import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
@@ -62,7 +63,7 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
     protected ResourceMapping getResourceMapping(String alias) {
         return mapping.getRootMappingByAlias(alias);
     }
-    
+
     protected LuceneSearchEngineInternalSearch buildInternalSearch(String[] subIndexes, String[] aliases, boolean useFieldCache) throws SearchEngineException {
         ArrayList<LuceneIndexHolder> indexHoldersToClose = new ArrayList<LuceneIndexHolder>();
         try {
@@ -142,5 +143,9 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
             throw new SearchEngineException("Failed to search with query [" + query + "]", e);
         }
         return hits;
+    }
+
+    protected boolean isClearCacheOnCommit() {
+        return searchEngine.getSettings().getSettingAsBoolean(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, true);
     }
 }
