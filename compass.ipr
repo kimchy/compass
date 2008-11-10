@@ -519,7 +519,6 @@
     <library name="coherence">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/coherence/coherence.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/coherence/tangosol.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
