@@ -103,6 +103,7 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
     }
 
     public void close() throws SearchEngineException {
+        transactionProcessorManager.close();
         if (spellCheckManager != null) {
             spellCheckManager.close();
         }

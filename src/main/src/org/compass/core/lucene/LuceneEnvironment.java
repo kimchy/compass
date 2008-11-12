@@ -628,6 +628,23 @@ public class LuceneEnvironment {
                  */
                 public static final String NAME = "serializable";
             }
+
+            public static final class Async {
+
+                public static final String NAME = "async";
+
+                public static final String BACKLOG = "compass.transaction.async.backlog";
+
+                public static final int DEFAULT_BACKLOG = 10;
+
+                public static final String BATCH_JOBS_SIZE = "compass.transaction.async.batchJobSize"; 
+
+                public static final int DEFAULT_BATCH_JOBS_SIZE = 5;
+
+                public static final String BATCH_JOBS_TIMEOUT = "compass.transaction.async.batchJobTimeout"; 
+
+                public static final int DEFAULT_BATCH_JOBS_TIMEOUT = 100; // millis
+            }
         }
     }
 

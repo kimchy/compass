@@ -31,4 +31,7 @@ public class LuceneTransactionProcessorFactory implements TransactionProcessorFa
     public TransactionProcessor create(LuceneSearchEngine searchEngine) {
         return new LuceneTransactionProcessor(searchEngine);
     }
+
+    public void close() {
+    }
 }

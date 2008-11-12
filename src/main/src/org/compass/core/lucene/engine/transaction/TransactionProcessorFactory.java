@@ -37,4 +37,9 @@ public interface TransactionProcessorFactory {
      * Creates a new transaction processor to handle a transaction.
      */
     TransactionProcessor create(LuceneSearchEngine searchEngine);
+
+    /**
+     * Closes the transaction factory.
+     */
+    void close();
 }

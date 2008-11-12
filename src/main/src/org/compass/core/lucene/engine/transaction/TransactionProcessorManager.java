@@ -23,6 +23,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassMappingAware;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.config.SearchEngineFactoryAware;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
@@ -68,6 +69,9 @@ public class TransactionProcessorManager {
             if (type instanceof CompassMappingAware) {
                 ((CompassMappingAware) type).setCompassMapping(searchEngineFactory.getMapping());
             }
+            if (type instanceof SearchEngineFactoryAware) {
+                ((SearchEngineFactoryAware) type).setSearchEngineFactory(searchEngineFactory);
+            }
             if (type instanceof CompassConfigurable) {
                 ((CompassConfigurable) type).configure(entry.getValue());
             }
@@ -84,7 +88,7 @@ public class TransactionProcessorManager {
         }
         TransactionProcessorFactory processorFactory;
         try {
-           processorFactory = type.newInstance();
+            processorFactory = type.newInstance();
         } catch (Exception e) {
             throw new ConfigurationException("Failed to create instanco of [" + type.getName() + "]", e);
         }
@@ -95,6 +99,12 @@ public class TransactionProcessorManager {
             ((CompassConfigurable) processorFactory).configure(new CompassSettings());
         }
         transactionProcessors.put(key, processorFactory);
+    }
+
+    public void close() {
+        for (TransactionProcessorFactory transactionProcessorFactory : transactionProcessors.values()) {
+            transactionProcessorFactory.close();
+        }
     }
 
 

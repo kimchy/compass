@@ -31,4 +31,7 @@ public class SerializableTransactionProcessorFactory implements TransactionProce
     public TransactionProcessor create(LuceneSearchEngine searchEngine) {
         return new SerializableTransactionProcessor(searchEngine);
     }
+
+    public void close() {
+    }
 }

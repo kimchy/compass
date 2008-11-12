@@ -31,4 +31,7 @@ public class ReadCommittedTransactionProcessorFactory implements TransactionProc
     public TransactionProcessor create(LuceneSearchEngine searchEngine) {
         return new ReadCommittedTransactionProcessor(searchEngine);
     }
+
+    public void close() {
+    }
 }

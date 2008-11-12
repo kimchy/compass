@@ -14,34 +14,28 @@
  * limitations under the License.
  */
 
-package org.compass.core.lucene.engine.transaction.support;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+package org.compass.core.util;
 
 /**
- * A holds for a list of jobs (usually, represent a transaction).
+ * A set of collection based utilities.
  *
  * @author kimchy
  */
-public class TransactionJobs {
+public abstract class CollectionUtils {
 
-    private List<TransactionJob> jobs = new ArrayList<TransactionJob>();
-
-    private Set<String> subIndexes = new HashSet<String>();
-
-    public void add(TransactionJob job) {
-        jobs.add(job);
-        subIndexes.add(job.getSubIndex());
+    public static int modHash(Object obj, int mod) {
+        return hash(obj) % mod;
     }
 
-    public List<TransactionJob> getJobs() {
-        return this.jobs;
-    }
-
-    public Set<String> getSubIndexes() {
-        return this.subIndexes;
+    /**
+     * Same hash function as <code>HashMap#newHash</code> method. 
+     */
+    public static int hash(Object obj) {
+        int h = obj.hashCode();
+        // This function ensures that hashCodes that differ only by
+        // constant multiples at each bit position have a bounded
+        // number of collisions (approximately 8 at default load factor).
+        h ^= (h >>> 20) ^ (h >>> 12);
+        return h ^ (h >>> 7) ^ (h >>> 4);
     }
 }

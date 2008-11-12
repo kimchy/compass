@@ -16,6 +16,9 @@
 
 package org.compass.core.lucene.engine.transaction.support;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.Term;
+import org.compass.core.lucene.LuceneResource;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
@@ -38,16 +41,20 @@ public class TransactionJob {
 
     private final InternalResource resource;
 
+    private final String resourceUID;
+
     public TransactionJob(Type type, InternalResource resource) {
         this.type = type;
         this.resource = resource;
         this.resourceKey = resource.getResourceKey();
+        this.resourceUID = resourceKey.buildUID();
     }
 
     public TransactionJob(Type type, ResourceKey resourceKey) {
         this.type = type;
         this.resourceKey = resourceKey;
         this.resource = null;
+        this.resourceUID = resourceKey.buildUID();
     }
 
     public Type getType() {
@@ -63,6 +70,22 @@ public class TransactionJob {
             throw new IllegalStateException("No resource provided for type [" + type + "] and resource key [" + resourceKey + "]");
         }
         return resource;
+    }
+
+    public Document getDocument() {
+        return ((LuceneResource) getResource()).getDocument();
+    }
+
+    public String getResourceUID() {
+        return resourceUID;
+    }
+
+    public String getSubIndex() {
+        return resourceKey.getSubIndex();
+    }
+
+    public Term getUIDTerm() {
+        return new Term(resourceKey.getUIDPath(), resourceUID);        
     }
 
     @Override
