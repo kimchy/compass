@@ -34,6 +34,7 @@ import org.apache.lucene.index.LuceneUtils;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Searchable;
+import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.Lock;
 import org.compass.core.CompassException;
@@ -454,6 +455,9 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                 if (!indexHolder.getIndexReader().isCurrent()) {
                     return true;
                 }
+            } catch (AlreadyClosedException e) {
+                // the directory was closed
+                return false;
             } catch (FileNotFoundException e) {
                 // no segments file, no index
                 return false;

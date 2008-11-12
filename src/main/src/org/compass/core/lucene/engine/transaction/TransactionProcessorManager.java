@@ -27,6 +27,7 @@ import org.compass.core.config.SearchEngineFactoryAware;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
+import org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.serializable.SerializableTransactionProcessorFactory;
@@ -47,6 +48,10 @@ public class TransactionProcessorManager {
         Map<String, CompassSettings> processorsGroupsSettings = settings.getSettingGroups(LuceneEnvironment.Transaction.Processor.PREFIX);
         for (Map.Entry<String, CompassSettings> entry : processorsGroupsSettings.entrySet()) {
             Object type = entry.getValue().getSetting(LuceneEnvironment.Transaction.Processor.CONFIG_TYPE);
+            if (type == null) {
+                // probably one of the defualt, will be taken into accoutn when created
+                continue;
+            }
             if (type instanceof String) {
                 String typeClass = (String) type;
                 if (typeClass.equalsIgnoreCase(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME)) {
@@ -73,13 +78,14 @@ public class TransactionProcessorManager {
                 ((SearchEngineFactoryAware) type).setSearchEngineFactory(searchEngineFactory);
             }
             if (type instanceof CompassConfigurable) {
-                ((CompassConfigurable) type).configure(entry.getValue());
+                ((CompassConfigurable) type).configure(searchEngineFactory.getLuceneSettings().getSettings());
             }
             transactionProcessors.put(entry.getKey(), (TransactionProcessorFactory) type);
         }
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, ReadCommittedTransactionProcessorFactory.class);
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Lucene.NAME, LuceneTransactionProcessorFactory.class);
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Serializable.NAME, SerializableTransactionProcessorFactory.class);
+        addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Async.NAME, AsyncTransactionProcessorFactory.class);
     }
 
     private void addDefaulIfRequired(LuceneSearchEngineFactory searchEngineFactory, String key, Class<? extends TransactionProcessorFactory> type) {
@@ -95,8 +101,11 @@ public class TransactionProcessorManager {
         if (processorFactory instanceof CompassMappingAware) {
             ((CompassMappingAware) processorFactory).setCompassMapping(searchEngineFactory.getMapping());
         }
+        if (processorFactory instanceof SearchEngineFactoryAware) {
+            ((SearchEngineFactoryAware) processorFactory).setSearchEngineFactory(searchEngineFactory);
+        }
         if (processorFactory instanceof CompassConfigurable) {
-            ((CompassConfigurable) processorFactory).configure(new CompassSettings());
+            ((CompassConfigurable) processorFactory).configure(searchEngineFactory.getLuceneSettings().getSettings());
         }
         transactionProcessors.put(key, processorFactory);
     }

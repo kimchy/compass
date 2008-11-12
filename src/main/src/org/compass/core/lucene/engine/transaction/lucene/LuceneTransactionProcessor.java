@@ -33,6 +33,8 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.transaction.support.AbstractSearchTransactionProcessor;
+import org.compass.core.lucene.engine.transaction.support.CommitCallable;
+import org.compass.core.lucene.engine.transaction.support.PrepareCommitCallable;
 import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
@@ -48,7 +50,7 @@ import org.compass.core.util.StringUtils;
  */
 public class LuceneTransactionProcessor extends AbstractSearchTransactionProcessor {
 
-    private static final Log log = LogFactory.getLog(LuceneTransactionProcessor.class);
+    private static final Log logger = LogFactory.getLog(LuceneTransactionProcessor.class);
 
     private Map<String, IndexWriter> indexWriterBySubIndex = new HashMap<String, IndexWriter>();
 
@@ -66,8 +68,8 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
             try {
                 entry.getValue().rollback();
             } catch (AlreadyClosedException e) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
                 }
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(entry.getKey());
@@ -76,7 +78,7 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
                         IndexWriter.unlock(dir);
                     }
                 } catch (Exception e1) {
-                    log.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
+                    logger.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
                 }
                 exception = new SearchEngineException("Failed to rollback transaction for sub index [" + entry.getKey() + "]", e);
             }
@@ -113,18 +115,27 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
         // here, we issue doPrepare since if only one of the sub indexes failed with it, then
         // it should fail.
         if (onePhase) {
-            prepare();
+            try {
+                prepare();
+            } catch (SearchEngineException e) {
+                try {
+                    rollback();
+                } catch (Exception e1) {
+                    logger.trace("Failed to rollback after prepare failure in one phase commit", e);
+                }
+                throw e;
+            }
         }
         if (indexManager.supportsConcurrentOperations()) {
-            ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
+            ArrayList<Callable<Object>> commitCallables = new ArrayList<Callable<Object>>();
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
-                prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue())));
+                commitCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(indexManager, entry.getKey(), entry.getValue(), isClearCacheOnCommit())));
             }
-            indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
+            indexManager.getExecutorManager().invokeAllWithLimitBailOnException(commitCallables, 1);
         } else {
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
                 try {
-                    new CommitCallable(entry.getKey(), entry.getValue()).call();
+                    new CommitCallable(indexManager, entry.getKey(), entry.getValue(), isClearCacheOnCommit()).call();
                 } catch (SearchEngineException e) {
                     throw e;
                 } catch (Exception e) {
@@ -188,56 +199,4 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
         return indexWriter;
     }
 
-    private class PrepareCommitCallable implements Callable {
-
-        private String subIndex;
-
-        private IndexWriter indexWriter;
-
-        private PrepareCommitCallable(String subIndex, IndexWriter indexWriter) {
-            this.subIndex = subIndex;
-            this.indexWriter = indexWriter;
-        }
-
-        public Object call() throws Exception {
-            indexWriter.prepareCommit();
-            return null;
-        }
-    }
-
-    private class CommitCallable implements Callable {
-
-        private String subIndex;
-
-        private IndexWriter indexWriter;
-
-        private CommitCallable(String subIndex, IndexWriter indexWriter) {
-            this.subIndex = subIndex;
-            this.indexWriter = indexWriter;
-        }
-
-        public Object call() throws Exception {
-            try {
-                indexWriter.commit();
-                indexWriter.close();
-            } catch (IOException e) {
-                Directory dir = indexManager.getStore().openDirectory(subIndex);
-                try {
-                    if (IndexWriter.isLocked(dir)) {
-                        IndexWriter.unlock(dir);
-                    }
-                } catch (Exception e1) {
-                    log.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
-                }
-                throw new SearchEngineException("Failed commit transaction sub index [" + subIndex + "]", e);
-            }
-            if (isClearCacheOnCommit()) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Clearing cache after commit for sub index [" + subIndex + "]");
-                }
-                indexManager.clearCache(subIndex);
-            }
-            return null;
-        }
-    }
 }

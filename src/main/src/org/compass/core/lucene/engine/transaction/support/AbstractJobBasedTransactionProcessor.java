@@ -26,6 +26,8 @@ import org.compass.core.spi.ResourceKey;
  * transaction processor. Mainly used for simple accumelating of {@link org.compass.core.lucene.engine.transaction.support.TransactionJob}s
  * and then processing them during commit/rollback time.
  *
+ * <p>Note, if only search based operations were performed, then prepare/commit/rollback will not be called.
+ *
  * @author kimchy
  */
 public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearchTransactionProcessor {
@@ -83,7 +85,7 @@ public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearc
     }
 
     private TransactionJobs getTransactionJobs() {
-        if (jobs != null) {
+        if (jobs == null) {
             jobs = new TransactionJobs();
         }
         return jobs;

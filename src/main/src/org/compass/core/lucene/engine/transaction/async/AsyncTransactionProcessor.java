@@ -26,19 +26,22 @@ import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
  */
 public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProcessor {
 
-    public AsyncTransactionProcessor(LuceneSearchEngine searchEngine) {
+    private final AsyncTransactionProcessorFactory processorFactory;
+
+    public AsyncTransactionProcessor(LuceneSearchEngine searchEngine, AsyncTransactionProcessorFactory processorFactory) {
         super(searchEngine);
+        this.processorFactory = processorFactory;
     }
 
     protected void doPrepare(TransactionJobs jobs) throws SearchEngineException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // nothign to do here, we only add on commit
     }
 
     protected void doCommit(boolean onePhase, TransactionJobs jobs) throws SearchEngineException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        processorFactory.add(jobs);
     }
 
     protected void doRollback(TransactionJobs jobs) throws SearchEngineException {
-        //To change body of implemented methods use File | Settings | File Templates.
+        processorFactory.remove(jobs);
     }
 }

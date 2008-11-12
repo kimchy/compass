@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package org.compass.core.util;
+package org.compass.core.test.engine.lucene;
+
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.lucene.LuceneEnvironment;
 
 /**
- * A set of collection based utilities.
- *
  * @author kimchy
  */
-public abstract class CollectionUtils {
+public class RamSubIndexHashingAsyncTransactionTests extends AbstractAsyncTransactionTests {
 
-    public static int absHash(Object obj) {
-        return Math.abs(hash(obj));
-    }
-
-    /**
-     * Same hash function as <code>HashMap#newHash</code> method. 
-     */
-    public static int hash(Object obj) {
-        int h = obj.hashCode();
-        // This function ensures that hashCodes that differ only by
-        // constant multiples at each bit position have a bounded
-        // number of collisions (approximately 8 at default load factor).
-        h ^= (h >>> 20) ^ (h >>> 12);
-        return h ^ (h >>> 7) ^ (h >>> 4);
+    @Override
+    protected CompassSettings buildCompassSettings() {
+        CompassSettings settings =  super.buildCompassSettings();
+        settings.setSetting(CompassEnvironment.CONNECTION, "ram://target/testindex");
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.HASHING, "subindex");
+        return settings;
     }
 }

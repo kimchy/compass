@@ -558,7 +558,7 @@ public class LuceneEnvironment {
             /**
              * The type of the transaction processor (can be set in runtime). The name can be
              * the either default built in ones (<code>read_committed</code>, <code>lucene</code>,
-             * <code>serializable</code>) or custom ones registered under a custom name.
+             * <code>serializable</code>, <code>async</code>) or custom ones registered under a custom name.
              */
             public static final String TYPE = "compass.transaction.processor";
 
@@ -590,13 +590,13 @@ public class LuceneEnvironment {
                      * The connection type for the read committed transactional log. Can be either <code>ram://</code>
                      * or <code>file://</code>.
                      */
-                    public static final String CONNECTION = "compass.transaction.readcommitted.translog.connection";
+                    public static final String CONNECTION = "compass.transaction.processor.read_committed.translog.connection";
 
                     /**
                      * Should the transactional index be optimized before it is added to the actual index. Defaults to
                      * <code>true</code>.
                      */
-                    public static final String OPTIMIZE_TRANS_LOG = "compass.transaction.readcommitted.translog.optimize";
+                    public static final String OPTIMIZE_TRANS_LOG = "compass.transaction.processor.read_committed.translog.optimize";
                 }
             }
 
@@ -633,17 +633,21 @@ public class LuceneEnvironment {
 
                 public static final String NAME = "async";
 
-                public static final String BACKLOG = "compass.transaction.async.backlog";
+                public static final String BACKLOG = "compass.transaction.processor.async.backlog";
 
-                public static final int DEFAULT_BACKLOG = 10;
+                public static final String BATCH_JOBS_SIZE = "compass.transaction.processor.async.batchJobSize";
 
-                public static final String BATCH_JOBS_SIZE = "compass.transaction.async.batchJobSize"; 
+                public static final String BATCH_JOBS_TIMEOUT = "compass.transaction.processor.async.batchJobTimeout";
 
-                public static final int DEFAULT_BATCH_JOBS_SIZE = 5;
+                public static final String CONCURRENCY_LEVEL = "compass.transaction.processor.async.concurrencyLevel";
 
-                public static final String BATCH_JOBS_TIMEOUT = "compass.transaction.async.batchJobTimeout"; 
+                public static final String PROCESS_BEFORE_CLOSE = "compass.transaction.processor.async.processBeforeClose";
 
-                public static final int DEFAULT_BATCH_JOBS_TIMEOUT = 100; // millis
+                /**
+                 * Controls how hashing will be done for parallel processing. Eitehr <code>uid</code> or <code>subindex</code>.
+                 * Defuats to <code>uid</code>.
+                 */
+                public static final String HASHING = "compass.transaction.processor.async.hashing";
             }
         }
     }
