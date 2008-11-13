@@ -45,7 +45,7 @@ public abstract class AbstractAsyncTransactionTests extends AbstractTransactionE
 
     protected void sleepForChangesToOccur() {
         try {
-            Thread.sleep(200);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new IllegalStateException("Interrupted", e);
         }
