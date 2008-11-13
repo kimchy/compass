@@ -39,12 +39,13 @@ public abstract class AbstractAsyncTransactionTests extends AbstractTransactionE
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
         settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.Async.NAME);
+        settings.setIntSetting(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_SIZE, 0);
         return settings;
     }
 
     protected void sleepForChangesToOccur() {
         try {
-            Thread.sleep(500);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             throw new IllegalStateException("Interrupted", e);
         }

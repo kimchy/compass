@@ -158,7 +158,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
     }
 
     public void add(TransactionJobs jobs) throws SearchEngineException {
-        synchronized (this) { // though called from single thread each time, not that  big an overhead to make it thread safe
+        synchronized (this) { // though called from single thread each time, not that big an overhead to make it thread safe
             if (pollingProcessor == null) {
                 this.pollingProcessor = new PollingProcessor();
                 pollingProcessorFuture = searchEngineFactory.getExecutorManager().submit(pollingProcessor);
