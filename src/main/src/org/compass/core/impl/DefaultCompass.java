@@ -64,7 +64,7 @@ import org.compass.core.transaction.context.TransactionContextCallbackWithTr;
  */
 public class DefaultCompass implements InternalCompass {
 
-    private static final Log log = LogFactory.getLog(DefaultCompass.class);
+    private static final Log logger = LogFactory.getLog(DefaultCompass.class);
 
     private static final long serialVersionUID = 3256446884762891059L;
 
@@ -95,6 +95,8 @@ public class DefaultCompass implements InternalCompass {
     protected CompassSettings settings;
 
     private FirstLevelCacheFactory firstLevelCacheFactory;
+
+    private volatile ShutdownThread shutdownThread;
 
     private boolean duplicate;
 
@@ -155,6 +157,14 @@ public class DefaultCompass implements InternalCompass {
 
         if (!duplicate) {
             start();
+        }
+
+        if (settings.getSettingAsBoolean(CompassEnvironment.REGISTER_SHUTDOWN_HOOK, true)) {
+            shutdownThread = new ShutdownThread(this);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Registering shutdown hook [" + System.identityHashCode(shutdownThread) + "]");
+            }
+            Runtime.getRuntime().addShutdownHook(shutdownThread);
         }
     }
 
@@ -240,7 +250,16 @@ public class DefaultCompass implements InternalCompass {
             return;
         }
         closed = true;
-        log.info("Closing Compass [" + name + "]");
+
+        logger.info("Closing Compass [" + name + "]");
+
+        if (shutdownThread != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Removing shutdown hook");
+            }
+            Runtime.getRuntime().removeShutdownHook(shutdownThread);
+        }
+
         if (settings.getSettingAsBoolean(CompassEnvironment.Jndi.ENABLE, false) && !duplicate) {
             CompassObjectFactory.removeInstance(uuid, name, settings);
         }
@@ -250,7 +269,7 @@ public class DefaultCompass implements InternalCompass {
             executorManager.close();
         }
 
-        log.info("Closed Compass [" + name + "]");
+        logger.info("Closed Compass [" + name + "]");
     }
 
     public boolean isClosed() {
@@ -328,6 +347,30 @@ public class DefaultCompass implements InternalCompass {
         close();
     }
 
+    public void clearShutdownHook() {
+        shutdownThread = null;
+    }
+
+    /**
+     * A shutdown hook that closes Compass.
+     */
+    private static class ShutdownThread extends Thread {
+
+        private Compass compass;
+
+        public ShutdownThread(Compass compass) {
+            this.compass = compass;
+        }
+
+        @Override
+        public void run() {
+            ((DefaultCompass) compass).clearShutdownHook();
+            if (!compass.isClosed()) {
+                compass.close();
+            }
+        }
+    }
+
     private static class CompassTransactionContext implements TransactionContext {
 
         private InternalCompass compass;
@@ -354,7 +397,7 @@ public class DefaultCompass implements InternalCompass {
                     try {
                         tx.rollback();
                     } catch (Exception e1) {
-                        log.error("Failed to rollback transaction, ignoring", e1);
+                        logger.error("Failed to rollback transaction, ignoring", e1);
                     }
                 }
                 throw e;
@@ -363,7 +406,7 @@ public class DefaultCompass implements InternalCompass {
                     try {
                         tx.rollback();
                     } catch (Exception e1) {
-                        log.error("Failed to rollback transaction, ignoring", e1);
+                        logger.error("Failed to rollback transaction, ignoring", e1);
                     }
                 }
                 throw err;
@@ -385,7 +428,7 @@ public class DefaultCompass implements InternalCompass {
                     try {
                         tx.rollback();
                     } catch (Exception e1) {
-                        log.error("Failed to rollback transaction, ignoring", e1);
+                        logger.error("Failed to rollback transaction, ignoring", e1);
                     }
                 }
                 throw e;
@@ -394,7 +437,7 @@ public class DefaultCompass implements InternalCompass {
                     try {
                         tx.rollback();
                     } catch (Exception e1) {
-                        log.error("Failed to rollback transaction, ignoring", e1);
+                        logger.error("Failed to rollback transaction, ignoring", e1);
                     }
                 }
                 throw err;

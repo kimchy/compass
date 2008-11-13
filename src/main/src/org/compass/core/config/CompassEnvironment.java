@@ -41,6 +41,11 @@ public class CompassEnvironment {
     public static final String NAME = "compass.name";
 
     /**
+     * Should Compass register a shut down hook. Default to <code>true</code>.
+     */
+    public static final String REGISTER_SHUTDOWN_HOOK = "compass.registerShutdownHook";
+
+    /**
      * Allows to set event listeners for Compas.
      */
     public abstract class Event {
