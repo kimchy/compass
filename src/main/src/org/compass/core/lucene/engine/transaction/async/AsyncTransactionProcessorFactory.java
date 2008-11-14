@@ -75,6 +75,8 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
 
     private int concurrencyLevel;
 
+    private long addTimeout;
+
     private int batchJobsSize;
 
     private long batchJobTimeout;
@@ -100,14 +102,31 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         this.settings = settings;
         jobsToProcess = new ArrayBlockingQueue<TransactionJobs>(settings.getSettingAsInt(LuceneEnvironment.Transaction.Processor.Async.BACKLOG, 10), true);
 
+        addTimeout = settings.getSettingAsTimeInMillis(LuceneEnvironment.Transaction.Processor.Async.ADD_TIMEOUT, 10 * 1000);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Async Transaction Processor will wait for [" + addTimeout + "ms] if backlog is full");
+        }
+
         batchJobsSize = settings.getSettingAsInt(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_SIZE, 5);
         batchJobTimeout = settings.getSettingAsTimeInMillis(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_SIZE, 100);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Async Transaction Processor blocking batch size is [" + batchJobsSize + "] with timeout of [" + batchJobTimeout + "ms]");
+        }
 
         nonBlockingBatchSize = settings.getSettingAsInt(LuceneEnvironment.Transaction.Processor.Async.NON_BLOCKING_BATCH_JOBS_SIZE, 5);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Async Transaction Processor non blocking batch size is [" + nonBlockingBatchSize + "]");
+        }
 
         processBeforeClose = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.Processor.Async.PROCESS_BEFORE_CLOSE, true);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Async Transaction Processor process before close is set to [" + processBeforeClose + "]");
+        }
 
         this.concurrencyLevel = settings.getSettingAsInt(LuceneEnvironment.Transaction.Processor.Async.CONCURRENCY_LEVEL, 5);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Async Transaction Processor will use [" + concurrencyLevel + "] concrrent threads to process transactions");
+        }
 
         String hashingSetting = settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.HASHING, "uid");
         if ("uid".equalsIgnoreCase(hashingSetting)) {
@@ -117,12 +136,20 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         } else {
             throw new ConfigurationException("No hashing support for [" + hashingSetting + "]. Either use 'uid' (defualt) or 'subindex'");
         }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Async Transaction Processor uses [" + hashingSetting + "] based hashing for concurrent processing");
+        }
 
         if (logger.isDebugEnabled()) {
             logger.debug("Starting Async polling transaction processor");
         }
     }
 
+    /**
+     * Closes the transaction processor. Will wait for ongoing transactions if the
+     * {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#PROCESS_BEFORE_CLOSE} is set to
+     * <code>true</code> (the default).
+     */
     public synchronized void close() {
         closed = true;
         if (processBeforeClose && pollingProcessor != null) {
@@ -155,14 +182,32 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         }
     }
 
+    /**
+     * Creates a new {@link org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessor}.
+     */
     public TransactionProcessor create(LuceneSearchEngine searchEngine) {
         return new AsyncTransactionProcessor(searchEngine, this);
     }
 
+    /**
+     * Removed (if still pending) the given {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs}
+     * from being processed.
+     */
     public boolean remove(TransactionJobs jobs) throws SearchEngineException {
         return jobsToProcess.remove(jobs);
     }
 
+    /**
+     * Adds the {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs} to be processed
+     * asynchronously. If a procesing threads has not started, will start it (it is started lazily so if the
+     * async transaction processor is not used, it won't incur any overhead).
+     *
+     * <p>The addition of {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs} is "offered"
+     * to a blocking queue, waiting until the queue if cleared in case it is full. This will cause a transaction
+     * commit to block if the backlog is full. The time to wait can be controlled using
+     * {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#ADD_TIMEOUT} and defaults to
+     * 10 seconds.
+     */
     public void add(TransactionJobs jobs) throws SearchEngineException {
         synchronized (this) { // though called from single thread each time, not that big an overhead to make it thread safe
             if (pollingProcessor == null) {
@@ -171,7 +216,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
             }
         }
         try {
-            boolean offered = jobsToProcess.offer(jobs, 10, TimeUnit.SECONDS);
+            boolean offered = jobsToProcess.offer(jobs, addTimeout, TimeUnit.MILLISECONDS);
             if (!offered) {
                 throw new SearchEngineException("Failed to add jobs [" + System.identityHashCode(jobs) + "], queue is full and nothing empties it");
             }
@@ -278,6 +323,9 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         }
     }
 
+    /**
+     * Closes all the list of writers passed as part of the writers map.
+     */
     private void closeWriters(Map<String, IndexWriter> writers) {
         for (Map.Entry<String, IndexWriter> entry : writers.entrySet()) {
             try {
@@ -301,6 +349,9 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         writers.clear();
     }
 
+    /**
+     * Rolls back all the list of writers passed as part of the writers map.
+     */
     private void rollbackWriters(Map<String, IndexWriter> writers) {
         SearchEngineException exception = null;
         for (Map.Entry<String, IndexWriter> entry : writers.entrySet()) {

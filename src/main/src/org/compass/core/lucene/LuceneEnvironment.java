@@ -635,6 +635,12 @@ public class LuceneEnvironment {
                 public static final String BACKLOG = "compass.transaction.processor.async.backlog";
 
                 /**
+                 * The timeout value to wait if the backlog is full until it is cleared. Defaults to
+                 * <code>10</code> seconds. Accepts Compass time format settings.
+                 */
+                public static final String ADD_TIMEOUT = "compass.transaction.processor.async.addTimeout";
+
+                /**
                  * Once a transaction is identified as needed to be processed asynchronously, it can try and wait
                  * for more transactions to happen in order to process all of them in one go. This settings controls
                  * how many additional transactions will be accumalated by blocking for them. The blocking time
