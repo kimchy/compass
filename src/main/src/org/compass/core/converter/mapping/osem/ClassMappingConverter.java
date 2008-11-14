@@ -81,6 +81,13 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
     public boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
 
+        if (root instanceof Resource) {
+            Resource rootResource = (Resource) root;
+            resource.copy(rootResource);
+            ((InternalResource) resource).addUID();
+            return true;
+        }
+
         // first store some important original context
         Object disableInternalMappings = context.getAttribute(DISABLE_INTERNAL_MAPPINGS);
 

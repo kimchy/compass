@@ -59,6 +59,14 @@ public class XmlObjectMappingConverter implements ResourceMappingConverter {
         if (root == null && !context.handleNulls()) {
             return false;
         }
+
+        if (root instanceof Resource) {
+            Resource rootResource = (Resource) root;
+            resource.copy(rootResource);
+            ((InternalResource) resource).addUID();
+            return true;
+        }
+        
         XmlObjectMapping xmlObjectMapping = (XmlObjectMapping) mapping;
         XmlObject rootXmlObject = (XmlObject) root;
 

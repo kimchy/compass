@@ -44,6 +44,14 @@ public class RootJsonObjectMappingConverter extends AbstractJsonObjectMappingCon
         if (root == null && !context.handleNulls()) {
             return false;
         }
+
+        if (root instanceof Resource) {
+            Resource rootResource = (Resource) root;
+            resource.copy(rootResource);
+            ((InternalResource) resource).addUID();
+            return true;
+        }
+
         RootJsonObjectMapping jsonObjectMapping = (RootJsonObjectMapping) mapping;
         JsonObject jsonObject = (JsonObject) root;
 

@@ -99,8 +99,12 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         this.docNum = luceneResource.docNum;
         this.properties = luceneResource.properties;
         this.aliasProperty = luceneResource.aliasProperty;
-        this.searchEngineFactory = luceneResource.searchEngineFactory;
-        this.resourceMapping = luceneResource.resourceMapping;
+        if (luceneResource.searchEngineFactory != null) {
+            this.searchEngineFactory = luceneResource.searchEngineFactory;
+        }
+        if (luceneResource.resourceMapping != null) {
+            this.resourceMapping = luceneResource.resourceMapping;
+        }
     }
 
     public Document getDocument() {
