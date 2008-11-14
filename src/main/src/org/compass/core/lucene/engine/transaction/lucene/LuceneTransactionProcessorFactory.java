@@ -21,13 +21,18 @@ import org.compass.core.lucene.engine.transaction.TransactionProcessor;
 import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 
 /**
- * A transaction processor factory that creates {@link org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessor}
- * instances.
+ * Lucene based transaction, allows to perfom dirty operations directly over the index
+ * using Lucene support for transactions. Reads and search will be performed on the
+ * index itself without taking into account any transactional operations.
  *
  * @author kimchy
+ * @see org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessor
  */
 public class LuceneTransactionProcessorFactory implements TransactionProcessorFactory {
 
+    /**
+     * Creates a new {@link org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessor}.
+     */
     public TransactionProcessor create(LuceneSearchEngine searchEngine) {
         return new LuceneTransactionProcessor(searchEngine);
     }

@@ -57,8 +57,10 @@ import org.compass.core.transaction.context.TransactionalCallable;
 import org.compass.core.util.StringUtils;
 
 /**
- * Read Committed transaction support. Allows to perform operations within a transaction and all
- * operations will be "viewable" to the ongoing transaction, even search.
+ * Read committed transaction processor allows to isolate changes done during a transaction from other
+ * transactions until commit. It also allows for load/get/find operations to take into account changes
+ * done during the current transaction. This means that a delete that occurs during a transaction will
+ * be filtered out if a search is executed within the same transaction just after the delete.
  *
  * @author kimchy
  */

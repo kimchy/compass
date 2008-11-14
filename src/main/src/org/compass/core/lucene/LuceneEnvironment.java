@@ -569,10 +569,10 @@ public class LuceneEnvironment {
             public static final String CONFIG_TYPE = "type";
 
             /**
-             * Read committed transaction processor allows to isolate changes done during a transaction from other
-             * transactions until commit. It also allows for load/get/find operations to take into account changes
-             * done during the current transaction. This means that a delete that occurs during a transaction will
-             * be filtered out if a search is executed within the same transaction just after the delete.
+             * Settings for <code>read_committed</code> tranasction processr.
+             *
+             * @see org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessorFactory
+             * @see org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessor
              */
             public static final class ReadCommitted {
 
@@ -582,7 +582,7 @@ public class LuceneEnvironment {
                 public static final String NAME = "read_committed";
 
                 /**
-                 * Transaction log settings
+                 * Transaction log settings.
                  */
                 public static final class TransLog {
 
@@ -601,11 +601,10 @@ public class LuceneEnvironment {
             }
 
             /**
-             * Similar to the <code>read_committed</code> isolation level except dirty operations done during a
-             * transaction are not visible to get/load/find operations that occur within the same transaction.
-             * This isolation level is very handy for long running batch dirty operations and can be faster than
-             * <code>read_committed</code>. Most usage patterns of Compass (such as integration with ORM tools) can
-             * work perfectly well with the <literal>lucene</literal> isolation level
+             * Settings for <code>lucene</code> transaction procssor.
+             *
+             * @see org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessorFactory
+             * @see org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessor
              */
             public static final class Lucene {
 
@@ -616,19 +615,11 @@ public class LuceneEnvironment {
             }
 
             /**
-             * The <code>serializable</code> transaction processor operates the same as the <code>read_committed</code>
-             * transaction level, except that when the transaction is opened/started, a lock is acquired on all the
-             * sub-indexes. This causes the transactional operations to be sequential in nature (as well as being
-             * a performance killer).
+             * Settings for async transaction processor.
+             *
+             * @see org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory
+             * @see org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessor
              */
-            public static final class Serializable {
-
-                /**
-                 * The name of the serializable transaction processor.
-                 */
-                public static final String NAME = "serializable";
-            }
-
             public static final class Async {
 
                 public static final String NAME = "async";
@@ -638,6 +629,8 @@ public class LuceneEnvironment {
                 public static final String BATCH_JOBS_SIZE = "compass.transaction.processor.async.batchJobSize";
 
                 public static final String BATCH_JOBS_TIMEOUT = "compass.transaction.processor.async.batchJobTimeout";
+
+                public static final String NON_BLOCKING_BATCH_JOBS_SIZE = "compass.transaction.processor.async.nonBlockingBatchJobSize";
 
                 public static final String CONCURRENCY_LEVEL = "compass.transaction.processor.async.concurrencyLevel";
 

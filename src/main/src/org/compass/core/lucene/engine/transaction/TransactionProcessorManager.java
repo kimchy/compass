@@ -30,7 +30,6 @@ import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.lucene.LuceneTransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessorFactory;
-import org.compass.core.lucene.engine.transaction.serializable.SerializableTransactionProcessorFactory;
 import org.compass.core.util.ClassUtils;
 
 /**
@@ -56,8 +55,6 @@ public class TransactionProcessorManager {
                 String typeClass = (String) type;
                 if (typeClass.equalsIgnoreCase(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME)) {
                     type = new ReadCommittedTransactionProcessorFactory();
-                } else if (typeClass.equalsIgnoreCase(LuceneEnvironment.Transaction.Processor.Serializable.NAME)) {
-                    type = new SerializableTransactionProcessorFactory();
                 } else if (typeClass.equalsIgnoreCase(LuceneEnvironment.Transaction.Processor.Lucene.NAME)) {
                     type = new LuceneTransactionProcessorFactory();
                 } else {
@@ -84,7 +81,6 @@ public class TransactionProcessorManager {
         }
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, ReadCommittedTransactionProcessorFactory.class);
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Lucene.NAME, LuceneTransactionProcessorFactory.class);
-        addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Serializable.NAME, SerializableTransactionProcessorFactory.class);
         addDefaulIfRequired(searchEngineFactory, LuceneEnvironment.Transaction.Processor.Async.NAME, AsyncTransactionProcessorFactory.class);
     }
 

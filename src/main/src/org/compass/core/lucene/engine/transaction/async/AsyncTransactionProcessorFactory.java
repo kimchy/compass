@@ -57,6 +57,8 @@ import org.compass.core.transaction.context.TransactionalCallable;
 import org.compass.core.util.CollectionUtils;
 
 /**
+ * 
+ *
  * @author kimchy
  */
 public class AsyncTransactionProcessorFactory implements TransactionProcessorFactory, CompassConfigurable, SearchEngineFactoryAware {
@@ -77,6 +79,8 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
 
     private long batchJobTimeout;
 
+    private int nonBlockingBatchSize;
+    
     private Hashing hashing;
 
     private BlockingQueue<TransactionJobs> jobsToProcess;
@@ -98,6 +102,8 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
 
         batchJobsSize = settings.getSettingAsInt(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_SIZE, 5);
         batchJobTimeout = settings.getSettingAsTimeInMillis(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_SIZE, 100);
+
+        nonBlockingBatchSize = settings.getSettingAsInt(LuceneEnvironment.Transaction.Processor.Async.NON_BLOCKING_BATCH_JOBS_SIZE, 5);
 
         processBeforeClose = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.Processor.Async.PROCESS_BEFORE_CLOSE, true);
 
@@ -193,6 +199,16 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
                 logger.trace("Batching additional Jobs [" + System.identityHashCode(jobs) + "]");
             }
             addConcurrentJobsToProcess(concurrentJobsToProcess, subIndexes, jobs);
+        }
+        // now spin non blocking
+        List<TransactionJobs> nonBlockingDrainToList = new ArrayList<TransactionJobs>();
+        if (jobsToProcess.drainTo(nonBlockingDrainToList, nonBlockingBatchSize) > 0) {
+            for (TransactionJobs transactionJobs : nonBlockingDrainToList) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Batching additional Jobs [" + System.identityHashCode(transactionJobs) + "]");
+                }
+                addConcurrentJobsToProcess(concurrentJobsToProcess, subIndexes, transactionJobs);
+            }
         }
 
         boolean failure = false;
