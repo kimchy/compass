@@ -545,8 +545,8 @@ public class LuceneEnvironment {
          * Allows to control transaction processors within Compass. Several transaction processors can
          * be defined in Compass using the {@link #PREFIX} and then the name. Default ones include
          * {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.ReadCommitted ReadCommitted},
-         * {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Serializable Serializable},
-         * and {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Lucene Lucene}.
+         * {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Lucene Lucene},
+         * {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async Async}.
          */
         public static final class Processor {
 
@@ -622,18 +622,64 @@ public class LuceneEnvironment {
              */
             public static final class Async {
 
+                /**
+                 * The name of the lucene async transaction processor.
+                 */
                 public static final String NAME = "async";
 
+                /**
+                 * The bounded size of the backlog for async transactions to process (note, a transaciton includes
+                 * one or more destructive operations. Once the backlog is full, transactions will block until new
+                 * tranasctions can be inserted to it. The default backlog size is <code>10</code>.
+                 */
                 public static final String BACKLOG = "compass.transaction.processor.async.backlog";
 
+                /**
+                 * Once a transaction is identified as needed to be processed asynchronously, it can try and wait
+                 * for more transactions to happen in order to process all of them in one go. This settings controls
+                 * how many additional transactions will be accumalated by blocking for them. The blocking time
+                 * is controlled using {@link #BATCH_JOBS_TIMEOUT}.
+                 *
+                 * <p>While there is an additional job within the timeout, transactions will be accumelated until
+                 * the configured size. If there is none within the timeout, the processor will break and won't
+                 * wait for more in order to process the jobs.
+                 *
+                 * <p>Defaults to <code>5</code>.
+                 */
                 public static final String BATCH_JOBS_SIZE = "compass.transaction.processor.async.batchJobSize";
 
+                /**
+                 * Once a transaction is identified as needed to be processed asynchronously, it can try and wait
+                 * for more transactions to happen in order to process all of them in one go. This settings controls
+                 * how long to wait for each additional transaction.
+                 *
+                 * <p>While there is an additional job within the timeout, transactions will be accumelated until
+                 * the configured size. If there is none within the timeout, the processor will break and won't
+                 * wait for more in order to process the jobs.
+                 *
+                 * <p>Defaults to 100 milliseconds.
+                 */
                 public static final String BATCH_JOBS_TIMEOUT = "compass.transaction.processor.async.batchJobTimeout";
 
+                /**
+                 * Once a transaction is identified as needed to be processed asynchronously, and after it has waited
+                 * for additional transactions (see {@link #BATCH_JOBS_SIZE} and {@link #BATCH_JOBS_TIMEOUT}, this
+                 * setting controls the number of additional transacitons the processor will try to get in a non
+                 * blocking fashion.
+                 *
+                 * <p>Defaults to <code>5</code>.
+                 */
                 public static final String NON_BLOCKING_BATCH_JOBS_SIZE = "compass.transaction.processor.async.nonBlockingBatchJobSize";
 
+                /**
+                 * The number of threads that will be used to process the transactions. Defaults to <code>5</code>.
+                 */
                 public static final String CONCURRENCY_LEVEL = "compass.transaction.processor.async.concurrencyLevel";
 
+                /**
+                 * When Compass is closed, should it wait for all the unprocessed transactions to be processed. Defaults
+                 * to <code>true</code>.
+                 */
                 public static final String PROCESS_BEFORE_CLOSE = "compass.transaction.processor.async.processBeforeClose";
 
                 /**
