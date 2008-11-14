@@ -248,7 +248,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
     <title>Transaction</title>
 
     <para>
-      Compass Search Engine abstraction provides support for transaction management on top of Lucene. The abstraction support common transaction levels: <literal>read_committed</literal> and <literal>serializable</literal>, as well as the special <literal>batch_insert</literal> one. Compass provides two phase commit support for the common transaction levels only.
+      Compass Search Engine abstraction provides support for transaction management on top of Lucene. The abstraction support the following transaction processors: <literal>read_committed</literal> > and <literal>lucene</literal>. Compass provides two phase commit support for the common transaction levels only.
     </para>
 
     <sect2 id="core-searchengine-transaction-locking">
@@ -289,14 +289,6 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
 		<para>
 			The read committed transaction support concurrent commit where if operations are performed against several sub indexes, the commit process will happen concurrently on the different sub indexes. It uses Compass internal Execution Manager where the number of threads as well as the type of the execution manager (concurrent or work manager) can be configured.
 		</para>
-      </sect3>
-  
-      <sect3 id="core-searchengine-transaction-serializable">
-        <title>serializable</title>
-  
-        <para>
-            The <literal>serializable</literal> transaction processor operates the same as the <literal>read_committed</literal> transaction level, except that when the transaction is opened/started, a lock is acquired on all the sub-indexes. This causes the transactional operations to be sequential in nature (as well as being a performance killer).
-        </para>
       </sect3>
   
       <sect3 id="core-searchengine-transaction-lucene">
