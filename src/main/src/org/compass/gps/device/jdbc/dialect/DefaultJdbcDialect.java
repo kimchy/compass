@@ -28,9 +28,7 @@ import org.compass.gps.device.jdbc.mapping.ColumnMapping;
 import org.compass.gps.device.jdbc.mapping.VersionColumnMapping;
 
 /**
- *
  * @author kimchy
- *
  */
 public class DefaultJdbcDialect implements JdbcDialect {
 
@@ -41,14 +39,14 @@ public class DefaultJdbcDialect implements JdbcDialect {
         } else {
             integer = rs.getInt(columnMapping.getColumnName());
         }
-        return new Long(integer);
+        return (long) integer;
     }
 
     protected Long getNumericAsLong(ResultSet rs, ColumnMapping columnMapping) throws SQLException {
         if (columnMapping.isUsingColumnIndex()) {
-            return new Long(rs.getLong(columnMapping.getColumnIndex()));
+            return rs.getLong(columnMapping.getColumnIndex());
         }
-        return new Long(rs.getLong(columnMapping.getColumnName()));
+        return rs.getLong(columnMapping.getColumnName());
     }
 
     protected Long getLong(ResultSet rs, ColumnMapping columnMapping) throws SQLException {
@@ -59,37 +57,44 @@ public class DefaultJdbcDialect implements JdbcDialect {
     }
 
     protected Long getDateAsLong(ResultSet rs, ColumnMapping columnMapping) throws SQLException {
-        Date date = null;
+        Date date;
         if (columnMapping.isUsingColumnIndex()) {
             date = rs.getDate(columnMapping.getColumnIndex());
         } else {
             date = rs.getDate(columnMapping.getColumnName());
         }
-        return new Long(date.getTime());
+        return date.getTime();
     }
 
     protected Long getTimeAsLong(ResultSet rs, ColumnMapping columnMapping) throws SQLException {
-        Date date = null;
+        Date date;
         if (columnMapping.isUsingColumnIndex()) {
             date = rs.getTime(columnMapping.getColumnIndex());
         } else {
             date = rs.getTime(columnMapping.getColumnName());
         }
-        return new Long(date.getTime());
+        return date.getTime();
     }
 
     protected Long getTimestampAsLong(ResultSet rs, ColumnMapping columnMapping) throws SQLException {
-        Timestamp timestamp = null;
+        Timestamp timestamp;
         if (columnMapping.isUsingColumnIndex()) {
             timestamp = rs.getTimestamp(columnMapping.getColumnIndex());
         } else {
             timestamp = rs.getTimestamp(columnMapping.getColumnName());
         }
-        return new Long(timestamp.getTime());
+        return timestamp.getTime();
+    }
+
+    protected Long getBigIntAsLong(final ResultSet rs, final ColumnMapping columnMapping) throws SQLException {
+        if (columnMapping.isUsingColumnIndex()) {
+            return rs.getBigDecimal(columnMapping.getColumnIndex()).longValue();
+        }
+        return rs.getBigDecimal(columnMapping.getColumnName()).longValue();
     }
 
     public Long getVersion(ResultSet rs, VersionColumnMapping versionMapping) throws SQLException {
-        Long result = null;
+        Long result;
         int sqlType = versionMapping.getSqlType();
         if (sqlType == Types.INTEGER) {
             result = getIntegerAsLong(rs, versionMapping);
@@ -101,6 +106,8 @@ public class DefaultJdbcDialect implements JdbcDialect {
             result = getTimeAsLong(rs, versionMapping);
         } else if (sqlType == Types.NUMERIC) {
             result = getNumericAsLong(rs, versionMapping);
+        } else if (sqlType == Types.BIGINT) {
+            result = getBigIntAsLong(rs, versionMapping);
         } else {
             result = getLong(rs, versionMapping);
         }
@@ -128,7 +135,7 @@ public class DefaultJdbcDialect implements JdbcDialect {
     }
 
     public String getStringValue(ResultSet rs, ColumnMapping mapping) throws SQLException {
-        String value = null;
+        String value;
         if (mapping.isUsingColumnIndex()) {
             value = rs.getString(mapping.getColumnIndex());
         } else {
