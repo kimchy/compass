@@ -77,7 +77,6 @@ public class CompassSearchHelper {
         }
         return (CompassSearchResults) compassTemplate.execute(new CompassCallback() {
             public Object doInCompass(CompassSession session) throws CompassException {
-                session.setReadOnly();
                 return performSearch(command, session);
             }
         });
@@ -89,7 +88,6 @@ public class CompassSearchHelper {
         }
         return (CompassSearchResults) compassTemplate.executeLocal(new CompassCallback() {
             public Object doInCompass(CompassSession session) throws CompassException {
-                session.setReadOnly();
                 return performSearch(command, session);
             }
         });

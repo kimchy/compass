@@ -68,6 +68,8 @@ public class CompassTemplate implements CompassOperations {
 
     private CompassSettings globalSessionSettings = new CompassSettings();
 
+    private boolean readOnly;
+
     /**
      * Creates a new CompassTemplate instance (remember to set Compass using the
      * setCompass method).
@@ -92,6 +94,15 @@ public class CompassTemplate implements CompassOperations {
     }
 
     /**
+     * Sets the {@link org.compass.core.CompassSession} to be read only.
+     *
+     * @see CompassSession#setReadOnly() 
+     */
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    /**
      * Returns the compass instance used by the template.
      *
      * @return the compass instance
@@ -109,6 +120,9 @@ public class CompassTemplate implements CompassOperations {
      */
     public <T> T execute(CompassCallback<T> action) throws CompassException {
         CompassSession session = compass.openSession();
+        if (readOnly) {
+            session.setReadOnly();
+        }
         session.getSettings().addSettings(globalSessionSettings);
         CompassTransaction tx = null;
         try {
