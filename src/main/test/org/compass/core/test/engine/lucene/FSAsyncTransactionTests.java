@@ -30,4 +30,13 @@ public class FSAsyncTransactionTests extends AbstractAsyncTransactionTests {
         settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
         return settings;
     }
+
+    @Override
+    protected void sleepForChangesToOccur() {
+        try {
+            Thread.sleep(700);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException("Interrupted", e);
+        }
+    }
 }
