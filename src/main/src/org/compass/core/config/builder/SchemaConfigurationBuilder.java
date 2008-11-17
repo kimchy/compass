@@ -404,6 +404,18 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION, getElementAttribute(readCommittedSettingsEle, "transLog"));
                 settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG, getElementAttribute(readCommittedSettingsEle, "optimizeTransLog"));
             }
+            child1 = DomUtils.getChildElementsByTagName(prEle, "async", true);
+            if (child1.size() == 1) {
+                Element asyncSettingsEle = (Element) child1.get(0);
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.ADD_TIMEOUT, getElementAttribute(asyncSettingsEle, "addTimeout"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.BACKLOG, getElementAttribute(asyncSettingsEle, "backlog"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_SIZE, getElementAttribute(asyncSettingsEle, "batchJobSize"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_TIMEOUT, getElementAttribute(asyncSettingsEle, "batchJobTimeout"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.CONCURRENCY_LEVEL, getElementAttribute(asyncSettingsEle, "concurrencyLevel"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.HASHING, getElementAttribute(asyncSettingsEle, "hashing"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.NON_BLOCKING_BATCH_JOBS_SIZE, getElementAttribute(asyncSettingsEle, "nonBlockingBatchJobSize"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Async.PROCESS_BEFORE_CLOSE, getElementAttribute(asyncSettingsEle, "processBeforeClose"));
+            }
         }
     }
 

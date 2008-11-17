@@ -29,6 +29,9 @@ import org.compass.core.spi.ResourceKey;
  */
 public class TransactionJob {
 
+    /**
+     * The type of the transaction job. Can be create, delete, or update.
+     */
     public static enum Type {
         CREATE,
         DELETE,

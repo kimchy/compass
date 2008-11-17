@@ -114,6 +114,21 @@ public class SchemaSimpleTests extends TestCase {
         assertEquals("false", settings.getSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG));
     }
 
+    public void testTxProcessorAsync() throws Exception {
+        CompassConfiguration conf = new CompassConfiguration()
+                .configure("/org/compass/core/test/config/schema/tx-processor-async.cfg.xml");
+
+        CompassSettings settings = conf.getSettings();
+        assertEquals("100", settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.ADD_TIMEOUT));
+        assertEquals("50", settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.BACKLOG));
+        assertEquals("99", settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_SIZE));
+        assertEquals("30", settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.BATCH_JOBS_TIMEOUT));
+        assertEquals("7", settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.CONCURRENCY_LEVEL));
+        assertEquals("subindex", settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.HASHING));
+        assertEquals("89", settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.NON_BLOCKING_BATCH_JOBS_SIZE));
+        assertEquals("false", settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.PROCESS_BEFORE_CLOSE));
+    }
+
     public void testQueryParser() throws Exception {
         CompassConfiguration conf = new CompassConfiguration()
                 .configure("/org/compass/core/test/config/schema/queryParser.cfg.xml");

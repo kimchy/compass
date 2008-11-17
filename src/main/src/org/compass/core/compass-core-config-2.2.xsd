@@ -985,7 +985,7 @@
                             <xsd:element name="readCommitted" minOccurs="0">
                                 <xsd:annotation>
                                     <xsd:documentation>
-                                        Specialized settings for read_committed isolation level.
+                                        Specialized settings for processor.
                                     </xsd:documentation>
                                 </xsd:annotation>
                                 <xsd:complexType>
@@ -999,10 +999,108 @@
                                     <xsd:attribute name="optimizeTransLog" use="optional" default="true">
                                         <xsd:annotation>
                                             <xsd:documentation>
-                                                Should the transactional log be optimized before added to the actual index. Defaults
+                                                Should the transactional log be optimized before added to the actual
+                                                index. Defaults
                                                 to true.
                                             </xsd:documentation>
                                         </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="async" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Specialized settings for async processor.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="backlog" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The bounded size of the backlog for async transactions to process (note,
+                                                a transaciton includes one or more destructive operations. Once the
+                                                backlog is full, transactions will block until new tranasctions can be
+                                                inserted to it. The default backlog size is 10.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="addTimeout" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The timeout value to wait if the backlog is full until it is cleared.
+                                                Defaults to 10 seconds. Accepts Compass time format settings.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="batchJobSize" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Once a transaction is identified as needed to be processed
+                                                asynchronously, it can try and wait for more transactions to happen in
+                                                order to process all of them in one go. This settings controls how many
+                                                additional transactions will be accumalated by blocking for them. The
+                                                blocking time is controlled using batchJobTimeout.
+
+                                                While there is an additional job within the timeout, transactions will
+                                                be accumelated until the configured size. If there is none within the
+                                                timeout, the processor will break and won't wait for more in order to
+                                                process the jobs.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="batchJobTimeout" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Once a transaction is identified as needed to be processed
+                                                asynchronously, it can try and wait for more transactions to happen in
+                                                order to process all of them in one go. This settings controls how long
+                                                to wait for each additional transaction.
+
+                                                While there is an additional job within the timeout, transactions will
+                                                be accumelated until the configured size. If there is none within the
+                                                timeout, the processor will break and won't wait for more in order to
+                                                process the jobs.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="nonBlockingBatchJobSize" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Once a transaction is identified as needed to be processed
+                                                asynchronously, and after it has waited for additional transactions (see
+                                                batchJobSize and batchJobTimeout, this setting controls the number of
+                                                additional transacitons the processor will try to get in a non blocking
+                                                fashion.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="concurrencyLevel" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The number of threads that will be used to process the transactions.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="processBeforeClose" use="optional" type="booleanType">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                When Compass is closed, should it wait for all the unprocessed
+                                                transactions to be processed.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="hashing" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Controls how hashing will be done for parallel processing.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:simpleType>
+                                            <xsd:restriction base="xsd:string">
+                                                <xsd:enumeration value="uid"/>
+                                                <xsd:enumeration value="subindex"/>
+                                            </xsd:restriction>
+                                        </xsd:simpleType>
                                     </xsd:attribute>
                                 </xsd:complexType>
                             </xsd:element>

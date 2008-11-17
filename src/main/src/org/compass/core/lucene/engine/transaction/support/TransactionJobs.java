@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A holds for a list of jobs (usually, represent a transaction).
+ * A holds for a list of jobs (usually, represent a transaction which holds several dirty operations).
  *
  * @author kimchy
  */
@@ -32,15 +32,24 @@ public class TransactionJobs {
 
     private Set<String> subIndexes = new HashSet<String>();
 
+    /**
+     * Adds a transactional job, representing a single create/update/delete operation.
+     */
     public void add(TransactionJob job) {
         jobs.add(job);
         subIndexes.add(job.getSubIndex());
     }
 
+    /**
+     * Returns all the jobs.
+     */
     public List<TransactionJob> getJobs() {
         return this.jobs;
     }
 
+    /**
+     * Returns all the sub indexes this transactional jobs were performed against.
+     */
     public Set<String> getSubIndexes() {
         return this.subIndexes;
     }

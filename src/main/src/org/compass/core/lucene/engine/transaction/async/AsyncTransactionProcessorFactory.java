@@ -57,7 +57,36 @@ import org.compass.core.transaction.context.TransactionalCallable;
 import org.compass.core.util.CollectionUtils;
 
 /**
- * 
+ * A transaction processor that created {@link org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessor}
+ * instances. Supports async execution of transactions against the index. A transaction (which includes several dirty
+ * operations) is packaged into a single operation which is then applied to the index asynchronously.
+ *
+ * <p>Note, when several instances of Compass are running using this transaction processor, order of transactions is
+ * not maintained, which might result in out of order transaction being applied to the index.
+ *
+ * <p>The number of transactions that have not been processed (backlog) are bounded and default to <code>10</code>.
+ * If the processor is falling behind in processing transactions, commit operations will block until the backlog
+ * lowers below its threshold. The backlog can be set using the {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#BACKLOG}.
+ * Commit operations will block by default for 10 seconds in order for the backlog to lower below its threashold. It
+ * can be changed using the {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#ADD_TIMEOUT}
+ * setting.
+ *
+ * <p>Processing of transactions is done by a background thread that waits for transactions. Once there is a transaction
+ * to process, it will first try to wait for additional transactions. It will block for 100 milliseconds (configurable
+ * using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#BATCH_JOBS_TIMEOUT}), and if one
+ * is was added, will wait again up to 5 times (configurable using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#BATCH_JOBS_SIZE}).
+ * Once batch jobs based on timeout is done, the processor will try to get up to 5 more transactions in a non blocking
+ * manner (configurable using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#NON_BLOCKING_BATCH_JOBS_SIZE}).
+ *
+ * <p>When all transaction jobs are accumulated, the processor starts up to 5 threads
+ * (configurable using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#CONCURRENCY_LEVEL})
+ * in order to process all the transaction jobs against the index. Hashing of actual operation (create/update/delete)
+ * can either be done based on uid (of the resource) or sub index. By default, hashing is done based on <code>uid</code>
+ * and can be configured usign {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#HASHING}. 
+ *
+ * <p>When the transaction processor closes, by default it will wait for all the transactions to finish. In order to
+ * disable it, the {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#PROCESS_BEFORE_CLOSE}
+ * setting should be set to <code>false</code>.
  *
  * @author kimchy
  */
