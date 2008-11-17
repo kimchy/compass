@@ -1231,34 +1231,6 @@
                     Transaction isolation levels that Compass supports.
                 </xsd:documentation>
             </xsd:annotation>
-            <xsd:simpleType>
-                <xsd:restriction base="xsd:string">
-                    <xsd:enumeration value="read_committed">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                The same read committed from data base systems. As fast for read only transactions.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:enumeration>
-                    <xsd:enumeration value="serializable">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                The same as serializable from data base systems. Performance killer, basically results
-                                in transactions executed sequentially.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:enumeration>
-                    <xsd:enumeration value="lucene">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                An isolation level allowing for faster indexing at the expense of transactional
-                                sematics. Operations done during a transaction will not be visible to find/load/get
-                                operations within that transaction.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:enumeration>
-                </xsd:restriction>
-            </xsd:simpleType>
         </xsd:attribute>
         <xsd:attribute name="commitBeforeCompletion" type="booleanType" use="optional" default="false">
             <xsd:annotation>

@@ -248,7 +248,7 @@ standard (org.apache.lucene.analysis.standard.StandardAnalyzer):
     <title>Transaction</title>
 
     <para>
-      Compass Search Engine abstraction provides support for transaction management on top of Lucene. The abstraction support the following transaction processors: <literal>read_committed</literal> > and <literal>lucene</literal>. Compass provides two phase commit support for the common transaction levels only.
+      Compass Search Engine abstraction provides support for transaction management on top of Lucene. The abstraction support the following transaction processors: <literal>read_committed</literal>, <literal>lucene</literal> and <literal>async</literal>. Compass provides two phase commit support for the common transaction levels only.
     </para>
 
     <sect2 id="core-searchengine-transaction-locking">
@@ -309,6 +309,14 @@ compass.transaction.readcommitted.translog.connection=ram://
 		</para>
 		
 		<para>
+		    Using the read committed transaction processor can also be done in runtime using the following code:
+<programlisting><![CDATA[CompassSession session = compass.openSession();
+session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE, 
+                                 LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
+]]></programlisting>			
+		</para>
+        
+		<para>
             The FS transaction log stores the transactional data on the file system. This allows for bigger transactions (bigger in terms of data) to be run when compared with the ram transaction log though on account of performance. The fs transaction log can be configured with a path where to store the transaction log (defaults to java.io.tmpdir system property). The path is then appended with <literal>compass/translog</literal> and for each transaction a new unique directory is created. Here is an example of how the FS transaction can be configured:
 <programlisting><![CDATA[<compass name="default">
 <connection>
@@ -329,7 +337,7 @@ compass.transaction.readcommitted.translog.connection=file://
       <para>
         Transactional log settings are one of the session level settings that can be set. This allows to change how Compass would save the transaction log per session, and not globally on the Compass instance level configuration. Note, this only applies on the session that is responsible for creating the transaction. The following is an example of how it can be done:
 <programlisting><![CDATA[CompassSession session = compass.openSession();
-session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommittedTransLog.CONNECTION, 
+session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION, 
                                  "file://tmp/");
 ]]></programlisting>
       </para>
@@ -343,15 +351,11 @@ session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommit
         </para>
 		
 		<para>
-			It is important to understand this transaction isolation level in terms of merging done during commit time. Lucene might perform some merges during commit time depending on the merge factor configured using <literal>compass.engine.mergeFactor</literal>. This is different from the <literal>read_committed</literal> isolation level where no merges are perfomed during commit time. Possible merges can cause commits to take some time, so one option is to configure a large merge factor and let the optimizer do its magic (you can configure a different merge factor for the optimizer).
+			It is important to understand this transaction isolation level in terms of merging done during commit time. Lucene might perform some merges during commit time depending on the merge factor configured using <literal>compass.engine.mergeFactor</literal>. This is different from the <literal>read_committed</literal> processor  where no merges are performed during commit time. Possible merges can cause commits to take some time, so one option is to configure a large merge factor and let the optimizer do its magic (you can configure a different merge factor for the optimizer).
 		</para>
 		
 		<para>
 			Another important parameter when using this transaction isolation level is <literal>compass.engine.ramBufferSize</literal> (defaults to 16.0 Mb) which replaces the max buffered docs parameter and controls the amount of transactional data stored in memory. Larger values will yield better performance and it is best to allocate as much as possible.
-		</para>
-		
-		<para>
-			Most of the parameters can also be configured on a per session/transaction level. Please refer to <classname>RuntimeLuceneEnvironment</classname> for more information.
 		</para>
 		
 		<para>
@@ -369,6 +373,65 @@ session.getSettings().setSetting(RuntimeLuceneEnvironment.Transaction.ReadCommit
 ]]></programlisting>
 <programlisting><![CDATA[compass.engine.connection=target/test-index
 compass.transaction.processor=lucene
+]]></programlisting>			
+		</para>
+
+		<para>
+		    Using the lucene transaction processor can also be done in runtime using the following code:
+<programlisting><![CDATA[CompassSession session = compass.openSession();
+session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE, 
+                                 LuceneEnvironment.Transaction.Processor.Lucene.NAME);
+]]></programlisting>			
+		</para>
+      </sect3>
+      
+      <sect3 id="core-searchengine-transaction-async">
+        <title>async</title>
+        
+        <para>
+            The async transaction processor allows to asynchronously process transactions without incurring any overhead on the thread that actually executes the transaction. Transactions (each transaction consists of one or more destructive operation - create/upgrade/delete) are accumulated and processed asynchronously and concurrently. Note, async transaction processor does not obtain a lock when a dirty operation occurs within a transaction.
+        </para>
+        
+        <para>
+            Note, when several instances of Compass are running using this transaction processor, order of transactions is not maintained, which might result in out of order transaction being applied to the index.
+        </para>
+        
+        <para>
+            The number of transactions that have not been processed (backlog) are bounded and default to 10. If the processor is falling behind in processing transactions, commit operations will block until the backlog lowers below its threshold. The backlog can be set using the <literal>compass.transaction.processor.async.backlog</literal> setting. Commit operations will block by default for 10 seconds in order for the backlog to lower below its threshold. It
+can be changed using the <literal>compass.transaction.processor.async.addTimeout</literal> setting (which accepts the time format setting).
+        </para>
+        
+        <para>
+            Processing of transactions is done by a background thread that waits for transactions. Once there is a transaction to process, it will first try to wait for additional transactions. It will block for 100 milliseconds (configurable using <literal>compass.transaction.processor.async.batchJobTimeout</literal>), and if one was added, will wait again up to 5 times (configurable using <literal>compass.transaction.processor.async.batchJobSize</literal> setting). Once batch jobs based on timeout is done, the processor will try to get up to 5 more transactions in a non blocking manner (configurable using <literal>compass.transaction.processor.async.nonBlockingBatchJobSize</literal> setting).
+        </para>
+        
+        <para>
+            When all transaction jobs are accumulated, the processor starts up to 5 threads (configurable using <literal>compass.transaction.processor.async.concurrencyLevel</literal>) in order to process all the transaction jobs against the index. Hashing of actual operation (create/update/delete) can either be done based on <literal>uid</literal> (of the resource) or <literal>subindex</literal>. By default, hashing is done based on <literal>uid</literal> and can be configured using <literal>compass.transaction.processor.async.hashing</literal> setting.
+        </para>
+        
+        <para>
+            When the transaction processor closes, by default it will wait for all the transactions to finish. In order to disable it, the <literal>compass.transaction.processor.async.processBeforeClose</literal> setting should be set to <literal>false</literal>.
+        </para>
+
+		<para>
+			Here is how the transaction isolation level can be configured:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+  </connection>
+  <transaction processor="async" />
+</compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.transaction.processor=async
+]]></programlisting>			
+		</para>
+		
+		<para>
+		    Using the async transaction processor can also be done in runtime using the following code:
+<programlisting><![CDATA[CompassSession session = compass.openSession();
+session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE, 
+                                 LuceneEnvironment.Transaction.Processor.Async.NAME);
 ]]></programlisting>			
 		</para>
       </sect3>

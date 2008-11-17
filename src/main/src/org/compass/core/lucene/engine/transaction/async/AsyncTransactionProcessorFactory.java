@@ -67,14 +67,14 @@ import org.compass.core.util.CollectionUtils;
  * <p>The number of transactions that have not been processed (backlog) are bounded and default to <code>10</code>.
  * If the processor is falling behind in processing transactions, commit operations will block until the backlog
  * lowers below its threshold. The backlog can be set using the {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#BACKLOG}.
- * Commit operations will block by default for 10 seconds in order for the backlog to lower below its threashold. It
+ * Commit operations will block by default for 10 seconds in order for the backlog to lower below its threshold. It
  * can be changed using the {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#ADD_TIMEOUT}
  * setting.
  *
  * <p>Processing of transactions is done by a background thread that waits for transactions. Once there is a transaction
  * to process, it will first try to wait for additional transactions. It will block for 100 milliseconds (configurable
  * using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#BATCH_JOBS_TIMEOUT}), and if one
- * is was added, will wait again up to 5 times (configurable using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#BATCH_JOBS_SIZE}).
+ * was added, will wait again up to 5 times (configurable using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#BATCH_JOBS_SIZE}).
  * Once batch jobs based on timeout is done, the processor will try to get up to 5 more transactions in a non blocking
  * manner (configurable using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#NON_BLOCKING_BATCH_JOBS_SIZE}).
  *
@@ -82,7 +82,7 @@ import org.compass.core.util.CollectionUtils;
  * (configurable using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#CONCURRENCY_LEVEL})
  * in order to process all the transaction jobs against the index. Hashing of actual operation (create/update/delete)
  * can either be done based on uid (of the resource) or sub index. By default, hashing is done based on <code>uid</code>
- * and can be configured usign {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#HASHING}. 
+ * and can be configured using {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#HASHING}. 
  *
  * <p>When the transaction processor closes, by default it will wait for all the transactions to finish. In order to
  * disable it, the {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor.Async#PROCESS_BEFORE_CLOSE}
