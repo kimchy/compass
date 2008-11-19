@@ -34,7 +34,7 @@ public class FSAsyncTransactionTests extends AbstractAsyncTransactionTests {
     @Override
     protected void sleepForChangesToOccur() {
         try {
-            Thread.sleep(700);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             throw new IllegalStateException("Interrupted", e);
         }
