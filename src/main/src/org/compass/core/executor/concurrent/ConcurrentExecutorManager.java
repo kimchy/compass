@@ -56,7 +56,7 @@ public class ConcurrentExecutorManager implements InternalExecutorManager, Compa
     public void configure(CompassSettings settings) throws CompassException {
         int corePoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.CORE_POOL_SIZE, 10);
         int maximumPoolSize = settings.getSettingAsInt(CompassEnvironment.ExecutorManager.Concurrent.MAXIMUM_POOL_SIZE, 30);
-        long keepAliveTime = settings.getSettingAsLong(CompassEnvironment.ExecutorManager.Concurrent.KEEP_ALIVE_TIME, 60000);
+        long keepAliveTime = settings.getSettingAsTimeInMillis(CompassEnvironment.ExecutorManager.Concurrent.KEEP_ALIVE_TIME, 60000);
 
         executorService = ScalingExecutros.newScalingThreadPool(corePoolSize, maximumPoolSize, keepAliveTime, new SingleThreadThreadFactory("Compass Executor Thread", true));
 
