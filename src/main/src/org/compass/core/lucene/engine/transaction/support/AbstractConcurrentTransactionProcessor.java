@@ -287,14 +287,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
 
         public boolean needsReschedule() throws InterruptedException {
             if (stopped) {
-                // if we stopped, make sure we are not starting up (before actual execution)
-                if (startLatch != null) {
-                    startLatch.await();
-                }
-                // and that we are not during actual execution
-                if (stopLatch != null) {
-                    stopLatch.await();
-                }
+                waitTillStopped();
             }
             return stopped;
         }
@@ -308,7 +301,6 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         }
 
         public void stop() throws InterruptedException {
-            startLatch.await();
             if (stopped) {
                 return;
             }
@@ -326,7 +318,12 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
          * Wait till stop. Note, should be called only after {@link #stop()}  was called.
          */
         public void waitTillStopped() throws InterruptedException {
-            stopLatch.await();
+            if (startLatch != null) {
+                startLatch.await();
+            }
+            if (stopLatch != null) {
+                stopLatch.await();
+            }
         }
 
         public void addJob(TransactionJob job) throws SearchEngineException {
