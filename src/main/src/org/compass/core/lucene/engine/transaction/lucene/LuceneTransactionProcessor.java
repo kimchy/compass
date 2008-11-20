@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,12 +31,17 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
-import org.compass.core.lucene.engine.transaction.support.AbstractSearchTransactionProcessor;
+import org.compass.core.lucene.engine.LuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
+import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
+import org.compass.core.lucene.engine.transaction.support.AbstractConcurrentTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.CommitCallable;
 import org.compass.core.lucene.engine.transaction.support.PrepareCommitCallable;
 import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
+import org.compass.core.lucene.engine.transaction.support.TransactionJob;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.transaction.context.TransactionalCallable;
@@ -48,21 +54,26 @@ import org.compass.core.util.StringUtils;
  *
  * @author kimchy
  */
-public class LuceneTransactionProcessor extends AbstractSearchTransactionProcessor {
+public class LuceneTransactionProcessor extends AbstractConcurrentTransactionProcessor {
 
     private static final Log logger = LogFactory.getLog(LuceneTransactionProcessor.class);
 
-    private Map<String, IndexWriter> indexWriterBySubIndex = new HashMap<String, IndexWriter>();
+    private Map<String, IndexWriter> indexWriterBySubIndex;
 
     public LuceneTransactionProcessor(LuceneSearchEngine searchEngine) {
-        super(searchEngine);
+        super(logger, searchEngine, false, searchEngine.getSearchEngineFactory().getIndexManager().supportsConcurrentOperations());
+        if (isConcurrentOperations()) {
+            indexWriterBySubIndex = new ConcurrentHashMap<String, IndexWriter>();
+        } else {
+            indexWriterBySubIndex = new HashMap<String, IndexWriter>();
+        }
     }
 
-    public void begin() throws SearchEngineException {
-        // nothing to do here
+    public String getName() {
+        return LuceneEnvironment.Transaction.Processor.Lucene.NAME;
     }
 
-    public void rollback() throws SearchEngineException {
+    protected void doRollback() throws SearchEngineException {
         SearchEngineException exception = null;
         for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
             try {
@@ -88,7 +99,10 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
         }
     }
 
-    public void prepare() throws SearchEngineException {
+    protected void doPrepare() throws SearchEngineException {
+        if (indexWriterBySubIndex.isEmpty()) {
+            return;
+        }
         if (indexManager.supportsConcurrentOperations()) {
             ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
@@ -108,7 +122,7 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
         }
     }
 
-    public void commit(boolean onePhase) throws SearchEngineException {
+    protected void doCommit(boolean onePhase) throws SearchEngineException {
         if (indexWriterBySubIndex.isEmpty()) {
             return;
         }
@@ -145,19 +159,7 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
         }
     }
 
-    public void flush() throws SearchEngineException {
-        // flush() deprecated in Lucene 2.4
-//        if (indexWriterBySubIndex.isEmpty()) {
-//            return;
-//        }
-//        ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
-//        for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
-//            prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new PrepareCommitCallable(entry.getKey(), entry.getValue())));
-//        }
-//        indexManager.getExecutorManager().invokeAllWithLimitBailOnException(prepareCallables, 1);
-    }
-
-    public void create(InternalResource resource) throws SearchEngineException {
+    protected void doCreate(InternalResource resource) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
             Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
@@ -168,7 +170,18 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
         }
     }
 
-    public void delete(ResourceKey resourceKey) throws SearchEngineException {
+    protected void doUpdate(InternalResource resource) throws SearchEngineException {
+        try {
+            IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
+            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
+            indexWriter.updateDocument(new Term(resource.getResourceKey().getUIDPath(), resource.getResourceKey().buildUID()), ((LuceneResource) resource).getDocument(), analyzer);
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to update resource for alias [" + resource.getAlias()
+                    + "] and resource " + resource, e);
+        }
+    }
+
+    protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resourceKey.getSubIndex());
             indexWriter.deleteDocuments(new Term(resourceKey.getUIDPath(), resourceKey.buildUID()));
@@ -178,14 +191,23 @@ public class LuceneTransactionProcessor extends AbstractSearchTransactionProcess
         }
     }
 
-    public void update(InternalResource resource) throws SearchEngineException {
+    protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
+        return performFind(query);
+    }
+
+    protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        return performInternalSearch(subIndexes, aliases);
+    }
+
+    /**
+     * Just open an index writer here on the same calling thread so we maintain ordering of operations as well
+     * as no need for double check if we created it or not using expensive global locking.
+     */
+    protected void prepareBeforeAsyncDirtyOperation(TransactionJob job) throws SearchEngineException {
         try {
-            IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
-            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
-            indexWriter.updateDocument(new Term(resource.getResourceKey().getUIDPath(), resource.getResourceKey().buildUID()), ((LuceneResource) resource).getDocument(), analyzer);
+            getOrCreateIndexWriter(job.getSubIndex());
         } catch (IOException e) {
-            throw new SearchEngineException("Failed to update resource for alias [" + resource.getAlias()
-                    + "] and resource " + resource, e);
+            throw new SearchEngineException("Failed to open index writer for sub index [" + job.getSubIndex() + "]", e);
         }
     }
 

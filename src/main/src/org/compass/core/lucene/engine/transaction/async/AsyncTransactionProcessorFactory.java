@@ -38,7 +38,6 @@ import org.apache.lucene.store.Directory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.SearchEngineFactoryAware;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
@@ -51,10 +50,10 @@ import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.support.CommitCallable;
 import org.compass.core.lucene.engine.transaction.support.PrepareCommitCallable;
 import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
+import org.compass.core.lucene.engine.transaction.support.ResourceHashing;
 import org.compass.core.lucene.engine.transaction.support.TransactionJob;
 import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
 import org.compass.core.transaction.context.TransactionalCallable;
-import org.compass.core.util.CollectionUtils;
 
 /**
  * A transaction processor that created {@link org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessor}
@@ -112,7 +111,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
 
     private int nonBlockingBatchSize;
     
-    private Hashing hashing;
+    private ResourceHashing hashing;
 
     private BlockingQueue<TransactionJobs> jobsToProcess;
 
@@ -157,16 +156,9 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
             logger.debug("Async Transaction Processor will use [" + concurrencyLevel + "] concrrent threads to process transactions");
         }
 
-        String hashingSetting = settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.HASHING, "uid");
-        if ("uid".equalsIgnoreCase(hashingSetting)) {
-            hashing = Hashing.UID;
-        } else if ("subindex".equalsIgnoreCase(hashingSetting)) {
-            hashing = Hashing.SUBINDEX;
-        } else {
-            throw new ConfigurationException("No hashing support for [" + hashingSetting + "]. Either use 'uid' (defualt) or 'subindex'");
-        }
+        hashing = ResourceHashing.fromName(settings.getSetting(LuceneEnvironment.Transaction.Processor.Async.HASHING, "uid"));
         if (logger.isDebugEnabled()) {
-            logger.debug("Async Transaction Processor uses [" + hashingSetting + "] based hashing for concurrent processing");
+            logger.debug("Async Transaction Processor uses [" + hashing + "] based hashing for concurrent processing");
         }
 
         if (logger.isDebugEnabled()) {
@@ -408,15 +400,8 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
     private void addConcurrentJobsToProcess(List<TransactionJob>[] concurrentJobsToProcess, Set<String> subIndexes, TransactionJobs jobs) {
         subIndexes.addAll(jobs.getSubIndexes());
         for (TransactionJob job : jobs.getJobs()) {
-            concurrentJobsToProcess[hash(job) % concurrencyLevel].add(job);
+            concurrentJobsToProcess[hashing.hash(job) % concurrencyLevel].add(job);
         }
-    }
-
-    private int hash(TransactionJob job) {
-        if (hashing == Hashing.UID) {
-            return CollectionUtils.absHash(job.getResourceUID());
-        }
-        return CollectionUtils.absHash(job.getSubIndex());
     }
 
     protected boolean isClearCacheOnCommit() {
@@ -510,8 +495,4 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         }
     }
 
-    private enum Hashing {
-        UID,
-        SUBINDEX
-    }
 }

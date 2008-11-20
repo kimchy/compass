@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine.transaction.support;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.search.Filter;
@@ -42,11 +43,11 @@ import org.compass.core.spi.ResourceKey;
  */
 public abstract class AbstractSearchTransactionProcessor extends AbstractTransactionProcessor {
 
-    protected AbstractSearchTransactionProcessor(LuceneSearchEngine searchEngine) {
-        super(searchEngine);
+    protected AbstractSearchTransactionProcessor(Log logger, LuceneSearchEngine searchEngine) {
+        super(logger, searchEngine);
     }
 
-    public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
+    protected LuceneSearchEngineHits performFind(LuceneSearchEngineQuery query) throws SearchEngineException {
         LuceneSearchEngineInternalSearch internalSearch = internalSearch(query.getSubIndexes(), query.getAliases());
         if (internalSearch.isEmpty()) {
             return new EmptyLuceneSearchEngineHits();
@@ -59,7 +60,7 @@ public abstract class AbstractSearchTransactionProcessor extends AbstractTransac
         return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
     }
 
-    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+    protected LuceneSearchEngineInternalSearch performInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         // TODO somehow, we need to find a way to pass the useFieldCache parameter
         return buildInternalSearch(subIndexes, aliases, true);
     }

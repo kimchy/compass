@@ -7,10 +7,10 @@
         <connection>
             <file path="target/test-index"/>
         </connection>
-        <transaction>
-            <readCommittedSettings>
-                <ramTransLog />
-            </readCommittedSettings>
+        <transaction processor="lucene">
+            <processors>
+                <readCommitted transLog="ram://" />
+            </processors>
         </transaction>
         <searchEngine useCompoundFile="true">
             <optimizer type="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer" schedule="false" />

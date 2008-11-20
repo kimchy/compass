@@ -16,6 +16,7 @@
 
 package org.compass.core.lucene.engine.transaction.support;
 
+import org.apache.commons.logging.Log;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.spi.InternalResource;
@@ -34,8 +35,8 @@ public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearc
 
     private TransactionJobs jobs;
 
-    public AbstractJobBasedTransactionProcessor(LuceneSearchEngine searchEngine) {
-        super(searchEngine);
+    public AbstractJobBasedTransactionProcessor(Log logger, LuceneSearchEngine searchEngine) {
+        super(logger, searchEngine);
     }
 
     public void begin() throws SearchEngineException {

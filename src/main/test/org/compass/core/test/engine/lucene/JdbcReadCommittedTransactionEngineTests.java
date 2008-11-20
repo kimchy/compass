@@ -21,8 +21,9 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 
 /**
+ * @author kimchy
  */
-public class JdbcLuceneReadCommittedTransactionEngineTests extends AbstractReadCommittedTransactionTests {
+public class JdbcReadCommittedTransactionEngineTests extends AbstractReadCommittedTransactionTests {
 
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();

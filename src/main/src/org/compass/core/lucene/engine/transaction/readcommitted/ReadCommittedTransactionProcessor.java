@@ -39,6 +39,7 @@ import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.DefaultLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.EmptyLuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
@@ -66,7 +67,7 @@ import org.compass.core.util.StringUtils;
  */
 public class ReadCommittedTransactionProcessor extends AbstractTransactionProcessor {
 
-    private static final Log log = LogFactory.getLog(ReadCommittedTransactionProcessor.class);
+    private static final Log logger = LogFactory.getLog(ReadCommittedTransactionProcessor.class);
 
     private TransIndexManager transIndexManager;
 
@@ -77,7 +78,11 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
     private Map<String, LuceneIndexHolder> indexHoldersBySubIndex = new HashMap<String, LuceneIndexHolder>();
 
     public ReadCommittedTransactionProcessor(LuceneSearchEngine searchEngine) {
-        super(searchEngine);
+        super(logger, searchEngine);
+    }
+
+    public String getName() {
+        return LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME;
     }
 
     public void begin() throws SearchEngineException {
@@ -93,8 +98,8 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
             try {
                 entry.getValue().rollback();
             } catch (AlreadyClosedException e) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
                 }
             } catch (IOException e) {
                 Directory dir = indexManager.getStore().openDirectory(entry.getKey());
@@ -103,7 +108,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
                         IndexWriter.unlock(dir);
                     }
                 } catch (Exception e1) {
-                    log.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
+                    logger.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
                 }
                 lastException = new SearchEngineException("Failed to rollback sub index [" + entry.getKey() + "]", e);
             }
@@ -447,20 +452,20 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
                         IndexWriter.unlock(dir);
                     }
                 } catch (Exception e1) {
-                    log.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
+                    logger.warn("Failed to check for locks or unlock failed commit for sub index [" + subIndex + "]", e);
                 }
                 throw new SearchEngineException("Failed to add transaction index to sub index [" + subIndex + "]", e);
             }
             if (isClearCacheOnCommit()) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Clearing cache after commit for sub index [" + subIndex + "]");
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Clearing cache after commit for sub index [" + subIndex + "]");
                 }
                 indexManager.clearCache(subIndex);
             }
             try {
                 transIndexManager.close(subIndex);
             } catch (IOException e) {
-                log.warn("Failed to close transactional index for sub index [" + subIndex + "], ignoring", e);
+                logger.warn("Failed to close transactional index for sub index [" + subIndex + "], ignoring", e);
             }
             return null;
         }

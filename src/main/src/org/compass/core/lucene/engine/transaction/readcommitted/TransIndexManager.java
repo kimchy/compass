@@ -40,6 +40,7 @@ public class TransIndexManager implements CompassConfigurable {
 
     private CompassSettings settings;
 
+    // TODO get the read committed transaction processor, and if it is concurrent, just then, create a CHM
     private final Map<String, TransIndex> transIndexMap = new ConcurrentHashMap<String, TransIndex>();
 
     public TransIndexManager(LuceneSearchEngineFactory searchEngineFactory) {

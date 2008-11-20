@@ -50,8 +50,9 @@ public class TransLogTester {
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
 
+        long time = System.currentTimeMillis();
         CompassSession session = compass.openSession();
-//        session.getSettings().setClassSetting(RuntimeLuceneEnvironment.Transaction.TransLog.TYPE, FSTransLog.class);
+//        session.getSettings().setBooleanSetting(LuceneEnvironment.Transaction.Processor.Lucene.CONCURRENT_OPERATIONS, true);
         CompassTransaction tr = session.beginTransaction();
         for (int i = 0; i < numberOfInstances; i++) {
             if (i % 1000 == 0) {
@@ -67,6 +68,6 @@ public class TransLogTester {
         System.out.println("Committing Transaction");
         tr.commit();
         session.close();
-        System.out.println("Indexing Complete");
+        System.out.println("Indexing Complete, took [" + (System.currentTimeMillis() - time) + "ms]");
     }
 }

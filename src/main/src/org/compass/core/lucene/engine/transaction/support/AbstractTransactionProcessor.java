@@ -19,6 +19,7 @@ package org.compass.core.lucene.engine.transaction.support;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.logging.Log;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.search.Filter;
@@ -48,13 +49,16 @@ import org.compass.core.mapping.ResourceMapping;
  */
 public abstract class AbstractTransactionProcessor implements TransactionProcessor {
 
+    protected final Log logger;
+
     protected final LuceneSearchEngine searchEngine;
 
     protected final LuceneSearchEngineIndexManager indexManager;
 
     protected final CompassMapping mapping;
 
-    protected AbstractTransactionProcessor(LuceneSearchEngine searchEngine) {
+    protected AbstractTransactionProcessor(Log logger, LuceneSearchEngine searchEngine) {
+        this.logger = logger;
         this.searchEngine = searchEngine;
         this.indexManager = searchEngine.getSearchEngineFactory().getLuceneIndexManager();
         this.mapping = searchEngine.getSearchEngineFactory().getMapping();
@@ -147,5 +151,9 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
 
     protected boolean isClearCacheOnCommit() {
         return searchEngine.getSettings().getSettingAsBoolean(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, true);
+    }
+
+    protected final String getSettingName(String settingName) {
+        return LuceneEnvironment.Transaction.Processor.PREFIX + getName() + "." + settingName;
     }
 }

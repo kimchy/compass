@@ -612,6 +612,14 @@ public class LuceneEnvironment {
                  * The name of the lucene transaction processor.
                  */
                 public static final String NAME = "lucene";
+
+                public static final String CONCURRENT_OPERATIONS = "compass.transaction.processor.lucene.concurrentOperations";
+
+                public static final String CONCURRENCY_LEVEL = "compass.transaction.processor.lucene.concurrencyLevel";
+
+                public static final String HASHING = "compass.transaction.processor.lucene.hashing";
+
+                public static final String BACKLOG = "compass.transaction.processor.lucene.backlog";
             }
 
             /**

@@ -5,7 +5,7 @@
 <compass-core-mapping package="org.compass.core.load.translog">
 
     <class name="A" alias="a">
-    
+
         <id name="id" />
         
         <property name="data1">

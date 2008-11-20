@@ -16,18 +16,20 @@
 
 package org.compass.core.test.engine.lucene;
 
+import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 
 /**
  * @author kimchy
  */
-public class UnCompoundFSRamTransLuceneReadCommittedTransactionEngineTests extends FSRamTransLuceneReadCommittedTransactionEngineTests {
+public class FSRamTransReadCommittedTransactionEngineTests extends AbstractReadCommittedTransactionTests {
 
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
-        settings.setBooleanSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, false);
+        settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
         settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION, "ram://");
         return settings;
     }
 

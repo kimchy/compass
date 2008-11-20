@@ -33,6 +33,11 @@ import org.compass.core.spi.ResourceKey;
 public interface TransactionProcessor {
 
     /**
+     * Retuns the name of this transaction processor.
+     */
+    String getName();
+
+    /**
      * Begin the transaction.
      */
     void begin() throws SearchEngineException;

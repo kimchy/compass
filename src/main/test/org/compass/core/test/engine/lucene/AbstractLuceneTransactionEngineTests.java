@@ -59,4 +59,18 @@ public abstract class AbstractLuceneTransactionEngineTests extends AbstractTrans
         assertMulitIdResource2Exists(getSearchEngine());
         getSearchEngine().commit(true);
     }
+
+    public void testDualCreatesSameAlias() throws Exception {
+        getSearchEngine().begin();
+        Resource singleId = createSingleIdResource(getSearchEngine());
+        getSearchEngine().create(singleId);
+        Resource singleId2 = createSingleIdResource2(getSearchEngine());
+        getSearchEngine().create(singleId2);
+        getSearchEngine().commit(true);
+
+        getSearchEngine().begin();
+        assertSingleIdResourceExists(getSearchEngine());
+        assertSingleIdResource2Exists(getSearchEngine());
+        getSearchEngine().commit(true);
+    }
 }

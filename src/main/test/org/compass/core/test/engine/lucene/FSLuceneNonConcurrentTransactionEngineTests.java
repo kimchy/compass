@@ -16,9 +16,17 @@
 
 package org.compass.core.test.engine.lucene;
 
+import org.compass.core.config.CompassSettings;
+import org.compass.core.lucene.LuceneEnvironment;
+
 /**
  * @author kimchy
  */
-public class FSLuceneTransactionEngineTests extends AbstractLuceneTransactionEngineTests {
+public class FSLuceneNonConcurrentTransactionEngineTests extends AbstractLuceneTransactionEngineTests {
 
+    protected CompassSettings buildCompassSettings() {
+        CompassSettings settings = super.buildCompassSettings();
+        settings.setBooleanSetting(LuceneEnvironment.Transaction.Processor.Lucene.CONCURRENT_OPERATIONS, false);
+        return settings;
+    }
 }

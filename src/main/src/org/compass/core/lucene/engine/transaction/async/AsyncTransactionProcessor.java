@@ -16,8 +16,14 @@
 
 package org.compass.core.lucene.engine.transaction.async;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
+import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.transaction.support.AbstractJobBasedTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
 
@@ -29,6 +35,8 @@ import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
  */
 public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProcessor {
 
+    private final static Log logger = LogFactory.getLog(AsyncTransactionProcessor.class); 
+
     private final AsyncTransactionProcessorFactory processorFactory;
 
     /**
@@ -37,8 +45,12 @@ public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProces
      * {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs}.
      */
     public AsyncTransactionProcessor(LuceneSearchEngine searchEngine, AsyncTransactionProcessorFactory processorFactory) {
-        super(searchEngine);
+        super(logger, searchEngine);
         this.processorFactory = processorFactory;
+    }
+
+    public String getName() {
+        return LuceneEnvironment.Transaction.Processor.Async.NAME;
     }
 
     protected void doPrepare(TransactionJobs jobs) throws SearchEngineException {
@@ -51,5 +63,13 @@ public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProces
 
     protected void doRollback(TransactionJobs jobs) throws SearchEngineException {
         processorFactory.remove(jobs);
+    }
+
+    public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
+        return performFind(query);
+    }
+
+    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        return performInternalSearch(subIndexes, aliases);
     }
 }
