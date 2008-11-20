@@ -22,6 +22,8 @@ import org.compass.core.CompassQuery.SortDirection;
 import org.compass.core.CompassQuery.SortImplicitType;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
+import org.compass.core.config.CompassSettings;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.test.AbstractTestCase;
 
 public class SortTests extends AbstractTestCase {
@@ -29,7 +31,13 @@ public class SortTests extends AbstractTestCase {
     protected String[] getMappings() {
         return new String[] { "sort/sort.cpm.xml" };
     }
-    
+
+    @Override
+    protected void addSettings(CompassSettings settings) {
+        // set no concurrent operations so sort by id and relevance will worok
+        settings.setBooleanSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.CONCURRENT_OPERATIONS, false);
+    }
+
     protected void setUp() throws Exception {
         super.setUp();
         CompassSession session = openSession();
@@ -101,7 +109,7 @@ public class SortTests extends AbstractTestCase {
         assertAId(3, 2, hits);
         assertAId(4, 3, hits);
         tr.commit();
-        
+
         session.close();
     }
 
@@ -119,7 +127,7 @@ public class SortTests extends AbstractTestCase {
         assertAId(3, 2, hits);
         assertAId(4, 3, hits);
         tr.commit();
-        
+
         session.close();
     }
 
