@@ -581,13 +581,35 @@ public class LuceneEnvironment {
                  */
                 public static final String NAME = "read_committed";
 
+                /**
+                 * Should dirty operations be perfomed asynchronously. Defaults to <code>true</code>. 
+                 */
                 public static final String CONCURRENT_OPERATIONS = "compass.transaction.processor.read_committed.concurrentOperations";
 
+                /**
+                 * The number of threads used to process dirty operations asynchronously. Defaults to <code>5</code>.
+                 *
+                 * <p>Note, this is the number of threads used per transaction and threads are pooled.
+                 */
                 public static final String CONCURRENCY_LEVEL = "compass.transaction.processor.read_committed.concurrencyLevel";
 
+                /**
+                 * Controls how hashing will be done for parallel processing. Eitehr <code>uid</code> or <code>subindex</code>.
+                 * Defuats to <code>uid</code>.
+                 */
                 public static final String HASHING = "compass.transaction.processor.read_committed.hashing";
 
+                /**
+                 * The backlog size of the current ongoing dirty operations. If full, will block the dirty operation
+                 * until it is emptied by the running async processor threads.
+                 */
                 public static final String BACKLOG = "compass.transaction.processor.read_committed.backlog";
+
+                /**
+                 * The time for a dirty operation to wait if the backlog is full until the dirty operation can be added.
+                 * Defaults to <code>10</code> seconds. Supports time based configuration and default value is in millis.
+                 */
+                public static final String ADD_TIMEOUT = "compass.transaction.processor.read_committed.addTimeout";
 
                 /**
                  * Transaction log settings.
@@ -621,13 +643,35 @@ public class LuceneEnvironment {
                  */
                 public static final String NAME = "lucene";
 
+                /**
+                 * Should dirty operations be perfomed asynchronously. Defaults to <code>true</code>.
+                 */
                 public static final String CONCURRENT_OPERATIONS = "compass.transaction.processor.lucene.concurrentOperations";
 
+                /**
+                 * The number of threads used to process dirty operations asynchronously. Defaults to <code>5</code>.
+                 *
+                 * <p>Note, this is the number of threads used per transaction and threads are pooled.
+                 */
                 public static final String CONCURRENCY_LEVEL = "compass.transaction.processor.lucene.concurrencyLevel";
 
+                /**
+                 * Controls how hashing will be done for parallel processing. Eitehr <code>uid</code> or <code>subindex</code>.
+                 * Defuats to <code>uid</code>.
+                 */
                 public static final String HASHING = "compass.transaction.processor.lucene.hashing";
 
+                /**
+                 * The backlog size of the current ongoing dirty operations. If full, will block the dirty operation
+                 * until it is emptied by the running async processor threads.
+                 */
                 public static final String BACKLOG = "compass.transaction.processor.lucene.backlog";
+
+                /**
+                 * The time for a dirty operation to wait if the backlog is full until the dirty operation can be added.
+                 * Defaults to <code>10</code> seconds. Supports time based configuration and default value is in millis.
+                 */
+                public static final String ADD_TIMEOUT = "compass.transaction.processor.lucene.addTimeout";
             }
 
             /**

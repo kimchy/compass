@@ -37,17 +37,19 @@ import org.compass.core.spi.ResourceKey;
  */
 public abstract class AbstractConcurrentTransactionProcessor extends AbstractSearchTransactionProcessor {
 
-    private boolean waitForSearchOperations;
+    private final boolean waitForSearchOperations;
 
-    private boolean concurrentOperations;
+    private final boolean concurrentOperations;
 
-    private int concurrencyLevel;
+    private final int concurrencyLevel;
 
     private Processor[] processors;
 
-    private ResourceHashing hashing;
+    private final ResourceHashing hashing;
 
-    private int backlog;
+    private final int backlog;
+
+    private final long addTimeout;
 
     protected AbstractConcurrentTransactionProcessor(Log logger, LuceneSearchEngine searchEngine,
                                                      boolean waitForSearchOperations, boolean concurrentOperations) {
@@ -57,6 +59,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         this.concurrencyLevel = searchEngine.getSettings().getSettingAsInt(getSettingName("concurrencyLevel"), 5);
         this.hashing = ResourceHashing.fromName(searchEngine.getSettings().getSetting(getSettingName("hashing"), "uid"));
         this.backlog = searchEngine.getSettings().getSettingAsInt(getSettingName("backlog"), 100);
+        this.addTimeout = searchEngine.getSettings().getSettingAsTimeInMillis(getSettingName("addTimeout"), 10000);
     }
 
     public boolean isConcurrentOperations() {
@@ -344,13 +347,12 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
                 if (logger.isTraceEnabled()) {
                     logger.trace("Processor [" + id + "]: Adding Job [" + job + "]");
                 }
-                // TODO make the timeout configurable
-                boolean offered = jobs.offer(job, 10000, TimeUnit.MILLISECONDS);
+                boolean offered = jobs.offer(job, addTimeout, TimeUnit.MILLISECONDS);
                 if (!offered) {
-                    throw new SearchEngineException("Processor [" + id + "]: Failed to add job [" + job + "], queue is full and nothing empties it");
+                    throw new SearchEngineException("Processor [" + id + "]: Failed to add job [" + job + "] after [" + addTimeout + "ms] and backlog size [" + backlog + "]");
                 }
             } catch (InterruptedException e) {
-                throw new SearchEngineException("Processor [" + id + "]: Failed to add job [" + job + "], queue is full and nothing empties it");
+                throw new SearchEngineException("Processor [" + id + "]: Failed to add job [" + job + "], interrupted while adding to queue", e);
             }
         }
 

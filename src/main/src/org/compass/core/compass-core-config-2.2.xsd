@@ -1005,6 +1005,109 @@
                                             </xsd:documentation>
                                         </xsd:annotation>
                                     </xsd:attribute>
+                                    <xsd:attribute name="concurrentOperations" use="optional" type="booleanType">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Should dirty operations be perfomed asynchronously. Defaults to true.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="concurrencyLevel" use="optional" type="xsd:positiveInteger">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The number of threads used to process dirty operations asynchronously.
+                                                Defaults to 5. Note, this is the number of threads used per transaction
+                                                and threads are pooled.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="hashing" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Controls how hashing will be done for parallel processing.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:simpleType>
+                                            <xsd:restriction base="xsd:string">
+                                                <xsd:enumeration value="uid"/>
+                                                <xsd:enumeration value="subindex"/>
+                                            </xsd:restriction>
+                                        </xsd:simpleType>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="backlog" use="optional" type="xsd:positiveInteger">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The backlog size of the current ongoing dirty operations. If full, will
+                                                block the dirty operation until it is emptied by the running async
+                                                processor threads.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="addTimeout" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The time for a dirty operation to wait if the backlog is full until the
+                                                dirty operation can be added. Defaults to 10 seconds. Supports time
+                                                based configuration and default value is in millis.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="lucene" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        Specialized settings for processor.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="concurrentOperations" use="optional" type="booleanType">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Should dirty operations be perfomed asynchronously. Defaults to true.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="concurrencyLevel" use="optional" type="xsd:positiveInteger">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The number of threads used to process dirty operations asynchronously.
+                                                Defaults to 5. Note, this is the number of threads used per transaction
+                                                and threads are pooled.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="hashing" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                Controls how hashing will be done for parallel processing.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:simpleType>
+                                            <xsd:restriction base="xsd:string">
+                                                <xsd:enumeration value="uid"/>
+                                                <xsd:enumeration value="subindex"/>
+                                            </xsd:restriction>
+                                        </xsd:simpleType>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="backlog" use="optional" type="xsd:positiveInteger">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The backlog size of the current ongoing dirty operations. If full, will
+                                                block the dirty operation until it is emptied by the running async
+                                                processor threads.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="addTimeout" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                The time for a dirty operation to wait if the backlog is full until the
+                                                dirty operation can be added. Defaults to 10 seconds. Supports time
+                                                based configuration and default value is in millis.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
                                 </xsd:complexType>
                             </xsd:element>
                             <xsd:element name="async" minOccurs="0">
@@ -1014,7 +1117,7 @@
                                     </xsd:documentation>
                                 </xsd:annotation>
                                 <xsd:complexType>
-                                    <xsd:attribute name="backlog" use="optional">
+                                    <xsd:attribute name="backlog" use="optional" type="xsd:positiveInteger">
                                         <xsd:annotation>
                                             <xsd:documentation>
                                                 The bounded size of the backlog for async transactions to process (note,
@@ -1032,7 +1135,7 @@
                                             </xsd:documentation>
                                         </xsd:annotation>
                                     </xsd:attribute>
-                                    <xsd:attribute name="batchJobSize" use="optional">
+                                    <xsd:attribute name="batchJobSize" use="optional" type="xsd:positiveInteger">
                                         <xsd:annotation>
                                             <xsd:documentation>
                                                 Once a transaction is identified as needed to be processed
@@ -1048,7 +1151,7 @@
                                             </xsd:documentation>
                                         </xsd:annotation>
                                     </xsd:attribute>
-                                    <xsd:attribute name="batchJobTimeout" use="optional">
+                                    <xsd:attribute name="batchJobTimeout" use="optional" type="xsd:positiveInteger">
                                         <xsd:annotation>
                                             <xsd:documentation>
                                                 Once a transaction is identified as needed to be processed
@@ -1063,7 +1166,8 @@
                                             </xsd:documentation>
                                         </xsd:annotation>
                                     </xsd:attribute>
-                                    <xsd:attribute name="nonBlockingBatchJobSize" use="optional">
+                                    <xsd:attribute name="nonBlockingBatchJobSize" use="optional"
+                                                   type="xsd:positiveInteger">
                                         <xsd:annotation>
                                             <xsd:documentation>
                                                 Once a transaction is identified as needed to be processed
@@ -1074,7 +1178,7 @@
                                             </xsd:documentation>
                                         </xsd:annotation>
                                     </xsd:attribute>
-                                    <xsd:attribute name="concurrencyLevel" use="optional">
+                                    <xsd:attribute name="concurrencyLevel" use="optional" type="xsd:positiveInteger">
                                         <xsd:annotation>
                                             <xsd:documentation>
                                                 The number of threads that will be used to process the transactions.

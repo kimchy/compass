@@ -403,6 +403,20 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
                 Element readCommittedSettingsEle = (Element) child1.get(0);
                 settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION, getElementAttribute(readCommittedSettingsEle, "transLog"));
                 settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG, getElementAttribute(readCommittedSettingsEle, "optimizeTransLog"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.CONCURRENT_OPERATIONS, getElementAttribute(readCommittedSettingsEle, "concurrentOperations"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.CONCURRENCY_LEVEL, getElementAttribute(readCommittedSettingsEle, "concurrencyLevel"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.HASHING, getElementAttribute(readCommittedSettingsEle, "hashing"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.ADD_TIMEOUT, getElementAttribute(readCommittedSettingsEle, "addTimeout"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.BACKLOG, getElementAttribute(readCommittedSettingsEle, "backlog"));
+            }
+            child1 = DomUtils.getChildElementsByTagName(prEle, "lucene", true);
+            if (child1.size() == 1) {
+                Element luceneSettingsEle = (Element) child1.get(0);
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Lucene.CONCURRENT_OPERATIONS, getElementAttribute(luceneSettingsEle, "concurrentOperations"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Lucene.CONCURRENCY_LEVEL, getElementAttribute(luceneSettingsEle, "concurrencyLevel"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Lucene.HASHING, getElementAttribute(luceneSettingsEle, "hashing"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Lucene.ADD_TIMEOUT, getElementAttribute(luceneSettingsEle, "addTimeout"));
+                settings.setSetting(LuceneEnvironment.Transaction.Processor.Lucene.BACKLOG, getElementAttribute(luceneSettingsEle, "backlog"));
             }
             child1 = DomUtils.getChildElementsByTagName(prEle, "async", true);
             if (child1.size() == 1) {
