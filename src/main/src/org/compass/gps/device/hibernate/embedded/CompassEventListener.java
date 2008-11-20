@@ -129,11 +129,11 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
         PostCollectionRecreateEventListener, PostCollectionRemoveEventListener, PostCollectionUpdateEventListener,
         Initializable {
 
-    private static Log log = LogFactory.getLog(CompassEventListener.class);
+    public final static Log log = LogFactory.getLog(CompassEventListener.class);
 
-    private static final String COMPASS_PREFIX = "compass";
+    public static final String COMPASS_PREFIX = "compass";
 
-    private static final String COMPASS_GPS_INDEX_PREFIX = "gps.index.";
+    public static final String COMPASS_GPS_INDEX_PREFIX = "gps.index.";
 
     public static final String COMPASS_CONFIG_LOCATION = "compass.hibernate.config";
 
