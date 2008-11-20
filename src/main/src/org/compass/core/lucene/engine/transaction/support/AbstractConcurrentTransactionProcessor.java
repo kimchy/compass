@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
+import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
@@ -160,6 +161,15 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
 
     protected abstract LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
 
+    public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
+        if (waitForSearchOperations && concurrentOperations) {
+            waitForJobs();
+        }
+        return doGet(resourceKey);
+    }
+
+    protected abstract Resource[] doGet(ResourceKey resourceKey) throws SearchEngineException;
+
     private void clearJobs() {
         if (!concurrentOperations || processors == null) {
             return;
@@ -193,7 +203,7 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
             }
         }
         if (exception != null) {
-            logger.warn("Failed to finish rollback", exception);
+            logger.trace("EXception while waiting to clear jobs for rollback", exception);
         }
     }
 

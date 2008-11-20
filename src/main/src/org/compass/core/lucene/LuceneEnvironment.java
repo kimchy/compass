@@ -581,6 +581,14 @@ public class LuceneEnvironment {
                  */
                 public static final String NAME = "read_committed";
 
+                public static final String CONCURRENT_OPERATIONS = "compass.transaction.processor.read_committed.concurrentOperations";
+
+                public static final String CONCURRENCY_LEVEL = "compass.transaction.processor.read_committed.concurrencyLevel";
+
+                public static final String HASHING = "compass.transaction.processor.read_committed.hashing";
+
+                public static final String BACKLOG = "compass.transaction.processor.read_committed.backlog";
+
                 /**
                  * Transaction log settings.
                  */

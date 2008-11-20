@@ -160,12 +160,11 @@ public class ResourceAnalyzerTests extends AbstractAnalyzerTests {
         r.addProperty("value", TEXT);
         try {
             session.save(r);
+            tr.commit();
             fail();
         } catch (SearchEngineException e) {
 
         }
-
-        tr.commit();
     }
 
     public void testResourceAnalyzerControllerWithNullAnalyzer() {

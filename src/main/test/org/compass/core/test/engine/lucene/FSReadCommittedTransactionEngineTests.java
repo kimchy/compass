@@ -16,21 +16,12 @@
 
 package org.compass.core.test.engine.lucene;
 
-import org.compass.core.config.CompassEnvironment;
-import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 
 /**
  * @author kimchy
  */
-public class FSLuceneReadCommittedTransactionEngineTests extends AbstractReadCommittedTransactionTests {
-
-    protected CompassSettings buildCompassSettings() {
-        CompassSettings settings = super.buildCompassSettings();
-        settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
-        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
-        return settings;
-    }
+public class FSReadCommittedTransactionEngineTests extends AbstractReadCommittedTransactionTests {
 
     public void testSettings() {
         assertEquals(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, getSettings().getSetting(

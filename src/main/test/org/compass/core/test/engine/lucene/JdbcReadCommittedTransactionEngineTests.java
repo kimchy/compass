@@ -28,17 +28,10 @@ public class JdbcReadCommittedTransactionEngineTests extends AbstractReadCommitt
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
         settings.setSetting(CompassEnvironment.CONNECTION, "jdbc://jdbc:hsqldb:mem:test");
-        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
         settings.setSetting(LuceneEnvironment.JdbcStore.DIALECT, "org.apache.lucene.store.jdbc.dialect.HSQLDialect");
         settings.setSetting(LuceneEnvironment.JdbcStore.Connection.DRIVER_CLASS, "org.hsqldb.jdbcDriver");
         settings.setSetting(LuceneEnvironment.JdbcStore.Connection.USERNAME, "sa");
         settings.setSetting(LuceneEnvironment.JdbcStore.Connection.PASSWORD, "");
         return settings;
     }
-
-    public void testSettings() {
-        assertEquals(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, getSettings().getSetting(
-                LuceneEnvironment.Transaction.Processor.TYPE));
-    }
-
 }

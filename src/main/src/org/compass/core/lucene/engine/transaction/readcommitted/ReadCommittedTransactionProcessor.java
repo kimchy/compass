@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,8 +48,9 @@ import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.manager.LuceneIndexHolder;
-import org.compass.core.lucene.engine.transaction.support.AbstractTransactionProcessor;
+import org.compass.core.lucene.engine.transaction.support.AbstractConcurrentTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
+import org.compass.core.lucene.engine.transaction.support.TransactionJob;
 import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.lucene.support.ChainedFilter;
 import org.compass.core.lucene.support.ResourceHelper;
@@ -65,20 +67,30 @@ import org.compass.core.util.StringUtils;
  *
  * @author kimchy
  */
-public class ReadCommittedTransactionProcessor extends AbstractTransactionProcessor {
+public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransactionProcessor {
 
     private static final Log logger = LogFactory.getLog(ReadCommittedTransactionProcessor.class);
 
-    private TransIndexManager transIndexManager;
+    private final TransIndexManager transIndexManager;
 
-    private Map<String, IndexWriter> indexWriterBySubIndex = new HashMap<String, IndexWriter>();
+    private final Map<String, IndexWriter> indexWriterBySubIndex;
 
-    private BitSetByAliasFilter filter;
+    private final BitSetByAliasFilter filter;
 
-    private Map<String, LuceneIndexHolder> indexHoldersBySubIndex = new HashMap<String, LuceneIndexHolder>();
+    private final Map<String, LuceneIndexHolder> indexHoldersBySubIndex;
 
     public ReadCommittedTransactionProcessor(LuceneSearchEngine searchEngine) {
-        super(logger, searchEngine);
+        super(logger, searchEngine, true, searchEngine.getSearchEngineFactory().getIndexManager().supportsConcurrentOperations());
+        if (isConcurrentOperations()) {
+            indexWriterBySubIndex = new ConcurrentHashMap<String, IndexWriter>();
+            indexHoldersBySubIndex = new ConcurrentHashMap<String, LuceneIndexHolder>();
+        } else {
+            indexWriterBySubIndex = new HashMap<String, IndexWriter>();
+            indexHoldersBySubIndex = new HashMap<String, LuceneIndexHolder>();
+        }
+        this.filter = new BitSetByAliasFilter(isConcurrentOperations());
+        this.transIndexManager = new TransIndexManager(searchEngine.getSearchEngineFactory(), isConcurrentOperations());
+        this.transIndexManager.configure(searchEngine.getSettings());
     }
 
     public String getName() {
@@ -86,39 +98,10 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
     }
 
     public void begin() throws SearchEngineException {
-        this.transIndexManager = new TransIndexManager(searchEngine.getSearchEngineFactory());
-        this.transIndexManager.configure(searchEngine.getSettings());
-        this.filter = new BitSetByAliasFilter();
+        this.filter.clear();
     }
 
-    public void rollback() throws SearchEngineException {
-        releaseHolders();
-        SearchEngineException lastException = null;
-        for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
-            try {
-                entry.getValue().rollback();
-            } catch (AlreadyClosedException e) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
-                }
-            } catch (IOException e) {
-                Directory dir = indexManager.getStore().openDirectory(entry.getKey());
-                try {
-                    if (IndexWriter.isLocked(dir)) {
-                        IndexWriter.unlock(dir);
-                    }
-                } catch (Exception e1) {
-                    logger.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
-                }
-                lastException = new SearchEngineException("Failed to rollback sub index [" + entry.getKey() + "]", e);
-            }
-        }
-        if (lastException != null) {
-            throw lastException;
-        }
-    }
-
-    public void prepare() throws SearchEngineException {
+    protected void doPrepare() throws SearchEngineException {
         releaseHolders();
         if (indexManager.supportsConcurrentOperations()) {
             ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
@@ -145,7 +128,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    public void commit(boolean onePhase) throws SearchEngineException {
+    protected void doCommit(boolean onePhase) throws SearchEngineException {
         releaseHolders();
         // here, we issue doPrepare since if only one of the sub indexes failed with it, then
         // it should fail.
@@ -171,10 +154,37 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+    protected void doRollback() throws SearchEngineException {
+        releaseHolders();
+        SearchEngineException lastException = null;
+        for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
+            try {
+                entry.getValue().rollback();
+            } catch (AlreadyClosedException e) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace("Failed to abort transaction for sub index [" + entry.getKey() + "] since it is alreayd closed");
+                }
+            } catch (IOException e) {
+                Directory dir = indexManager.getStore().openDirectory(entry.getKey());
+                try {
+                    if (IndexWriter.isLocked(dir)) {
+                        IndexWriter.unlock(dir);
+                    }
+                } catch (Exception e1) {
+                    logger.warn("Failed to check for locks or unlock failed commit for sub index [" + entry.getKey() + "]", e);
+                }
+                lastException = new SearchEngineException("Failed to rollback sub index [" + entry.getKey() + "]", e);
+            }
+        }
+        if (lastException != null) {
+            throw lastException;
+        }
+    }
+
+    protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         // if there are no ongoing dirty operations, simply return the default one which is faster
         if (indexHoldersBySubIndex.isEmpty() && !transIndexManager.hasTransactions()) {
-            // TODO somehow, we need to find a way to pass the useFieldCache parameter 
+            // TODO somehow, we need to find a way to pass the useFieldCache parameter
             return super.buildInternalSearch(subIndexes, aliases, true);
         }
         // we have a transaction, take it into account
@@ -208,7 +218,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
+    protected LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException {
         LuceneSearchEngineInternalSearch internalSearch = internalSearch(query.getSubIndexes(), query.getAliases());
         if (internalSearch.isEmpty()) {
             return new EmptyLuceneSearchEngineHits();
@@ -229,7 +239,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         return new DefaultLuceneSearchEngineHits(hits, searchEngine, query, internalSearch);
     }
 
-    public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
+    protected Resource[] doGet(ResourceKey resourceKey) throws SearchEngineException {
         Searcher indexSearcher = null;
         IndexReader indexReader = null;
         LuceneIndexHolder indexHolder = null;
@@ -303,7 +313,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    public void create(InternalResource resource) throws SearchEngineException {
+    protected void doCreate(InternalResource resource) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(resource.getSubIndex());
             Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
@@ -312,10 +322,9 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
             throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()
                     + "] and resource " + resource, e);
         }
-
     }
 
-    public void delete(ResourceKey resourceKey) throws SearchEngineException {
+    protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(resourceKey.getSubIndex());
 
@@ -330,7 +339,7 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    public void update(InternalResource resource) throws SearchEngineException {
+    protected void doUpdate(InternalResource resource) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(resource.getSubIndex());
 
@@ -346,8 +355,12 @@ public class ReadCommittedTransactionProcessor extends AbstractTransactionProces
         }
     }
 
-    public void flush() throws SearchEngineException {
-        // TODO maybe flush here the trans index manager?
+    protected void prepareBeforeAsyncDirtyOperation(TransactionJob job) throws SearchEngineException {
+        try {
+            openIndexWriterIfNeeded(job.getSubIndex());
+        } catch (IOException e) {
+            throw new SearchEngineException("Failed to open writer for sub index [" + job.getSubIndex() + "]", e);
+        }
     }
 
     private Term markDeleted(ResourceKey resourceKey) {

@@ -7,7 +7,7 @@
         <connection>
             <file path="target/test-index"/>
         </connection>
-        <transaction processor="lucene">
+        <transaction processor="read_committed">
             <processors>
                 <readCommitted transLog="ram://" />
             </processors>

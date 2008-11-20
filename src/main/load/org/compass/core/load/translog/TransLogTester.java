@@ -53,6 +53,7 @@ public class TransLogTester {
         long time = System.currentTimeMillis();
         CompassSession session = compass.openSession();
 //        session.getSettings().setBooleanSetting(LuceneEnvironment.Transaction.Processor.Lucene.CONCURRENT_OPERATIONS, true);
+//        session.getSettings().setBooleanSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.CONCURRENT_OPERATIONS, true);
         CompassTransaction tr = session.beginTransaction();
         for (int i = 0; i < numberOfInstances; i++) {
             if (i % 1000 == 0) {

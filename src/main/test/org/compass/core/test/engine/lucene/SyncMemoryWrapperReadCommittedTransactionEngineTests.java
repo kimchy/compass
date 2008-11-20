@@ -16,7 +16,6 @@
 
 package org.compass.core.test.engine.lucene;
 
-import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.wrapper.SyncMemoryMirrorDirectoryWrapperProvider;
@@ -28,17 +27,9 @@ public class SyncMemoryWrapperReadCommittedTransactionEngineTests extends Abstra
 
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
-        settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
-        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
         settings.setGroupSettings(LuceneEnvironment.DirectoryWrapper.PREFIX, "wrapper",
                 new String[] {LuceneEnvironment.DirectoryWrapper.TYPE}, 
                 new String[] {SyncMemoryMirrorDirectoryWrapperProvider.class.getName()});
         return settings;
     }
-
-    public void testSettings() {
-        assertEquals(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, getSettings().getSetting(
-                LuceneEnvironment.Transaction.Processor.TYPE));
-    }
-
 }

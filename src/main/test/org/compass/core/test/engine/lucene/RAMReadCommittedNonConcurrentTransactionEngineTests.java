@@ -23,13 +23,12 @@ import org.compass.core.lucene.LuceneEnvironment;
 /**
  * @author kimchy
  */
-public class RamLocalCacheReadCommittedTransactionEngineTests extends AbstractReadCommittedTransactionTests {
+public class RAMReadCommittedNonConcurrentTransactionEngineTests extends AbstractReadCommittedTransactionTests {
 
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
-        settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
-        settings.setGroupSettings(LuceneEnvironment.LocalCache.PREFIX, LuceneEnvironment.LocalCache.DEFAULT_NAME,
-                new String[]{LuceneEnvironment.LocalCache.CONNECTION}, new String[]{"ram://"});
+        settings.setSetting(CompassEnvironment.CONNECTION, "ram://target/testindex");
+        settings.setBooleanSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.CONCURRENT_OPERATIONS, false);
         return settings;
     }
 }

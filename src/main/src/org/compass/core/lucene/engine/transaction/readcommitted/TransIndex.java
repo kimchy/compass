@@ -54,9 +54,11 @@ public class TransIndex implements CompassConfigurable {
 
     private static final String DEFAULT_LOCATION = System.getProperty("java.io.tmpdir") + "/compass/translog";
 
-    private LuceneSearchEngineFactory searchEngineFactory;
+    private final LuceneSearchEngineFactory searchEngineFactory;
 
-    private String subIndex;
+    private final String subIndex;
+
+    private final boolean concurrent;
 
     private Directory directory;
 
@@ -70,9 +72,10 @@ public class TransIndex implements CompassConfigurable {
 
     private boolean optimize;
 
-    public TransIndex(LuceneSearchEngineFactory searchEngineFactory, String subIndex) {
+    public TransIndex(LuceneSearchEngineFactory searchEngineFactory, String subIndex, boolean concurrent) {
         this.searchEngineFactory = searchEngineFactory;
         this.subIndex = subIndex;
+        this.concurrent = concurrent;
     }
 
     public void configure(CompassSettings settings) throws CompassException {
@@ -95,7 +98,7 @@ public class TransIndex implements CompassConfigurable {
             // create an index writer with autoCommit=true since we want it to be visible to readers (still need to flush)
             indexWriter = searchEngineFactory.getLuceneIndexManager().openIndexWriter(settings, directory, true, true,
                     new KeepOnlyLastCommitDeletionPolicy());
-            // TODO lucene23 we probably want to set a merge policy that will perform no merges
+            // TODO what about merge policy, which one is better? Default is async operations, so good to have merges in the backgournd
             optimize = settings.getSettingAsBoolean(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.OPTIMIZE_TRANS_LOG, true);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to open transactional index for sub index [" + subIndex + "]", e);
@@ -150,7 +153,17 @@ public class TransIndex implements CompassConfigurable {
         directory.close();
     }
 
-    private synchronized void refreshIfNeeded() throws IOException {
+    private void refreshIfNeeded() throws IOException {
+        if (concurrent) {
+            synchronized (this) {
+                innerRefreshIfNeeded();
+            }
+        } else {
+            innerRefreshIfNeeded();
+        }
+    }
+
+    private void innerRefreshIfNeeded() throws IOException {
         if (flushRequired) {
             if (indexWriter != null) {
                 indexWriter.commit();

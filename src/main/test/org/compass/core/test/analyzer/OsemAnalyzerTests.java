@@ -131,12 +131,11 @@ public class OsemAnalyzerTests extends AbstractAnalyzerTests {
         a.setAnalyzer(null);
         try {
             session.save("a6", a);
+            tr.commit();
             fail();
         } catch (SearchEngineException e) {
 
         }
-
-        tr.commit();
     }
 
     public void testClassAnalyzerControllerWithNullAnalyzer() {

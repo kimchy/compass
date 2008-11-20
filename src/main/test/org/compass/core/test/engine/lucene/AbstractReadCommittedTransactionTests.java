@@ -21,10 +21,13 @@ import java.util.ArrayList;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermEnum;
 import org.compass.core.Resource;
+import org.compass.core.config.CompassEnvironment;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.config.RuntimeCompassSettings;
 import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineHits;
 import org.compass.core.engine.SearchEngineQuery;
+import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
 import org.compass.core.lucene.engine.transaction.readcommitted.ReadCommittedTransactionProcessor;
 import org.compass.core.spi.InternalCompass;
@@ -34,6 +37,18 @@ import org.compass.core.spi.InternalCompass;
  */
 public abstract class AbstractReadCommittedTransactionTests extends AbstractTransactionEngineTests {
 
+    protected CompassSettings buildCompassSettings() {
+        CompassSettings settings = super.buildCompassSettings();
+        settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
+        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
+        return settings;
+    }
+
+    public void testSettings() {
+        assertEquals(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, getSettings().getSetting(
+                LuceneEnvironment.Transaction.Processor.TYPE));
+    }
+    
     public void testSearchEngineTransactionProcessorInstance() {
         getSearchEngine().begin();
         assertTrue(getLuceneSearchEngine().getTransactionProcessor() instanceof ReadCommittedTransactionProcessor);

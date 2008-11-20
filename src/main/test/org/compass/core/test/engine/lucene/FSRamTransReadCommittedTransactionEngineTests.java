@@ -16,7 +16,6 @@
 
 package org.compass.core.test.engine.lucene;
 
-import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
 
@@ -27,15 +26,7 @@ public class FSRamTransReadCommittedTransactionEngineTests extends AbstractReadC
 
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
-        settings.setSetting(CompassEnvironment.CONNECTION, "target/test-index");
-        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
         settings.setSetting(LuceneEnvironment.Transaction.Processor.ReadCommitted.TransLog.CONNECTION, "ram://");
         return settings;
     }
-
-    public void testSettings() {
-        assertEquals(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, getSettings().getSetting(
-                LuceneEnvironment.Transaction.Processor.TYPE));
-    }
-
 }

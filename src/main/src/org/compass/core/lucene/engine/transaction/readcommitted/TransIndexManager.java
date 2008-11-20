@@ -17,6 +17,7 @@
 package org.compass.core.lucene.engine.transaction.readcommitted;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,15 +37,22 @@ import org.compass.core.spi.ResourceKey;
  */
 public class TransIndexManager implements CompassConfigurable {
 
-    private LuceneSearchEngineFactory searchEngineFactory;
+    private final boolean concurrent;
+
+    private final LuceneSearchEngineFactory searchEngineFactory;
 
     private CompassSettings settings;
 
-    // TODO get the read committed transaction processor, and if it is concurrent, just then, create a CHM
-    private final Map<String, TransIndex> transIndexMap = new ConcurrentHashMap<String, TransIndex>();
+    private final Map<String, TransIndex> transIndexMap;
 
-    public TransIndexManager(LuceneSearchEngineFactory searchEngineFactory) {
+    public TransIndexManager(LuceneSearchEngineFactory searchEngineFactory, boolean concurrent) {
         this.searchEngineFactory = searchEngineFactory;
+        this.concurrent = concurrent;
+        if (concurrent) {
+            transIndexMap = new ConcurrentHashMap<String, TransIndex>();
+        } else {
+            transIndexMap = new HashMap<String, TransIndex>();
+        }
     }
 
     public void configure(CompassSettings settings) throws CompassException {
@@ -107,13 +115,19 @@ public class TransIndexManager implements CompassConfigurable {
     private TransIndex getTransIndex(String subIndex) {
         TransIndex transIndex = transIndexMap.get(subIndex);
         if (transIndex == null) {
-            synchronized (transIndexMap) {
-                transIndex = transIndexMap.get(subIndex);
-                if (transIndex == null) {
-                    transIndex = new TransIndex(searchEngineFactory, subIndex);
-                    transIndex.configure(settings);
-                    transIndexMap.put(subIndex, transIndex);
+            if (concurrent) {
+                synchronized (transIndexMap) {
+                    transIndex = transIndexMap.get(subIndex);
+                    if (transIndex == null) {
+                        transIndex = new TransIndex(searchEngineFactory, subIndex, concurrent);
+                        transIndex.configure(settings);
+                        transIndexMap.put(subIndex, transIndex);
+                    }
                 }
+            } else {
+                transIndex = new TransIndex(searchEngineFactory, subIndex, concurrent);
+                transIndex.configure(settings);
+                transIndexMap.put(subIndex, transIndex);
             }
         }
         return transIndex;

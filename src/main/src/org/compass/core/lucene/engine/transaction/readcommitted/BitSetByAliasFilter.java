@@ -19,6 +19,7 @@ package org.compass.core.lucene.engine.transaction.readcommitted;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.DocIdSet;
@@ -65,13 +66,22 @@ public class BitSetByAliasFilter extends Filter {
         }
     }
 
-    private Map<IndexReader, DocIdSet> deletedBitSets = new HashMap<IndexReader, DocIdSet>();
+    private boolean concurrent;
 
-    private Map<IndexReader, DocIdSet> allBitSets = new HashMap<IndexReader, DocIdSet>();
+    private final Map<IndexReader, DocIdSet> deletedBitSets;
 
-    private boolean hasDeletes = false;
+    private final Map<IndexReader, DocIdSet> allBitSets;
 
-    public BitSetByAliasFilter() {
+    private volatile boolean hasDeletes = false;
+
+    public BitSetByAliasFilter(boolean concurrent) {
+        if (concurrent) {
+            deletedBitSets = new ConcurrentHashMap<IndexReader, DocIdSet>();
+            allBitSets = new ConcurrentHashMap<IndexReader, DocIdSet>();
+        } else {
+            deletedBitSets = new HashMap<IndexReader, DocIdSet>();
+            allBitSets = new HashMap<IndexReader, DocIdSet>();
+        }
     }
 
     public void clear() {
@@ -86,12 +96,16 @@ public class BitSetByAliasFilter extends Filter {
 
     public void markDelete(IndexReader indexReader, int docNum, int maxDoc) {
         OpenBitSet bitSet = (OpenBitSet) deletedBitSets.get(indexReader);
-        if (bitSet == null) {
-            // TODO we can implement our own DocIdSet for marked deleted ones
-            bitSet = new OpenBitSet(maxDoc);
-            bitSet.set(0, maxDoc);
-            deletedBitSets.put(indexReader, bitSet);
-            allBitSets.remove(indexReader);
+        if (concurrent) {
+            if (bitSet == null) {
+                synchronized (deletedBitSets) {
+                    bitSet = initBitSet(indexReader, maxDoc);
+                }
+            }
+        } else {
+            if (bitSet == null) {
+                bitSet = initBitSet(indexReader, maxDoc);
+            }
         }
         bitSet.fastClear(docNum);
         hasDeletes = true;
@@ -109,4 +123,17 @@ public class BitSetByAliasFilter extends Filter {
         }
         return bitSet;
     }
+
+    private OpenBitSet initBitSet(IndexReader indexReader, int maxDoc) {
+        OpenBitSet bitSet = (OpenBitSet) deletedBitSets.get(indexReader);
+        if (bitSet == null) {
+            // TODO we can implement our own DocIdSet for marked deleted ones
+            bitSet = new OpenBitSet(maxDoc);
+            bitSet.set(0, maxDoc);
+            deletedBitSets.put(indexReader, bitSet);
+            allBitSets.remove(indexReader);
+        }
+        return bitSet;
+    }
+
 }

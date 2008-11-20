@@ -154,12 +154,11 @@ public class XsemAnalyzerTests extends AbstractAnalyzerTests {
 
         try {
             session.save(buildAliasedXmlObject("g", XML_DATA));
+            tr.commit();
             fail();
         } catch (SearchEngineException e) {
 
         }
-
-        tr.commit();
     }
 
     public void testXmlObjectAnalyzerControllerWithNullAnalyzer() throws Exception {

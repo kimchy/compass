@@ -30,6 +30,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
+import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.LuceneResource;
@@ -197,6 +198,10 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
 
     protected LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
         return performInternalSearch(subIndexes, aliases);
+    }
+
+    protected Resource[] doGet(ResourceKey resourceKey) throws SearchEngineException {
+        return performGet(resourceKey);
     }
 
     /**

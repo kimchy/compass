@@ -27,13 +27,6 @@ public class UnCompoundFSRamTransReadCommittedTransactionEngineTests extends FSR
     protected CompassSettings buildCompassSettings() {
         CompassSettings settings = super.buildCompassSettings();
         settings.setBooleanSetting(LuceneEnvironment.SearchEngineIndex.USE_COMPOUND_FILE, false);
-        settings.setSetting(LuceneEnvironment.Transaction.Processor.TYPE, LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME);
         return settings;
     }
-
-    public void testSettings() {
-        assertEquals(LuceneEnvironment.Transaction.Processor.ReadCommitted.NAME, getSettings().getSetting(
-                LuceneEnvironment.Transaction.Processor.TYPE));
-    }
-
 }

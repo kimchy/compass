@@ -65,7 +65,7 @@ public abstract class AbstractSearchTransactionProcessor extends AbstractTransac
         return buildInternalSearch(subIndexes, aliases, true);
     }
 
-    public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
+    protected Resource[] performGet(ResourceKey resourceKey) throws SearchEngineException {
         LuceneIndexHolder indexHolder = indexManager.openIndexHolderBySubIndex(resourceKey.getSubIndex());
         try {
             Term t = new Term(resourceKey.getUIDPath(), resourceKey.buildUID());
