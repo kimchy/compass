@@ -16,7 +16,7 @@
 
 package org.compass.core.lucene;
 
-import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.RepeatableReader;
 import org.compass.core.mapping.ResourcePropertyMapping;
@@ -29,17 +29,17 @@ public class LuceneProperty implements InternalProperty {
 
     private static final long serialVersionUID = 3690475809949104182L;
 
-    private Field field;
+    private Fieldable field;
 
     private RepeatableReader reader;
 
     private transient ResourcePropertyMapping propertyMapping;
 
-    public LuceneProperty(Field field) {
+    public LuceneProperty(Fieldable field) {
         this.field = field;
     }
 
-    public LuceneProperty(Field field, RepeatableReader reader) {
+    public LuceneProperty(Fieldable field, RepeatableReader reader) {
         this.field = field;
         this.reader = reader;
     }
@@ -56,7 +56,7 @@ public class LuceneProperty implements InternalProperty {
         return this.reader;
     }
 
-    public Field getField() {
+    public Fieldable getField() {
         return this.field;
     }
 

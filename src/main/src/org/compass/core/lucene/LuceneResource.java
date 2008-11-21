@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
@@ -86,7 +87,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
 
         List fields = document.getFields();
         for (Iterator fieldsIt = fields.iterator(); fieldsIt.hasNext();) {
-            Field field = (Field) fieldsIt.next();
+            Fieldable field = (Fieldable) fieldsIt.next();
             LuceneProperty lProperty = new LuceneProperty(field);
             lProperty.setPropertyMapping(resourceMapping.getResourcePropertyMapping(field.name()));
             properties.add(lProperty);
