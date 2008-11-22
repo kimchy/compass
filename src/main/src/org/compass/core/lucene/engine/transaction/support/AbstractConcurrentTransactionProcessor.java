@@ -33,6 +33,32 @@ import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
 /**
+ * Base class support for async dirty operation processing.
+ *
+ * <p>Each dirty operation is added to a backlog for a specific thread to proces it (obtained from
+ * {@link org.compass.core.executor.ExecutorManager}). A {@link org.compass.core.lucene.engine.transaction.support.AbstractConcurrentTransactionProcessor.Processor}
+ * is assigned for each thread responsible for processing dirty operations.
+ *
+ * <p>Extedning classes should implement teh required operations and provide indication as to if search/read operations
+ * should block until all dirty operations have been processed, and if concurrent operations are even allowed. In case
+ * concurrent operations are not allowed, all dirty operations will be perfomed in a sync manner.
+ *
+ * <p>Different settings can control how the concurrent processing is perfomed. Settings names are based on
+ * {@link #getName()} by using {@link #getSettingName(String)}.
+ *
+ * <p>The <code>concurrentOperations</code> setting can be used to disable concurrent dirty operations, or enable
+ * them. This is only applies of the concurrentOperations parameter in the constructor is <code>true</code>.
+ *
+ * <p>The number of processor threads can be controlled using <code>concurrencyLevel</code> setting. It defaults to
+ * 5 threads.
+ *
+ * <p>Operations are hashed to their respective processor thread for procesing. Hashing can be controlled to either
+ * be perofmed based on <code>uid</code> or <code>subindex</code>. The default is <code>uid</code>.
+ *
+ * <p>The size of the backlog for each processor thread can also be controlled. If the backlog is full, user operations
+ * will block until space becaomes available (by the respective processor processing the operations). The amount of time
+ * the operation will block can be controlled using the <code>addTimeout</code> setting which defaults to 10 seconds.
+ *
  * @author kimchy
  */
 public abstract class AbstractConcurrentTransactionProcessor extends AbstractSearchTransactionProcessor {
@@ -62,6 +88,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         this.addTimeout = searchEngine.getSettings().getSettingAsTimeInMillis(getSettingName("addTimeout"), 10000);
     }
 
+    /**
+     * Returns <code>true</code> if concurrent operaetions are enabled for this transaction processor.
+     */
     public boolean isConcurrentOperations() {
         return concurrentOperations;
     }
@@ -77,6 +106,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         doPrepare();
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #prepare()}.
+     */
     protected abstract void doPrepare() throws SearchEngineException;
 
     public void commit(boolean onePhase) throws SearchEngineException {
@@ -86,6 +118,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         doCommit(onePhase);
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #commit(boolean)}.
+     */
     protected abstract void doCommit(boolean onePhase) throws SearchEngineException;
 
     public void rollback() throws SearchEngineException {
@@ -93,6 +128,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         doRollback();
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #rollback()}.
+     */
     protected abstract void doRollback() throws SearchEngineException;
 
     public void flush() throws SearchEngineException {
@@ -114,6 +152,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         }
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #create(org.compass.core.spi.InternalResource)}.
+     */
     protected abstract void doCreate(InternalResource resource) throws SearchEngineException;
 
     public void update(InternalResource resource) throws SearchEngineException {
@@ -126,6 +167,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         }
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #update(org.compass.core.spi.InternalResource)}.
+     */
     protected abstract void doUpdate(InternalResource resource) throws SearchEngineException;
 
     public void delete(ResourceKey resourceKey) throws SearchEngineException {
@@ -138,6 +182,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         }
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #delete(org.compass.core.spi.ResourceKey)}.
+     */
     protected abstract void doDelete(ResourceKey resourceKey) throws SearchEngineException;
 
     /**
@@ -153,6 +200,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         return doFind(query);
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #find(org.compass.core.lucene.engine.LuceneSearchEngineQuery)}.
+     */
     protected abstract LuceneSearchEngineHits doFind(LuceneSearchEngineQuery query) throws SearchEngineException;
 
     public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
@@ -162,6 +212,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         return doInternalSearch(subIndexes, aliases);
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #internalSearch(String[], String[])}.
+     */
     protected abstract LuceneSearchEngineInternalSearch doInternalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException;
 
     public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
@@ -171,8 +224,16 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         return doGet(resourceKey);
     }
 
+    /**
+     * Base classes should implement this. Behaviour should be the same as {@link #get(org.compass.core.spi.ResourceKey)}.
+     */
     protected abstract Resource[] doGet(ResourceKey resourceKey) throws SearchEngineException;
 
+    /**
+     * Similar to {@link #waitForJobs()} except that it clears all the remaining jobs from execution and simply
+     * waits for clean stop of the processors. Does not throw any processing exceptions, instead logs them since
+     * this is usually called by {@link #rollback()}.
+     */
     private void clearJobs() {
         if (!concurrentOperations || processors == null) {
             return;
@@ -210,7 +271,14 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         }
     }
 
-    private void waitForJobs() {
+    /**
+     * Waits for all the current dirty operations (if there are any) to be performed. Stops all the processors
+     * as well.
+     *
+     * <p>If there were any exceptions during the processing of dirty operation by any processor, they will be
+     * thrown.
+     */
+    private void waitForJobs() throws SearchEngineException {
         if (!concurrentOperations || processors == null) {
             return;
         }
@@ -245,6 +313,11 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         }
     }
 
+    /**
+     * Returns the processor that should handle the specific {@link org.compass.core.lucene.engine.transaction.support.TransactionJob}.
+     * If the processor has not been created, it will be lazily created. If the processor has not been scheduled yet
+     * to a thread, it will also be scheduled to one.
+     */
     private Processor getProcessor(TransactionJob job) {
         if (processors == null) {
             processors = new Processor[concurrencyLevel];
@@ -258,7 +331,6 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         try {
             if (processor.needsReschedule()) {
                 processor.start();
-                indexManager.getExecutorManager().submit(processor);
             }
         } catch (InterruptedException e) {
             throw new SearchEngineException("Failed to wait for processor [" + processor.getId() + "] to check if stopped", e);
@@ -267,6 +339,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
         return processor;
     }
 
+    /**
+     * Processor attached to a thread and responsible for processing dirty operations assigned to it.
+     */
     private class Processor implements Runnable {
 
         private final BlockingQueue<TransactionJob> jobs = new ArrayBlockingQueue<TransactionJob>(backlog);
@@ -285,6 +360,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
             this.id = id;
         }
 
+        /**
+         * Returns the id of the processor.
+         */
         public int getId() {
             return id;
         }
@@ -298,6 +376,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
             return exception;
         }
 
+        /**
+         * Returns <code>true</code> if the processor requires rescheduling to a thread.
+         */
         public boolean needsReschedule() throws InterruptedException {
             if (stopped) {
                 waitTillStopped();
@@ -305,14 +386,22 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
             return stopped;
         }
 
+        /**
+         * Starts the given processor, scheduling it to a thread as well.
+         */
         public void start() {
             if (logger.isTraceEnabled()) {
                 logger.trace("Processor [" + id + "]: Starting");
             }
             startLatch = new CountDownLatch(1);
             stopped = false;
+            indexManager.getExecutorManager().submit(this);
         }
 
+        /**
+         * Stops the given processor. Note, stopping the processor will cause it to finish executing all the remaining
+         * jobs and then exiting.
+         */
         public void stop() throws InterruptedException {
             if (stopped) {
                 return;
@@ -323,6 +412,9 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
             stopped = true;
         }
 
+        /**
+         * Clears the jobs associated with the processor.
+         */
         public void clear() {
             jobs.clear();
         }
@@ -339,6 +431,12 @@ public abstract class AbstractConcurrentTransactionProcessor extends AbstractSea
             }
         }
 
+        /**
+         * Adds a job to the processor. If there is an execption that occured during the procesing of a previously
+         * submitted job, the exception will be thrown.
+         *
+         * <p>If the backlog of the processor is full, will wait till space becomes avaialbe.
+         */
         public void addJob(TransactionJob job) throws SearchEngineException {
             if (exception != null) {
                 throw exception;

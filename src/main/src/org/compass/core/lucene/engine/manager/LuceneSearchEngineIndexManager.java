@@ -79,6 +79,9 @@ public interface LuceneSearchEngineIndexManager extends SearchEngineIndexManager
      */
     void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis);
 
+    /**
+     * Returns an executor manager that can be used to execute / submit tasks.
+     */
     ExecutorManager getExecutorManager();
 
     TransactionContext getTransactionContext();

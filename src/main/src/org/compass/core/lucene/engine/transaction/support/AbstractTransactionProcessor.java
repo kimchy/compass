@@ -153,6 +153,10 @@ public abstract class AbstractTransactionProcessor implements TransactionProcess
         return searchEngine.getSettings().getSettingAsBoolean(LuceneEnvironment.Transaction.CLEAR_CACHE_ON_COMMIT, true);
     }
 
+    /**
+     * Returns the concatanation of {@link org.compass.core.lucene.LuceneEnvironment.Transaction.Processor#PREFIX} +
+     * {@link #getName()}  + "." + <code>settingName</code>.
+     */
     protected final String getSettingName(String settingName) {
         return LuceneEnvironment.Transaction.Processor.PREFIX + getName() + "." + settingName;
     }
