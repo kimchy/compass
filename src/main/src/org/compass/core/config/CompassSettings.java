@@ -60,6 +60,10 @@ public class CompassSettings {
         this.gloablSettings = settings;
     }
 
+    /**
+     * Returns the global settings. Useful when getting group based settings and still access the global
+     * settings that created it.
+     */
     public CompassSettings getGloablSettings() {
         if (gloablSettings == null) {
             return this;

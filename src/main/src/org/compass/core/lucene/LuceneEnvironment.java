@@ -83,7 +83,7 @@ public class LuceneEnvironment {
         public static final String TYPE = "type";
 
         /**
-         * The fully qualified name of the anayzer factory. Must implement the
+         * The fully qualified name of the anayzer factory or an instnace of it. Must implement the
          * {@link org.compass.core.lucene.engine.analyzer.LuceneAnalyzerFactory}
          * inteface.
          *
@@ -582,7 +582,7 @@ public class LuceneEnvironment {
                 public static final String NAME = "read_committed";
 
                 /**
-                 * Should dirty operations be perfomed asynchronously. Defaults to <code>true</code>. 
+                 * Should dirty operations be perfomed asynchronously. Defaults to <code>true</code>.
                  */
                 public static final String CONCURRENT_OPERATIONS = "compass.transaction.processor.read_committed.concurrentOperations";
 
