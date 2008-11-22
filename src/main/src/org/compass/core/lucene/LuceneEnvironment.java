@@ -601,7 +601,7 @@ public class LuceneEnvironment {
 
                 /**
                  * The backlog size of the current ongoing dirty operations. If full, will block the dirty operation
-                 * until it is emptied by the running async processor threads.
+                 * until it is emptied by the running async processor threads. Defaults to <code>100</code>.
                  */
                 public static final String BACKLOG = "compass.transaction.processor.read_committed.backlog";
 
@@ -663,7 +663,7 @@ public class LuceneEnvironment {
 
                 /**
                  * The backlog size of the current ongoing dirty operations. If full, will block the dirty operation
-                 * until it is emptied by the running async processor threads.
+                 * until it is emptied by the running async processor threads. Defaults to <code>100</code>.
                  */
                 public static final String BACKLOG = "compass.transaction.processor.lucene.backlog";
 
