@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * A scaling queue that works with a {@link java.util.concurrent.ThreadPoolExecutor}
  * in when offerring which takes the active count and the max threads into account.
- * 
+ *
  * @author kimchy
  */
 public class ScalingQueue<E> extends LinkedBlockingQueue<E> {
@@ -68,6 +68,7 @@ public class ScalingQueue<E> extends LinkedBlockingQueue<E> {
      */
     @Override
     public boolean offer(E o) {
-        return executor.getActiveCount() < executor.getPoolSize() && super.offer(o);
+        int allWorkingThreads = executor.getActiveCount() + super.size();
+        return allWorkingThreads < executor.getPoolSize() && super.offer(o);
     }
 }
