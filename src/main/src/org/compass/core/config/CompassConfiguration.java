@@ -395,7 +395,7 @@ public class CompassConfiguration {
      *
      * @param mappingResolver The mapping resolver
      */
-    public CompassConfiguration addMappingResover(InputStreamMappingResolver mappingResolver) throws ConfigurationException {
+    public CompassConfiguration addMappingResolver(InputStreamMappingResolver mappingResolver) throws ConfigurationException {
         boolean hasAddedResource = getMappingBinding().addMappingResolver(mappingResolver);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match mapping resolver [" + mappingResolver + "]");

@@ -326,7 +326,7 @@ public class LocalCompassBean implements FactoryBean, InitializingBean, Disposab
 
         if (mappingResolvers != null) {
             for (InputStreamMappingResolver mappingResolver : mappingResolvers) {
-                config.addMappingResover(mappingResolver);
+                config.addMappingResolver(mappingResolver);
             }
         }
 

@@ -72,7 +72,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/test-index");
-        conf.addMappingResover(new ResultSetResourceMappingResolver(mapping, dataSource));
+        conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, dataSource));
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
@@ -124,7 +124,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/test-index");
-        conf.addMappingResover(new ResultSetResourceMappingResolver(mapping, this.dataSource));
+        conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, this.dataSource));
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
@@ -182,7 +182,7 @@ public class ResultSetJdbcGpsDeviceTests extends AbstractJdbcGpsDeviceTests {
 
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/testindex");
-        conf.addMappingResover(new ResultSetResourceMappingResolver(mapping, this.dataSource));
+        conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, this.dataSource));
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();

@@ -134,7 +134,7 @@ public class Hibernate3ScrollableResultsGpsDeviceTests extends TestCase {
 
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/test-index");
-        conf.addMappingResover(new ResultSetResourceMappingResolver(mapping, null)); //TODO
+        conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, null)); //TODO
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
@@ -221,7 +221,7 @@ public class Hibernate3ScrollableResultsGpsDeviceTests extends TestCase {
 
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/test-index");
-        conf.addMappingResover(new ResultSetResourceMappingResolver(mapping, null)); //XXX
+        conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, null)); //XXX
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
@@ -262,7 +262,7 @@ public class Hibernate3ScrollableResultsGpsDeviceTests extends TestCase {
 
         CompassConfiguration conf = new CompassConfiguration().setSetting(CompassEnvironment.CONNECTION,
                 "target/testindex");
-        conf.addMappingResover(new ResultSetResourceMappingResolver(mapping, null)); //XXX
+        conf.addMappingResolver(new ResultSetResourceMappingResolver(mapping, null)); //XXX
         compass = conf.buildCompass();
         compass.getSearchEngineIndexManager().deleteIndex();
         compass.getSearchEngineIndexManager().verifyIndex();
