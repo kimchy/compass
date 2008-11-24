@@ -81,6 +81,10 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
 
     private boolean autoDetectVersionColumnSqlType = true;
 
+    protected JdbcSnapshot getJdbcSnapshot() {
+        return this.snapshot;
+    }
+
     /**
      * performs operations on startup, such as auto generation of mappings for
      * mappings that implement the {@link AutoGenerateMapping}, auto detection
