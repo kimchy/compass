@@ -128,6 +128,23 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
 
     private void lookupConverter(ClassMapping classMapping) throws MappingException {
         MappingProcessorUtils.lookupConverter(converterLookup, classMapping);
+
+        // initalize the managed id converter
+        for (Iterator<Mapping> it = classMapping.mappingsIt(); it.hasNext();) {
+            Mapping m = it.next();
+            if (m instanceof ClassPropertyMapping) {
+                ClassPropertyMapping classPropertyMapping = (ClassPropertyMapping) m;
+                if (classPropertyMapping.getManagedIdConverterName() == null) {
+                    if (classPropertyMapping.mappingsSize() == 1) {
+                        Mapping m2 = classPropertyMapping.mappingsIt().next();
+                        if (m2 instanceof ClassPropertyMetaDataMapping) {
+                            classPropertyMapping.setManagedIdConverterName(m2.getConverterName());
+                        }
+                    }
+                }
+            }
+        }
+
         OsemMappingIterator.iterateMappings(new OsemConverterLookup(), classMapping, false);
     }
 

@@ -40,7 +40,9 @@ public abstract class AbstractTestCase extends ExtendedTestCase {
 
     private static FileHandlerMonitor fileHandlerMonitor;
 
-    protected abstract String[] getMappings();
+    protected String[] getMappings() {
+        return new String[0];
+    }
 
     protected void beforeTestCase() throws Exception {
         compass = (InternalCompass) buildCompass();
