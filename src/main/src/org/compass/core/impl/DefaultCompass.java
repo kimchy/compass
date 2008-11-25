@@ -16,6 +16,7 @@
 
 package org.compass.core.impl;
 
+import java.lang.ref.WeakReference;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
@@ -356,17 +357,20 @@ public class DefaultCompass implements InternalCompass {
      */
     private static class ShutdownThread extends Thread {
 
-        private Compass compass;
+        private final WeakReference<Compass> compass;
 
         public ShutdownThread(Compass compass) {
-            this.compass = compass;
+            this.compass = new WeakReference<Compass>(compass);
         }
 
         @Override
         public void run() {
-            ((DefaultCompass) compass).clearShutdownHook();
-            if (!compass.isClosed()) {
-                compass.close();
+            Compass compass = this.compass.get();
+            if (compass != null) {
+                ((DefaultCompass) compass).clearShutdownHook();
+                if (!compass.isClosed()) {
+                    compass.close();
+                }
             }
         }
     }
