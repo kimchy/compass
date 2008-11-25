@@ -295,6 +295,7 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
         Connection connection = JdbcUtils.getConnection(dataSource);
         PreparedStatement ps = null;
         ResultSet rs = null;
+        boolean dirtySnapshot = false;
         try {
             for (Iterator it = mappings.iterator(); it.hasNext();) {
                 ResultSetToResourceMapping mapping = (ResultSetToResourceMapping) it.next();
@@ -362,11 +363,13 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
                     }
                 }
                 if (!createdRows.isEmpty() || !updatedRows.isEmpty()) {
+                    dirtySnapshot = true;
                     getSnapshotEventListener().onCreateAndUpdate(
                             new CreateAndUpdateSnapshotEvent(connection, dialect, mapping, createdRows, updatedRows,
                                     compassGps));
                 }
                 if (!deletedRows.isEmpty()) {
+                    dirtySnapshot = true;
                     getSnapshotEventListener().onDelete(
                             new DeleteSnapshotEvent(connection, dialect, mapping, deletedRows, compassGps));
                 }
@@ -379,7 +382,7 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
             JdbcUtils.closeStatement(ps);
             JdbcUtils.closeConnection(connection);
         }
-        if (isSaveSnapshotAfterMirror()) {
+        if (isSaveSnapshotAfterMirror() && dirtySnapshot) {
             getSnapshotPersister().save(snapshot);
         }
     }

@@ -78,6 +78,11 @@ public interface CompassSession extends CompassOperations {
     CompassSettings getSettings();
 
     /**
+     * Flush the current transaction.
+     */
+    void flush() throws CompassException;
+
+    /**
      * Begin a unit of work and return the associated CompassTranscation object.
      * If a new underlying transaction is required, begin the transaction.
      * Otherwise continue the new work in the context of the existing underlying

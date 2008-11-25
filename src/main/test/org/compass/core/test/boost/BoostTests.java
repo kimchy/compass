@@ -43,12 +43,18 @@ public class BoostTests extends AbstractTestCase {
         a.value2 = "nomatch";
         session.save("a1", a);
 
+        // flush to maintain order
+        session.flush();
+
         a = new A();
         a.id = 2;
         a.value1 = "nomatch";
         a.value2 = "match";
         session.save("a1", a);
 
+        // flush to maintain order
+        session.flush();
+        
         for (int i = 0; i < 10; i++) {
             CompassHits hits = session.find("value1:match OR value2:match");
             assertEquals(2, hits.length());
@@ -81,12 +87,18 @@ public class BoostTests extends AbstractTestCase {
         a.value2 = "nomatch";
         session.save("a2", a);
 
+        // flush to maintain order
+        session.flush();
+
         a = new A();
         a.id = 2;
         a.value1 = "nomatch";
         a.value2 = "match";
         session.save("a2", a);
 
+        // flush to maintain order
+        session.flush();
+        
         for (int i = 0; i < 10; i++) {
             CompassHits hits = session.find("value1:match OR value2:match");
             assertEquals(2, hits.length());
@@ -118,12 +130,18 @@ public class BoostTests extends AbstractTestCase {
         a.value2 = "nomatch";
         session.save("a3", a);
 
+        // flush to maintain order
+        session.flush();
+
         a = new A();
         a.id = 1;
         a.value1 = "match";
         a.value2 = "nomatch";
         session.save("a4", a);
 
+        // flush to maintain order
+        session.flush();
+        
         for (int i = 0; i < 10; i++) {
             CompassHits hits = session.find("value1:match");
             assertEquals(2, hits.length());
@@ -145,6 +163,9 @@ public class BoostTests extends AbstractTestCase {
         parent.value = "match";
         session.save("parent11", parent);
 
+        // flush to maintain order
+        session.flush();
+
         parent = new Parent();
         parent.id = 2;
         parent.value = "match";
@@ -152,6 +173,9 @@ public class BoostTests extends AbstractTestCase {
         parent.child.value = "nomatch";
         session.save("parent12", parent);
 
+        // flush to maintain order
+        session.flush();
+        
         // if the component boost level propogated from child to parent 12
         // than it will score higher when searching for match
         CompassHits hits = session.find("value:match");

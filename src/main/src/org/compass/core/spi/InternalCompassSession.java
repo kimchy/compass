@@ -68,9 +68,4 @@ public interface InternalCompassSession extends CompassSession {
     void delete(Class clazz, Object obj, DirtyOperationContext context) throws CompassException;
 
     void delete(Object obj, DirtyOperationContext context) throws CompassException;
-
-    /**
-     * Flushed the current transaction. Only supported for batch_insert (no op in others).
-     */
-    void flush() throws CompassException;
 }
