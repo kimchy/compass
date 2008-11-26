@@ -42,14 +42,22 @@ public class AllBoostTests extends AbstractTestCase {
         a.value1 = "test2";
         a.value2 = "test1";
         session.save("anoboost", a);
+        // need to flush to maintain order
+        session.flush();
         session.save("a1", a);
+        // need to flush to maintain order
+        session.flush();
 
         a = new A();
         a.id = 2;
         a.value1 = "test1";
         a.value2 = "test2";
         session.save("anoboost", a);
+        // need to flush to maintain order
+        session.flush();
         session.save("a1", a);
+        // need to flush to maintain order
+        session.flush();
 
         CompassHits hits = session.queryBuilder().queryString("test1").toQuery().setAliases("anoboost").hits();
         assertEquals(1, ((A) hits.data(0)).id);
@@ -71,6 +79,10 @@ public class AllBoostTests extends AbstractTestCase {
         a.value1 = "moo test2";
         a.value2 = "moo test1";
         session.save("anoboost", a);
+        // need to flush to maintain order
+        session.flush();
+        // need to flush to maintain order
+        session.flush();
         session.save("a1", a);
 
         a = new A();
@@ -78,7 +90,11 @@ public class AllBoostTests extends AbstractTestCase {
         a.value1 = "moo test1";
         a.value2 = "moo test2";
         session.save("anoboost", a);
+        // need to flush to maintain order
+        session.flush();
         session.save("a1", a);
+        // need to flush to maintain order
+        session.flush();
 
         CompassHits hits = session.queryBuilder().queryString("test1").toQuery().setAliases("anoboost").hits();
         assertEquals(1, ((A) hits.data(0)).id);
@@ -101,7 +117,11 @@ public class AllBoostTests extends AbstractTestCase {
         b.value1 = "test2";
         b.value2 = "test1";
         session.save("bnoboost", b);
+        // need to flush to maintain order
+        session.flush();
         session.save("b1", b);
+        // need to flush to maintain order
+        session.flush();
 
         b = new B();
         b.id = 2;
@@ -109,7 +129,11 @@ public class AllBoostTests extends AbstractTestCase {
         b.value1 = "test1";
         b.value2 = "test2";
         session.save("bnoboost", b);
+        // need to flush to maintain order
+        session.flush();
         session.save("b1", b);
+        // need to flush to maintain order
+        session.flush();
 
         CompassHits hits = session.queryBuilder().queryString("test1").toQuery().setAliases("bnoboost").hits();
         assertEquals(1, ((B) hits.data(0)).id);
