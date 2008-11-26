@@ -64,6 +64,16 @@ public @interface SearchableAllMetaData {
      * Controls is the alias will be stored within the "all" proeprty or not.
      */
     ExcludeAlias excludeAlias() default ExcludeAlias.NA;
+
+    /**
+     * Set to <code>TRUE</code> if when adding the different {@link org.compass.core.Resource} properties,
+     * properties with no mappings will be added to the "all" property. A resoruce can have property with no
+     * mappings if it was added programtically to the resource.
+     *
+     * <p>See {@link org.compass.core.config.CompassEnvironment.All#INCLUDE_UNMAPPED_PROPERTIES} for system wide
+     * setting and teh defult value if this is set to <code>NA</code>.
+     */
+    NABoolean includePropertiesWithNoMappings() default NABoolean.NA;
     
     /**
      * Expert:

@@ -221,6 +221,11 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
             } else if (allMetaData.spellCheck() == SpellCheck.NA) {
                 allMapping.setSpellCheck(SpellCheckType.NA);
             }
+            if (allMetaData.includePropertiesWithNoMappings() == NABoolean.TRUE) {
+                allMapping.setIncludePropertiesWithNoMappings(true);
+            } else if (allMetaData.includePropertiesWithNoMappings() == NABoolean.FALSE) {
+                allMapping.setIncludePropertiesWithNoMappings(false);
+            }
             allMapping.setOmitNorms(AnnotationsBindingUtils.convert(allMetaData.omitNorms()));
             allMapping.setOmitTf(AnnotationsBindingUtils.convert(allMetaData.omitTf()));
         }
