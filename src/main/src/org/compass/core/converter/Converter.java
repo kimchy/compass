@@ -26,7 +26,7 @@ import org.compass.core.marshall.MarshallingContext;
  *
  * @author kimchy
  */
-public interface Converter {
+public interface Converter<T> {
 
     /**
      * Marshall the given <code>Object</code> to the given <code>Resource</code>. Will use
@@ -42,7 +42,7 @@ public interface Converter {
      * @return <code>true</code> if data was saved in the the index that can be read.
      * @throws ConversionException
      */
-    boolean marshall(Resource resource, Object root, Mapping mapping, MarshallingContext context)
+    boolean marshall(Resource resource, T root, Mapping mapping, MarshallingContext context)
             throws ConversionException;
 
     /**
@@ -54,5 +54,5 @@ public interface Converter {
      * @return The object unmarshalled
      * @throws ConversionException
      */
-    Object unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException;
+    T unmarshall(Resource resource, Mapping mapping, MarshallingContext context) throws ConversionException;
 }

@@ -26,7 +26,7 @@ import org.compass.core.mapping.ResourcePropertyMapping;
  *
  * @author kimchy
  */
-public interface ResourcePropertyConverter extends Converter {
+public interface ResourcePropertyConverter<T> extends Converter<T> {
 
     /**
      * Converts from a String and into it's Object representation.
@@ -37,7 +37,7 @@ public interface ResourcePropertyConverter extends Converter {
      * @throws org.compass.core.converter.ConversionException
      *
      */
-    Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException;
+    T fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException;
 
     /**
      * Converts the Object into a String.
@@ -49,7 +49,7 @@ public interface ResourcePropertyConverter extends Converter {
      * @return The String converted from the Object
      * @throws ConversionException
      */
-    String toString(Object o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException;
+    String toString(T o, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException;
 
     /**
      * Returns <code>true</code> if this converter should be used to convert query parser related
