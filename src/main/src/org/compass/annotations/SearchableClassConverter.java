@@ -46,8 +46,8 @@ public @interface SearchableClassConverter {
 
     /**
      * The converter that will be used to convert the class.
-     * <p/>
-     * Usually will be a converter that converts the class into a String
+     *
+     * <p>Usually will be a converter that converts the class into a String
      * stored in the search engine index (since for other cases, the {@link SearchableComponent}
      * can be used). Compass comes with a handy class for such converters:
      * {@link org.compass.core.converter.basic.AbstractBasicConverter}.
