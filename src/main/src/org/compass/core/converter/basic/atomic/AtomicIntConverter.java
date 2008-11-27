@@ -16,21 +16,41 @@
 
 package org.compass.core.converter.basic.atomic;
 
+import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.compass.core.converter.basic.IntConverter;
+import org.compass.core.converter.basic.AbstractNumberConverter;
+import org.compass.core.converter.basic.format.Formatter;
+import org.compass.core.converter.basic.format.NumberUtils;
 import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
  */
-public class AtomicIntConverter extends IntConverter {
+public class AtomicIntConverter extends AbstractNumberConverter<AtomicInteger> {
 
-    protected Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected AtomicInteger defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         return new AtomicInteger(Integer.valueOf(str));
     }
 
-    protected Object fromNumber(Number number) {
+    protected AtomicInteger fromNumber(Number number) {
         return new AtomicInteger(number.intValue());
+    }
+
+    protected Formatter createSortableFormatter() {
+        return new Formatter() {
+            public String format(Object obj) {
+                int val = ((Number) obj).intValue();
+                return NumberUtils.int2sortableStr(val);
+            }
+
+            public Object parse(String str) throws ParseException {
+                return NumberUtils.SortableStr2int(str);
+            }
+
+            public boolean isThreadSafe() {
+                return true;
+            }
+        };
     }
 }

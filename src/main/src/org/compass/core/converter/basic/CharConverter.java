@@ -23,9 +23,9 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class CharConverter extends AbstractBasicConverter {
+public class CharConverter extends AbstractBasicConverter<Character> {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
-        return new Character(str.charAt(0));
+    protected Character doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+        return str.charAt(0);
     }
 }

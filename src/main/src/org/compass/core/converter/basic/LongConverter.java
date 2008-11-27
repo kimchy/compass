@@ -25,13 +25,13 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class LongConverter extends AbstractNumberConverter {
+public class LongConverter extends AbstractNumberConverter<Long> {
 
-    protected Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Long defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         return Long.valueOf(str);
     }
 
-    protected Object fromNumber(Number number) {
+    protected Long fromNumber(Number number) {
         return number.longValue();
     }
 

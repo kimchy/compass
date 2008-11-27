@@ -27,9 +27,9 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class URLConverter extends AbstractBasicConverter {
+public class URLConverter extends AbstractBasicConverter<URL> {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected URL doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         try {
             return new URL(str);
         } catch (MalformedURLException e) {

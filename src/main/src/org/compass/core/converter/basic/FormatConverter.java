@@ -24,7 +24,7 @@ import org.compass.core.converter.mapping.ResourcePropertyConverter;
  *
  * @author kimchy
  */
-public interface FormatConverter extends ResourcePropertyConverter {
+public interface FormatConverter<T> extends ResourcePropertyConverter<T> {
 
     /**
      * Sets the format for the {@link Converter}.

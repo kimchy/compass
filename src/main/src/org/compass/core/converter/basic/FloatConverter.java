@@ -25,13 +25,13 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class FloatConverter extends AbstractNumberConverter {
+public class FloatConverter extends AbstractNumberConverter<Float> {
 
-    protected Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Float defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         return Float.valueOf(str);
     }
 
-    protected Object fromNumber(Number number) {
+    protected Float fromNumber(Number number) {
         return number.floatValue();
     }
 

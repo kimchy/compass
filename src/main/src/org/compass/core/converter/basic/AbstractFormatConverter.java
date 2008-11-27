@@ -41,7 +41,7 @@ import org.compass.core.util.StringUtils;
  *
  * @author kimchy
  */
-public abstract class AbstractFormatConverter extends AbstractBasicConverter implements CompassConfigurable, FormatConverter {
+public abstract class AbstractFormatConverter<T> extends AbstractBasicConverter<T> implements CompassConfigurable, FormatConverter<T> {
 
     protected Formatter[] formatters;
 

@@ -25,13 +25,13 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class ShortConverter extends AbstractNumberConverter {
+public class ShortConverter extends AbstractNumberConverter<Short> {
 
-    protected Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Short defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         return Short.valueOf(str);
     }
 
-    protected Object fromNumber(Number number) {
+    protected Short fromNumber(Number number) {
         return number.shortValue();
     }
 

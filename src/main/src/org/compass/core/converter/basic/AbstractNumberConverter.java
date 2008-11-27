@@ -35,7 +35,7 @@ import org.compass.core.marshall.MarshallingContext;
  *
  * @author kimchy
  */
-public abstract class AbstractNumberConverter extends AbstractFormatConverter implements CompassConfigurable {
+public abstract class AbstractNumberConverter<N extends Number> extends AbstractFormatConverter<N> implements CompassConfigurable {
 
     public static final String SORTABLE_FORMAT = "sortable";
 
@@ -74,13 +74,13 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
         return new AbstractNumberConverter.NumberFormatter();
     }
 
-    protected abstract Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping);
+    protected abstract N defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping);
 
-    protected abstract Object fromNumber(Number number);
+    protected abstract N fromNumber(Number number);
 
     protected abstract Formatter createSortableFormatter();
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected N doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         if (hasFormatter) {
             ParseException pe = null;
             for (Formatter formatter : formatters) {
@@ -96,7 +96,7 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
         }
     }
 
-    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+    protected String doToString(N o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         if (hasFormatter) {
             return formatters[0].format(o);
         } else {
@@ -104,7 +104,7 @@ public abstract class AbstractNumberConverter extends AbstractFormatConverter im
         }
     }
 
-    protected String defaultToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+    protected String defaultToString(N o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         return super.doToString(o, resourcePropertyMapping, context);
     }
 }

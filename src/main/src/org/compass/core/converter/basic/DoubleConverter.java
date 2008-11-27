@@ -25,13 +25,13 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class DoubleConverter extends AbstractNumberConverter {
+public class DoubleConverter extends AbstractNumberConverter<Double> {
 
-    protected Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Double defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         return Double.valueOf(str);
     }
 
-    protected Object fromNumber(Number number) {
+    protected Double fromNumber(Number number) {
         return number.doubleValue();
     }
 

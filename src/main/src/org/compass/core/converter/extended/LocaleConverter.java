@@ -30,9 +30,9 @@ import org.compass.core.marshall.MarshallingContext;
  *
  * @author kimchy
  */
-public class LocaleConverter extends AbstractBasicConverter {
+public class LocaleConverter extends AbstractBasicConverter<Locale> {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected Locale doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return new Locale(str);
     }
 

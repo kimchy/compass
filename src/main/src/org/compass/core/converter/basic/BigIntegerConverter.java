@@ -24,13 +24,13 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class BigIntegerConverter extends AbstractNumberConverter {
+public class BigIntegerConverter extends AbstractNumberConverter<BigInteger> {
 
-    protected Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected BigInteger defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         return new BigInteger(str);
     }
 
-    protected Object fromNumber(Number number) {
+    protected BigInteger fromNumber(Number number) {
         // TODO need to think more about how to do it, we loose data
         return new BigInteger(number.toString());
     }

@@ -24,9 +24,9 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class BooleanConverter extends AbstractBasicConverter {
+public class BooleanConverter extends AbstractBasicConverter<Boolean> {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected Boolean doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return str.equals("true") ? Boolean.TRUE : Boolean.FALSE;
     }
 

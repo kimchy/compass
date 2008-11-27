@@ -27,9 +27,9 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class AtomicBooleanConverter extends AbstractBasicConverter {
+public class AtomicBooleanConverter extends AbstractBasicConverter<AtomicBoolean> {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected AtomicBoolean doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return str.equals("true") ? new AtomicBoolean(true) : new AtomicBoolean(false);
     }
 

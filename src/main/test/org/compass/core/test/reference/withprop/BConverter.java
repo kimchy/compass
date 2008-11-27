@@ -8,13 +8,13 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class BConverter extends AbstractBasicConverter {
+public class BConverter extends AbstractBasicConverter<B> {
 
-    protected String doToString(Object o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
-        return ((B) o).value;
+    protected String doToString(B o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+        return o.value;
     }
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected B doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         B b = new B();
         b.value = "1";
         return b;

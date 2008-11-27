@@ -23,9 +23,9 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class ByteConverter extends AbstractBasicConverter {
+public class ByteConverter extends AbstractBasicConverter<Byte> {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected Byte doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return new Byte((byte) Integer.parseInt(str));
     }
 }

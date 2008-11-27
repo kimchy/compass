@@ -25,13 +25,13 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class IntConverter extends AbstractNumberConverter {
+public class IntConverter extends AbstractNumberConverter<Integer> {
 
-    protected Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected Integer defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         return Integer.valueOf(str);
     }
 
-    protected Object fromNumber(Number number) {
+    protected Integer fromNumber(Number number) {
         return number.intValue();
     }
 

@@ -27,9 +27,9 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class URIConverter extends AbstractBasicConverter {
+public class URIConverter extends AbstractBasicConverter<URI> {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected URI doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         try {
             return new URI(str);
         } catch (URISyntaxException e) {

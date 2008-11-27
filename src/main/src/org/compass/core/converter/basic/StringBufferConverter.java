@@ -23,9 +23,9 @@ import org.compass.core.marshall.MarshallingContext;
 /**
  * @author kimchy
  */
-public class StringBufferConverter extends AbstractBasicConverter {
+public class StringBufferConverter extends AbstractBasicConverter<StringBuffer> {
 
-    protected Object doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    protected StringBuffer doFromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return new StringBuffer(str);
     }
 }

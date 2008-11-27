@@ -24,13 +24,13 @@ import org.compass.core.mapping.ResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class BigDecimalConverter extends AbstractNumberConverter {
+public class BigDecimalConverter extends AbstractNumberConverter<BigDecimal> {
 
-    protected Object defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
+    protected BigDecimal defaultFromString(String str, ResourcePropertyMapping resourcePropertyMapping) {
         return new BigDecimal(str);
     }
 
-    protected Object fromNumber(Number number) {
+    protected BigDecimal fromNumber(Number number) {
         // TODO need to think more about how to do it, we loose data
         return new BigDecimal(number.doubleValue());        
     }
