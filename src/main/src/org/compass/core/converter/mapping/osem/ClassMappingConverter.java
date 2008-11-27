@@ -31,9 +31,11 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConversionException;
 import org.compass.core.converter.mapping.CollectionResourceWrapper;
 import org.compass.core.converter.mapping.ResourceMappingConverter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ObjectMapping;
 import org.compass.core.mapping.osem.OsemMapping;
@@ -421,6 +423,12 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
     private boolean convertId(ResourceMapping resourceMapping, Resource resource, Object root, Mapping mapping, MarshallingContext context) {
         if (root == null) {
             throw new ConversionException("Trying to marshall a null id [" + mapping.getName() + "] for alias [" + resourceMapping.getAlias() + "]");
+        }
+        if ((root instanceof String) && (mapping instanceof ResourcePropertyMapping) && (mapping.getConverter() instanceof ResourcePropertyConverter)) {
+            ResourcePropertyConverter converter = (ResourcePropertyConverter) mapping.getConverter();
+            if (converter.canNormalize()) {
+                root = converter.fromString((String) root, (ResourcePropertyMapping) mapping);
+            }
         }
         return mapping.getConverter().marshall(resource, root, mapping, context);
     }

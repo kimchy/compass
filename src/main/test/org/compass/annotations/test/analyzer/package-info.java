@@ -1,7 +1,6 @@
 
 @SearchAnalyzers({
-        @SearchAnalyzer(name = LuceneEnvironment.Analyzer.SEARCH_GROUP, type = AnalyzerType.Simple, stopWords = {"fox"}),
-        @SearchAnalyzer(name = "simple", type = AnalyzerType.Simple)
+        @SearchAnalyzer(name = LuceneEnvironment.Analyzer.SEARCH_GROUP, type = AnalyzerType.Simple, stopWords = {"fox"})
         })
 package org.compass.annotations.test.analyzer;
 

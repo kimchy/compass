@@ -18,6 +18,7 @@ package org.compass.core.converter.json;
 
 import org.compass.core.Property;
 import org.compass.core.converter.ConversionException;
+import org.compass.core.converter.mapping.ContextResourcePropertyConverter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -28,7 +29,7 @@ import org.compass.core.marshall.MarshallingContext;
  *
  * @author kimchy
  */
-public class ResourcePropertyJsonValueConverter extends SimpleJsonValueConverter implements ResourcePropertyConverter {
+public class ResourcePropertyJsonValueConverter extends SimpleJsonValueConverter implements ContextResourcePropertyConverter {
 
     private ResourcePropertyConverter converter;
 
@@ -36,11 +37,15 @@ public class ResourcePropertyJsonValueConverter extends SimpleJsonValueConverter
         this.converter = converter;
     }
 
-    protected String toString(Object value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+    public String toString(Object value, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         return converter.toString(value, resourcePropertyMapping);
     }
 
     public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping) throws ConversionException {
+        return converter.fromString(str, resourcePropertyMapping);
+    }
+
+    public Object fromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         return converter.fromString(str, resourcePropertyMapping);
     }
 

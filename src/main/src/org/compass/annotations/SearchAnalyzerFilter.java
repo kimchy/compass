@@ -38,7 +38,7 @@ import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerTokenFilterProvider
  * @see LuceneAnalyzerTokenFilterProvider
  * @see org.compass.core.lucene.engine.analyzer.synonym.SynonymAnalyzerTokenFilterProvider
  */
-@Target(ElementType.PACKAGE)
+@Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchAnalyzerFilter {
 

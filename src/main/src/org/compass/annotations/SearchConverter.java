@@ -32,7 +32,7 @@ import org.compass.core.converter.Converter;
  *
  * @author kimchy
  */
-@Target(ElementType.PACKAGE)
+@Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchConverter {
 

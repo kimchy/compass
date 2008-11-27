@@ -55,7 +55,7 @@ import org.apache.lucene.analysis.Analyzer;
  *
  * @author kimchy
  */
-@Target(ElementType.PACKAGE)
+@Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchAnalyzer {
 

@@ -40,14 +40,16 @@ public class BoostPropertyTests extends AbstractTestCase {
 
         A a = new A();
         a.id = 1;
-        a.value1 = new Float(1f);
+        a.value1 = 1f;
         a.value2 = "test";
         session.save(a);
+        session.flush();
         a = new A();
         a.id = 2;
-        a.value1 = new Float(1f);
+        a.value1 = 1f;
         a.value2 = "test";
         session.save(a);
+        session.flush();
 
         CompassHits hits = session.find("test");
         assertEquals(1, ((A) hits.data(0)).id);
@@ -64,21 +66,21 @@ public class BoostPropertyTests extends AbstractTestCase {
 
         A a = new A();
         a.id = 1;
-        a.value1 = new Float(1f);
+        a.value1 = 1f;
         a.value2 = "test";
         session.save(a);
         a = new A();
         a.id = 2;
-        a.value1 = new Float(2f);
+        a.value1 = 2f;
         a.value2 = "test";
         session.save(a);
 
         CompassHits hits = session.find("test");
         // order is revered
         assertEquals(2, ((A) hits.data(0)).id);
-        assertEquals(new Float(2f), ((A) hits.data(0)).value1);
+        assertEquals(2f, ((A) hits.data(0)).value1);
         assertEquals(1, ((A) hits.data(1)).id);
-        assertEquals(new Float(1f), ((A) hits.data(1)).value1);
+        assertEquals(1f, ((A) hits.data(1)).value1);
 
         tr.commit();
         session.close();

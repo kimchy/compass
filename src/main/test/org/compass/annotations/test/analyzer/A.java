@@ -16,6 +16,8 @@
 
 package org.compass.annotations.test.analyzer;
 
+import org.compass.annotations.AnalyzerType;
+import org.compass.annotations.SearchAnalyzer;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableAnalyzerProperty;
 import org.compass.annotations.SearchableId;
@@ -25,6 +27,7 @@ import org.compass.annotations.SearchableProperty;
  * @author kimchy
  */
 @Searchable
+@SearchAnalyzer(name = "simple", type = AnalyzerType.Simple)
 public class A {
 
     @SearchableId

@@ -79,7 +79,8 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
 
     public static final Log log = LogFactory.getLog(AnnotationsMappingBinding.class);
 
-    private static final Class[] applicableAnnotations = new Class[] {Searchable.class};
+    private static final Class[] applicableAnnotations = new Class[]{Searchable.class, SearchConverter.class, SearchConverters.class,
+            SearchAnalyzer.class, SearchAnalyzers.class, SearchAnalyzerFilter.class, SearchAnalyzerFilters.class};
 
     private CommonMetaDataLookup valueLookup;
 
@@ -110,41 +111,15 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         } catch (ClassNotFoundException e) {
             return false;
         }
-        if (pckg.isAnnotationPresent(SearchConverter.class)) {
-            bindConverter(pckg.getAnnotation(SearchConverter.class));
-        }
-        if (pckg.isAnnotationPresent(SearchConverters.class)) {
-            SearchConverters searchConverters = pckg.getAnnotation(SearchConverters.class);
-            for (SearchConverter searchConverter : searchConverters.value()) {
-                bindConverter(searchConverter);
-            }
-        }
-        if (pckg.isAnnotationPresent(SearchAnalyzer.class)) {
-            bindAnalyzer(pckg.getAnnotation(SearchAnalyzer.class));
-        }
-        if (pckg.isAnnotationPresent(SearchAnalyzers.class)) {
-            SearchAnalyzers searchAnalyzers = pckg.getAnnotation(SearchAnalyzers.class);
-            for (SearchAnalyzer searchAnalyzer : searchAnalyzers.value()) {
-                bindAnalyzer(searchAnalyzer);
-            }
-        }
-        if (pckg.isAnnotationPresent(SearchAnalyzerFilter.class)) {
-            bindAnalyzerFilter(pckg.getAnnotation(SearchAnalyzerFilter.class));
-        }
-        if (pckg.isAnnotationPresent(SearchAnalyzerFilters.class)) {
-            SearchAnalyzerFilters searchAnalyzerFilters = pckg.getAnnotation(SearchAnalyzerFilters.class);
-            for (SearchAnalyzerFilter searchAnalyzerFilter : searchAnalyzerFilters.value()) {
-                bindAnalyzerFilter(searchAnalyzerFilter);
-            }
-        }
-        return true;
+        return processNonSearchableAnnotations(pckg);
     }
 
     public boolean addClass(Class clazz) throws ConfigurationException, MappingException {
         Class<?> annotationClass = clazz;
+        boolean found = processNonSearchableAnnotations(clazz);
         Searchable searchable = annotationClass.getAnnotation(Searchable.class);
         if (searchable == null) {
-            return false;
+            return found;
         }
         String alias = getAliasFromSearchableClass(clazz, searchable);
         // try and check is the class mapping is already defined
@@ -274,6 +249,44 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         classMapping = null;
 
         return true;
+    }
+
+    private boolean processNonSearchableAnnotations(AnnotatedElement annotatedElement) {
+        boolean found = false;
+        if (annotatedElement.isAnnotationPresent(SearchConverter.class)) {
+            found = true;
+            bindConverter(annotatedElement.getAnnotation(SearchConverter.class));
+        }
+        if (annotatedElement.isAnnotationPresent(SearchConverters.class)) {
+            found = true;
+            SearchConverters searchConverters = annotatedElement.getAnnotation(SearchConverters.class);
+            for (SearchConverter searchConverter : searchConverters.value()) {
+                bindConverter(searchConverter);
+            }
+        }
+        if (annotatedElement.isAnnotationPresent(SearchAnalyzer.class)) {
+            found = true;
+            bindAnalyzer(annotatedElement.getAnnotation(SearchAnalyzer.class));
+        }
+        if (annotatedElement.isAnnotationPresent(SearchAnalyzers.class)) {
+            found = true;
+            SearchAnalyzers searchAnalyzers = annotatedElement.getAnnotation(SearchAnalyzers.class);
+            for (SearchAnalyzer searchAnalyzer : searchAnalyzers.value()) {
+                bindAnalyzer(searchAnalyzer);
+            }
+        }
+        if (annotatedElement.isAnnotationPresent(SearchAnalyzerFilter.class)) {
+            found = true;
+            bindAnalyzerFilter(annotatedElement.getAnnotation(SearchAnalyzerFilter.class));
+        }
+        if (annotatedElement.isAnnotationPresent(SearchAnalyzerFilters.class)) {
+            found = true;
+            SearchAnalyzerFilters searchAnalyzerFilters = annotatedElement.getAnnotation(SearchAnalyzerFilters.class);
+            for (SearchAnalyzerFilter searchAnalyzerFilter : searchAnalyzerFilters.value()) {
+                bindAnalyzerFilter(searchAnalyzerFilter);
+            }
+        }
+        return found;
     }
 
     private void bindAnalyzerFilter(SearchAnalyzerFilter searchAnalyzerFilter) throws ConfigurationException, MappingException {

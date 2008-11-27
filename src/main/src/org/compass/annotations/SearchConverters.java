@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  *
  * @author kimchy
  */
-@Target({ElementType.PACKAGE})
+@Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SearchConverters {
 

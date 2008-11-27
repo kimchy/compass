@@ -19,7 +19,7 @@ package org.compass.core.converter.basic;
 import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.ConversionException;
-import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.converter.mapping.ContextResourcePropertyConverter;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.marshall.MarshallingContext;
@@ -35,7 +35,7 @@ import org.compass.core.marshall.MarshallingContext;
  *
  * @author kimchy
  */
-public abstract class AbstractBasicConverter<T> implements ResourcePropertyConverter<T> {
+public abstract class AbstractBasicConverter<T> implements ContextResourcePropertyConverter<T> {
 
     public boolean marshall(Resource resource, T root, Mapping mapping, MarshallingContext context)
             throws ConversionException {
@@ -46,7 +46,13 @@ public abstract class AbstractBasicConverter<T> implements ResourcePropertyConve
         if (root == null && !handleNulls(resourcePropertyMapping, context)) {
             return false;
         }
-        String sValue = toString(root, resourcePropertyMapping, context);
+        String sValue;
+        if (root instanceof String && context.getResourceFactory().isNullValue((String) root)) {
+            // check if this is a null value (since sometimes we get injected with a null value for non string types)
+            sValue = (String) root;
+        } else {
+            sValue = toString(root, resourcePropertyMapping, context);
+        }
         Property p = createProperty(sValue, resourcePropertyMapping, context);
         doSetBoost(p, root, resourcePropertyMapping, context);
         resource.addProperty(p);
@@ -167,10 +173,17 @@ public abstract class AbstractBasicConverter<T> implements ResourcePropertyConve
      * <p>Note, please don't override this method, please override {@link #doToString(Object,org.compass.core.mapping.ResourcePropertyMapping,org.compass.core.marshall.MarshallingContext)}
      * to change the how the object gets marshalled into a String.
      */
-    protected String toString(T o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
+    public String toString(T o, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) {
         String sValue;
         if (o != null) {
-            sValue = doToString(o, resourcePropertyMapping, context);
+            if (o instanceof String) {
+                // if we got a string, don't bother with converting it
+                // we trust the user that he gave us the correct value and also, since
+                // this is templated, we will get ClassCastException if it is not a string based converter
+                sValue = (String) o;
+            } else {
+                sValue = doToString(o, resourcePropertyMapping, context);
+            }
         } else {
             sValue = getNullValue(resourcePropertyMapping, context);
         }
@@ -199,7 +212,7 @@ public abstract class AbstractBasicConverter<T> implements ResourcePropertyConve
      * and then calls {@link #doFromString(String, org.compass.core.mapping.ResourcePropertyMapping, org.compass.core.marshall.MarshallingContext)}
      * if the value is not <code>null</code>.
      */
-    protected T fromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
+    public T fromString(String str, ResourcePropertyMapping resourcePropertyMapping, MarshallingContext context) throws ConversionException {
         if (isNullValue(str, resourcePropertyMapping, context)) {
             return null;
         }

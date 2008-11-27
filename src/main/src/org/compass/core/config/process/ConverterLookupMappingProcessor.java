@@ -25,8 +25,10 @@ import org.compass.core.converter.ConverterLookup;
 import org.compass.core.converter.DelegateConverter;
 import org.compass.core.converter.basic.FormatConverter;
 import org.compass.core.converter.dynamic.DynamicConverter;
+import org.compass.core.converter.json.ContextResourcePropertyJsonValueConverter;
 import org.compass.core.converter.json.ResourcePropertyJsonValueConverter;
 import org.compass.core.converter.json.SimpleJsonValueConverter;
+import org.compass.core.converter.mapping.ContextResourcePropertyConverter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.converter.xsem.ResourcePropertyValueConverter;
 import org.compass.core.converter.xsem.SimpleXmlValueConverter;
@@ -177,7 +179,9 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                     ((DelegateConverter) mapping.getValueConverter()).setDelegatedConverter(converter);
                     converter = mapping.getValueConverter();
                 }
-                if (converter instanceof ResourcePropertyConverter) {
+                if (converter instanceof ContextResourcePropertyConverter) {
+                    converter = new ContextResourcePropertyJsonValueConverter((ContextResourcePropertyConverter) converter);
+                } else if (converter instanceof ResourcePropertyConverter) {
                     converter = new ResourcePropertyJsonValueConverter((ResourcePropertyConverter) converter);
                 }
                 if (converter == null) {
