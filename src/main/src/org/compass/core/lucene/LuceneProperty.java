@@ -31,7 +31,7 @@ public class LuceneProperty implements InternalProperty {
 
     private Fieldable field;
 
-    private RepeatableReader reader;
+    private transient RepeatableReader reader;
 
     private transient ResourcePropertyMapping propertyMapping;
 
