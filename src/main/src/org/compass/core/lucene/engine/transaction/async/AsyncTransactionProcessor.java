@@ -18,16 +18,11 @@ package org.compass.core.lucene.engine.transaction.async;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
-import org.compass.core.lucene.engine.LuceneSearchEngineHits;
-import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
-import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.transaction.support.AbstractJobBasedTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
-import org.compass.core.spi.ResourceKey;
 
 /**
  * Processes transaction asynchronously. For more information see {@link org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory}.
@@ -70,17 +65,5 @@ public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProces
         if (committed) {
             processorFactory.remove(jobs);
         }
-    }
-
-    public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
-        return performFind(query);
-    }
-
-    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
-        return performInternalSearch(subIndexes, aliases);
-    }
-
-    public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
-        return performGet(resourceKey);
     }
 }

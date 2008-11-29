@@ -17,8 +17,12 @@
 package org.compass.core.lucene.engine.transaction.support;
 
 import org.apache.commons.logging.Log;
+import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
+import org.compass.core.lucene.engine.LuceneSearchEngineHits;
+import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
+import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
@@ -85,6 +89,18 @@ public abstract class AbstractJobBasedTransactionProcessor extends AbstractSearc
         getTransactionJobs().add(new TransactionJob(TransactionJob.Type.DELETE, resourceKey));
     }
 
+    public LuceneSearchEngineHits find(LuceneSearchEngineQuery query) throws SearchEngineException {
+        return performFind(query);
+    }
+
+    public LuceneSearchEngineInternalSearch internalSearch(String[] subIndexes, String[] aliases) throws SearchEngineException {
+        return performInternalSearch(subIndexes, aliases);
+    }
+
+    public Resource[] get(ResourceKey resourceKey) throws SearchEngineException {
+        return performGet(resourceKey);
+    }
+    
     private TransactionJobs getTransactionJobs() {
         if (jobs == null) {
             jobs = new TransactionJobs();
