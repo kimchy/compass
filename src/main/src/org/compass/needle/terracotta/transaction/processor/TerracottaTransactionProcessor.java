@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
-import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
@@ -54,7 +53,7 @@ public class TerracottaTransactionProcessor extends AbstractJobBasedTransactionP
     }
 
     public String getName() {
-        return LuceneEnvironment.Transaction.Processor.Async.NAME;
+        return TerracottaTransactionProcessorEnvironment.NAME;
     }
 
     protected void doPrepare(TransactionJobs jobs) throws SearchEngineException {
