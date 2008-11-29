@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
@@ -49,10 +48,10 @@ import org.compass.core.lucene.engine.transaction.TransactionProcessor;
 import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.support.CommitCallable;
 import org.compass.core.lucene.engine.transaction.support.PrepareCommitCallable;
-import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
 import org.compass.core.lucene.engine.transaction.support.ResourceHashing;
 import org.compass.core.lucene.engine.transaction.support.TransactionJob;
 import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
+import org.compass.core.lucene.engine.transaction.support.WriterHelper;
 import org.compass.core.transaction.context.TransactionalCallable;
 
 /**
@@ -476,20 +475,7 @@ public class AsyncTransactionProcessorFactory implements TransactionProcessorFac
         public Object call() throws Exception {
             for (TransactionJob job : jobsToProcess) {
                 IndexWriter writer = writers.get(job.getResourceKey().getSubIndex());
-                Analyzer analyzer;
-                switch (job.getType()) {
-                    case CREATE:
-                        analyzer = ResourceEnhancer.enahanceResource(job.getResource(), searchEngineFactory);
-                        writer.addDocument(job.getDocument(), analyzer);
-                        break;
-                    case UPDATE:
-                        analyzer = ResourceEnhancer.enahanceResource(job.getResource(), searchEngineFactory);
-                        writer.updateDocument(job.getUIDTerm(), job.getDocument(), analyzer);
-                        break;
-                    case DELETE:
-                        writer.deleteDocuments(job.getUIDTerm());
-                        break;
-                }
+                WriterHelper.processJob(writer, job);
             }
             return null;
         }

@@ -33,6 +33,7 @@ import org.compass.core.Property;
 import org.compass.core.Resource;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.support.FieldHelper;
 import org.compass.core.mapping.ResourceMapping;
@@ -51,8 +52,6 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
 
     private ArrayList<Property> properties = new ArrayList<Property>();
 
-    private String aliasProperty;
-
     private int docNum;
 
     private float boost = 1.0f;
@@ -62,6 +61,8 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     private transient ResourceMapping resourceMapping;
 
     private transient ResourceKey resourceKey;
+
+    private String alias;
 
     public LuceneResource(String alias, LuceneSearchEngineFactory searchEngineFactory) {
         this(alias, new Document(), -1, searchEngineFactory);
@@ -73,9 +74,10 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
 
     public LuceneResource(String alias, Document document, int docNum, LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
-        this.aliasProperty = searchEngineFactory.getAliasProperty();
+        String aliasProperty = searchEngineFactory.getAliasProperty();
         this.docNum = docNum;
         if (alias != null) {
+            this.alias = alias;
             Field aliasField = new Field(aliasProperty, alias, Field.Store.YES, Field.Index.NOT_ANALYZED);
             aliasField.setOmitNorms(true);
             properties.add(new LuceneProperty(aliasField));
@@ -83,6 +85,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
             Fieldable aliasField = document.getField(aliasProperty);
             if (aliasField != null) {
                 properties.add(new LuceneProperty(aliasField));
+                this.alias = aliasField.stringValue();
             }
         }
 
@@ -100,11 +103,20 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
         }
     }
 
+    public LuceneSearchEngineFactory getSearchEngineFactory() {
+        return this.searchEngineFactory;
+    }
+
+    public void attach(SearchEngineFactory searchEngineFactory) {
+        this.searchEngineFactory = (LuceneSearchEngineFactory) searchEngineFactory;
+        this.resourceMapping = searchEngineFactory.getMapping().getRootMappingByAlias(getAlias());
+    }
+
     public void copy(Resource resource) {
         LuceneResource luceneResource = (LuceneResource) resource;
         this.docNum = luceneResource.docNum;
         this.properties = luceneResource.properties;
-        this.aliasProperty = luceneResource.aliasProperty;
+        this.alias = luceneResource.alias;
         if (luceneResource.searchEngineFactory != null) {
             this.searchEngineFactory = luceneResource.searchEngineFactory;
         }
@@ -178,7 +190,7 @@ public class LuceneResource implements AliasedObject, InternalResource, Map<Stri
     }
 
     public String getAlias() {
-        return getValue(aliasProperty);
+        return alias;
     }
 
     public String getUID() {

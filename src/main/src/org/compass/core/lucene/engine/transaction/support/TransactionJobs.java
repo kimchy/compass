@@ -16,17 +16,22 @@
 
 package org.compass.core.lucene.engine.transaction.support;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.compass.core.engine.SearchEngineFactory;
 
 /**
  * A holds for a list of jobs (usually, represent a transaction which holds several dirty operations).
  *
  * @author kimchy
  */
-public class TransactionJobs {
+public class TransactionJobs implements Serializable {
 
     private List<TransactionJob> jobs = new ArrayList<TransactionJob>();
 
@@ -52,5 +57,29 @@ public class TransactionJobs {
      */
     public Set<String> getSubIndexes() {
         return this.subIndexes;
+    }
+
+    public void attach(SearchEngineFactory searchEngineFactory) {
+        for (TransactionJob job : jobs) {
+            job.attach(searchEngineFactory);
+        }
+    }
+
+    /**
+     * Takes all the jobs within this transaction and breaks it into one or more
+     * {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs} per
+     * sub index.
+     */
+    public Map<String, TransactionJobs> buildJobsPerSubIndex() {
+        Map<String, TransactionJobs> jobsPerSubIndex = new HashMap<String, TransactionJobs>();
+        for (TransactionJob job : jobs) {
+            TransactionJobs jobs = jobsPerSubIndex.get(job.getSubIndex());
+            if (jobs == null) {
+                jobs = new TransactionJobs();
+                jobsPerSubIndex.put(job.getSubIndex(), jobs);
+            }
+            jobs.add(job);
+        }
+        return jobsPerSubIndex;
     }
 }

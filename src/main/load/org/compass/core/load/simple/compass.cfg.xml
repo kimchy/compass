@@ -57,7 +57,8 @@
             <!--<localCache subIndex="__default__" connection="ram://" />-->
         </connection>
 
-        <transaction isolation="read_committed"/>
+        <!--<transaction processor="read_committed"/>-->
+        <transaction processor="tc"/>
 
         <cache>
             <firstLevel type="org.compass.core.cache.first.DefaultFirstLevelCache"/>
@@ -69,6 +70,11 @@
                 <expirationTime expirationTimeSeconds="60"/>
             </indexDeletionPolicy>
         </searchEngine>
+
+        <settings>
+            <setting name="compass.transaction.processor.tc.type" value="org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory" />
+            <setting name="compass.transaction.processor.tc.process" value="false" />
+        </settings>
     </compass>
 
 </compass-core-config>

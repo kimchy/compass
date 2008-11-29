@@ -1,0 +1,30 @@
+<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                     xsi:schemaLocation="http://www.compass-project.org/schema/core-config http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+
+    <compass name="default">
+
+        <connection>
+            <file path="target/test-index"/>
+        </connection>
+
+        <transaction processor="tc" />
+
+        <cache>
+            <firstLevel type="org.compass.core.cache.first.DefaultFirstLevelCache"/>
+        </cache>
+
+        <searchEngine>
+            <optimizer type="org.compass.core.lucene.engine.optimizer.AdaptiveOptimizer" schedule="false"/>
+            <indexDeletionPolicy>
+                <expirationTime expirationTimeSeconds="60"/>
+            </indexDeletionPolicy>
+        </searchEngine>
+
+        <settings>
+            <setting name="compass.transaction.processor.tc.type" value="org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory" />
+            <setting name="compass.transaction.processor.tc.process" value="true" />
+        </settings>
+    </compass>
+
+</compass-core-config>

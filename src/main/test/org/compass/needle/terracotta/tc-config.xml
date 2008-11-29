@@ -11,12 +11,47 @@
                     <class-expression>org.compass.needle.terracotta.*</class-expression>
                 </include>
                 <include>
+                    <class-expression>org.compass.needle.terracotta.transaction.processor.*</class-expression>
+                </include>
+                <include>
                     <class-expression>org.apache.lucene.store.Directory</class-expression>
                 </include>
                 <include>
                     <class-expression>org.apache.lucene.store.LockFactory</class-expression>
                 </include>
+                <include>
+                    <class-expression>org.compass.core.lucene.engine.transaction.support.TransactionJobs
+                    </class-expression>
+                </include>
+                <include>
+                    <class-expression>org.compass.core.lucene.engine.transaction.support.TransactionJob
+                    </class-expression>
+                </include>
+                <include>
+                    <class-expression>org.compass.core.spi.ResourceKey</class-expression>
+                </include>
+                <include>
+                    <class-expression>org.compass.core.lucene.LuceneResource</class-expression>
+                </include>
+                <include>
+                    <class-expression>org.compass.core.lucene.LuceneProperty</class-expression>
+                </include>
+                <include>
+                  <class-expression>org.apache.lucene.document.Field</class-expression>
+                </include>
+                <include>
+                  <class-expression>org.apache.lucene.document.AbstractField</class-expression>
+                </include>
             </instrumented-classes>
+
+            <transient-fields>
+                <field-name>org.compass.core.lucene.LuceneResource.searchEngineFactory</field-name>
+                <field-name>org.compass.core.lucene.LuceneResource.resourceMapping</field-name>
+                <field-name>org.compass.core.lucene.LuceneResource.resourceKey</field-name>
+                <field-name>org.compass.core.lucene.LuceneProperty.reader</field-name>
+                <field-name>org.compass.core.lucene.LuceneProperty.propertyMapping</field-name>
+                <field-name>org.compass.core.spi.ResourceKey.resourceMapping</field-name>
+            </transient-fields>
 
             <locks>
                 <autolock>
@@ -37,7 +72,13 @@
                     <field-name>org.compass.needle.terracotta.TerracottaLockFactoryProvider.lockFactories</field-name>
                 </root>
                 <root>
-                    <field-name>org.compass.needle.terracotta.TerracottaManagerUtilLockFactoryProvider.lockFactories</field-name>
+                    <field-name>org.compass.needle.terracotta.TerracottaManagerUtilLockFactoryProvider.lockFactories
+                    </field-name>
+                </root>
+                <root>
+                    <field-name>
+                        org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory.holder
+                    </field-name>
                 </root>
             </roots>
 

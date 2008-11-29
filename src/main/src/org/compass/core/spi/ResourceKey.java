@@ -16,9 +16,12 @@
 
 package org.compass.core.spi;
 
+import java.io.Serializable;
+
 import org.compass.core.CompassException;
 import org.compass.core.Property;
 import org.compass.core.Resource;
+import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.engine.utils.ResourceHelper;
 import org.compass.core.mapping.ResourceMapping;
@@ -28,7 +31,7 @@ import org.compass.core.mapping.ResourceMapping;
  *
  * @author kimchy
  */
-public final class ResourceKey {
+public final class ResourceKey implements Serializable {
 
     private static final char SEPARATOR = '#';
 
@@ -38,9 +41,9 @@ public final class ResourceKey {
 
     private Property[] ids;
 
-    private int hashCode = Integer.MIN_VALUE;
+    private transient int hashCode = Integer.MIN_VALUE;
 
-    private ResourceMapping resourceMapping;
+    private transient ResourceMapping resourceMapping;
 
     public ResourceKey(ResourceMapping resourceMapping, Resource idResource) {
         this(resourceMapping, ResourceHelper.toIds(idResource, resourceMapping));
@@ -89,6 +92,10 @@ public final class ResourceKey {
 
     public ResourceMapping getResourceMapping() {
         return this.resourceMapping;
+    }
+
+    public void attach(SearchEngineFactory searchEngineFactory) {
+        this.resourceMapping = searchEngineFactory.getMapping().getRootMappingByAlias(getAlias());
     }
 
     public boolean equals(Object other) {

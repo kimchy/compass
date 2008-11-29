@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.compass.core.lucene.engine.transaction.async;
+package org.compass.needle.terracotta.transaction.processor;
+
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,25 +32,20 @@ import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
 import org.compass.core.spi.ResourceKey;
 
 /**
- * Processes transaction asynchronously. For more information see {@link org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory}.
- *
  * @author kimchy
- * @see org.compass.core.lucene.engine.transaction.async.AsyncTransactionProcessorFactory
+ * @see TerracottaTransactionProcessorFactory
  */
-public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProcessor {
+public class TerracottaTransactionProcessor extends AbstractJobBasedTransactionProcessor {
 
-    private final static Log logger = LogFactory.getLog(AsyncTransactionProcessor.class); 
+    private final static Log logger = LogFactory.getLog(TerracottaTransactionProcessor.class);
 
-    private final AsyncTransactionProcessorFactory processorFactory;
+    private final TerracottaTransactionProcessorFactory processorFactory;
 
-    private boolean committed = false;
+    private Map<String, TransactionJobs> committedJobs;
 
     /**
-     * Constructs a new processor (for a given transaction) with a back reference to the
-     * {@link AsyncTransactionProcessorFactory} in order to add (at commit) the
-     * {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs}.
      */
-    public AsyncTransactionProcessor(LuceneSearchEngine searchEngine, AsyncTransactionProcessorFactory processorFactory) {
+    public TerracottaTransactionProcessor(LuceneSearchEngine searchEngine, TerracottaTransactionProcessorFactory processorFactory) {
         super(logger, searchEngine);
         this.processorFactory = processorFactory;
     }
@@ -62,13 +59,12 @@ public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProces
     }
 
     protected void doCommit(boolean onePhase, TransactionJobs jobs) throws SearchEngineException {
-        processorFactory.add(jobs);
-        committed = true;
+        committedJobs = processorFactory.add(jobs);
     }
 
     protected void doRollback(TransactionJobs jobs) throws SearchEngineException {
-        if (committed) {
-            processorFactory.remove(jobs);
+        if (committedJobs != null) {
+            processorFactory.remove(committedJobs);
         }
     }
 

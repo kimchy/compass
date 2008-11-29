@@ -57,6 +57,8 @@ public class TransactionProcessorManager {
                     type = new ReadCommittedTransactionProcessorFactory();
                 } else if (typeClass.equalsIgnoreCase(LuceneEnvironment.Transaction.Processor.Lucene.NAME)) {
                     type = new LuceneTransactionProcessorFactory();
+                } else if (typeClass.equalsIgnoreCase(LuceneEnvironment.Transaction.Processor.Async.NAME)) {
+                    type = new AsyncTransactionProcessorFactory();
                 } else {
                     try {
                         type = ClassUtils.forName(typeClass, settings.getClassLoader()).newInstance();

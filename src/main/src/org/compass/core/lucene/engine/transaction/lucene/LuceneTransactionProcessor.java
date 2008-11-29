@@ -25,15 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.store.AlreadyClosedException;
 import org.apache.lucene.store.Directory;
 import org.compass.core.Resource;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngine;
 import org.compass.core.lucene.engine.LuceneSearchEngineHits;
 import org.compass.core.lucene.engine.LuceneSearchEngineInternalSearch;
@@ -41,8 +38,8 @@ import org.compass.core.lucene.engine.LuceneSearchEngineQuery;
 import org.compass.core.lucene.engine.transaction.support.AbstractConcurrentTransactionProcessor;
 import org.compass.core.lucene.engine.transaction.support.CommitCallable;
 import org.compass.core.lucene.engine.transaction.support.PrepareCommitCallable;
-import org.compass.core.lucene.engine.transaction.support.ResourceEnhancer;
 import org.compass.core.lucene.engine.transaction.support.TransactionJob;
+import org.compass.core.lucene.engine.transaction.support.WriterHelper;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 import org.compass.core.transaction.context.TransactionalCallable;
@@ -163,8 +160,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
     protected void doCreate(InternalResource resource) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
-            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
-            indexWriter.addDocument(((LuceneResource) resource).getDocument(), analyzer);
+            WriterHelper.processAdd(indexWriter, resource);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()
                     + "] and resource " + resource, e);
@@ -174,8 +170,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
     protected void doUpdate(InternalResource resource) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resource.getSubIndex());
-            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
-            indexWriter.updateDocument(new Term(resource.getResourceKey().getUIDPath(), resource.getResourceKey().buildUID()), ((LuceneResource) resource).getDocument(), analyzer);
+            WriterHelper.processUpdate(indexWriter, resource);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to update resource for alias [" + resource.getAlias()
                     + "] and resource " + resource, e);
@@ -185,7 +180,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
     protected void doDelete(ResourceKey resourceKey) throws SearchEngineException {
         try {
             IndexWriter indexWriter = getOrCreateIndexWriter(resourceKey.getSubIndex());
-            indexWriter.deleteDocuments(new Term(resourceKey.getUIDPath(), resourceKey.buildUID()));
+            WriterHelper.processDelete(indexWriter, resourceKey);
         } catch (IOException e) {
             throw new SearchEngineException("Failed to delete alias [" + resourceKey.getAlias() + "] and ids ["
                     + StringUtils.arrayToCommaDelimitedString(resourceKey.getIds()) + "]", e);

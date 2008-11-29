@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
@@ -29,7 +30,6 @@ import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
 /**
@@ -59,12 +59,12 @@ public class TransIndexManager implements CompassConfigurable {
         this.settings = settings;
     }
 
-    public void create(InternalResource resource, Analyzer analyzer) throws IOException {
-        getTransIndex(resource.getSubIndex()).create(resource, analyzer);
+    public void create(Document document, ResourceKey resourceKey, Analyzer analyzer) throws IOException {
+        getTransIndex(resourceKey.getSubIndex()).create(document, analyzer);
     }
 
-    public void update(InternalResource resource, Analyzer analyzer) throws IOException {
-        getTransIndex(resource.getSubIndex()).update(resource, analyzer);
+    public void update(Document document, ResourceKey resourceKey, Analyzer analyzer) throws IOException {
+        getTransIndex(resourceKey.getSubIndex()).update(document, resourceKey, analyzer);
     }
 
     public void delete(ResourceKey resourceKey) throws IOException {

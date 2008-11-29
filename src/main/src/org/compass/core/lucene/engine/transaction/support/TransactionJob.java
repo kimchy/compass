@@ -16,9 +16,10 @@
 
 package org.compass.core.lucene.engine.transaction.support;
 
-import org.apache.lucene.document.Document;
+import java.io.Serializable;
+
 import org.apache.lucene.index.Term;
-import org.compass.core.lucene.LuceneResource;
+import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
@@ -27,7 +28,7 @@ import org.compass.core.spi.ResourceKey;
  *
  * @author kimchy
  */
-public class TransactionJob {
+public class TransactionJob implements Serializable {
 
     /**
      * The type of the transaction job. Can be create, delete, or update.
@@ -75,10 +76,6 @@ public class TransactionJob {
         return resource;
     }
 
-    public Document getDocument() {
-        return ((LuceneResource) getResource()).getDocument();
-    }
-
     public String getResourceUID() {
         return resourceUID;
     }
@@ -89,6 +86,13 @@ public class TransactionJob {
 
     public Term getUIDTerm() {
         return new Term(resourceKey.getUIDPath(), resourceUID);        
+    }
+
+    public void attach(SearchEngineFactory searchEngineFactory) {
+        if (resource != null) {
+            resource.attach(searchEngineFactory);
+        }
+        resourceKey.attach(searchEngineFactory);
     }
 
     @Override

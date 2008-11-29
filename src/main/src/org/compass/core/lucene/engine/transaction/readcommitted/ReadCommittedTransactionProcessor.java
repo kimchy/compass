@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -316,8 +315,8 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
     protected void doCreate(InternalResource resource) throws SearchEngineException {
         try {
             openIndexWriterIfNeeded(resource.getSubIndex());
-            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
-            transIndexManager.create(resource, analyzer);
+            ResourceEnhancer.Result result = ResourceEnhancer.enahanceResource(resource);
+            transIndexManager.create(result.getDocument(), resource.getResourceKey(), result.getAnalyzer());
         } catch (IOException e) {
             throw new SearchEngineException("Failed to create resource for alias [" + resource.getAlias()
                     + "] and resource " + resource, e);
@@ -347,8 +346,8 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
             // delete from the original index (autoCommit is false, so won't be committed
             indexWriterBySubIndex.get(resource.getResourceKey().getSubIndex()).deleteDocuments(deleteTerm);
             // and update it in the transactional index
-            Analyzer analyzer = ResourceEnhancer.enahanceResource(resource, searchEngine.getSearchEngineFactory());
-            transIndexManager.update(resource, analyzer);
+            ResourceEnhancer.Result result = ResourceEnhancer.enahanceResource(resource);
+            transIndexManager.update(result.getDocument(), resource.getResourceKey(), result.getAnalyzer());
         } catch (IOException e) {
             throw new SearchEngineException("Failed to update resource for alias [" + resource.getAlias()
                     + "] and resource " + resource, e);

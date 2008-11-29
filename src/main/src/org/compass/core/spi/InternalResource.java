@@ -17,6 +17,7 @@
 package org.compass.core.spi;
 
 import org.compass.core.Resource;
+import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.mapping.ResourceMapping;
 
 /**
@@ -46,4 +47,9 @@ public interface InternalResource extends Resource {
      * the resource and the resource mapping associated with it.
      */
     void addUID();
+
+    /**
+     * Attaches the given resource to the search engine factory.
+     */
+    void attach(SearchEngineFactory searchEngineFactory);
 }

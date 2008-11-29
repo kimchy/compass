@@ -18,6 +18,7 @@ package org.compass.core.lucene.engine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.compass.core.Resource;
 import org.compass.core.ResourceFactory;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
@@ -32,6 +33,7 @@ import org.compass.core.engine.spellcheck.SearchEngineSpellCheckManager;
 import org.compass.core.engine.spi.InternalSearchEngineFactory;
 import org.compass.core.executor.ExecutorManager;
 import org.compass.core.lucene.LuceneEnvironment;
+import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.LuceneResourceFactory;
 import org.compass.core.lucene.engine.analyzer.LuceneAnalyzerManager;
 import org.compass.core.lucene.engine.highlighter.LuceneHighlighterManager;
@@ -47,6 +49,7 @@ import org.compass.core.lucene.engine.store.DefaultLuceneSearchEngineStore;
 import org.compass.core.lucene.engine.store.LuceneSearchEngineStore;
 import org.compass.core.lucene.engine.transaction.TransactionProcessorManager;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.transaction.context.TransactionContext;
 import org.compass.core.util.ClassUtils;
 
@@ -168,6 +171,12 @@ public class LuceneSearchEngineFactory implements InternalSearchEngineFactory {
 
         // build the transaction processor manager
         transactionProcessorManager = new TransactionProcessorManager(this);
+    }
+
+    public void attach(Resource resource) {
+        LuceneResource luceneResource = (LuceneResource) resource;
+        ResourceMapping resourceMapping = mapping.getRootMappingByAlias(luceneResource.getAlias());
+
     }
 
     public void start() {

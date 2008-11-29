@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.KeepOnlyLastCommitDeletionPolicy;
@@ -34,9 +35,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.spi.InternalResource;
 import org.compass.core.spi.ResourceKey;
 
 /**
@@ -105,14 +104,13 @@ public class TransIndex implements CompassConfigurable {
         }
     }
 
-    public void create(InternalResource resource, Analyzer analyzer) throws IOException {
-        indexWriter.addDocument(((LuceneResource) resource).getDocument(), analyzer);
+    public void create(Document document, Analyzer analyzer) throws IOException {
+        indexWriter.addDocument(document, analyzer);
         flushRequired = true;
     }
 
-    public void update(InternalResource resource, Analyzer analyzer) throws IOException {
-        indexWriter.updateDocument(new Term(resource.getResourceKey().getUIDPath(), resource.getResourceKey().buildUID()),
-                ((LuceneResource) resource).getDocument(), analyzer);
+    public void update(Document document, ResourceKey resourceKey, Analyzer analyzer) throws IOException {
+        indexWriter.updateDocument(new Term(resourceKey.getUIDPath(), resourceKey.buildUID()), document, analyzer);
         flushRequired = true;
     }
 

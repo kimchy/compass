@@ -17,13 +17,17 @@
 package org.compass.core.lucene.engine.transaction.support;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Fieldable;
 import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.SearchEngineFactory;
 import org.compass.core.lucene.LuceneProperty;
-import org.compass.core.lucene.LuceneResourceFactory;
+import org.compass.core.lucene.LuceneResource;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.engine.all.AllAnalyzer;
+import org.compass.core.lucene.support.FieldHelper;
 import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -36,19 +40,47 @@ import org.compass.core.spi.InternalResource;
  */
 public class ResourceEnhancer {
 
+
+    /**
+     * Result of {@link org.compass.core.lucene.engine.transaction.support.ResourceEnhancer#enahanceResource(org.compass.core.spi.InternalResource)}.
+     * Provides the Lucene {@link org.apache.lucene.document.Document} and {@link org.apache.lucene.analysis.Analyzer} to
+     * be used with create/update IndexWriter operations.
+     */
+    public static class Result {
+        private final Analyzer analyzer;
+
+        private final Document document;
+
+        public Result(Analyzer analyzer, Document document) {
+            this.analyzer = analyzer;
+            this.document = document;
+        }
+
+        public Analyzer getAnalyzer() {
+            return analyzer;
+        }
+
+        public Document getDocument() {
+            return document;
+        }
+    }
+
     /**
      * Enhances the given resource and reutrns the {@link org.apache.lucene.analysis.Analyzer} that should be
      * used when adding the Lucene Resource to the index.
      *
      * @param resource            The resource to enhance.
-     * @param searchEngineFactory The search engine factory
      * @return The analyzer that should be used when adding the Lucene resource to the search engine
      */
-    public static Analyzer enahanceResource(InternalResource resource, LuceneSearchEngineFactory searchEngineFactory) {
+    public static Result enahanceResource(InternalResource resource) {
+        LuceneResource luceneResource = (LuceneResource) resource;
+        LuceneSearchEngineFactory searchEngineFactory = luceneResource.getSearchEngineFactory();
         applyBoostIfNeeded(resource, searchEngineFactory);
         addExtendedProeprty(resource, searchEngineFactory);
         Analyzer analyzer = searchEngineFactory.getAnalyzerManager().getAnalyzerByResource(resource);
-        return addAllProperty(resource, analyzer, searchEngineFactory);
+        Document document = luceneResource.getDocument();
+        analyzer = addAllProperty(document, resource, analyzer, searchEngineFactory);
+        return new Result(analyzer, document);
     }
 
     private static void applyBoostIfNeeded(InternalResource resource, SearchEngineFactory searchEngineFactory) {
@@ -79,13 +111,13 @@ public class ResourceEnhancer {
 
     }
 
-    private static Analyzer addAllProperty(InternalResource resource, Analyzer analyzer, LuceneSearchEngineFactory searchEngineFactory) throws SearchEngineException {
+    private static Analyzer addAllProperty(Document document, InternalResource resource, Analyzer analyzer, LuceneSearchEngineFactory searchEngineFactory) throws SearchEngineException {
         AllAnalyzer allAnalyzer = new AllAnalyzer(analyzer, resource, searchEngineFactory);
         AllMapping allMapping = resource.getResourceMapping().getAllMapping();
-        Property property = ((LuceneResourceFactory) searchEngineFactory.getResourceFactory()).createProperty(allMapping.getProperty(), allAnalyzer.createAllTokenStream(), allMapping.getTermVector());
-        property.setOmitNorms(allMapping.isOmitNorms());
-        property.setOmitTf(allMapping.isOmitTf());
-        resource.addProperty(property);
+        Fieldable allField = new Field(allMapping.getProperty(), allAnalyzer.createAllTokenStream(), FieldHelper.getFieldTermVector(allMapping.getTermVector()));
+        allField.setOmitNorms(allMapping.isOmitNorms());
+        allField.setOmitTf(allMapping.isOmitTf());
+        document.add(allField);
         return allAnalyzer;
     }
 
