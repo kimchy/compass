@@ -730,7 +730,7 @@ public class LuceneEnvironment {
                 /**
                  * Once a transaction is identified as needed to be processed asynchronously, and after it has waited
                  * for additional transactions (see {@link #BATCH_JOBS_SIZE} and {@link #BATCH_JOBS_TIMEOUT}, this
-                 * setting controls the number of additional transacitons the processor will try to get in a non
+                 * setting controls the number of additional transactions the processor will try to get in a non
                  * blocking fashion.
                  *
                  * <p>Defaults to <code>5</code>.

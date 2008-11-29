@@ -82,4 +82,24 @@ public class TransactionJobs implements Serializable {
         }
         return jobsPerSubIndex;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (TransactionJob job : jobs) {
+            switch (job.getType()) {
+                case CREATE:
+                    sb.append("CREATE[").append(job.getResourceUID()).append(']');
+                    break;
+                case UPDATE:
+                    sb.append("UPDATE[").append(job.getResourceUID()).append(']');
+                    break;
+                case DELETE:
+                    sb.append("DELETE[").append(job.getResourceUID()).append(']');
+                    break;
+            }
+            sb.append(',');
+        }
+        return sb.toString();
+    }
 }

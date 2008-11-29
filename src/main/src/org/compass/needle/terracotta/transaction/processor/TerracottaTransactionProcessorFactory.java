@@ -17,6 +17,9 @@
 package org.compass.needle.terracotta.transaction.processor;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +44,7 @@ import org.compass.core.lucene.engine.transaction.TransactionProcessorFactory;
 import org.compass.core.lucene.engine.transaction.support.TransactionJob;
 import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
 import org.compass.core.lucene.engine.transaction.support.WriterHelper;
+import org.compass.core.util.StringUtils;
 
 /**
  * Experimental!.
@@ -59,12 +63,18 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
 
     private final transient Map<String, TerracottaProcessor> currentProcessors = new ConcurrentHashMap<String, TerracottaProcessor>();
 
+    private int nonBlockingBatchSize;
+
     public void setSearchEngineFactory(SearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = (LuceneSearchEngineFactory) searchEngineFactory;
     }
 
     public void configure(CompassSettings settings) throws CompassException {
         this.settings = settings;
+        nonBlockingBatchSize = settings.getSettingAsInt(TerracottaTransactionProcessorEnvironment.NON_BLOCKING_BATCH_JOBS_SIZE, 5);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Terracotta Transaction Processor non blocking batch size is [" + nonBlockingBatchSize + "]");
+        }
         holder.getInitializationLock().lock();
         try {
             for (String subIndex : searchEngineFactory.getIndexManager().getSubIndexes()) {
@@ -82,15 +92,23 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
         } finally {
             holder.getInitializationLock().unlock();
         }
-        if (settings.getSettingAsBoolean(TerracottaTransactionProcessorEnvironment.PROCESS, false)) {
+        if (settings.getSettingAsBoolean(TerracottaTransactionProcessorEnvironment.PROCESS, true)) {
             logger.info("Terracotta processor started");
-            for (String subIndex : searchEngineFactory.getIndexManager().getSubIndexes()) {
+            String[] subIndexes;
+            String subIndexesSetting = settings.getSetting(TerracottaTransactionProcessorEnvironment.SUB_INDEXES);
+            if (subIndexesSetting == null) {
+                subIndexes = searchEngineFactory.getIndexManager().getSubIndexes();
+            } else {
+                subIndexes = StringUtils.commaDelimitedListToStringArray(subIndexesSetting);
+            }
+            logger.info("Terracotta Transaction Processor Worker started. Sub indexes to process " + Arrays.toString(subIndexes));
+            for (String subIndex : subIndexes) {
                 TerracottaProcessor processor = new TerracottaProcessor(subIndex, holder.getJobsPerSubIndex().get(subIndex));
                 searchEngineFactory.getExecutorManager().submit(processor);
                 currentProcessors.put(subIndex, processor);
             }
         } else {
-            logger.info("Terracotta transaction processor will not process transactions on this node");
+            logger.info("Terracotta transaction processor will only submit transactions to be processed (none worker mode)");
         }
     }
 
@@ -141,38 +159,54 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
 
         public void run() {
             while (running) {
-                TransactionJobs jobs = null;
-                try {
-                    jobs = jobsToProcess.poll(1000, TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) {
-                    // we geto interupted, bail out
-                    running = false;
-                }
-                if (jobs == null) {
-                    continue;
-                }
-                logger.info("Processor [" + subIndex + "] procesing jobs [" + jobs + "]");
-                jobs.attach(searchEngineFactory);
-
+                // each node locks and waits for jobs. This means that there are never
+                // two processors for the same sub index waiting for (and potentially taking) jobs.
+                // This also allows for several JVMs to run and be able to share the load for a specific
+                // sub index (if they are handling more than one sub index)
                 Lock processLock = holder.getProcessorLocks().get(subIndex);
-
                 processLock.lock(); // create a shared lock for terracotta to process
+
                 try {
+                    TransactionJobs jobs = null;
+                    try {
+                        jobs = jobsToProcess.poll(1000, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        // we geto interupted, bail out
+                        running = false;
+                    }
+                    if (jobs == null) {
+                        continue;
+                    }
+                    List<TransactionJobs> jobsList = new ArrayList<TransactionJobs>();
+                    jobsList.add(jobs);
+                    jobsToProcess.drainTo(jobsList, nonBlockingBatchSize);
+                    if (logger.isDebugEnabled()) {
+                        int totalJobs = 0;
+                        for (TransactionJobs x : jobsList) {
+                            totalJobs += x.getJobs().size();
+                        }
+                        logger.debug("Processor [" + subIndex + "] procesing [" + jobsList.size() + "] transactions with [" + totalJobs + "] jobs");
+                    }
+                    for (TransactionJobs xJobs : jobsList) {
+                        xJobs.attach(searchEngineFactory);
+                    }
+
                     IndexWriter writer;
                     try {
                         writer = searchEngineFactory.getLuceneIndexManager().openIndexWriter(settings, subIndex);
                     } catch (LockObtainFailedException e) {
                         // we failed to get a lock, probably another one running and getting it, which is bad!
-                        logger.error("Another instance is running on the sub index, make sure it does not");
-                        // TODO we need to do something here with the job
+                        logger.error("Another instance is running on the sub index, make sure it does not. Should not happen really...");
                         continue;
                     } catch (IOException e) {
-                        logger.error("Failed to open index writer, dismissing jobs [" + jobs + "]", e);
+                        logger.error("Failed to open index writer, dismissing jobs [" + jobs + "]. Should not happen really...", e);
                         continue;
                     }
                     try {
-                        for (TransactionJob job : jobs.getJobs()) {
-                            WriterHelper.processJob(writer, job);
+                        for (TransactionJobs xJobs : jobsList) {
+                            for (TransactionJob job : xJobs.getJobs()) {
+                                WriterHelper.processJob(writer, job);
+                            }
                         }
                         writer.commit();
                     } catch (Exception e) {

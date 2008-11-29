@@ -5,10 +5,41 @@
             <class-expression>org.compass.needle.terracotta.*</class-expression>
         </include>
         <include>
-          <class-expression>org.apache.lucene.store.Directory</class-expression>
+            <class-expression>org.compass.needle.terracotta.transaction.processor.*</class-expression>
         </include>
         <include>
-          <class-expression>org.apache.lucene.store.LockFactory</class-expression>
+            <class-expression>org.apache.lucene.store.Directory</class-expression>
+        </include>
+        <include>
+            <class-expression>org.apache.lucene.store.LockFactory</class-expression>
+        </include>
+        <include>
+            <class-expression>org.compass.core.lucene.engine.transaction.support.TransactionJobs</class-expression>
+            <honor-transient>true</honor-transient>
+        </include>
+        <include>
+            <class-expression>org.compass.core.lucene.engine.transaction.support.TransactionJob</class-expression>
+            <honor-transient>true</honor-transient>
+        </include>
+        <include>
+            <class-expression>org.compass.core.spi.ResourceKey</class-expression>
+            <honor-transient>true</honor-transient>
+        </include>
+        <include>
+            <class-expression>org.compass.core.lucene.LuceneResource</class-expression>
+            <honor-transient>true</honor-transient>
+        </include>
+        <include>
+            <class-expression>org.compass.core.lucene.LuceneProperty</class-expression>
+            <honor-transient>true</honor-transient>
+        </include>
+        <include>
+            <class-expression>org.apache.lucene.document.Field</class-expression>
+            <honor-transient>true</honor-transient>
+        </include>
+        <include>
+            <class-expression>org.apache.lucene.document.AbstractField</class-expression>
+            <honor-transient>true</honor-transient>
         </include>
     </instrumented-classes>
 
@@ -32,6 +63,9 @@
         </root>
         <root>
             <field-name>org.compass.needle.terracotta.TerracottaManagerUtilLockFactoryProvider.lockFactories</field-name>
+        </root>
+        <root>
+            <field-name>org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory.holder</field-name>
         </root>
     </roots>
 </xml-fragment>
