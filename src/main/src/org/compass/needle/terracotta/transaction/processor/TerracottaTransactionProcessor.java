@@ -32,6 +32,9 @@ import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
 import org.compass.core.spi.ResourceKey;
 
 /**
+ * The actual terracotta transaction processor that simply delegates the commit point to
+ * {@link org.compass.needle.terracotta.transaction.processor.TerracottaTransactionProcessorFactory#add(org.compass.core.lucene.engine.transaction.support.TransactionJobs)}.
+ *
  * @author kimchy
  * @see TerracottaTransactionProcessorFactory
  */

@@ -47,7 +47,26 @@ import org.compass.core.lucene.engine.transaction.support.WriterHelper;
 import org.compass.core.util.StringUtils;
 
 /**
- * Experimental!.
+ * The terracotta transaction processor factory allows to add {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs TransactionJobs}
+ * to a shared work queue (partitioned by sub index) to be processed later by worker processors.
+ *
+ * <p>By default, the transaction processor factory acts as a worker processor as well. In order to disable it (and make
+ * it only a producer node) set the {@link TerracottaTransactionProcessorEnvironment#PROCESS} to <code>false</code>.
+ *
+ * <p>By default, each worker processor node will try and processes jobs from all sub indexes (you can start as many
+ * as you like). In order to pin down the worker processor to work only on specific sub indexes, set then using
+ * {@link TerracottaTransactionProcessorEnvironment#SUB_INDEXES} setting.
+ *
+ * <p>The processor itself, once it identifies that there is a transactional job to be processed, will try and get
+ * more transactional jobs in a non blocking manner for better utilization of an already opened IndexWriter. By default
+ * it will try and get 5 more, and it can be controlled using {@link TerracottaTransactionProcessorEnvironment#NON_BLOCKING_BATCH_JOBS_SIZE}.
+ *
+ * <p>Transactions visibility (once a transaction commits, how long till the other nodes, including the one that committed
+ * will see the result) can be controlld using {@link org.compass.core.lucene.LuceneEnvironment.SearchEngineIndex#CACHE_INTERVAL_INVALIDATION}.
+ * Note, by default, refreshing to a new index happens in the background and does not affect the search nodes.
+ *
+ * <p>When working with several machines, the index should probably be shared between all nodes. The terracotta based
+ * directory store can be used to share the index as well. 
  *
  * @author kimchy
  */
@@ -93,7 +112,6 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
             holder.getInitializationLock().unlock();
         }
         if (settings.getSettingAsBoolean(TerracottaTransactionProcessorEnvironment.PROCESS, true)) {
-            logger.info("Terracotta processor started");
             String[] subIndexes;
             String subIndexesSetting = settings.getSetting(TerracottaTransactionProcessorEnvironment.SUB_INDEXES);
             if (subIndexesSetting == null) {
