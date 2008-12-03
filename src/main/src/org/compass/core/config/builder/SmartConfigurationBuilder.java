@@ -73,6 +73,12 @@ public class SmartConfigurationBuilder implements ConfigurationBuilder {
     }
 
     private ConfigurationBuilder detect(InputStream stream, String resourceName) {
+        if (resourceName.endsWith(".properties")) {
+            return new PropertiesConfigurationBuilder();
+        }
+        if (resourceName.endsWith(".json")) {
+            return new JsonConfigurationBuilder();
+        }
         //peek into the file to look for DOCTYPE
         BufferedReader reader = null;
         try {

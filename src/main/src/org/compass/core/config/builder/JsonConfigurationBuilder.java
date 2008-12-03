@@ -29,6 +29,7 @@ import org.compass.core.json.JsonObject;
 import org.compass.core.json.impl.DefaultJSONObject;
 import org.compass.core.json.impl.DefaultJSONTokener;
 import org.compass.core.util.CopyUtils;
+import org.compass.core.util.SystemPropertyUtils;
 
 /**
  * A JSON configuration bulider, basically converting the JSON notation to flat settings.
@@ -81,7 +82,7 @@ public class JsonConfigurationBuilder extends AbstractInputStreamConfigurationBu
                 sb.append(elements.get(i)).append('.');
             }
             sb.append(elements.get(i));
-            config.setSetting(sb.toString(), element.toString());
+            config.setSetting(sb.toString(), SystemPropertyUtils.resolvePlaceholders(element.toString()));
         }
     }
 }
