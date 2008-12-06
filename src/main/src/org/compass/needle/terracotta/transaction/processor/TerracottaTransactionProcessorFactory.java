@@ -179,7 +179,16 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
                 // This also allows for several JVMs to run and be able to share the load for a specific
                 // sub index (if they are handling more than one sub index)
                 Lock processLock = holder.getProcessorLocks().get(subIndex);
-                processLock.lock(); // create a shared lock for terracotta to process
+                boolean locked = false; // create a shared lock for terracotta to process
+                try {
+                    locked = processLock.tryLock(1000, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                    // we geto interupted, bail out
+                    running = false;                    
+                }
+                if (!locked) {
+                    continue;
+                }
 
                 try {
                     TransactionJobs jobs = null;
