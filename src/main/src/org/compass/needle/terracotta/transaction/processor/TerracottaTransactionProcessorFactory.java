@@ -66,7 +66,7 @@ import org.compass.core.util.StringUtils;
  * Note, by default, refreshing to a new index happens in the background and does not affect the search nodes.
  *
  * <p>When working with several machines, the index should probably be shared between all nodes. The terracotta based
- * directory store can be used to share the index as well. 
+ * directory store can be used to share the index as well.
  *
  * @author kimchy
  */
@@ -112,13 +112,10 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
             holder.getInitializationLock().unlock();
         }
         if (settings.getSettingAsBoolean(TerracottaTransactionProcessorEnvironment.PROCESS, true)) {
-            String[] subIndexes;
             String subIndexesSetting = settings.getSetting(TerracottaTransactionProcessorEnvironment.SUB_INDEXES);
-            if (subIndexesSetting == null) {
-                subIndexes = searchEngineFactory.getIndexManager().getSubIndexes();
-            } else {
-                subIndexes = StringUtils.commaDelimitedListToStringArray(subIndexesSetting);
-            }
+            String aliasesSetting = settings.getSetting(TerracottaTransactionProcessorEnvironment.ALIASES);
+            String[] subIndexes = searchEngineFactory.getIndexManager().calcSubIndexes(StringUtils.commaDelimitedListToStringArray(subIndexesSetting),
+                    StringUtils.commaDelimitedListToStringArray(aliasesSetting), null);
             logger.info("Terracotta Transaction Processor Worker started. Sub indexes to process " + Arrays.toString(subIndexes));
             for (String subIndex : subIndexes) {
                 TerracottaProcessor processor = new TerracottaProcessor(subIndex, holder.getJobsPerSubIndex().get(subIndex));

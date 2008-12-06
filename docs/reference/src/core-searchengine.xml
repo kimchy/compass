@@ -452,6 +452,22 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE,
 		</para>
       </sect3>
       
+      <sect3 id="core-searchengine-transaction-terracotta">
+        <title>tc (Terracotta)</title>
+        
+        <para>
+            Compass supports master worker like processing of transactions using Terracotta. For more information see <link linkend="needle-terracotta-transaction-processor">here</link>.
+        </para>
+      </sect3>
+
+      <sect3 id="core-searchengine-transaction-custom">
+        <title>Custom</title>
+        
+        <para>
+            Implementing a custom Transaction Processor is very simple. Compass provides simple API and simple base classes that should make implementing one a snap. For more information on how to do it, please check the currently implemented transaction processors and ask questions on the forum. Proper documentation will arrive soon.
+        </para>
+      </sect3>
+      
     </sect2>
   </sect1>
   

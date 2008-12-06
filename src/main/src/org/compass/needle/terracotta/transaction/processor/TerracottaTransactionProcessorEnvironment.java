@@ -42,6 +42,12 @@ public class TerracottaTransactionProcessorEnvironment {
     public static final String SUB_INDEXES = "compass.transaction.processor.tc.subIndexes";
 
     /**
+     * A comma separated list of aliases that the processor node (worker) will process against the index.
+     * Defaults to all aliases.
+     */
+    public static final String ALIASES = "compass.transaction.processor.tc.aliases";
+
+    /**
      * Once a transaction is identified as needed to be processed, this
      * setting controls the number of additional transactions the processor will try to get in a non
      * blocking fashion.
