@@ -688,6 +688,14 @@ public class LuceneEnvironment {
                 public static final String NAME = "async";
 
                 /**
+                 * Allows to control if order between concurrent transactions within a single JVM or across JVMs on
+                 * the sub index level will have to be ordered or not. If they are ordered, a lock will be obtained
+                 * once a dirty operation is perfomed against the sub index, and it will only be released once the
+                 * transaction commits / rolls back. Default value is <code>true</code>.
+                 */
+                public static final String MAINTAIN_ORDER = "compass.transaction.processor.async.maintainOrder";
+
+                /**
                  * The bounded size of the backlog for async transactions to process (note, a transaciton includes
                  * one or more destructive operations. Once the backlog is full, transactions will block until new
                  * tranasctions can be inserted to it. The default backlog size is <code>10</code>.

@@ -29,6 +29,15 @@ public class TerracottaTransactionProcessorEnvironment {
     public static final String NAME = "tc";
 
     /**
+     * Allows to control if order between concurrent transactions within a single JVM or across JVMs on
+     * the sub index level will have to be ordered or not. If they are ordered, a lock will be obtained
+     * once a dirty operation is perfomed against the sub index, and it will only be released once the
+     * transaction commits / rolls back. Default value is <code>true</code>.
+     */
+    public static final String MAINTAIN_ORDER = "compass.transaction.processor.tc.maintainOrder"; 
+
+
+    /**
      * <code>true</code> if this terracotta processor will also act as worker and processor
      * transactional jobs, <code>false</code> if this is just a client node that only submits
      * transactions to be processed by worker nodes. Defaults to <code>true</code>.

@@ -44,7 +44,7 @@ public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProces
      * {@link org.compass.core.lucene.engine.transaction.support.TransactionJobs}.
      */
     public AsyncTransactionProcessor(LuceneSearchEngine searchEngine, AsyncTransactionProcessorFactory processorFactory) {
-        super(logger, searchEngine);
+        super(logger, searchEngine, true);
         this.processorFactory = processorFactory;
     }
 
@@ -53,7 +53,7 @@ public class AsyncTransactionProcessor extends AbstractJobBasedTransactionProces
     }
 
     protected void doPrepare(TransactionJobs jobs) throws SearchEngineException {
-        // nothign to do here, we only add on commit
+        // nothing to do here, we only add on commit
     }
 
     protected void doCommit(boolean onePhase, TransactionJobs jobs) throws SearchEngineException {

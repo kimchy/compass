@@ -81,7 +81,7 @@ compass.engine.store.tc.flushRate=10
 	    <title>Transaction Processor</title>
 	  
 	    <para>
-	        Compass comes with a built in Terracotta transaction processor allowing to easily get master worker like processing of Compass transactions. Transactional dirty operations (create/delete/update) are accumulated during a transaction, and on commit time, they are put on a queue that is shared by terracotta between different JVM instances. Workers can be started to process the transactional jobs and apply the changes to a shared index (obviously, can be stored using Terracotta as well). This allows for Compass transactions to be extremely fast, and having the heavy job of processing and indexing data performed on different nodes (or same nodes, but simply sharing the load).
+	        Compass comes with a built in Terracotta transaction processor allowing to easily get master worker like processing of Compass transactions. Transactional dirty operations (create/delete/update) are accumulated during a transaction, and on commit time, they are put on a queue (one per sub index) that is shared by terracotta between different JVM instances. Transactioal processor workers can be started to process the transactional jobs and apply the changes to a shared index (obviously, can be stored using Terracotta as well). This allows for Compass transactions to be extremely fast, and having the heavy job of processing and indexing data performed on different nodes (or same nodes, but simply sharing the load).
 	    </para>
 	    
 	    <para>
@@ -89,15 +89,19 @@ compass.engine.store.tc.flushRate=10
 	    </para>
 	    
 	    <para>
-	        When setting the above setting, transactions will be processed by the terracotta processor which means that nothing much will be done except for accumulating transactional changes and putting them as on a shared queue. By default, a thread per sub index will also be started to process transactional jobs for each sub index. The threads will pick transaction jobs and index them in a failsafe, ordered transactional manner.
+	        When setting the above setting, transactions will be processed by the terracotta processor which means that nothing much will be done except for accumulating transactional changes and putting them as on a shared queue. By default, a thread per sub index will also be started to process transactional jobs for each sub index. The threads will pick transaction jobs and index them in a fail-safe, ordered transactional manner.
 	    </para>
 	    
 	    <para>
-	        In order to disable the actual processing/indexing of transactions by a specific node, the <literal>compass.transaction.processor.tc.process</literal> setting can be set to <literal>false</literal>.
+	        Total ordering of transactions is maintained by default. This basically means that a dirty operation on a specific sub index will try and obtain a lock (using Lucene Directory abstraction) called "order.lock" (per sub index). The lock will be obtained through the duration of the transaction and released when the transaction commits / rolls back. Ordering of transactions on a sub index level can be disabled by setting <literal>compass.transaction.processor.tc.maintainOrder</literal> setting to <literal>false</literal>. This means that transactions on the same sub index will not block on each other, but ordering will not be guaranteed.
 	    </para>
 	    
 	    <para>
-	        By default, an indexing node will try and work on all sub indexes (note, it is perfectly fine to have more than one indexing node working on all sub indexes, they will maintain order and pick jobs as they can). In order to have a node only to only process transactional jobs for certain sub indexes, the following setting <literal>compass.transaction.processor.tc.subIndexes</literal> should be set to a comma separated list of the sub indexes to process. The <literal>compass.transaction.processor.tc.aliases</literal> can also be used to narrow down the sub indexes of respective aliases that will be processed.
+	        In order to disable the actual processing/indexing of transactions by a specific node, the <literal>compass.transaction.processor.tc.process</literal> setting can be set to <literal>false</literal>. This option allows to create pure "client" nodes that simply put jobs on the queue, and dedicated worker nodes that will process transactions off the queue.
+	    </para>
+	    
+	    <para>
+	        By default, an indexing node will try and work on all sub indexes (note, it is perfectly fine to have more than one indexing node working on all sub indexes, they will maintain order and pick jobs as they can). In order to have a node to only process transactional jobs for certain sub indexes, the following setting <literal>compass.transaction.processor.tc.subIndexes</literal> should be set to a comma separated list of the sub indexes to process. The <literal>compass.transaction.processor.tc.aliases</literal> can also be used to narrow down the sub indexes of respective aliases that will be processed.
 	    </para>
 	    
 	    <para>

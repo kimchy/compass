@@ -409,7 +409,7 @@ session.getSettings().setSetting(LuceneEnvironment.Transaction.Processor.TYPE,
         </para>
         
         <para>
-            Note, when several instances of Compass are running using this transaction processor, order of transactions is not maintained, which might result in out of order transaction being applied to the index.
+            Note, when several instances of Compass are running using this transaction processor, order of transactions is not maintained, which might result in out of order transaction being applied to the index. When there is a single instance running, by default, order of transaction is maintained by obtaining an order lock once a dirty operation occurs against the sub index (similar to Lucene write lock) which is released once the transaction commits / rolls back. In order to disable even this ordering, the <literal>compass.transaction.processor.async.maintainOrder</literal> can be set to <literal>false</literal>.
         </para>
         
         <para>

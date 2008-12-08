@@ -112,10 +112,15 @@ public class TerracottaTransactionProcessorFactory implements TransactionProcess
             holder.getInitializationLock().unlock();
         }
         if (settings.getSettingAsBoolean(TerracottaTransactionProcessorEnvironment.PROCESS, true)) {
-            String subIndexesSetting = settings.getSetting(TerracottaTransactionProcessorEnvironment.SUB_INDEXES);
-            String aliasesSetting = settings.getSetting(TerracottaTransactionProcessorEnvironment.ALIASES);
-            String[] subIndexes = searchEngineFactory.getIndexManager().calcSubIndexes(StringUtils.commaDelimitedListToStringArray(subIndexesSetting),
-                    StringUtils.commaDelimitedListToStringArray(aliasesSetting), null);
+            String[] subIndexesSetting = StringUtils.commaDelimitedListToStringArray(settings.getSetting(TerracottaTransactionProcessorEnvironment.SUB_INDEXES));
+            if (subIndexesSetting.length == 0) {
+                subIndexesSetting = null;
+            }
+            String[] aliasesSetting = StringUtils.commaDelimitedListToStringArray(settings.getSetting(TerracottaTransactionProcessorEnvironment.ALIASES));
+            if (aliasesSetting.length == 0) {
+                aliasesSetting = null;
+            }
+            String[] subIndexes = searchEngineFactory.getIndexManager().calcSubIndexes(subIndexesSetting, aliasesSetting, null);
             logger.info("Terracotta Transaction Processor Worker started. Sub indexes to process " + Arrays.toString(subIndexes));
             for (String subIndex : subIndexes) {
                 TerracottaProcessor processor = new TerracottaProcessor(subIndex, holder.getJobsPerSubIndex().get(subIndex));

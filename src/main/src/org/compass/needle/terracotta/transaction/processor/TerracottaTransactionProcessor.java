@@ -43,7 +43,7 @@ public class TerracottaTransactionProcessor extends AbstractJobBasedTransactionP
     /**
      */
     public TerracottaTransactionProcessor(LuceneSearchEngine searchEngine, TerracottaTransactionProcessorFactory processorFactory) {
-        super(logger, searchEngine);
+        super(logger, searchEngine, true);
         this.processorFactory = processorFactory;
     }
 
@@ -52,7 +52,7 @@ public class TerracottaTransactionProcessor extends AbstractJobBasedTransactionP
     }
 
     protected void doPrepare(TransactionJobs jobs) throws SearchEngineException {
-        // nothign to do here, we only add on commit
+        // nothing to do here, we only add on commit
     }
 
     protected void doCommit(boolean onePhase, TransactionJobs jobs) throws SearchEngineException {
