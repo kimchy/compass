@@ -29,7 +29,7 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.gps.CompassGpsException;
 import org.compass.gps.device.AbstractGpsDevice;
-import org.compass.gps.device.jdbc.dialect.DefaultJdbcDialect;
+import org.compass.gps.device.jdbc.dialect.DialectResolver;
 import org.compass.gps.device.jdbc.dialect.JdbcDialect;
 
 /**
@@ -105,11 +105,18 @@ public abstract class AbstractJdbcGpsDevice extends AbstractGpsDevice implements
 
     protected DataSource dataSource;
 
-    protected JdbcDialect dialect = new DefaultJdbcDialect();
+    protected JdbcDialect dialect;
 
     protected void doStart() throws CompassGpsException {
         if (dataSource == null) {
             throw new IllegalArgumentException("dataSource property must be set");
+        }
+
+        try {
+            this.dialect = new DialectResolver(true).getDialect(dataSource);
+        } catch (Exception e) {
+            log.warn("Failed to detect database dialect", e);
+            throw new JdbcGpsDeviceException("Failed to detect database dialect", e);
         }
     }
 
