@@ -28,7 +28,7 @@ import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
  */
 public class RawResourcePropertyMapping extends AbstractResourcePropertyMapping implements ResourcePropertyMapping, InternalOverrideByNameMapping {
 
-    private boolean overrideByName = false;
+    private boolean overrideByName = true;
 
     protected void copy(RawResourcePropertyMapping rawResourcePropertyMapping) {
         super.copy(rawResourcePropertyMapping);

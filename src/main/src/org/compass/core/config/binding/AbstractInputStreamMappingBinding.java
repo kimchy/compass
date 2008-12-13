@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.InputStreamMappingResolver;
+import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
@@ -58,6 +59,11 @@ public abstract class AbstractInputStreamMappingBinding implements MappingBindin
 
     public boolean addResourceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
         mapping.addMapping(resourceMapping);
+        return true;
+    }
+
+    public boolean addContractMaping(ContractMapping contractMapping) throws ConfigurationException, MappingException {
+        mapping.addMapping(contractMapping);
         return true;
     }
 

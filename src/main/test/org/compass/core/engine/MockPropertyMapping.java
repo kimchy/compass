@@ -21,8 +21,10 @@ import org.compass.core.Property.TermVector;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.PropertyPath;
+import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.ReverseType;
 import org.compass.core.mapping.SpellCheckType;
 
 /**

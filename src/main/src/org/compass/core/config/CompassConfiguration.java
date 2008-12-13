@@ -53,8 +53,11 @@ import org.compass.core.executor.DefaultExecutorManager;
 import org.compass.core.impl.DefaultCompass;
 import org.compass.core.impl.RefreshableCompass;
 import org.compass.core.mapping.CompassMapping;
+import org.compass.core.mapping.ContractMapping;
+import org.compass.core.mapping.ContractMappingProvider;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
+import org.compass.core.mapping.ResourceMappingProvider;
 import org.compass.core.mapping.internal.DefaultCompassMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.metadata.CompassMetaData;
@@ -342,6 +345,28 @@ public class CompassConfiguration {
     }
 
     /**
+     * Advance: Add mappings based on {@link org.compass.core.mapping.ContractMapping}
+     * implementation which allows for adding pre built mapping constructs.
+     */
+    public CompassConfiguration addContractMapping(ContractMapping contractMapping) {
+        boolean hasAddedResource = getMappingBinding().addContractMaping(contractMapping);
+        if (!hasAddedResource) {
+            throw new ConfigurationException("No mapping match contract mapping [" + contractMapping.getAlias() + "]");
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Adding Contract Mapping [" + contractMapping.getAlias() + "]");
+        }
+        return this;
+    }
+
+    /**
+     * Allows to provide contract mapping through a level of indiraction.
+     */
+    public CompassConfiguration addContractMapping(ContractMappingProvider contractMappingProvider) {
+        return addContractMapping(contractMappingProvider.getMapping());
+    }
+
+    /**
      * Advance: Add mappings based on {@link org.compass.core.mapping.ResourceMapping}
      * implementation which allows for adding pre built mapping constructs.
      */
@@ -354,6 +379,13 @@ public class CompassConfiguration {
             log.info("Adding Resource Mapping [" + resourceMapping.getAlias() + "]");
         }
         return this;
+    }
+
+    /**
+     * Allows to provide resource mapping through a level of indiraction.
+     */
+    public CompassConfiguration addResourceMapping(ResourceMappingProvider resourceMappingProvider) {
+        return addResourceMapping(resourceMappingProvider.getMapping());
     }
 
     /**

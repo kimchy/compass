@@ -32,7 +32,8 @@ import org.compass.annotations.Store;
 import org.compass.annotations.TermVector;
 import org.compass.core.Property;
 import org.compass.core.mapping.CascadeMapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ReverseType;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 
 /**
@@ -95,24 +96,24 @@ public abstract class AnnotationsBindingUtils {
         throw new IllegalArgumentException("Failed to convert termVectory [" + termVector + "]");
     }
 
-    public static ResourcePropertyMapping.ReverseType convert(Reverse reverse) throws IllegalArgumentException {
+    public static ReverseType convert(Reverse reverse) throws IllegalArgumentException {
         if (reverse == Reverse.NO) {
-            return ResourcePropertyMapping.ReverseType.NO;
+            return ReverseType.NO;
         } else if (reverse == Reverse.READER) {
-            return ResourcePropertyMapping.ReverseType.READER;
+            return ReverseType.READER;
         } else if (reverse == Reverse.STRING) {
-            return ResourcePropertyMapping.ReverseType.STRING;
+            return ReverseType.STRING;
         }
         throw new IllegalArgumentException("Failed to convert reverse [" + reverse + "]");
     }
 
-    public static ResourcePropertyMapping.ExcludeFromAllType convert(ExcludeFromAll excludeFromAll) throws IllegalArgumentException {
+    public static ExcludeFromAllType convert(ExcludeFromAll excludeFromAll) throws IllegalArgumentException {
         if (excludeFromAll == ExcludeFromAll.NO) {
-            return ResourcePropertyMapping.ExcludeFromAllType.NO;
+            return ExcludeFromAllType.NO;
         } else if (excludeFromAll == ExcludeFromAll.NO_ANALYZED) {
-            return ResourcePropertyMapping.ExcludeFromAllType.NO_ANALYZED;
+            return ExcludeFromAllType.NO_ANALYZED;
         } else if (excludeFromAll == ExcludeFromAll.YES) {
-            return ResourcePropertyMapping.ExcludeFromAllType.YES;
+            return ExcludeFromAllType.YES;
         }
         throw new IllegalArgumentException("Failed to convert exclude from all [" + excludeFromAll + "]");
     }

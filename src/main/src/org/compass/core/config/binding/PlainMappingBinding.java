@@ -30,8 +30,9 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.ReverseType;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.DefaultContractMapping;
@@ -909,7 +910,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         classPropertyMapping.setAnalyzer(classPropertyConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
 
         String excludeFromAll = classPropertyConf.getAttribute("exclude-from-all", "no");
-        classPropertyMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
+        classPropertyMapping.setExcludeFromAll(ExcludeFromAllType.fromString(excludeFromAll));
 
         String managedId = classPropertyConf.getAttribute("managed-id", null);
         if (managedId != null) {
@@ -945,7 +946,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         constantMapping.setName(valueLookup.lookupMetaDataName(metaDataValue));
 
         String excludeFromAll = constantConf.getAttribute("exclude-from-all", "no");
-        constantMapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
+        constantMapping.setExcludeFromAll(ExcludeFromAllType.fromString(excludeFromAll));
 
         bindResourcePropertyMapping(metadataConf, constantMapping, 1.0f, constantMapping.getExcludeFromAll(),
                 classMapping.getAnalyzer());
@@ -1114,13 +1115,13 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
     private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
                                              AliasMapping aliasMapping) {
-        bindResourcePropertyMapping(conf, mapping, 1.0f, ResourcePropertyMapping.ExcludeFromAllType.NO,
+        bindResourcePropertyMapping(conf, mapping, 1.0f, ExcludeFromAllType.NO,
                 aliasMapping.getAnalyzer());
     }
 
     private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
                                              float defaultBoost,
-                                             ResourcePropertyMapping.ExcludeFromAllType excludeFromAllType,
+                                             ExcludeFromAllType excludeFromAllType,
                                              String analyzer) {
         mapping.setBoost(getBoost(conf, defaultBoost));
         String storeType = conf.getAttribute("store", null);
@@ -1147,11 +1148,11 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         }
 
         String reverseType = conf.getAttribute("reverse", "no");
-        mapping.setReverse(ResourcePropertyMapping.ReverseType.fromString(reverseType));
+        mapping.setReverse(ReverseType.fromString(reverseType));
         mapping.setAnalyzer(conf.getAttribute("analyzer", analyzer));
         mapping.setNullValue(conf.getAttribute("null-value", null));
-        String excludeFromAll = conf.getAttribute("exclude-from-all", ResourcePropertyMapping.ExcludeFromAllType.toString(excludeFromAllType));
-        mapping.setExcludeFromAll(ResourcePropertyMapping.ExcludeFromAllType.fromString(excludeFromAll));
+        String excludeFromAll = conf.getAttribute("exclude-from-all", ExcludeFromAllType.toString(excludeFromAllType));
+        mapping.setExcludeFromAll(ExcludeFromAllType.fromString(excludeFromAll));
 
         mapping.setInternal(false);
     }

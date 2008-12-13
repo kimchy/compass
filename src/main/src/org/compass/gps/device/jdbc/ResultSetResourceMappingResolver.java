@@ -24,7 +24,7 @@ import javax.sql.DataSource;
 import org.compass.core.CompassException;
 import org.compass.core.Property;
 import org.compass.core.config.InputStreamMappingResolver;
-import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.gps.device.jdbc.mapping.AutoGenerateMapping;
 import org.compass.gps.device.jdbc.mapping.ColumnToPropertyMapping;
 import org.compass.gps.device.jdbc.mapping.DataColumnToPropertyMapping;
@@ -157,7 +157,7 @@ public class ResultSetResourceMappingResolver implements InputStreamMappingResol
         sb.append("index=\"").append(Property.Index.toString(mapping.getPropertyIndex())).append("\"").append(" ");
         sb.append("store=\"").append(Property.Store.toString(mapping.getPropertyStore())).append("\"").append(" ");
         sb.append("term-vector=\"").append(Property.TermVector.toString(mapping.getPropertyTermVector())).append("\"").append(" ");
-        sb.append("exclude-from-all=\"").append(ResourcePropertyMapping.ExcludeFromAllType.toString(mapping.getExcludeFromAll())).append("\"").append(" ");
+        sb.append("exclude-from-all=\"").append(ExcludeFromAllType.toString(mapping.getExcludeFromAll())).append("\"").append(" ");
         if (mapping.getAnalyzer() != null) {
             sb.append("analyzer=\"").append(mapping.getAnalyzer()).append("\"").append(" ");
         }

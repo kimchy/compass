@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.compass.core.config.binding.MappingBinding;
+import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
@@ -66,6 +67,11 @@ public class CompassMappingBinding implements MappingBinding {
 
     public boolean addResourceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException {
         mapping.addMapping(resourceMapping);
+        return true;
+    }
+
+    public boolean addContractMaping(ContractMapping contractMapping) throws ConfigurationException, MappingException {
+        mapping.addMapping(contractMapping);
         return true;
     }
 

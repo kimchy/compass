@@ -18,75 +18,11 @@ package org.compass.core.mapping;
 
 import org.compass.core.Property;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
-import org.compass.core.util.Parameter;
 
 /**
  * @author kimchy
  */
 public interface ResourcePropertyMapping extends Mapping {
-
-    public static class ReverseType extends Parameter {
-
-        private static final long serialVersionUID = 9135849961654313364L;
-
-        protected ReverseType(String name) {
-            super(name);
-        }
-
-        public static final ReverseType NO = new ReverseType("NO");
-
-        public static final ReverseType READER = new ReverseType("READER");
-
-        public static final ReverseType STRING = new ReverseType("STRING");
-
-        public static ReverseType fromString(String reverseType) {
-            if ("no".equalsIgnoreCase(reverseType)) {
-                return ReverseType.NO;
-            } else if ("reader".equalsIgnoreCase(reverseType)) {
-                return ReverseType.READER;
-            } else if ("string".equalsIgnoreCase(reverseType)) {
-                return ReverseType.STRING;
-            }
-            throw new IllegalArgumentException("Can't find reverse type for [" + reverseType + "]");
-        }
-    }
-
-    public static class ExcludeFromAllType extends Parameter {
-
-        protected ExcludeFromAllType(String name) {
-            super(name);
-        }
-
-        public static final ExcludeFromAllType NO = new ExcludeFromAllType("NO");
-
-        public static final ExcludeFromAllType YES = new ExcludeFromAllType("YES");
-
-        public static final ExcludeFromAllType NO_ANALYZED = new ExcludeFromAllType("NO_ANALYZED");
-
-        public static ExcludeFromAllType fromString(String excludeFromAllType) {
-            if ("no".equalsIgnoreCase(excludeFromAllType) || "false".equalsIgnoreCase(excludeFromAllType)) {
-                return ExcludeFromAllType.NO;
-            } else if ("yes".equalsIgnoreCase(excludeFromAllType) || "true".equalsIgnoreCase(excludeFromAllType)) {
-                return ExcludeFromAllType.YES;
-            } else if ("no_analyzed".equalsIgnoreCase(excludeFromAllType)) {
-                return ExcludeFromAllType.NO_ANALYZED;
-            }
-            throw new IllegalArgumentException("Can't find exclude from all type for [" + excludeFromAllType + "]");
-        }
-
-        public static String toString(ExcludeFromAllType excludeFromAllType) {
-            if (excludeFromAllType == NO) {
-                return "no";
-            }
-            if (excludeFromAllType == NO_ANALYZED) {
-                return "no_analyzed";
-            }
-            if (excludeFromAllType == YES) {
-                return "yes";
-            }
-            return "no";
-        }
-    }
 
     /**
      * Returns the anayzer name that is associated with the property.
@@ -123,7 +59,7 @@ public interface ResourcePropertyMapping extends Mapping {
      *
      * If set, omit tf from postings of this indexed field.
      *
-     * @see Property#setOmitTf(boolean) 
+     * @see Property#setOmitTf(boolean)
      */
     Boolean isOmitTf();
 

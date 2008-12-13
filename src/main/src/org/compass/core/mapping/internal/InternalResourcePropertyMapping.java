@@ -17,7 +17,9 @@
 package org.compass.core.mapping.internal;
 
 import org.compass.core.Property;
+import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.ReverseType;
 import org.compass.core.mapping.SpellCheckType;
 
 /**

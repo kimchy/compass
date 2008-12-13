@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.internal;
-
-import org.compass.core.engine.subindex.SubIndexHash;
-import org.compass.core.mapping.AllMapping;
-import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.SpellCheckType;
+package org.compass.core.mapping;
 
 /**
+ * An interface allowing for implemenations to provide a {@link ContractMapping}
+ * instance.
+ *
  * @author kimchy
  */
-public interface InternalResourceMapping extends ResourceMapping, InternalAliasMapping {
+public interface ContractMappingProvider {
 
-    /**
-     * Sets the path under which the internal UID of the resource is stored. 
-     */
-    void setUIDPath(String uid);
-
-    void setAllMapping(AllMapping allMapping);
-
-    void setSpellCheck(SpellCheckType spellCheck);
-
-    void setSubIndexHash(SubIndexHash subIndexHash);
+    ContractMapping getMapping();
 }

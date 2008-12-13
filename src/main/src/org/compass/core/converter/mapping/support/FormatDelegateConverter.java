@@ -43,6 +43,11 @@ public class FormatDelegateConverter implements DelegateConverter, ResourcePrope
         this.format = format;
     }
 
+    public FormatDelegateConverter(Converter converter, String format) {
+        this.format = format;
+        setDelegatedConverter(converter);
+    }
+
     /**
      * Sets a delegated format converter. Will not use the actual passed converter,
      * but will use {@link org.compass.core.converter.basic.FormatConverter#copy()} to create a new format converter.

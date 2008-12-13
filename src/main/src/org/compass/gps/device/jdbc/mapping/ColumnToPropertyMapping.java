@@ -17,7 +17,7 @@
 package org.compass.gps.device.jdbc.mapping;
 
 import org.compass.core.Property;
-import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.ExcludeFromAllType;
 
 /**
  * A general interface for a jdbc column mapping to a Compass
@@ -76,5 +76,5 @@ public interface ColumnToPropertyMapping extends ColumnMapping {
     /**
      * Should this property be excluded from the all property.
      */
-    ResourcePropertyMapping.ExcludeFromAllType getExcludeFromAll();
+    ExcludeFromAllType getExcludeFromAll();
 }

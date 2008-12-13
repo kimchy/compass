@@ -18,6 +18,7 @@ package org.compass.core.mapping.json;
 
 import org.compass.core.Property;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;

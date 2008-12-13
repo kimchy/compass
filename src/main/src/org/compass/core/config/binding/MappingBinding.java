@@ -23,6 +23,7 @@ import java.net.URL;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
 import org.compass.core.config.InputStreamMappingResolver;
+import org.compass.core.mapping.ContractMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
@@ -59,6 +60,8 @@ public interface MappingBinding {
     boolean addInputStream(InputStream is, String resourceName) throws ConfigurationException, MappingException;
 
     boolean addResourceMapping(ResourceMapping resourceMapping) throws ConfigurationException, MappingException;
+
+    boolean addContractMaping(ContractMapping contractMapping) throws ConfigurationException, MappingException;
 
     String[] getSuffixes();
 }

@@ -13,6 +13,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.lucene.support.FieldHelper;
 import org.compass.core.mapping.ResourcePropertyMapping;
+import org.compass.core.mapping.ReverseType;
 import org.compass.core.util.StringUtils;
 import org.compass.core.util.reader.ReverseStringReader;
 
@@ -78,11 +79,11 @@ public class LuceneResourceFactory implements ResourceFactory {
     public Property createProperty(String name, String value, ResourcePropertyMapping mapping,
                                    Property.Store store, Property.Index index) throws SearchEngineException {
         Property property;
-        if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.NO) {
+        if (mapping.getReverse() == ReverseType.NO) {
             property = createProperty(name, value, store, index, mapping.getTermVector());
-        } else if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.READER) {
+        } else if (mapping.getReverse() == ReverseType.READER) {
             property = createProperty(name, new ReverseStringReader(value), mapping.getTermVector());
-        } else if (mapping.getReverse() == ResourcePropertyMapping.ReverseType.STRING) {
+        } else if (mapping.getReverse() == ReverseType.STRING) {
             property = createProperty(name, StringUtils.reverse(value), store, index, mapping.getTermVector());
         } else {
             throw new SearchEngineException("Unsupported Reverse type [" + mapping.getReverse() + "]");

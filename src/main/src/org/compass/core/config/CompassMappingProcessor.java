@@ -31,6 +31,7 @@ public class CompassMappingProcessor implements MappingProcessor {
     private ArrayList<MappingProcessor> mappingProcessors = new ArrayList<MappingProcessor>();
 
     public CompassMappingProcessor() {
+        mappingProcessors.add(new SubIndexHashMappingProcessor());
         mappingProcessors.add(new ResolveExtendsMappingProcessor());
         mappingProcessors.add(new PropertyAccessorMappingProcessor());
         mappingProcessors.add(new NullValueMappingProcessor());
