@@ -28,7 +28,11 @@ import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
 /**
  * @author kimchy
  */
-public class RSEM {
+public abstract class RSEM {
+
+    private RSEM() {
+
+    }
 
     public static ResourceContractMappingBuilder contract(String alias) {
         DefaultContractMapping mapping = new DefaultContractMapping();

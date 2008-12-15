@@ -22,43 +22,12 @@ import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
-import org.compass.core.util.Parameter;
 
 /**
  * @author kimchy
  */
 public class JsonPropertyMapping extends AbstractResourcePropertyMapping implements JsonMapping, ResourcePropertyMapping,
         InternalOverrideByNameMapping {
-
-    public static final class NamingType extends Parameter {
-
-        private NamingType(String name) {
-            super(name);
-        }
-
-        public static final NamingType PLAIN = new NamingType("PLAIN");
-
-        public static final NamingType FULL = new NamingType("FULL");
-
-        public static String toString(NamingType namingType) {
-            if (namingType == NamingType.PLAIN) {
-                return "plain";
-            } else if (namingType == NamingType.FULL) {
-                return "full";
-            }
-            throw new IllegalArgumentException("Can't find naming type for [" + namingType + "]");
-        }
-
-        public static NamingType fromString(String namingType) {
-            if ("plain".equalsIgnoreCase(namingType)) {
-                return NamingType.PLAIN;
-            } else if ("full".equalsIgnoreCase(namingType)) {
-                return NamingType.FULL;
-            }
-            throw new IllegalArgumentException("Can't find naming type for [" + namingType + "]");
-        }
-
-    }
 
     private boolean overrideByName = false;
 

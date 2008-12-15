@@ -21,5 +21,15 @@
         </json-array>
     </root-json-object>
 
+    <root-json-object alias="c">
+        <json-id name="id" />
+        <json-property name="value" />
+        <json-array name="arr">
+            <json-object>
+                <json-property name="arr-value" />
+            </json-object>
+        </json-array>
+    </root-json-object>
+
 </compass-core-mapping>
     

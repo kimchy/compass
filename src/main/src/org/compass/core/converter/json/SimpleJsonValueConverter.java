@@ -26,6 +26,7 @@ import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.json.JsonPropertyMapping;
+import org.compass.core.mapping.json.NamingType;
 import org.compass.core.marshall.MarshallingContext;
 
 /**
@@ -55,7 +56,7 @@ public class SimpleJsonValueConverter implements Converter {
             sValue = toString(root, jsonPropertyMapping, context);
         }
         String propertyName;
-        if (jsonPropertyMapping.getNamingType() == JsonPropertyMapping.NamingType.FULL) {
+        if (jsonPropertyMapping.getNamingType() == NamingType.FULL) {
             propertyName = ((JsonFullPathHolder) context.getAttribute(JsonFullPathHolder.CONTEXT_KEY)).calculatePath();
         } else {
             PropertyPath path = jsonPropertyMapping.getPath();

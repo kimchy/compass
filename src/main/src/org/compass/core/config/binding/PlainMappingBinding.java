@@ -49,6 +49,7 @@ import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
 import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
 import org.compass.core.mapping.json.JsonPropertyMapping;
+import org.compass.core.mapping.json.NamingType;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.mapping.json.RootJsonObjectMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
@@ -306,7 +307,9 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
             name = valueLookup.lookupMetaDataName(name);
         }
         jsonObjectMapping.setName(name);
-        jsonObjectMapping.setPath(new StaticPropertyPath(name));
+        if (name != null) {
+            jsonObjectMapping.setPath(new StaticPropertyPath(name));
+        }
         bindConverter(jsonObjectConf, jsonObjectMapping);
 
         jsonObjectMapping.setDynamic(jsonObjectConf.getAttributeAsBoolean("dynamic", false));
@@ -366,8 +369,8 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
             jsonPropertyMapping.setValueConverter(new FormatDelegateConverter(format));
         }
 
-        String namingType = jsonPropConf.getAttribute("naming-type", JsonPropertyMapping.NamingType.PLAIN.toString());
-        jsonPropertyMapping.setNamingType(JsonPropertyMapping.NamingType.fromString(namingType));
+        String namingType = jsonPropConf.getAttribute("naming-type", NamingType.PLAIN.toString());
+        jsonPropertyMapping.setNamingType(NamingType.fromString(namingType));
 
 
         bindResourcePropertyMapping(jsonPropConf, jsonPropertyMapping, aliasMapping);
