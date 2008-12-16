@@ -18,6 +18,7 @@ package org.compass.core.mapping.rsem.builder;
 
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 
 /**
@@ -27,8 +28,10 @@ public class ResourceAnalyzerMappingBuilder {
 
     final RawResourcePropertyAnalyzerController mapping;
 
-    ResourceAnalyzerMappingBuilder(RawResourcePropertyAnalyzerController mapping) {
-        this.mapping = mapping;
+    public ResourceAnalyzerMappingBuilder(String name) {
+        this.mapping = new RawResourcePropertyAnalyzerController();
+        mapping.setName(name);
+        mapping.setPath(new StaticPropertyPath(name));
     }
 
     public ResourceAnalyzerMappingBuilder nullAnalyzer(String nullAnalyzer) {

@@ -19,6 +19,7 @@ package org.compass.core.mapping.rsem.builder;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.converter.mapping.support.FormatDelegateConverter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
@@ -30,8 +31,12 @@ public class ResourceIdMappingBuilder {
 
     final RawResourcePropertyIdMapping mapping;
 
-    ResourceIdMappingBuilder(RawResourcePropertyIdMapping mapping) {
-        this.mapping = mapping;
+    public ResourceIdMappingBuilder(String name) {
+        this.mapping = new RawResourcePropertyIdMapping();
+        mapping.setName(name);
+        mapping.setPath(new StaticPropertyPath(name));
+        mapping.setOmitNorms(true);
+        mapping.setOmitTf(true);
     }
 
     public ResourceIdMappingBuilder omitNorms(boolean omitNorms) {

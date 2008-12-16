@@ -33,8 +33,13 @@ public class ResourceMappingBuilder implements ResourceMappingProvider {
 
     private final RawResourceMapping mapping;
 
-    ResourceMappingBuilder(RawResourceMapping mapping) {
-        this.mapping = mapping;
+    /**
+     * Constructs the builder based on raw resource mapping.
+     */
+    public ResourceMappingBuilder(String alias) {
+        this.mapping = new RawResourceMapping();
+        mapping.setAlias(alias);
+        mapping.setRoot(true);
     }
 
     public ResourceMapping getMapping() {

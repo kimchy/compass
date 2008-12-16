@@ -16,17 +16,6 @@
 
 package org.compass.core.mapping.json.builder;
 
-import org.compass.core.engine.naming.StaticPropertyPath;
-import org.compass.core.mapping.internal.DefaultAllMapping;
-import org.compass.core.mapping.json.JsonArrayMapping;
-import org.compass.core.mapping.json.JsonBoostPropertyMapping;
-import org.compass.core.mapping.json.JsonContentMapping;
-import org.compass.core.mapping.json.JsonIdMapping;
-import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
-import org.compass.core.mapping.json.JsonPropertyMapping;
-import org.compass.core.mapping.json.PlainJsonObjectMapping;
-import org.compass.core.mapping.json.RootJsonObjectMapping;
-
 /**
  * @author kimchy
  */
@@ -37,25 +26,15 @@ public abstract class JSEM {
     }
 
     public static RootJsonObjectMappingBuilder json(String alias) {
-        RootJsonObjectMapping mapping = new RootJsonObjectMapping();
-        mapping.setRoot(true);
-        mapping.setAlias(alias);
-        return new RootJsonObjectMappingBuilder(mapping);
+        return new RootJsonObjectMappingBuilder(alias);
     }
 
     public static JsonAnalyzerMappingBuilder analyzer(String name) {
-        JsonPropertyAnalyzerController mapping = new JsonPropertyAnalyzerController();
-        mapping.setName(name);
-        mapping.setPath(new StaticPropertyPath(name));
-        return new JsonAnalyzerMappingBuilder(mapping);
+        return new JsonAnalyzerMappingBuilder(name);
     }
 
     public static JsonIdMappingBuilder id(String name) {
-        JsonIdMapping mapping = new JsonIdMapping();
-        mapping.setName(name);
-        mapping.setOmitNorms(true);
-        mapping.setOmitTf(true);
-        return new JsonIdMappingBuilder(mapping);
+        return new JsonIdMappingBuilder(name);
     }
 
     /**
@@ -66,20 +45,11 @@ public abstract class JSEM {
     }
 
     public static JsonPropertyMappingBuilder property(String name) {
-        JsonPropertyMapping mapping = new JsonPropertyMapping();
-        mapping.setName(name);
-        if (name != null) {
-            mapping.setPath(new StaticPropertyPath(name));
-        }
-        return new JsonPropertyMappingBuilder(mapping);
+        return new JsonPropertyMappingBuilder(name);
     }
 
     public static JsonContentMappingBuilder content(String name) {
-        JsonContentMapping mapping = new JsonContentMapping();
-        mapping.setName(name);
-        mapping.setPath(new StaticPropertyPath(name));
-        mapping.setInternal(true);
-        return new JsonContentMappingBuilder(mapping);
+        return new JsonContentMappingBuilder(name);
     }
 
     public static PlainJsonObjectMappingBuilder object() {
@@ -87,29 +57,18 @@ public abstract class JSEM {
     }
 
     public static PlainJsonObjectMappingBuilder object(String name) {
-        PlainJsonObjectMapping mapping = new PlainJsonObjectMapping();
-        mapping.setName(name);
-        if (name != null) {
-            mapping.setPath(new StaticPropertyPath(name));
-        }
-        return new PlainJsonObjectMappingBuilder(mapping);
+        return new PlainJsonObjectMappingBuilder(name);
     }
 
     public static JsonArrayMappingBuilder array(String name) {
-        JsonArrayMapping mapping = new JsonArrayMapping();
-        mapping.setName(name);
-        mapping.setPath(new StaticPropertyPath(name));
-        return new JsonArrayMappingBuilder(mapping);
+        return new JsonArrayMappingBuilder(name);
     }
 
     public static JsonBoostMappingBuilder boost(String name) {
-        JsonBoostPropertyMapping mapping = new JsonBoostPropertyMapping();
-        mapping.setName(name);
-        return new JsonBoostMappingBuilder(mapping);
+        return new JsonBoostMappingBuilder(name);
     }
 
     public static JsonAllMappingBuilder all() {
-        DefaultAllMapping allMapping = new DefaultAllMapping();
-        return new JsonAllMappingBuilder(allMapping);
+        return new JsonAllMappingBuilder();
     }
 }

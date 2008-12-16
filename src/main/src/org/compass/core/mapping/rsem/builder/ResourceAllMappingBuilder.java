@@ -27,8 +27,8 @@ public class ResourceAllMappingBuilder {
 
     final DefaultAllMapping mapping;
 
-    ResourceAllMappingBuilder(DefaultAllMapping mapping) {
-        this.mapping = mapping;
+    public ResourceAllMappingBuilder() {
+        this.mapping = new DefaultAllMapping();
     }
 
     public ResourceAllMappingBuilder enable(boolean enable) {

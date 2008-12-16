@@ -33,8 +33,12 @@ public class JsonPropertyMappingBuilder {
 
     final JsonPropertyMapping mapping;
 
-    JsonPropertyMappingBuilder(JsonPropertyMapping mapping) {
-        this.mapping = mapping;
+    JsonPropertyMappingBuilder(String name) {
+        this.mapping = new JsonPropertyMapping();
+        mapping.setName(name);
+        if (name != null) {
+            mapping.setPath(new StaticPropertyPath(name));
+        }
     }
 
     public JsonPropertyMappingBuilder indexName(String indexName) {

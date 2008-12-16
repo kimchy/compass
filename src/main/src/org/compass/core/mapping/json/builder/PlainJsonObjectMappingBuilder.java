@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.json.builder;
 
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
 
 /**
@@ -25,8 +26,12 @@ public class PlainJsonObjectMappingBuilder {
 
     final PlainJsonObjectMapping mapping;
 
-    PlainJsonObjectMappingBuilder(PlainJsonObjectMapping mapping) {
-        this.mapping = mapping;
+    public PlainJsonObjectMappingBuilder(String name) {
+        this.mapping = new PlainJsonObjectMapping();
+        mapping.setName(name);
+        if (name != null) {
+            mapping.setPath(new StaticPropertyPath(name));
+        }
     }
 
     public PlainJsonObjectMappingBuilder dynamic(boolean dynamic) {

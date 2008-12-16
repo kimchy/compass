@@ -32,8 +32,11 @@ public class JsonIdMappingBuilder {
 
     final JsonIdMapping mapping;
 
-    JsonIdMappingBuilder(JsonIdMapping mapping) {
-        this.mapping = mapping;
+    public JsonIdMappingBuilder(String name) {
+        this.mapping = new JsonIdMapping();
+        mapping.setName(name);
+        mapping.setOmitNorms(true);
+        mapping.setOmitTf(true);
     }
 
     public JsonIdMappingBuilder indexName(String indexName) {

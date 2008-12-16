@@ -18,6 +18,7 @@ package org.compass.core.mapping.json.builder;
 
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
 
 /**
@@ -27,8 +28,10 @@ public class JsonAnalyzerMappingBuilder {
 
     final JsonPropertyAnalyzerController mapping;
 
-    JsonAnalyzerMappingBuilder(JsonPropertyAnalyzerController mapping) {
-        this.mapping = mapping;
+    public JsonAnalyzerMappingBuilder(String name) {
+        this.mapping = new JsonPropertyAnalyzerController();
+        mapping.setName(name);
+        mapping.setPath(new StaticPropertyPath(name));
     }
 
     public JsonAnalyzerMappingBuilder nullAnalyzer(String nullAnalyzer) {

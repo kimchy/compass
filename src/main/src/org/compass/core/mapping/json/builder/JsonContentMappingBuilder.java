@@ -18,6 +18,7 @@ package org.compass.core.mapping.json.builder;
 
 import org.compass.core.Property;
 import org.compass.core.converter.Converter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.json.JsonContentMapping;
 
 /**
@@ -27,8 +28,11 @@ public class JsonContentMappingBuilder {
 
     final JsonContentMapping mapping;
 
-    JsonContentMappingBuilder(JsonContentMapping mapping) {
-        this.mapping = mapping;
+    public JsonContentMappingBuilder(String name) {
+        this.mapping = new JsonContentMapping();
+        mapping.setName(name);
+        mapping.setPath(new StaticPropertyPath(name));
+        mapping.setInternal(true);
     }
 
     public JsonContentMappingBuilder store(Property.Store store) {

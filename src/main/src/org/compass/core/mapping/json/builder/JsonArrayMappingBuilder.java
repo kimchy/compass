@@ -26,8 +26,10 @@ public class JsonArrayMappingBuilder {
 
     final JsonArrayMapping mapping;
 
-    JsonArrayMappingBuilder(JsonArrayMapping mapping) {
-        this.mapping = mapping;
+    public JsonArrayMappingBuilder(String name) {
+        this.mapping = new JsonArrayMapping();
+        mapping.setName(name);
+        mapping.setPath(new StaticPropertyPath(name));
     }
 
     public JsonArrayMappingBuilder indexName(String indexName) {

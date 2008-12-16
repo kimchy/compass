@@ -27,8 +27,9 @@ public class JsonBoostMappingBuilder {
 
     final JsonBoostPropertyMapping mapping;
 
-    JsonBoostMappingBuilder(JsonBoostPropertyMapping mapping) {
-        this.mapping = mapping;
+    public JsonBoostMappingBuilder(String name) {
+        this.mapping = new JsonBoostPropertyMapping();
+        mapping.setName(name);
     }
 
     public JsonBoostMappingBuilder defaultBoost(float defaultBoost) {

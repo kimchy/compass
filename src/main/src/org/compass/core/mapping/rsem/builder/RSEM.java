@@ -16,15 +16,6 @@
 
 package org.compass.core.mapping.rsem.builder;
 
-import org.compass.core.engine.naming.StaticPropertyPath;
-import org.compass.core.mapping.internal.DefaultAllMapping;
-import org.compass.core.mapping.internal.DefaultContractMapping;
-import org.compass.core.mapping.rsem.RawBoostPropertyMapping;
-import org.compass.core.mapping.rsem.RawResourceMapping;
-import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
-import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
-import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
-
 /**
  * Static builder allowing to construct RSEM (Resource to Search Engine Mapping)
  * definitions.
@@ -56,50 +47,30 @@ public abstract class RSEM {
     }
 
     public static ResourceContractMappingBuilder contract(String alias) {
-        DefaultContractMapping mapping = new DefaultContractMapping();
-        mapping.setAlias(alias);
-        return new ResourceContractMappingBuilder(mapping);
+        return new ResourceContractMappingBuilder(alias);
     }
 
     public static ResourceMappingBuilder resource(String alias) {
-        RawResourceMapping mapping = new RawResourceMapping();
-        mapping.setAlias(alias);
-        mapping.setRoot(true);
-        return new ResourceMappingBuilder(mapping);
+        return new ResourceMappingBuilder(alias);
     }
 
     public static ResourceIdMappingBuilder id(String name) {
-        RawResourcePropertyIdMapping mapping = new RawResourcePropertyIdMapping();
-        mapping.setName(name);
-        mapping.setPath(new StaticPropertyPath(name));
-        mapping.setOmitNorms(true);
-        mapping.setOmitTf(true);
-        return new ResourceIdMappingBuilder(mapping);
+        return new ResourceIdMappingBuilder(name);
     }
 
     public static ResourcePropertyMappingBuilder property(String name) {
-        RawResourcePropertyMapping mapping = new RawResourcePropertyMapping();
-        mapping.setName(name);
-        mapping.setPath(new StaticPropertyPath(name));
-        return new ResourcePropertyMappingBuilder(mapping);
+        return new ResourcePropertyMappingBuilder(name);
     }
 
     public static ResourceAnalyzerMappingBuilder analyzer(String name) {
-        RawResourcePropertyAnalyzerController mapping = new RawResourcePropertyAnalyzerController();
-        mapping.setName(name);
-        mapping.setPath(new StaticPropertyPath(name));
-        return new ResourceAnalyzerMappingBuilder(mapping);
+        return new ResourceAnalyzerMappingBuilder(name);
     }
 
     public static ResourceBoostMappingBuilder boost(String name) {
-        RawBoostPropertyMapping mapping = new RawBoostPropertyMapping();
-        mapping.setName(name);
-        mapping.setPath(new StaticPropertyPath(name));
-        return new ResourceBoostMappingBuilder(mapping);
+        return new ResourceBoostMappingBuilder(name);
     }
 
     public static ResourceAllMappingBuilder all() {
-        DefaultAllMapping allMapping = new DefaultAllMapping();
-        return new ResourceAllMappingBuilder(allMapping);
+        return new ResourceAllMappingBuilder();
     }
 }

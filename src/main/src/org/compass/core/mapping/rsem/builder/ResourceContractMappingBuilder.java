@@ -27,8 +27,9 @@ public class ResourceContractMappingBuilder implements ContractMappingProvider {
 
     private final DefaultContractMapping mapping;
 
-    ResourceContractMappingBuilder(DefaultContractMapping mapping) {
-        this.mapping = mapping;
+    ResourceContractMappingBuilder(String alias) {
+        this.mapping = new DefaultContractMapping();
+        mapping.setAlias(alias);
     }
 
     public ContractMapping getMapping() {

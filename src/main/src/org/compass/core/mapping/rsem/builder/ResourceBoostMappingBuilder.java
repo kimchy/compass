@@ -18,6 +18,7 @@ package org.compass.core.mapping.rsem.builder;
 
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.rsem.RawBoostPropertyMapping;
 
 /**
@@ -27,8 +28,10 @@ public class ResourceBoostMappingBuilder {
 
     final RawBoostPropertyMapping mapping;
 
-    ResourceBoostMappingBuilder(RawBoostPropertyMapping mapping) {
-        this.mapping = mapping;
+    public ResourceBoostMappingBuilder(String name) {
+        this.mapping = new RawBoostPropertyMapping();
+        mapping.setName(name);
+        mapping.setPath(new StaticPropertyPath(name));
     }
 
     public ResourceBoostMappingBuilder defaultBoost(float defaultBoost) {

@@ -20,6 +20,7 @@ import org.compass.core.Property;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.converter.mapping.support.FormatDelegateConverter;
+import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
@@ -31,8 +32,10 @@ public class ResourcePropertyMappingBuilder {
 
     final RawResourcePropertyMapping mapping;
 
-    ResourcePropertyMappingBuilder(RawResourcePropertyMapping mapping) {
-        this.mapping = mapping;
+    public ResourcePropertyMappingBuilder(String name) {
+        this.mapping = new RawResourcePropertyMapping();
+        mapping.setName(name);
+        mapping.setPath(new StaticPropertyPath(name));
     }
 
     public ResourcePropertyMappingBuilder store(Property.Store store) {
