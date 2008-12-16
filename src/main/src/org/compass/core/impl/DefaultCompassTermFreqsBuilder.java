@@ -105,35 +105,35 @@ public class DefaultCompassTermFreqsBuilder implements CompassTermFreqsBuilder {
         SearchEngineTermFrequencies seTermFreqs = session.getSearchEngine().termFreq(propertyNames, size, internalSearch);
         CompassTermFreq[] termFreqs = seTermFreqs.getTerms();
         if (sort == Sort.TERM) {
-            List list = Arrays.asList(termFreqs);
-            Collections.sort(list, new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    return ((CompassTermFreq) o1).getTerm().compareTo(((CompassTermFreq) o2).getTerm());
+            List<CompassTermFreq> list = Arrays.asList(termFreqs);
+            Collections.sort(list, new Comparator<CompassTermFreq>() {
+                public int compare(CompassTermFreq o1, CompassTermFreq o2) {
+                    return o1.getTerm().compareTo(o2.getTerm());
                 }
             });
-            termFreqs = (CompassTermFreq[]) list.toArray(new CompassTermFreq[list.size()]);
+            termFreqs = list.toArray(new CompassTermFreq[list.size()]);
         }
         if (minNorm != -1 && maxNorm != -1) {
             int min = Integer.MAX_VALUE;
             int max = Integer.MIN_VALUE;
-            for (int i = 0; i < termFreqs.length; i++) {
-                if (termFreqs[i].getFreq() < min) {
-                    min = (int) termFreqs[i].getFreq();
+            for (CompassTermFreq termFreq : termFreqs) {
+                if (termFreq.getFreq() < min) {
+                    min = (int) termFreq.getFreq();
                 }
-                if (termFreqs[i].getFreq() > max) {
-                    max = (int) termFreqs[i].getFreq();
+                if (termFreq.getFreq() > max) {
+                    max = (int) termFreq.getFreq();
                 }
             }
-            for (int i = 0; i < termFreqs.length; i++) {
+            for (CompassTermFreq termFreq : termFreqs) {
                 float freq;
-                if ((int) termFreqs[i].getFreq() == min) {
+                if ((int) termFreq.getFreq() == min) {
                     freq = minNorm;
-                } else if ((int) termFreqs[i].getFreq() == max) {
+                } else if ((int) termFreq.getFreq() == max) {
                     freq = maxNorm;
                 } else {
-                    freq = minNorm + (termFreqs[i].getFreq() - min) / (max - min) * (maxNorm - minNorm);
+                    freq = minNorm + (termFreq.getFreq() - min) / (max - min) * (maxNorm - minNorm);
                 }
-                ((DefaultCompassTermFreq) termFreqs[i]).setFreq(freq);
+                ((DefaultCompassTermFreq) termFreq).setFreq(freq);
             }
         }
         return termFreqs;
