@@ -19,6 +19,11 @@ package org.compass.core.mapping;
 import org.compass.core.util.Parameter;
 
 /**
+ * Specifies if a certain property should be included in the spell check index.
+ *
+ * <p>Note, most times this is not requried to be configured, since by default, the
+ * spell check index uses the "all" property.
+ * 
  * @author kimchy
  */
 public class SpellCheckType extends Parameter {
@@ -27,10 +32,19 @@ public class SpellCheckType extends Parameter {
         super(name);
     }
 
+    /**
+     * Should this property mapping be included in the spell check index.
+     */
     public static final SpellCheckType INCLUDE = new SpellCheckType("INCLUDE");
 
+    /**
+     * Should this proeprty mapping be excluded from the spell check index.
+     */
     public static final SpellCheckType EXCLUDE = new SpellCheckType("EXCLUDE");
 
+    /**
+     * NA. Has no affect on the spell check and will use external properties configuration.
+     */
     public static final SpellCheckType NA = new SpellCheckType("NA");
 
     public static SpellCheckType fromString(String spellCheckType) {

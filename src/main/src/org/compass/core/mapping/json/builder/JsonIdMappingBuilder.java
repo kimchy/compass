@@ -95,18 +95,8 @@ public class JsonIdMappingBuilder {
         return this;
     }
 
-    public JsonIdMappingBuilder analyzer(String analyzer) {
-        mapping.setAnalyzer(analyzer);
-        return this;
-    }
-
     public JsonIdMappingBuilder excludeFromAll(ExcludeFromAllType excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
-        return this;
-    }
-
-    public JsonIdMappingBuilder nullValue(String nullValue) {
-        mapping.setNullValue(nullValue);
         return this;
     }
 

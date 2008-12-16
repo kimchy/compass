@@ -26,14 +26,17 @@ import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
 
 /**
  * A builder allowing to constrcut resource id mapping definition.
- * 
+ *
  * @author kimchy
- * @see RSEM#id(String) 
+ * @see RSEM#id(String)
  */
 public class ResourceIdMappingBuilder {
 
     final RawResourcePropertyIdMapping mapping;
 
+    /**
+     * Constructs a new resource id mapping builder for the specified name.
+     */
     public ResourceIdMappingBuilder(String name) {
         this.mapping = new RawResourcePropertyIdMapping();
         mapping.setName(name);
@@ -42,56 +45,77 @@ public class ResourceIdMappingBuilder {
         mapping.setOmitTf(true);
     }
 
+    /**
+     * If set, omit normalization factors associated with this indexed field.
+     * This effectively disables indexing boosts and length normalization for this field. By
+     * default, it is set for id mapping.
+     */
     public ResourceIdMappingBuilder omitNorms(boolean omitNorms) {
         mapping.setOmitNorms(omitNorms);
         return this;
     }
 
+    /**
+     * If set, omit tf from postings of this indexed property. By default, it is set for
+     * id mapping.
+     */
     public ResourceIdMappingBuilder omitTf(boolean omitTf) {
         mapping.setOmitTf(omitTf);
         return this;
     }
 
+    /**
+     * Sets the boost value for the id property mapping. Defaults to <code>1.0f</code>.
+     */
     public ResourceIdMappingBuilder boost(float boost) {
         mapping.setBoost(boost);
         return this;
     }
 
+    /**
+     * Sets the format that will be used for formattable capable converters (such as numbers and dates).
+     */
     public ResourceIdMappingBuilder format(String format) {
         mapping.setConverter(new FormatDelegateConverter(format));
         return this;
     }
 
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the value
+     * of the property.
+     */
     public ResourceIdMappingBuilder converter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
 
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
     public ResourceIdMappingBuilder converter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }
 
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
     public ResourceIdMappingBuilder converter(ResourcePropertyConverter converter) {
         mapping.setConverter(converter);
         return this;
     }
 
-    public ResourceIdMappingBuilder analyzer(String analyzer) {
-        mapping.setAnalyzer(analyzer);
-        return this;
-    }
-
+    /**
+     * Controls if the id property will be excluded from all or not.
+     */
     public ResourceIdMappingBuilder excludeFromAll(ExcludeFromAllType excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
 
-    public ResourceIdMappingBuilder nullValue(String nullValue) {
-        mapping.setNullValue(nullValue);
-        return this;
-    }
-
+    /**
+     * Sets the spell check specific setting for the mapping.
+     */
     public ResourceIdMappingBuilder spellCheck(SpellCheckType spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;

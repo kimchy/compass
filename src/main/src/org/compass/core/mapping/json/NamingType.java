@@ -23,7 +23,7 @@ import org.compass.core.util.Parameter;
  */
 public final class NamingType extends Parameter {
 
-    NamingType(String name) {
+    private NamingType(String name) {
         super(name);
     }
 

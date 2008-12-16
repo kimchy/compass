@@ -19,18 +19,31 @@ package org.compass.core.mapping;
 import org.compass.core.util.Parameter;
 
 /**
+ * Specifies if a certain property should be excluded from all property or not.
+ *
  * @author kimchy
  */
 public class ExcludeFromAllType extends Parameter {
 
-    public ExcludeFromAllType(String name) {
+    private ExcludeFromAllType(String name) {
         super(name);
     }
 
+    /**
+     * The property will not be excluded from all. If this property is "not_analyzed"
+     * it will be added as is to the all property without being analyzed/tokenized.
+     */
     public static final ExcludeFromAllType NO = new ExcludeFromAllType("NO");
 
+    /**
+     * The property will be exlcuded from all.
+     */
     public static final ExcludeFromAllType YES = new ExcludeFromAllType("YES");
 
+    /**
+     * The property will not be excluded from all. If this property is "not_analyzed"
+     * it will be added as is to the all property after being analyzed.
+     */
     public static final ExcludeFromAllType NO_ANALYZED = new ExcludeFromAllType("NO_ANALYZED");
 
     public static ExcludeFromAllType fromString(String excludeFromAllType) {
