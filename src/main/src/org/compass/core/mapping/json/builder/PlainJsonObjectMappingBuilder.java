@@ -25,7 +25,7 @@ public class PlainJsonObjectMappingBuilder {
 
     final PlainJsonObjectMapping mapping;
 
-    public PlainJsonObjectMappingBuilder(PlainJsonObjectMapping mapping) {
+    PlainJsonObjectMappingBuilder(PlainJsonObjectMapping mapping) {
         this.mapping = mapping;
     }
 

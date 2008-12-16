@@ -31,7 +31,7 @@ public class ResourcePropertyMappingBuilder {
 
     final RawResourcePropertyMapping mapping;
 
-    public ResourcePropertyMappingBuilder(RawResourcePropertyMapping mapping) {
+    ResourcePropertyMappingBuilder(RawResourcePropertyMapping mapping) {
         this.mapping = mapping;
     }
 

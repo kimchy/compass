@@ -32,7 +32,7 @@ public class JsonIdMappingBuilder {
 
     final JsonIdMapping mapping;
 
-    public JsonIdMappingBuilder(JsonIdMapping mapping) {
+    JsonIdMappingBuilder(JsonIdMapping mapping) {
         this.mapping = mapping;
     }
 

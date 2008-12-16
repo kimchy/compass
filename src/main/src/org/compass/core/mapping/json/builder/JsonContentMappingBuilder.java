@@ -27,7 +27,7 @@ public class JsonContentMappingBuilder {
 
     final JsonContentMapping mapping;
 
-    public JsonContentMappingBuilder(JsonContentMapping mapping) {
+    JsonContentMappingBuilder(JsonContentMapping mapping) {
         this.mapping = mapping;
     }
 

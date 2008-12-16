@@ -27,7 +27,7 @@ public class JsonAnalyzerMappingBuilder {
 
     final JsonPropertyAnalyzerController mapping;
 
-    public JsonAnalyzerMappingBuilder(JsonPropertyAnalyzerController mapping) {
+    JsonAnalyzerMappingBuilder(JsonPropertyAnalyzerController mapping) {
         this.mapping = mapping;
     }
 

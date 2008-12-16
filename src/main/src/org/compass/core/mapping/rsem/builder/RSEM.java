@@ -26,6 +26,27 @@ import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
 import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
 
 /**
+ * Static builder allowing to construct RSEM (Resource to Search Engine Mapping)
+ * definitions.
+ *
+ * <p>Here is an exmaple how it can be used:
+ *
+ * <p><pre>
+ * import static org.compass.core.mapping.rsem.builder.RSEM.*;
+ *
+ *
+ * conf.addResourceMapping(
+ *          resource("a")
+ *              .add(id("id"))
+ *              .add(property("value1"))
+ *              .add(property("value2").store(Property.Store.YES).index(Property.Index.ANALYZED))
+ *              .add(property("value3").store(Property.Store.COMPRESS).index(Property.Index.ANALYZED))
+ *              .add(property("value4").store(Property.Store.YES).index(Property.Index.NOT_ANALYZED))
+ *              .add(property("value5").store(Property.Store.YES).index(Property.Index.ANALYZED).converter("mydate"))
+ *              .add(property("value6"))
+ * );
+ * </pre>
+ *
  * @author kimchy
  */
 public abstract class RSEM {

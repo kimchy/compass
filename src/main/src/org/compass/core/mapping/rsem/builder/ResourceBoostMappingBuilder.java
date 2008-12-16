@@ -27,7 +27,7 @@ public class ResourceBoostMappingBuilder {
 
     final RawBoostPropertyMapping mapping;
 
-    public ResourceBoostMappingBuilder(RawBoostPropertyMapping mapping) {
+    ResourceBoostMappingBuilder(RawBoostPropertyMapping mapping) {
         this.mapping = mapping;
     }
 

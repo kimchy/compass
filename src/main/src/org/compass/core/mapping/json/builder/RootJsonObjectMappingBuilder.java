@@ -30,7 +30,7 @@ public class RootJsonObjectMappingBuilder implements ResourceMappingProvider {
 
     private final RootJsonObjectMapping mapping;
 
-    public RootJsonObjectMappingBuilder(RootJsonObjectMapping mapping) {
+    RootJsonObjectMappingBuilder(RootJsonObjectMapping mapping) {
         this.mapping = mapping;
     }
 

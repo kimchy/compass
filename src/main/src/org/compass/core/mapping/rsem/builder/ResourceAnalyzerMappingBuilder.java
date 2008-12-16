@@ -27,7 +27,7 @@ public class ResourceAnalyzerMappingBuilder {
 
     final RawResourcePropertyAnalyzerController mapping;
 
-    public ResourceAnalyzerMappingBuilder(RawResourcePropertyAnalyzerController mapping) {
+    ResourceAnalyzerMappingBuilder(RawResourcePropertyAnalyzerController mapping) {
         this.mapping = mapping;
     }
 

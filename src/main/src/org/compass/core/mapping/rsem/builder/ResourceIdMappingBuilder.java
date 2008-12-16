@@ -30,7 +30,7 @@ public class ResourceIdMappingBuilder {
 
     final RawResourcePropertyIdMapping mapping;
 
-    public ResourceIdMappingBuilder(RawResourcePropertyIdMapping mapping) {
+    ResourceIdMappingBuilder(RawResourcePropertyIdMapping mapping) {
         this.mapping = mapping;
     }
 

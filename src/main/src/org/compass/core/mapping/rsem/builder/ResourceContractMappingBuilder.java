@@ -27,7 +27,7 @@ public class ResourceContractMappingBuilder implements ContractMappingProvider {
 
     private final DefaultContractMapping mapping;
 
-    public ResourceContractMappingBuilder(DefaultContractMapping mapping) {
+    ResourceContractMappingBuilder(DefaultContractMapping mapping) {
         this.mapping = mapping;
     }
 

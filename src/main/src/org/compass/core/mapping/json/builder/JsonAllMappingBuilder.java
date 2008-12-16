@@ -27,7 +27,7 @@ public class JsonAllMappingBuilder {
 
     final DefaultAllMapping mapping;
 
-    public JsonAllMappingBuilder(DefaultAllMapping mapping) {
+    JsonAllMappingBuilder(DefaultAllMapping mapping) {
         this.mapping = mapping;
     }
 

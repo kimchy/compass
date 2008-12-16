@@ -27,7 +27,7 @@ public class JsonBoostMappingBuilder {
 
     final JsonBoostPropertyMapping mapping;
 
-    public JsonBoostMappingBuilder(JsonBoostPropertyMapping mapping) {
+    JsonBoostMappingBuilder(JsonBoostPropertyMapping mapping) {
         this.mapping = mapping;
     }
 

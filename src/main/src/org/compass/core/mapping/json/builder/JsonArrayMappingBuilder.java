@@ -26,7 +26,7 @@ public class JsonArrayMappingBuilder {
 
     final JsonArrayMapping mapping;
 
-    public JsonArrayMappingBuilder(JsonArrayMapping mapping) {
+    JsonArrayMappingBuilder(JsonArrayMapping mapping) {
         this.mapping = mapping;
     }
 

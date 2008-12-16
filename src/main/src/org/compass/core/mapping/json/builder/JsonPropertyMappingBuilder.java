@@ -33,7 +33,7 @@ public class JsonPropertyMappingBuilder {
 
     final JsonPropertyMapping mapping;
 
-    public JsonPropertyMappingBuilder(JsonPropertyMapping mapping) {
+    JsonPropertyMappingBuilder(JsonPropertyMapping mapping) {
         this.mapping = mapping;
     }
 

@@ -24,13 +24,16 @@ import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 
 /**
+ * A builder allowing to constrcut resource mapping definition.
+ *
  * @author kimchy
+ * @see RSEM#resource(String)
  */
 public class ResourceMappingBuilder implements ResourceMappingProvider {
 
     private final RawResourceMapping mapping;
 
-    public ResourceMappingBuilder(RawResourceMapping mapping) {
+    ResourceMappingBuilder(RawResourceMapping mapping) {
         this.mapping = mapping;
     }
 
