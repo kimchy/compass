@@ -50,6 +50,10 @@ public abstract class RSEM {
         return new ResourceContractMappingBuilder(alias);
     }
 
+    /**
+     * Constructs a new resource based mapping for the specific alias. Note, at least one
+     * id mapping must be added to the resource mapping.
+     */
     public static ResourceMappingBuilder resource(String alias) {
         return new ResourceMappingBuilder(alias);
     }
