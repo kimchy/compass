@@ -19,13 +19,13 @@ public class SimpleJsonArrayBuilderTests extends SimpleJsonArrayTests {
                 json("a")
                         .add(id("id"))
                         .add(property("value"))
-                        .add(array("arr").set(property().valueConverter("int")))
+                        .add(array("arr").element(property().valueConverter("int")))
         );
         conf.addResourceMapping(
                 json("b")
                         .add(id("id"))
                         .add(property("value"))
-                        .add(array("arr").indexName("xarr").set(property().valueConverter("int")))
+                        .add(array("arr").indexName("xarr").element(property().valueConverter("int")))
         );
         conf.addResourceMapping(
                 json("c")

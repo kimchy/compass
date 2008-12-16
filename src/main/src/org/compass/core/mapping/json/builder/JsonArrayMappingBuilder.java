@@ -40,7 +40,7 @@ public class JsonArrayMappingBuilder {
         return this;
     }
 
-    public JsonArrayMappingBuilder set(JsonPropertyMappingBuilder builder) {
+    public JsonArrayMappingBuilder element(JsonPropertyMappingBuilder builder) {
         if (builder.mapping.getName() == null) {
             builder.mapping.setName(mapping.getName());
         }

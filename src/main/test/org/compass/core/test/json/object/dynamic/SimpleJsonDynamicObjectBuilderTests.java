@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.test.json.indexname;
+package org.compass.core.test.json.object.dynamic;
 
 import org.compass.core.config.CompassConfiguration;
 import static org.compass.core.mapping.json.builder.JSEM.*;
@@ -22,8 +22,9 @@ import static org.compass.core.mapping.json.builder.JSEM.*;
 /**
  * @author kimchy
  */
-public class SimpleJsonIndexNameBuilderTests extends SimpleJsonIndexNameTests {
+public class SimpleJsonDynamicObjectBuilderTests extends SimpleJsonDynamicObjectTests {
 
+    @Override
     protected String[] getMappings() {
         return new String[0];
     }
@@ -33,8 +34,12 @@ public class SimpleJsonIndexNameBuilderTests extends SimpleJsonIndexNameTests {
         conf.addResourceMapping(
                 json("a")
                         .add(id("id"))
-                        .add(property("value").indexName("ivalue"))
-                        .add(array("arr").indexName("iarr").element(property().valueConverter("int")))
+                        .add(property("value"))
+                        .add(object("obj").dynamic(true))
+        );
+        conf.addResourceMapping(
+                json("b").dynamic(true)
+                        .add(id("id"))
         );
     }
 }
