@@ -5,7 +5,6 @@
 	<classpathentry kind="src" output="target/sandbox/classes" path="src/sandbox/src"/>
 	<classpathentry kind="src" output="target/sandbox/test-classes" path="src/sandbox/test"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate2.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant-junit.jar"/>
@@ -27,7 +26,6 @@
 	<classpathentry kind="lib" path="lib/j2ee/connector.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/activation.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-taglibs/standard.jar"/>
-	<classpathentry kind="lib" path="lib/jdo/jdo2.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-pool.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang.jar"/>
@@ -39,13 +37,8 @@
 	<classpathentry kind="lib" path="lib/jotm/jotm-jrmp-stub.jar"/>
 	<classpathentry kind="lib" path="lib/jotm/jotm-carol.jar"/>
 	<classpathentry kind="lib" path="lib/jotm/jotm.jar"/>
-	<classpathentry kind="lib" path="lib/jpox/jpox-enhancer.jar"/>
-	<classpathentry kind="lib" path="lib/jpox/jpox.jar"/>
-	<classpathentry kind="lib" path="lib/jpox/bcel-5.1.jar"/>
 	<classpathentry kind="lib" path="lib/junit/junit.jar"/>
 	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="lib/ojb/db-ojb-1.0.4.jar"/>
-	<classpathentry kind="lib" path="lib/odmg/odmg-3.0.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/jboss-archive-browsing.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/javassist.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate-entitymanager.jar"/>
@@ -56,8 +49,6 @@
 	<classpathentry kind="lib" path="lib/lucene/lucene-core.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-analyzers.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-hibernate2.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring-jdo.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring-ojb.jar"/>
 	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials-agent.jar"/>
@@ -75,7 +66,6 @@
 	<classpathentry kind="lib" path="lib/lucene/lucene-queries.jar"/>
 	<classpathentry kind="lib" path="lib/openjpa/serp-1.13.1.jar"/>
 	<classpathentry kind="lib" path="lib/coherence/coherence.jar"/>
-	<classpathentry kind="lib" path="lib/coherence/tangosol.jar"/>
 	<classpathentry kind="lib" path="lib/eclipselink/eclipselink.jar"/>
 	<classpathentry kind="lib" path="lib/gigaspaces/gs-boot.jar"/>
 	<classpathentry kind="lib" path="lib/gigaspaces/gs-lib.jar"/>
