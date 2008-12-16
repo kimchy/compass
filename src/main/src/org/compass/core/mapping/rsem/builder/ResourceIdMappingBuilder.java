@@ -25,7 +25,10 @@ import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.rsem.RawResourcePropertyIdMapping;
 
 /**
+ * A builder allowing to constrcut resource id mapping definition.
+ * 
  * @author kimchy
+ * @see RSEM#id(String) 
  */
 public class ResourceIdMappingBuilder {
 

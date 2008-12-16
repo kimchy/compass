@@ -58,22 +58,42 @@ public abstract class RSEM {
         return new ResourceMappingBuilder(alias);
     }
 
+    /**
+     * Constructs a new resource id mapping using the specified name. Can then be added
+     * to a resource mapping builder using {@link ResourceMappingBuilder#add(ResourceIdMappingBuilder)}.
+     */
     public static ResourceIdMappingBuilder id(String name) {
         return new ResourceIdMappingBuilder(name);
     }
 
+    /**
+     * Constructs a new resource property mapping using the specified name. Can then be added
+     * to a resource mapping builder using {@link ResourceMappingBuilder#add(ResourcePropertyMappingBuilder)}.
+     */
     public static ResourcePropertyMappingBuilder property(String name) {
         return new ResourcePropertyMappingBuilder(name);
     }
 
+    /**
+     * Constructs a new resource analyzer property mapping using the specified name. Can then be added
+     * to a resource mapping builder using {@link ResourceMappingBuilder#add(ResourceAnalyzerMappingBuilder)}.
+     */
     public static ResourceAnalyzerMappingBuilder analyzer(String name) {
         return new ResourceAnalyzerMappingBuilder(name);
     }
 
+    /**
+     * Constructs a new resource boost property mapping using the specified name. Can then be added
+     * to a resource mapping builder using {@link ResourceMappingBuilder#add(ResourceBoostMappingBuilder)}.
+     */
     public static ResourceBoostMappingBuilder boost(String name) {
         return new ResourceBoostMappingBuilder(name);
     }
 
+    /**
+     * Constructs a new all mapping definition that can be added to a resource mapping builder using
+     * {@link ResourceMappingBuilder#all(ResourceAllMappingBuilder)}.
+     */
     public static ResourceAllMappingBuilder all() {
         return new ResourceAllMappingBuilder();
     }
