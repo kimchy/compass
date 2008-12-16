@@ -42,60 +42,105 @@ public class ResourceMappingBuilder implements ResourceMappingProvider {
         mapping.setRoot(true);
     }
 
+    /**
+     * Returns the mapping constructed. Used in {@link org.compass.core.config.CompassConfiguration#addResourceMapping(org.compass.core.mapping.ResourceMappingProvider)}.
+     */
     public ResourceMapping getMapping() {
         return mapping;
     }
 
+    /**
+     * Sets a sub index that will be used for this resource. Basically uses
+     * {@link org.compass.core.engine.subindex.ConstantSubIndexHash}.
+     */
     public ResourceMappingBuilder subIndex(String subIndex) {
         mapping.setSubIndexHash(new ConstantSubIndexHash(subIndex));
         return this;
     }
 
+    /**
+     * Sets a custom sub index hashing strategy for the resource mapping.
+     */
     public ResourceMappingBuilder subIndex(SubIndexHash subIndexHash) {
         mapping.setSubIndexHash(subIndexHash);
         return this;
     }
 
+    /**
+     * Sets the list of other resource/contract mappings that this mapping will extend and inherit
+     * internal mappings from.
+     */
     public ResourceMappingBuilder extendsAliases(String... extendedAliases) {
         mapping.setExtendedAliases(extendedAliases);
         return this;
     }
 
+    /**
+     * Sets the spell check mode that will be used for this resource mapping (and for all the
+     * internal mappings that do not explicitly set their own spell check mode). If not set
+     * will use the global spell check setting.
+     */
     public ResourceMappingBuilder spellCheck(SpellCheckType spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }
 
+    /**
+     * The name of the analyzer that will be used to analyze ANALYZED properties. Defaults to the default analyzer
+     * which is one of the internal analyzers that comes with Compass. If not set, will use the <code>default</code>
+     * analyzer.
+     *
+     * <p>Note, that when using the resource-analyzer mapping (a child mapping of resource mapping)
+     * (for a resource property value that controls the analyzer), the analyzer attribute will have no effects.
+     */
     public ResourceMappingBuilder analyzer(String analyzer) {
         mapping.setAnalyzer(analyzer);
         return this;
     }
 
+    /**
+     * Sets the boost value for the resource.
+     */
     public ResourceMappingBuilder boost(float boost) {
         mapping.setBoost(boost);
         return this;
     }
 
+    /**
+     * Sets the "all" level mapping definition.
+     */
     public ResourceMappingBuilder all(ResourceAllMappingBuilder allMappingBuilder) {
         mapping.setAllMapping(allMappingBuilder.mapping);
         return this;
     }
 
+    /**
+     * Adds a resource id mapping definition.
+     */
     public ResourceMappingBuilder add(ResourceIdMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
+    /**
+     * Adds a resource property mapping definition.
+     */
     public ResourceMappingBuilder add(ResourcePropertyMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
+    /**
+     * Adds a resource analyzer property mapping definition.
+     */
     public ResourceMappingBuilder add(ResourceAnalyzerMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
+    /**
+     * Adds a resource boost property mapping definition.
+     */
     public ResourceMappingBuilder add(ResourceBoostMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
