@@ -827,7 +827,6 @@
     <library name="spring">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/spring/spring.jar!/" />
-        <root url="jar://$PROJECT_DIR$/lib/spring/spring-hibernate2.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/spring/spring-webmvc.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/spring/spring-test.jar!/" />
       </CLASSES>

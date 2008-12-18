@@ -48,7 +48,6 @@
 	<classpathentry kind="lib" path="lib/lucene/lucene-highlighter.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-core.jar"/>
 	<classpathentry kind="lib" path="lib/lucene/lucene-analyzers.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring-hibernate2.jar"/>
 	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials.jar"/>
 	<classpathentry kind="lib" path="lib/toplink/toplink-essentials-agent.jar"/>
