@@ -47,6 +47,9 @@ public class SpellCheckType extends Parameter {
      */
     public static final SpellCheckType NA = new SpellCheckType("NA");
 
+    /**
+     * Converts to spell check type from a String.
+     */
     public static SpellCheckType fromString(String spellCheckType) {
         if ("include".equalsIgnoreCase(spellCheckType)) {
             return SpellCheckType.INCLUDE;
@@ -58,6 +61,9 @@ public class SpellCheckType extends Parameter {
         throw new IllegalArgumentException("Can't find spell check type for [" + spellCheckType + "]");
     }
 
+    /**
+     * Converts the spell check type to a String.
+     */
     public static String toString(SpellCheckType spellCheckType) {
         if (spellCheckType == INCLUDE) {
             return "include";
