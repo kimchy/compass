@@ -101,6 +101,35 @@
 ]]></programlisting>
 
       </para>
+      
+      <para>
+          Last, here is the same example using programmatic configuration:
+          
+<programlisting><![CDATA[
+import static org.compass.core.mapping.rsem.builder.RSEM.*;    
+    
+    
+CompassConfiguration conf = new CompassConfiguration();
+conf.addResourceMapping(
+    resource("a")
+        .add(id("id"))
+);
+conf.addResourceMapping(
+    resource("b")
+        .add(id("id1"))
+        .add(id("id2"))
+);
+conf.addResourceMapping(
+    resource("c")
+        .add(id("id1"))
+        .add(property("value1"))
+        .add(property("value2").store(Property.Store.YES).index(Property.Index.ANALYZED))
+        .add(property("value3").store(Property.Store.COMPRESS).index(Property.Index.ANALYZED))
+        .add(property("value4").store(Property.Store.YES).index(Property.Index.NOT_ANALYZED))
+        .add(property("value5").store(Property.Store.YES).index(Property.Index.NO).converter("my-date"))
+);
+]]></programlisting>
+      </para>
 
       <para>
         Now that the Resource Mapping has been declared, you can create the Resource in the application. In the following code example the Resource is created with an alias and id property matching the Resource Mapping declaration.
