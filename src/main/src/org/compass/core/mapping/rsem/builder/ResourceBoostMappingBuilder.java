@@ -22,33 +22,52 @@ import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.rsem.RawBoostPropertyMapping;
 
 /**
+ * Allows to dynamically define the boost value of the resource based on a resource property value.
+ *
  * @author kimchy
  */
 public class ResourceBoostMappingBuilder {
 
     final RawBoostPropertyMapping mapping;
 
+    /**
+     * Constructs a new boost resource property mapping.
+     */
     public ResourceBoostMappingBuilder(String name) {
         this.mapping = new RawBoostPropertyMapping();
         mapping.setName(name);
         mapping.setPath(new StaticPropertyPath(name));
     }
 
+    /**
+     * The default boost value that will be used of the resrouce property to be used
+     * has <code>null</code> value. Defaults to <code>1.0f</code>.
+     */
     public ResourceBoostMappingBuilder defaultBoost(float defaultBoost) {
         mapping.setDefaultBoost(defaultBoost);
         return this;
     }
 
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the value
+     * of the property.
+     */
     public ResourceBoostMappingBuilder converter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
 
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
     public ResourceBoostMappingBuilder converter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }
 
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
     public ResourceBoostMappingBuilder converter(ResourcePropertyConverter converter) {
         mapping.setConverter(converter);
         return this;

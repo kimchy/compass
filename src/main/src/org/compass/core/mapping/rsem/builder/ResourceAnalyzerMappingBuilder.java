@@ -22,33 +22,54 @@ import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 
 /**
+ * A builder allowing to construct a resource analyzer property mapping. Resource analyzer property mapping
+ * allows to dynamically define the analyzer that will be used to analyzer the resource (properties that are
+ * specificed as analyzed). The value of the analyzer property will be used to lookup a registered analyzer
+ * within Compass. If no analyzer is found, the {@link #nullAnalyzer(String)} will be used (if specified).
+ *
  * @author kimchy
  */
 public class ResourceAnalyzerMappingBuilder {
 
     final RawResourcePropertyAnalyzerController mapping;
 
+    /**
+     * Constructs a new resource analyzer property using the provided name.
+     */
     public ResourceAnalyzerMappingBuilder(String name) {
         this.mapping = new RawResourcePropertyAnalyzerController();
         mapping.setName(name);
         mapping.setPath(new StaticPropertyPath(name));
     }
 
+    /**
+     * The name of the analyzer that will be used if the property has the null value.
+     */
     public ResourceAnalyzerMappingBuilder nullAnalyzer(String nullAnalyzer) {
         mapping.setNullAnalyzer(nullAnalyzer);
         return this;
     }
 
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the value
+     * of the property.
+     */
     public ResourceAnalyzerMappingBuilder converter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
 
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
     public ResourceAnalyzerMappingBuilder converter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }
 
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
     public ResourceAnalyzerMappingBuilder converter(ResourcePropertyConverter converter) {
         mapping.setConverter(converter);
         return this;
