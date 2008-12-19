@@ -31,7 +31,7 @@ public class SimpleJsonArrayBuilderTests extends SimpleJsonArrayTests {
                 json("c")
                         .add(id("id"))
                         .add(property("value"))
-                        .add(array("arr").set(object().add(property("arr-value"))))
+                        .add(array("arr").element(object().add(property("arr-value"))))
         );
     }
 }

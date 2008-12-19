@@ -53,7 +53,7 @@ public class JsonArrayMappingBuilder {
         return this;
     }
 
-    public JsonArrayMappingBuilder set(PlainJsonObjectMappingBuilder builder) {
+    public JsonArrayMappingBuilder element(JsonObjectMappingBuilder builder) {
         if (builder.mapping.getName() == null) {
             builder.mapping.setName(mapping.getName());
         }
@@ -64,7 +64,7 @@ public class JsonArrayMappingBuilder {
         return this;
     }
 
-    public JsonArrayMappingBuilder set(JsonArrayMappingBuilder builder) {
+    public JsonArrayMappingBuilder element(JsonArrayMappingBuilder builder) {
         if (builder.mapping.getName() == null) {
             builder.mapping.setName(mapping.getName());
         }

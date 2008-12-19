@@ -22,11 +22,11 @@ import org.compass.core.mapping.json.PlainJsonObjectMapping;
 /**
  * @author kimchy
  */
-public class PlainJsonObjectMappingBuilder {
+public class JsonObjectMappingBuilder {
 
     final PlainJsonObjectMapping mapping;
 
-    public PlainJsonObjectMappingBuilder(String name) {
+    public JsonObjectMappingBuilder(String name) {
         this.mapping = new PlainJsonObjectMapping();
         mapping.setName(name);
         if (name != null) {
@@ -34,22 +34,22 @@ public class PlainJsonObjectMappingBuilder {
         }
     }
 
-    public PlainJsonObjectMappingBuilder dynamic(boolean dynamic) {
+    public JsonObjectMappingBuilder dynamic(boolean dynamic) {
         mapping.setDynamic(dynamic);
         return this;
     }
 
-    public PlainJsonObjectMappingBuilder add(JsonPropertyMappingBuilder builder) {
+    public JsonObjectMappingBuilder add(JsonPropertyMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
-    public PlainJsonObjectMappingBuilder add(PlainJsonObjectMappingBuilder builder) {
+    public JsonObjectMappingBuilder add(JsonObjectMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
-    public PlainJsonObjectMappingBuilder add(JsonArrayMappingBuilder builder) {
+    public JsonObjectMappingBuilder add(JsonArrayMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }

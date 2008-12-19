@@ -26,11 +26,11 @@ import org.compass.core.mapping.json.RootJsonObjectMapping;
 /**
  * @author kimchy
  */
-public class RootJsonObjectMappingBuilder implements ResourceMappingProvider {
+public class JsonMappingBuilder implements ResourceMappingProvider {
 
     private final RootJsonObjectMapping mapping;
 
-    public RootJsonObjectMappingBuilder(String alias) {
+    public JsonMappingBuilder(String alias) {
         this.mapping = new RootJsonObjectMapping();
         mapping.setRoot(true);
         mapping.setAlias(alias);
@@ -40,77 +40,77 @@ public class RootJsonObjectMappingBuilder implements ResourceMappingProvider {
         return mapping;
     }
 
-    public RootJsonObjectMappingBuilder subIndex(String subIndex) {
+    public JsonMappingBuilder subIndex(String subIndex) {
         mapping.setSubIndexHash(new ConstantSubIndexHash(subIndex));
         return this;
     }
 
-    public RootJsonObjectMappingBuilder subIndex(SubIndexHash subIndexHash) {
+    public JsonMappingBuilder subIndex(SubIndexHash subIndexHash) {
         mapping.setSubIndexHash(subIndexHash);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder extendsAliases(String... extendedAliases) {
+    public JsonMappingBuilder extendsAliases(String... extendedAliases) {
         mapping.setExtendedAliases(extendedAliases);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public JsonMappingBuilder spellCheck(SpellCheckType spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder analyzer(String analyzer) {
+    public JsonMappingBuilder analyzer(String analyzer) {
         mapping.setAnalyzer(analyzer);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder boost(float boost) {
+    public JsonMappingBuilder boost(float boost) {
         mapping.setBoost(boost);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder dynamic(boolean dynamic) {
+    public JsonMappingBuilder dynamic(boolean dynamic) {
         mapping.setDynamic(dynamic);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder all(JsonAllMappingBuilder allMappingBuilder) {
+    public JsonMappingBuilder all(JsonAllMappingBuilder allMappingBuilder) {
         mapping.setAllMapping(allMappingBuilder.mapping);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder add(JsonAnalyzerMappingBuilder builder) {
+    public JsonMappingBuilder add(JsonAnalyzerMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder add(JsonBoostMappingBuilder builder) {
+    public JsonMappingBuilder add(JsonBoostMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder add(JsonIdMappingBuilder builder) {
+    public JsonMappingBuilder add(JsonIdMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder add(JsonPropertyMappingBuilder builder) {
+    public JsonMappingBuilder add(JsonPropertyMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder add(JsonContentMappingBuilder builder) {
+    public JsonMappingBuilder add(JsonContentMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder add(PlainJsonObjectMappingBuilder builder) {
+    public JsonMappingBuilder add(JsonObjectMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
-    public RootJsonObjectMappingBuilder add(JsonArrayMappingBuilder builder) {
+    public JsonMappingBuilder add(JsonArrayMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
