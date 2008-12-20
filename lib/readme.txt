@@ -30,11 +30,6 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 - required for running PetClinic (by Hibernate)
 
-* hibernate/hibernate2.jar
-- Hibernate 2.1.8 (http://www.hibernate.org)
-- required for building compass
-- required at runtime when using Compass's Hibernate 2.1 support
-
 * hibernate/hibernate3.jar
 - Hibernate 3.2.6 GA (http://www.hibernate.org)
 - required for building compass
@@ -154,11 +149,6 @@ distribution/website before using any of them in your own applications.
 - Jaxen XPath engine (http://jaxen.codehaus.org/)
 - required when using dom4j/... for xpath processing
 
-* jdo/jdo2.jar
-- JDO API 2.0 (http://www.jpox.org, corresponding to JPOX 1.1.0)
-- required for building compass
-- required at runtime when using Compass's JDO support
-
 * jotm/jotm.jar
 - JOTM 1.5.3 (http://jotm.objectweb.org)
 - required for building compass
@@ -192,33 +182,24 @@ distribution/website before using any of them in your own applications.
 - required for building compass
 
 * lucene/lucene-analyzers.jar
-- Lucene 2.2 (http://lucene.apache.org)
+- Lucene 2.4 (http://lucene.apache.org)
 - required for building compass
 - required at runtime if using extended analyzers
 
 * lucene/lucene-core.jar
-- Lucene 2.2 (http://lucene.apache.org)
+- Lucene 2.4 (http://lucene.apache.org)
 - required for building compass
 - required at runtime
 
 * lucene/lucene-highlighter.jar
-- Lucene 2.2 (http://lucene.apache.org)
+- Lucene 2.4 (http://lucene.apache.org)
 - required for building compass
 - required at runtime if using highlighter features
 
 * lucene/lucene-snowball.jar
-- Lucene 2.2 (http://lucene.apache.org)
+- Lucene 2.4 (http://lucene.apache.org)
 - required for building compass
 - required at runtime if using the snowball analyzer features
-
-* odmg/odmg-3.0.jar
-- ObjectManagementGroup 3.0 (http://odmg.org)
-- required at runtime when using Compass's OJB support
-
-* ojb/db-ojb-1.0.4.jar
-- Apache ObJectRelationalBridge 1.0.4 (http://db.apache.org/ojb)
-- required for building compass
-- required at runtime when using Compass's OJB support
 
 * ognl/ognl-2.6.5.jar
 - OpenSymphony Ognl (http://www.opensymphony.com/ognl)
@@ -226,7 +207,7 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using dynamic meta data with ognl
 
 * spring/spring.jar (and spring-*.jar)
-- Spring Framework 2.0.5 (http://www.springframework.org)
+- Spring Framework 2.5.6 (http://www.springframework.org)
 - required for building compass
 - required at runtime when using Compass's Spring support
 
@@ -241,7 +222,7 @@ distribution/website before using any of them in your own applications.
 - required at runtime when using Compass Gps JPA support with Toplink Essentials
 
 * eclipselink/eclipselink
-- Eclipselink Reference implementation of JPA 1.0 M3
+- Eclipselink Reference implementation of JPA 1.0
 - required for building compass
 - required at runtime when using Compass Gps JPA support with EclipseLink
 
@@ -255,5 +236,5 @@ distribution/website before using any of them in your own applications.
 
 * gigaspaces/*
 
-- GigaSpaces Community edition (http://www.gigaspaces.com) version 6.0.2
+- GigaSpaces Community edition (http://www.gigaspaces.com) version 6.6.2
 - required for building compass
