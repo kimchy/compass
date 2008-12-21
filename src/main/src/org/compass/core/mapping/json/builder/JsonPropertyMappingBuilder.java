@@ -27,13 +27,20 @@ import org.compass.core.mapping.json.JsonPropertyMapping;
 import org.compass.core.mapping.json.NamingType;
 
 /**
+ * A builder allowing to constrcut json property mapping definition.
+ *
  * @author kimchy
+ * @see JSEM#property(String)
  */
 public class JsonPropertyMappingBuilder {
 
     final JsonPropertyMapping mapping;
 
-    JsonPropertyMappingBuilder(String name) {
+    /**
+     * Constructs a new jsonJSON property mapping with the given name. The name can be
+     * <code>null</code> when used with array mapping.
+     */
+    public JsonPropertyMappingBuilder(String name) {
         this.mapping = new JsonPropertyMapping();
         mapping.setName(name);
         if (name != null) {
@@ -41,92 +48,160 @@ public class JsonPropertyMappingBuilder {
         }
     }
 
+    /**
+     * The name of the resource property that will be stored in the index. Defaults to the element name.
+     */
     public JsonPropertyMappingBuilder indexName(String indexName) {
         mapping.setPath(new StaticPropertyPath(indexName));
         return this;
     }
 
+    /**
+     * Controls the resource property name that will be used. Default to {@link NamingType#PLAIN} which means
+     * that only the element name / index name will be stored. If {@link NamingType#FULL} is set, will use the full
+     * path (element1.element2.) to be stored in as the property name.
+     */
     public JsonPropertyMappingBuilder namingType(NamingType namingType) {
         mapping.setNamingType(namingType);
         return this;
     }
 
+    /**
+     * Specifies whether and how a property will be stored. Deftauls to
+     * {@link org.compass.core.Property.Store#YES}.
+     */
     public JsonPropertyMappingBuilder store(Property.Store store) {
         mapping.setStore(store);
         return this;
     }
 
+    /**
+     * Specifies whether and how a property should be indexed. Defaults to
+     * {@link org.compass.core.Property.Index#ANALYZED}.
+     */
     public JsonPropertyMappingBuilder index(Property.Index index) {
         mapping.setIndex(index);
         return this;
     }
 
+    /**
+     * Specifies whether and how a property should have term vectors. Defaults to
+     * {@link org.compass.core.Property.TermVector#NO}.
+     */
     public JsonPropertyMappingBuilder termVector(Property.TermVector termVector) {
         mapping.setTermVector(termVector);
         return this;
     }
 
+    /**
+     * If set, omit normalization factors associated with this indexed field.
+     * This effectively disables indexing boosts and length normalization for this field. Defaults
+     * to <code>false</code>.
+     */
     public JsonPropertyMappingBuilder omitNorms(boolean omitNorms) {
         mapping.setOmitNorms(omitNorms);
         return this;
     }
 
+    /**
+     * If set, omit tf from postings of this indexed property. Defaults to <code>false</code>.
+     */
     public JsonPropertyMappingBuilder omitTf(boolean omitTf) {
         mapping.setOmitTf(omitTf);
         return this;
     }
 
+    /**
+     * Sets the boost value for the property mapping. Defaults to <code>1.0f</code>.
+     */
     public JsonPropertyMappingBuilder boost(float boost) {
         mapping.setBoost(boost);
         return this;
     }
 
+    /**
+     * Sets the format that will be used for formattable capable converters (such as numbers and dates).
+     */
     public JsonPropertyMappingBuilder format(String format) {
         mapping.setValueConverter(new FormatDelegateConverter(format));
         mapping.setFormat(format);
         return this;
     }
 
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the JSON
+     * property. Defaults to {@link org.compass.core.converter.mapping.json.JsonPropertyMappingConverter}.
+     */
     public JsonPropertyMappingBuilder converter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
 
+    /**
+     * Sets the actual converter that will be used to convert the JSON
+     * property. Defaults to {@link org.compass.core.converter.mapping.json.JsonPropertyMappingConverter}.
+     */
     public JsonPropertyMappingBuilder converter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }
 
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
+     */
     public JsonPropertyMappingBuilder valueConverter(String converterName) {
         mapping.setValueConverterName(converterName);
         return this;
     }
 
+    /**
+     * Sets the actual converter that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
+     */
     public JsonPropertyMappingBuilder valueConverter(Converter converter) {
         mapping.setValueConverter(converter);
         return this;
     }
 
+    /**
+     * Sets the actual converter that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
+     */
     public JsonPropertyMappingBuilder valueConverter(ResourcePropertyConverter converter) {
         mapping.setValueConverter(converter);
         return this;
     }
 
+    /**
+     * Sets the analyzer logical name that will be used to analyzer the property value. The name
+     * is a lookup name for an Analyzer that is registered with Compass.
+     */
     public JsonPropertyMappingBuilder analyzer(String analyzer) {
         mapping.setAnalyzer(analyzer);
         return this;
     }
 
+    /**
+     * Controls if the property will be excluded from all or not.
+     */
     public JsonPropertyMappingBuilder excludeFromAll(ExcludeFromAllType excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
 
+    /**
+     * Sets the null value of the property. If the property value is null, will store in the
+     * index the provided value.
+     */
     public JsonPropertyMappingBuilder nullValue(String nullValue) {
         mapping.setNullValue(nullValue);
         return this;
     }
 
+    /**
+     * Sets the spell check specific setting for the mapping.
+     */
     public JsonPropertyMappingBuilder spellCheck(SpellCheckType spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;

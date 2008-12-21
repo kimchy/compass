@@ -90,7 +90,7 @@ public class ResourcePropertyMappingBuilder {
     }
 
     /**
-     * Sets the boost value for the id property mapping. Defaults to <code>1.0f</code>.
+     * Sets the boost value for the property mapping. Defaults to <code>1.0f</code>.
      */
     public ResourcePropertyMappingBuilder boost(float boost) {
         mapping.setBoost(boost);
