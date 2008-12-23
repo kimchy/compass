@@ -27,6 +27,8 @@ import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
  */
 public abstract class AbstractResourcePropertyMapping extends AbstractMapping implements InternalResourcePropertyMapping {
 
+    private String originalName;
+
     private String rootAlias;
 
     private String analyzer;
@@ -55,6 +57,7 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     protected void copy(AbstractResourcePropertyMapping copy) {
         super.copy(copy);
+        copy.originalName = originalName;
         copy.setBoost(getBoost());
         copy.setName(getName());
         copy.setStore(getStore());
@@ -70,6 +73,23 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         copy.setRootAlias(getRootAlias());
         copy.setNullValue(getNullValue());
         copy.setSpellCheck(getSpellCheck());
+    }
+
+    @Override
+    public void setName(String name) {
+        if (name != null && originalName == null) {
+            if (!name.equals(getName())) {
+                originalName = getName();
+            }
+        }
+        super.setName(name);
+    }
+
+    public String getOriginalName() {
+        if (originalName != null) {
+            return this.originalName;
+        }
+        return getName();
     }
 
     public String getRootAlias() {

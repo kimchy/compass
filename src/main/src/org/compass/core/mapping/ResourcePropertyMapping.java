@@ -25,6 +25,12 @@ import org.compass.core.converter.mapping.ResourcePropertyConverter;
 public interface ResourcePropertyMapping extends Mapping {
 
     /**
+     * Returns the original name of the resource property, before any prefix aditions or any
+     * other post processing manipulation.
+     */
+    String getOriginalName();
+
+    /**
      * Returns the anayzer name that is associated with the property.
      * Can be <code>null</code> (i.e. not set).
      */

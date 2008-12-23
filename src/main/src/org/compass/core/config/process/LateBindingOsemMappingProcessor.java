@@ -300,7 +300,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         for (Iterator it = classPropertyMapping.mappingsIt(); it.hasNext();) {
             Mapping m = (Mapping) it.next();
             ClassPropertyMetaDataMapping metaDataMappingCopy = (ClassPropertyMetaDataMapping) m.copy();
-            metaDataMappingCopy.setName(buildFullName(metaDataMappingCopy.getName()));
+            metaDataMappingCopy.setName(buildFullName(metaDataMappingCopy.getOriginalName()));
             MappingProcessorUtils.process(metaDataMappingCopy, classPropertyMapping, converterLookup);
             innerMappingsCopy.add(metaDataMappingCopy);
         }
@@ -312,13 +312,13 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
     }
 
     private boolean secondPass(ConstantMetaDataMapping constantMapping) {
-        constantMapping.setName(buildFullName(constantMapping.getName()));
+        constantMapping.setName(buildFullName(constantMapping.getOriginalName()));
         constantMapping.setPath(new StaticPropertyPath(constantMapping.getName()));
         return false;
     }
 
     private boolean secondPass(DynamicMetaDataMapping dynamicMetaDataMapping) {
-        dynamicMetaDataMapping.setName(buildFullName(dynamicMetaDataMapping.getName()));
+        dynamicMetaDataMapping.setName(buildFullName(dynamicMetaDataMapping.getOriginalName()));
         dynamicMetaDataMapping.setPath(new StaticPropertyPath(dynamicMetaDataMapping.getName()));
         return false;
     }
@@ -464,18 +464,18 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
         }
 
         public void onConstantMetaDataMappaing(ClassMapping classMapping, ConstantMetaDataMapping constantMetaDataMapping) {
-            constantMetaDataMapping.setName(buildFullName(constantMetaDataMapping.getName()));
+            constantMetaDataMapping.setName(buildFullName(constantMetaDataMapping.getOriginalName()));
             constantMetaDataMapping.setPath(new StaticPropertyPath(constantMetaDataMapping.getName()));
         }
 
 
         public void onDynamicMetaDataMapping(ClassMapping classMapping, DynamicMetaDataMapping dynamicMetaDataMapping) {
-            dynamicMetaDataMapping.setName(buildFullName(dynamicMetaDataMapping.getName()));
+            dynamicMetaDataMapping.setName(buildFullName(dynamicMetaDataMapping.getOriginalName()));
             dynamicMetaDataMapping.setPath(new StaticPropertyPath(dynamicMetaDataMapping.getName()));
         }
 
         public void onClassPropertyMetaDataMapping(ClassPropertyMetaDataMapping classPropertyMetaDataMapping) {
-            classPropertyMetaDataMapping.setName(buildFullName(classPropertyMetaDataMapping.getName()));
+            classPropertyMetaDataMapping.setName(buildFullName(classPropertyMetaDataMapping.getOriginalName()));
             MappingProcessorUtils.process(classPropertyMetaDataMapping, classPropertyMapping, converterLookup);
         }
 
