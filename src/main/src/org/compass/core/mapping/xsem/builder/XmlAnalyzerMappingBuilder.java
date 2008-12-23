@@ -14,30 +14,31 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.json.builder;
+package org.compass.core.mapping.xsem.builder;
 
 import org.compass.core.converter.Converter;
 import org.compass.core.engine.naming.StaticPropertyPath;
-import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
+import org.compass.core.mapping.xsem.XmlPropertyAnalyzerController;
 
 /**
- * A builder allowing to construct a resource analyzer property mapping. JSON analyzer property mapping
- * allows to dynamically define the analyzer that will be used to analyzer the json resource (properties that are
+ * A builder allowing to construct a resource analyzer property mapping. XML analyzer property mapping
+ * allows to dynamically define the analyzer that will be used to analyzer the xml resource (properties that are
  * specificed as analyzed). The value of the analyzer property will be used to lookup a registered analyzer
  * within Compass. If no analyzer is found, the {@link #nullAnalyzer(String)} will be used (if specified).
- * 
+ *
  * @author kimchy
- * @see JSEM#analyzer(String) 
+ * @see XSEM#analyzer(String, String)
  */
-public class JsonAnalyzerMappingBuilder {
+public class XmlAnalyzerMappingBuilder {
 
-    final JsonPropertyAnalyzerController mapping;
+    final XmlPropertyAnalyzerController mapping;
 
     /**
-     * Constructs a new JSON analyzer property using the provided name.
+     * Constructs a new XML analyzer property using the provided name and xpath.
      */
-    public JsonAnalyzerMappingBuilder(String name) {
-        this.mapping = new JsonPropertyAnalyzerController();
+    public XmlAnalyzerMappingBuilder(String name, String xpath) {
+        this.mapping = new XmlPropertyAnalyzerController();
+        mapping.setXPath(xpath);
         mapping.setName(name);
         mapping.setPath(new StaticPropertyPath(name));
     }
@@ -45,7 +46,7 @@ public class JsonAnalyzerMappingBuilder {
     /**
      * The name of the analyzer that will be used if the property has the null value.
      */
-    public JsonAnalyzerMappingBuilder nullAnalyzer(String nullAnalyzer) {
+    public XmlAnalyzerMappingBuilder nullAnalyzer(String nullAnalyzer) {
         mapping.setNullAnalyzer(nullAnalyzer);
         return this;
     }
@@ -54,7 +55,7 @@ public class JsonAnalyzerMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the value
      * of the property.
      */
-    public JsonAnalyzerMappingBuilder converter(String converterName) {
+    public XmlAnalyzerMappingBuilder converter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -62,7 +63,7 @@ public class JsonAnalyzerMappingBuilder {
     /**
      * Sets an actual converter that will be used to convert this property value.
      */
-    public JsonAnalyzerMappingBuilder converter(Converter converter) {
+    public XmlAnalyzerMappingBuilder converter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }

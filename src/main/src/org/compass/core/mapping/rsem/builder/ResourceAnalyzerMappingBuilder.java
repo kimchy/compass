@@ -17,7 +17,6 @@
 package org.compass.core.mapping.rsem.builder;
 
 import org.compass.core.converter.Converter;
-import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
 
@@ -64,14 +63,6 @@ public class ResourceAnalyzerMappingBuilder {
      * Sets an actual converter that will be used to convert this property value.
      */
     public ResourceAnalyzerMappingBuilder converter(Converter converter) {
-        mapping.setConverter(converter);
-        return this;
-    }
-
-    /**
-     * Sets an actual converter that will be used to convert this property value.
-     */
-    public ResourceAnalyzerMappingBuilder converter(ResourcePropertyConverter converter) {
         mapping.setConverter(converter);
         return this;
     }

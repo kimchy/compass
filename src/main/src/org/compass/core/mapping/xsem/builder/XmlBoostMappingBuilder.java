@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.json.builder;
+package org.compass.core.mapping.xsem.builder;
 
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
-import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
+import org.compass.core.mapping.xsem.XmlBoostPropertyMapping;
 
 /**
- * A builder allowing to construct a resource analyzer property mapping. JSON analyzer property mapping
- * allows to dynamically define the analyzer that will be used to analyzer the json resource (properties that are
- * specificed as analyzed). The value of the analyzer property will be used to lookup a registered analyzer
- * within Compass. If no analyzer is found, the {@link #nullAnalyzer(String)} will be used (if specified).
- * 
+ * Allows to dynamically define the boost value of the resource based on a XML property value.
+ *
  * @author kimchy
- * @see JSEM#analyzer(String) 
+ * @see XSEM#boost(String, String)
  */
-public class JsonAnalyzerMappingBuilder {
+public class XmlBoostMappingBuilder {
 
-    final JsonPropertyAnalyzerController mapping;
+    final XmlBoostPropertyMapping mapping;
 
     /**
-     * Constructs a new JSON analyzer property using the provided name.
+     * Constructs a new boost JSON property mapping.
      */
-    public JsonAnalyzerMappingBuilder(String name) {
-        this.mapping = new JsonPropertyAnalyzerController();
+    public XmlBoostMappingBuilder(String name, String xpath) {
+        this.mapping = new XmlBoostPropertyMapping();
+        mapping.setXPath(xpath);
         mapping.setName(name);
         mapping.setPath(new StaticPropertyPath(name));
     }
 
     /**
-     * The name of the analyzer that will be used if the property has the null value.
+     * The default boost value that will be used of the JSON property to be used
+     * has <code>null</code> value. Defaults to <code>1.0f</code>.
      */
-    public JsonAnalyzerMappingBuilder nullAnalyzer(String nullAnalyzer) {
-        mapping.setNullAnalyzer(nullAnalyzer);
+    public XmlBoostMappingBuilder defaultBoost(float defaultBoost) {
+        mapping.setDefaultBoost(defaultBoost);
         return this;
     }
 
@@ -54,7 +54,7 @@ public class JsonAnalyzerMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the value
      * of the property.
      */
-    public JsonAnalyzerMappingBuilder converter(String converterName) {
+    public XmlBoostMappingBuilder converter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -62,7 +62,15 @@ public class JsonAnalyzerMappingBuilder {
     /**
      * Sets an actual converter that will be used to convert this property value.
      */
-    public JsonAnalyzerMappingBuilder converter(Converter converter) {
+    public XmlBoostMappingBuilder converter(Converter converter) {
+        mapping.setConverter(converter);
+        return this;
+    }
+
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
+    public XmlBoostMappingBuilder converter(ResourcePropertyConverter converter) {
         mapping.setConverter(converter);
         return this;
     }

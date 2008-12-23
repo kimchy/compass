@@ -25,6 +25,7 @@ import org.compass.core.CompassTransaction;
 import org.compass.core.Resource;
 import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassEnvironment;
+import static org.compass.core.mapping.xsem.builder.XSEM.*;
 import org.compass.core.test.AbstractTestCase;
 import org.compass.core.xml.AliasedXmlObject;
 import org.compass.core.xml.XmlObject;
@@ -38,11 +39,61 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         return new String[]{"xml/xml.cpm.xml"};
     }
 
+    @Override
     protected void addExtraConf(CompassConfiguration conf) {
         conf.getSettings().setGroupSettings(CompassEnvironment.Xsem.Namespace.PREFIX, "test1",
-                new String[] {CompassEnvironment.Xsem.Namespace.URI}, new String[] {"http://test1"});
+                new String[]{CompassEnvironment.Xsem.Namespace.URI}, new String[]{"http://test1"});
         conf.getSettings().setGroupSettings(CompassEnvironment.Xsem.Namespace.PREFIX, "test2",
-                new String[] {CompassEnvironment.Xsem.Namespace.URI}, new String[] {"http://test2"});
+                new String[]{CompassEnvironment.Xsem.Namespace.URI}, new String[]{"http://test2"});
+    }
+
+    protected void addProgrammaticConfiguration(CompassConfiguration conf) {
+        conf.addResourceMapping(
+                xml("data1")
+                        .add(id("/xml-fragment/data/id/@value").indexName("id"))
+                        .add(property("/xml-fragment/data/data1/@value"))
+                        .add(property("/xml-fragment/data/data1").indexName("eleText"))
+        );
+        conf.addResourceMapping(
+                xml("data2").xpath("/xml-fragment/data[1]")
+                        .add(id("id/@value").indexName("id"))
+                        .add(property("data1/@value"))
+                        .add(property("data1").indexName("eleText"))
+        );
+        conf.addResourceMapping(
+                xml("data3").xpath("/xml-fragment/data")
+                        .add(id("id/@value").indexName("id"))
+                        .add(property("data1/@value"))
+                        .add(property("data1").indexName("eleText"))
+        );
+        conf.addResourceMapping(
+                xml("data4").xpath("/xml-fragment/data")
+                        .add(id("id/@value").indexName("id"))
+                        .add(property("data1/@value"))
+                        .add(property("data1").indexName("eleText"))
+                        .add(content("content"))
+        );
+        conf.addResourceMapping(
+                xml("data5-1").xpath("/xml-fragment/test1:data")
+                        .add(id("test1:id/@value").indexName("id"))
+                        .add(property("test1:data1/@value"))
+                        .add(property("test1:data1").indexName("eleText"))
+                        .add(content("content"))
+        );
+        conf.addResourceMapping(
+                xml("data5-2").xpath("/xml-fragment/data")
+                        .add(id("id/@value").indexName("id"))
+                        .add(property("data1/@value"))
+                        .add(property("data1").indexName("eleText"))
+                        .add(content("content"))
+        );
+        conf.addResourceMapping(
+                xml("data6").xpath("/xml-fragment/data")
+                        .add(id("id/@value").indexName("id"))
+                        .add(property("data1/@value").format("000000.0000").valueConverter("float"))
+                        .add(property("data1").indexName("eleText").format("yyyy-MM-dd||dd-MM-yyyy").valueConverter("date"))
+                        .add(content("content"))
+        );
     }
 
     protected abstract AliasedXmlObject buildAliasedXmlObject(String alias, Reader data) throws Exception;
