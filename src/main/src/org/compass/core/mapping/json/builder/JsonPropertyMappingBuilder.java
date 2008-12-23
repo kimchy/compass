@@ -37,7 +37,7 @@ public class JsonPropertyMappingBuilder {
     final JsonPropertyMapping mapping;
 
     /**
-     * Constructs a new jsonJSON property mapping with the given name. The name can be
+     * Constructs a new JSON property mapping with the given name. The name can be
      * <code>null</code> when used with array mapping.
      */
     public JsonPropertyMappingBuilder(String name) {

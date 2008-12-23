@@ -25,6 +25,7 @@ import org.compass.core.mapping.rsem.RawBoostPropertyMapping;
  * Allows to dynamically define the boost value of the resource based on a resource property value.
  *
  * @author kimchy
+ * @see RSEM#boost(String) 
  */
 public class ResourceBoostMappingBuilder {
 

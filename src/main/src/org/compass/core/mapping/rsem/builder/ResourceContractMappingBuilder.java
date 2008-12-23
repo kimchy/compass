@@ -25,6 +25,7 @@ import org.compass.core.mapping.internal.DefaultContractMapping;
  * specific resource) which can then be extended by actual resource or other contract mappings.
  *
  * @author kimchy
+ * @see RSEM#contract(String) 
  */
 public class ResourceContractMappingBuilder implements ContractMappingProvider {
 

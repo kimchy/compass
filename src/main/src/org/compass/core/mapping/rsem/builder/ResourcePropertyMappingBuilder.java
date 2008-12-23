@@ -29,6 +29,7 @@ import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
  * A builder allowing to constrcut resource property mapping definition.
  *
  * @author kimchy
+ * @see RSEM#property(String) 
  */
 public class ResourcePropertyMappingBuilder {
 

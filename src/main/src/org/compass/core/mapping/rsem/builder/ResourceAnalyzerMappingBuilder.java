@@ -28,6 +28,7 @@ import org.compass.core.mapping.rsem.RawResourcePropertyAnalyzerController;
  * within Compass. If no analyzer is found, the {@link #nullAnalyzer(String)} will be used (if specified).
  *
  * @author kimchy
+ * @see RSEM#analyzer(String) 
  */
 public class ResourceAnalyzerMappingBuilder {
 

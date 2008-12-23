@@ -20,12 +20,19 @@ import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
 
 /**
+ * A builder allowing to constrcut json object mapping definition.
+ *
  * @author kimchy
+ * @see JSEM#object(String) 
  */
 public class JsonObjectMappingBuilder {
 
     final PlainJsonObjectMapping mapping;
 
+    /**
+     * Constructs a new JSON object mapping with the given name. The name can be
+     * <code>null</code> when used with array mapping.
+     */
     public JsonObjectMappingBuilder(String name) {
         this.mapping = new PlainJsonObjectMapping();
         mapping.setName(name);
@@ -34,21 +41,34 @@ public class JsonObjectMappingBuilder {
         }
     }
 
+    /**
+     * Should unmapped json elements be added to the search engine automatically (and recursively). Defaults
+     * to <code>false</code>.
+     */
     public JsonObjectMappingBuilder dynamic(boolean dynamic) {
         mapping.setDynamic(dynamic);
         return this;
     }
 
+    /**
+     * Adds a json property mapping definition.
+     */
     public JsonObjectMappingBuilder add(JsonPropertyMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
+    /**
+     * Adds a json object mapping definition.
+     */
     public JsonObjectMappingBuilder add(JsonObjectMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;
     }
 
+    /**
+     * Adds a json array mapping definition.
+     */
     public JsonObjectMappingBuilder add(JsonArrayMappingBuilder builder) {
         mapping.addMapping(builder.mapping);
         return this;

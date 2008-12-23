@@ -22,12 +22,22 @@ import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.json.JsonContentMapping;
 
 /**
+ * A builder allowing to constrcut json content mapping definition allowing to
+ * store the actual JSON content withn the index to and be able to rebuild the
+ * {@link org.compass.core.json.JsonObject} back from the index.
+ *
  * @author kimchy
+ * @see JSEM#content(String)
  */
 public class JsonContentMappingBuilder {
 
     final JsonContentMapping mapping;
 
+    /**
+     * Constructs a new JSON content mapping with the given name. The JSON
+     * string will be stored as a property within the Resource in the index
+     * under the name.
+     */
     public JsonContentMappingBuilder(String name) {
         this.mapping = new JsonContentMapping();
         mapping.setName(name);
@@ -35,6 +45,11 @@ public class JsonContentMappingBuilder {
         mapping.setInternal(true);
     }
 
+    /**
+     * Specifies whether and how a property will be stored. Deftauls to
+     * {@link org.compass.core.Property.Store#YES}. Note, {@link org.compass.core.Property.Store#NO}
+     * is not valid here.
+     */
     public JsonContentMappingBuilder store(Property.Store store) {
         if (store == Property.Store.NO) {
             throw new IllegalArgumentException("Content must be stored");
@@ -43,11 +58,19 @@ public class JsonContentMappingBuilder {
         return this;
     }
 
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the JSON
+     * content. Defaults to {@link org.compass.core.converter.mapping.json.JsonContentMappingConverter}.
+     */
     public JsonContentMappingBuilder converter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
 
+    /**
+     * Sets the actual converter that will be used to convert the JSON
+     * content. Defaults to {@link org.compass.core.converter.mapping.json.JsonContentMappingConverter}.
+     */
     public JsonContentMappingBuilder converter(Converter converter) {
         mapping.setConverter(converter);
         return this;

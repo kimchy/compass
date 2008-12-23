@@ -24,6 +24,7 @@ import org.compass.core.mapping.internal.DefaultAllMapping;
  * A builder allowing to constrcut resource all mapping definition.
  * 
  * @author kimchy
+ * @see JSEM#all() 
  */
 public class JsonAllMappingBuilder {
 

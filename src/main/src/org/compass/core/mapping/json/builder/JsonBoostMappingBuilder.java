@@ -21,32 +21,52 @@ import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.json.JsonBoostPropertyMapping;
 
 /**
+ * Allows to dynamically define the boost value of the resource based on a JSON property value.
+ *
  * @author kimchy
+ * @see JSEM#boost(String) 
  */
 public class JsonBoostMappingBuilder {
 
     final JsonBoostPropertyMapping mapping;
 
+    /**
+     * Constructs a new boost JSON property mapping.
+     */
     public JsonBoostMappingBuilder(String name) {
         this.mapping = new JsonBoostPropertyMapping();
         mapping.setName(name);
     }
 
+    /**
+     * The default boost value that will be used of the JSON property to be used
+     * has <code>null</code> value. Defaults to <code>1.0f</code>.
+     */
     public JsonBoostMappingBuilder defaultBoost(float defaultBoost) {
         mapping.setDefaultBoost(defaultBoost);
         return this;
     }
 
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the value
+     * of the property.
+     */
     public JsonBoostMappingBuilder converter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
 
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
     public JsonBoostMappingBuilder converter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }
 
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
     public JsonBoostMappingBuilder converter(ResourcePropertyConverter converter) {
         mapping.setConverter(converter);
         return this;
