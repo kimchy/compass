@@ -17,6 +17,23 @@
 package org.compass.core.mapping.xsem.builder;
 
 /**
+ * Static builder allowing to construct XSEM (XML to Search Engine Mapping)
+ * definitions.
+ *
+ * <p>Here is an exmaple how it can be used:
+ *
+ * <p><pre>
+ * import static org.compass.core.mapping.xsem.builder.XSEM.*;
+ *
+ *
+ * conf.addResourceMapping(
+ *      xml("a")
+ *          .add(id("/xml-fragment/data/id/@value").indexName("id"))
+ *          .add(property("/xml-fragment/data/data1/@value"))
+ *          .add(property("/xml-fragment/data/data1").indexName("eleText"))
+ * );
+ * </pre>
+ *
  * @author kimchy
  */
 public abstract class XSEM {
