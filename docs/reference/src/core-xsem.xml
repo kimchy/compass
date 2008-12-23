@@ -105,11 +105,11 @@ session.save(xmlObject);
                   <entry>Support dom4j <literal>STAXEventReader</literal> for parsing, and <literal>XMLWriter</literal> to write the raw xml data.</entry>
                 </row>
                 <row>
-                  <entry>org.compass.core.xml.jdmo.converter. SAXBuilderXmlContentConverter</entry>
+                  <entry>org.compass.core.xml.jdom.converter. SAXBuilderXmlContentConverter</entry>
                   <entry>Support JDOM <literal>SAXBuilder</literal> for parsing, and <literal>XMLOutputter</literal> to write the raw xml data.</entry>
                 </row>
                 <row>
-                  <entry>org.compass.core.xml.jdmo.converter. STAXBuilderXmlContentConverter</entry>
+                  <entry>org.compass.core.xml.jdom.converter. STAXBuilderXmlContentConverter</entry>
                   <entry>Support JDOM <literal>STAXBuilder</literal> for parsing, and <literal>XMLOutputter</literal> to write the raw xml data.</entry>
                 </row>
               </tbody>
@@ -281,6 +281,34 @@ session.save(xmlObject);
     ]
   }   
 }
+]]></programlisting>
+        </para>
+        <para>
+            Or last, we can use programmatic builder API to construct the mapping:
+<programlisting><![CDATA[
+import static org.compass.core.mapping.xsem.builder.XSEM.*;
+
+conf.addResourceMapping(
+    xml("data1").xpath("/xml-fragment/data[1]")
+        .add(id("id/@value").indexName("id"))
+        .add(property("data1/@value"))
+        .add(proeprty("data1").indexName("eleText"))
+);
+
+conf.addResourceMapping(
+    xml("data2").xpath("/xml-fragment/data")
+        .add(id("id/@value").indexName("id"))
+        .add(property("data1/@value"))
+        .add(proeprty("data1").indexName("eleText"))
+);
+
+conf.addResourceMapping(
+    xml("data3").xpath("/xml-fragment/data")
+        .add(id("id/@value").indexName("id"))
+        .add(property("data1/@value"))
+        .add(proeprty("data1").indexName("eleText"))
+        .add(content("content"))
+);
 ]]></programlisting>
         </para>
 

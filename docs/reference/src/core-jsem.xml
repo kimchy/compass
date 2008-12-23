@@ -80,6 +80,25 @@
     </para>
 
     <para>
+      Here is the same mapping configuration using programmatic builder API:
+<programlisting><![CDATA[
+import static org.compass.core.mapping.jsem.builder.JSEM.*;
+
+conf.addResourceMapping(
+    json("addressbook")
+        .add(id("id"))
+        .add(property("name"))
+        .add(object("address")
+                .add(property("street"))
+                .add(property("city"))
+                .add(property("zip").index(Property.Index.NOT_ANALYZED))
+                .add(array("phoneNumbers").indexName("phoneNumber").element(property()))
+        )
+);
+]]></programlisting>      
+    </para>
+
+    <para>
       The above explicit mapping defines how each JSON element will be mapped to the search engine. In the above case, we will have several searchable properties named after their respective JSON element names (the name can be changed by using <literal>index-name</literal> attribute). We can now perform search queries such as <literal>street:diego</literal>, or <literal>phoneNumber:619*</literal>, or even (using dot path notation): <literal>addressbook.address.street:diego</literal>.
     </para>
     
