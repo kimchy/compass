@@ -30,8 +30,6 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
 
     private String accessor;
 
-    private String originalName;
-
     private String propertyName;
 
     private String definedInAlias;
@@ -47,7 +45,6 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
         copy.setGetter(getGetter());
         copy.setAccessor(getAccessor());
         copy.setPropertyName(getPropertyName());
-        copy.setOriginalName(getOriginalName());
         return copy;
     }
 
@@ -57,18 +54,6 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
 
     public boolean canBeCollectionWrapped() {
         return false;
-    }
-
-    /**
-     * The original name is the name of the meta-data mapping without any prefixes added to
-     * its {@link #getName()}.
-     */
-    public String getOriginalName() {
-        return originalName;
-    }
-
-    public void setOriginalName(String originalName) {
-        this.originalName = originalName;
     }
 
     public Getter getGetter() {
@@ -124,9 +109,5 @@ public class ClassPropertyMetaDataMapping extends AbstractResourcePropertyMappin
             return (ResourcePropertyConverter) getConverter();
         }
         return null;
-    }
-
-    public void setName(String name) {
-        super.setName(name);    //To change body of overridden methods use File | Settings | File Templates.
     }
 }

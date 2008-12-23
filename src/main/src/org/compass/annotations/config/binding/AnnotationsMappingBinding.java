@@ -685,7 +685,6 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
                 name = classPropertyMapping.getName();
             }
             mdMapping.setName(valueLookup.lookupMetaDataName(name));
-            mdMapping.setOriginalName(valueLookup.lookupMetaDataName(name));
             mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
             mdMapping.setBoost(classPropertyMapping.getBoost());
 
@@ -764,7 +763,6 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
                 name = classPropertyMapping.getName();
             }
             mdMapping.setName(valueLookup.lookupMetaDataName(name));
-            mdMapping.setOriginalName(valueLookup.lookupMetaDataName(name));
             mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
             mdMapping.setBoost(classPropertyMapping.getBoost());
 
@@ -814,7 +812,6 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         ClassPropertyMetaDataMapping mdMapping = new ClassPropertyMetaDataMapping();
         String name = searchableMetaData.name();
         mdMapping.setName(valueLookup.lookupMetaDataName(name));
-        mdMapping.setOriginalName(valueLookup.lookupMetaDataName(name));
         mdMapping.setPath(new StaticPropertyPath(mdMapping.getName()));
         if (searchableMetaData.boost() == 1.0f) {
             mdMapping.setBoost(classPropertyMapping.getBoost());

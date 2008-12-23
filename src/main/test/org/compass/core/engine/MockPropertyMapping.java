@@ -60,6 +60,10 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
         this.boost = boost;
     }
 
+    public String getOriginalName() {
+        return getName();
+    }
+
     /**
      * @return Returns the name.
      */

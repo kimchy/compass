@@ -971,7 +971,6 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         }
         String name = valueLookup.lookupMetaDataName(value);
         mdMapping.setName(name);
-        mdMapping.setOriginalName(name);
         mdMapping.setPath(new StaticPropertyPath(name));
 
         mdMapping.setAccessor(classPropertyMapping.getAccessor());
