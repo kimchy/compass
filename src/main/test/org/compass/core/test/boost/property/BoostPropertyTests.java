@@ -52,6 +52,7 @@ public class BoostPropertyTests extends AbstractTestCase {
         session.flush();
 
         CompassHits hits = session.find("test");
+        assertEquals(2, hits.length());
         assertEquals(1, ((A) hits.data(0)).id);
         assertEquals(2, ((A) hits.data(1)).id);
 
@@ -69,13 +70,16 @@ public class BoostPropertyTests extends AbstractTestCase {
         a.value1 = 1f;
         a.value2 = "test";
         session.save(a);
+        session.flush();
         a = new A();
         a.id = 2;
         a.value1 = 2f;
         a.value2 = "test";
         session.save(a);
+        session.flush();
 
         CompassHits hits = session.find("test");
+        assertEquals(2, hits.length());
         // order is revered
         assertEquals(2, ((A) hits.data(0)).id);
         assertEquals(2f, ((A) hits.data(0)).value1);

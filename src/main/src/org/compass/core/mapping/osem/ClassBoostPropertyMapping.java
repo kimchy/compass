@@ -18,7 +18,6 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.mapping.BoostPropertyMapping;
 import org.compass.core.mapping.Mapping;
-import org.compass.core.mapping.ResourcePropertyMapping;
 
 /**
  * @author kimchy
@@ -35,7 +34,7 @@ public class ClassBoostPropertyMapping extends ClassPropertyMapping implements B
     }
 
     public String getBoostResourcePropertyName() {
-        return ((ResourcePropertyMapping) mappings.get(getIdPropertyIndex())).getPath().getPath();
+        return mappings.get(getIdPropertyIndex()).getPath().getPath();
     }
 
     public float getDefaultBoost() {
@@ -44,5 +43,10 @@ public class ClassBoostPropertyMapping extends ClassPropertyMapping implements B
 
     public void setDefaultBoost(float defaultBoost) {
         this.defaultBoost = defaultBoost;
+    }
+
+    @Override
+    public boolean isOverrideByName() {
+        return false;
     }
 }

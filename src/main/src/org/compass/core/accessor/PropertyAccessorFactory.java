@@ -108,7 +108,7 @@ public class PropertyAccessorFactory implements CompassConfigurable {
         try {
             accessorClass = ClassUtils.forName(type, settings.getClassLoader());
         } catch (ClassNotFoundException cnfe) {
-            throw new MappingException("Could not find PropertyAccessor class [" + type + "]", cnfe);
+            throw new MappingException("Could not find PropertyAccessor class [" + type + "] or bounded under name [" + type + "]", cnfe);
         }
         try {
             propertyAccessor = (PropertyAccessor) accessorClass.newInstance();

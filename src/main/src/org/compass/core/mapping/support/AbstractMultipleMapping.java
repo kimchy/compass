@@ -41,9 +41,13 @@ public abstract class AbstractMultipleMapping extends AbstractMapping implements
         if (mappingsByNameMap.get(mapping.getName()) != null) {
             for (int i = 0; i < mappings.size(); i++) {
                 Mapping tempMapping = mappings.get(i);
-                if (tempMapping.getName() != null && tempMapping.getName().equals(mapping.getName())) {
-                    mappings.remove(i);
-                    break;
+                if (tempMapping instanceof OverrideByNameMapping) {
+                    if (((OverrideByNameMapping) tempMapping).isOverrideByName()) {
+                        if (tempMapping.getName() != null && tempMapping.getName().equals(mapping.getName())) {
+                            mappings.remove(i);
+                            break;
+                        }
+                    }
                 }
             }
             mappingsByNameMap.remove(mapping.getName());

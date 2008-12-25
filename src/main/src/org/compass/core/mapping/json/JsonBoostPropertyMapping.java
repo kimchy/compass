@@ -46,23 +46,33 @@ public class JsonBoostPropertyMapping extends JsonPropertyMapping implements Boo
         this.defaultBoost = defaultBoost;
     }
 
+    @Override
     public Property.Index getIndex() {
         return Property.Index.NOT_ANALYZED;
     }
 
+    @Override
     public Property.Store getStore() {
         return Property.Store.YES;
     }
 
+    @Override
     public Property.TermVector getTermVector() {
         return Property.TermVector.NO;
     }
 
+    @Override
     public Boolean isOmitNorms() {
         return true;
     }
 
+    @Override
     public Boolean isOmitTf() {
         return true;
+    }
+
+    @Override
+    public boolean isOverrideByName() {
+        return false;
     }
 }

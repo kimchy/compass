@@ -40,4 +40,16 @@ public abstract class OSEM {
     public static ClassMetaDataMappingBuilder metadata(String name) {
         return new ClassMetaDataMappingBuilder(name);
     }
+
+    public static ClassAnalyzerMappingBuilder analyzer(String name) {
+        return new ClassAnalyzerMappingBuilder(name);
+    }
+
+    public static ClassBoostMappingBuilder boost(String name) {
+        return new ClassBoostMappingBuilder(name);
+    }
+
+    public static ClassAllMappingBuilder all() {
+        return new ClassAllMappingBuilder();
+    }
 }

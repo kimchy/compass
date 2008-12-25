@@ -53,7 +53,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private String analyzer;
 
-    private float boost;
+    private float boost = 1.0f;
 
     private boolean isRoot = true;
 
@@ -131,6 +131,12 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         resourceMapping.setUIDPath(getUIDPath());
         resourceMapping.setAllMapping(getAllMapping().copy());
         resourceMapping.setSpellCheck(getSpellCheck());
+        if (boostPropertyMapping != null) {
+            resourceMapping.boostPropertyMapping = (BoostPropertyMapping) boostPropertyMapping.copy();
+        }
+        if (analyzerController != null) {
+            resourceMapping.analyzerController = (ResourceAnalyzerController) analyzerController.copy();
+        }
     }
 
     public void postProcess() throws MappingException {

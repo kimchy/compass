@@ -48,23 +48,34 @@ public class RawBoostPropertyMapping extends RawResourcePropertyMapping implemen
         return defaultBoost;
     }
 
+    @Override
     public Index getIndex() {
         return Index.NOT_ANALYZED;
     }
 
+    @Override
     public Store getStore() {
         return Store.YES;
     }
 
+    @Override
     public Property.TermVector getTermVector() {
         return Property.TermVector.NO;
     }
 
+    @Override
     public Boolean isOmitNorms() {
         return true;
     }
 
+
+    @Override
     public Boolean isOmitTf() {
         return true;
+    }
+
+    @Override
+    public boolean isOverrideByName() {
+        return false;
     }
 }

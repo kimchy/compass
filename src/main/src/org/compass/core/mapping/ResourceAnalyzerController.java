@@ -24,7 +24,7 @@ package org.compass.core.mapping;
  * 
  * @author kimchy
  */
-public interface ResourceAnalyzerController {
+public interface ResourceAnalyzerController extends Mapping {
 
     /**
      * Returns the name of the {@link org.compass.core.Resource}

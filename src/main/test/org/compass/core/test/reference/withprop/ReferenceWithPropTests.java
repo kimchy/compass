@@ -35,14 +35,13 @@ public class ReferenceWithPropTests extends AbstractTestCase {
         session.save(a);
         session.save(a.b);
 
-        a = (A) session.load(A.class, "1");
+        a = session.load(A.class, "1");
         assertEquals("test", a.b.value);
-        B b = (B) session.load(B.class, "1");
+        B b = session.load(B.class, "1");
         assertEquals("test", b.value);
 
-        // A test that shows we don't support property and reference on the same mapping
         CompassHits hits = session.find("test");
-        assertEquals(1, hits.length());
+        assertEquals(2, hits.length());
 
         tr.commit();
         session.close();

@@ -140,8 +140,16 @@ public class ClassMappingBuilder implements ResourceMappingProvider {
         return this;
     }
 
+    public ClassMappingBuilder all(ClassAllMappingBuilder builder) {
+        mapping.setAllMapping(builder.mapping);
+        return this;
+    }
+
     public ClassMappingBuilder add(ClassIdMappingBuilder builder) {
         builder.mapping.setDefinedInAlias(mapping.getAlias());
+        for (Iterator<Mapping> it = builder.mapping.mappingsIt(); it.hasNext();) {
+            ((ClassPropertyMetaDataMapping) it.next()).setDefinedInAlias(mapping.getAlias());
+        }
         mapping.addMapping(builder.mapping);
         return this;
     }
@@ -151,6 +159,18 @@ public class ClassMappingBuilder implements ResourceMappingProvider {
         for (Iterator<Mapping> it = builder.mapping.mappingsIt(); it.hasNext();) {
             ((ClassPropertyMetaDataMapping) it.next()).setDefinedInAlias(mapping.getAlias());
         }
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
+
+    public ClassMappingBuilder add(ClassAnalyzerMappingBuilder builder) {
+        builder.mapping.setDefinedInAlias(mapping.getAlias());
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
+
+    public ClassMappingBuilder add(ClassBoostMappingBuilder builder) {
+        builder.mapping.setDefinedInAlias(mapping.getAlias());
         mapping.addMapping(builder.mapping);
         return this;
     }
