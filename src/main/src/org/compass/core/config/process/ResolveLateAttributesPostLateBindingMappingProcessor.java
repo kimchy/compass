@@ -25,6 +25,7 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
+import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 
 /**
  * Reolves late attributes associated usually with {@link org.compass.core.mapping.osem.ClassMapping}, they are:
@@ -45,6 +46,9 @@ public class ResolveLateAttributesPostLateBindingMappingProcessor implements Map
                 if (resourceMapping.isRoot()) {
                     for (ResourcePropertyMapping mapping : resourceMapping.getResourcePropertyMappings()) {
                         MappingProcessorUtils.applyResourcePropertySettings(mapping, settings);
+                        if (resourceMapping.getAnalyzer() != null && mapping.getAnalyzer() == null) {
+                            ((InternalResourcePropertyMapping) mapping).setAnalyzer(resourceMapping.getAnalyzer());
+                        }
                     }
                 }
             }

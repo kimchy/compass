@@ -46,6 +46,15 @@ public class ResourceIdMappingBuilder {
     }
 
     /**
+     * Sets the analyzer logical name that will be used to analyzer the property value. The name
+     * is a lookup name for an Analyzer that is registered with Compass.
+     */
+    public ResourceIdMappingBuilder analyzer(String analyzer) {
+        mapping.setAnalyzer(analyzer);
+        return this;
+    }
+
+    /**
      * If set, omit normalization factors associated with this indexed field.
      * This effectively disables indexing boosts and length normalization for this field. By
      * default, it is set for id mapping.
