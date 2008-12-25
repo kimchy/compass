@@ -23,7 +23,7 @@ import org.apache.openjpa.event.LifecycleEvent;
 import org.apache.openjpa.event.PersistListener;
 import org.apache.openjpa.event.StoreListener;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
@@ -57,7 +57,7 @@ public class EmbeddedOpenJPAEventListener extends AbstractDeviceJpaEntityListene
             return;
         }
         Object entity = lifecycleEvent.getSource();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.DELETE)) {
             return;
         }
         try {
@@ -82,7 +82,7 @@ public class EmbeddedOpenJPAEventListener extends AbstractDeviceJpaEntityListene
             return;
         }
         Object entity = lifecycleEvent.getSource();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.CREATE)) {
             return;
         }
         try {
@@ -107,7 +107,7 @@ public class EmbeddedOpenJPAEventListener extends AbstractDeviceJpaEntityListene
             return;
         }
         Object entity = lifecycleEvent.getSource();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.SAVE)) {
             return;
         }
         try {

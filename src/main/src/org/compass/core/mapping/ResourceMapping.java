@@ -105,7 +105,7 @@ public interface ResourceMapping extends AliasMapping {
      * it is non root mappings, it should return true if it has cascade mappings
      * that map one of the cascade operations.
      */
-    boolean operationAllowed(CascadeMapping.Cascade cascade);
+    boolean operationAllowed(Cascade cascade);
 
     /**
      * Returns all the mapped property names for the resoruce.

@@ -31,7 +31,6 @@ import org.compass.annotations.Reverse;
 import org.compass.annotations.Store;
 import org.compass.annotations.TermVector;
 import org.compass.core.Property;
-import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.ReverseType;
 
@@ -182,15 +181,15 @@ public abstract class AnnotationsBindingUtils {
         throw new IllegalArgumentException("Failed to convert index [" + index + "]");
     }
 
-    public static CascadeMapping.Cascade convert(Cascade cascade) throws IllegalArgumentException {
+    public static org.compass.core.mapping.Cascade convert(Cascade cascade) throws IllegalArgumentException {
         if (cascade == Cascade.ALL) {
-            return CascadeMapping.Cascade.ALL;
+            return org.compass.core.mapping.Cascade.ALL;
         } else if (cascade == Cascade.CREATE) {
-            return CascadeMapping.Cascade.CREATE;
+            return org.compass.core.mapping.Cascade.CREATE;
         } else if (cascade == Cascade.DELETE) {
-            return CascadeMapping.Cascade.DELETE;
+            return org.compass.core.mapping.Cascade.DELETE;
         } else if (cascade == Cascade.SAVE) {
-            return CascadeMapping.Cascade.SAVE;
+            return org.compass.core.mapping.Cascade.SAVE;
         }
         throw new IllegalArgumentException("Failed to convert cascade [" + cascade + "]");
     }

@@ -19,6 +19,7 @@ package org.compass.core.mapping.osem;
 import java.util.HashMap;
 
 import org.compass.core.CompassException;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.internal.InternalCascadeMapping;
 import org.compass.core.mapping.osem.internal.InternalRefAliasObjectMapping;
 

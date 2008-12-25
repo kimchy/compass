@@ -24,7 +24,7 @@ import java.util.Map;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.core.util.ClassUtils;
@@ -158,7 +158,7 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             }
 
             final Object entity = postInsertEvent.getEntity();
-            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
+            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), Cascade.CREATE)) {
                 return;
             }
 
@@ -217,7 +217,7 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             }
 
             final Object entity = postUpdateEvent.getEntity();
-            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), Cascade.SAVE)) {
                 return;
             }
 
@@ -275,7 +275,7 @@ public class Hibernate3GpsDevice extends AbstractHibernateGpsDevice implements P
             }
 
             final Object entity = postDeleteEvent.getEntity();
-            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
+            if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), Cascade.DELETE)) {
                 return;
             }
 

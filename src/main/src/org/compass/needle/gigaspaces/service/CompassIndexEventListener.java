@@ -24,7 +24,7 @@ import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTemplate;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.spi.InternalCompassSession;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.events.SpaceDataEventListener;
@@ -73,12 +73,12 @@ public class CompassIndexEventListener implements SpaceDataEventListener {
 
     private void performOperation(CompassSession session, Object event, EntryArrivedRemoteEvent remoteEvent) {
         if (remoteEvent.getNotifyActionType() == NotifyActionType.NOTIFY_LEASE_EXPIRATION || remoteEvent.getNotifyActionType() == NotifyActionType.NOTIFY_TAKE) {
-            if (((InternalCompassSession) session).getMapping().hasMappingForClass(event.getClass(), CascadeMapping.Cascade.DELETE)) {
+            if (((InternalCompassSession) session).getMapping().hasMappingForClass(event.getClass(), Cascade.DELETE)) {
                 session.delete(event);
             }
         } else
         if (remoteEvent.getNotifyActionType() == NotifyActionType.NOTIFY_UPDATE || remoteEvent.getNotifyActionType() == NotifyActionType.NOTIFY_WRITE) {
-            if (((InternalCompassSession) session).getMapping().hasMappingForClass(event.getClass(), CascadeMapping.Cascade.SAVE)) {
+            if (((InternalCompassSession) session).getMapping().hasMappingForClass(event.getClass(), Cascade.SAVE)) {
                 session.save(event);
             }
         }

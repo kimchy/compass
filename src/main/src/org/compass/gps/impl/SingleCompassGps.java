@@ -28,7 +28,7 @@ import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.events.RebuildEventListener;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsException;
@@ -157,11 +157,11 @@ public class SingleCompassGps extends AbstractCompassGps {
         return hasRootMappingForEntity(name, getIndexCompass());
     }
 
-    public boolean hasMappingForEntityForMirror(Class clazz, CascadeMapping.Cascade cascade) throws CompassException {
+    public boolean hasMappingForEntityForMirror(Class clazz, Cascade cascade) throws CompassException {
         return hasMappingForEntity(clazz, compass, cascade);
     }
 
-    public boolean hasMappingForEntityForMirror(String name, CascadeMapping.Cascade cascade) throws CompassException {
+    public boolean hasMappingForEntityForMirror(String name, Cascade cascade) throws CompassException {
         return hasMappingForEntity(name, compass, cascade);
     }
 

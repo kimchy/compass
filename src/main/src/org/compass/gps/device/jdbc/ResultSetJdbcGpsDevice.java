@@ -29,7 +29,7 @@ import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.Resource;
 import org.compass.core.config.CommonMetaDataLookup;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.spi.InternalCompassSession;
 import org.compass.gps.CompassGpsException;
@@ -123,7 +123,7 @@ public class ResultSetJdbcGpsDevice extends AbstractJdbcActiveMirrorGpsDevice {
         // resource mapping
         for (Iterator it = mappings.iterator(); it.hasNext();) {
             ResultSetToResourceMapping rsMapping = (ResultSetToResourceMapping) it.next();
-            if (!compassGps.hasMappingForEntityForMirror(rsMapping.getAlias(), CascadeMapping.Cascade.ALL)) {
+            if (!compassGps.hasMappingForEntityForMirror(rsMapping.getAlias(), Cascade.ALL)) {
                 throw new IllegalStateException(
                         buildMessage("No resource mapping defined in gps mirror compass for alias ["
                                 + rsMapping.getAlias() + "]. Did you defined a jdbc mapping builder?"));

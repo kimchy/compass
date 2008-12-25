@@ -19,7 +19,7 @@
 
     <class name="SimpleComponentId" alias="id-sc">
         <id name="id">
-            <meta-data store="yes" index="un_tokenized">id-sc</meta-data>
+            <meta-data store="yes" index="not_analyzed">id-sc</meta-data>
         </id>
         <property name="value">
             <meta-data>mvalue</meta-data>

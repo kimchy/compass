@@ -37,7 +37,7 @@ import org.compass.core.config.CompassConfiguration;
 import org.compass.core.config.CompassConfigurationFactory;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.transaction.JTASyncTransactionFactory;
@@ -164,7 +164,7 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             return;
         }
         Object entity = event.getEntity();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.DELETE)) {
             return;
         }
         if (compassHolder.mirrorFilter != null) {
@@ -185,7 +185,7 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             return;
         }
         Object entity = event.getEntity();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.CREATE)) {
             return;
         }
         if (compassHolder.mirrorFilter != null) {
@@ -218,7 +218,7 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             return;
         }
         Object entity = event.getEntity();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.SAVE)) {
             return;
         }
         if (compassHolder.mirrorFilter != null) {
@@ -277,7 +277,7 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
             return;
         }
 
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.SAVE)) {
             return;
         }
 
@@ -481,7 +481,7 @@ public class CompassEventListener implements PostDeleteEventListener, PostInsert
         return compassHolder;
     }
 
-    private boolean hasMappingForEntity(Class clazz, CascadeMapping.Cascade cascade) {
+    private boolean hasMappingForEntity(Class clazz, Cascade cascade) {
         ResourceMapping resourceMapping = ((InternalCompass) compassHolder.compass).getMapping().getRootMappingByClass(clazz);
         if (resourceMapping != null) {
             return true;

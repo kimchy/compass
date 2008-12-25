@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
@@ -82,7 +82,7 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         final CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
 
         final Object entity = postInsertEvent.getEntity();
-        if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
+        if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), Cascade.CREATE)) {
             return;
         }
 
@@ -118,7 +118,7 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         final CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
 
         final Object entity = postUpdateEvent.getEntity();
-        if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+        if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), Cascade.SAVE)) {
             return;
         }
 
@@ -167,7 +167,7 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
 
         final Object entity = postDeleteEvent.getEntity();
-        if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
+        if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), Cascade.DELETE)) {
             return;
         }
 
@@ -207,7 +207,7 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         if (pendingCascades) {
             HibernateEventListenerUtils.registerRemovalHook(postInsertEvent.getSession(), pendingCreate, entity);
             Collection dependencies = HibernateEventListenerUtils.getUnpersistedCascades(compassGps, entity,
-                    (SessionFactoryImplementor) device.getSessionFactory(), CascadeMapping.Cascade.CREATE, new HashSet());
+                    (SessionFactoryImplementor) device.getSessionFactory(), Cascade.CREATE, new HashSet());
             if (!dependencies.isEmpty()) {
                 pendingCreate.put(entity, dependencies);
             } else {
@@ -237,7 +237,7 @@ public class HibernateEventListener implements PostInsertEventListener, PostUpda
         if (pendingCascades) {
             HibernateEventListenerUtils.registerRemovalHook(eventSource, pendingSave, entity);
             Collection dependencies = HibernateEventListenerUtils.getUnpersistedCascades(compassGps, entity,
-                    (SessionFactoryImplementor) device.getSessionFactory(), CascadeMapping.Cascade.SAVE, new HashSet());
+                    (SessionFactoryImplementor) device.getSessionFactory(), Cascade.SAVE, new HashSet());
             if (!dependencies.isEmpty()) {
                 pendingSave.put(entity, dependencies);
             } else {

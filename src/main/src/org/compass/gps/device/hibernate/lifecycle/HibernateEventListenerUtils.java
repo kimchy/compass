@@ -25,7 +25,7 @@ import java.util.Set;
 import javax.transaction.Synchronization;
 
 import org.compass.core.CompassSession;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -64,7 +64,7 @@ public abstract class HibernateEventListenerUtils {
     }
 
     public static Collection getUnpersistedCascades(CompassGpsInterfaceDevice compassGps, Object entity,
-                                                    SessionFactoryImplementor sessionFactory, CascadeMapping.Cascade cascade,
+                                                    SessionFactoryImplementor sessionFactory, Cascade cascade,
                                                     Collection visited) {
         if (visited.contains(entity)) {
             return Collections.EMPTY_SET;

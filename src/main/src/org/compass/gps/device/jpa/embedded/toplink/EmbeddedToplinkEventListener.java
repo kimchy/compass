@@ -21,7 +21,7 @@ import java.util.Vector;
 import oracle.toplink.essentials.descriptors.DescriptorEvent;
 import oracle.toplink.essentials.descriptors.DescriptorEventListener;
 import oracle.toplink.essentials.sessions.Session;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
@@ -51,7 +51,7 @@ public class EmbeddedToplinkEventListener extends AbstractDeviceJpaEntityListene
             return;
         }
         Object entity = event.getObject();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.SAVE)) {
             return;
         }
         try {
@@ -73,7 +73,7 @@ public class EmbeddedToplinkEventListener extends AbstractDeviceJpaEntityListene
             return;
         }
         Object entity = event.getObject();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.DELETE)) {
             return;
         }
         try {
@@ -95,7 +95,7 @@ public class EmbeddedToplinkEventListener extends AbstractDeviceJpaEntityListene
             return;
         }
         Object entity = event.getObject();
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.CREATE)) {
             return;
         }
         try {

@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.gps.device.hibernate.HibernateGpsDevice;
 import org.compass.gps.device.hibernate.HibernateGpsDeviceException;
 import org.compass.gps.spi.CompassGpsInterfaceDevice;
@@ -80,7 +80,7 @@ public class HibernateCollectionEventListener extends HibernateEventListener imp
         }
 
         final CompassGpsInterfaceDevice compassGps = (CompassGpsInterfaceDevice) device.getGps();
-        if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+        if (!compassGps.hasMappingForEntityForMirror(entity.getClass(), Cascade.SAVE)) {
             return;
         }
 

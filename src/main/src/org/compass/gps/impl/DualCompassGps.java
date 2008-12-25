@@ -21,7 +21,7 @@ import org.compass.core.CompassCallback;
 import org.compass.core.CompassException;
 import org.compass.core.CompassTemplate;
 import org.compass.core.events.RebuildEventListener;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.gps.CompassGpsException;
@@ -133,11 +133,11 @@ public class DualCompassGps extends AbstractCompassGps {
         return hasRootMappingForEntity(name, indexCompass);
     }
 
-    public boolean hasMappingForEntityForMirror(Class clazz, CascadeMapping.Cascade cascade) throws CompassException {
+    public boolean hasMappingForEntityForMirror(Class clazz, Cascade cascade) throws CompassException {
         return hasMappingForEntity(clazz, mirrorCompass, cascade);
     }
 
-    public boolean hasMappingForEntityForMirror(String name, CascadeMapping.Cascade cascade) throws CompassException {
+    public boolean hasMappingForEntityForMirror(String name, Cascade cascade) throws CompassException {
         return hasMappingForEntity(name, mirrorCompass, cascade);
     }
 

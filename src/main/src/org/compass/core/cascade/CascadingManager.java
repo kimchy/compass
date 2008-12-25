@@ -24,6 +24,7 @@ import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.config.ConfigurationException;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -63,7 +64,7 @@ public class CascadingManager implements CompassConfigurable {
         }
     }
 
-    public boolean cascade(Object root, CascadeMapping.Cascade cascade, DirtyOperationContext context) throws CompassException {
+    public boolean cascade(Object root, Cascade cascade, DirtyOperationContext context) throws CompassException {
         if (cascadingDisabled()) return false;
         if (root instanceof AliasedObject) {
             return cascade(((AliasedObject) root).getAlias(), root, cascade, context);
@@ -71,19 +72,19 @@ public class CascadingManager implements CompassConfigurable {
         return cascade(root.getClass(), root, cascade, context);
     }
 
-    public boolean cascade(String alias, Object root, CascadeMapping.Cascade cascade, DirtyOperationContext context) throws CompassException {
+    public boolean cascade(String alias, Object root, Cascade cascade, DirtyOperationContext context) throws CompassException {
         if (cascadingDisabled()) return false;
         ResourceMapping resourceMapping = mapping.getMappingByAlias(alias);
         return resourceMapping != null && cascade(resourceMapping, root, cascade, context);
     }
 
-    public boolean cascade(Class clazz, Object root, CascadeMapping.Cascade cascade, DirtyOperationContext context) throws CompassException {
+    public boolean cascade(Class clazz, Object root, Cascade cascade, DirtyOperationContext context) throws CompassException {
         if (cascadingDisabled()) return false;
         ResourceMapping resourceMapping = mapping.getMappingByClass(clazz);
         return resourceMapping != null && cascade(resourceMapping, root, cascade, context);
     }
 
-    public boolean shouldCascade(Object root, CascadeMapping.Cascade cascade) throws CompassException {
+    public boolean shouldCascade(Object root, Cascade cascade) throws CompassException {
         if (cascadingDisabled()) return false;
         if (root instanceof AliasedObject) {
             return shouldCascade(((AliasedObject) root).getAlias(), root, cascade);
@@ -91,19 +92,19 @@ public class CascadingManager implements CompassConfigurable {
         return shouldCascade(root.getClass(), root, cascade);
     }
 
-    public boolean shouldCascade(String alias, Object root, CascadeMapping.Cascade cascade) throws CompassException {
+    public boolean shouldCascade(String alias, Object root, Cascade cascade) throws CompassException {
         if (cascadingDisabled()) return false;
         ResourceMapping resourceMapping = mapping.getMappingByAlias(alias);
         return resourceMapping != null && shouldCascade(resourceMapping, root, cascade);
     }
 
-    public boolean shouldCascade(Class clazz, Object root, CascadeMapping.Cascade cascade) throws CompassException {
+    public boolean shouldCascade(Class clazz, Object root, Cascade cascade) throws CompassException {
         if (cascadingDisabled()) return false;
         ResourceMapping resourceMapping = mapping.getMappingByClass(clazz);
         return resourceMapping != null && shouldCascade(resourceMapping, root, cascade);
     }
 
-    private boolean shouldCascade(ResourceMapping resourceMapping, Object root, CascadeMapping.Cascade cascade) throws CompassException {
+    private boolean shouldCascade(ResourceMapping resourceMapping, Object root, Cascade cascade) throws CompassException {
         if (cascadingDisabled()) return false;
         CascadeMapping[] cascadeMappings = resourceMapping.getCascadeMappings();
         if (cascadeMappings == null) {
@@ -118,7 +119,7 @@ public class CascadingManager implements CompassConfigurable {
     }
 
 
-    private boolean cascade(ResourceMapping resourceMapping, Object root, CascadeMapping.Cascade cascade, DirtyOperationContext context) throws CompassException {
+    private boolean cascade(ResourceMapping resourceMapping, Object root, Cascade cascade, DirtyOperationContext context) throws CompassException {
         if (cascadingDisabled()) return false;
         CascadeMapping[] cascadeMappings = resourceMapping.getCascadeMappings();
         if (cascadeMappings == null) {
@@ -150,22 +151,22 @@ public class CascadingManager implements CompassConfigurable {
         return retVal;
     }
 
-    private void cascadeOperation(CascadeMapping.Cascade cascade, Object value, DirtyOperationContext context) {
+    private void cascadeOperation(Cascade cascade, Object value, DirtyOperationContext context) {
         // TODO what happens if there are several aliases for value
         if (value == null) {
             return;
         }
-        if (cascade == CascadeMapping.Cascade.DELETE) {
+        if (cascade == Cascade.DELETE) {
             if (cascadeFilter != null && cascadeFilter.shouldFilterDelete(value)) {
                 return;
             }
             session.delete(value, context);
-        } else if (cascade == CascadeMapping.Cascade.CREATE) {
+        } else if (cascade == Cascade.CREATE) {
             if (cascadeFilter != null && cascadeFilter.shouldFilterCreate(value)) {
                 return;
             }
             session.create(value, context);
-        } else if (cascade == CascadeMapping.Cascade.SAVE) {
+        } else if (cascade == Cascade.SAVE) {
             if (cascadeFilter != null && cascadeFilter.shouldFilterSave(value)) {
                 return;
             }

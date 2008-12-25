@@ -26,7 +26,7 @@ import org.apache.openjpa.event.StoreListener;
 import org.apache.openjpa.meta.ClassMetaData;
 import org.apache.openjpa.persistence.EntityManagerFactoryImpl;
 import org.apache.openjpa.persistence.OpenJPAPersistence;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
@@ -116,7 +116,7 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
             for (Class clazz : classes) {
                 ClassMetaData classMetaData = emf.getConfiguration().getMetaDataRepositoryInstance().getMetaData(clazz, classLoader, true);
                 Class mappedClass = classMetaData.getDescribedType();
-                if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
+                if (gps.hasMappingForEntityForMirror(mappedClass, Cascade.ALL)) {
                     emf.addLifecycleListener(eventListener, mappedClass);
                 }
             }

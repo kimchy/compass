@@ -26,6 +26,7 @@ import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.BoostPropertyMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
@@ -248,7 +249,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         return cascades;
     }
 
-    public boolean operationAllowed(CascadeMapping.Cascade cascade) {
+    public boolean operationAllowed(Cascade cascade) {
         if (isRoot()) {
             return true;
         }

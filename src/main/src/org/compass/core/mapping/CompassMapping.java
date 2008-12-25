@@ -120,13 +120,13 @@ public interface CompassMapping {
      * Returns <code>true</code> if the given class has either root mappings, or if it has
      * a non root mapping, it has mappings for the given cascade operation.
      */
-    boolean hasMappingForClass(Class clazz, CascadeMapping.Cascade cascade);
+    boolean hasMappingForClass(Class clazz, Cascade cascade);
 
     /**
      * Returns <code>true</code> if the given alias has either root mappings, or if it has
      * a non root mapping, it has mappings for the given cascade operation. 
      */
-    boolean hasMappingForAlias(String alias, CascadeMapping.Cascade cascade);
+    boolean hasMappingForAlias(String alias, Cascade cascade);
 
     /**
      * Finds a root mapping by the class name. If a root mapping is not found

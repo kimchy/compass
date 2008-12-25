@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Vector;
 import javax.persistence.EntityManagerFactory;
 
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.gps.device.jpa.AbstractDeviceJpaEntityListener;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 import org.compass.gps.device.jpa.JpaGpsDeviceException;
@@ -142,7 +142,7 @@ public class EclipseLinkJpaEntityLifecycleInjector implements JpaEntityLifecycle
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
             Class mappedClass = classDescriptor.getJavaClass();
-            if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
+            if (gps.hasMappingForEntityForMirror(mappedClass, Cascade.ALL)) {
                 classDescriptor.getDescriptorEventManager().addListener(eventListener);
             }
         }
@@ -159,7 +159,7 @@ public class EclipseLinkJpaEntityLifecycleInjector implements JpaEntityLifecycle
         for (Object o : descriptors.values()) {
             ClassDescriptor classDescriptor = (ClassDescriptor) o;
             Class mappedClass = classDescriptor.getJavaClass();
-            if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
+            if (gps.hasMappingForEntityForMirror(mappedClass, Cascade.ALL)) {
                 classDescriptor.getDescriptorEventManager().removeListener(eventListener);
             }
         }

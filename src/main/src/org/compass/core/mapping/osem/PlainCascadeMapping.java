@@ -17,6 +17,7 @@
 package org.compass.core.mapping.osem;
 
 import org.compass.core.CompassException;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.internal.InternalCascadeMapping;
 

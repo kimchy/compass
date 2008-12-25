@@ -27,7 +27,7 @@ import org.compass.core.CompassCallbackWithoutResult;
 import org.compass.core.CompassException;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTemplate;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
@@ -60,7 +60,7 @@ public abstract class AbstractCompassJpaEntityListener {
         return false;
     }
 
-    protected boolean hasMappingForEntity(Class clazz, CascadeMapping.Cascade cascade) {
+    protected boolean hasMappingForEntity(Class clazz, Cascade cascade) {
         ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByClass(clazz);
         if (resourceMapping == null) {
             return false;
@@ -71,7 +71,7 @@ public abstract class AbstractCompassJpaEntityListener {
         return resourceMapping.operationAllowed(cascade);
     }
 
-    protected boolean hasMappingForEntity(String name, CascadeMapping.Cascade cascade) {
+    protected boolean hasMappingForEntity(String name, Cascade cascade) {
         ResourceMapping resourceMapping = ((InternalCompass) getCompass()).getMapping().getMappingByAlias(name);
         if (resourceMapping != null) {
             if (resourceMapping.isRoot()) {
@@ -97,7 +97,7 @@ public abstract class AbstractCompassJpaEntityListener {
         if (disable()) {
             return;
         }
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.CREATE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.CREATE)) {
             return;
         }
 
@@ -123,7 +123,7 @@ public abstract class AbstractCompassJpaEntityListener {
         if (disable()) {
             return;
         }
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.SAVE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.SAVE)) {
             return;
         }
 
@@ -149,7 +149,7 @@ public abstract class AbstractCompassJpaEntityListener {
         if (disable()) {
             return;
         }
-        if (!hasMappingForEntity(entity.getClass(), CascadeMapping.Cascade.DELETE)) {
+        if (!hasMappingForEntity(entity.getClass(), Cascade.DELETE)) {
             return;
         }
 

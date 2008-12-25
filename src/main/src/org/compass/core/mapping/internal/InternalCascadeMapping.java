@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.internal;
 
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.CascadeMapping;
 
 /**

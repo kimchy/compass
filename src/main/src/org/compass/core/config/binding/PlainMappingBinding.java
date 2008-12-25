@@ -29,7 +29,7 @@ import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AliasMapping;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ReverseType;
@@ -872,14 +872,14 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         if ("none".equals(commaSeparatedCascades)) {
             return;
         }
-        ArrayList<CascadeMapping.Cascade> cascades = new ArrayList<CascadeMapping.Cascade>();
+        ArrayList<Cascade> cascades = new ArrayList<Cascade>();
         StringTokenizer st = new StringTokenizer(commaSeparatedCascades, ",");
         while (st.hasMoreTokens()) {
             String cascade = st.nextToken().trim();
-            cascades.add(CascadeMapping.Cascade.fromString(cascade));
+            cascades.add(Cascade.fromString(cascade));
         }
         if (cascades.size() > 0) {
-            cascadeMapping.setCascades(cascades.toArray(new CascadeMapping.Cascade[cascades.size()]));
+            cascadeMapping.setCascades(cascades.toArray(new Cascade[cascades.size()]));
         }
     }
 

@@ -45,7 +45,6 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.AliasMapping;
-import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.internal.DefaultAllMapping;
@@ -656,7 +655,7 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         if (cascades == null || cascades.length == 0) {
             return;
         }
-        CascadeMapping.Cascade[] mappingCascades = new CascadeMapping.Cascade[cascades.length];
+        org.compass.core.mapping.Cascade[] mappingCascades = new org.compass.core.mapping.Cascade[cascades.length];
         for (int i = 0; i < cascades.length; i++) {
             mappingCascades[i] = AnnotationsBindingUtils.convert(cascades[i]);
         }

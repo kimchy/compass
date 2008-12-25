@@ -21,7 +21,7 @@ import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.compass.core.Compass;
-import org.compass.core.mapping.CascadeMapping;
+import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.spi.InternalCompass;
 import org.compass.core.util.ClassUtils;
@@ -80,11 +80,11 @@ public abstract class AbstractCompassGps implements CompassGpsInterfaceDevice {
         return getRootMappingForEntity(clazz, checkedCompass) != null;
     }
 
-    protected boolean hasMappingForEntity(Class clazz, Compass checkedCompass, CascadeMapping.Cascade cascade) {
+    protected boolean hasMappingForEntity(Class clazz, Compass checkedCompass, Cascade cascade) {
         return ((InternalCompass) checkedCompass).getMapping().hasMappingForClass(clazz, cascade);
     }
 
-    protected boolean hasMappingForEntity(String name, Compass checkedCompass, CascadeMapping.Cascade cascade) {
+    protected boolean hasMappingForEntity(String name, Compass checkedCompass, Cascade cascade) {
         return ((InternalCompass) checkedCompass).getMapping().hasMappingForAlias(name, cascade);
     }
 

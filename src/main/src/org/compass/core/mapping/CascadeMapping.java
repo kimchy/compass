@@ -17,7 +17,6 @@
 package org.compass.core.mapping;
 
 import org.compass.core.CompassException;
-import org.compass.core.util.Parameter;
 
 /**
  * Cascade mappings responsible for getting objects for cascading
@@ -27,50 +26,6 @@ import org.compass.core.util.Parameter;
  * @author kimchy
  */
 public interface CascadeMapping {
-
-    /**
-     * A cascade enumeration of operations allowed for cascading.
-     */
-    public static final class Cascade extends Parameter {
-
-        private Cascade(String name) {
-            super(name);
-        }
-
-        public static final Cascade DELETE = new Cascade("DELETE");
-
-        public static final Cascade SAVE = new Cascade("SAVE");
-
-        public static final Cascade CREATE = new Cascade("CREATE");
-
-        public static final Cascade ALL = new Cascade("ALL");
-
-        public static String toString(Cascade cascade) {
-            if (cascade == Cascade.DELETE) {
-                return "delete";
-            } else if (cascade == Cascade.SAVE) {
-                return "save";
-            } else if (cascade == Cascade.CREATE) {
-                return "create";
-            } else if (cascade == Cascade.ALL) {
-                return "all";
-            }
-            throw new IllegalArgumentException("Can't find cascade for [" + cascade + "]");
-        }
-
-        public static Cascade fromString(String cascade) {
-            if ("delete".equalsIgnoreCase(cascade)) {
-                return Cascade.DELETE;
-            } else if ("save".equalsIgnoreCase(cascade)) {
-                return Cascade.SAVE;
-            } else if ("create".equalsIgnoreCase(cascade)) {
-                return Cascade.CREATE;
-            } else if ("all".equalsIgnoreCase(cascade)) {
-                return Cascade.ALL;
-            }
-            throw new IllegalArgumentException("Can't find cascade for [" + cascade + "]");
-        }
-    }
 
     /**
      * Returns the value that should be cascaded basde on the root object.
