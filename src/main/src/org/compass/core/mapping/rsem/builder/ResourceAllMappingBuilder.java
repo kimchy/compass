@@ -17,7 +17,7 @@
 package org.compass.core.mapping.rsem.builder;
 
 import org.compass.core.Property;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 
 /**
@@ -100,7 +100,7 @@ public class ResourceAllMappingBuilder {
     /**
      * The spell check type of the all property.
      */
-    public ResourceAllMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public ResourceAllMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

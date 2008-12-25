@@ -16,35 +16,29 @@
 
 package org.compass.core.mapping.json;
 
-import org.compass.core.util.Parameter;
-
 /**
  * @author kimchy
  */
-public final class NamingType extends Parameter {
+public enum Naming {
 
-    private NamingType(String name) {
-        super(name);
-    }
+    PLAIN,
 
-    public static final NamingType PLAIN = new NamingType("PLAIN");
+    FULL;
 
-    public static final NamingType FULL = new NamingType("FULL");
-
-    public static String toString(NamingType namingType) {
-        if (namingType == NamingType.PLAIN) {
+    public static String toString(Naming namingType) {
+        if (namingType == Naming.PLAIN) {
             return "plain";
-        } else if (namingType == NamingType.FULL) {
+        } else if (namingType == Naming.FULL) {
             return "full";
         }
         throw new IllegalArgumentException("Can't find naming type for [" + namingType + "]");
     }
 
-    public static NamingType fromString(String namingType) {
+    public static Naming fromString(String namingType) {
         if ("plain".equalsIgnoreCase(namingType)) {
-            return NamingType.PLAIN;
+            return Naming.PLAIN;
         } else if ("full".equalsIgnoreCase(namingType)) {
-            return NamingType.FULL;
+            return Naming.FULL;
         }
         throw new IllegalArgumentException("Can't find naming type for [" + namingType + "]");
     }

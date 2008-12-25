@@ -18,7 +18,7 @@ package org.compass.core.test.spellcheck.properties;
 
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 
 /**
  * @author kimchy
@@ -28,7 +28,7 @@ public class GlobalExcludeProeprtiesSpellCheckTests extends AbstractGlobalProper
     protected void addSettings(CompassSettings settings) {
         super.addSettings(settings);
         settings.setSetting(LuceneEnvironment.SpellCheck.GLOBAL_EXCLUDE_PROPERTY, "value3");
-        settings.setSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, SpellCheckType.INCLUDE.toString());
+        settings.setSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, SpellCheck.INCLUDE.toString());
     }
 
 }

@@ -21,19 +21,12 @@ import org.compass.core.util.Parameter;
 /**
  * A cascade enumeration of operations allowed for cascading.
  */
-public final class Cascade extends Parameter {
+public enum Cascade {
 
-    public Cascade(String name) {
-        super(name);
-    }
-
-    public static final Cascade DELETE = new Cascade("DELETE");
-
-    public static final Cascade SAVE = new Cascade("SAVE");
-
-    public static final Cascade CREATE = new Cascade("CREATE");
-
-    public static final Cascade ALL = new Cascade("ALL");
+    DELETE,
+    SAVE,
+    CREATE,
+    ALL;
 
     public static String toString(Cascade cascade) {
         if (cascade == Cascade.DELETE) {

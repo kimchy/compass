@@ -17,7 +17,7 @@
 package org.compass.core.mapping.json.builder;
 
 import org.compass.core.Property;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 
 /**
@@ -100,7 +100,7 @@ public class JsonAllMappingBuilder {
     /**
      * The spell check type of the all property.
      */
-    public JsonAllMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public JsonAllMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

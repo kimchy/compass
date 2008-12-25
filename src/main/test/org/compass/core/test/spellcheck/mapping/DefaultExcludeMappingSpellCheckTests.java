@@ -20,7 +20,7 @@ import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
 import org.compass.core.config.CompassSettings;
 import org.compass.core.lucene.LuceneEnvironment;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.test.AbstractTestCase;
 
 /**
@@ -35,7 +35,7 @@ public class DefaultExcludeMappingSpellCheckTests extends AbstractTestCase {
     protected void addSettings(CompassSettings settings) {
         settings.setBooleanSetting(LuceneEnvironment.SpellCheck.ENABLE, true);
         settings.setBooleanSetting(LuceneEnvironment.SpellCheck.SCHEDULE, false);
-        settings.setSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, SpellCheckType.EXCLUDE.toString());
+        settings.setSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, SpellCheck.EXCLUDE.toString());
     }
 
     public void testSimplePropertiesSpellCheck() {

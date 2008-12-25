@@ -23,43 +23,37 @@ import org.compass.core.util.Parameter;
  *
  * @author kimchy
  */
-public final class ManagedId extends Parameter {
-
-    private static final long serialVersionUID = -7849904473959816389L;
-
-    ManagedId(String name) {
-        super(name);
-    }
+public enum ManagedId {
 
     /**
      * The meta-data (resource-property) that will act as the id will be
      * computed automatically.
      */
-    public static final ManagedId AUTO = new ManagedId("AUTO");
+    AUTO,
 
     /**
      * The class property will always have an internal managed id that will
      * be created.
      */
-    public static final ManagedId TRUE = new ManagedId("TRUE");
+    TRUE,
 
     /**
      * The class property will not have an internal managed id, the
      * meta-data that will be used as an id will be the first one.
      */
-    public static final ManagedId FALSE = new ManagedId("FALSE");
+    FALSE,
 
     /**
      * The class proeprty will not create an internal managed id if
      * all its meta data mappings have store=no
      */
-    public static final ManagedId NO_STORE = new ManagedId("NO_STORE");
+    NO_STORE,
 
     /**
      * The class property will not have any internal meta-data id, causing
      * it not to be unmarshalled at all.
      */
-    public static final ManagedId NO = new ManagedId("NO");
+    NO;
 
     public static String toString(ManagedId managedId) {
         if (managedId == ManagedId.AUTO) {

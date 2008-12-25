@@ -18,7 +18,7 @@ package org.compass.core.mapping.osem.builder;
 
 import org.compass.core.Property;
 import org.compass.core.converter.Converter;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ManagedId;
 
@@ -41,7 +41,7 @@ public class ClassPropertyMappingBuilder {
         return this;
     }
 
-    public ClassPropertyMappingBuilder excludeFromAll(ExcludeFromAllType excludeFromAll) {
+    public ClassPropertyMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }

@@ -34,25 +34,20 @@ public interface CompassHighlighter {
      * 
      * @author kimchy
      */
-    public static final class TextTokenizer extends Parameter {
+    public static enum TextTokenizer {
 
-        private static final long serialVersionUID = -2884363380650216389L;
-
-        private TextTokenizer(String name) {
-            super(name);
-        }
 
         /** Forces tokenization of the text using the analyzer. */
-        public static final TextTokenizer ANALYZER = new TextTokenizer("ANALYZER");
+        ANALYZER,
 
         /** Forces tokenization of the text using the tem vector information. */
-        public static final TextTokenizer TERM_VECTOR = new TextTokenizer("TERM_VECTOR");
+        TERM_VECTOR,
 
         /**
          * Will use term vector if available to tokenize the text, otherwise
          * will use analyzer.
          */
-        public static final TextTokenizer AUTO = new TextTokenizer("AUTO");
+        AUTO;
 
         public static String toString(TextTokenizer textTokenizer) {
             if (textTokenizer == CompassHighlighter.TextTokenizer.ANALYZER) {

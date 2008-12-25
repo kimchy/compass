@@ -46,7 +46,7 @@ import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.MappingException;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalCascadeMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
@@ -188,12 +188,12 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
             if (allMetaData.termVector() != TermVector.NA) {
                 allMapping.setTermVector(AnnotationsBindingUtils.convert(allMetaData.termVector()));
             }
-            if (allMetaData.spellCheck() == SpellCheck.EXCLUDE) {
-                allMapping.setSpellCheck(SpellCheckType.EXCLUDE);
-            } else if (allMetaData.spellCheck() == SpellCheck.INCLUDE) {
-                allMapping.setSpellCheck(SpellCheckType.INCLUDE);
-            } else if (allMetaData.spellCheck() == SpellCheck.NA) {
-                allMapping.setSpellCheck(SpellCheckType.NA);
+            if (allMetaData.spellCheck() == org.compass.annotations.SpellCheck.EXCLUDE) {
+                allMapping.setSpellCheck(SpellCheck.EXCLUDE);
+            } else if (allMetaData.spellCheck() == org.compass.annotations.SpellCheck.INCLUDE) {
+                allMapping.setSpellCheck(SpellCheck.INCLUDE);
+            } else if (allMetaData.spellCheck() == org.compass.annotations.SpellCheck.NA) {
+                allMapping.setSpellCheck(SpellCheck.NA);
             }
             if (allMetaData.includePropertiesWithNoMappings() == NABoolean.TRUE) {
                 allMapping.setIncludePropertiesWithNoMappings(true);
@@ -205,12 +205,12 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         }
         classMapping.setAllMapping(allMapping);
 
-        if (searchable.spellCheck() == SpellCheck.NA) {
-            classMapping.setSpellCheck(SpellCheckType.NA);
-        } else if (searchable.spellCheck() == SpellCheck.EXCLUDE) {
-            classMapping.setSpellCheck(SpellCheckType.EXCLUDE);
-        } else if (searchable.spellCheck() == SpellCheck.INCLUDE) {
-            classMapping.setSpellCheck(SpellCheckType.INCLUDE);
+        if (searchable.spellCheck() == org.compass.annotations.SpellCheck.NA) {
+            classMapping.setSpellCheck(SpellCheck.NA);
+        } else if (searchable.spellCheck() == org.compass.annotations.SpellCheck.EXCLUDE) {
+            classMapping.setSpellCheck(SpellCheck.EXCLUDE);
+        } else if (searchable.spellCheck() == org.compass.annotations.SpellCheck.INCLUDE) {
+            classMapping.setSpellCheck(SpellCheck.INCLUDE);
         }
 
         classMapping.setBoost(searchable.boost());
@@ -927,13 +927,13 @@ public class AnnotationsMappingBinding extends AbstractClassMetaDataMappingBindi
         bindConverter(mapping, converterName, null, null);
     }
 
-    private void bindSpellCheck(InternalResourcePropertyMapping mapping, SpellCheck spellCheck) {
-        if (spellCheck == SpellCheck.EXCLUDE) {
-            mapping.setSpellCheck(SpellCheckType.EXCLUDE);
-        } else if (spellCheck == SpellCheck.INCLUDE) {
-            mapping.setSpellCheck(SpellCheckType.INCLUDE);
-        } else if (spellCheck == SpellCheck.NA) {
-            mapping.setSpellCheck(SpellCheckType.NA);
+    private void bindSpellCheck(InternalResourcePropertyMapping mapping, org.compass.annotations.SpellCheck spellCheck) {
+        if (spellCheck == org.compass.annotations.SpellCheck.EXCLUDE) {
+            mapping.setSpellCheck(SpellCheck.EXCLUDE);
+        } else if (spellCheck == org.compass.annotations.SpellCheck.INCLUDE) {
+            mapping.setSpellCheck(SpellCheck.INCLUDE);
+        } else if (spellCheck == org.compass.annotations.SpellCheck.NA) {
+            mapping.setSpellCheck(SpellCheck.NA);
         }
     }
 

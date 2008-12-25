@@ -82,7 +82,7 @@ public interface ResourceMapping extends AliasMapping {
     /**
      * Returns the default spell check mode. If NA, will use global setting.
      */
-    SpellCheckType getSpellCheck();
+    SpellCheck getSpellCheck();
 
     /**
      * Returns the uid property name.

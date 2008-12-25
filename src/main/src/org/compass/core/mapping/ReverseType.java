@@ -16,24 +16,16 @@
 
 package org.compass.core.mapping;
 
-import org.compass.core.util.Parameter;
-
 /**
  * @author kimchy
  */
-public class ReverseType extends Parameter {
+public enum ReverseType {
 
-    private static final long serialVersionUID = 9135849961654313364L;
+    NO,
 
-    public ReverseType(String name) {
-        super(name);
-    }
+    READER,
 
-    public static final ReverseType NO = new ReverseType("NO");
-
-    public static final ReverseType READER = new ReverseType("READER");
-
-    public static final ReverseType STRING = new ReverseType("STRING");
+    STRING;
 
     public static ReverseType fromString(String reverseType) {
         if ("no".equalsIgnoreCase(reverseType)) {

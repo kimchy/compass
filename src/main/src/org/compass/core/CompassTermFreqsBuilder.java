@@ -39,21 +39,17 @@ import org.compass.core.util.Parameter;
  */
 public interface CompassTermFreqsBuilder {
 
-    public static final class Sort extends Parameter {
-
-        private Sort(String name) {
-            super(name);
-        }
+    public static enum Sort {
 
         /**
          * Sort the terms based on their name
          */
-        public static final Sort TERM = new Sort("TERM");
+        TERM,
 
         /**
          * Sort the terms based on their frequency (the default)
          */
-        public static final Sort FREQ = new Sort("FREQ");
+        FREQ
     }
 
     /**

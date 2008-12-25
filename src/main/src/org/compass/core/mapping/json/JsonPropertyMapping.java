@@ -39,7 +39,7 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
 
     private String fullPath;
 
-    private NamingType namingType = NamingType.PLAIN;
+    private Naming namingType = Naming.PLAIN;
 
     private boolean dynamic = false;
 
@@ -103,11 +103,11 @@ public class JsonPropertyMapping extends AbstractResourcePropertyMapping impleme
         this.format = format;
     }
 
-    public NamingType getNamingType() {
+    public Naming getNamingType() {
         return namingType;
     }
 
-    public void setNamingType(NamingType namingType) {
+    public void setNamingType(Naming namingType) {
         this.namingType = namingType;
     }
 

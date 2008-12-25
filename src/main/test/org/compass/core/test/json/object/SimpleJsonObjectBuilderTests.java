@@ -17,7 +17,7 @@
 package org.compass.core.test.json.object;
 
 import org.compass.core.config.CompassConfiguration;
-import org.compass.core.mapping.json.NamingType;
+import org.compass.core.mapping.json.Naming;
 import static org.compass.core.mapping.json.builder.JSEM.*;
 
 /**
@@ -49,7 +49,7 @@ public class SimpleJsonObjectBuilderTests extends SimpleJsonObjectTests {
                 json("c")
                         .add(id("id"))
                         .add(property("value"))
-                        .add(object("obj").add(property("objValue1").namingType(NamingType.FULL).valueConverter("int")).add(array("arr").element(property().namingType(NamingType.FULL).valueConverter("int"))))
+                        .add(object("obj").add(property("objValue1").namingType(Naming.FULL).valueConverter("int")).add(array("arr").element(property().namingType(Naming.FULL).valueConverter("int"))))
         );
     }
 }

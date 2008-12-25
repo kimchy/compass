@@ -148,13 +148,14 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
     }
 
     private int getImplicitSortField(SortImplicitType implicitType) {
-        if (implicitType == SortImplicitType.DOC) {
-            return SortField.DOC;
+        switch (implicitType) {
+            case DOC:
+                return SortField.DOC;
+            case SCORE:
+                return SortField.SCORE;
+            default:
+                throw new IllegalArgumentException("Faile to create lucene implicit type for [" + implicitType + "]");
         }
-        if (implicitType == SortImplicitType.SCORE) {
-            return SortField.SCORE;
-        }
-        throw new IllegalArgumentException("Faile to create lucene implicit type for [" + implicitType + "]");
     }
 
     private boolean getSortReverse(SortDirection direction) {
@@ -162,19 +163,24 @@ public class LuceneSearchEngineQuery implements SearchEngineQuery, Cloneable {
     }
 
     private int getSortType(SortPropertyType type) {
-        if (type == SortPropertyType.AUTO) {
-            return SortField.AUTO;
+        switch (type) {
+            case AUTO:
+                return SortField.AUTO;
+            case BYTE:
+                return SortField.BYTE;
+            case DOUBLE:
+                return SortField.DOUBLE;
+            case FLOAT:
+                return SortField.FLOAT;
+            case INT:
+                return SortField.INT;
+            case LONG:
+                return SortField.LONG;
+            case STRING:
+                return SortField.STRING;
+            default:
+                throw new IllegalArgumentException("Failed to convert type [" + type + "]");
         }
-        if (type == SortPropertyType.FLOAT) {
-            return SortField.FLOAT;
-        }
-        if (type == SortPropertyType.INT) {
-            return SortField.INT;
-        }
-        if (type == SortPropertyType.STRING) {
-            return SortField.STRING;
-        }
-        throw new IllegalArgumentException("Faile to create lucene sort property type for [" + type + "]");
     }
 
     public long count() {

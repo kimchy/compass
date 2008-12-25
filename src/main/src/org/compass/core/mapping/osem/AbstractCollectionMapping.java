@@ -26,27 +26,16 @@ import org.compass.core.util.Parameter;
  */
 public abstract class AbstractCollectionMapping extends AbstractAccessorMapping implements InternalOverrideByNameMapping {
 
-    public static final class CollectionType extends Parameter {
+    public static enum CollectionType {
 
-        private static final long serialVersionUID = 5419036751959715652L;
 
-        private CollectionType(String name) {
-            super(name);
-        }
-
-        public static final CollectionType NOT_REQUIRED = new CollectionType("NOT_REQUIRED");
-
-        public static final CollectionType UNKNOWN = new CollectionType("UNKNOWN");
-
-        public static final CollectionType SET = new CollectionType("SET");
-
-        public static final CollectionType LIST = new CollectionType("LIST");
-
-        public static final CollectionType ENUM_SET = new CollectionType("ESET");
-
-        public static final CollectionType SORTED_SET = new CollectionType("SORTED_SET");
-
-        public static final CollectionType LINKED_HASH_SET = new CollectionType("LINKED_HASH_SET");
+        NOT_REQUIRED,
+        UNKNOWN,
+        SET,
+        LIST,
+        ENUM_SET,
+        SORTED_SET,
+        LINKED_HASH_SET;
 
         public static String toString(CollectionType collectionType) {
             if (collectionType == CollectionType.NOT_REQUIRED) {

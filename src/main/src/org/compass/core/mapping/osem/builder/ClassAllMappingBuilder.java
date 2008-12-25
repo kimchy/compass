@@ -17,7 +17,7 @@
 package org.compass.core.mapping.osem.builder;
 
 import org.compass.core.Property;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 
 /**
@@ -100,7 +100,7 @@ public class ClassAllMappingBuilder {
     /**
      * The spell check type of the all property.
      */
-    public ClassAllMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public ClassAllMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

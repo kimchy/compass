@@ -2,7 +2,7 @@ package org.compass.core.test.resource;
 
 import org.compass.core.Property;
 import org.compass.core.config.CompassConfiguration;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import static org.compass.core.mapping.rsem.builder.RSEM.*;
 
 /**
@@ -58,10 +58,10 @@ public class BuilderResourceTests extends ResourceTests {
         );
         conf.addResourceMapping(
                 resource("f")
-                        .add(id("id1").excludeFromAll(ExcludeFromAllType.YES))
-                        .add(id("id2").excludeFromAll(ExcludeFromAllType.NO))
-                        .add(property("value1").excludeFromAll(ExcludeFromAllType.YES))
-                        .add(property("value2").excludeFromAll(ExcludeFromAllType.NO))
+                        .add(id("id1").excludeFromAll(ExcludeFromAll.YES))
+                        .add(id("id2").excludeFromAll(ExcludeFromAll.NO))
+                        .add(property("value1").excludeFromAll(ExcludeFromAll.YES))
+                        .add(property("value2").excludeFromAll(ExcludeFromAll.NO))
         );
         conf.addResourceMapping(
                 resource("g")

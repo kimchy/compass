@@ -18,7 +18,7 @@ package org.compass.core.mapping.json;
 
 import org.compass.core.Property;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
@@ -73,8 +73,8 @@ public class JsonContentMapping extends AbstractResourcePropertyMapping implemen
     /**
      * Json content mapping is always excluded from all
      */
-    public ExcludeFromAllType getExcludeFromAll() {
-        return ExcludeFromAllType.YES;
+    public ExcludeFromAll getExcludeFromAll() {
+        return ExcludeFromAll.YES;
     }
 
     public Mapping copy() {

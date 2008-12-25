@@ -66,7 +66,7 @@ import org.compass.core.lucene.search.CacheableMultiReader;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.transaction.InternalCompassTransaction;
 import org.compass.core.transaction.context.TransactionContextCallback;
 import org.compass.core.transaction.context.TransactionContextCallbackWithTr;
@@ -175,19 +175,19 @@ public class DefaultLuceneSpellCheckManager implements InternalLuceneSearchEngin
                     if (resourcePropertyMapping.isInternal()) {
                         continue;
                     }
-                    if (resourceMapping.getSpellCheck() == SpellCheckType.INCLUDE && resourcePropertyMapping.getSpellCheck() != SpellCheckType.EXCLUDE) {
+                    if (resourceMapping.getSpellCheck() == SpellCheck.INCLUDE && resourcePropertyMapping.getSpellCheck() != SpellCheck.EXCLUDE) {
                         subIndexProps.add(resourcePropertyMapping.getPath().getPath());
                     }
-                    if (resourceMapping.getSpellCheck() == SpellCheckType.EXCLUDE && resourcePropertyMapping.getSpellCheck() == SpellCheckType.INCLUDE) {
+                    if (resourceMapping.getSpellCheck() == SpellCheck.EXCLUDE && resourcePropertyMapping.getSpellCheck() == SpellCheck.INCLUDE) {
                         subIndexProps.add(resourcePropertyMapping.getPath().getPath());
                     }
                 }
-                if (resourceMapping.getAllMapping().getSpellCheck() == SpellCheckType.INCLUDE) {
+                if (resourceMapping.getAllMapping().getSpellCheck() == SpellCheck.INCLUDE) {
                     subIndexProps.add(resourceMapping.getAllMapping().getProperty());
                 }
 
-                if (subIndexProps.size() == 0 && resourceMapping.getSpellCheck() == SpellCheckType.NA &&
-                        resourceMapping.getAllMapping().getSpellCheck() != SpellCheckType.EXCLUDE) {
+                if (subIndexProps.size() == 0 && resourceMapping.getSpellCheck() == SpellCheck.NA &&
+                        resourceMapping.getAllMapping().getSpellCheck() != SpellCheck.EXCLUDE) {
                     subIndexProps.add(settings.getSetting(CompassEnvironment.All.NAME, CompassEnvironment.All.DEFAULT_NAME));
                 }
             }

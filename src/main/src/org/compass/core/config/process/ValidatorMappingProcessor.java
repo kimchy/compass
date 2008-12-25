@@ -22,7 +22,7 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.ConverterLookup;
 import org.compass.core.engine.naming.PropertyNamingStrategy;
 import org.compass.core.mapping.CompassMapping;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.InvalidMappingException;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
@@ -95,7 +95,7 @@ public class ValidatorMappingProcessor implements MappingProcessor {
         if (resourcePropertyMapping.length == 1) {
             return;
         }
-        ExcludeFromAllType excludeFromAll = resourcePropertyMapping[0].getExcludeFromAll();
+        ExcludeFromAll excludeFromAll = resourcePropertyMapping[0].getExcludeFromAll();
         for (int i = 1; i < resourcePropertyMapping.length; i++) {
             if (resourcePropertyMapping[i].isInternal()) {
                 continue;

@@ -18,7 +18,7 @@ package org.compass.core.mapping.internal;
 
 import org.compass.core.Property;
 import org.compass.core.mapping.AllMapping;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 
 /**
  * @author kimchy
@@ -37,7 +37,7 @@ public interface InternalAllMapping extends AllMapping {
 
     void setTermVector(Property.TermVector termVector);
 
-    void setSpellCheck(SpellCheckType spellCheck);
+    void setSpellCheck(SpellCheck spellCheck);
 
     void setIncludePropertiesWithNoMappings(Boolean includeUnmapped);
 }

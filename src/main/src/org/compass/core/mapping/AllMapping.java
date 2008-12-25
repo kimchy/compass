@@ -66,7 +66,7 @@ public interface AllMapping {
     /**
      * 
      */
-    SpellCheckType getSpellCheck();
+    SpellCheck getSpellCheck();
 
     /**
      * Returns a copy of the All mapping settings.

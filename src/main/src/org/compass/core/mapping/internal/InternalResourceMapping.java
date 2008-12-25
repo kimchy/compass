@@ -19,7 +19,7 @@ package org.compass.core.mapping.internal;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AllMapping;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 
 /**
  * @author kimchy
@@ -33,7 +33,7 @@ public interface InternalResourceMapping extends ResourceMapping, InternalAliasM
 
     void setAllMapping(AllMapping allMapping);
 
-    void setSpellCheck(SpellCheckType spellCheck);
+    void setSpellCheck(SpellCheck spellCheck);
 
     void setSubIndexHash(SubIndexHash subIndexHash);
 }

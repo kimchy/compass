@@ -30,10 +30,10 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.AliasMapping;
 import org.compass.core.mapping.Cascade;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ReverseType;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.DefaultContractMapping;
 import org.compass.core.mapping.internal.InternalAliasMapping;
@@ -49,7 +49,7 @@ import org.compass.core.mapping.json.JsonContentMapping;
 import org.compass.core.mapping.json.JsonIdMapping;
 import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
 import org.compass.core.mapping.json.JsonPropertyMapping;
-import org.compass.core.mapping.json.NamingType;
+import org.compass.core.mapping.json.Naming;
 import org.compass.core.mapping.json.PlainJsonObjectMapping;
 import org.compass.core.mapping.json.RootJsonObjectMapping;
 import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
@@ -370,8 +370,8 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
             jsonPropertyMapping.setValueConverter(new FormatDelegateConverter(format));
         }
 
-        String namingType = jsonPropConf.getAttribute("naming-type", NamingType.PLAIN.toString());
-        jsonPropertyMapping.setNamingType(NamingType.fromString(namingType));
+        String namingType = jsonPropConf.getAttribute("naming-type", Naming.PLAIN.toString());
+        jsonPropertyMapping.setNamingType(Naming.fromString(namingType));
 
 
         bindResourcePropertyMapping(jsonPropConf, jsonPropertyMapping, aliasMapping);
@@ -912,7 +912,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         classPropertyMapping.setAnalyzer(classPropertyConf.getAttribute("analyzer", aliasMapping.getAnalyzer()));
 
         String excludeFromAll = classPropertyConf.getAttribute("exclude-from-all", "no");
-        classPropertyMapping.setExcludeFromAll(ExcludeFromAllType.fromString(excludeFromAll));
+        classPropertyMapping.setExcludeFromAll(ExcludeFromAll.fromString(excludeFromAll));
 
         String managedId = classPropertyConf.getAttribute("managed-id", null);
         if (managedId != null) {
@@ -948,7 +948,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         constantMapping.setName(valueLookup.lookupMetaDataName(metaDataValue));
 
         String excludeFromAll = constantConf.getAttribute("exclude-from-all", "no");
-        constantMapping.setExcludeFromAll(ExcludeFromAllType.fromString(excludeFromAll));
+        constantMapping.setExcludeFromAll(ExcludeFromAll.fromString(excludeFromAll));
 
         bindResourcePropertyMapping(metadataConf, constantMapping, 1.0f, constantMapping.getExcludeFromAll(),
                 classMapping.getAnalyzer());
@@ -1064,17 +1064,17 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
                 allMapping.setIncludePropertiesWithNoMappings(sIncludeUnmappedProperties.equalsIgnoreCase("true"));
             }
             allMapping.setProperty(allConf.getAttribute("name", null));
-            allMapping.setSpellCheck(SpellCheckType.fromString(allConf.getAttribute("spell-check", "na")));
+            allMapping.setSpellCheck(SpellCheck.fromString(allConf.getAttribute("spell-check", "na")));
         }
         resourceMapping.setAllMapping(allMapping);
     }
 
     private void bindSpellCheck(ConfigurationHelper conf, InternalResourcePropertyMapping mapping) {
-        mapping.setSpellCheck(SpellCheckType.fromString(conf.getAttribute("spell-check", "na")));
+        mapping.setSpellCheck(SpellCheck.fromString(conf.getAttribute("spell-check", "na")));
     }
 
     private void bindSpellCheck(ConfigurationHelper conf, InternalResourceMapping mapping) {
-        mapping.setSpellCheck(SpellCheckType.fromString(conf.getAttribute("spell-check", "na")));
+        mapping.setSpellCheck(SpellCheck.fromString(conf.getAttribute("spell-check", "na")));
     }
 
     private void bindSubIndexHash(ConfigurationHelper conf, AbstractResourceMapping resourceMapping) {
@@ -1116,13 +1116,13 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
     private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
                                              AliasMapping aliasMapping) {
-        bindResourcePropertyMapping(conf, mapping, 1.0f, ExcludeFromAllType.NO,
+        bindResourcePropertyMapping(conf, mapping, 1.0f, ExcludeFromAll.NO,
                 aliasMapping.getAnalyzer());
     }
 
     private void bindResourcePropertyMapping(ConfigurationHelper conf, InternalResourcePropertyMapping mapping,
                                              float defaultBoost,
-                                             ExcludeFromAllType excludeFromAllType,
+                                             ExcludeFromAll excludeFromAllType,
                                              String analyzer) {
         mapping.setBoost(getBoost(conf, defaultBoost));
         String storeType = conf.getAttribute("store", null);
@@ -1152,8 +1152,8 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         mapping.setReverse(ReverseType.fromString(reverseType));
         mapping.setAnalyzer(conf.getAttribute("analyzer", analyzer));
         mapping.setNullValue(conf.getAttribute("null-value", null));
-        String excludeFromAll = conf.getAttribute("exclude-from-all", ExcludeFromAllType.toString(excludeFromAllType));
-        mapping.setExcludeFromAll(ExcludeFromAllType.fromString(excludeFromAll));
+        String excludeFromAll = conf.getAttribute("exclude-from-all", ExcludeFromAll.toString(excludeFromAllType));
+        mapping.setExcludeFromAll(ExcludeFromAll.fromString(excludeFromAll));
 
         mapping.setInternal(false);
     }

@@ -17,9 +17,9 @@
 package org.compass.core.mapping.support;
 
 import org.compass.core.Property;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.ReverseType;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.internal.InternalResourcePropertyMapping;
 
 /**
@@ -43,9 +43,9 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
 
     private boolean isInternal = false;
 
-    private ExcludeFromAllType excludeFromAll = ExcludeFromAllType.NO;
+    private ExcludeFromAll excludeFromAll = ExcludeFromAll.NO;
 
-    private SpellCheckType spellCheck = SpellCheckType.NA;
+    private SpellCheck spellCheck = SpellCheck.NA;
 
     private Boolean omitNorms = false;
 
@@ -132,11 +132,11 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         this.isInternal = isInternal;
     }
 
-    public ExcludeFromAllType getExcludeFromAll() {
+    public ExcludeFromAll getExcludeFromAll() {
         return excludeFromAll;
     }
 
-    public void setExcludeFromAll(ExcludeFromAllType excludeFromAll) {
+    public void setExcludeFromAll(ExcludeFromAll excludeFromAll) {
         this.excludeFromAll = excludeFromAll;
     }
 
@@ -196,11 +196,11 @@ public abstract class AbstractResourcePropertyMapping extends AbstractMapping im
         return nullValue.length() > 0;
     }
 
-    public SpellCheckType getSpellCheck() {
+    public SpellCheck getSpellCheck() {
         return spellCheck;
     }
 
-    public void setSpellCheck(SpellCheckType spellCheck) {
+    public void setSpellCheck(SpellCheck spellCheck) {
         this.spellCheck = spellCheck;
     }
 }

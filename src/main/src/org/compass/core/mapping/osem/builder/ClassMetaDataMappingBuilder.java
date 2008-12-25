@@ -21,8 +21,8 @@ import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.converter.mapping.support.FormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
-import org.compass.core.mapping.ExcludeFromAllType;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.ExcludeFromAll;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 
 /**
@@ -136,7 +136,7 @@ public class ClassMetaDataMappingBuilder {
     /**
      * Controls if the property will be excluded from all or not.
      */
-    public ClassMetaDataMappingBuilder excludeFromAll(ExcludeFromAllType excludeFromAll) {
+    public ClassMetaDataMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
@@ -153,7 +153,7 @@ public class ClassMetaDataMappingBuilder {
     /**
      * Sets the spell check specific setting for the mapping.
      */
-    public ClassMetaDataMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public ClassMetaDataMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

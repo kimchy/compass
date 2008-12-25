@@ -18,8 +18,6 @@ package org.compass.core;
 
 import java.util.Locale;
 
-import org.compass.core.util.Parameter;
-
 /**
  * An object representing a Compass query. The query is created using the
  * {@link org.compass.core.CompassQueryBuilder}, and used to get the
@@ -48,24 +46,18 @@ public interface CompassQuery {
      *
      * @author kimchy
      */
-    public static final class SortDirection extends Parameter {
-
-        private static final long serialVersionUID = -1186862896088594504L;
-
-        private SortDirection(String name) {
-            super(name);
-        }
+    public static enum SortDirection {
 
         /**
          * The default sort direction, which is descending for relevance type
          * and increasing for all the rest.
          */
-        public static final SortDirection AUTO = new SortDirection("AUTO");
+        AUTO,
 
         /**
          * The reverse order of the <code>AUTO</code> order.
          */
-        public static final SortDirection REVERSE = new SortDirection("REVERSE");
+        REVERSE
 
     }
 
@@ -76,13 +68,7 @@ public interface CompassQuery {
      *
      * @author kimchy
      */
-    public static final class SortPropertyType extends Parameter {
-
-        private static final long serialVersionUID = -7244219805458198332L;
-
-        private SortPropertyType(String name) {
-            super(name);
-        }
+    public static enum SortPropertyType {
 
         /**
          * Guess type of sort based on proeprty contents. A regular expression
@@ -90,25 +76,42 @@ public interface CompassQuery {
          * determine if it represents an integer number, a floating point
          * number, or just arbitrary string characters.
          */
-        public static final SortPropertyType AUTO = new SortPropertyType("AUTO");
+        AUTO,
 
         /**
          * Sort using term values as Strings. Sort values are String and lower
          * values are at the front.
          */
-        public static final SortPropertyType STRING = new SortPropertyType("STRING");
+        STRING,
+
+        /**
+         * Sort using term values as encoded bytes.  Sort values are bytes and lower values are at the front
+         */
+        BYTE,
 
         /**
          * Sort using term values as encoded Integers. Sort values are Integer
          * and lower values are at the front.
          */
-        public static final SortPropertyType INT = new SortPropertyType("INT");
+        INT,
+
+        /**
+         * Sort using term values as encoded Longs.  Sort values are Long and
+         * lower values are at the front.
+         */
+        LONG,
 
         /**
          * Sort using term values as encoded Floats. Sort values are Float and
          * lower values are at the front.
          */
-        public static final SortPropertyType FLOAT = new SortPropertyType("FLOAT");
+        FLOAT,
+
+        /**
+         * Sort using term values as encoded Doubles.  Sort values are Double and
+         * lower values are at the front.
+         */
+        DOUBLE
     }
 
     /**
@@ -116,26 +119,20 @@ public interface CompassQuery {
      *
      * @author kimchy
      */
-    public static final class SortImplicitType extends Parameter {
-
-        private static final long serialVersionUID = -6280976433851973161L;
-
-        private SortImplicitType(String name) {
-            super(name);
-        }
+    public static enum SortImplicitType {
 
         /**
          * Sort by resource score (relevancy). Sort values are Float and higher
          * values are at the front.
          */
-        public static final SortImplicitType SCORE = new SortImplicitType("SCORE");
+        SCORE,
 
         /**
          * Sort by document number (index order). Sort values are Integer and
          * lower values are at the front. Note, that if an updated occurs, the
          * document number will be higher.
          */
-        public static final SortImplicitType DOC = new SortImplicitType("DOC");
+        DOC
     }
 
     /**

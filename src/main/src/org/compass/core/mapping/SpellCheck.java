@@ -16,8 +16,6 @@
 
 package org.compass.core.mapping;
 
-import org.compass.core.util.Parameter;
-
 /**
  * Specifies if a certain property should be included in the spell check index.
  *
@@ -26,37 +24,33 @@ import org.compass.core.util.Parameter;
  * 
  * @author kimchy
  */
-public class SpellCheckType extends Parameter {
-
-    protected SpellCheckType(String name) {
-        super(name);
-    }
+public enum SpellCheck {
 
     /**
      * Should this property mapping be included in the spell check index.
      */
-    public static final SpellCheckType INCLUDE = new SpellCheckType("INCLUDE");
+    INCLUDE,
 
     /**
      * Should this proeprty mapping be excluded from the spell check index.
      */
-    public static final SpellCheckType EXCLUDE = new SpellCheckType("EXCLUDE");
+    EXCLUDE,
 
     /**
      * NA. Has no affect on the spell check and will use external properties configuration.
      */
-    public static final SpellCheckType NA = new SpellCheckType("NA");
+    NA;
 
     /**
      * Converts to spell check type from a String.
      */
-    public static SpellCheckType fromString(String spellCheckType) {
+    public static SpellCheck fromString(String spellCheckType) {
         if ("include".equalsIgnoreCase(spellCheckType)) {
-            return SpellCheckType.INCLUDE;
+            return SpellCheck.INCLUDE;
         } else if ("exclude".equalsIgnoreCase(spellCheckType)) {
-            return SpellCheckType.EXCLUDE;
+            return SpellCheck.EXCLUDE;
         } else if ("na".equalsIgnoreCase(spellCheckType)) {
-            return SpellCheckType.NA;
+            return SpellCheck.NA;
         }
         throw new IllegalArgumentException("Can't find spell check type for [" + spellCheckType + "]");
     }
@@ -64,7 +58,7 @@ public class SpellCheckType extends Parameter {
     /**
      * Converts the spell check type to a String.
      */
-    public static String toString(SpellCheckType spellCheckType) {
+    public static String toString(SpellCheck spellCheckType) {
         if (spellCheckType == INCLUDE) {
             return "include";
         }

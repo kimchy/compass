@@ -29,7 +29,7 @@ import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceMapping;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.internal.InternalAllMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
@@ -89,8 +89,8 @@ public class ResolveLateAttributesPreLateBindingMappingProcessor implements Mapp
             }
             if (aliasMapping instanceof InternalResourceMapping) {
                 InternalResourceMapping resourceMapping = (InternalResourceMapping) aliasMapping;
-                SpellCheckType globablSpellCheck = SpellCheckType.fromString(settings.getSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, "NA"));
-                if (resourceMapping.getSpellCheck() == SpellCheckType.NA) {
+                SpellCheck globablSpellCheck = SpellCheck.fromString(settings.getSetting(LuceneEnvironment.SpellCheck.DEFAULT_MODE, "NA"));
+                if (resourceMapping.getSpellCheck() == SpellCheck.NA) {
                     resourceMapping.setSpellCheck(globablSpellCheck);
                 }
             }

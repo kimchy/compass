@@ -21,10 +21,10 @@ import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.converter.mapping.support.FormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
-import org.compass.core.mapping.ExcludeFromAllType;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.ExcludeFromAll;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.json.JsonPropertyMapping;
-import org.compass.core.mapping.json.NamingType;
+import org.compass.core.mapping.json.Naming;
 
 /**
  * A builder allowing to constrcut json property mapping definition.
@@ -57,11 +57,11 @@ public class JsonPropertyMappingBuilder {
     }
 
     /**
-     * Controls the resource property name that will be used. Default to {@link NamingType#PLAIN} which means
-     * that only the element name / index name will be stored. If {@link NamingType#FULL} is set, will use the full
+     * Controls the resource property name that will be used. Default to {@link org.compass.core.mapping.json.Naming#PLAIN} which means
+     * that only the element name / index name will be stored. If {@link org.compass.core.mapping.json.Naming#FULL} is set, will use the full
      * path (element1.element2.) to be stored in as the property name.
      */
-    public JsonPropertyMappingBuilder namingType(NamingType namingType) {
+    public JsonPropertyMappingBuilder namingType(Naming namingType) {
         mapping.setNamingType(namingType);
         return this;
     }
@@ -185,7 +185,7 @@ public class JsonPropertyMappingBuilder {
     /**
      * Controls if the property will be excluded from all or not.
      */
-    public JsonPropertyMappingBuilder excludeFromAll(ExcludeFromAllType excludeFromAll) {
+    public JsonPropertyMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
@@ -202,7 +202,7 @@ public class JsonPropertyMappingBuilder {
     /**
      * Sets the spell check specific setting for the mapping.
      */
-    public JsonPropertyMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public JsonPropertyMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

@@ -17,10 +17,10 @@
 package org.compass.core.mapping.internal;
 
 import org.compass.core.Property;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.ReverseType;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 
 /**
  * @author kimchy
@@ -32,7 +32,7 @@ public interface InternalResourcePropertyMapping extends ResourcePropertyMapping
      */
     void setNullValue(String nullValue);
 
-    void setSpellCheck(SpellCheckType spellCheck);
+    void setSpellCheck(SpellCheck spellCheck);
 
     void setIndex(Property.Index index);
 
@@ -50,7 +50,7 @@ public interface InternalResourcePropertyMapping extends ResourcePropertyMapping
 
     void setAnalyzer(String analyzer);
 
-    void setExcludeFromAll(ExcludeFromAllType excludeFromAll);
+    void setExcludeFromAll(ExcludeFromAll excludeFromAll);
 
     void setInternal(boolean internal);
 }

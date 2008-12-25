@@ -18,7 +18,7 @@ package org.compass.core.mapping.xsem;
 
 import org.compass.core.Property;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.support.AbstractResourcePropertyMapping;
@@ -44,8 +44,8 @@ public class XmlContentMapping extends AbstractResourcePropertyMapping implement
     /**
      * Xml content mapping is always excluded from all
      */
-    public ExcludeFromAllType getExcludeFromAll() {
-        return ExcludeFromAllType.YES;
+    public ExcludeFromAll getExcludeFromAll() {
+        return ExcludeFromAll.YES;
     }
 
     /**

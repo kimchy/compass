@@ -42,31 +42,25 @@ public interface Property extends Serializable {
     /**
      * Specifies whether and how a meta-data property will be stored.
      */
-    public static final class Store extends Parameter {
-
-        private static final long serialVersionUID = 3833746603143278642L;
-
-        private Store(String name) {
-            super(name);
-        }
+    public static enum Store {
 
         /**
          * Do not store the property value in the index.
          */
-        public static final Store NO = new Store("NO");
+        NO,
 
         /**
          * Store the original property value in the index. This is useful for short texts like a document's title which
          * should be displayed with the results. The value is stored in its original form, i.e. no analyzer is used
          * before it is stored.
          */
-        public static final Store YES = new Store("YES");
+        YES,
 
         /**
          * Store the original property value in the index in a compressed form. This is useful for long documents and
          * for binary valued fields.
          */
-        public static final Store COMPRESS = new Store("COMPRESS");
+        COMPRESS;
 
         public static String toString(Property.Store propertyStore) {
             if (propertyStore == Property.Store.NO) {
@@ -97,41 +91,35 @@ public interface Property extends Serializable {
     /**
      * Specifies whether and how a meta-data property should be indexed.
      */
-    public static final class Index extends Parameter {
-
-        private static final long serialVersionUID = 3761973756863985718L;
-
-        private Index(String name) {
-            super(name);
-        }
+    public static enum Index {
 
         /**
          * Do not index the property value. This property can thus not be searched, but one can still access its
          * contents provided it is {@link Property.Store stored}.
          */
-        public static final Index NO = new Index("NO");
+        NO,
 
         /**
          * @deprecated renamed to {@link #ANALYZED}.
          */
-        public static final Index TOKENIZED = new Index("TOKENIZED");
+        TOKENIZED,
 
         /**
          * Index the property's value so it can be searched. An Analyzer will be used to tokenize and possibly further
          * normalize the text before its terms will be stored in the index. This is useful for common text.
          */
-        public static final Index ANALYZED = new Index("ANALYZED");
+        ANALYZED,
 
         /**
          * @deprecated renamed to {@link #NOT_ANALYZED}
          */
-        public static final Index UN_TOKENIZED = new Index("UN_TOKENIZED");
+        UN_TOKENIZED,
 
         /**
          * Index the property's value without using an Analyzer, so it can be searched. As no analyzer is used the value
          * will be stored as a single term. This is useful for unique Ids like product numbers.
          */
-        public static final Index NOT_ANALYZED = new Index("NOT_ANALYZED");
+        NOT_ANALYZED;
 
         public static String toString(Property.Index propertyIndex) {
             if (propertyIndex == Property.Index.NO) {
@@ -170,38 +158,32 @@ public interface Property extends Serializable {
     /**
      * Specifies whether and how a meta-data property should have term vectors.
      */
-    public static final class TermVector extends Parameter {
-
-        private static final long serialVersionUID = 3256728372590948921L;
-
-        private TermVector(String name) {
-            super(name);
-        }
+    public static enum TermVector {
 
         /**
          * Do not store term vectors.
          */
-        public static final TermVector NO = new TermVector("NO");
+        NO,
 
         /**
          * Store the term vectors of each document. A term vector is a list of the document's terms and their number of
          * occurences in that document.
          */
-        public static final TermVector YES = new TermVector("YES");
+        YES,
 
         /**
          * Store the term vector + token position information
          *
          * @see #YES
          */
-        public static final TermVector WITH_POSITIONS = new TermVector("WITH_POSITIONS");
+        WITH_POSITIONS,
 
         /**
          * Store the term vector + Token offset information
          *
          * @see #YES
          */
-        public static final TermVector WITH_OFFSETS = new TermVector("WITH_OFFSETS");
+        WITH_OFFSETS,
 
         /**
          * Store the term vector + Token position and offset information
@@ -210,7 +192,7 @@ public interface Property extends Serializable {
          * @see #WITH_POSITIONS
          * @see #WITH_OFFSETS
          */
-        public static final TermVector WITH_POSITIONS_OFFSETS = new TermVector("WITH_POSITIONS_OFFSETS");
+        WITH_POSITIONS_OFFSETS;
 
         public static String toString(Property.TermVector propertyTermVector) {
             if (propertyTermVector == Property.TermVector.NO) {

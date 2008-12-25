@@ -21,7 +21,6 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 
 import org.compass.annotations.Cascade;
-import org.compass.annotations.ExcludeFromAll;
 import org.compass.annotations.Index;
 import org.compass.annotations.ManagedId;
 import org.compass.annotations.ManagedIdIndex;
@@ -31,7 +30,7 @@ import org.compass.annotations.Reverse;
 import org.compass.annotations.Store;
 import org.compass.annotations.TermVector;
 import org.compass.core.Property;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.ReverseType;
 
 /**
@@ -105,13 +104,13 @@ public abstract class AnnotationsBindingUtils {
         throw new IllegalArgumentException("Failed to convert reverse [" + reverse + "]");
     }
 
-    public static ExcludeFromAllType convert(ExcludeFromAll excludeFromAll) throws IllegalArgumentException {
-        if (excludeFromAll == ExcludeFromAll.NO) {
-            return ExcludeFromAllType.NO;
-        } else if (excludeFromAll == ExcludeFromAll.NO_ANALYZED) {
-            return ExcludeFromAllType.NO_ANALYZED;
-        } else if (excludeFromAll == ExcludeFromAll.YES) {
-            return ExcludeFromAllType.YES;
+    public static ExcludeFromAll convert(org.compass.annotations.ExcludeFromAll excludeFromAll) throws IllegalArgumentException {
+        if (excludeFromAll == org.compass.annotations.ExcludeFromAll.NO) {
+            return ExcludeFromAll.NO;
+        } else if (excludeFromAll == org.compass.annotations.ExcludeFromAll.NO_ANALYZED) {
+            return ExcludeFromAll.NO_ANALYZED;
+        } else if (excludeFromAll == org.compass.annotations.ExcludeFromAll.YES) {
+            return ExcludeFromAll.YES;
         }
         throw new IllegalArgumentException("Failed to convert exclude from all [" + excludeFromAll + "]");
     }

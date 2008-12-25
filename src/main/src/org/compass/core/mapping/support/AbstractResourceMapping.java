@@ -33,7 +33,7 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourceAnalyzerController;
 import org.compass.core.mapping.ResourceIdMappingProvider;
 import org.compass.core.mapping.ResourcePropertyMapping;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.internal.DefaultAllMapping;
 import org.compass.core.mapping.internal.InternalResourceMapping;
 import org.compass.core.mapping.internal.PostProcessingMapping;
@@ -60,7 +60,7 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
 
     private AllMapping allMapping = new DefaultAllMapping();
 
-    private SpellCheckType spellCheck = SpellCheckType.NA;
+    private SpellCheck spellCheck = SpellCheck.NA;
 
     private String uidProperty;
 
@@ -100,11 +100,11 @@ public abstract class AbstractResourceMapping extends AbstractMultipleMapping im
         this.allMapping = allMapping;
     }
 
-    public SpellCheckType getSpellCheck() {
+    public SpellCheck getSpellCheck() {
         return spellCheck;
     }
 
-    public void setSpellCheck(SpellCheckType spellCheck) {
+    public void setSpellCheck(SpellCheck spellCheck) {
         this.spellCheck = spellCheck;
     }
 

@@ -19,8 +19,8 @@ package org.compass.core.mapping.json.builder;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.converter.mapping.support.FormatDelegateConverter;
-import org.compass.core.mapping.ExcludeFromAllType;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.ExcludeFromAll;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.json.JsonIdMapping;
 
 /**
@@ -136,7 +136,7 @@ public class JsonIdMappingBuilder {
     /**
      * Controls if the id property will be excluded from all or not.
      */
-    public JsonIdMappingBuilder excludeFromAll(ExcludeFromAllType excludeFromAll) {
+    public JsonIdMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
@@ -144,7 +144,7 @@ public class JsonIdMappingBuilder {
     /**
      * Sets the spell check specific setting for the mapping.
      */
-    public JsonIdMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public JsonIdMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

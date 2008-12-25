@@ -16,48 +16,42 @@
 
 package org.compass.core.mapping;
 
-import org.compass.core.util.Parameter;
-
 /**
  * Specifies if a certain property should be excluded from all property or not.
  *
  * @author kimchy
  */
-public class ExcludeFromAllType extends Parameter {
-
-    private ExcludeFromAllType(String name) {
-        super(name);
-    }
+public enum ExcludeFromAll {
 
     /**
      * The property will not be excluded from all. If this property is "not_analyzed"
      * it will be added as is to the all property without being analyzed/tokenized.
      */
-    public static final ExcludeFromAllType NO = new ExcludeFromAllType("NO");
+    NO,
 
     /**
      * The property will be exlcuded from all.
      */
-    public static final ExcludeFromAllType YES = new ExcludeFromAllType("YES");
+    YES,
 
     /**
      * The property will not be excluded from all. If this property is "not_analyzed"
      * it will be added as is to the all property after being analyzed.
      */
-    public static final ExcludeFromAllType NO_ANALYZED = new ExcludeFromAllType("NO_ANALYZED");
+    NO_ANALYZED;
 
-    public static ExcludeFromAllType fromString(String excludeFromAllType) {
+    public static ExcludeFromAll fromString(String excludeFromAllType) {
         if ("no".equalsIgnoreCase(excludeFromAllType) || "false".equalsIgnoreCase(excludeFromAllType)) {
-            return ExcludeFromAllType.NO;
+            return ExcludeFromAll.NO;
         } else if ("yes".equalsIgnoreCase(excludeFromAllType) || "true".equalsIgnoreCase(excludeFromAllType)) {
-            return ExcludeFromAllType.YES;
+            return ExcludeFromAll.YES;
         } else if ("no_analyzed".equalsIgnoreCase(excludeFromAllType)) {
-            return ExcludeFromAllType.NO_ANALYZED;
+            return ExcludeFromAll.NO_ANALYZED;
         }
         throw new IllegalArgumentException("Can't find exclude from all type for [" + excludeFromAllType + "]");
     }
 
-    public static String toString(ExcludeFromAllType excludeFromAllType) {
+    public static String toString(ExcludeFromAll excludeFromAllType) {
         if (excludeFromAllType == NO) {
             return "no";
         }

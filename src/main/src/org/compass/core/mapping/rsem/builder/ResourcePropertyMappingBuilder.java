@@ -21,8 +21,8 @@ import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.converter.mapping.support.FormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
-import org.compass.core.mapping.ExcludeFromAllType;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.ExcludeFromAll;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.rsem.RawResourcePropertyMapping;
 
 /**
@@ -143,7 +143,7 @@ public class ResourcePropertyMappingBuilder {
     /**
      * Controls if the property will be excluded from all or not.
      */
-    public ResourcePropertyMappingBuilder excludeFromAll(ExcludeFromAllType excludeFromAll) {
+    public ResourcePropertyMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
@@ -160,7 +160,7 @@ public class ResourcePropertyMappingBuilder {
     /**
      * Sets the spell check specific setting for the mapping.
      */
-    public ResourcePropertyMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public ResourcePropertyMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

@@ -30,7 +30,7 @@ import org.compass.core.Property;
 import org.compass.core.engine.SearchEngineException;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
 import org.compass.core.mapping.AllMapping;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.spi.InternalProperty;
@@ -136,7 +136,7 @@ public class AllAnalyzer extends Analyzer {
             if (resourcePropertyMapping.isInternal()) {
                 continue;
             }
-            if (resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAllType.YES) {
+            if (resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAll.YES) {
                 continue;
             }
             if (resourcePropertyMapping.getIndex() == Property.Index.UN_TOKENIZED || resourcePropertyMapping.getIndex() == Property.Index.NOT_ANALYZED) {
@@ -154,12 +154,12 @@ public class AllAnalyzer extends Analyzer {
                 if (value != null) {
                     // if NO exclude from all, just add it
                     // if NO_ANALYZED, will analyze it as well
-                    if (resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAllType.NO) {
+                    if (resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAll.NO) {
                         Token t = new Token(value, 0, value.length());
                         t.setPayload(payload);
                         tokens.add(t);
                     } else
-                    if (resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAllType.NO_ANALYZED) {
+                    if (resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAll.NO_ANALYZED) {
                         Analyzer propAnalyzer;
                         if (resourcePropertyMapping.getAnalyzer() != null) {
                             propAnalyzer = searchEngineFactory
@@ -215,7 +215,7 @@ public class AllAnalyzer extends Analyzer {
                     retVal = allTokenStreamCollector;
                 }
             }
-        } else if (!(resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAllType.YES)
+        } else if (!(resourcePropertyMapping.getExcludeFromAll() == ExcludeFromAll.YES)
                 && !resourcePropertyMapping.isInternal()) {
             allTokenStreamCollector.setTokenStream(retVal);
             allTokenStreamCollector.updateMapping(resource, resourcePropertyMapping);

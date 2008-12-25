@@ -20,7 +20,7 @@ import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourceMappingProvider;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.rsem.RawResourceMapping;
 
 /**
@@ -81,7 +81,7 @@ public class ResourceMappingBuilder implements ResourceMappingProvider {
      * internal mappings that do not explicitly set their own spell check mode). If not set
      * will use the global spell check setting.
      */
-    public ResourceMappingBuilder spellCheck(SpellCheckType spellCheck) {
+    public ResourceMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

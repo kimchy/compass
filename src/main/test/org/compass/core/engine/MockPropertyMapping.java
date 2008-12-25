@@ -21,11 +21,11 @@ import org.compass.core.Property.TermVector;
 import org.compass.core.converter.Converter;
 import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.PropertyPath;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.ReverseType;
-import org.compass.core.mapping.SpellCheckType;
+import org.compass.core.mapping.SpellCheck;
 
 /**
  * @author kimchy
@@ -40,7 +40,7 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
 
     private boolean isInternal = false;
 
-    private SpellCheckType spellCheck = SpellCheckType.EXCLUDE;
+    private SpellCheck spellCheck = SpellCheck.EXCLUDE;
 
     public MockPropertyMapping(String name, PropertyPath path) {
         this.name = name;
@@ -150,8 +150,8 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
         return null;
     }
 
-    public ExcludeFromAllType getExcludeFromAll() {
-        return ExcludeFromAllType.NO;
+    public ExcludeFromAll getExcludeFromAll() {
+        return ExcludeFromAll.NO;
     }
 
     public ReverseType getReverse() {
@@ -186,11 +186,11 @@ public class MockPropertyMapping implements ResourcePropertyMapping {
         return false;
     }
 
-    public SpellCheckType getSpellCheck() {
+    public SpellCheck getSpellCheck() {
         return spellCheck;
     }
 
-    public void setSpellCheck(SpellCheckType spellCheck) {
+    public void setSpellCheck(SpellCheck spellCheck) {
         this.spellCheck = spellCheck;
     }
 }

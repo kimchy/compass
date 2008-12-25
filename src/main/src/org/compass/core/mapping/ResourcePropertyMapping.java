@@ -69,9 +69,9 @@ public interface ResourcePropertyMapping extends Mapping {
      */
     Boolean isOmitTf();
 
-    ExcludeFromAllType getExcludeFromAll();
+    ExcludeFromAll getExcludeFromAll();
 
-    SpellCheckType getSpellCheck();
+    SpellCheck getSpellCheck();
 
     Property.Store getStore();
 

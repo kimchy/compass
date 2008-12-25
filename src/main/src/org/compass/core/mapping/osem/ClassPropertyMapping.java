@@ -18,7 +18,7 @@ package org.compass.core.mapping.osem;
 
 import org.compass.core.Property;
 import org.compass.core.converter.Converter;
-import org.compass.core.mapping.ExcludeFromAllType;
+import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
 
@@ -41,7 +41,7 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private String managedIdConverterName;
 
-    private ExcludeFromAllType excludeFromAll = ExcludeFromAllType.NO;
+    private ExcludeFromAll excludeFromAll = ExcludeFromAll.NO;
 
     private String analyzer;
 
@@ -125,11 +125,11 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         return idPropertyIndex != ID_NOT_SET_VALUE;
     }
 
-    public ExcludeFromAllType getExcludeFromAll() {
+    public ExcludeFromAll getExcludeFromAll() {
         return excludeFromAll;
     }
 
-    public void setExcludeFromAll(ExcludeFromAllType excludeFromAll) {
+    public void setExcludeFromAll(ExcludeFromAll excludeFromAll) {
         this.excludeFromAll = excludeFromAll;
     }
 
