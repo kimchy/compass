@@ -16,12 +16,16 @@
 
 package org.compass.core.mapping.osem.builder;
 
+import java.util.Iterator;
+
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
+import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.ResourceMapping;
 import org.compass.core.mapping.ResourceMappingProvider;
 import org.compass.core.mapping.SpellCheckType;
 import org.compass.core.mapping.osem.ClassMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 import org.compass.core.mapping.osem.ManagedId;
 import org.compass.core.util.ClassUtils;
 
@@ -36,6 +40,7 @@ public class ClassMappingBuilder implements ResourceMappingProvider {
         mapping = new ClassMapping();
         mapping.setClazz(clazz);
         mapping.setAlias(ClassUtils.getShortName(clazz));
+        mapping.setName(clazz.getName());
         mapping.setRoot(true);
     }
 
@@ -132,6 +137,21 @@ public class ClassMappingBuilder implements ResourceMappingProvider {
      */
     public ClassMappingBuilder boost(float boost) {
         mapping.setBoost(boost);
+        return this;
+    }
+
+    public ClassMappingBuilder add(ClassIdMappingBuilder builder) {
+        builder.mapping.setDefinedInAlias(mapping.getAlias());
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
+
+    public ClassMappingBuilder add(ClassPropertyMappingBuilder builder) {
+        builder.mapping.setDefinedInAlias(mapping.getAlias());
+        for (Iterator<Mapping> it = builder.mapping.mappingsIt(); it.hasNext();) {
+            ((ClassPropertyMetaDataMapping) it.next()).setDefinedInAlias(mapping.getAlias());
+        }
+        mapping.addMapping(builder.mapping);
         return this;
     }
 }

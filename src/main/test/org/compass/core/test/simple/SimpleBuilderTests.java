@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-package org.compass.core.mapping.osem.builder;
+package org.compass.core.test.simple;
+
+import org.compass.core.config.CompassConfiguration;
+import static org.compass.core.mapping.osem.builder.OSEM.*;
 
 /**
  * @author kimchy
  */
-public abstract class OSEM {
+public class SimpleBuilderTests extends SimpleTests {
 
-    private OSEM() {
-
+    protected String[] getMappings() {
+        return new String[0];
     }
 
-    public static ClassMappingBuilder clazz(Class clazz) {
-        return new ClassMappingBuilder(clazz);
-    }
-
-    public static ClassIdMappingBuilder id(String name) {
-        return new ClassIdMappingBuilder(name);
-    }
-
-    public static ClassPropertyMappingBuilder property(String name) {
-        return new ClassPropertyMappingBuilder(name);
-    }
-
-    public static ClassMetaDataMappingBuilder metadata(String name) {
-        return new ClassMetaDataMappingBuilder(name);
+    @Override
+    protected void addExtraConf(CompassConfiguration conf) {
+        super.addExtraConf(conf);
+        conf.addResourceMapping(
+                clazz(A.class)
+                        .add(id("id"))
+                        .add(property("value").add(metadata("value")))
+        );
     }
 }

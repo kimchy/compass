@@ -49,8 +49,6 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     private Property.Index managedIdIndex;
 
-    private String colClassName;
-
     private String accessor;
 
     private String propertyName;
@@ -67,7 +65,6 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
         mapping.setAnalyzer(getAnalyzer());
         mapping.setOverrideByName(isOverrideByName());
         mapping.setManagedIdIndex(getManagedIdIndex());
-        mapping.setColClassName(getColClassName());
         mapping.setAccessor(getAccessor());
         mapping.setPropertyName(getPropertyName());
         mapping.setManagedIdConverter(getManagedIdConverter());
@@ -158,14 +155,6 @@ public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implem
 
     public void setManagedIdIndex(Property.Index managedIdIndex) {
         this.managedIdIndex = managedIdIndex;
-    }
-
-    public String getColClassName() {
-        return colClassName;
-    }
-
-    public void setColClassName(String colClassName) {
-        this.colClassName = colClassName;
     }
 
     public String getAccessor() {

@@ -906,8 +906,6 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
         classPropertyMapping.setBoost(getBoost(classPropertyConf));
 
-        classPropertyMapping.setColClassName(classPropertyConf.getAttribute("col-class", null));
-
         classPropertyMapping.setAccessor(classPropertyConf.getAttribute("accessor", null));
         classPropertyMapping.setPropertyName(name);
 
