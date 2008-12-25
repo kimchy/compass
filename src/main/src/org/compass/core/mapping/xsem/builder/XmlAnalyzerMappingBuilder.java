@@ -17,6 +17,7 @@
 package org.compass.core.mapping.xsem.builder;
 
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.xsem.XmlPropertyAnalyzerController;
 
@@ -55,7 +56,7 @@ public class XmlAnalyzerMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the value
      * of the property.
      */
-    public XmlAnalyzerMappingBuilder converter(String converterName) {
+    public XmlAnalyzerMappingBuilder mappingConverter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -63,8 +64,35 @@ public class XmlAnalyzerMappingBuilder {
     /**
      * Sets an actual converter that will be used to convert this property value.
      */
-    public XmlAnalyzerMappingBuilder converter(Converter converter) {
+    public XmlAnalyzerMappingBuilder mappingConverter(Converter converter) {
         mapping.setConverter(converter);
+        return this;
+    }
+
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the actual
+     * value of the XML property. Detaults to {@link org.compass.core.converter.xsem.SimpleXmlValueConverter}.
+     */
+    public XmlAnalyzerMappingBuilder valueConverter(String converterName) {
+        mapping.setValueConverterName(converterName);
+        return this;
+    }
+
+    /**
+     * Sets the actual converter that will be used to convert the actual
+     * value of the XML property. Detaults to {@link org.compass.core.converter.xsem.SimpleXmlValueConverter}.
+     */
+    public XmlAnalyzerMappingBuilder valueConverter(Converter converter) {
+        mapping.setValueConverter(converter);
+        return this;
+    }
+
+    /**
+     * Sets the actual converter that will be used to convert the actual
+     * value of the XML property. Detaults to {@link org.compass.core.converter.xsem.SimpleXmlValueConverter}.
+     */
+    public XmlAnalyzerMappingBuilder valueConverter(ResourcePropertyConverter converter) {
+        mapping.setValueConverter(converter);
         return this;
     }
 }

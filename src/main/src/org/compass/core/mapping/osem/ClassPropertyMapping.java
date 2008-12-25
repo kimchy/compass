@@ -21,7 +21,6 @@ import org.compass.core.converter.Converter;
 import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
-import org.compass.core.util.Parameter;
 
 /**
  * @author kimchy
@@ -29,76 +28,6 @@ import org.compass.core.util.Parameter;
 public class ClassPropertyMapping extends AbstractAccessorMultipleMapping implements InternalOverrideByNameMapping {
 
     private static final int ID_NOT_SET_VALUE = -1;
-
-    public static final class ManagedId extends Parameter {
-
-        private static final long serialVersionUID = -7849904473959816389L;
-
-        private ManagedId(String name) {
-            super(name);
-        }
-
-        /**
-         * The meta-data (resource-property) that will act as the id will be
-         * computed automatically.
-         */
-        public static final ManagedId AUTO = new ManagedId("AUTO");
-
-        /**
-         * The class property will always have an internal managed id that will
-         * be created.
-         */
-        public static final ManagedId TRUE = new ManagedId("TRUE");
-
-        /**
-         * The class property will not have an internal managed id, the
-         * meta-data that will be used as an id will be the first one.
-         */
-        public static final ManagedId FALSE = new ManagedId("FALSE");
-
-        /**
-         * The class proeprty will not create an internal managed id if
-         * all its meta data mappings have store=no
-         */
-        public static final ManagedId NO_STORE = new ManagedId("NO_STORE");
-
-        /**
-         * The class property will not have any internal meta-data id, causing
-         * it not to be unmarshalled at all.
-         */
-        public static final ManagedId NO = new ManagedId("NO");
-
-        public static String toString(ManagedId managedId) {
-            if (managedId == ManagedId.AUTO) {
-                return "auto";
-            } else if (managedId == ManagedId.TRUE) {
-                return "true";
-            } else if (managedId == ManagedId.FALSE) {
-                return "false";
-            } else if (managedId == ManagedId.NO_STORE) {
-                return "no_store";
-            } else if (managedId == ManagedId.NO) {
-                return "no";
-            }
-            throw new IllegalArgumentException("Can't find managed-id for [" + managedId + "]");
-        }
-
-        public static ManagedId fromString(String managedId) {
-            if ("auto".equalsIgnoreCase(managedId)) {
-                return ManagedId.AUTO;
-            } else if ("true".equalsIgnoreCase(managedId)) {
-                return ManagedId.TRUE;
-            } else if ("false".equalsIgnoreCase(managedId)) {
-                return ManagedId.FALSE;
-            } else if ("no_store".equalsIgnoreCase(managedId)) {
-                return ManagedId.NO_STORE;
-            } else if ("no".equalsIgnoreCase(managedId)) {
-                return ManagedId.NO;
-            }
-            throw new IllegalArgumentException("Can't find managed-id for [" + managedId + "]");
-        }
-
-    }
 
     private String className;
 

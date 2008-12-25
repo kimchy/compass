@@ -96,7 +96,7 @@ public class XmlIdMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the XML
      * property. Defaults to {@link org.compass.core.converter.mapping.xsem.XmlIdMappingConverter}.
      */
-    public XmlIdMappingBuilder converter(String converterName) {
+    public XmlIdMappingBuilder mappingConverter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -105,7 +105,7 @@ public class XmlIdMappingBuilder {
      * Sets the actual converter that will be used to convert the XML
      * property. Defaults to {@link org.compass.core.converter.mapping.xsem.XmlIdMappingConverter}.
      */
-    public XmlIdMappingBuilder converter(Converter converter) {
+    public XmlIdMappingBuilder mappingConverter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }

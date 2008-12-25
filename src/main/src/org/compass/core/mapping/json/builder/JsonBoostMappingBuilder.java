@@ -51,7 +51,7 @@ public class JsonBoostMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the value
      * of the property.
      */
-    public JsonBoostMappingBuilder converter(String converterName) {
+    public JsonBoostMappingBuilder mappingConverter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -59,16 +59,35 @@ public class JsonBoostMappingBuilder {
     /**
      * Sets an actual converter that will be used to convert this property value.
      */
-    public JsonBoostMappingBuilder converter(Converter converter) {
+    public JsonBoostMappingBuilder mappingConverter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }
 
     /**
-     * Sets an actual converter that will be used to convert this property value.
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
      */
-    public JsonBoostMappingBuilder converter(ResourcePropertyConverter converter) {
-        mapping.setConverter(converter);
+    public JsonBoostMappingBuilder valueConverter(String converterName) {
+        mapping.setValueConverterName(converterName);
+        return this;
+    }
+
+    /**
+     * Sets the actual converter that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
+     */
+    public JsonBoostMappingBuilder valueConverter(Converter converter) {
+        mapping.setValueConverter(converter);
+        return this;
+    }
+
+    /**
+     * Sets the actual converter that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
+     */
+    public JsonBoostMappingBuilder valueConverter(ResourcePropertyConverter converter) {
+        mapping.setValueConverter(converter);
         return this;
     }
 }

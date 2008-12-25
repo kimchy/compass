@@ -35,20 +35,7 @@ import org.compass.core.mapping.MappingException;
 import org.compass.core.mapping.ResourcePropertyMapping;
 import org.compass.core.mapping.internal.InternalCompassMapping;
 import org.compass.core.mapping.internal.InternalMapping;
-import org.compass.core.mapping.osem.AbstractCollectionMapping;
-import org.compass.core.mapping.osem.ClassIdPropertyMapping;
-import org.compass.core.mapping.osem.ClassMapping;
-import org.compass.core.mapping.osem.ClassPropertyMapping;
-import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
-import org.compass.core.mapping.osem.ComponentMapping;
-import org.compass.core.mapping.osem.ConstantMetaDataMapping;
-import org.compass.core.mapping.osem.DynamicMetaDataMapping;
-import org.compass.core.mapping.osem.IdComponentMapping;
-import org.compass.core.mapping.osem.ObjectMapping;
-import org.compass.core.mapping.osem.OsemMappingIterator;
-import org.compass.core.mapping.osem.ParentMapping;
-import org.compass.core.mapping.osem.PlainCascadeMapping;
-import org.compass.core.mapping.osem.ReferenceMapping;
+import org.compass.core.mapping.osem.*;
 import org.compass.core.marshall.MarshallingEnvironment;
 import org.compass.core.util.IdentityHashSet;
 
@@ -75,7 +62,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
      * Used to externaly control the managed id option (for example for ref-comp-mapping,
      * where we do not want internal ids being created, since we will never unmarshall it)
      */
-    private ClassPropertyMapping.ManagedId managedId = null;
+    private ManagedId managedId = null;
 
 
     public CompassMapping process(CompassMapping compassMapping, PropertyNamingStrategy namingStrategy,
@@ -210,7 +197,7 @@ public class LateBindingOsemMappingProcessor implements MappingProcessor {
             ClassMapping refClass = (ClassMapping) pointerClass.copy();
             refClass.setPath(namingStrategy.buildPath(referenceMapping.getPath(), referenceMapping.getRefCompAlias()));
             // we do not want to create intenral ids, since we will never unmarshall it
-            managedId = ClassPropertyMapping.ManagedId.FALSE;
+            managedId = ManagedId.FALSE;
             secondPass(refClass, false, false);
             managedId = null;
             refClass.setRoot(false);

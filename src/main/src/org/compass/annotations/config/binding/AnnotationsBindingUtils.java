@@ -34,7 +34,6 @@ import org.compass.core.Property;
 import org.compass.core.mapping.CascadeMapping;
 import org.compass.core.mapping.ExcludeFromAllType;
 import org.compass.core.mapping.ReverseType;
-import org.compass.core.mapping.osem.ClassPropertyMapping;
 
 /**
  * @author kimchy
@@ -62,19 +61,19 @@ public abstract class AnnotationsBindingUtils {
         return null;
     }
 
-    public static ClassPropertyMapping.ManagedId convert(ManagedId managedId) throws IllegalArgumentException {
+    public static org.compass.core.mapping.osem.ManagedId convert(ManagedId managedId) throws IllegalArgumentException {
         if (managedId == ManagedId.NA) {
             return null;
         } else if (managedId == ManagedId.AUTO) {
-            return ClassPropertyMapping.ManagedId.AUTO;
+            return org.compass.core.mapping.osem.ManagedId.AUTO;
         } else if (managedId == ManagedId.TRUE) {
-            return ClassPropertyMapping.ManagedId.TRUE;
+            return org.compass.core.mapping.osem.ManagedId.TRUE;
         } else if (managedId == ManagedId.FALSE) {
-            return ClassPropertyMapping.ManagedId.FALSE;
+            return org.compass.core.mapping.osem.ManagedId.FALSE;
         } else if (managedId == ManagedId.NO) {
-            return ClassPropertyMapping.ManagedId.NO;
+            return org.compass.core.mapping.osem.ManagedId.NO;
         } else if (managedId == ManagedId.NO_STORE) {
-            return ClassPropertyMapping.ManagedId.NO_STORE;
+            return org.compass.core.mapping.osem.ManagedId.NO_STORE;
         }
         throw new IllegalArgumentException("Failed to convert managedId [" + managedId + "]");
     }

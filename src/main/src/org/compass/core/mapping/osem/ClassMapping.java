@@ -39,7 +39,7 @@ import org.compass.core.util.reflection.ReflectionConstructor;
  */
 public class ClassMapping extends AbstractResourceMapping implements ResourceMapping, PostProcessingMapping {
 
-    private ClassPropertyMapping.ManagedId managedId;
+    private ManagedId managedId;
 
     private PropertyPath enumNamePath;
 
@@ -169,11 +169,11 @@ public class ClassMapping extends AbstractResourceMapping implements ResourceMap
         return pathMappings.get(path);
     }
 
-    public ClassPropertyMapping.ManagedId getManagedId() {
+    public ManagedId getManagedId() {
         return managedId;
     }
 
-    public void setManagedId(ClassPropertyMapping.ManagedId managedId) {
+    public void setManagedId(ManagedId managedId) {
         this.managedId = managedId;
     }
 

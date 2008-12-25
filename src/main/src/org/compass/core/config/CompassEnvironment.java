@@ -711,7 +711,7 @@ public class CompassEnvironment {
         public static final String MANAGED_ID_INDEX = "compass.osem.managedId.index";
 
         /**
-         * The default managed id for all property mappings based on {@link org.compass.core.mapping.osem.ClassPropertyMapping.ManagedId}
+         * The default managed id for all property mappings based on {@link org.compass.core.mapping.osem.ManagedId}
          * configuration. Defaults to <code>NO_STORE</code>.
          *
          * <p>This can be overriden either by using class mapping level setting or property level mapping.

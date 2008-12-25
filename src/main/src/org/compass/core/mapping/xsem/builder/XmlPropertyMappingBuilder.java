@@ -121,7 +121,7 @@ public class XmlPropertyMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the XML
      * property. Defaults to {@link org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter}.
      */
-    public XmlPropertyMappingBuilder converter(String converterName) {
+    public XmlPropertyMappingBuilder mappingConverter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -130,7 +130,7 @@ public class XmlPropertyMappingBuilder {
      * Sets the actual converter that will be used to convert the XML
      * property. Defaults to {@link org.compass.core.converter.mapping.xsem.XmlPropertyMappingConverter}.
      */
-    public XmlPropertyMappingBuilder converter(Converter converter) {
+    public XmlPropertyMappingBuilder mappingConverter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }

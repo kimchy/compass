@@ -132,7 +132,7 @@ public class JsonPropertyMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the JSON
      * property. Defaults to {@link org.compass.core.converter.mapping.json.JsonPropertyMappingConverter}.
      */
-    public JsonPropertyMappingBuilder converter(String converterName) {
+    public JsonPropertyMappingBuilder mappingConverter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -141,7 +141,7 @@ public class JsonPropertyMappingBuilder {
      * Sets the actual converter that will be used to convert the JSON
      * property. Defaults to {@link org.compass.core.converter.mapping.json.JsonPropertyMappingConverter}.
      */
-    public JsonPropertyMappingBuilder converter(Converter converter) {
+    public JsonPropertyMappingBuilder mappingConverter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }

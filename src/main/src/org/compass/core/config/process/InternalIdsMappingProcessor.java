@@ -33,6 +33,7 @@ import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ClassMapping;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.ManagedId;
 import org.compass.core.mapping.osem.OsemMappingIterator;
 
 /**
@@ -124,8 +125,8 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
             // not set, up to Compass settings, and if not there, default to auto).
             if (classPropertyMapping.getManagedId() == null) {
                 if (classMapping.getManagedId() == null) {
-                    String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, ClassPropertyMapping.ManagedId.NO_STORE.toString());
-                    classPropertyMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(globalManagedId));
+                    String globalManagedId = settings.getSetting(CompassEnvironment.Osem.MANAGED_ID_DEFAULT, ManagedId.NO_STORE.toString());
+                    classPropertyMapping.setManagedId(ManagedId.fromString(globalManagedId));
                 } else {
                     classPropertyMapping.setManagedId(classMapping.getManagedId());
                 }
@@ -138,12 +139,12 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
             if (classPropertyMapping.isIdPropertySet()) {
                 // the id has been set already (for example - in case of reference)
                 continue;
-            } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.TRUE
+            } else if (classPropertyMapping.getManagedId() == ManagedId.TRUE
                     || classPropertyMapping.mappingsSize() == 0) {
                 MappingProcessorUtils.addInternalId(settings, converterLookup, classPropertyMapping, mustBeUnTokenized);
-            } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.AUTO) {
+            } else if (classPropertyMapping.getManagedId() == ManagedId.AUTO) {
                 autoAddIfRequiredInternalId(propertyMappingsMap, classPropertyMapping, mustBeUnTokenized);
-            } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.NO_STORE) {
+            } else if (classPropertyMapping.getManagedId() == ManagedId.NO_STORE) {
                 boolean allMetaDataHasStoreNo = true;
                 for (int i = 0; i < classPropertyMapping.mappingsSize(); i++) {
                     ClassPropertyMetaDataMapping pMapping = (ClassPropertyMetaDataMapping) classPropertyMapping.getMapping(i);
@@ -160,7 +161,7 @@ public class InternalIdsMappingProcessor implements MappingProcessor {
                     autoAddIfRequiredInternalId(propertyMappingsMap, classPropertyMapping, mustBeUnTokenized);
                 } // else, don't set the id property, and don't unmarshall it
 
-            } else if (classPropertyMapping.getManagedId() == ClassPropertyMapping.ManagedId.NO) {
+            } else if (classPropertyMapping.getManagedId() == ManagedId.NO) {
                 // do nothing, don't set the managed id, won't be unmarshallled
             } else { // ManagedId.FALSE
                 // mark the first one as the id, the user decides

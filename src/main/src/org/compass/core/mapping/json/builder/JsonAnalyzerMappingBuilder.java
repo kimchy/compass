@@ -17,6 +17,7 @@
 package org.compass.core.mapping.json.builder;
 
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
 
@@ -25,9 +26,9 @@ import org.compass.core.mapping.json.JsonPropertyAnalyzerController;
  * allows to dynamically define the analyzer that will be used to analyzer the json resource (properties that are
  * specificed as analyzed). The value of the analyzer property will be used to lookup a registered analyzer
  * within Compass. If no analyzer is found, the {@link #nullAnalyzer(String)} will be used (if specified).
- * 
+ *
  * @author kimchy
- * @see JSEM#analyzer(String) 
+ * @see JSEM#analyzer(String)
  */
 public class JsonAnalyzerMappingBuilder {
 
@@ -54,7 +55,7 @@ public class JsonAnalyzerMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the value
      * of the property.
      */
-    public JsonAnalyzerMappingBuilder converter(String converterName) {
+    public JsonAnalyzerMappingBuilder mappingConverter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -62,8 +63,36 @@ public class JsonAnalyzerMappingBuilder {
     /**
      * Sets an actual converter that will be used to convert this property value.
      */
-    public JsonAnalyzerMappingBuilder converter(Converter converter) {
+    public JsonAnalyzerMappingBuilder mappingConverter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }
+
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
+     */
+    public JsonAnalyzerMappingBuilder valueConverter(String converterName) {
+        mapping.setValueConverterName(converterName);
+        return this;
+    }
+
+    /**
+     * Sets the actual converter that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
+     */
+    public JsonAnalyzerMappingBuilder valueConverter(Converter converter) {
+        mapping.setValueConverter(converter);
+        return this;
+    }
+
+    /**
+     * Sets the actual converter that will be used to convert the actual
+     * value of the json property. Detaults to {@link org.compass.core.converter.json.SimpleJsonValueConverter}.
+     */
+    public JsonAnalyzerMappingBuilder valueConverter(ResourcePropertyConverter converter) {
+        mapping.setValueConverter(converter);
+        return this;
+    }
+
 }

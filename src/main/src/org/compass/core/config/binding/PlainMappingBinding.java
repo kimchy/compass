@@ -62,6 +62,7 @@ import org.compass.core.mapping.osem.ComponentMapping;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 import org.compass.core.mapping.osem.IdComponentMapping;
+import org.compass.core.mapping.osem.ManagedId;
 import org.compass.core.mapping.osem.ParentMapping;
 import org.compass.core.mapping.osem.PlainCascadeMapping;
 import org.compass.core.mapping.osem.ReferenceMapping;
@@ -660,7 +661,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
         String managedId = classConf.getAttribute("managed-id", null);
         if (managedId != null) {
-            classMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(managedId));
+            classMapping.setManagedId(ManagedId.fromString(managedId));
         }
 
         String polyClassName = classConf.getAttribute("poly-class", null);
@@ -917,7 +918,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
         String managedId = classPropertyConf.getAttribute("managed-id", null);
         if (managedId != null) {
-            classPropertyMapping.setManagedId(ClassPropertyMapping.ManagedId.fromString(managedId));
+            classPropertyMapping.setManagedId(ManagedId.fromString(managedId));
         }
 
         String managedIdIndex = classPropertyConf.getAttribute("managed-id-index", null);

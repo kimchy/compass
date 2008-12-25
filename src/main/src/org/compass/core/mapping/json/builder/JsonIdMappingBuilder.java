@@ -83,7 +83,7 @@ public class JsonIdMappingBuilder {
      * Sets the lookup converter name (registered with Compass) that will be used to convert the JSON
      * property. Defaults to {@link org.compass.core.converter.mapping.json.JsonIdMappingConverter}.
      */
-    public JsonIdMappingBuilder converter(String converterName) {
+    public JsonIdMappingBuilder mappingConverter(String converterName) {
         mapping.setConverterName(converterName);
         return this;
     }
@@ -92,7 +92,7 @@ public class JsonIdMappingBuilder {
      * Sets the actual converter that will be used to convert the JSON
      * property. Defaults to {@link org.compass.core.converter.mapping.json.JsonIdMappingConverter}.
      */
-    public JsonIdMappingBuilder converter(Converter converter) {
+    public JsonIdMappingBuilder mappingConverter(Converter converter) {
         mapping.setConverter(converter);
         return this;
     }
