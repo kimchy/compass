@@ -33,6 +33,10 @@ public abstract class OSEM {
         return new ClassIdMappingBuilder(name);
     }
 
+    public static ClassIdComponentMappingBuilder idComponent(String name) {
+        return new ClassIdComponentMappingBuilder(name);
+    }
+
     public static ClassComponentMappingBuilder component(String name) {
         return new ClassComponentMappingBuilder(name);
     }

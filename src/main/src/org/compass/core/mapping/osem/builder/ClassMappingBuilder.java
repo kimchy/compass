@@ -181,6 +181,12 @@ public class ClassMappingBuilder implements ResourceMappingProvider {
         return this;
     }
 
+    public ClassMappingBuilder add(ClassIdComponentMappingBuilder builder) {
+        builder.mapping.setDefinedInAlias(mapping.getAlias());
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
+
     public ClassMappingBuilder add(ClassReferenceMappingBuilder builder) {
         builder.mapping.setDefinedInAlias(mapping.getAlias());
         mapping.addMapping(builder.mapping);
