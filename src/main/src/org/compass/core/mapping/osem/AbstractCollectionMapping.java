@@ -19,7 +19,6 @@ package org.compass.core.mapping.osem;
 import org.compass.core.engine.naming.PropertyPath;
 import org.compass.core.mapping.Mapping;
 import org.compass.core.mapping.internal.InternalOverrideByNameMapping;
-import org.compass.core.util.Parameter;
 
 /**
  * @author kimchy

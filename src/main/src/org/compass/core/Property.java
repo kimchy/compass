@@ -18,8 +18,6 @@ package org.compass.core;
 
 import java.io.Serializable;
 
-import org.compass.core.util.Parameter;
-
 /**
  * The basic Compass meta data holder. A property is a name value pair representing the mapped object attribute and
  * value. Can be used to fetch meta data values from a resource in an abstract way.

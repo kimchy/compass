@@ -16,8 +16,6 @@
 
 package org.compass.core;
 
-import org.compass.core.util.Parameter;
-
 /**
  * A highlighter tool that can highlight hits in a given text based on an
  * executed query.

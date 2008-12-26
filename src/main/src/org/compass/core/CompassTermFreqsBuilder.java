@@ -16,8 +16,6 @@
 
 package org.compass.core;
 
-import org.compass.core.util.Parameter;
-
 /**
  * <p>A term and frequencies builder, allows to set different settings regarding
  * the available terms for certain properties and their respective frequencies.

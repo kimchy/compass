@@ -16,8 +16,6 @@
 
 package org.compass.core.mapping.osem;
 
-import org.compass.core.util.Parameter;
-
 /**
  * Controls how Compass managed ids will be created.
  *

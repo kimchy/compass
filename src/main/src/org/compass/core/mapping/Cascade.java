@@ -16,8 +16,6 @@
 
 package org.compass.core.mapping;
 
-import org.compass.core.util.Parameter;
-
 /**
  * A cascade enumeration of operations allowed for cascading.
  */
