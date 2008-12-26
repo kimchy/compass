@@ -192,4 +192,9 @@ public class ClassMappingBuilder implements ResourceMappingProvider {
         mapping.addMapping(builder.mapping);
         return this;
     }
+
+    public ClassMappingBuilder add(ClassConstantMappingBuilder builder) {
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
 }
