@@ -202,4 +202,16 @@ public class ClassMappingBuilder implements ResourceMappingProvider {
         mapping.addMapping(builder.mapping);
         return this;
     }
+
+    public ClassMappingBuilder add(ClassCascadeMappingBuilder builder) {
+        builder.mapping.setDefinedInAlias(mapping.getAlias());
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
+
+    public ClassMappingBuilder add(ClassParentMappingBuilder builder) {
+        builder.mapping.setDefinedInAlias(mapping.getAlias());
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
 }

@@ -65,6 +65,14 @@ public abstract class OSEM {
         return new ClassAnalyzerMappingBuilder(name);
     }
 
+    public static ClassCascadeMappingBuilder cascade(String name) {
+        return new ClassCascadeMappingBuilder(name);
+    }
+
+    public static ClassCascadeMappingBuilder parent(String name) {
+        return new ClassCascadeMappingBuilder(name);
+    }
+
     public static ClassBoostMappingBuilder boost(String name) {
         return new ClassBoostMappingBuilder(name);
     }
