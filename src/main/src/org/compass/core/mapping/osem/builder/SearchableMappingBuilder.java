@@ -18,6 +18,7 @@ package org.compass.core.mapping.osem.builder;
 
 import java.util.Iterator;
 
+import org.compass.core.converter.Converter;
 import org.compass.core.engine.subindex.ConstantSubIndexHash;
 import org.compass.core.engine.subindex.SubIndexHash;
 import org.compass.core.mapping.Mapping;
@@ -72,7 +73,7 @@ import org.compass.core.util.ClassUtils;
  * searchable classes using the {@link #extendsAliases(String[])} mapping.
  *
  * @author kimchy
- * @see OSEM#searchable(Class) 
+ * @see OSEM#searchable(Class)
  */
 public class SearchableMappingBuilder implements ResourceMappingProvider {
 
@@ -242,6 +243,24 @@ public class SearchableMappingBuilder implements ResourceMappingProvider {
      */
     public SearchableMappingBuilder all(SearchableAllMappingBuilder builder) {
         mapping.setAllMapping(builder.mapping);
+        return this;
+    }
+
+    /**
+     * Sets the mapping converter lookup name that will be used to convert the class. Defaults to
+     * {@link org.compass.core.converter.mapping.osem.ClassMappingConverter}.
+     */
+    public SearchableMappingBuilder mappingConverter(String converter) {
+        mapping.setConverterName(converter);
+        return this;
+    }
+
+    /**
+     * Sets the mapping converter that will be used to convert the class. Defaults to
+     * {@link org.compass.core.converter.mapping.osem.ClassMappingConverter}.
+     */
+    public SearchableMappingBuilder mappingConverter(Converter converter) {
+        mapping.setConverter(converter);
         return this;
     }
 
