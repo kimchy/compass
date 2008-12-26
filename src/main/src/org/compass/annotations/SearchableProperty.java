@@ -50,7 +50,7 @@ import java.lang.annotation.Target;
  * is not defined with generics, {@link #type()} should be used to hint for the collection
  * element type.
  *
- * <p>The searchable property can annotate an array as well, with the array element type used for
+ * <p>The searchable property can annotate an array/collections as well, with the array element type used for
  * Converter lookups.
  *
  * <p>Compass might require an internal meta-data to be created, so it can identify the correct
