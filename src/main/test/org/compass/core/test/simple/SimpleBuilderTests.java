@@ -32,7 +32,7 @@ public class SimpleBuilderTests extends SimpleTests {
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
         conf.addResourceMapping(
-                clazz(A.class)
+                searchable(A.class)
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
         );

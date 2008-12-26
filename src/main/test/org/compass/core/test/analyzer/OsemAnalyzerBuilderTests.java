@@ -33,42 +33,42 @@ public class OsemAnalyzerBuilderTests extends OsemAnalyzerTests {
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
         conf.addResourceMapping(
-                clazz(A.class).alias("a1")
+                searchable(A.class).alias("a1")
                     .add(id("id"))
                     .add(property("value").add(metadata("value")))
         );
         conf.addResourceMapping(
-                clazz(A.class).alias("a2").analyzer("simple")
+                searchable(A.class).alias("a2").analyzer("simple")
                     .add(id("id"))
                     .add(property("value").add(metadata("value")))
         );
         conf.addResourceMapping(
-                clazz(A.class).alias("a3")
+                searchable(A.class).alias("a3")
                     .add(id("id"))
                     .add(property("value").add(metadata("value").analyzer("simple")))
                     .add(property("value2").add(metadata("value2")))
         );
         conf.addResourceMapping(
-                clazz(A.class).alias("a4").analyzer("simple")
+                searchable(A.class).alias("a4").analyzer("simple")
                     .add(id("id"))
                     .add(property("value").add(metadata("value").analyzer("default")))
                     .add(property("value2").add(metadata("value2")))
         );
         conf.addResourceMapping(
-                clazz(A.class).alias("a5")
+                searchable(A.class).alias("a5")
                     .add(id("id"))
                     .add(property("value").add(metadata("value")))
                     .add(property("value2").add(metadata("value2")))
         );
         conf.addResourceMapping(
-                clazz(A.class).alias("a6")
+                searchable(A.class).alias("a6")
                     .add(id("id"))
                      .add(analyzer("analyzer"))
                     .add(property("value").add(metadata("value")))
                     .add(property("value2").add(metadata("value2")))
         );
         conf.addResourceMapping(
-                clazz(A.class).alias("a7")
+                searchable(A.class).alias("a7")
                     .add(id("id"))
                      .add(analyzer("analyzer").nullAnalyzer("simple"))
                     .add(property("value").add(metadata("value")))

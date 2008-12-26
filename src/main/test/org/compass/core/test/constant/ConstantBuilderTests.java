@@ -34,7 +34,7 @@ public class ConstantBuilderTests extends ConstantTests {
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
         conf.addResourceMapping(
-                clazz(A.class).alias("a")
+                searchable(A.class).alias("a")
                         .add(id("id"))
                         .add(constant("mvalue").values("mValue11", "mValue12"))
                         .add(constant("mvalue2").store(Property.Store.NO).index(Property.Index.ANALYZED).values("mValue21", "mValue22"))

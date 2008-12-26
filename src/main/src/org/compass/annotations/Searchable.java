@@ -25,62 +25,62 @@ import java.lang.annotation.Target;
  * Marks a class as searchable.
  * A searchable class is assoiated with an alias, and allows to perform full
  * text search on it's mapped properties/fields.
- * <p/>
- * The searchable class is associated with an alias, which can be used to
+ *
+ * <p>The searchable class is associated with an alias, which can be used to
  * reference the class when performing search operations, or for other
  * mappings to extend it.
- * <p/>
- * A class mapping has it's own fully functional index, unless using the
+ *
+ * <p>A class mapping has it's own fully functional index, unless using the
  * {@link #subIndex()} to join several searchable classes into the same
  * index (when joining several searchalbe classes into the same index,
  * the search will be much faster, but updates perform locks on the sub index
- * level, so it might slow it down).
- * <p/>
- * A searchable class creates an internal "all" meta-data, which holds
- * searchable information of all the class searchable content. You can
- * control if it will be created or not using {@link #enableAll()}, and control
+ * level, so it might slow it down). More fine grained control can be acheived
+ * using the {@link org.compass.annotations.SearchableSubIndexHash} annotation.
+ *
+ * <p>A searchable class creates an internal "all" meta-data, which holds
+ * searchable information of all the class searchable content. Controlling
  * the "all" property using the {@link SearchableAllMetaData} annotation.
- * <p/>
- * A searchable class can have constant meta-data associated with it. They
+ *
+ * <p>A searchable class can have constant meta-data associated with it. They
  * can be defined using the {@link SearchableConstant} and {@link SearchableConstants}.
- * <p/>
- * Searchable class can have annotations defined on either it's fields, or
+ *
+ * <p>Searchable class can have annotations defined on either it's fields, or
  * on the field getter accessor. The possible annotions for them are:
  * {@link SearchableId}, {@link SearchableProperty}, {@link SearchableComponent},
  * and {@link SearchableReference}. Note that collections are automatically
  * detected and handled by Compass if annotated.
- * <p/>
- * If the searchable class extends a class, or implement intefaces, they
+ *
+ * <p>If the searchable class extends a class, or implement intefaces, they
  * will be automatically detected and added to it in a revrse order. If the
  * same annotaion is defined in both the searcable class and one of it's
  * super class / interfaces, it will be overriden unless defined otherwise.
  * The annotaions will be included even if the inteface/superclass do not
  * implement the {@link Searchable} annotation.
- * <p/>
- * The seachable class can have a specialized analyzer (different from the
+ *
+ * <p>The seachable class can have a specialized analyzer (different from the
  * default one) associated with it using {@link #analyzer()}. Note, that this
  * will associate the class statically with an analyzer. Dynamically associating
  * the class with an analyzer, the {@link SearchableAnalyzerProperty} can be
  * used to annotated the dynamic value for the analyzer to use.
- * <p/>
- * The searchable class can extend other mappings defined elsewhere (either by
+ *
+ * <p>The searchable class can extend other mappings defined elsewhere (either by
  * the xml mappings, or annotations). Remember, that the searchable class will
  * already include all the annotations in it's super class or interface (recursivly).
  * So there is no need to specify them in {@link #extend()}. Note, that xml mapping
  * <code>contract</code>s can be extended as well.
- * <p/>
- * By default, the searchable class is defined as a root class. A root class is
+ *
+ * <p>By default, the searchable class is defined as a root class. A root class is
  * a top level searchable class. A non root class can be used to define mappings
  * definitions for {@link SearchableComponent}, and it is preferable that classes
  * that are only used as component mapping definitions, will be defined with {@link #root()}
  * <code>false</code>.
- * <p/>
- * The {@link #poly()} can be used to mapped polymprphic inheritance tree. This is the less
+ *
+ * <p>The {@link #poly()} can be used to mapped polymprphic inheritance tree. This is the less
  * prefable way to map an inhertiance tree, since the fact that a searchable class automatically
  * inhertis all it's base class and interface mappings, means that the same result can be
  * acheived by marking the all the inheritance tree classes as {@link Searchable}.
- * <p/>
- * Compass provides it's own internal converter for searchable classes
+ *
+ * <p>Compass provides it's own internal converter for searchable classes
  * {@link org.compass.core.converter.mapping.osem.ClassMappingConverter}. For advance usage,
  * the converter can be set using {@link #converter()} IT will convert
  * the {@link org.compass.core.mapping.osem.ClassMapping} definitions.
@@ -108,12 +108,14 @@ public @interface Searchable {
     /**
      * The sub index the searchable class will be saved to. A sub index is
      * a fully functional index.
-     * <p/>
-     * When joining several searchalbe classes into the same index,
+     *
+     * <p>When joining several searchalbe classes into the same index,
      * the search will be much faster, but updates perform locks on the sub index
      * level, so it might slow it down.
-     * <p/>
-     * Defaults to the searchable class {@link #alias()} value.
+     *
+     * <p>Defaults to the searchable class {@link #alias()} value.
+     *
+     * <p>More fine grained control can be used with {@link org.compass.annotations.SearchableSubIndexHash}.
      */
     String subIndex() default "";
 
@@ -136,8 +138,8 @@ public @interface Searchable {
      * inhertis all it's base class and interface mappings, means that the same result can be
      * acheived by marking the all the inheritance tree classes as {@link Searchable}, in a
      * more performant way.
-     * <p/>
-     * If poly is set to <code>true</code>, the actual class implementation will be persisted
+     *
+     * <p>If poly is set to <code>true</code>, the actual class implementation will be persisted
      * to the index, later be used to instantiate it when un-marhsalling. If a specific class
      * need to be used to instantiate all classes, use the {{@link #polyClass()} to set it.
      */
@@ -146,8 +148,8 @@ public @interface Searchable {
     /**
      * In cases where poly is set to <code>true</code>, allows to set the class that will
      * be used to instantiate in all inheritance tree cases.
-     * <p/>
-     * If not set, the actual class will be saved to the index,
+     *
+     * <p>If not set, the actual class will be saved to the index,
      * later be used to instantiate it when un-marhsalling
      */
     Class polyClass() default Object.class;
@@ -188,7 +190,7 @@ public @interface Searchable {
     /**
      * Controls the managed id value for all the mapped properties that have no explicit setting
      * of the managed id (also default to NA). The default value for the managed id is derived from
-     * globabl Compass settings and defaults to AUTO.
+     * globabl Compass settings and defaults to NO_STORE.
      */
     ManagedId managedId() default ManagedId.NA;
 

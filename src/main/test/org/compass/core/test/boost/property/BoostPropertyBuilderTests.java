@@ -32,7 +32,7 @@ public class BoostPropertyBuilderTests extends BoostPropertyTests {
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         conf.addResourceMapping(
-                clazz(A.class).alias("a1")
+                searchable(A.class).alias("a1")
                         .add(id("id").accessor("field"))
                         .add(boost("value1").accessor("field"))
                         .add(property("value1").accessor("field").add(metadata("value1")))

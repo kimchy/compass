@@ -25,7 +25,8 @@ package org.compass.annotations;
  */
 public enum SupportUnmarshall {
 	/**
-	 * Defaults to Compass global osem setting supportUnmarshall.
+	 * Defaults to Compass global osem setting supportUnmarshall. See
+     * {@link org.compass.core.config.CompassEnvironment.Osem#SUPPORT_UNMARSHALL}.
  	 */
     NA,
     /**

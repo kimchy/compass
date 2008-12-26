@@ -25,7 +25,7 @@ public abstract class OSEM {
 
     }
 
-    public static ClassMappingBuilder clazz(Class clazz) {
+    public static ClassMappingBuilder searchable(Class clazz) {
         return new ClassMappingBuilder(clazz);
     }
 

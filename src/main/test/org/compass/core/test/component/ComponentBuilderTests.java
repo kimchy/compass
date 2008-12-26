@@ -34,7 +34,7 @@ public class ComponentBuilderTests extends ComponentTests {
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
         conf.addResourceMapping(
-                clazz(SimpleRoot.class).alias("sr")
+                searchable(SimpleRoot.class).alias("sr")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
                         .add(component("firstComponent").refAlias("sc"))
@@ -43,39 +43,39 @@ public class ComponentBuilderTests extends ComponentTests {
 
 
         conf.addResourceMapping(
-                clazz(SimpleComponent.class).alias("sc").root(false)
+                searchable(SimpleComponent.class).alias("sc").root(false)
                         .add(property("value").add(metadata("value")))
         );
         conf.addResourceMapping(
-                clazz(CFirst.class).alias("first")
+                searchable(CFirst.class).alias("first")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
                         .add(component("second").refAlias("second"))
         );
         conf.addResourceMapping(
-                clazz(CSecond.class).alias("second").root(false)
+                searchable(CSecond.class).alias("second").root(false)
                         .add(property("value").add(metadata("value")))
                         .add(component("third").refAlias("third"))
         );
         conf.addResourceMapping(
-                clazz(CThird.class).alias("third").root(false)
+                searchable(CThird.class).alias("third").root(false)
                         .add(property("value").add(metadata("value")))
                         .add(component("fourth").refAlias("fourth"))
         );
         conf.addResourceMapping(
-                clazz(CFourth.class).alias("fourth").root(false)
+                searchable(CFourth.class).alias("fourth").root(false)
                         .add(property("value").add(metadata("value")))
         );
 
         conf.addResourceMapping(
-                clazz(SimpleRootId.class).alias("id-sr")
+                searchable(SimpleRootId.class).alias("id-sr")
                     .add(id("id"))
                     .add(property("value").add(metadata("mvalue")))
                     .add(component("firstComponent").refAlias("id-sc"))
                     .add(component("secondComponent").refAlias("id-sc"))
         );
         conf.addResourceMapping(
-                clazz(SimpleComponentId.class).alias("id-sc")
+                searchable(SimpleComponentId.class).alias("id-sc")
                     .add(id("id").add(metadata("id-sc").store(Property.Store.YES).index(Property.Index.NOT_ANALYZED)))
                     .add(property("value").add(metadata("mvalue")))
         );

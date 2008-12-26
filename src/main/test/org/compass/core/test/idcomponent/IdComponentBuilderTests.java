@@ -33,17 +33,17 @@ public class IdComponentBuilderTests extends IdComponentTests {
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
         conf.addResourceMapping(
-                clazz(A.class).alias("a")
+                searchable(A.class).alias("a")
                         .add(idComponent("b").accessor("field"))
                         .add(property("value").accessor("field").add(metadata("mvalue")))
         );
         conf.addResourceMapping(
-                clazz(B.class).alias("b")
+                searchable(B.class).alias("b")
                         .add(id("id1").accessor("field"))
                         .add(id("id2").accessor("field"))
         );
         conf.addResourceMapping(
-                clazz(C.class).alias("c")
+                searchable(C.class).alias("c")
                         .add(id("id").accessor("field"))
                         .add(reference("a").accessor("field"))
         );
