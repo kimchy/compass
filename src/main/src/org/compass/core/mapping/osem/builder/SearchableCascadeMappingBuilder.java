@@ -22,23 +22,23 @@ import org.compass.core.mapping.osem.PlainCascadeMapping;
 /**
  * @author kimchy
  */
-public class ClassCascadeMappingBuilder {
+public class SearchableCascadeMappingBuilder {
 
     final PlainCascadeMapping mapping;
 
-    public ClassCascadeMappingBuilder(String name) {
+    public SearchableCascadeMappingBuilder(String name) {
         mapping = new PlainCascadeMapping();
         mapping.setName(name);
         mapping.setPropertyName(name);
         mapping.setCascades(new Cascade[]{Cascade.ALL});
     }
 
-    public ClassCascadeMappingBuilder accessor(String accessor) {
+    public SearchableCascadeMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
     }
 
-    public ClassCascadeMappingBuilder cascade(Cascade... cascade) {
+    public SearchableCascadeMappingBuilder cascade(Cascade... cascade) {
         mapping.setCascades(cascade);
         return this;
     }

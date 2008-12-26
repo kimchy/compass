@@ -22,42 +22,42 @@ import org.compass.core.mapping.osem.IdComponentMapping;
 /**
  * @author kimchy
  */
-public class ClassIdComponentMappingBuilder {
+public class SearchableIdComponentMappingBuilder {
 
     final IdComponentMapping mapping;
 
-    public ClassIdComponentMappingBuilder(String name) {
+    public SearchableIdComponentMappingBuilder(String name) {
         mapping = new IdComponentMapping();
         mapping.setName(name);
         mapping.setPropertyName(name);
     }
 
-    public ClassIdComponentMappingBuilder refAlias(String... refAlias) {
+    public SearchableIdComponentMappingBuilder refAlias(String... refAlias) {
         mapping.setRefAliases(refAlias);
         return this;
     }
 
-    public ClassIdComponentMappingBuilder maxDepth(int maxDepth) {
+    public SearchableIdComponentMappingBuilder maxDepth(int maxDepth) {
         mapping.setMaxDepth(maxDepth);
         return this;
     }
 
-    public ClassIdComponentMappingBuilder prefix(String prefix) {
+    public SearchableIdComponentMappingBuilder prefix(String prefix) {
         mapping.setPrefix(prefix);
         return this;
     }
 
-    public ClassIdComponentMappingBuilder accessor(String accessor) {
+    public SearchableIdComponentMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
     }
 
-    public ClassIdComponentMappingBuilder overrideByName(boolean override) {
+    public SearchableIdComponentMappingBuilder overrideByName(boolean override) {
         mapping.setOverrideByName(override);
         return this;
     }
 
-    public ClassIdComponentMappingBuilder cascade(Cascade... cascade) {
+    public SearchableIdComponentMappingBuilder cascade(Cascade... cascade) {
         mapping.setCascades(cascade);
         return this;
     }

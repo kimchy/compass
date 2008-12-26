@@ -22,22 +22,22 @@ import org.compass.core.mapping.osem.ParentMapping;
 /**
  * @author kimchy
  */
-public class ClassParentMappingBuilder {
+public class SearchableParentMappingBuilder {
 
     final ParentMapping mapping;
 
-    public ClassParentMappingBuilder(String name) {
+    public SearchableParentMappingBuilder(String name) {
         mapping = new ParentMapping();
         mapping.setName(name);
         mapping.setPropertyName(name);
     }
 
-    public ClassParentMappingBuilder accessor(String accessor) {
+    public SearchableParentMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
     }
 
-    public ClassParentMappingBuilder cascade(Cascade... cascade) {
+    public SearchableParentMappingBuilder cascade(Cascade... cascade) {
         mapping.setCascades(cascade);
         return this;
     }

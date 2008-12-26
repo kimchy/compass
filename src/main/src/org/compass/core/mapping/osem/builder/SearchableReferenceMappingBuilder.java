@@ -6,32 +6,32 @@ import org.compass.core.mapping.osem.ReferenceMapping;
 /**
  * @author kimchy
  */
-public class ClassReferenceMappingBuilder {
+public class SearchableReferenceMappingBuilder {
 
     final ReferenceMapping mapping;
 
-    public ClassReferenceMappingBuilder(String name) {
+    public SearchableReferenceMappingBuilder(String name) {
         mapping = new ReferenceMapping();
         mapping.setName(name);
         mapping.setPropertyName(name);
     }
 
-    public ClassReferenceMappingBuilder refAlias(String... refAlias) {
+    public SearchableReferenceMappingBuilder refAlias(String... refAlias) {
         mapping.setRefAliases(refAlias);
         return this;
     }
 
-    public ClassReferenceMappingBuilder refCompoenntAlias(String alias) {
+    public SearchableReferenceMappingBuilder refCompoenntAlias(String alias) {
         mapping.setRefCompAlias(alias);
         return this;
     }
 
-    public ClassReferenceMappingBuilder accessor(String accessor) {
+    public SearchableReferenceMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
     }
 
-    public ClassReferenceMappingBuilder cascade(Cascade... cascade) {
+    public SearchableReferenceMappingBuilder cascade(Cascade... cascade) {
         mapping.setCascades(cascade);
         return this;
     }
@@ -40,7 +40,7 @@ public class ClassReferenceMappingBuilder {
      * This reference mapping (only in case of collection) will be lazy  or not. By default
      * will be set by the global setting {@link org.compass.core.config.CompassEnvironment.Osem#LAZY_REFERNCE}.
      */
-    public ClassReferenceMappingBuilder lazy(boolean lazy) {
+    public SearchableReferenceMappingBuilder lazy(boolean lazy) {
         mapping.setLazy(lazy);
         return this;
     }

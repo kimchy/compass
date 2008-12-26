@@ -19,69 +19,69 @@ package org.compass.core.mapping.osem.builder;
 import org.compass.core.Property;
 import org.compass.core.converter.Converter;
 import org.compass.core.mapping.ExcludeFromAll;
-import org.compass.core.mapping.osem.ClassIdPropertyMapping;
+import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ManagedId;
 
 /**
  * @author kimchy
  */
-public class ClassIdMappingBuilder {
+public class SearchablePropertyMappingBuilder {
 
-    final ClassIdPropertyMapping mapping;
+    final ClassPropertyMapping mapping;
 
-    public ClassIdMappingBuilder(String name) {
-        mapping = new ClassIdPropertyMapping();
+    public SearchablePropertyMappingBuilder(String name) {
+        mapping = new ClassPropertyMapping();
         mapping.setName(name);
         mapping.setPropertyName(name);
         mapping.setOverrideByName(true);
     }
 
-    public ClassIdMappingBuilder accessor(String accessor) {
+    public SearchablePropertyMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
     }
 
-    public ClassIdMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
+    public SearchablePropertyMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
 
-    public ClassIdMappingBuilder managedId(ManagedId managedId) {
+    public SearchablePropertyMappingBuilder managedId(ManagedId managedId) {
         mapping.setManagedId(managedId);
         return this;
     }
 
-    public ClassIdMappingBuilder managedIdIndex(Property.Index index) {
+    public SearchablePropertyMappingBuilder managedIdIndex(Property.Index index) {
         mapping.setManagedIdIndex(index);
         return this;
     }
 
-    public ClassIdMappingBuilder managedIdConverter(String converterName) {
+    public SearchablePropertyMappingBuilder managedIdConverter(String converterName) {
         mapping.setManagedIdConverterName(converterName);
         return this;
     }
 
-    public ClassIdMappingBuilder managedIdConverter(Converter managedIdConverter) {
+    public SearchablePropertyMappingBuilder managedIdConverter(Converter managedIdConverter) {
         mapping.setManagedIdConverter(managedIdConverter);
         return this;
     }
 
-    public ClassIdMappingBuilder overrideByName(boolean override) {
+    public SearchablePropertyMappingBuilder overrideByName(boolean override) {
         mapping.setOverrideByName(override);
         return this;
     }
 
-    public ClassIdMappingBuilder mappingConverter(String mappingConverter) {
+    public SearchablePropertyMappingBuilder mappingConverter(String mappingConverter) {
         mapping.setConverterName(mappingConverter);
         return this;
     }
 
-    public ClassIdMappingBuilder mappingConverter(Converter mappingConverter) {
+    public SearchablePropertyMappingBuilder mappingConverter(Converter mappingConverter) {
         mapping.setConverter(mappingConverter);
         return this;
     }
 
-    public ClassIdMappingBuilder add(ClassMetaDataMappingBuilder builder) {
+    public SearchablePropertyMappingBuilder add(SearchableMetaDataMappingBuilder builder) {
         builder.mapping.setPropertyName(mapping.getPropertyName());
         builder.mapping.setAccessor(mapping.getAccessor());
         mapping.addMapping(builder.mapping);

@@ -25,59 +25,129 @@ public abstract class OSEM {
 
     }
 
-    public static ClassMappingBuilder searchable(Class clazz) {
-        return new ClassMappingBuilder(clazz);
+    /**
+     * Constructs a new searchable class mapping builder.
+     */
+    public static SearchableMappingBuilder searchable(Class clazz) {
+        return new SearchableMappingBuilder(clazz);
     }
 
-    public static ClassIdMappingBuilder id(String name) {
-        return new ClassIdMappingBuilder(name);
+    /**
+     * Constructs a new searchdble id mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableIdMappingBuilder)
+     */
+    public static SearchableIdMappingBuilder id(String name) {
+        return new SearchableIdMappingBuilder(name);
     }
 
-    public static ClassIdComponentMappingBuilder idComponent(String name) {
-        return new ClassIdComponentMappingBuilder(name);
+    /**
+     * Constructs a new searchable id component mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableIdComponentMappingBuilder)
+     */
+    public static SearchableIdComponentMappingBuilder idComponent(String name) {
+        return new SearchableIdComponentMappingBuilder(name);
     }
 
-    public static ClassComponentMappingBuilder component(String name) {
-        return new ClassComponentMappingBuilder(name);
+    /**
+     * Constructs a new searchable component mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableComponentMappingBuilder)
+     */
+    public static SearchableComponentMappingBuilder component(String name) {
+        return new SearchableComponentMappingBuilder(name);
     }
 
-    public static ClassReferenceMappingBuilder reference(String name) {
-        return new ClassReferenceMappingBuilder(name);
+    /**
+     * Constructs a new searchable referennce mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableReferenceMappingBuilder)
+     */
+    public static SearchableReferenceMappingBuilder reference(String name) {
+        return new SearchableReferenceMappingBuilder(name);
     }
 
-    public static ClassConstantMappingBuilder constant(String name) {
-        return new ClassConstantMappingBuilder(name);
+    /**
+     * Constructs a new searchable constant mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableConstantMappingBuilder)
+     */
+    public static SearchableConstantMappingBuilder constant(String name) {
+        return new SearchableConstantMappingBuilder(name);
     }
 
-    public static ClassDynamicMetaDataMappingBuilder dynamicMetadata(String name, String converter, String expression) {
-        return new ClassDynamicMetaDataMappingBuilder(name, converter, expression);
+    /**
+     * Constructs a new searchable dynamic meta data mapping builder based on the name, the
+     * converter (jexl, velocity, groovy, ...) and the dynamic expression to use.
+     *
+     * @see SearchableMappingBuilder#add(SearchableDynamicMetaDataMappingBuilder)
+     */
+    public static SearchableDynamicMetaDataMappingBuilder dynamicMetadata(String name, String converter, String expression) {
+        return new SearchableDynamicMetaDataMappingBuilder(name, converter, expression);
     }
 
-    public static ClassPropertyMappingBuilder property(String name) {
-        return new ClassPropertyMappingBuilder(name);
+    /**
+     * Constructs a new searchable property mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchablePropertyMappingBuilder)
+     */
+    public static SearchablePropertyMappingBuilder property(String name) {
+        return new SearchablePropertyMappingBuilder(name);
     }
 
-    public static ClassMetaDataMappingBuilder metadata(String name) {
-        return new ClassMetaDataMappingBuilder(name);
+    /**
+     * Constructs a new searchable metadata mapping builder.
+     *
+     * @see SearchablePropertyMappingBuilder#add(SearchableMetaDataMappingBuilder)
+     * @see SearchableIdMappingBuilder#add(SearchableMetaDataMappingBuilder)
+     */
+    public static SearchableMetaDataMappingBuilder metadata(String name) {
+        return new SearchableMetaDataMappingBuilder(name);
     }
 
-    public static ClassAnalyzerMappingBuilder analyzer(String name) {
-        return new ClassAnalyzerMappingBuilder(name);
+    /**
+     * Constructs a new searchable analyzer property mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableAnalyzerMappingBuilder)
+     */
+    public static SearchableAnalyzerMappingBuilder analyzer(String name) {
+        return new SearchableAnalyzerMappingBuilder(name);
     }
 
-    public static ClassCascadeMappingBuilder cascade(String name) {
-        return new ClassCascadeMappingBuilder(name);
+    /**
+     * Constructs a new searchable cascade mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableCascadeMappingBuilder)
+     */
+    public static SearchableCascadeMappingBuilder cascade(String name) {
+        return new SearchableCascadeMappingBuilder(name);
     }
 
-    public static ClassParentMappingBuilder parent(String name) {
-        return new ClassParentMappingBuilder(name);
+    /**
+     * Constructs a new searchable parent mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableParentMappingBuilder)
+     */
+    public static SearchableParentMappingBuilder parent(String name) {
+        return new SearchableParentMappingBuilder(name);
     }
 
-    public static ClassBoostMappingBuilder boost(String name) {
-        return new ClassBoostMappingBuilder(name);
+    /**
+     * Constructs a new searchable boost mapping builder.
+     *
+     * @see SearchableMappingBuilder#add(SearchableBoostMappingBuilder)
+     */
+    public static SearchableBoostMappingBuilder boost(String name) {
+        return new SearchableBoostMappingBuilder(name);
     }
 
-    public static ClassAllMappingBuilder all() {
-        return new ClassAllMappingBuilder();
+    /**
+     * Constructs a new searchable all mapping builder.
+     *
+     * @see SearchableMappingBuilder#all(SearchableAllMappingBuilder)
+     */
+    public static SearchableAllMappingBuilder all() {
+        return new SearchableAllMappingBuilder();
     }
 }

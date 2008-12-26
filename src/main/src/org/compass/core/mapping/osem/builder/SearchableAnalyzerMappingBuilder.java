@@ -27,14 +27,14 @@ import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
  * @author kimchy
  * @see org.compass.core.mapping.json.builder.JSEM#analyzer(String)
  */
-public class ClassAnalyzerMappingBuilder {
+public class SearchableAnalyzerMappingBuilder {
 
     final ClassPropertyAnalyzerController mapping;
 
     /**
      * Constructs a new Class analyzer property using the provided name.
      */
-    public ClassAnalyzerMappingBuilder(String name) {
+    public SearchableAnalyzerMappingBuilder(String name) {
         this.mapping = new ClassPropertyAnalyzerController();
         mapping.setName(name);
         mapping.setPropertyName(name);
@@ -44,12 +44,12 @@ public class ClassAnalyzerMappingBuilder {
     /**
      * The name of the analyzer that will be used if the property has the null value.
      */
-    public ClassAnalyzerMappingBuilder nullAnalyzer(String nullAnalyzer) {
+    public SearchableAnalyzerMappingBuilder nullAnalyzer(String nullAnalyzer) {
         mapping.setNullAnalyzer(nullAnalyzer);
         return this;
     }
 
-    public ClassAnalyzerMappingBuilder accessor(String accessor) {
+    public SearchableAnalyzerMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
     }

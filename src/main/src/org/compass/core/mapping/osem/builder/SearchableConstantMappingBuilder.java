@@ -17,32 +17,34 @@
 package org.compass.core.mapping.osem.builder;
 
 import org.compass.core.Property;
-import org.compass.core.converter.Converter;
-import org.compass.core.converter.mapping.ResourcePropertyConverter;
-import org.compass.core.converter.mapping.support.FormatDelegateConverter;
-import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.SpellCheck;
-import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
+import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 
 /**
  * @author kimchy
  */
-public class ClassMetaDataMappingBuilder {
+public class SearchableConstantMappingBuilder {
 
-    final ClassPropertyMetaDataMapping mapping;
+    final ConstantMetaDataMapping mapping;
 
-    public ClassMetaDataMappingBuilder(String name) {
-        mapping = new ClassPropertyMetaDataMapping();
+    public SearchableConstantMappingBuilder(String name) {
+        mapping = new ConstantMetaDataMapping();
         mapping.setName(name);
-        mapping.setPath(new StaticPropertyPath(name));
+    }
+
+    public SearchableConstantMappingBuilder values(String ... values) {
+        for (String value : values) {
+            mapping.addMetaDataValue(value);
+        }
+        return this;
     }
 
     /**
      * Specifies whether and how a property will be stored. Deftauls to
      * {@link org.compass.core.Property.Store#YES}.
      */
-    public ClassMetaDataMappingBuilder store(Property.Store store) {
+    public SearchableConstantMappingBuilder store(Property.Store store) {
         mapping.setStore(store);
         return this;
     }
@@ -51,7 +53,7 @@ public class ClassMetaDataMappingBuilder {
      * Specifies whether and how a property should be indexed. Defaults to
      * {@link org.compass.core.Property.Index#ANALYZED}.
      */
-    public ClassMetaDataMappingBuilder index(Property.Index index) {
+    public SearchableConstantMappingBuilder index(Property.Index index) {
         mapping.setIndex(index);
         return this;
     }
@@ -60,7 +62,7 @@ public class ClassMetaDataMappingBuilder {
      * Specifies whether and how a property should have term vectors. Defaults to
      * {@link org.compass.core.Property.TermVector#NO}.
      */
-    public ClassMetaDataMappingBuilder termVector(Property.TermVector termVector) {
+    public SearchableConstantMappingBuilder termVector(Property.TermVector termVector) {
         mapping.setTermVector(termVector);
         return this;
     }
@@ -70,7 +72,7 @@ public class ClassMetaDataMappingBuilder {
      * This effectively disables indexing boosts and length normalization for this field. Defaults
      * to <code>false</code>.
      */
-    public ClassMetaDataMappingBuilder omitNorms(boolean omitNorms) {
+    public SearchableConstantMappingBuilder omitNorms(boolean omitNorms) {
         mapping.setOmitNorms(omitNorms);
         return this;
     }
@@ -78,7 +80,7 @@ public class ClassMetaDataMappingBuilder {
     /**
      * If set, omit tf from postings of this indexed property. Defaults to <code>false</code>.
      */
-    public ClassMetaDataMappingBuilder omitTf(boolean omitTf) {
+    public SearchableConstantMappingBuilder omitTf(boolean omitTf) {
         mapping.setOmitTf(omitTf);
         return this;
     }
@@ -86,41 +88,18 @@ public class ClassMetaDataMappingBuilder {
     /**
      * Sets the boost value for the property mapping. Defaults to <code>1.0f</code>.
      */
-    public ClassMetaDataMappingBuilder boost(float boost) {
+    public SearchableConstantMappingBuilder boost(float boost) {
         mapping.setBoost(boost);
         return this;
     }
 
-    /**
-     * Sets the format that will be used for formattable capable converters (such as numbers and dates).
-     */
-    public ClassMetaDataMappingBuilder format(String format) {
-        mapping.setConverter(new FormatDelegateConverter(format));
+    public SearchableConstantMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
+        mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
 
-    /**
-     * Sets the lookup converter name (registered with Compass) that will be used to convert the value
-     * of the property.
-     */
-    public ClassMetaDataMappingBuilder converter(String converterName) {
-        mapping.setConverterName(converterName);
-        return this;
-    }
-
-    /**
-     * Sets an actual converter that will be used to convert this property value.
-     */
-    public ClassMetaDataMappingBuilder converter(Converter converter) {
-        mapping.setConverter(converter);
-        return this;
-    }
-
-    /**
-     * Sets an actual converter that will be used to convert this property value.
-     */
-    public ClassMetaDataMappingBuilder converter(ResourcePropertyConverter converter) {
-        mapping.setConverter(converter);
+    public SearchableConstantMappingBuilder overrideByName(boolean override) {
+        mapping.setOverrideByName(override);
         return this;
     }
 
@@ -128,16 +107,8 @@ public class ClassMetaDataMappingBuilder {
      * Sets the analyzer logical name that will be used to analyzer the property value. The name
      * is a lookup name for an Analyzer that is registered with Compass.
      */
-    public ClassMetaDataMappingBuilder analyzer(String analyzer) {
+    public SearchableConstantMappingBuilder analyzer(String analyzer) {
         mapping.setAnalyzer(analyzer);
-        return this;
-    }
-
-    /**
-     * Controls if the property will be excluded from all or not.
-     */
-    public ClassMetaDataMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
-        mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
 
@@ -145,7 +116,7 @@ public class ClassMetaDataMappingBuilder {
      * Sets the null value of the property. If the property value is null, will store in the
      * index the provided value.
      */
-    public ClassMetaDataMappingBuilder nullValue(String nullValue) {
+    public SearchableConstantMappingBuilder nullValue(String nullValue) {
         mapping.setNullValue(nullValue);
         return this;
     }
@@ -153,7 +124,7 @@ public class ClassMetaDataMappingBuilder {
     /**
      * Sets the spell check specific setting for the mapping.
      */
-    public ClassMetaDataMappingBuilder spellCheck(SpellCheck spellCheck) {
+    public SearchableConstantMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

@@ -22,42 +22,42 @@ import org.compass.core.mapping.osem.ComponentMapping;
 /**
  * @author kimchy
  */
-public class ClassComponentMappingBuilder {
+public class SearchableComponentMappingBuilder {
 
     final ComponentMapping mapping;
 
-    public ClassComponentMappingBuilder(String name) {
+    public SearchableComponentMappingBuilder(String name) {
         mapping = new ComponentMapping();
         mapping.setName(name);
         mapping.setPropertyName(name);
     }
 
-    public ClassComponentMappingBuilder refAlias(String... refAlias) {
+    public SearchableComponentMappingBuilder refAlias(String... refAlias) {
         mapping.setRefAliases(refAlias);
         return this;
     }
 
-    public ClassComponentMappingBuilder maxDepth(int maxDepth) {
+    public SearchableComponentMappingBuilder maxDepth(int maxDepth) {
         mapping.setMaxDepth(maxDepth);
         return this;
     }
 
-    public ClassComponentMappingBuilder prefix(String prefix) {
+    public SearchableComponentMappingBuilder prefix(String prefix) {
         mapping.setPrefix(prefix);
         return this;
     }
 
-    public ClassComponentMappingBuilder accessor(String accessor) {
+    public SearchableComponentMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
     }
 
-    public ClassComponentMappingBuilder overrideByName(boolean override) {
+    public SearchableComponentMappingBuilder overrideByName(boolean override) {
         mapping.setOverrideByName(override);
         return this;
     }
 
-    public ClassComponentMappingBuilder cascade(Cascade... cascade) {
+    public SearchableComponentMappingBuilder cascade(Cascade... cascade) {
         mapping.setCascades(cascade);
         return this;
     }

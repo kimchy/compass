@@ -26,14 +26,14 @@ import org.compass.core.mapping.internal.DefaultAllMapping;
  * @author kimchy
  * @see OSEM#all()
  */
-public class ClassAllMappingBuilder {
+public class SearchableAllMappingBuilder {
 
     final DefaultAllMapping mapping;
 
     /**
      * Constructs a new all mapping builder.
      */
-    public ClassAllMappingBuilder() {
+    public SearchableAllMappingBuilder() {
         this.mapping = new DefaultAllMapping();
     }
 
@@ -42,7 +42,7 @@ public class ClassAllMappingBuilder {
      * {@link org.compass.core.config.CompassEnvironment.All#ENABLED} setting which
      * in turn defaults to <code>true</code>.
      */
-    public ClassAllMappingBuilder enable(boolean enable) {
+    public SearchableAllMappingBuilder enable(boolean enable) {
         mapping.setSupported(enable);
         return this;
     }
@@ -52,7 +52,7 @@ public class ClassAllMappingBuilder {
      * {@link org.compass.core.config.CompassEnvironment.All#EXCLUDE_ALIAS} setting which in turn
      * defaults to <code>true</code>.
      */
-    public ClassAllMappingBuilder excludeAlias(boolean excludeAlias) {
+    public SearchableAllMappingBuilder excludeAlias(boolean excludeAlias) {
         mapping.setExcludeAlias(excludeAlias);
         return this;
     }
@@ -62,7 +62,7 @@ public class ClassAllMappingBuilder {
      * {@link org.compass.core.config.CompassEnvironment.All#INCLUDE_UNMAPPED_PROPERTIES} setting which
      * in turn defaults to <code>true</code>.
      */
-    public ClassAllMappingBuilder includePropertiesWithNoMappings(boolean includePropertiesWithNoMappings) {
+    public SearchableAllMappingBuilder includePropertiesWithNoMappings(boolean includePropertiesWithNoMappings) {
         mapping.setIncludePropertiesWithNoMappings(includePropertiesWithNoMappings);
         return this;
     }
@@ -72,7 +72,7 @@ public class ClassAllMappingBuilder {
      * {@link org.compass.core.config.CompassEnvironment.All#TERM_VECTOR} setting which in turn
      * defaults to <code>NO</code>.
      */
-    public ClassAllMappingBuilder termVector(Property.TermVector termVector) {
+    public SearchableAllMappingBuilder termVector(Property.TermVector termVector) {
         mapping.setTermVector(termVector);
         return this;
     }
@@ -82,7 +82,7 @@ public class ClassAllMappingBuilder {
      * {@link org.compass.core.config.CompassEnvironment.All#OMIT_NORMS} setting which in turn
      * defaults to <code>false</code>.
      */
-    public ClassAllMappingBuilder omitNorms(boolean omitNorms) {
+    public SearchableAllMappingBuilder omitNorms(boolean omitNorms) {
         mapping.setOmitNorms(omitNorms);
         return this;
     }
@@ -92,7 +92,7 @@ public class ClassAllMappingBuilder {
      * {@link org.compass.core.config.CompassEnvironment.All#OMIT_TF} setting which in turn
      * defaults to <code>false</code>.
      */
-    public ClassAllMappingBuilder omitTf(boolean omitTf) {
+    public SearchableAllMappingBuilder omitTf(boolean omitTf) {
         mapping.setOmitTf(omitTf);
         return this;
     }
@@ -100,7 +100,7 @@ public class ClassAllMappingBuilder {
     /**
      * The spell check type of the all property.
      */
-    public ClassAllMappingBuilder spellCheck(SpellCheck spellCheck) {
+    public SearchableAllMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }

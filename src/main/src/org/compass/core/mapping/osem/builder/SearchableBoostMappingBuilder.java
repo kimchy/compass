@@ -24,14 +24,14 @@ import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
  * @author kimchy
  * @see OSEM#boost(String)
  */
-public class ClassBoostMappingBuilder {
+public class SearchableBoostMappingBuilder {
 
     final ClassBoostPropertyMapping mapping;
 
     /**
      * Constructs a new boost JSON property mapping.
      */
-    public ClassBoostMappingBuilder(String name) {
+    public SearchableBoostMappingBuilder(String name) {
         this.mapping = new ClassBoostPropertyMapping();
         mapping.setName(name);
         mapping.setPropertyName(name);
@@ -42,12 +42,12 @@ public class ClassBoostMappingBuilder {
      * The default boost value that will be used of the JSON property to be used
      * has <code>null</code> value. Defaults to <code>1.0f</code>.
      */
-    public ClassBoostMappingBuilder defaultBoost(float defaultBoost) {
+    public SearchableBoostMappingBuilder defaultBoost(float defaultBoost) {
         mapping.setDefaultBoost(defaultBoost);
         return this;
     }
 
-    public ClassBoostMappingBuilder accessor(String accessor) {
+    public SearchableBoostMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
     }

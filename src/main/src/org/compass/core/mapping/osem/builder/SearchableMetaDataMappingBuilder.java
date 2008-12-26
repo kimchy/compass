@@ -17,41 +17,32 @@
 package org.compass.core.mapping.osem.builder;
 
 import org.compass.core.Property;
+import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
+import org.compass.core.converter.mapping.support.FormatDelegateConverter;
 import org.compass.core.engine.naming.StaticPropertyPath;
 import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.SpellCheck;
-import org.compass.core.mapping.osem.DynamicMetaDataMapping;
+import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 
 /**
  * @author kimchy
  */
-public class ClassDynamicMetaDataMappingBuilder {
+public class SearchableMetaDataMappingBuilder {
 
-    final DynamicMetaDataMapping mapping;
+    final ClassPropertyMetaDataMapping mapping;
 
-    public ClassDynamicMetaDataMappingBuilder(String name, String converter, String expression) {
-        mapping = new DynamicMetaDataMapping();
+    public SearchableMetaDataMappingBuilder(String name) {
+        mapping = new ClassPropertyMetaDataMapping();
         mapping.setName(name);
         mapping.setPath(new StaticPropertyPath(name));
-        mapping.setConverterName(converter);
-        mapping.setExpression(expression);
-    }
-
-    public ClassDynamicMetaDataMappingBuilder format(String format) {
-        mapping.setFormat(format);
-        return this;
-    }
-
-    public ClassDynamicMetaDataMappingBuilder type(Class type) {
-        mapping.setType(type);
-        return this;
     }
 
     /**
      * Specifies whether and how a property will be stored. Deftauls to
      * {@link org.compass.core.Property.Store#YES}.
      */
-    public ClassDynamicMetaDataMappingBuilder store(Property.Store store) {
+    public SearchableMetaDataMappingBuilder store(Property.Store store) {
         mapping.setStore(store);
         return this;
     }
@@ -60,7 +51,7 @@ public class ClassDynamicMetaDataMappingBuilder {
      * Specifies whether and how a property should be indexed. Defaults to
      * {@link org.compass.core.Property.Index#ANALYZED}.
      */
-    public ClassDynamicMetaDataMappingBuilder index(Property.Index index) {
+    public SearchableMetaDataMappingBuilder index(Property.Index index) {
         mapping.setIndex(index);
         return this;
     }
@@ -69,7 +60,7 @@ public class ClassDynamicMetaDataMappingBuilder {
      * Specifies whether and how a property should have term vectors. Defaults to
      * {@link org.compass.core.Property.TermVector#NO}.
      */
-    public ClassDynamicMetaDataMappingBuilder termVector(Property.TermVector termVector) {
+    public SearchableMetaDataMappingBuilder termVector(Property.TermVector termVector) {
         mapping.setTermVector(termVector);
         return this;
     }
@@ -79,7 +70,7 @@ public class ClassDynamicMetaDataMappingBuilder {
      * This effectively disables indexing boosts and length normalization for this field. Defaults
      * to <code>false</code>.
      */
-    public ClassDynamicMetaDataMappingBuilder omitNorms(boolean omitNorms) {
+    public SearchableMetaDataMappingBuilder omitNorms(boolean omitNorms) {
         mapping.setOmitNorms(omitNorms);
         return this;
     }
@@ -87,7 +78,7 @@ public class ClassDynamicMetaDataMappingBuilder {
     /**
      * If set, omit tf from postings of this indexed property. Defaults to <code>false</code>.
      */
-    public ClassDynamicMetaDataMappingBuilder omitTf(boolean omitTf) {
+    public SearchableMetaDataMappingBuilder omitTf(boolean omitTf) {
         mapping.setOmitTf(omitTf);
         return this;
     }
@@ -95,18 +86,41 @@ public class ClassDynamicMetaDataMappingBuilder {
     /**
      * Sets the boost value for the property mapping. Defaults to <code>1.0f</code>.
      */
-    public ClassDynamicMetaDataMappingBuilder boost(float boost) {
+    public SearchableMetaDataMappingBuilder boost(float boost) {
         mapping.setBoost(boost);
         return this;
     }
 
-    public ClassDynamicMetaDataMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
-        mapping.setExcludeFromAll(excludeFromAll);
+    /**
+     * Sets the format that will be used for formattable capable converters (such as numbers and dates).
+     */
+    public SearchableMetaDataMappingBuilder format(String format) {
+        mapping.setConverter(new FormatDelegateConverter(format));
         return this;
     }
 
-    public ClassDynamicMetaDataMappingBuilder overrideByName(boolean override) {
-        mapping.setOverrideByName(override);
+    /**
+     * Sets the lookup converter name (registered with Compass) that will be used to convert the value
+     * of the property.
+     */
+    public SearchableMetaDataMappingBuilder converter(String converterName) {
+        mapping.setConverterName(converterName);
+        return this;
+    }
+
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
+    public SearchableMetaDataMappingBuilder converter(Converter converter) {
+        mapping.setConverter(converter);
+        return this;
+    }
+
+    /**
+     * Sets an actual converter that will be used to convert this property value.
+     */
+    public SearchableMetaDataMappingBuilder converter(ResourcePropertyConverter converter) {
+        mapping.setConverter(converter);
         return this;
     }
 
@@ -114,8 +128,16 @@ public class ClassDynamicMetaDataMappingBuilder {
      * Sets the analyzer logical name that will be used to analyzer the property value. The name
      * is a lookup name for an Analyzer that is registered with Compass.
      */
-    public ClassDynamicMetaDataMappingBuilder analyzer(String analyzer) {
+    public SearchableMetaDataMappingBuilder analyzer(String analyzer) {
         mapping.setAnalyzer(analyzer);
+        return this;
+    }
+
+    /**
+     * Controls if the property will be excluded from all or not.
+     */
+    public SearchableMetaDataMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
+        mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
 
@@ -123,7 +145,7 @@ public class ClassDynamicMetaDataMappingBuilder {
      * Sets the null value of the property. If the property value is null, will store in the
      * index the provided value.
      */
-    public ClassDynamicMetaDataMappingBuilder nullValue(String nullValue) {
+    public SearchableMetaDataMappingBuilder nullValue(String nullValue) {
         mapping.setNullValue(nullValue);
         return this;
     }
@@ -131,7 +153,7 @@ public class ClassDynamicMetaDataMappingBuilder {
     /**
      * Sets the spell check specific setting for the mapping.
      */
-    public ClassDynamicMetaDataMappingBuilder spellCheck(SpellCheck spellCheck) {
+    public SearchableMetaDataMappingBuilder spellCheck(SpellCheck spellCheck) {
         mapping.setSpellCheck(spellCheck);
         return this;
     }
