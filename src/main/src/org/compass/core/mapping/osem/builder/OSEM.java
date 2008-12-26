@@ -37,6 +37,10 @@ public abstract class OSEM {
         return new ClassComponentMappingBuilder(name);
     }
 
+    public static ClassReferenceMappingBuilder reference(String name) {
+        return new ClassReferenceMappingBuilder(name);
+    }
+
     public static ClassPropertyMappingBuilder property(String name) {
         return new ClassPropertyMappingBuilder(name);
     }
