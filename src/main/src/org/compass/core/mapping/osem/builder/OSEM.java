@@ -49,6 +49,10 @@ public abstract class OSEM {
         return new ClassConstantMappingBuilder(name);
     }
 
+    public static ClassDynamicMetaDataMappingBuilder dynamicMetadata(String name, String converter, String expression) {
+        return new ClassDynamicMetaDataMappingBuilder(name, converter, expression);
+    }
+
     public static ClassPropertyMappingBuilder property(String name) {
         return new ClassPropertyMappingBuilder(name);
     }

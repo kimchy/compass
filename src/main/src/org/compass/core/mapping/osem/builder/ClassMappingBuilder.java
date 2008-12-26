@@ -197,4 +197,9 @@ public class ClassMappingBuilder implements ResourceMappingProvider {
         mapping.addMapping(builder.mapping);
         return this;
     }
+
+    public ClassMappingBuilder add(ClassDynamicMetaDataMappingBuilder builder) {
+        mapping.addMapping(builder.mapping);
+        return this;
+    }
 }
