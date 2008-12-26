@@ -43,7 +43,7 @@ public enum ManagedId {
 
     /**
      * The class proeprty will not create an internal managed id if
-     * all its meta data mappings have store=no
+     * all its meta data mappings have store=no.
      */
     NO_STORE,
 

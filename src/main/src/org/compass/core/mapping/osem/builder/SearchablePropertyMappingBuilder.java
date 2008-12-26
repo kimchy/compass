@@ -18,7 +18,7 @@ package org.compass.core.mapping.osem.builder;
 
 import org.compass.core.Property;
 import org.compass.core.converter.Converter;
-import org.compass.core.mapping.ExcludeFromAll;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.osem.ClassPropertyMapping;
 import org.compass.core.mapping.osem.ManagedId;
 
@@ -45,11 +45,6 @@ public class SearchablePropertyMappingBuilder {
         return this;
     }
 
-    public SearchablePropertyMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
-        mapping.setExcludeFromAll(excludeFromAll);
-        return this;
-    }
-
     public SearchablePropertyMappingBuilder managedId(ManagedId managedId) {
         mapping.setManagedId(managedId);
         return this;
@@ -67,6 +62,11 @@ public class SearchablePropertyMappingBuilder {
 
     public SearchablePropertyMappingBuilder managedIdConverter(Converter managedIdConverter) {
         mapping.setManagedIdConverter(managedIdConverter);
+        return this;
+    }
+
+    public SearchablePropertyMappingBuilder managedIdConverter(ResourcePropertyConverter converter) {
+        mapping.setManagedIdConverter(converter);
         return this;
     }
 
