@@ -31,6 +31,13 @@ public class SampleConverter extends AbstractBasicConverter implements CompassCo
 
     private String seperator;
 
+    public SampleConverter() {
+    }
+
+    public SampleConverter(String seperator) {
+        this.seperator = seperator;
+    }
+
     public void configure(CompassSettings settings) throws CompassException {
         seperator = settings.getSetting("seperator", "XXX");
     }
