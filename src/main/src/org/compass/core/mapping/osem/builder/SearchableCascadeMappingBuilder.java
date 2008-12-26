@@ -33,6 +33,10 @@ public class SearchableCascadeMappingBuilder {
         mapping.setCascades(new Cascade[]{Cascade.ALL});
     }
 
+    public SearchableCascadeMappingBuilder accessor(Accessor accessor) {
+        return accessor(accessor.toString());
+    }
+
     public SearchableCascadeMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;

@@ -47,6 +47,10 @@ public class SearchableIdComponentMappingBuilder {
         return this;
     }
 
+    public SearchableIdComponentMappingBuilder accessor(Accessor accessor) {
+        return accessor(accessor.toString());
+    }
+
     public SearchableIdComponentMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;

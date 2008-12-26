@@ -32,6 +32,10 @@ public class SearchableParentMappingBuilder {
         mapping.setPropertyName(name);
     }
 
+    public SearchableParentMappingBuilder accessor(Accessor accessor) {
+        return accessor(accessor.toString());
+    }
+
     public SearchableParentMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;

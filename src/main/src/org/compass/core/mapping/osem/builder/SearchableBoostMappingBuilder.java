@@ -47,6 +47,10 @@ public class SearchableBoostMappingBuilder {
         return this;
     }
 
+    public SearchableBoostMappingBuilder accessor(Accessor accessor) {
+        return accessor(accessor.toString());
+    }
+
     public SearchableBoostMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;

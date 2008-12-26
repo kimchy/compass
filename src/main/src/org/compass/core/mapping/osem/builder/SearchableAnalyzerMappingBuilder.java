@@ -49,6 +49,10 @@ public class SearchableAnalyzerMappingBuilder {
         return this;
     }
 
+    public SearchableAnalyzerMappingBuilder accessor(Accessor accessor) {
+        return accessor(accessor.toString());
+    }
+    
     public SearchableAnalyzerMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;

@@ -144,6 +144,14 @@ public class ConverterLookupMappingProcessor implements MappingProcessor {
                         }
                     }
                 }
+                if (classPropertyMapping.getManagedIdConverter() == null) {
+                    if (classPropertyMapping.mappingsSize() == 1) {
+                        Mapping m2 = classPropertyMapping.mappingsIt().next();
+                        if (m2 instanceof ClassPropertyMetaDataMapping) {
+                            classPropertyMapping.setManagedIdConverter(m2.getConverter());
+                        }
+                    }
+                }
             }
         }
 

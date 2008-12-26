@@ -23,26 +23,26 @@ import java.lang.annotation.Target;
 
 /**
  * Specifies a searchable id on property or field of the {@link Searchable} class.
- * <p/>
- * Each searchable class must have at least one id annotation. The type
+ *
+ * <p>Each searchable class must have at least one id annotation. The type
  * of the field/property can be a simple type, or a custom class. In case
  * of a custom class, there should be a specialized converter associtaed
  * with it, with the preferable way of defining the converter is to use
  * the {@link SearchableClassConverter} annotating the custom class.
- * <p/>
- * A searchable class can have more than one searchable id associated with it.
- * <p/>
- * For simple usage, the annotation can create a {@link SearchableMetaData} automatically
+ *
+ * <p>A searchable class can have more than one searchable id associated with it.
+ *
+ * <p>For simple usage, the annotation can create a {@link SearchableMetaData} automatically
  * (without explicitly defining one on the field/property).
  * It will only be created if the {@link #name()} is set to a value. Most of
  * the attributes that can control the meta-data are provided in the searchable
  * id as well, they are marked in the java doc.
- * <p/>
- * Note, that if the {@link #name()} is not set, no defined {@link SearchableMetaData}
+ *
+ * <p>Note, that if the {@link #name()} is not set, no defined {@link SearchableMetaData}
  * will be created, and Compass will end up generating an internal meta-data for it.
  * For additional meta-datas, use the {@link SearchableMetaData} or {@link SearchableMetaDatas}.
- * <p/>
- * Compass might require an internal meta-data to be created, so it can identify the correct
+ *
+ * <p>Compass might require an internal meta-data to be created, so it can identify the correct
  * value that match the property/field. Controlling the creation and specifics of the intenal
  * meta-data id can be done using {@link #managedId()} and {@link #managedIdIndex()}.
  *

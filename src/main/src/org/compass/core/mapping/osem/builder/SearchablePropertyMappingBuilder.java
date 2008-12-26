@@ -36,6 +36,10 @@ public class SearchablePropertyMappingBuilder {
         mapping.setOverrideByName(true);
     }
 
+    public SearchablePropertyMappingBuilder accessor(Accessor accessor) {
+        return accessor(accessor.toString());
+    }
+
     public SearchablePropertyMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;

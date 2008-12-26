@@ -26,6 +26,10 @@ public class SearchableReferenceMappingBuilder {
         return this;
     }
 
+    public SearchableReferenceMappingBuilder accessor(Accessor accessor) {
+        return accessor(accessor.toString());
+    }
+
     public SearchableReferenceMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;

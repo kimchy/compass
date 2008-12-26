@@ -18,22 +18,43 @@ package org.compass.core.mapping.osem.builder;
 
 import org.compass.core.Property;
 import org.compass.core.converter.Converter;
+import org.compass.core.converter.mapping.ResourcePropertyConverter;
 import org.compass.core.mapping.ExcludeFromAll;
 import org.compass.core.mapping.osem.ClassIdPropertyMapping;
 import org.compass.core.mapping.osem.ManagedId;
 
 /**
+ * Specifies a searchable id on property or field of {@link SearchableMappingBuilder}.
+ *
+ * <p>A root searchable class must have at least one id (or id component) mapping defined for it.
+ *
+ * <p>The searchable id can optionally have a {@link SearchableMetaDataMappingBuilder} added to it
+ * using {@link #add(SearchableMetaDataMappingBuilder)}. If no meta-data is added to it, or Compass
+ * identifies that there is another meta-data with the same name, a managed id (internal) will be
+ * created for it so it can be correctly unmarshall it from the index. Note, when support unmarshall
+ * is set to <code>false</code> for the searchable class, a managed id will still be created for
+ * id mappings (and only for id mappings).
+ *
  * @author kimchy
+ * @see OSEM#id(String)
+ * @see SearchableMappingBuilder#add(SearchableIdMappingBuilder)
  */
 public class SearchableIdMappingBuilder {
 
     final ClassIdPropertyMapping mapping;
 
+    /**
+     * Constructs a new searchable id mapping builder based on the property/field name.
+     */
     public SearchableIdMappingBuilder(String name) {
         mapping = new ClassIdPropertyMapping();
         mapping.setName(name);
         mapping.setPropertyName(name);
         mapping.setOverrideByName(true);
+    }
+
+    public SearchableIdMappingBuilder accessor(Accessor accessor) {
+        return accessor(accessor.toString());
     }
 
     public SearchableIdMappingBuilder accessor(String accessor) {
@@ -56,13 +77,18 @@ public class SearchableIdMappingBuilder {
         return this;
     }
 
-    public SearchableIdMappingBuilder managedIdConverter(String converterName) {
-        mapping.setManagedIdConverterName(converterName);
+    public SearchableIdMappingBuilder managedIdConverter(String converter) {
+        mapping.setManagedIdConverterName(converter);
         return this;
     }
 
-    public SearchableIdMappingBuilder managedIdConverter(Converter managedIdConverter) {
-        mapping.setManagedIdConverter(managedIdConverter);
+    public SearchableIdMappingBuilder managedIdConverter(Converter converter) {
+        mapping.setManagedIdConverter(converter);
+        return this;
+    }
+
+    public SearchableIdMappingBuilder managedIdConverter(ResourcePropertyConverter converter) {
+        mapping.setManagedIdConverter(converter);
         return this;
     }
 
