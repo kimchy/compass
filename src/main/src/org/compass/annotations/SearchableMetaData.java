@@ -24,31 +24,31 @@ import java.lang.annotation.Target;
 /**
  * Sepcifies additional meta-data on a {@link SearchableProperty} or
  * {@link SearchableId}.
- * <p/>
- * {@link SearchableId} and {@link SearchableProperty} can be used to
+ *
+ * <p>{@link SearchableId} and {@link SearchableProperty} can be used to
  * auto-generate meta-data. If more than one meta-data is required, the
  * {@link SearchableMetaData}/{@link SearchableMetaDatas} can be used.
- * <p/>
- * The searchable meta-data is meant to handle basic types (which usually translate to
+ *
+ * <p>The searchable meta-data is meant to handle basic types (which usually translate to
  * a String saved in the search engine). The conversion is done using converters, with
  * Compass providing converters for most basic types. A specialized Converter can be
- * associated with the auto generated meta-data using {@link #converter()}. The
+ * associated with the meta-data using {@link #converter()}. The
  * specialized converter will implement the {@link org.compass.core.converter.Converter}
  * interface, usually extending the {@link org.compass.core.converter.basic.AbstractBasicConverter}.
- * <p/>
- * Another way of defining a converter for a class can be done using the {@link SearchableClassConverter}
+ *
+ * <p>Another way of defining a converter for a class can be done using the {@link SearchableClassConverter}
  * to annotate the class that needs conversion, with Compass auto detecting it.
- * <p/>
- * Note, that most of the time, a specialized converter for user classes will not be needed,
+ *
+ * <p>Note, that most of the time, a specialized converter for user classes will not be needed,
  * since the {@link SearchableComponent} usually makes more sense to use.
- * <p/>
- * The searchalbe property can annotate a {@link java.util.Collection} type field/property,
+ *
+ * <p>The searchalbe property can annotate a {@link java.util.Collection} type field/property,
  * supporting either {@link java.util.List} or {@link java.util.Set}. The searchable property
  * will try and automatically identify the element type using generics, but if the collection
  * is not defined with generics, {@link SearchableProperty#type()} should be used to hint for
  * the collection element type.
- * <p/>
- * The searchable property can annotate an array as well, with the array element type used for
+ *
+ * <p>The searchable property can annotate an array as well, with the array element type used for
  * Converter lookups.
  *
  * @author kimchy

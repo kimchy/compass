@@ -23,6 +23,7 @@ import org.compass.core.mapping.osem.ClassBoostPropertyMapping;
  *
  * @author kimchy
  * @see OSEM#boost(String)
+ * @see SearchableMappingBuilder#add(SearchableBoostMappingBuilder) 
  */
 public class SearchableBoostMappingBuilder {
 
@@ -47,10 +48,20 @@ public class SearchableBoostMappingBuilder {
         return this;
     }
 
+    /**
+     * Sets the acessor the will be used for the class property. Defaults to property (getter
+     * and optionally setter).
+     */
     public SearchableBoostMappingBuilder accessor(Accessor accessor) {
         return accessor(accessor.toString());
     }
 
+    /**
+     * Sets the acessor the will be used for the class property. Defaults to property (getter
+     * and optionally setter). Note, this is the lookup name of a {@link org.compass.core.accessor.PropertyAccessor}
+     * registered with Compass, with two default ones (custom ones can be easily added) named <code>field</code>
+     * and <code>property</code>.
+     */
     public SearchableBoostMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;

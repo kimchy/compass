@@ -156,6 +156,15 @@ public class SearchablePropertyMappingBuilder {
     }
 
     /**
+     * The class type of the property. Mainly used for <code>Collection</code> properties, without
+     * specific Generic type parameter.
+     */
+    public SearchablePropertyMappingBuilder type(Class type) {
+        mapping.setClassName(type.getName());
+        return this;
+    }
+
+    /**
      * Adds an optional meta data mapping.
      */
     public SearchablePropertyMappingBuilder add(SearchableMetaDataMappingBuilder builder) {

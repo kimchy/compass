@@ -26,7 +26,32 @@ import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.osem.ClassPropertyMetaDataMapping;
 
 /**
+ * A meta data mapping builder that can be used to define resource properties that will be
+ * added to the index. Defined on both property and id based searchable mappings.
+ *
+ * <p>The searchable meta-data is meant to handle basic types (which usually translate to
+ * a String saved in the search engine). The conversion is done using converters, with
+ * Compass providing converters for most basic types. A specialized Converter can be
+ * associated with the meta-data using {@link #converter(String)} or {@link #converter(org.compass.core.converter.mapping.ResourcePropertyConverter)}.
+ * The specialized converter will implement the {@link org.compass.core.converter.Converter}
+ * interface, usually extending the {@link org.compass.core.converter.basic.AbstractBasicConverter}.
+ *
+ * <p>Note, that most of the time, a specialized converter for user classes will not be needed,
+ * since the {@link SearchableComponentMappingBuilder} usually makes more sense to use.
+ *
+ * <p>The searchalbe property can annotate a {@link java.util.Collection} type field/property,
+ * supporting either {@link java.util.List} or {@link java.util.Set}. The searchable property
+ * will try and automatically identify the element type using generics, but if the collection
+ * is not defined with generics, {@link SearchablePropertyMappingBuilder#type(Class)} should be used to hint for
+ * the collection element type.
+ *
+ * <p>The searchable property can annotate an array as well, with the array element type used for
+ * Converter lookups.
+ *
  * @author kimchy
+ * @see OSEM#metadata(String)
+ * @see SearchablePropertyMappingBuilder#add(SearchableMetaDataMappingBuilder)
+ * @see SearchableIdMappingBuilder#add(SearchableMetaDataMappingBuilder)
  */
 public class SearchableMetaDataMappingBuilder {
 

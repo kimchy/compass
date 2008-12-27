@@ -25,7 +25,8 @@ import org.compass.core.mapping.osem.ClassPropertyAnalyzerController;
  * within Compass. If no analyzer is found, the {@link #nullAnalyzer(String)} will be used (if specified).
  *
  * @author kimchy
- * @see org.compass.core.mapping.json.builder.JSEM#analyzer(String)
+ * @see OSEM#analyzer(String)
+ * @see SearchableMappingBuilder#add(SearchableAnalyzerMappingBuilder) 
  */
 public class SearchableAnalyzerMappingBuilder {
 
@@ -49,10 +50,20 @@ public class SearchableAnalyzerMappingBuilder {
         return this;
     }
 
+    /**
+     * Sets the acessor the will be used for the class property. Defaults to property (getter
+     * and optionally setter).
+     */
     public SearchableAnalyzerMappingBuilder accessor(Accessor accessor) {
         return accessor(accessor.toString());
     }
     
+    /**
+     * Sets the acessor the will be used for the class property. Defaults to property (getter
+     * and optionally setter). Note, this is the lookup name of a {@link org.compass.core.accessor.PropertyAccessor}
+     * registered with Compass, with two default ones (custom ones can be easily added) named <code>field</code>
+     * and <code>property</code>.
+     */
     public SearchableAnalyzerMappingBuilder accessor(String accessor) {
         mapping.setAccessor(accessor);
         return this;
