@@ -17,6 +17,22 @@
 package org.compass.core.mapping.osem.builder;
 
 /**
+ * Static builder allowing to construct OSEM (Object to Search Engine Mapping)
+ * definitions.
+ *
+ * <p>Here is an exmaple how it can be used:
+ *
+ * <p><pre>
+ * import static org.compass.core.mapping.osem.builder.OSEM.*;
+ *
+ *
+ * conf.addResourceMapping(
+ *          searchable(Author.class).alias("author")
+ *              .add(id("id"))
+ *              .add(property("name").add(metadata("name"))
+ *              .add(property("age").add(metadata("age").format("000")))
+ * );
+ * </pre>
  * @author kimchy
  */
 public abstract class OSEM {
