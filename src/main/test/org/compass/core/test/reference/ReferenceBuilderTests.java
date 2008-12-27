@@ -70,7 +70,7 @@ public class ReferenceBuilderTests extends ReferenceTests {
                 searchable(X.class).alias("x1")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
-                        .add(reference("y").refAlias("y1").refCompoenntAlias("y2"))
+                        .add(reference("y").refAlias("y1").refComponentAlias("y2"))
         );
         conf.addResourceMapping(
                 searchable(Y.class).alias("y1")

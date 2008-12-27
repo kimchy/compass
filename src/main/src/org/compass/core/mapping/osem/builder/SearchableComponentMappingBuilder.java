@@ -16,6 +16,7 @@
 
 package org.compass.core.mapping.osem.builder;
 
+import org.compass.core.converter.Converter;
 import org.compass.core.mapping.Cascade;
 import org.compass.core.mapping.osem.ComponentMapping;
 
@@ -121,6 +122,24 @@ public class SearchableComponentMappingBuilder {
      */
     public SearchableComponentMappingBuilder cascade(Cascade... cascade) {
         mapping.setCascades(cascade);
+        return this;
+    }
+
+    /**
+     * Sets the mapping converter lookup name. Defaults to
+     * {@link org.compass.core.converter.mapping.osem.ComponentMappingConverter}.
+     */
+    public SearchableComponentMappingBuilder mappingConverter(String mappingConverter) {
+        mapping.setConverterName(mappingConverter);
+        return this;
+    }
+
+    /**
+     * Sets the mapping converter. Defaults to
+     * {@link org.compass.core.converter.mapping.osem.ComponentMappingConverter}.
+     */
+    public SearchableComponentMappingBuilder mappingConverter(Converter mappingConverter) {
+        mapping.setConverter(mappingConverter);
         return this;
     }
 }
