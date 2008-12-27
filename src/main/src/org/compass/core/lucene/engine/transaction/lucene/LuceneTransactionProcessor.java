@@ -101,7 +101,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
         if (indexWriterBySubIndex.isEmpty()) {
             return;
         }
-        if (indexManager.supportsConcurrentOperations()) {
+        if (indexManager.supportsConcurrentCommits()) {
             ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
                 prepareCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new PrepareCommitCallable(entry.getKey(), entry.getValue())));
@@ -138,7 +138,7 @@ public class LuceneTransactionProcessor extends AbstractConcurrentTransactionPro
                 throw e;
             }
         }
-        if (indexManager.supportsConcurrentOperations()) {
+        if (indexManager.supportsConcurrentCommits()) {
             ArrayList<Callable<Object>> commitCallables = new ArrayList<Callable<Object>>();
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
                 commitCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(indexManager, entry.getKey(), entry.getValue(), isClearCacheOnCommit())));

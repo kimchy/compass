@@ -92,6 +92,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private boolean supportsConcurrentOperations;
 
+    private boolean supportsConcurrentCommits;
+
     private volatile boolean closed = false;
 
     public void configure(LuceneSearchEngineFactory searchEngineFactory, CompassSettings settings, CompassMapping mapping) {
@@ -158,8 +160,14 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
         } else {
             supportsConcurrentOperations = Boolean.valueOf(useConcurrentOperationsSetting);
         }
+        String useConcurrentCommitsSetting = settings.getSetting(LuceneEnvironment.SearchEngineIndex.USE_CONCURRENT_COMMITS);
+        if (useConcurrentCommitsSetting == null) {
+            supportsConcurrentCommits = directoryStore.supportsConcurrentCommits();
+        } else {
+            supportsConcurrentCommits = Boolean.valueOf(useConcurrentCommitsSetting);
+        }
         if (log.isDebugEnabled()) {
-            log.debug("Support concurrent operations [" + supportsConcurrentOperations + "]");
+            log.debug("Support concurrent operations [" + supportsConcurrentOperations + "] and concurrent commits [" + supportsConcurrentCommits + "]");
         }
 
         // setup sub indexes and aliases
@@ -639,6 +647,10 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     public boolean supportsConcurrentOperations() {
         return supportsConcurrentOperations;
+    }
+
+    public boolean supportsConcurrentCommits() {
+        return supportsConcurrentCommits;
     }
 
     public boolean isUseCompoundFile() {

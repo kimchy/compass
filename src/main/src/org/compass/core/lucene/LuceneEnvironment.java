@@ -998,9 +998,15 @@ public class LuceneEnvironment {
 
         /**
          * Should concurrent operations be performed during a transaction against the search engine
-         * index store. Defualts to <code>true</code>.
+         * index store. Defualts to the direcoty used {@link org.compass.core.lucene.engine.store.DirectoryStore#supportsConcurrentOperations()}.
          */
         public static final String USE_CONCURRENT_OPERATIONS = "compass.engine.useConcurrentOperations";
+
+        /**
+         * Should concurrent commits be performed during a transaction against the search engine
+         * index store. Defaults to the directory store used {@link org.compass.core.lucene.engine.store.DirectoryStore#supportsConcurrentCommits()}.
+         */
+        public static final String USE_CONCURRENT_COMMITS = "compass.engine.useConcurrentCommits";
 
         /**
          * The maximum number of terms that will be indexed for a single field in a

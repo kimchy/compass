@@ -90,6 +90,12 @@ public interface DirectoryStore {
     boolean supportsConcurrentOperations();
 
     /**
+     * Retruns <code>true</code> if this store supports concurrent commits. If set to <code>true</code>,
+     * commits will be perfomed on different threads concurrently.
+     */
+    boolean supportsConcurrentCommits();
+
+    /**
      * Returns the suggested index deletion policy for the given store. Will be applied if not
      * explicitly configured. Can return <code>null</code> if globabl settings should be applied.
      */

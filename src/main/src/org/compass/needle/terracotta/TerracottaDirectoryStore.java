@@ -111,10 +111,12 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         }
     }
 
+    @Override
     public void cleanIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
         deleteIndex(dir, subContext, subIndex);
     }
 
+    @Override
     public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
         synchronized (dirs) {
             Map<String, Map<String, TerracottaDirectory>> index = dirs.get(indexName);
@@ -128,6 +130,7 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         }
     }
 
+    @Override
     public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
         try {
             String[] files = dir.list();
@@ -140,7 +143,26 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
         return new CopyFromHolder();
     }
 
+    @Override
     public String suggestedIndexDeletionPolicy() {
         return LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME;
+    }
+
+    /**
+     * The terracotta index store should not commit on different threads since it should commit
+     * on the thread that owns the lock obtained when opening IndexOutputs.
+     */
+    @Override
+    public boolean supportsConcurrentCommits() {
+        return false;
+    }
+
+    /**
+     * The terracotta index store should not commit on different threads since it should commit
+     * on the thread that owns the lock obtained when opening IndexOutputs.
+     */
+    @Override
+    public boolean supportsConcurrentOperations() {
+        return false;
     }
 }

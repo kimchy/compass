@@ -93,6 +93,13 @@ public abstract class AbstractDirectoryStore implements DirectoryStore {
     }
 
     /**
+     * By default, stores support concurrent commits.
+     */
+    public boolean supportsConcurrentCommits() {
+        return true;
+    }
+
+    /**
      * By default, return <code>null</code> which means let globabl settings to decide what the default
      * index deletion policy should be.
      */

@@ -753,6 +753,10 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
         return searchEngineStore.supportsConcurrentOperations();
     }
 
+    public boolean supportsConcurrentCommits() {
+        return searchEngineStore.supportsConcurrentCommits();
+    }
+
     public void setWaitForCacheInvalidationBeforeSecondStep(long timeToWaitInMillis) {
         this.waitForCacheInvalidationBeforeSecondStep = timeToWaitInMillis;
     }

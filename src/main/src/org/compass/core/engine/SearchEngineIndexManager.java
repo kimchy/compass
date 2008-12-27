@@ -257,4 +257,9 @@ public interface SearchEngineIndexManager {
      * Returns <code>true</code> if the index store supports concurrent operations.
      */
     boolean supportsConcurrentOperations();
+
+    /**
+     * Returns <code>true</code> if the index store supports concurrent commits.
+     */
+    boolean supportsConcurrentCommits();
 }

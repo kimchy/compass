@@ -195,6 +195,11 @@ public interface LuceneSearchEngineStore {
     boolean supportsConcurrentOperations();
 
     /**
+     * Returns <code>true</code> if this store supprots concurrent commits.
+     */
+    boolean supportsConcurrentCommits();
+
+    /**
      * Should we use the compound file format or not.
      */
     boolean isUseCompoundFile();

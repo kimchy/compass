@@ -75,10 +75,18 @@ public class JdbcDirectoryStore extends AbstractDirectoryStore implements Compas
     private Map<String, JdbcTable> cachedJdbcTables = new ConcurrentHashMap<String, JdbcTable>();
 
     /**
-     * Jdbc storeage should not support concurrent operations on the index within a single session
-     * (such as concurrent commits on different sub indexes).
+     * Jdbc store should not support concurrent operations on the index within a single session.
      */
+    @Override
     public boolean supportsConcurrentOperations() {
+        return false;
+    }
+
+    /**
+     * Jdbc store should not support concurrent operations on the index within a single session.
+     */
+    @Override
+    public boolean supportsConcurrentCommits() {
         return false;
     }
 

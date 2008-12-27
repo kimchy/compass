@@ -102,7 +102,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
 
     protected void doPrepare() throws SearchEngineException {
         releaseHolders();
-        if (indexManager.supportsConcurrentOperations()) {
+        if (indexManager.supportsConcurrentCommits()) {
             ArrayList<Callable<Object>> prepareCallables = new ArrayList<Callable<Object>>();
             for (String subIndex : indexWriterBySubIndex.keySet()) {
                 if (!transIndexManager.hasTransIndex(subIndex)) {
@@ -134,7 +134,7 @@ public class ReadCommittedTransactionProcessor extends AbstractConcurrentTransac
         if (onePhase) {
             prepare();
         }
-        if (indexManager.supportsConcurrentOperations()) {
+        if (indexManager.supportsConcurrentCommits()) {
             ArrayList<Callable<Object>> commitCallables = new ArrayList<Callable<Object>>();
             for (Map.Entry<String, IndexWriter> entry : indexWriterBySubIndex.entrySet()) {
                 commitCallables.add(new TransactionalCallable(indexManager.getTransactionContext(), new CommitCallable(entry.getKey(), entry.getValue(), false)));
