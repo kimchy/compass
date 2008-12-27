@@ -22,18 +22,31 @@ import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.osem.ConstantMetaDataMapping;
 
 /**
+ * A constant meta-data that can be defined on a {@link SearchableMappingBuilder} class.
+ *
+ * <p>A constant meta-data is a predefined name and value pair that will be
+ * saved in the search engine index.
+ *
  * @author kimchy
+ * @see OSEM#constant(String)
+ * @see SearchableMappingBuilder#add(SearchableConstantMappingBuilder)
  */
 public class SearchableConstantMappingBuilder {
 
     final ConstantMetaDataMapping mapping;
 
+    /**
+     * Constructs a new constant metda data with the specified name.
+     */
     public SearchableConstantMappingBuilder(String name) {
         mapping = new ConstantMetaDataMapping();
         mapping.setName(name);
     }
 
-    public SearchableConstantMappingBuilder values(String ... values) {
+    /**
+     * A list of values that the meta-data will have.
+     */
+    public SearchableConstantMappingBuilder values(String... values) {
         for (String value : values) {
             mapping.addMetaDataValue(value);
         }
@@ -93,11 +106,18 @@ public class SearchableConstantMappingBuilder {
         return this;
     }
 
+    /**
+     * Controls if the property will be excluded from all or not.
+     */
     public SearchableConstantMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
 
+    /**
+     * Sets if this mapping will override another mapping with the same name. Defaults to
+     * <code>true</code>.
+     */
     public SearchableConstantMappingBuilder overrideByName(boolean override) {
         mapping.setOverrideByName(override);
         return this;

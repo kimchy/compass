@@ -23,12 +23,22 @@ import org.compass.core.mapping.SpellCheck;
 import org.compass.core.mapping.osem.DynamicMetaDataMapping;
 
 /**
+ * A dynamic meta data evaluation of the given expression using an expression
+ * language library.
+ *
  * @author kimchy
  */
 public class SearchableDynamicMetaDataMappingBuilder {
 
     final DynamicMetaDataMapping mapping;
 
+    /**
+     * Constructs a new dynamic meta data mapping builder.
+     *
+     * @param name       The name the expression evaluation will be stored under in the index
+     * @param converter  The converter to use, for example: jexl, velocity, groovy, mvel, ...
+     * @param expression The expression used to evaluate
+     */
     public SearchableDynamicMetaDataMappingBuilder(String name, String converter, String expression) {
         mapping = new DynamicMetaDataMapping();
         mapping.setName(name);
@@ -37,11 +47,18 @@ public class SearchableDynamicMetaDataMappingBuilder {
         mapping.setExpression(expression);
     }
 
+    /**
+     * The format to apply to the value. Only applies to format-able converters
+     * (like dates and numbers).
+     */
     public SearchableDynamicMetaDataMappingBuilder format(String format) {
         mapping.setFormat(format);
         return this;
     }
 
+    /**
+     * If using a format, the type of the expression result.
+     */
     public SearchableDynamicMetaDataMappingBuilder type(Class type) {
         mapping.setType(type);
         return this;
@@ -100,11 +117,18 @@ public class SearchableDynamicMetaDataMappingBuilder {
         return this;
     }
 
+    /**
+     * Controls if the property will be excluded from all or not.
+     */
     public SearchableDynamicMetaDataMappingBuilder excludeFromAll(ExcludeFromAll excludeFromAll) {
         mapping.setExcludeFromAll(excludeFromAll);
         return this;
     }
 
+    /**
+     * Sets if this mapping will override another mapping with the same name. Defaults to
+     * <code>true</code>.
+     */
     public SearchableDynamicMetaDataMappingBuilder overrideByName(boolean override) {
         mapping.setOverrideByName(override);
         return this;

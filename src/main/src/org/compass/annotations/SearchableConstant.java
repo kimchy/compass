@@ -23,11 +23,11 @@ import java.lang.annotation.Target;
 
 /**
  * A constant meta-data that can be defined on a {@link Searchable} class.
- * <p/>
- * A constant meta-data is a predefined name and value pair that will be
+ *
+ * <p>A constant meta-data is a predefined name and value pair that will be
  * saved in the search engine index.
- * <p/>
- * Multiple constants can be defined using the {@link SearchableConstants} annotation.
+ *
+ * <p>Multiple constants can be defined using the {@link SearchableConstants} annotation.
  *
  * @author kimchy
  * @see Searchable
