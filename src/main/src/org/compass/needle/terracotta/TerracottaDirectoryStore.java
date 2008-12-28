@@ -19,13 +19,18 @@ package org.compass.needle.terracotta;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.lucene.store.Directory;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
 import org.compass.core.config.CompassSettings;
+import org.compass.core.engine.SearchEngine;
 import org.compass.core.engine.SearchEngineException;
+import org.compass.core.engine.event.SearchEngineEventManager;
+import org.compass.core.engine.event.SearchEngineLifecycleEventListener;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.store.AbstractDirectoryStore;
 import org.compass.core.lucene.engine.store.CopyFromHolder;
@@ -64,7 +69,16 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
      */
     public static final String CHM_CONCURRENCY_LEVEL_PROP = "compass.engine.store.tc.chm.concurrencyLevel";
 
+    /**
+     * Uses {@link org.compass.needle.terracotta.ManagedTerracottaDirectory} if set to <code>true</code>. Uses
+     * plain {@link org.compass.needle.terracotta.TerracottaDirectory} if set to <code>false</code>. Defaults to
+     * <code>true</code>.
+     */
+    public static final String MANAGED = "compass.engine.store.tc.managed";
+
     private final Map<String, Map<String, Map<String, TerracottaDirectory>>> dirs = new HashMap<String, Map<String, Map<String, TerracottaDirectory>>>();
+
+    private final ReadWriteLock managedRWL = new ReentrantReadWriteLock();
 
     private int bufferSize;
 
@@ -76,17 +90,20 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
 
     private int chmConcurrencyLevel;
 
+    private boolean managed;
+
     private transient String indexName;
 
     public void configure(CompassSettings settings) throws CompassException {
         indexName = settings.getSetting(CompassEnvironment.CONNECTION).substring(PROTOCOL.length());
         bufferSize = (int) settings.getSettingAsBytes(BUFFER_SIZE_PROP, TerracottaDirectory.DEFAULT_BUFFER_SIZE);
         flushRate = settings.getSettingAsInt(FLUSH_RATE_PROP, TerracottaDirectory.DEFAULT_FLUSH_RATE);
+        managed = settings.getSettingAsBoolean(MANAGED, true);
         chmInitialCapacity = settings.getSettingAsInt(CHM_CONCURRENCY_LEVEL_PROP, TerracottaDirectory.DEFAULT_CHM_INITIAL_CAPACITY);
         chmLoadFactor = settings.getSettingAsFloat(CHM_LOAD_FACTOR_PROP, TerracottaDirectory.DEFAULT_CHM_LOAD_FACTOR);
         chmConcurrencyLevel = settings.getSettingAsInt(CHM_CONCURRENCY_LEVEL_PROP, TerracottaDirectory.DEFAULT_CHM_CONCURRENCY_LEVEL);
         if (log.isDebugEnabled()) {
-            log.debug("Terracotta directory store configured with index [" + indexName + "], bufferSize [" + bufferSize + "], and flushRate [" + flushRate + "]");
+            log.debug("Terracotta directory store configured with index [" + indexName + "], bufferSize [" + bufferSize + "], flushRate [" + flushRate + "], managed [" + managed + "]");
         }
     }
 
@@ -104,7 +121,11 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
             }
             TerracottaDirectory dir = subIndexDirs.get(subIndex);
             if (dir == null) {
-                dir = new TerracottaDirectory(bufferSize, flushRate, chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
+                if (managed) {
+                    dir = new ManagedTerracottaDirectory(managedRWL, bufferSize, flushRate, chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
+                } else {
+                    dir = new TerracottaDirectory(bufferSize, flushRate, chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
+                }
                 subIndexDirs.put(subIndex, dir);
             }
             return dir;
@@ -164,5 +185,37 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
     @Override
     public boolean supportsConcurrentOperations() {
         return false;
+    }
+
+    @Override
+    public void registerEventListeners(SearchEngine searchEngine, SearchEngineEventManager eventManager) {
+        if (managed) {
+            eventManager.registerLifecycleListener(new SearchEngineLifecycleEventListener() {
+                public void beforeBeginTransaction() throws SearchEngineException {
+                    managedRWL.readLock().lock();
+                }
+
+                public void afterBeginTransaction() throws SearchEngineException {
+                }
+
+                public void afterPrepare() throws SearchEngineException {
+                }
+
+                public void afterCommit(boolean onePhase) throws SearchEngineException {
+                    managedRWL.readLock().unlock();
+                }
+
+                public void afterRollback() throws SearchEngineException {
+                    try {
+                        managedRWL.readLock().unlock();
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+
+                public void close() throws SearchEngineException {
+                }
+            });
+        }
     }
 }

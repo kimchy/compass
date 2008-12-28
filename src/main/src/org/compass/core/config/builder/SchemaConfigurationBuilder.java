@@ -525,6 +525,7 @@ public class SchemaConfigurationBuilder extends AbstractXmlConfigurationBuilder 
             String indexName = getElementAttribute(connEle, "indexName");
             settings.setSetting(CompassEnvironment.CONNECTION, "tc://" + indexName);
             settings.setSetting("compass.engine.store.tc.bufferSize", getElementAttribute(connEle, "bufferSize"));
+            settings.setSetting("compass.engine.store.tc.managed", getElementAttribute(connEle, "managed"));
             settings.setSetting("compass.engine.store.tc.flushRate", getElementAttribute(connEle, "flushRate"));
             settings.setSetting("compass.engine.store.tc.chm.initialCapacity", getElementAttribute(connEle, "chmInitialCapacity"));
             settings.setSetting("compass.engine.store.tc.chm.loadFactor", getElementAttribute(connEle, "chmLoadFactor"));

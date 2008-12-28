@@ -54,7 +54,7 @@ public class SimpleLoadTester {
         private int writeFactor;
 
         private Long lastIdWritten;
-        
+
         private CompassTemplate template;
 
         public SimpleLoadTesterRunnable(CompassTemplate template, long runId, long cycles, int writeFactor) {
@@ -169,11 +169,11 @@ public class SimpleLoadTester {
         System.out.println("VERIFYING INDEX USING EXISTING TEMPLATE");
         // now check that everything is in the index
         check(templates[0]);
-        
+
         for (int i = 0; i < numberOfCompassInstances; i++) {
             templates[i].getCompass().close();
         }
-        
+
         System.out.println("VERIFYING INDEX USING NEW COMPASS INSTANCE");
         // now build a new one and check again
         CompassTemplate template = new CompassTemplate(conf.buildCompass());
@@ -184,18 +184,18 @@ public class SimpleLoadTester {
 
     private static void check(CompassTemplate template) {
         long time = System.currentTimeMillis();
-        long limit = id.longValue();
-        for (long i = 1; i < limit; i++) {
-            final Long id = new Long(i);
-            template.execute(new CompassCallbackWithoutResult() {
-                protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+        final long limit = id.longValue();
+        template.execute(new CompassCallbackWithoutResult() {
+            protected void doInCompassWithoutResult(CompassSession session) throws CompassException {
+                for (long i = 1; i < limit; i++) {
+                    final Long id = new Long(i);
                     A a = session.get(A.class, id);
                     if (a == null) {
                         System.err.println("FAILURE ID [" + id + "] FINAL CHECK NULL");
                     }
                 }
-            });
-        }
+            }
+        });
         System.out.println("FINISHED CHECK [1-" + limit + "] TOOK [" + (System.currentTimeMillis() - time) + "]");
     }
 }

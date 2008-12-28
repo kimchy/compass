@@ -396,7 +396,7 @@
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="LoadTester - Terracotta" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
       <option name="MAIN_CLASS_NAME" value="org.compass.core.load.simple.LoadTester" />
-      <option name="VM_PARAMETERS" value="-Xbootclasspath/p:/Users/kimchy/opt/terracotta/2.7.1/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=/Users/kimchy/opt/terracotta/2.7.1  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xbootclasspath/p:/Users/kimchy/opt/terracotta/2.7.1/lib/dso-boot/dso-boot-hotspot_osx_150_16.jar  -Dtc.install-root=/Users/kimchy/opt/terracotta/2.7.1  -Dtc.config=src/main/test/org/compass/needle/terracotta/tc-config.xml" />
       <option name="PROGRAM_PARAMETERS" value="" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -415,6 +415,9 @@
         <option name="WINDOW" value="false" />
         <option name="JVMPI" value="false" />
         <option name="INTERPRETED" value="false" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Profile ">
+        <option name="myExternalizedOptions" value="&#10;additional-options=&#10;snapshots-dir=&#10;" />
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
@@ -439,6 +442,9 @@
         <option name="WINDOW" value="false" />
         <option name="JVMPI" value="false" />
         <option name="INTERPRETED" value="false" />
+      </RunnerSettings>
+      <RunnerSettings RunnerId="Profile ">
+        <option name="myExternalizedOptions" value="&#10;additional-options=&#10;snapshots-dir=&#10;" />
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />

@@ -52,7 +52,7 @@ public class TerracottaIndexOutput extends IndexOutput {
     // seek occured, we only allow to work on the first bucket
     private boolean seekOccured;
 
-    TerracottaIndexOutput(TerracottaDirectory dir, String name) {
+    TerracottaIndexOutput(TerracottaDirectory dir, String name) throws IOException {
         this.name = name;
         this.bufferSize = dir.getBufferSize();
         this.flushRate = dir.getFlushRate();

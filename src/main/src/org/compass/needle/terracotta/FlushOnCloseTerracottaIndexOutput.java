@@ -47,7 +47,7 @@ public class FlushOnCloseTerracottaIndexOutput extends IndexOutput {
 
     private boolean open;
 
-    FlushOnCloseTerracottaIndexOutput(TerracottaDirectory dir, String name) {
+    FlushOnCloseTerracottaIndexOutput(TerracottaDirectory dir, String name) throws IOException {
         this.dir = dir;
         this.name = name;
         this.bufferSize = dir.getBufferSize();

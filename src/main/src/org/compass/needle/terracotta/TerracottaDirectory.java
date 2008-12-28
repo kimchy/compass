@@ -247,7 +247,7 @@ public class TerracottaDirectory extends Directory {
         return new TerracottaIndexInput(file, bufferSize);
     }
 
-    void addFile(String name, TerracottaFile file) {
+    void addFile(String name, TerracottaFile file) throws IOException {
         fileMap.put(name, file);
     }
 

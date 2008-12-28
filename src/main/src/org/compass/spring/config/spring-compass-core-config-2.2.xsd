@@ -1617,6 +1617,13 @@
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
+        <xsd:attribute name="managed" type="xsd:boolean" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Should the terracotta directory be managed with global transactions. Defaults to true.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
         <xsd:attribute name="bufferSize" type="xsd:string" use="optional">
             <xsd:annotation>
                 <xsd:documentation>
