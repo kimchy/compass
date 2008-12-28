@@ -78,7 +78,7 @@ public class TerracottaDirectory extends Directory {
     public TerracottaDirectory(int bufferSize, int flushRate, int chmInitialCapacity, float chmLoadFactor, int chmConcurrencyLevel) {
         this.bufferSize = bufferSize;
         this.flushRate = flushRate;
-        this.fileMap = new ConcurrentHashMap<String, TerracottaFile>(chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
+        this.fileMap = createMap(chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
         try {
             Class.forName("com.tc.object.bytecode.ManagerUtil", true, Thread.currentThread().getContextClassLoader());
 //            setLockFactory(new TerracottaManagerUtilLockFactory());
@@ -115,6 +115,10 @@ public class TerracottaDirectory extends Directory {
         this(FSDirectory.getDirectory(dir), true);
     }
 
+    protected Map<String, TerracottaFile> createMap(int chmInitialCapacity, float chmLoadFactor, int chmConcurrencyLevel) {
+        return new ConcurrentHashMap<String, TerracottaFile>(chmInitialCapacity, chmLoadFactor, chmConcurrencyLevel);
+    }
+
     @Override
     public synchronized void setLockFactory(LockFactory lockFactory) {
         super.setLockFactory(lockFactory);
@@ -128,7 +132,7 @@ public class TerracottaDirectory extends Directory {
     /**
      * Returns an array of strings, one for each file in the directory.
      */
-    public final String[] list() {
+    public String[] list() {
         Set<String> fileNames = fileMap.keySet();
         return fileNames.toArray(new String[0]);
     }
@@ -136,7 +140,7 @@ public class TerracottaDirectory extends Directory {
     /**
      * Returns true iff the named file exists in this directory.
      */
-    public final boolean fileExists(String name) {
+    public boolean fileExists(String name) {
         return fileMap.containsKey(name);
     }
 
@@ -145,7 +149,7 @@ public class TerracottaDirectory extends Directory {
      *
      * @throws IOException if the file does not exist
      */
-    public final long fileModified(String name) throws IOException {
+    public long fileModified(String name) throws IOException {
         TerracottaFile file = fileMap.get(name);
         if (file == null) {
             throw new FileNotFoundException(name);
@@ -182,7 +186,7 @@ public class TerracottaDirectory extends Directory {
      *
      * @throws IOException if the file does not exist
      */
-    public final long fileLength(String name) throws IOException {
+    public long fileLength(String name) throws IOException {
         TerracottaFile file = fileMap.get(name);
         if (file == null) {
             throw new FileNotFoundException(name);
@@ -208,7 +212,7 @@ public class TerracottaDirectory extends Directory {
      * @throws FileNotFoundException if from does not exist
      * @deprecated
      */
-    public final void renameFile(String from, String to) throws IOException {
+    public void renameFile(String from, String to) throws IOException {
         TerracottaFile fromFile = fileMap.get(from);
         if (fromFile == null) {
             throw new FileNotFoundException(from);
