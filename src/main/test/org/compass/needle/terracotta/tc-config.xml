@@ -9,15 +9,19 @@
             <instrumented-classes>
                 <include>
                     <class-expression>org.compass.needle.terracotta.*</class-expression>
+                    <honor-transient>true</honor-transient>
                 </include>
                 <include>
                     <class-expression>org.compass.needle.terracotta.transaction.processor.*</class-expression>
+                    <honor-transient>true</honor-transient>
                 </include>
                 <include>
                     <class-expression>org.apache.lucene.store.Directory</class-expression>
+                    <honor-transient>true</honor-transient>
                 </include>
                 <include>
                     <class-expression>org.apache.lucene.store.LockFactory</class-expression>
+                    <honor-transient>true</honor-transient>
                 </include>
                 <include>
                     <class-expression>org.compass.core.lucene.engine.transaction.support.TransactionJobs</class-expression>
