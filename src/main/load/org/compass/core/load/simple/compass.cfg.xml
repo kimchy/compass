@@ -57,8 +57,8 @@
             <!--<localCache subIndex="__default__" connection="ram://" />-->
         </connection>
 
-        <!--<transaction processor="read_committed"/>-->
-        <transaction processor="tc"/>
+        <transaction processor="read_committed"/>
+        <!--<transaction processor="tc"/>-->
 
         <cache>
             <firstLevel type="org.compass.core.cache.first.DefaultFirstLevelCache"/>
