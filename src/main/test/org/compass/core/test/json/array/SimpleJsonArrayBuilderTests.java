@@ -15,19 +15,19 @@ public class SimpleJsonArrayBuilderTests extends SimpleJsonArrayTests {
 
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("a")
                         .add(id("id"))
                         .add(property("value"))
                         .add(array("arr").element(property().valueConverter("int")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("b")
                         .add(id("id"))
                         .add(property("value"))
                         .add(array("arr").indexName("xarr").element(property().valueConverter("int")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("c")
                         .add(id("id"))
                         .add(property("value"))

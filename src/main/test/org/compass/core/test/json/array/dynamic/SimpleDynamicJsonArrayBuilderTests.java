@@ -15,12 +15,12 @@ public class SimpleDynamicJsonArrayBuilderTests extends SimpleDynamicJsonArrayTe
 
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addResourceMapping(json("a")
+        conf.addMapping(json("a")
                 .add(id("id"))
                 .add(property("value"))
                 .add(array("arr").dynamic(true))
         );
-        conf.addResourceMapping(json("b").dynamic(true)
+        conf.addMapping(json("b").dynamic(true)
                 .add(id("id"))
         );
     }

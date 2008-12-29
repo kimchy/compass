@@ -84,7 +84,7 @@
 <programlisting><![CDATA[
 import static org.compass.core.mapping.jsem.builder.JSEM.*;
 
-conf.addResourceMapping(
+conf.addMapping(
     json("addressbook")
         .add(id("id"))
         .add(property("name"))

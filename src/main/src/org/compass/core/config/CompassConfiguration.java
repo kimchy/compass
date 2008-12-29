@@ -348,7 +348,7 @@ public class CompassConfiguration {
      * Advance: Add mappings based on {@link org.compass.core.mapping.ContractMapping}
      * implementation which allows for adding pre built mapping constructs.
      */
-    public CompassConfiguration addContractMapping(ContractMapping contractMapping) {
+    public CompassConfiguration addMapping(ContractMapping contractMapping) {
         boolean hasAddedResource = getMappingBinding().addContractMaping(contractMapping);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match contract mapping [" + contractMapping.getAlias() + "]");
@@ -362,15 +362,15 @@ public class CompassConfiguration {
     /**
      * Allows to provide contract mapping through a level of indiraction.
      */
-    public CompassConfiguration addContractMapping(ContractMappingProvider contractMappingProvider) {
-        return addContractMapping(contractMappingProvider.getMapping());
+    public CompassConfiguration addMapping(ContractMappingProvider contractMappingProvider) {
+        return addMapping(contractMappingProvider.getMapping());
     }
 
     /**
      * Advance: Add mappings based on {@link org.compass.core.mapping.ResourceMapping}
      * implementation which allows for adding pre built mapping constructs.
      */
-    public CompassConfiguration addResourceMapping(ResourceMapping resourceMapping) {
+    public CompassConfiguration addMapping(ResourceMapping resourceMapping) {
         boolean hasAddedResource = getMappingBinding().addResourceMapping(resourceMapping);
         if (!hasAddedResource) {
             throw new ConfigurationException("No mapping match resource mapping [" + resourceMapping.getAlias() + "]");
@@ -384,8 +384,8 @@ public class CompassConfiguration {
     /**
      * Allows to provide resource mapping through a level of indiraction.
      */
-    public CompassConfiguration addResourceMapping(ResourceMappingProvider resourceMappingProvider) {
-        return addResourceMapping(resourceMappingProvider.getMapping());
+    public CompassConfiguration addMapping(ResourceMappingProvider resourceMappingProvider) {
+        return addMapping(resourceMappingProvider.getMapping());
     }
 
     /**

@@ -70,7 +70,7 @@
               <entry>Loads all the files named <literal>*.cpm.xml</literal> or <literal>*.cmd.xml</literal> from within the specified Jar file.</entry>
             </row>
             <row>
-              <entry><literal>addResourceMapping(ResourceMapping)</literal></entry>
+              <entry><literal>addMapping(ResourceMapping)</literal></entry>
               <entry>Programmatically add resource mapping (domain model that represents different mappings such as XSEM, OSEM, and RSEM).</entry>
             </row>
             <row>

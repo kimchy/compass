@@ -32,20 +32,20 @@ public class SimpleJsonObjectBuilderTests extends SimpleJsonObjectTests {
 
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("a")
                         .add(id("id"))
                         .add(property("value"))
                         .add(object("obj").add(property("objValue1").valueConverter("int")).add(array("arr").element(property().valueConverter("int"))))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("b")
                         .add(id("id"))
                         .add(property("value"))
                         .add(object("obj").add(property("objValue1").valueConverter("int")).add(array("arr").element(property().valueConverter("int"))))
                         .add(object("obj").add(property("objValue1").valueConverter("int")).add(array("arr").element(property().valueConverter("int"))))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("c")
                         .add(id("id"))
                         .add(property("value"))

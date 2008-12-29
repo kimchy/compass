@@ -30,7 +30,7 @@ public class SimpleJsonIndexNameBuilderTests extends SimpleJsonIndexNameTests {
 
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("a")
                         .add(id("id"))
                         .add(property("value").indexName("ivalue"))

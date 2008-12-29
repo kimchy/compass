@@ -32,62 +32,62 @@ public class ReferenceBuilderTests extends ReferenceTests {
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
                         .add(reference("b"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(B.class).alias("b")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(X.class).alias("x")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
                         .add(reference("y").refAlias("y"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(Y.class).alias("y")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(Cyclic1.class).alias("cyclic1")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
                         .add(reference("cyclic2").refAlias("cyclic2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(Cyclic2.class).alias("cyclic2")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
                         .add(reference("cyclic1").refAlias("cyclic1"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(X.class).alias("x1")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
                         .add(reference("y").refAlias("y1").refComponentAlias("y2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(Y.class).alias("y1")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(Y.class).alias("y2").root(false)
                         .add(property("value").add(metadata("value1")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(ManyToMany1.class).alias("many1")
                         .add(id("id").accessor("field"))
                         .add(property("value").accessor("field").add(metadata("value")))
                         .add(reference("many2").accessor("field").refAlias("many2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(ManyToMany2.class).alias("many2")
                         .add(id("id").accessor("field"))
                         .add(property("value").accessor("field").add(metadata("value")))

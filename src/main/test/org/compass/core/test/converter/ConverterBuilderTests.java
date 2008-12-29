@@ -34,17 +34,17 @@ public class ConverterBuilderTests extends ConverterTests {
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a")
                         .add(id("id"))
                         .add(property("value").managedId(ManagedId.FALSE).add(metadata("mvalue").converter(new SampleConverter("XXX1"))))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a1")
                         .add(id("id"))
                         .add(property("value").managedId(ManagedId.FALSE).add(metadata("mvalue").converter(new SampleConverter("YYY"))))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a3")
                         .add(id("id"))
                         .add(property("intVal").add(metadata("intVal")))

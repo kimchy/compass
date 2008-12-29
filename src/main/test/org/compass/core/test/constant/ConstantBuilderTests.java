@@ -33,7 +33,7 @@ public class ConstantBuilderTests extends ConstantTests {
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a")
                         .add(id("id"))
                         .add(constant("mvalue").values("mValue11", "mValue12"))

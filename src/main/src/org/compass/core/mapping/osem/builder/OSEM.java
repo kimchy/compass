@@ -26,7 +26,7 @@ package org.compass.core.mapping.osem.builder;
  * import static org.compass.core.mapping.osem.builder.OSEM.*;
  *
  *
- * conf.addResourceMapping(
+ * conf.addMapping(
  *          searchable(Author.class).alias("author")
  *              .add(id("id"))
  *              .add(property("name").add(metadata("name"))

@@ -33,7 +33,7 @@ public class ComponentBuilderTests extends ComponentTests {
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(SimpleRoot.class).alias("sr")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
@@ -42,39 +42,39 @@ public class ComponentBuilderTests extends ComponentTests {
         );
 
 
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(SimpleComponent.class).alias("sc").root(false)
                         .add(property("value").add(metadata("value")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(CFirst.class).alias("first")
                         .add(id("id"))
                         .add(property("value").add(metadata("value")))
                         .add(component("second").refAlias("second"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(CSecond.class).alias("second").root(false)
                         .add(property("value").add(metadata("value")))
                         .add(component("third").refAlias("third"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(CThird.class).alias("third").root(false)
                         .add(property("value").add(metadata("value")))
                         .add(component("fourth").refAlias("fourth"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(CFourth.class).alias("fourth").root(false)
                         .add(property("value").add(metadata("value")))
         );
 
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(SimpleRootId.class).alias("id-sr")
                     .add(id("id"))
                     .add(property("value").add(metadata("mvalue")))
                     .add(component("firstComponent").refAlias("id-sc"))
                     .add(component("secondComponent").refAlias("id-sc"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(SimpleComponentId.class).alias("id-sc")
                     .add(id("id").add(metadata("id-sc").store(Property.Store.YES).index(Property.Index.NOT_ANALYZED)))
                     .add(property("value").add(metadata("mvalue")))

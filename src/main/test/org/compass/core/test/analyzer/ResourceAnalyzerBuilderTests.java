@@ -32,51 +32,51 @@ public class ResourceAnalyzerBuilderTests extends ResourceAnalyzerTests {
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("a")
                         .add(id("id"))
                         .add(property("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("b").analyzer("simple")
                         .add(id("id"))
                         .add(property("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("c")
                         .add(id("id").analyzer("simple"))
                         .add(property("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("d")
                         .add(id("id"))
                         .add(property("value").analyzer("simple"))
                         .add(property("value2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("e").analyzer("simple")
                         .add(id("id"))
                         .add(property("value").analyzer("default"))
                         .add(property("value2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("f")
                         .add(id("id"))
                         .add(property("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("g")
                         .add(id("id"))
                         .add(analyzer("analyzer"))
                         .add(property("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("h")
                         .add(id("id"))
                         .add(analyzer("analyzer").nullAnalyzer("simple"))
                         .add(property("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("i")
                         .add(id("id"))
                         .add(analyzer("analyzer").nullAnalyzer("simple"))

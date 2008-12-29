@@ -15,29 +15,29 @@ public class SimpleJsonBuilderJsonTests extends SimpleJsonTests {
 
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("a")
                         .add(id("id"))
                         .add(property("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("b")
                         .add(id("id"))
                         .add(property("value"))
                         .add(content("test"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("c")
                         .add(id("id"))
                         .add(property("int").valueConverter("int").format("0000"))
                         .add(property("float").valueConverter("float").format("0000.00").store(Property.Store.COMPRESS))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("d")
                         .add(id("id"))
                         .add(property("value").nullValue("kablam"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 json("e")
                         .add(id("id"))
                         .add(property("value"))

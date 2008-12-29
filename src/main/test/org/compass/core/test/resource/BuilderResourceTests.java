@@ -17,16 +17,16 @@ public class BuilderResourceTests extends ResourceTests {
 
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("a")
                         .add(id("id"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("b")
                         .add(id("id1"))
                         .add(id("id2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("c")
                         .add(id("id"))
                         .add(property("value1"))
@@ -36,34 +36,34 @@ public class BuilderResourceTests extends ResourceTests {
                         .add(property("value5").store(Property.Store.YES).index(Property.Index.ANALYZED).converter("mydate"))
                         .add(property("value6"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("d").extendsAliases("a")
                         .add(property("value1"))
         );
-        conf.addContractMapping(
+        conf.addMapping(
                 contract("cont1")
                         .add(id("id"))
         );
-        conf.addContractMapping(
+        conf.addMapping(
                 contract("cont2")
                         .add(property("value1"))
         );
-        conf.addContractMapping(
+        conf.addMapping(
                 contract("cont3").extendsAliases("cont1")
                         .add(property("value2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("e").extendsAliases("cont2", "cont3")
                         .add(property("value1").store(Property.Store.NO))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("f")
                         .add(id("id1").excludeFromAll(ExcludeFromAll.YES))
                         .add(id("id2").excludeFromAll(ExcludeFromAll.NO))
                         .add(property("value1").excludeFromAll(ExcludeFromAll.YES))
                         .add(property("value2").excludeFromAll(ExcludeFromAll.NO))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 resource("g")
                         .add(id("id"))
                         .add(property("value").converter("int").format("000000.00"))

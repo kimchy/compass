@@ -32,42 +32,42 @@ public class OsemAnalyzerBuilderTests extends OsemAnalyzerTests {
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a1")
                     .add(id("id"))
                     .add(property("value").add(metadata("value")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a2").analyzer("simple")
                     .add(id("id"))
                     .add(property("value").add(metadata("value")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a3")
                     .add(id("id"))
                     .add(property("value").add(metadata("value").analyzer("simple")))
                     .add(property("value2").add(metadata("value2")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a4").analyzer("simple")
                     .add(id("id"))
                     .add(property("value").add(metadata("value").analyzer("default")))
                     .add(property("value2").add(metadata("value2")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a5")
                     .add(id("id"))
                     .add(property("value").add(metadata("value")))
                     .add(property("value2").add(metadata("value2")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a6")
                     .add(id("id"))
                      .add(analyzer("analyzer"))
                     .add(property("value").add(metadata("value")))
                     .add(property("value2").add(metadata("value2")))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 searchable(A.class).alias("a7")
                     .add(id("id"))
                      .add(analyzer("analyzer").nullAnalyzer("simple"))

@@ -44,7 +44,7 @@ public class XmlMappingBuilder implements ResourceMappingProvider {
 
     /**
      * Returns the mapping constructed. Used in
-     * {@link org.compass.core.config.CompassConfiguration#addResourceMapping(org.compass.core.mapping.ResourceMappingProvider)}.
+     * {@link org.compass.core.config.CompassConfiguration#addMapping(org.compass.core.mapping.ResourceMappingProvider)}.
      */
     public ResourceMapping getMapping() {
         return this.mapping;

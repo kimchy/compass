@@ -288,21 +288,21 @@ session.save(xmlObject);
 <programlisting><![CDATA[
 import static org.compass.core.mapping.xsem.builder.XSEM.*;
 
-conf.addResourceMapping(
+conf.addMapping(
     xml("data1").xpath("/xml-fragment/data[1]")
         .add(id("id/@value").indexName("id"))
         .add(property("data1/@value"))
         .add(proeprty("data1").indexName("eleText"))
 );
 
-conf.addResourceMapping(
+conf.addMapping(
     xml("data2").xpath("/xml-fragment/data")
         .add(id("id/@value").indexName("id"))
         .add(property("data1/@value"))
         .add(proeprty("data1").indexName("eleText"))
 );
 
-conf.addResourceMapping(
+conf.addMapping(
     xml("data3").xpath("/xml-fragment/data")
         .add(id("id/@value").indexName("id"))
         .add(property("data1/@value"))

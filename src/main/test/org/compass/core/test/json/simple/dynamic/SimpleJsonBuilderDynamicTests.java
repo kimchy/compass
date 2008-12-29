@@ -31,6 +31,6 @@ public class SimpleJsonBuilderDynamicTests extends SimpleJsonDynamicTests {
 
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
-        conf.addResourceMapping(json("a").dynamic(true).add(id("id")));
+        conf.addMapping(json("a").dynamic(true).add(id("id")));
     }
 }

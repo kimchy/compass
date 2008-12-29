@@ -48,46 +48,46 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
     }
 
     protected void addProgrammaticConfiguration(CompassConfiguration conf) {
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("data1")
                         .add(id("/xml-fragment/data/id/@value").indexName("id"))
                         .add(property("/xml-fragment/data/data1/@value"))
                         .add(property("/xml-fragment/data/data1").indexName("eleText"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("data2").xpath("/xml-fragment/data[1]")
                         .add(id("id/@value").indexName("id"))
                         .add(property("data1/@value"))
                         .add(property("data1").indexName("eleText"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("data3").xpath("/xml-fragment/data")
                         .add(id("id/@value").indexName("id"))
                         .add(property("data1/@value"))
                         .add(property("data1").indexName("eleText"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("data4").xpath("/xml-fragment/data")
                         .add(id("id/@value").indexName("id"))
                         .add(property("data1/@value"))
                         .add(property("data1").indexName("eleText"))
                         .add(content("content"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("data5-1").xpath("/xml-fragment/test1:data")
                         .add(id("test1:id/@value").indexName("id"))
                         .add(property("test1:data1/@value"))
                         .add(property("test1:data1").indexName("eleText"))
                         .add(content("content"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("data5-2").xpath("/xml-fragment/data")
                         .add(id("id/@value").indexName("id"))
                         .add(property("data1/@value"))
                         .add(property("data1").indexName("eleText"))
                         .add(content("content"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("data6").xpath("/xml-fragment/data")
                         .add(id("id/@value").indexName("id"))
                         .add(property("data1/@value").format("000000.0000").valueConverter("float"))

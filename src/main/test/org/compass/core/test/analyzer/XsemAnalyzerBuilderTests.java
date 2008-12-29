@@ -32,51 +32,51 @@ public class XsemAnalyzerBuilderTests extends XsemAnalyzerTests {
     @Override
     protected void addExtraConf(CompassConfiguration conf) {
         super.addExtraConf(conf);
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("a").xpath("/data")
                     .add(id("id").indexName("id"))
                     .add(property("value").indexName("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("b").xpath("/data").analyzer("simple")
                     .add(id("id").indexName("id"))
                     .add(property("value").indexName("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("c").xpath("/data")
                     .add(id("id").indexName("id").analyzer("simple"))
                     .add(property("value").indexName("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("d").xpath("/data")
                     .add(id("id").indexName("id"))
                     .add(property("value").indexName("value").analyzer("simple"))
                     .add(property("value2").indexName("value2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("e").xpath("/data").analyzer("simple")
                     .add(id("id").indexName("id"))
                     .add(property("value").indexName("value").analyzer("default"))
                     .add(property("value2").indexName("value2"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("f").xpath("/data")
                     .add(id("id").indexName("id"))
                     .add(property("value").indexName("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("g").xpath("/data")
                     .add(id("id").indexName("id"))
                     .add(analyzer("analyzer", "analyzer"))
                     .add(property("value").indexName("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("h").xpath("/data")
                     .add(id("id").indexName("id"))
                     .add(analyzer("analyzer", "analyzer").nullAnalyzer("simple"))
                     .add(property("value").indexName("value"))
         );
-        conf.addResourceMapping(
+        conf.addMapping(
                 xml("i").xpath("/data")
                     .add(id("id").indexName("id"))
                     .add(analyzer("analyzer", "analyzer").nullAnalyzer("simple"))

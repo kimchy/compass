@@ -26,7 +26,7 @@ package org.compass.core.mapping.xsem.builder;
  * import static org.compass.core.mapping.xsem.builder.XSEM.*;
  *
  *
- * conf.addResourceMapping(
+ * conf.addMapping(
  *      xml("a")
  *          .add(id("/xml-fragment/data/id/@value").indexName("id"))
  *          .add(property("/xml-fragment/data/data1/@value"))

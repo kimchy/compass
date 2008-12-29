@@ -26,7 +26,7 @@ package org.compass.core.mapping.rsem.builder;
  * import static org.compass.core.mapping.rsem.builder.RSEM.*;
  *
  *
- * conf.addResourceMapping(
+ * conf.addMapping(
  *          resource("a")
  *              .add(id("id"))
  *              .add(property("value1"))

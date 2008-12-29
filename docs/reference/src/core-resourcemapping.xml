@@ -110,16 +110,16 @@ import static org.compass.core.mapping.rsem.builder.RSEM.*;
     
     
 CompassConfiguration conf = new CompassConfiguration();
-conf.addResourceMapping(
+conf.addMapping(
     resource("a")
         .add(id("id"))
 );
-conf.addResourceMapping(
+conf.addMapping(
     resource("b")
         .add(id("id1"))
         .add(id("id2"))
 );
-conf.addResourceMapping(
+conf.addMapping(
     resource("c")
         .add(id("id1"))
         .add(property("value1"))
