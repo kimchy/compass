@@ -31,6 +31,10 @@
     <para>
         Note, it is preferable to configure the directory not to use the compound index format as it yields better performance (note, by default, when using Compass, the non compound format will be used). Also, the merge factor for the directory (also applies to Compass optimizers) should be set to a higher value (than the default 10) since it mainly applies to file based optimizations.
     </para>
+    
+    <para>
+        Another version of Lucene Terracotta Directory, called <classname>ManagedTerracottaDirectory</classname> is also provided. The idea behind this directory implementation is to be able to wrap several operations in a single "transaction". The <clasname>ManagedTerracottaDirectory</classname> is initialized with a <classname>ReadWriteLock</classname> and any operations using Lucene should be wrapped with a read lock and unlock operations. The more operations are wrapped, the better the performance will be, since locking will be more coarse grained (as opposed to the more fine grained, concurrent hash map based, locking done with the plain <classname>TerracottaDirectory</classname>).
+    </para>
 	  
 	</sect1>
 	
@@ -42,7 +46,11 @@
 	  </para>
 	  
 	  <para>
-	    Once the TIM is setup, Compass has a special Terracotta connection that allows it to use the <literal>TerracottaDirectory</literal> called <literal>TerracottaDirectoryStore</literal>. The <literal>TerracottaDirectoryStore</literal> is where terracotta is configured to have its root (note, this is all defined for you already since compass is a TIM).
+	    Once the TIM is setup, Compass has a special Terracotta connection that allows it to use the <literal>TerracottaDirectory</literal> or <literal>ManagedTerracottaDirectory</literal> called <literal>TerracottaDirectoryStore</literal>. The <literal>TerracottaDirectoryStore</literal> is where terracotta is configured to have its root (note, this is all defined for you already since compass is a TIM).
+	  </para>
+	  
+	  <para>
+	      The managed terracotta directory, which is the default, creates a logical transaction (using the managed read lock) that is bounded to the Compass transaction. It allows for much faster operations compared with the plain terracotta directory.
 	  </para>
 	  
 	  <para>
