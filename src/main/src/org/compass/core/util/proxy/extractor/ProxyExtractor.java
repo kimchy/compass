@@ -16,15 +16,22 @@
 
 package org.compass.core.util.proxy.extractor;
 
+import org.compass.core.config.CompassConfigurable;
+
 /**
  * A proxy extractor is helps to extract actual information from proxied classes.
  *
  * @author kimchy
  */
-public interface ProxyExtractor {
+public interface ProxyExtractor extends CompassConfigurable {
 
     /**
      * Returns the actual class of the given object.
      */
     Class getTargetClass(Object obj);
+
+    /**
+     * Initializes the proxy.
+     */
+    void initalizeProxy(Object obj);
 }
