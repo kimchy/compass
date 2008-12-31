@@ -97,6 +97,8 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
             throws ConversionException {
         ClassMapping classMapping = (ClassMapping) mapping;
 
+        proxyExtractorHelper.initializeProxy(root);
+
         Object disableInternalMapings = context.getAttribute(DISABLE_INTERNAL_MAPPINGS);
 
         // Note that even if a component is root, it will not be root when

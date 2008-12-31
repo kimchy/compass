@@ -16,6 +16,9 @@
 
 package org.compass.core.util.proxy.extractor;
 
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassSettings;
+import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.HibernateProxyHelper;
 
@@ -27,10 +30,22 @@ import org.hibernate.proxy.HibernateProxyHelper;
  */
 public class HibernateProxyExtractor implements ProxyExtractor {
 
+    private boolean initializePorxy;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        initializePorxy = settings.getSettingAsBoolean("compass.marshalling.hibernate.initializeProxy", true);
+    }
+
     public Class getTargetClass(Object obj) {
         if (obj instanceof HibernateProxy) {
             return HibernateProxyHelper.getClassWithoutInitializingProxy(obj);
         }
         return obj.getClass();
+    }
+
+    public void initalizeProxy(Object obj) {
+        if (initializePorxy) {
+            Hibernate.initialize(obj);
+        }
     }
 }

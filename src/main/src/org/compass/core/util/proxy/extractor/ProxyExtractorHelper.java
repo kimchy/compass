@@ -40,13 +40,17 @@ public class ProxyExtractorHelper implements CompassConfigurable {
         ArrayList<ProxyExtractor> extractorsList = new ArrayList<ProxyExtractor>();
         try {
             ClassUtils.forName("org.springframework.aop.support.AopUtils", settings.getClassLoader());
-            extractorsList.add(new SpringProxyExtractor());
+            ProxyExtractor extractor = new SpringProxyExtractor();
+            extractor.configure(settings);
+            extractorsList.add(extractor);
         } catch (Throwable e) {
             // not in the classpath
         }
         try {
             ClassUtils.forName("org.hibernate.proxy.HibernateProxyHelper", settings.getClassLoader());
-            extractorsList.add(new HibernateProxyExtractor());
+            ProxyExtractor extractor = new HibernateProxyExtractor();
+            extractor.configure(settings);
+            extractorsList.add(extractor);
         } catch (Throwable e) {
             // not in the classpath
         }
@@ -63,5 +67,11 @@ public class ProxyExtractorHelper implements CompassConfigurable {
             }
         }
         return objClass;
+    }
+
+    public void initializeProxy(Object obj) {
+        for (ProxyExtractor extractor : extractors) {
+            extractor.initalizeProxy(obj);
+        }
     }
 }

@@ -29,9 +29,12 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.compass.core.CompassException;
 import org.compass.core.Resource;
 import org.compass.core.accessor.AccessorUtils;
 import org.compass.core.accessor.Getter;
+import org.compass.core.config.CompassConfigurable;
+import org.compass.core.config.CompassSettings;
 import org.compass.core.converter.mapping.osem.collection.LazyReferenceCollection;
 import org.compass.core.converter.mapping.osem.collection.LazyReferenceEntry;
 import org.compass.core.converter.mapping.osem.collection.LazyReferenceList;
@@ -41,16 +44,27 @@ import org.compass.core.mapping.osem.AbstractCollectionMapping;
 import org.compass.core.mapping.osem.CollectionMapping;
 import org.compass.core.marshall.MarshallingContext;
 import org.compass.core.marshall.MarshallingEnvironment;
+import org.compass.core.util.proxy.extractor.ProxyExtractorHelper;
 
 /**
  * @author kimchy
  */
-public class CollectionMappingConverter extends AbstractCollectionMappingConverter {
+public class CollectionMappingConverter extends AbstractCollectionMappingConverter implements CompassConfigurable {
 
     private static final Log log = LogFactory.getLog(CollectionMappingConverter.class);
 
+    private ProxyExtractorHelper proxyExtractorHelper;
+
+    public void configure(CompassSettings settings) throws CompassException {
+        proxyExtractorHelper = new ProxyExtractorHelper();
+        proxyExtractorHelper.configure(settings);
+    }
+
     protected int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
                                       MarshallingContext context) {
+
+        proxyExtractorHelper.initializeProxy(root);
+        
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         int count = 0;
         Mapping elementMapping = colMapping.getElementMapping();

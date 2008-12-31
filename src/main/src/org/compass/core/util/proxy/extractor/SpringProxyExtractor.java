@@ -16,6 +16,8 @@
 
 package org.compass.core.util.proxy.extractor;
 
+import org.compass.core.CompassException;
+import org.compass.core.config.CompassSettings;
 import org.springframework.aop.support.AopUtils;
 
 /**
@@ -26,7 +28,15 @@ import org.springframework.aop.support.AopUtils;
  */
 public class SpringProxyExtractor implements ProxyExtractor {
 
+    public void configure(CompassSettings settings) throws CompassException {
+        // do nothing
+    }
+
     public Class getTargetClass(Object obj) {
         return AopUtils.getTargetClass(obj);
+    }
+
+    public void initalizeProxy(Object obj) {
+        // nothing to do
     }
 }
