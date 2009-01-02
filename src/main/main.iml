@@ -16,7 +16,6 @@
     <orderEntry type="library" exported="" name="c3p0" level="project" />
     <orderEntry type="library" exported="" name="antlr" level="project" />
     <orderEntry type="library" exported="" name="cglib" level="project" />
-    <orderEntry type="library" exported="" name="clover" level="project" />
     <orderEntry type="library" exported="" name="coherence" level="project" />
     <orderEntry type="library" exported="" name="dom4j" level="project" />
     <orderEntry type="library" exported="" name="eclipselink" level="project" />
@@ -30,17 +29,13 @@
     <orderEntry type="library" exported="" name="jakarta-commons" level="project" />
     <orderEntry type="library" exported="" name="jakarta-taglibs" level="project" />
     <orderEntry type="library" exported="" name="jboss" level="project" />
-    <orderEntry type="library" exported="" name="jdo" level="project" />
     <orderEntry type="library" exported="" name="jgroups" level="project" />
     <orderEntry type="library" exported="" name="jotm" level="project" />
     <orderEntry type="library" exported="" name="jpa" level="project" />
-    <orderEntry type="library" exported="" name="jpox" level="project" />
     <orderEntry type="library" exported="" name="junit" level="project" />
     <orderEntry type="library" exported="" name="log4j" level="project" />
     <orderEntry type="library" exported="" name="mina" level="project" />
-    <orderEntry type="library" exported="" name="odmg" level="project" />
     <orderEntry type="library" exported="" name="ognl" level="project" />
-    <orderEntry type="library" exported="" name="ojb" level="project" />
     <orderEntry type="library" exported="" name="openjpa" level="project" />
     <orderEntry type="library" exported="" name="spring" level="project" />
     <orderEntry type="library" exported="" name="sunfsjndi" level="project" />

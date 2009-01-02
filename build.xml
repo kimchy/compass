@@ -13,10 +13,6 @@
     <property file="project.properties"/>
     <property file="build.properties"/>
 
-    <property name="clover.jar" location="${lib.dir}/clover/clover.jar"/>
-    <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
-
-
     <tstamp>
         <format property="daystamp" pattern="yyyyMMdd"/>
         <format property="timestamp" pattern="yyyyMMdd HH:mm"/>
@@ -66,15 +62,10 @@
 
     </target>
 
-    <target name="with.clover">
-        <clover-setup/>
-    </target>
-
     <target name="clean" description="Clean all output dirs (dist, javadocs, classes, test-classes, etc)">
 
         <delete dir="${target.classes.dir}"/>
         <delete dir="${target.testclasses.dir}"/>
-        <delete dir="${target.clover.dir}"/>
         <delete dir="${target.junit.reports.dir}"/>
         <delete dir="${target.junit.summary.dir}"/>
         <delete dir="${target.release.dir}"/>
@@ -417,10 +408,6 @@
 
             <classpath refid="all-libs"/>
 
-            <classpath>
-                <pathelement path="${clover.jar}"/>
-            </classpath>
-
             <formatter type="plain" usefile="false"/>
             <formatter type="xml"/>
 
@@ -439,24 +426,6 @@
 
     </target>
 
-
-    <target name="clean_tests" depends="clean,tests"/>
-
-    <target name="clover.html">
-        <delete dir="${target.clover.html.dir}"/>
-        <mkdir dir="${target.clover.html.dir}"/>
-        <clover-html-report outdir="${target.clover.html.dir}" title="Compass"/>
-    </target>
-
-    <target name="clover.xml">
-        <delete dir="${target.clover.xml.dir}"/>
-        <mkdir dir="${target.clover.xml.dir}"/>
-        <clover-report>
-            <current outfile="${target.clover.xml.dir}/coverage.xml">
-                <format type="xml"/>
-            </current>
-        </clover-report>
-    </target>
 
     <target name="doc.clean" description="Delete temporary and distribution directories for docs">
 

@@ -640,13 +640,6 @@
       <JAVADOC />
       <SOURCES />
     </library>
-    <library name="clover">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/clover/clover.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
     <library name="coherence">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/coherence/coherence.jar!/" />
