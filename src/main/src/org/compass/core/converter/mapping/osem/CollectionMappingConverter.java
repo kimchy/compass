@@ -63,7 +63,7 @@ public class CollectionMappingConverter extends AbstractCollectionMappingConvert
     protected int marshallIterateData(Object root, AbstractCollectionMapping colMapping, Resource resource,
                                       MarshallingContext context) {
 
-        proxyExtractorHelper.initializeProxy(root);
+        root = proxyExtractorHelper.initializeProxy(root);
         
         Object current = context.getAttribute(MarshallingEnvironment.ATTRIBUTE_CURRENT);
         int count = 0;

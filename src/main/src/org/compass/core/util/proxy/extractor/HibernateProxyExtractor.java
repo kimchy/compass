@@ -43,13 +43,14 @@ public class HibernateProxyExtractor implements ProxyExtractor {
         return obj.getClass();
     }
 
-    public void initalizeProxy(Object obj) {
+    public Object initalizeProxy(Object obj) {
         if (initializePorxy) {
             Hibernate.initialize(obj);
             if (obj instanceof HibernateProxy) {
                 // further initialize the object since initlaize does not init lazy fields
-                ((HibernateProxy) obj).getHibernateLazyInitializer().getImplementation();
+                return ((HibernateProxy) obj).getHibernateLazyInitializer().getImplementation();
             }
         }
+        return obj;
     }
 }

@@ -36,7 +36,7 @@ public class SpringProxyExtractor implements ProxyExtractor {
         return AopUtils.getTargetClass(obj);
     }
 
-    public void initalizeProxy(Object obj) {
-        // nothing to do
+    public Object initalizeProxy(Object obj) {
+        return obj;
     }
 }

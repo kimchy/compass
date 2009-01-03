@@ -106,7 +106,7 @@ public class ClassMappingConverter implements ResourceMappingConverter, CompassC
             throws ConversionException {
         ClassMapping classMapping = (ClassMapping) mapping;
 
-        proxyExtractorHelper.initializeProxy(root);
+        root = proxyExtractorHelper.initializeProxy(root);
 
         Object disableInternalMapings = context.getAttribute(DISABLE_INTERNAL_MAPPINGS);
 

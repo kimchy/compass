@@ -33,5 +33,5 @@ public interface ProxyExtractor extends CompassConfigurable {
     /**
      * Initializes the proxy.
      */
-    void initalizeProxy(Object obj);
+    Object initalizeProxy(Object obj);
 }

@@ -69,9 +69,10 @@ public class ProxyExtractorHelper implements CompassConfigurable {
         return objClass;
     }
 
-    public void initializeProxy(Object obj) {
+    public Object initializeProxy(Object obj) {
         for (ProxyExtractor extractor : extractors) {
-            extractor.initalizeProxy(obj);
+            obj = extractor.initalizeProxy(obj);
         }
+        return obj;
     }
 }

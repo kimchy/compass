@@ -32,6 +32,7 @@ import org.compass.core.lucene.engine.transaction.support.TransactionJobs;
  * @author kimchy
  * @see TerracottaTransactionProcessorFactory
  */
+// TODO: Add the option to obtain an "order.lock" per sub index, so transactions will happen in order
 public class TerracottaTransactionProcessor extends AbstractJobBasedTransactionProcessor {
 
     private final static Log logger = LogFactory.getLog(TerracottaTransactionProcessor.class);
