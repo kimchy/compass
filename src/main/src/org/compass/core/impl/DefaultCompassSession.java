@@ -339,6 +339,7 @@ public class DefaultCompassSession implements InternalCompassSession {
             searchEngine.create(resource);
             ResourceKey key = ((InternalResource) resource).getResourceKey();
             firstLevelCache.set(key, object);
+            firstLevelCache.setResource(key, resource);
         }
         context.addOperatedObjects(object);
         boolean performedCascading = cascadingManager.cascade(alias, object, Cascade.CREATE, context);
@@ -372,6 +373,7 @@ public class DefaultCompassSession implements InternalCompassSession {
             searchEngine.create(resource);
             ResourceKey key = ((InternalResource) resource).getResourceKey();
             firstLevelCache.set(key, object);
+            firstLevelCache.setResource(key, resource);
             context.addOperatedObjects(object);
             // if we found a resource, we perform the cascading based on its alias
             performedCascading = cascadingManager.cascade(key.getAlias(), object, Cascade.CREATE, context);
@@ -411,6 +413,7 @@ public class DefaultCompassSession implements InternalCompassSession {
             searchEngine.save(resource);
             ResourceKey key = ((InternalResource) resource).getResourceKey();
             firstLevelCache.set(key, object);
+            firstLevelCache.setResource(key, resource);
         }
         context.addOperatedObjects(object);
         boolean performedCascading = cascadingManager.cascade(alias, object, Cascade.SAVE, context);
@@ -443,6 +446,7 @@ public class DefaultCompassSession implements InternalCompassSession {
             }
             searchEngine.save(resource);
             ResourceKey key = ((InternalResource) resource).getResourceKey();
+            firstLevelCache.setResource(key, resource);
             firstLevelCache.set(key, object);
             context.addOperatedObjects(object);
             performedCascading = cascadingManager.cascade(key.getAlias(), object, Cascade.SAVE, context);
