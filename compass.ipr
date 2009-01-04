@@ -711,12 +711,10 @@
     </library>
     <library name="ibatis">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/lib/ibatis/ibatis-2.3.2.715.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/ibatis/ibatis-2.3.4.726.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES>
-        <root url="jar:///Users/kimchy/opt/ibatis/2.3.2.715/src/ibatis-src.zip!/" />
-      </SOURCES>
+      <SOURCES />
     </library>
     <library name="jee">
       <CLASSES>
