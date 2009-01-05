@@ -105,6 +105,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         return this.dir;
     }
 
+    @Override
     public void deleteFile(String name) throws IOException {
         if (shouldPerformOperationOnActualDirectory(name)) {
             dir.deleteFile(name);
@@ -131,6 +132,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         }
     }
 
+    @Override
     public boolean fileExists(String name) throws IOException {
         if (shouldPerformOperationOnActualDirectory(name)) {
             return dir.fileExists(name);
@@ -141,6 +143,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         return dir.fileExists(name);
     }
 
+    @Override
     public long fileLength(String name) throws IOException {
         if (shouldPerformOperationOnActualDirectory(name)) {
             return dir.fileLength(name);
@@ -149,14 +152,17 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         return localCacheDir.fileLength(name);
     }
 
+    @Override
     public long fileModified(String name) throws IOException {
         return dir.fileModified(name);
     }
 
+    @Override
     public String[] list() throws IOException {
         return dir.list();
     }
 
+    @Override
     public void renameFile(String from, String to) throws IOException {
         if (shouldPerformOperationOnActualDirectory(from)) {
             dir.renameFile(from, to);
@@ -167,6 +173,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         dir.renameFile(from, to);
     }
 
+    @Override
     public void touchFile(String name) throws IOException {
         if (shouldPerformOperationOnActualDirectory(name)) {
             dir.touchFile(name);
@@ -177,16 +184,19 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         dir.touchFile(name);
     }
 
+    @Override
     public Lock makeLock(String name) {
         return dir.makeLock(name);
     }
 
+    @Override
     public void close() throws IOException {
         cleanupTaskFuture.cancel(true);
         localCacheDir.close();
         dir.close();
     }
 
+    @Override
     public IndexInput openInput(String name) throws IOException {
         if (shouldPerformOperationOnActualDirectory(name)) {
             return dir.openInput(name);
@@ -195,6 +205,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         return localCacheDir.openInput(name);
     }
 
+    @Override
     public IndexOutput createOutput(String name) throws IOException {
         if (shouldPerformOperationOnActualDirectory(name)) {
             return dir.createOutput(name);
