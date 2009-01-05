@@ -47,6 +47,8 @@ import org.apache.lucene.store.DirectoryWrapper;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.Lock;
+import org.compass.core.CompassException;
+import org.compass.core.transaction.context.TransactionContextCallback;
 
 /**
  * A local directory cache wraps an actual Lucene directory with a cache Lucene directory.
@@ -276,7 +278,19 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
             String[] remoteList;
             try {
                 currentList = localCacheDir.list();
-                remoteList = dir.list();
+                remoteList = localDirectoryCacheManager.getSearchEngineFactory().getTransactionContext().execute(new TransactionContextCallback<String[]>() {
+                    public String[] doInTransaction() throws CompassException {
+                        try {
+                            return dir.list();
+                        } catch (IOException e) {
+                            log.error(logMessage("Failed to list directory"), e);
+                            return null;
+                        }
+                    }
+                });
+                if (remoteList == null) {
+                    return;
+                }
             } catch (IOException e) {
                 log.error(logMessage("Failed to list directory"), e);
                 return;
