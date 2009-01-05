@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.index.LuceneUtils;
+import org.apache.lucene.index.LuceneFileNames;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IndexInput;
@@ -44,7 +44,7 @@ import org.apache.lucene.store.LockFactory;
  */
 public class TerracottaDirectory extends Directory {
 
-    public static final transient TerracottaFile EMPTY_FILE = new TerracottaFile(); 
+    public static final transient TerracottaFile EMPTY_FILE = new TerracottaFile();
 
     public static final transient int DEFAULT_BUFFER_SIZE = 4 * 1024;
 
@@ -227,7 +227,7 @@ public class TerracottaDirectory extends Directory {
      */
     public IndexOutput createOutput(String name) throws IOException {
         IndexOutput indexOutput;
-        if (LuceneUtils.isSegmentsFile(name)) {
+        if (LuceneFileNames.isSegmentsFile(name)) {
             // segment files are seeked to the end, and we know they are small, so flush them when they close
             indexOutput = new FlushOnCloseTerracottaIndexOutput(this, name);
         } else {

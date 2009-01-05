@@ -41,12 +41,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexFileNameFilter;
+import org.apache.lucene.index.LuceneFileNames;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.DirectoryWrapper;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.Lock;
-import org.compass.core.lucene.engine.manager.DefaultLuceneSearchEngineIndexManager;
 
 /**
  * A local directory cache wraps an actual Lucene directory with a cache Lucene directory.
@@ -204,13 +204,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
     }
 
     private boolean shouldPerformOperationOnActualDirectory(String name) {
-        if ("segments.gen".equals(name) || "spellcheck.version".equals(name)) {
-            return true;
-        }
-        if (DefaultLuceneSearchEngineIndexManager.CLEAR_CACHE_NAME.equals(name)) {
-            return true;
-        }
-        return false;
+        return LuceneFileNames.isStaticFile(name);
     }
 
     private void fetchFileIfNotExists(String name) throws IOException {

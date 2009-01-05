@@ -151,13 +151,6 @@ public abstract class LuceneUtils {
     }
 
     /**
-     * Returns if the name is a segment file or not.
-     */
-    public static boolean isSegmentsFile(String name) {
-        return name.startsWith(IndexFileNames.SEGMENTS) || name.equals(IndexFileNames.SEGMENTS_GEN);
-    }
-
-    /**
      * Clears all the locks within the array, ignoring any exceptions.
      */
     public static void clearLocks(Lock[] locks) {

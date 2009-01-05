@@ -19,6 +19,7 @@ package org.compass.needle.coherence;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.apache.lucene.index.LuceneFileNames;
 import org.apache.lucene.store.IndexOutput;
 
 /**
@@ -64,7 +65,7 @@ class CoherenceMemIndexOutput extends IndexOutput {
         buffer = new byte[dir.getBucketSize()];
         flushBuckets = new HashMap<Object, Object>();
         // this file is overridden by Lucene, so delete it first
-        if (fileName.equals("segments.gen")) {
+        if (LuceneFileNames.isStaticFile(fileName)) {
             dir.deleteFile(fileName);
         }
     }

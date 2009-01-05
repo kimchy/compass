@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import net.jini.core.lease.Lease;
+import org.apache.lucene.index.LuceneFileNames;
 import org.apache.lucene.store.IndexOutput;
 
 /**
@@ -62,7 +63,7 @@ class GigaSpaceMemIndexOutput extends IndexOutput {
         open = true;
         buffer = new byte[dir.getBucketSize()];
         // this file is overridden by Lucene, so delete it first
-        if (fileName.equals("segments.gen")) {
+        if (LuceneFileNames.isStaticFile(fileName)) {
             dir.deleteFile(fileName);
         }
         flushBuckets = new ArrayList<FileBucketEntry>(dir.getFlushRate());
