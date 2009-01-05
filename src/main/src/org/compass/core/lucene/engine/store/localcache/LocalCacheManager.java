@@ -42,9 +42,9 @@ import org.compass.core.util.FileSystemUtils;
 /**
  * @author kimchy
  */
-public class LocalDirectoryCacheManager implements CompassConfigurable {
+public class LocalCacheManager implements CompassConfigurable {
 
-    private static final Log log = LogFactory.getLog(LocalDirectoryCacheManager.class);
+    private static final Log log = LogFactory.getLog(LocalCacheManager.class);
 
     private boolean disableLocalCache = false;
 
@@ -54,7 +54,7 @@ public class LocalDirectoryCacheManager implements CompassConfigurable {
 
     private LockFactory lockFactory = new SingleInstanceLockFactory();
 
-    public LocalDirectoryCacheManager(LuceneSearchEngineFactory searchEngineFactory) {
+    public LocalCacheManager(LuceneSearchEngineFactory searchEngineFactory) {
         this.searchEngineFactory = searchEngineFactory;
     }
 

@@ -74,7 +74,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
 
     private Directory localCacheDir;
 
-    private LocalDirectoryCacheManager localDirectoryCacheManager;
+    private LocalCacheManager localCacheManager;
 
     private ScheduledFuture cleanupTaskFuture;
 
@@ -83,22 +83,22 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
      */
     private Object[] monitors = new Object[100];
 
-    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, LocalDirectoryCacheManager localDirectoryCacheManager) {
-        this(subIndex, dir, localCacheDir, 16384, localDirectoryCacheManager);
+    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, LocalCacheManager localCacheManager) {
+        this(subIndex, dir, localCacheDir, 16384, localCacheManager);
     }
 
-    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, int bufferSize, LocalDirectoryCacheManager localDirectoryCacheManager) {
+    public LocalDirectoryCache(String subIndex, Directory dir, Directory localCacheDir, int bufferSize, LocalCacheManager localCacheManager) {
         this.subIndex = subIndex;
         this.dir = dir;
         this.localCacheDir = localCacheDir;
         this.bufferSize = bufferSize;
-        this.localDirectoryCacheManager = localDirectoryCacheManager;
+        this.localCacheManager = localCacheManager;
 
         for (int i = 0; i < monitors.length; i++) {
             monitors[i] = new Object();
         }
 
-        cleanupTaskFuture = localDirectoryCacheManager.getSearchEngineFactory().getExecutorManager().scheduleWithFixedDelay(new CleanupTask(), 10, 10, TimeUnit.SECONDS);
+        cleanupTaskFuture = localCacheManager.getSearchEngineFactory().getExecutorManager().scheduleWithFixedDelay(new CleanupTask(), 10, 10, TimeUnit.SECONDS);
     }
 
     public Directory getWrappedDirectory() {
@@ -122,7 +122,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
         }
         // if this is a compound file extension, don't delete it from the actual directory
         // since we never copied it
-        if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
+        if (localCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
                 IndexFileNameFilter.getFilter().isCFSFile(name)) {
             return;
         }
@@ -289,7 +289,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
             String[] remoteList;
             try {
                 currentList = localCacheDir.list();
-                remoteList = localDirectoryCacheManager.getSearchEngineFactory().getTransactionContext().execute(new TransactionContextCallback<String[]>() {
+                remoteList = localCacheManager.getSearchEngineFactory().getTransactionContext().execute(new TransactionContextCallback<String[]>() {
                     public String[] doInTransaction() throws CompassException {
                         try {
                             return dir.list();
@@ -318,7 +318,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
                 synchronized (monitors[Math.abs(name.hashCode()) % monitors.length]) {
                     try {
                         // don't do anything with a cfs file since it will not be in the actual directory
-                        if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
+                        if (localCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
                                 IndexFileNameFilter.getFilter().isCFSFile(name)) {
                             continue;
                         }
@@ -377,7 +377,7 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
             localCacheIndexOutput.close();
             // if we are using compound file extension don't copy them to the actual directory
             // just copy over the cfs file
-            if (localDirectoryCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
+            if (localCacheManager.getSearchEngineFactory().getLuceneIndexManager().getStore().isUseCompoundFile() &&
                     IndexFileNameFilter.getFilter().isCFSFile(name)) {
                 return;
             }

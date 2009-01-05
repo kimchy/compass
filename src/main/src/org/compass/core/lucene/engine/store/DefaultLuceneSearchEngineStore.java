@@ -50,7 +50,7 @@ import org.compass.core.engine.SearchEngineException;
 import org.compass.core.engine.event.SearchEngineEventManager;
 import org.compass.core.lucene.LuceneEnvironment;
 import org.compass.core.lucene.engine.LuceneSearchEngineFactory;
-import org.compass.core.lucene.engine.store.localcache.LocalDirectoryCacheManager;
+import org.compass.core.lucene.engine.store.localcache.LocalCacheManager;
 import org.compass.core.lucene.engine.store.wrapper.DirectoryWrapperProvider;
 import org.compass.core.mapping.CompassMapping;
 import org.compass.core.mapping.ResourceMapping;
@@ -84,7 +84,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
 
     private DirectoryWrapperProvider[] directoryWrapperProviders;
 
-    private LocalDirectoryCacheManager localDirectoryCacheManager;
+    private LocalCacheManager localCacheManager;
 
     private Map<String, Map<String, Directory>> dirs;
 
@@ -223,8 +223,8 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
             directoryWrapperProviders = dws.toArray(new DirectoryWrapperProvider[dws.size()]);
         }
 
-        this.localDirectoryCacheManager = new LocalDirectoryCacheManager(searchEngineFactory);
-        localDirectoryCacheManager.configure(settings);
+        this.localCacheManager = new LocalCacheManager(searchEngineFactory);
+        localCacheManager.configure(settings);
     }
 
     public void close() {
@@ -232,7 +232,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
             return;
         }
         closed = true;
-        localDirectoryCacheManager.close();
+        localCacheManager.close();
         closeDirectories();
     }
 
@@ -447,7 +447,7 @@ public class DefaultLuceneSearchEngineStore implements LuceneSearchEngineStore {
                 }
             }
             if (!closed) {
-                dir = localDirectoryCacheManager.createLocalCache(subContext, subIndex, dir);
+                dir = localCacheManager.createLocalCache(subContext, subIndex, dir);
             }
             subContextDirs.put(subIndex, dir);
         }
