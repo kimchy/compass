@@ -97,7 +97,7 @@ public class MemoryDirectoryCache extends Directory implements DirectoryWrapper 
         this.bucketSize = bucketSize;
         
         int numberOfCacheEntries = (int) (size / bucketSize);
-        this.cache = new ConcurrentLinkedHashMap<CacheKey, byte[]>(ConcurrentLinkedHashMap.EvictionPolicy.FIFO, numberOfCacheEntries);
+        this.cache = new ConcurrentLinkedHashMap<CacheKey, byte[]>(ConcurrentLinkedHashMap.EvictionPolicy.SECOND_CHANCE, numberOfCacheEntries);
 
         if (localCacheManager == null) {
             isCompoundFile = false; // just cache everything
