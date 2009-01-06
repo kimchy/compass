@@ -262,6 +262,10 @@ public class CompassSettings {
         if (sValue == null) {
             return defaultValue;
         }
+        return parseStringAsBytes(sValue);
+    }
+
+    public static long parseStringAsBytes(String sValue) {
         if (sValue.endsWith("b")) {
             return Long.parseLong(sValue.substring(0, sValue.length() - 1));
         } else if (sValue.endsWith("k") || sValue.endsWith("K")) {
@@ -270,8 +274,9 @@ public class CompassSettings {
             return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 1024 * 1024);
         } else if (sValue.endsWith("g") || sValue.endsWith("G")) {
             return (long) (Double.parseDouble(sValue.substring(0, sValue.length() - 1)) * 1024 * 1024 * 1024);
+        } else {
+            return Long.parseLong(sValue);
         }
-        return Long.parseLong(sValue);
     }
 
     public Class getSettingAsClass(String setting, Class clazz) throws ClassNotFoundException {

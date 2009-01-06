@@ -88,7 +88,10 @@ public class LocalCacheManager implements CompassConfigurable {
         }
         String connection = settings.getSetting(LuceneEnvironment.LocalCache.CONNECTION, RAMDirectoryStore.PROTOCOL);
         Directory localCacheDirectory;
-        if (connection.startsWith(RAMDirectoryStore.PROTOCOL)) {
+        if (connection.startsWith("memory://")) {
+            String connectionString = connection.substring("memory://".length());
+            return new MemoryDirectoryCache(connectionString, dir, this);
+        } else if (connection.startsWith(RAMDirectoryStore.PROTOCOL)) {
             localCacheDirectory = new RAMDirectory();
         } else if (connection.startsWith(FSDirectoryStore.PROTOCOL) ||
                 connection.startsWith(MMapDirectoryStore.PROTOCOL) ||

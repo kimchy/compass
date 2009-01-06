@@ -121,7 +121,7 @@ public class ConcurrentLinkedHashMap<K, V> extends AbstractMap<K, V> implements 
             throw new IllegalArgumentException();
         }
         this.listeners = (listeners == null) ? Collections.<EvictionListener<K, V>>emptyList() : Arrays.asList(listeners);
-        this.data = new ConcurrentHashMap<K, Node<K, V>>(maximumCapacity, 0.75f, concurrencyLevel);
+        this.data = new ConcurrentHashMap<K, Node<K, V>>(100, 0.75f, concurrencyLevel);
         this.capacity = new AtomicInteger(maximumCapacity);
         this.length = new AtomicInteger();
         this.head = new Node<K, V>();

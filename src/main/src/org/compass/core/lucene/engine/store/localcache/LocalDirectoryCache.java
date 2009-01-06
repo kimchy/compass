@@ -47,6 +47,7 @@ import org.apache.lucene.store.DirectoryWrapper;
 import org.apache.lucene.store.IndexInput;
 import org.apache.lucene.store.IndexOutput;
 import org.apache.lucene.store.Lock;
+import org.apache.lucene.store.LockFactory;
 import org.compass.core.CompassException;
 import org.compass.core.transaction.context.TransactionContextCallback;
 
@@ -187,6 +188,26 @@ public class LocalDirectoryCache extends Directory implements DirectoryWrapper {
     @Override
     public Lock makeLock(String name) {
         return dir.makeLock(name);
+    }
+
+    @Override
+    public void clearLock(String name) throws IOException {
+        dir.clearLock(name);
+    }
+
+    @Override
+    public void setLockFactory(LockFactory lockFactory) {
+        dir.setLockFactory(lockFactory);
+    }
+
+    @Override
+    public LockFactory getLockFactory() {
+        return dir.getLockFactory();
+    }
+
+    @Override
+    public String getLockID() {
+        return dir.getLockID();
     }
 
     @Override
