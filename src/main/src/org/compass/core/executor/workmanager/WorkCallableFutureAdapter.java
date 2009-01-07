@@ -19,6 +19,7 @@ package org.compass.core.executor.workmanager;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -46,7 +47,7 @@ public class WorkCallableFutureAdapter<T> implements Work, ScheduledFuture<T> {
     }
 
     public WorkCallableFutureAdapter(Runnable runnable) {
-        this.callable = new RunnableCallableAdapter<T>(runnable);
+        this.callable = Executors.callable(runnable, (T) null);
     }
 
     public void run() {
