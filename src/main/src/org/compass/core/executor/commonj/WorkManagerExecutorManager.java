@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.compass.core.executor.workmanager;
+package org.compass.core.executor.commonj;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,9 +25,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import javax.resource.spi.work.WorkException;
-import javax.resource.spi.work.WorkManager;
 
+import commonj.work.WorkException;
+import commonj.work.WorkManager;
 import org.compass.core.CompassException;
 import org.compass.core.config.CompassConfigurable;
 import org.compass.core.config.CompassEnvironment;
@@ -37,6 +37,14 @@ import org.compass.core.executor.spi.InternalExecutorManager;
 import org.compass.core.jndi.NamingHelper;
 
 /**
+ * A commonj implemention of {@link org.compass.core.executor.spi.InternalExecutorManager}.
+ *
+ * <p>submit and invoke operations are executed directly using the work manager with a future
+ * adapter.
+ *
+ * <p>schedule operation uses a {@link java.util.concurrent.ScheduledExecutorService} and submits
+ * the work when the command/task is scheduled using adapters as well.
+ *
  * @author kimchy
  */
 public class WorkManagerExecutorManager implements InternalExecutorManager, CompassConfigurable {
@@ -65,7 +73,7 @@ public class WorkManagerExecutorManager implements InternalExecutorManager, Comp
     public <T> Future<T> submit(Callable<T> task) {
         WorkCallableFutureAdapter<T> workCallableAdapter = new WorkCallableFutureAdapter<T>(task);
         try {
-            workManager.scheduleWork(workCallableAdapter);
+            workManager.schedule(workCallableAdapter);
         } catch (WorkException e) {
             workCallableAdapter.setException(e);
         }
@@ -81,27 +89,18 @@ public class WorkManagerExecutorManager implements InternalExecutorManager, Comp
     }
 
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-        WorkCallableFutureAdapter<V> workCallableAdapter = new WorkCallableFutureAdapter<V>(callable);
-        try {
-            workManager.scheduleWork(workCallableAdapter, unit.toMillis(delay), null, null);
-        } catch (WorkException e) {
-            workCallableAdapter.setException(e);
-        }
-        return workCallableAdapter;
+        WorkSubmitterCallable<V> workSubmitterCallable = new WorkSubmitterCallable<V>(workManager, callable);
+        return executorService.schedule(workSubmitterCallable, delay, unit);
     }
 
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-        WorkCallableFutureAdapter<?> workCallableAdapter = new WorkCallableFutureAdapter(command);
-        ScheduledFuture scheduledFuture = executorService.scheduleAtFixedRate(command, initialDelay, period, unit);
-        workCallableAdapter.setDelegateScheduledFuture(scheduledFuture);
-        return workCallableAdapter;
+        WorkSubmitterRunnable workSubmitterRunnable = new WorkSubmitterRunnable(workManager, command);
+        return executorService.scheduleAtFixedRate(workSubmitterRunnable, initialDelay, period, unit);
     }
 
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-        WorkCallableFutureAdapter<?> workCallableAdapter = new WorkCallableFutureAdapter(command);
-        ScheduledFuture scheduledFuture = executorService.scheduleWithFixedDelay(command, initialDelay, delay, unit);
-        workCallableAdapter.setDelegateScheduledFuture(scheduledFuture);
-        return workCallableAdapter;
+        WorkSubmitterRunnable workSubmitterRunnable = new WorkSubmitterRunnable(workManager, command);
+        return executorService.scheduleWithFixedDelay(workSubmitterRunnable, initialDelay, delay, unit);
     }
 
     public void close() {

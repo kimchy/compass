@@ -941,6 +941,13 @@
       <JAVADOC />
       <SOURCES />
     </library>
+    <library name="commonj">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/commonj/commonj-twm.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>
 
