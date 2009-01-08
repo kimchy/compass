@@ -33,7 +33,7 @@
     </para>
     
     <para>
-        Another version of Lucene Terracotta Directory, called <classname>ManagedTerracottaDirectory</classname> is also provided. The idea behind this directory implementation is to be able to wrap several operations in a single "transaction". The <clasname>ManagedTerracottaDirectory</classname> is initialized with a <classname>ReadWriteLock</classname> and any operations using Lucene should be wrapped with a read lock and unlock operations. The more operations are wrapped, the better the performance will be, since locking will be more coarse grained (as opposed to the more fine grained, concurrent hash map based, locking done with the plain <classname>TerracottaDirectory</classname>).
+        Another version of Lucene Terracotta Directory, called <classname>ManagedTerracottaDirectory</classname> is also provided. The idea behind this directory implementation is to be able to wrap several operations in a single "transaction". The <classname>ManagedTerracottaDirectory</classname> is initialized with a <classname>ReadWriteLock</classname> and any operations using Lucene should be wrapped with a read lock and unlock operations. The more operations are wrapped, the better the performance will be, since locking will be more coarse grained (as opposed to the more fine grained, concurrent hash map based, locking done with the plain <classname>TerracottaDirectory</classname>).
     </para>
 	  
 	</sect1>

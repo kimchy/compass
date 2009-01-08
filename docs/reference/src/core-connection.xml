@@ -349,7 +349,7 @@ compass.engine.store.lockFactory.path=test/#subContext#/#subindex#
     </para>
     
     <para>
-        There are several types of local cache implementations. The regular connection based types (<literal>ram://</literal> or <literal>file://</literal>) actually creates a full replica of the directory it is built on. The <literal>memory://</literal> based one will keep an evictable memory based local cache. The memory based local cache accepts a <literal>size</literal> parameter that controls the maximum memory size that will be used before things will start to be evicted (defaults to <literal>64m</literal>)
+        There are several types of local cache implementations. The regular connection based types (<literal>ram://</literal> or <literal>file://</literal>) actually creates a full replica of the directory it is built on. The <literal>memory://</literal> based one will keep an evictable memory based local cache. The memory based local cache accepts a <literal>size</literal> parameter that controls the maximum memory size that will be used before things will start to be evicted (defaults to <literal>64m</literal>). It also accepts the <literal>bucketSize</literal> parameter that controls the size of each cache entry (defaults to <literal>1024</literal> bytes). Note, the configuration applies to each sub index separately.
     </para>
     
     <para>
@@ -361,6 +361,9 @@ compass.engine.store.lockFactory.path=test/#subContext#/#subindex#
   </connection>
 </compass>
 ]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.engine.localCache.a.connection=ram://
+]]></programlisting>
     </para>
     
     <para>
@@ -371,6 +374,23 @@ compass.engine.store.lockFactory.path=test/#subContext#/#subindex#
       <localCache subIndex="__default__" connection="file://tmp/cache" />
   </connection>
 </compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.engine.localCache.__default__.connection=file://tmp/cache
+]]></programlisting>
+    </para>
+    
+    <para>
+        Last, here is an example of the memory based evictable local cache:
+<programlisting><![CDATA[<compass name="default">
+  <connection>
+      <file path="target/test-index" />
+      <localCache subIndex="__default__" connection="memory://size=128m&bucketSize=2k" />
+  </connection>
+</compass>
+]]></programlisting>
+<programlisting><![CDATA[compass.engine.connection=target/test-index
+compass.engine.localCache.__default__.connection=memory://size=128m&bucketSize=2k
 ]]></programlisting>
     </para>
     
