@@ -45,37 +45,37 @@ import org.compass.core.lucene.engine.store.localcache.MemoryDirectoryCache;
 public class MemoryLocalCacheTests extends TestCase {
 
     public void test1Buffer() throws Exception {
-        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false,bucketSize=1,size=1k", new RAMDirectory(), null);
+        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false&bucketSize=1&size=1k", new RAMDirectory(), null);
         insertData(dir);
         verifyData(dir);
     }
 
     public void test3Buffer() throws Exception {
-        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false,bucketSize=3,size=1k", new RAMDirectory(), null);
+        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false&bucketSize=3&size=1k", new RAMDirectory(), null);
         insertData(dir);
         verifyData(dir);
     }
 
     public void test10Buffer() throws Exception {
-        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false,bucketSize=10,size=1k", new RAMDirectory(), null);
+        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false&bucketSize=10&size=1k", new RAMDirectory(), null);
         insertData(dir);
         verifyData(dir);
     }
 
     public void test15Buffer() throws Exception {
-        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false,bucketSize=15,size=1k", new RAMDirectory(), null);
+        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false&bucketSize=15&size=1k", new RAMDirectory(), null);
         insertData(dir);
         verifyData(dir);
     }
 
     public void test40Buffer() throws Exception {
-        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false,bucketSize=40,size=1k", new RAMDirectory(), null);
+        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false&bucketSize=40&size=1k", new RAMDirectory(), null);
         insertData(dir);
         verifyData(dir);
     }
 
     public void testSimpeLocking() throws Exception {
-        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false,bucketSize=40,size=1k", new RAMDirectory(), null);
+        MemoryDirectoryCache dir = new MemoryDirectoryCache("cacheFileNames=false&bucketSize=40&size=1k", new RAMDirectory(), null);
         Lock lock = dir.makeLock("testlock");
         assertFalse(lock.isLocked());
         assertTrue(lock.obtain(2000));

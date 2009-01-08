@@ -55,6 +55,12 @@ import org.compass.core.util.ConcurrentLinkedHashMap;
 import org.compass.core.util.StringUtils;
 
 /**
+ * Evictable Memory based directory cache wrapping the actual Lucene Directory the index uses. Accepts
+ * connection string parameters: <code>bucketSize</code> which is the size of each bucket entry (defaults
+ * to 1024 bytes), <code>size</code> which controls the maximum amount of memory that will be taken by
+ * the cache before entries will start to be evicted (defaults to <code>64m</code>), and <code>cacheFileNames</code>
+ * that controls if file names will try to be cached as well (defaults to <code>true</code>). 
+ *
  * @author kimchy
  */
 public class MemoryDirectoryCache extends Directory implements DirectoryWrapper {
@@ -80,13 +86,13 @@ public class MemoryDirectoryCache extends Directory implements DirectoryWrapper 
     public MemoryDirectoryCache(String connectionString, Directory dir, LocalCacheManager localCacheManager) {
         this.dir = dir;
         this.localCacheManager = localCacheManager;
-        String[] args = StringUtils.delimitedListToStringArray(connectionString, ",");
+        String[] args = StringUtils.delimitedListToStringArray(connectionString, "&");
         int bucketSize = 1024;
         long size = CompassSettings.parseStringAsBytes("64m");
         boolean cacheFileNames = true;
         for (String arg : args) {
             if (arg.startsWith("bucketSize=")) {
-                bucketSize = Integer.parseInt(arg.substring("bucketSize=".length()));
+                bucketSize = (int) CompassSettings.parseStringAsBytes(arg.substring("bucketSize=".length()));
             } else if (arg.startsWith("size=")) {
                 size = CompassSettings.parseStringAsBytes(arg.substring("size=".length()));
             } else if (arg.startsWith("cacheFileNames=")) {

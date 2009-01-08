@@ -349,7 +349,11 @@ compass.engine.store.lockFactory.path=test/#subContext#/#subindex#
     </para>
     
     <para>
-      Here is an example configuring a memory based local cache for sub index called a:
+        There are several types of local cache implementations. The regular connection based types (<literal>ram://</literal> or <literal>file://</literal>) actually creates a full replica of the directory it is built on. The <literal>memory://</literal> based one will keep an evictable memory based local cache. The memory based local cache accepts a <literal>size</literal> parameter that controls the maximum memory size that will be used before things will start to be evicted (defaults to <literal>64m</literal>)
+    </para>
+    
+    <para>
+      Here is an example configuring a ram based local cache for sub index called a:
 <programlisting><![CDATA[<compass name="default">
   <connection>
       <file path="target/test-index" />
