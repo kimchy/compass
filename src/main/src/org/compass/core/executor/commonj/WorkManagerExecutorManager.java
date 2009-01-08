@@ -54,7 +54,7 @@ public class WorkManagerExecutorManager implements InternalExecutorManager, Comp
     private ScheduledExecutorService executorService;
 
     public void configure(CompassSettings settings) throws CompassException {
-        String jndiName = settings.getSetting(CompassEnvironment.ExecutorManager.WorkManager.JNDI_NAME);
+        String jndiName = settings.getSetting(CompassEnvironment.ExecutorManager.CommonJ.WORK_MANAGER_JNDI_NAME);
         if (jndiName == null) {
             throw new ConfigurationException("When using WorkManager executor manager jndi name must be set using [" + CompassEnvironment.ExecutorManager.WorkManager.JNDI_NAME + "]");
         }

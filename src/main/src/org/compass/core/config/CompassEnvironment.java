@@ -866,6 +866,26 @@ public class CompassEnvironment {
              */
             public static final String JNDI_NAME = PREFIX + "jndiName";
         }
+
+        /**
+         * A set of settings of the commonj based executor manager.
+         */
+        public abstract class CommonJ {
+
+            /**
+             * The name (type) of the work manager executor manager.
+             */
+            public static final String NAME = "commonj";
+
+            private static final String PREFIX = EXECUTOR_MANAGER_PREFIX + NAME + ".";
+
+            /**
+             * The JNDI to lookup the JNDI name from. Required.
+             */
+            public static final String WORK_MANAGER_JNDI_NAME = PREFIX + "workManagerJndiName";
+
+            public static final String TIMER_MANAGER_JNDI_NAME = PREFIX + "timerManagerJndiName";
+        }
     }
 
     /**
