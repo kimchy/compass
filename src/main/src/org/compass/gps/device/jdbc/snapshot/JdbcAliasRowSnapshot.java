@@ -18,7 +18,6 @@ package org.compass.gps.device.jdbc.snapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -37,15 +36,15 @@ public class JdbcAliasRowSnapshot implements Serializable {
 
     private static final long serialVersionUID = 4300559727598252558L;
 
-    private ArrayList ids = new ArrayList();
+    private ArrayList<String> ids = new ArrayList<String>();
 
-    private ArrayList versions = new ArrayList();
+    private ArrayList<Long> versions = new ArrayList<Long>();
 
     public void addIdValue(String idValue) {
         ids.add(idValue);
     }
 
-    public List getIds() {
+    public List<String> getIds() {
         return ids;
     }
 
@@ -55,7 +54,7 @@ public class JdbcAliasRowSnapshot implements Serializable {
 
     public boolean isOlderThan(JdbcAliasRowSnapshot rowSnapshot) {
         for (int i = 0; i < versions.size(); i++) {
-            if (((Long) versions.get(i)).compareTo((Long) rowSnapshot.versions.get(i)) < 0) {
+            if ((versions.get(i)).compareTo(rowSnapshot.versions.get(i)) < 0) {
                 return true;
             }
         }
@@ -91,15 +90,15 @@ public class JdbcAliasRowSnapshot implements Serializable {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Ids [");
-        for (Iterator it = ids.iterator(); it.hasNext();) {
-            sb.append(it.next());
+        for (String id : ids) {
+            sb.append(id);
             sb.append(",");
         }
         sb.append("] Versions [");
-        for (Iterator it = versions.iterator(); it.hasNext();) {
-            sb.append(it.next());
+        for (Long version : versions) {
+            sb.append(version);
             sb.append(",");
         }
         sb.append("]");

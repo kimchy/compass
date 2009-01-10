@@ -18,7 +18,6 @@ package org.compass.gps.device.jdbc.snapshot;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * A system level (collection of aliases - <code>ResultSet</code>s)
@@ -31,21 +30,25 @@ public class JdbcSnapshot implements Serializable {
 
     private static final long serialVersionUID = 5118761723679749546L;
 
-    private HashMap aliasSnapshots = new HashMap();
+    private HashMap<String, JdbcAliasSnapshot> aliasSnapshots = new HashMap<String, JdbcAliasSnapshot>();
 
     public void putAliasSnapshot(JdbcAliasSnapshot aliasSnapshot) {
         aliasSnapshots.put(aliasSnapshot.getAlias(), aliasSnapshot);
     }
 
     public JdbcAliasSnapshot getAliasSnapshot(String alias) {
-        return (JdbcAliasSnapshot) aliasSnapshots.get(alias);
+        return aliasSnapshots.get(alias);
+    }
+
+    public JdbcAliasSnapshot removeAliasSnapshot(String alias) {
+        return aliasSnapshots.remove(alias);
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Snapshot ");
-        for (Iterator it = aliasSnapshots.values().iterator(); it.hasNext();) {
-            sb.append(it.next());
+        for (JdbcAliasSnapshot jdbcAliasSnapshot : aliasSnapshots.values()) {
+            sb.append(jdbcAliasSnapshot);
         }
         return sb.toString();
     }

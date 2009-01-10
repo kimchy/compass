@@ -33,7 +33,7 @@ public class JdbcAliasSnapshot implements Serializable {
 
     private String alias;
 
-    private HashMap rowEntries = new HashMap();
+    private HashMap<JdbcAliasRowSnapshot, JdbcAliasRowSnapshot> rowEntries = new HashMap<JdbcAliasRowSnapshot, JdbcAliasRowSnapshot>();
 
     public JdbcAliasSnapshot(String alias) {
         this.alias = alias;
@@ -52,18 +52,18 @@ public class JdbcAliasSnapshot implements Serializable {
     }
 
     public JdbcAliasRowSnapshot getRow(JdbcAliasRowSnapshot rowSnapshot) {
-        return (JdbcAliasRowSnapshot) this.rowEntries.get(rowSnapshot);
+        return this.rowEntries.get(rowSnapshot);
     }
 
-    public Iterator rowSnapshotIt() {
+    public Iterator<JdbcAliasRowSnapshot> rowSnapshotIt() {
         return this.rowEntries.values().iterator();
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("alias [" + alias + "]");
-        for (Iterator it = rowEntries.values().iterator(); it.hasNext();) {
-            sb.append(it.next());
+        StringBuilder sb = new StringBuilder();
+        sb.append("alias [").append(alias).append("]");
+        for (JdbcAliasRowSnapshot jdbcAliasRowSnapshot : rowEntries.values()) {
+            sb.append(jdbcAliasRowSnapshot);
             sb.append(", ");
         }
         return sb.toString();
