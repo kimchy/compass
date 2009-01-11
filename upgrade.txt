@@ -1,12 +1,12 @@
 COMPASS UPGRADE DOCUMENTATION (Please see Compass JIRA for a complete change-log)
 ================================================================================
 
-VERSION 2.2.0 M1
-================
+VERSION 2.2.0 M1 (11 January, 2009)
+===================================
 
 1. READ_ONLY_READ_COMMITTED transaction removed. CompassSession#setReadOnly() should be used instead.
 2. Major refactoring perfomed in transaction management paving the way for pluggable and more robust implementations.
-   What was knows as transaction isolations are now knows as Transaction Processor(s). The schema file configuration
+   What was known as transaction isolations are now knows as Transaction Processor(s). The schema file configuration
    of isolation has been renamed to processor. The readCommittedSettings has been renamed to readCommitted and should
    be placed within processors tag.
 3. Change all DTD and Schema names from 2.1 suffix to 2.2 suffix.
