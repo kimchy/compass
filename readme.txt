@@ -1,6 +1,6 @@
 COMPASS, Release 2.1.1
 ----------------------
-http://www.opensymphony.com/compass
+http://www.compass-project.org
 
 
 1. INTRODUCTION
