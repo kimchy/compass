@@ -85,10 +85,12 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
         return new GigaSpaceDirectory(space, buildFullIndexName(subContext, subIndex), bucketSize, flushRate);
     }
 
+    @Override
     public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
         cleanIndex(dir, subContext, subIndex);
     }
 
+    @Override
     public void cleanIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
         try {
             ((GigaSpaceDirectory) dir).deleteContent();
@@ -97,6 +99,7 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
         }
     }
 
+    @Override
     public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
         try {
             ((GigaSpaceDirectory) dir).deleteContent();
@@ -110,6 +113,7 @@ public class GigaSpaceDirectoryStore extends AbstractDirectoryStore implements C
         return indexName + "/" + subContext + "/" + subIndex;
     }
 
+    @Override
     public String suggestedIndexDeletionPolicy() {
         return LuceneEnvironment.IndexDeletionPolicy.ExpirationTime.NAME;
     }

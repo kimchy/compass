@@ -152,6 +152,21 @@ public class TerracottaDirectoryStore extends AbstractDirectoryStore implements 
     }
 
     @Override
+    public String[] listSubIndexes(String subContext) throws SearchEngineException, UnsupportedOperationException {
+        synchronized (dirs) {
+            Map<String, Map<String, TerracottaDirectory>> index = dirs.get(indexName);
+            if (index == null) {
+                return null;
+            }
+            Map<String, TerracottaDirectory> subIndexDirs = index.get(subContext);
+            if (subIndexDirs == null) {
+                return null;
+            }
+            return subIndexDirs.keySet().toArray(new String[subIndexDirs.size()]);
+        }
+    }
+
+    @Override
     public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
         try {
             String[] files = dir.list();

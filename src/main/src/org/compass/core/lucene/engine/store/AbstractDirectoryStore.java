@@ -46,6 +46,10 @@ public abstract class AbstractDirectoryStore implements DirectoryStore {
         return null;
     }
 
+    public String[] listSubIndexes(String subContext) throws SearchEngineException, UnsupportedOperationException {
+        throw new UnsupportedOperationException("listing sub indexes is not support for Directory Store [" + getClass().getName() + "]");
+    }
+
     public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
     }
 

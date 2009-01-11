@@ -34,6 +34,15 @@ public interface DirectoryStore {
     Directory open(String subContext, String subIndex) throws SearchEngineException;
 
     /**
+     * Lists all the sub indexes for the given sub context. Retruns <code>null</code> if the sub context
+     * directory does not even exists.
+     *
+     * <p>Throws an {@link UnsupportedOperationException} when the directory store does not support listing
+     * sub indexes. 
+     */
+    String[] listSubIndexes(String subContext) throws SearchEngineException, UnsupportedOperationException;
+
+    /**
      * Returns <code>true</code> if the inex exists, <code>false</code> if it does not. Can return
      * <code>null</code> which then will cause the default checking to apply.
      */

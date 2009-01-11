@@ -17,6 +17,8 @@
 package org.compass.core.lucene.engine.store;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
@@ -31,8 +33,50 @@ public class RAMDirectoryStore extends AbstractDirectoryStore {
 
     public static final String PROTOCOL = "ram://";
 
+    private final Map<String, Map<String, RAMDirectory>> dirs = new ConcurrentHashMap<String, Map<String, RAMDirectory>>();
+
     public Directory open(String subContext, String subIndex) throws SearchEngineException {
-        return new RAMDirectory();
+        Map<String, RAMDirectory> subContextDirs = dirs.get(subContext);
+        if (subContextDirs == null) {
+            synchronized (dirs) {
+                subContextDirs = dirs.get(subContext);
+                if (subContextDirs == null) {
+                    subContextDirs = new ConcurrentHashMap<String, RAMDirectory>();
+                }
+            }
+        }
+        RAMDirectory dir = subContextDirs.get(subIndex);
+        if (dir == null) {
+            synchronized (subContextDirs) {
+                dir = subContextDirs.get(subIndex);
+                if (dir == null) {
+                    dir = new RAMDirectory();
+                }
+            }
+        }
+        return dir;
+    }
+
+    @Override
+    public void cleanIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
+        deleteIndex(dir, subContext, subIndex);
+    }
+
+    @Override
+    public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
+        Map<String, RAMDirectory> subContextDirs = dirs.get(subContext);
+        if (subContextDirs != null) {
+            subContextDirs.remove(subIndex);
+        }
+    }
+
+    @Override
+    public String[] listSubIndexes(String subContext) throws SearchEngineException, UnsupportedOperationException {
+        Map<String, RAMDirectory> subContextDirs = dirs.get(subContext);
+        if (subContextDirs == null) {
+            return null;
+        }
+        return subContextDirs.keySet().toArray(new String[0]);
     }
 
     public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {

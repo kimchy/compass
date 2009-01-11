@@ -17,6 +17,7 @@
 package org.compass.core.lucene.engine.store;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
@@ -76,6 +77,25 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         }
     }
 
+    @Override
+    public String[] listSubIndexes(String subContext) throws SearchEngineException, UnsupportedOperationException {
+        File subContextIndex = new File(indexPath + "/" + subContext);
+        if (!subContextIndex.exists()) {
+            return null;
+        }
+        File[] subIndexFiles = subContextIndex.listFiles(new FileFilter() {
+            public boolean accept(File pathname) {
+                return pathname.isDirectory();
+            }
+        });
+        String[] subIndexes = new String[subIndexFiles.length];
+        for (int i = 0; i < subIndexFiles.length; i++) {
+            subIndexes[i] = subIndexFiles[i].getName();
+        }
+        return subIndexes;
+    }
+
+    @Override
     public void deleteIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
         File indexPathFile = new File(buildPath(subContext, subIndex));
         if (indexPathFile.exists()) {
@@ -98,10 +118,12 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         }
     }
 
+    @Override
     public void cleanIndex(Directory dir, String subContext, String subIndex) throws SearchEngineException {
         deleteIndex(dir, subContext, subIndex);
     }
 
+    @Override
     public CopyFromHolder beforeCopyFrom(String subContext, String subIndex, Directory dir) throws SearchEngineException {
         // first rename the current index directory
         String path = buildPath(subContext, subIndex);
@@ -139,6 +161,7 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         return holder;
     }
 
+    @Override
     public void afterSuccessfulCopyFrom(String subContext, String subIndex, CopyFromHolder holder) throws SearchEngineException {
         File renameToIndexPathFile = (File) holder.data;
         try {
@@ -148,7 +171,8 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         }
     }
 
-    public void afterFailedCopyFrom(String subContext, CopyFromHolder holder) throws SearchEngineException {
+    @Override
+    public void afterFailedCopyFrom(String subContext, String subIndex, CopyFromHolder holder) throws SearchEngineException {
         // TODO if it fails, try to rename the original one back
     }
 
@@ -156,6 +180,7 @@ public class FSDirectoryStore extends AbstractDirectoryStore implements CompassC
         return indexPath + "/" + subContext + "/" + subIndex;
     }
 
+    @Override
     public boolean suggestedUseCompoundFile() {
         return true;
     }
