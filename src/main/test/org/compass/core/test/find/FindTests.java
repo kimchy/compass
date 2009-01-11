@@ -106,6 +106,19 @@ public class FindTests extends AbstractTestCase {
         session.close();
     }
 
+    public void testWithMinus() {
+        addDataA(0, 10);
+
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        CompassHits hits = session.find("+value* -value1");
+        assertEquals(9, hits.length());
+
+        tr.commit();
+        session.close();
+    }
+
     public void testWithPrefix() {
         CompassSession session = openSession();
         CompassTransaction tr = session.beginTransaction();
@@ -215,7 +228,7 @@ public class FindTests extends AbstractTestCase {
         for (int i = from; i < to; i++) {
             A a = new A();
             a.setId(new Long(i));
-            a.setValue("value");
+            a.setValue("value" + i);
             session.save(a);
         }
         tr.commit();
@@ -228,7 +241,7 @@ public class FindTests extends AbstractTestCase {
         for (int i = from; i < to; i++) {
             B b = new B();
             b.setId(new Long(i));
-            b.setValue("value");
+            b.setValue("value" + i);
             session.save(b);
         }
         tr.commit();
