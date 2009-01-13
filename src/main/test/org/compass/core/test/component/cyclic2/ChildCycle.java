@@ -23,23 +23,7 @@ import java.util.List;
  */
 public class ChildCycle {
 
-    private List children;
+    List<ChildCycle> children;
 
-    private String value;
-
-    public List getChildren() {
-        return children;
-    }
-
-    public void setChildren(List children) {
-        this.children = children;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    String value;
 }

@@ -6,23 +6,23 @@
 
     <class name="ParentCycle" alias="parent">
 
-        <id name="id" />
+        <id name="id" accessor="field" />
 
-        <property name="value">
+        <property name="value" accessor="field">
             <meta-data>value</meta-data>
         </property>
 
-        <component name="children" ref-alias="child" />
+        <component name="children" ref-alias="child" accessor="field" />
         
     </class>
 
     <class name="ChildCycle" alias="child" root="false">
 
-        <property name="value">
+        <property name="value" accessor="field">
             <meta-data>value</meta-data>
         </property>
 
-        <component name="children" ref-alias="child" max-depth="3" />
+        <component name="children" ref-alias="child" max-depth="3" accessor="field"/>
 
     </class>
 

@@ -38,64 +38,60 @@ public class ParentChildCycleComponentTests extends AbstractTestCase {
         CompassTransaction tr = session.beginTransaction();
 
         ParentCycle parentCycle = new ParentCycle();
-        parentCycle.setId(new Long(1));
-        parentCycle.setValue("parentValue");
+        parentCycle.id = 1;
+        parentCycle.value = "parentValue";
 
         ChildCycle childCycle11 = new ChildCycle();
-        childCycle11.setValue("child11");
+        childCycle11.value = "child11";
         ChildCycle childCycle12 = new ChildCycle();
-        childCycle12.setValue("child12");
+        childCycle12.value = "child12";
 
-        List children = new ArrayList();
-        children.add(childCycle11);
-        children.add(childCycle12);
-
-        parentCycle.setChildren(children);
+        parentCycle.children = new ArrayList<ChildCycle>();
+        parentCycle.children.add(childCycle11);
+        parentCycle.children.add(childCycle12);
 
         ChildCycle childCycle21 = new ChildCycle();
-        childCycle21.setValue("child21");
+        childCycle21.value = "child21";
         ChildCycle childCycle22 = new ChildCycle();
-        childCycle22.setValue("child22");
+        childCycle22.value = "child22";
 
-        children = new ArrayList();
-        children.add(childCycle21);
-        children.add(childCycle22);
-        childCycle11.setChildren(children);
+        childCycle11.children = new ArrayList<ChildCycle>();
+        childCycle11.children.add(childCycle21);
+        childCycle11.children.add(childCycle22);
 
         ChildCycle childCycle31 = new ChildCycle();
-        childCycle31.setValue("child31");
+        childCycle31.value = "child31";
 
-        children = new ArrayList();
-        children.add(childCycle31);
-        childCycle21.setChildren(children);
+        childCycle21.children = new ArrayList<ChildCycle>();
+        childCycle21.children.add(childCycle31);
 
         session.save(parentCycle);
 
-        parentCycle = (ParentCycle) session.load(ParentCycle.class, new Long(1));
-        assertEquals("parentValue", parentCycle.getValue());
+        parentCycle = session.load(ParentCycle.class, 1);
+        assertEquals("parentValue", parentCycle.value);
 
-        children = parentCycle.getChildren();
+        List<ChildCycle> children = parentCycle.children;
         assertEquals(2, children.size());
-        childCycle11 = (ChildCycle) children.get(0);
-        assertEquals("child11", childCycle11.getValue());
-        childCycle12 = (ChildCycle) children.get(1);
-        assertEquals("child12", childCycle12.getValue());
+        childCycle11 = children.get(0);
+        assertEquals("child11", childCycle11.value);
+        childCycle12 = children.get(1);
+        assertEquals("child12", childCycle12.value);
 
-        children = childCycle11.getChildren();
+        children = childCycle11.children;
         assertEquals(2, children.size());
-        childCycle21 = (ChildCycle) children.get(0);
-        assertEquals("child21", childCycle21.getValue());
-        childCycle22 = (ChildCycle) children.get(1);
-        assertEquals("child22", childCycle22.getValue());
+        childCycle21 = children.get(0);
+        assertEquals("child21", childCycle21.value);
+        childCycle22 = children.get(1);
+        assertEquals("child22", childCycle22.value);
 
-        assertNull(childCycle12.getChildren());
+        assertNull(childCycle12.children);
 
-        children = childCycle21.getChildren();
+        children = childCycle21.children;
         assertEquals(1, children.size());
-        childCycle31 = (ChildCycle) children.get(0);
-        assertEquals("child31", childCycle31.getValue());
+        childCycle31 = children.get(0);
+        assertEquals("child31", childCycle31.value);
 
-        assertNull(childCycle22.getChildren());
+        assertNull(childCycle22.children);
 
         tr.commit();
         session.close();
