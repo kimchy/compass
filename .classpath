@@ -2,8 +2,6 @@
 <classpath>
 	<classpathentry kind="src" output="target/classes" path="src/main/src"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/main/test"/>
-	<classpathentry kind="src" output="target/sandbox/classes" path="src/sandbox/src"/>
-	<classpathentry kind="src" output="target/sandbox/test-classes" path="src/sandbox/test"/>
 	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant-launcher.jar"/>
@@ -92,10 +90,11 @@
 	<classpathentry kind="lib" path="lib/woodstox/wstx-asl-3.2.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/openjpa/openjpa-1.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.2.715.jar"/>
 	<classpathentry kind="lib" path="lib/terracotta/terracotta-api-2.7.0-prealpha.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-test.jar"/>
 	<classpathentry kind="lib" path="lib/spring/spring-webmvc.jar"/>
 	<classpathentry kind="lib" path="lib/mvel/mvel2-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/commonj/commonj-twm.jar"/>
+	<classpathentry kind="lib" path="lib/ibatis/ibatis-2.3.4.726.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
