@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/../../target/classes" />
+    <output-test url="file://$MODULE_DIR$/../../target/test-classes" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/load" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Lucene" level="project" />
+    <orderEntry type="library" name="Ant" level="project" />
+    <orderEntry type="library" name="c3p0" level="project" />
+    <orderEntry type="library" name="antlr" level="project" />
+    <orderEntry type="library" name="cglib" level="project" />
+    <orderEntry type="library" name="coherence" level="project" />
+    <orderEntry type="library" name="dom4j" level="project" />
+    <orderEntry type="library" name="eclipselink" level="project" />
+    <orderEntry type="library" name="ehcache" level="project" />
+    <orderEntry type="library" name="gigaspaces" level="project" />
+    <orderEntry type="library" name="groovy" level="project" />
+    <orderEntry type="library" name="hibernate" level="project" />
+    <orderEntry type="library" name="hsqldb" level="project" />
+    <orderEntry type="library" name="ibatis" level="project" />
+    <orderEntry type="library" name="jee" level="project" />
+    <orderEntry type="library" name="jakarta-commons" level="project" />
+    <orderEntry type="library" name="jakarta-taglibs" level="project" />
+    <orderEntry type="library" name="jboss" level="project" />
+    <orderEntry type="library" name="jgroups" level="project" />
+    <orderEntry type="library" name="jotm" level="project" />
+    <orderEntry type="library" name="jpa" level="project" />
+    <orderEntry type="library" name="junit" level="project" />
+    <orderEntry type="library" name="log4j" level="project" />
+    <orderEntry type="library" name="mina" level="project" />
+    <orderEntry type="library" name="ognl" level="project" />
+    <orderEntry type="library" name="openjpa" level="project" />
+    <orderEntry type="library" name="spring" level="project" />
+    <orderEntry type="library" name="sunfsjndi" level="project" />
+    <orderEntry type="library" name="toplink" level="project" />
+    <orderEntry type="library" name="velocity" level="project" />
+    <orderEntry type="library" name="xpp" level="project" />
+    <orderEntry type="library" name="Terracota" level="project" />
+    <orderEntry type="library" name="asm" level="project" />
+    <orderEntry type="library" name="jsr223" level="project" />
+    <orderEntry type="library" name="jaxen" level="project" />
+    <orderEntry type="library" name="stax" level="project" />
+    <orderEntry type="library" name="woodstox" level="project" />
+    <orderEntry type="library" name="jdom" level="project" />
+    <orderEntry type="library" name="grails" level="project" />
+    <orderEntry type="library" name="jettison" level="project" />
+    <orderEntry type="library" name="mvel" level="project" />
+    <orderEntry type="library" name="commonj" level="project" />
+  </component>
+</module>
+
