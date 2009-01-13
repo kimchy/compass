@@ -4,7 +4,6 @@ import java.util.HashMap;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
-import org.compass.core.util.JdkVersion;
 import org.compass.gps.device.jpa.AbstractSimpleJpaGpsDeviceTests;
 import org.compass.gps.device.jpa.JpaGpsDevice;
 
@@ -22,13 +21,5 @@ public class OpenJPASimpleJpaGpsDeviceTests extends AbstractSimpleJpaGpsDeviceTe
 
     protected EntityManagerFactory doSetUpEntityManagerFactory() {
         return new PersistenceProviderImpl().createEntityManagerFactory("openjpa", new HashMap());
-    }
-
-    public void testMirror() throws Exception {
-        // TODO OpenJPA fails on this with JDK 6, strange!
-        if (JdkVersion.isAtLeastJava16()) {
-            return;
-        }
-        super.testMirror();
     }
 }

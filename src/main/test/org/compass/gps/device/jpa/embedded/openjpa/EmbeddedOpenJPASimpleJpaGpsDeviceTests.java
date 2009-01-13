@@ -24,7 +24,6 @@ import javax.persistence.EntityTransaction;
 import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.compass.core.CompassSession;
 import org.compass.core.CompassTransaction;
-import org.compass.core.util.JdkVersion;
 import org.compass.gps.device.jpa.AbstractSimpleJpaGpsDeviceTests;
 import org.compass.gps.device.jpa.model.Simple;
 
@@ -51,20 +50,7 @@ public class EmbeddedOpenJPASimpleJpaGpsDeviceTests extends AbstractSimpleJpaGps
         return emf;
     }
 
-    public void testMirror() throws Exception {
-        // TODO OpenJPA fails on this with JDK 6, strange!
-        if (JdkVersion.isAtLeastJava16()) {
-            return;
-        }
-        super.testMirror();
-    }
-
     public void testRollbackTransaction() throws Exception {
-        // TODO OpenJPA fails on this with JDK 6, strange!
-        if (JdkVersion.isAtLeastJava16()) {
-            return;
-        }
-
         compassGps.index();
 
         EntityManager entityManager = entityManagerFactory.createEntityManager();

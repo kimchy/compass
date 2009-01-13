@@ -16,6 +16,7 @@
 
 package org.compass.gps.device.jpa.lifecycle;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.EntityManagerFactory;
 
@@ -112,13 +113,17 @@ public class OpenJPAJpaEntityLifecycleInjector implements JpaEntityLifecycleInje
         }
 
         if (useSpecificClassEvents) {
+            ArrayList<Class> matchedClasses = new ArrayList<Class>();
             Collection<Class> classes = emf.getConfiguration().getMetaDataRepositoryInstance().loadPersistentTypes(true, classLoader);
             for (Class clazz : classes) {
                 ClassMetaData classMetaData = emf.getConfiguration().getMetaDataRepositoryInstance().getMetaData(clazz, classLoader, true);
                 Class mappedClass = classMetaData.getDescribedType();
                 if (gps.hasMappingForEntityForMirror(mappedClass, CascadeMapping.Cascade.ALL)) {
-                    emf.addLifecycleListener(eventListener, mappedClass);
+                    matchedClasses.add(mappedClass);
                 }
+            }
+            if (matchedClasses.size() > 0) {
+                emf.addLifecycleListener(eventListener, matchedClasses.toArray(new Class[0]));
             }
         } else {
             emf.addLifecycleListener(eventListener);
