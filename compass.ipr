@@ -145,6 +145,11 @@
       <facet-type id="jpa">
         <modules>
           <module name="main" />
+          <module name="compass-main">
+            <files>
+              <file url="file://$PROJECT_DIR$/src/main/test/META-INF/persistence.xml" />
+            </files>
+          </module>
         </modules>
       </facet-type>
       <facet-type id="hibernate">
@@ -153,6 +158,11 @@
           <module name="sandbox">
             <files>
               <file url="file://$PROJECT_DIR$/src/sandbox/test/org/compass/gps/device/hibernate/scrollable/hibernate3.cfg.xml" />
+            </files>
+          </module>
+          <module name="compass-main">
+            <files>
+              <file url="file://$PROJECT_DIR$/src/main/test/org/compass/gps/device/hibernate/simple/embedded/hibernate.cfg.xml" />
             </files>
           </module>
         </modules>

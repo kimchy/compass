@@ -96,9 +96,8 @@ public abstract class TopLinkHelper {
      * or to perform additional Compass operations that are not reflected by the mirroring feature.
      */
     public static CompassSession getCurrentCompassSession(EntityManager em) {
-        Session serverSession = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) NativeJpaHelper.extractNativeJpa(em)).getServerSession();
-        Session session = ((oracle.toplink.essentials.ejb.cmp3.EntityManager) em).getUnitOfWork();
-        return findCompassSessionEventListener(serverSession).getCurrentCompassSession(session);
+        oracle.toplink.essentials.ejb.cmp3.EntityManager nativeEm = (oracle.toplink.essentials.ejb.cmp3.EntityManager) NativeJpaHelper.extractNativeJpa(em);
+        return findCompassSessionEventListener(nativeEm.getServerSession()).getCurrentCompassSession(nativeEm.getUnitOfWork());
     }
 
     /**
