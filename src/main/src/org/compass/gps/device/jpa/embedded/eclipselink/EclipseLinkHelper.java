@@ -97,9 +97,8 @@ public abstract class EclipseLinkHelper {
      * or to perform additional Compass operations that are not reflected by the mirroring feature.
      */
     public static CompassSession getCurrentCompassSession(EntityManager em) {
-        Session serverSession = ((JpaEntityManager) NativeJpaHelper.extractNativeJpa(em)).getServerSession();
-        Session session = ((JpaEntityManager) em).getUnitOfWork();
-        return findCompassSessionEventListener(serverSession).getCurrentCompassSession(session);
+        JpaEntityManager nativeEm = (JpaEntityManager) NativeJpaHelper.extractNativeJpa(em);
+        return findCompassSessionEventListener(nativeEm.getServerSession()).getCurrentCompassSession(nativeEm.getUnitOfWork());
     }
 
     /**
