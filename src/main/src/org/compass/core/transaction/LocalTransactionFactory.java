@@ -28,6 +28,11 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
+ * Local transaction factory provides Compass level transaction managment.
+ *
+ * <p>By default, when a transaction begins, the {@link org.compass.core.CompassSession} is
+ * bounded to a thread local. It will be unbinded from the thread local when the transaction commits/rollsback.
+ *
  * @author kimchy
  */
 public class LocalTransactionFactory extends AbstractTransactionFactory {
@@ -66,11 +71,11 @@ public class LocalTransactionFactory extends AbstractTransactionFactory {
         if (disableThreadBoundTx) {
             return null;
         }
-        Map sessionMap = sessionMap();
+        Map<Compass, CompassSession> sessionMap = sessionMap();
         if (sessionMap == null) {
             return null;
         } else {
-            return (CompassSession) sessionMap.get(compass);
+            return sessionMap.get(compass);
         }
     }
 

@@ -24,7 +24,7 @@ public abstract class AbstractTransaction implements InternalCompassTransaction 
 
     private boolean begun;
 
-    protected TransactionFactory transactionFactory;
+    protected final TransactionFactory transactionFactory;
 
     protected AbstractTransaction(TransactionFactory transactionFactory) {
         this.transactionFactory = transactionFactory;

@@ -24,13 +24,21 @@ import org.compass.core.config.CompassSettings;
 import org.compass.core.spi.InternalCompassSession;
 
 /**
+ * A factory of {@link org.compass.core.CompassTransaction} that also manages {@link org.compass.core.CompassSession}
+ * bounded to a transaction.
+ *
  * @author kimchy
  */
-
 public interface TransactionFactory {
 
+    /**
+     * Configures the transaction factory.
+     */
     void configure(Compass compass, CompassSettings settings) throws CompassException;
 
+    /**
+     * Begins a transaction for the proided session.
+     */
     CompassTransaction beginTransaction(InternalCompassSession session) throws CompassException;
 
     /**
@@ -42,8 +50,8 @@ public interface TransactionFactory {
      * If there is an outer running existing transaction, try and join it. This method
      * is called when opening a session and will ease the usage of Compass since there
      * won't be a need to begin a transaction explicitly.
-     * <p/>
-     * Note, this might end up working as if {@link org.compass.core.CompassSession#beginTransaction()}
+     *
+     * <p>Note, this might end up working as if {@link org.compass.core.CompassSession#beginTransaction()}
      * was called, commit/rollback will not be called afterwards. Actually, beginTransaction might be
      * called again for the same session.
      */
