@@ -812,7 +812,7 @@ public class DefaultLuceneSearchEngineIndexManager implements LuceneSearchEngine
                                 log.trace("Sub index [" + subIndex + "] does not exists, no refresh perfomed");
                             }
                         } catch (Exception e) {
-                            log.error("Failed to perform background refresh of cache for for sub-index [" + subIndex + "]", e);
+                            log.warn("Failed to perform background refresh of cache for for sub-index [" + subIndex + "]", e);
                         }
                     }
                     return null;
