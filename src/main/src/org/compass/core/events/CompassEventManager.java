@@ -118,10 +118,10 @@ public class CompassEventManager implements CompassConfigurable,
     }
 
     public FilterOperation onPreCreate(String alias, Object obj) {
-        alias = findAlias(alias, obj);
         if (preCreateEventListeners == null) {
             return FilterOperation.NO;
         }
+        alias = findAlias(alias, obj);
         for (PreCreateEventListener listener : preCreateEventListeners) {
             if (listener.onPreCreate(alias, obj) == FilterOperation.YES) {
                 return FilterOperation.YES;
@@ -143,10 +143,10 @@ public class CompassEventManager implements CompassConfigurable,
     }
 
     public FilterOperation onPreDelete(String alias, Object obj) {
-        alias = findAlias(alias, obj);
         if (preDeleteEventListeners == null) {
             return FilterOperation.NO;
         }
+        alias = findAlias(alias, obj);
         for (PreDeleteEventListener listener : preDeleteEventListeners) {
             if (listener.onPreDelete(alias, obj) == FilterOperation.YES) {
                 return FilterOperation.YES;
@@ -181,10 +181,10 @@ public class CompassEventManager implements CompassConfigurable,
     }
 
     public FilterOperation onPreSave(String alias, Object obj) {
-        alias = findAlias(alias, obj);
         if (preSaveEventListeners == null) {
             return FilterOperation.NO;
         }
+        alias = findAlias(alias, obj);
         for (PreSaveEventListener listener : preSaveEventListeners) {
             if (listener.onPreSave(alias, obj) == FilterOperation.YES) {
                 return FilterOperation.YES;
@@ -206,10 +206,10 @@ public class CompassEventManager implements CompassConfigurable,
     }
 
     public void onPostCreate(String alias, Object obj) {
-        alias = findAlias(alias, obj);
         if (postCreateEventListeners == null) {
             return;
         }
+        alias = findAlias(alias, obj);
         for (PostCreateEventListener listener : postCreateEventListeners) {
             listener.onPostCreate(alias, obj);
         }
@@ -225,10 +225,10 @@ public class CompassEventManager implements CompassConfigurable,
     }
 
     public void onPostDelete(String alias, Object obj) {
-        alias = findAlias(alias, obj);
         if (postDeleteEventListeners == null) {
             return;
         }
+        alias = findAlias(alias, obj);
         for (PostDeleteEventListener listener : postDeleteEventListeners) {
             listener.onPostDelete(alias, obj);
         }
@@ -254,10 +254,10 @@ public class CompassEventManager implements CompassConfigurable,
     }
 
     public void onPostSave(String alias, Object obj) {
-        alias = findAlias(alias, obj);
         if (postSaveEventListeners == null) {
             return;
         }
+        alias = findAlias(alias, obj);
         for (PostSaveEventListener listener : postSaveEventListeners) {
             listener.onPostSave(alias, obj);
         }
