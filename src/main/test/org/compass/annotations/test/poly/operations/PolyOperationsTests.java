@@ -85,4 +85,39 @@ public class PolyOperationsTests extends AbstractAnnotationsTestCase {
         tr.commit();
         session.close();
     }
+
+    public void testPolyFind() {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        A a = new A();
+        a.id = 1;
+        a.value = "value1";
+        session.save(a);
+
+        B b = new B();
+        b.id = 2;
+        b.value = "value2";
+        session.save(b);
+
+        a = new A();
+        a.id = 3;
+        a.value = "value3";
+        session.save(a);
+
+        // search exact ones
+        assertEquals(1, session.find("A.value:value1").length());
+        assertEquals(1, session.find("B.value:value2").length());
+
+        // search poly ones based on A
+        assertEquals(1, session.find("A.value:value2").length());
+
+        // search poly ones based on the Contract
+        assertEquals(1, session.find("Contract.value:value1").length());
+        assertEquals(1, session.find("Contract.value:value2").length());
+        assertEquals(1, session.find("Contract.value:value3").length());
+
+        tr.commit();
+        session.close();
+    }
 }

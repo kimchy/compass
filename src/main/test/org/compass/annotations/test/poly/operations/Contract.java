@@ -18,6 +18,7 @@ package org.compass.annotations.test.poly.operations;
 
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
 
 /**
  * @author kimchy
@@ -27,4 +28,7 @@ public interface Contract {
 
     @SearchableId
     int getId();
+
+    @SearchableProperty
+    String getValue();
 }
