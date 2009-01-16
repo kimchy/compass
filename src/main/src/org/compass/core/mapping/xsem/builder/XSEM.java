@@ -51,6 +51,14 @@ public abstract class XSEM {
     }
 
     /**
+     * Constrcuts a new contract xml mapping builder that can later be extended by other
+     * contracts / xml mappings. Contract mappings allow to share common mapping definitions.
+     */
+    public static XmlContractMappingBuilder contract(String alias) {
+        return new XmlContractMappingBuilder(alias);
+    }
+
+    /**
      * Constructs a new xml id mapping using the specified xpath. Can then be added
      * to a root xml mapping builder using {@link XmlMappingBuilder#add(XmlIdMappingBuilder)}.
      */

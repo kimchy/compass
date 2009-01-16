@@ -85,6 +85,8 @@ import org.compass.core.util.StringUtils;
 import org.compass.core.util.config.ConfigurationHelper;
 
 /**
+ * Binds a {@link org.compass.core.util.config.ConfigurationHelper} content into Compass mappings.
+ *
  * @author kimchy
  */
 public abstract class PlainMappingBinding extends AbstractConfigurationHelperMappingBinding {
@@ -107,20 +109,27 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         } else {
             defaultPackage = "";
         }
-        ConfigurationHelper[] contractArr = doc.getChildren("contract");
-        for (ConfigurationHelper aContractArr : contractArr) {
+        for (ConfigurationHelper contractConf : doc.getChildren("contract")) {
             DefaultContractMapping contractMapping = new DefaultContractMapping();
-            bindContract(aContractArr, contractMapping);
+            bindContract(contractConf, contractMapping);
             mapping.addMapping(contractMapping);
         }
-        ConfigurationHelper[] resourceContractArr = doc.getChildren("resource-contract");
-        for (ConfigurationHelper aResourceContractArr : resourceContractArr) {
+        for (ConfigurationHelper resourceContractConf : doc.getChildren("resource-contract")) {
             DefaultContractMapping contractMapping = new DefaultContractMapping();
-            bindResourceContract(aResourceContractArr, contractMapping);
+            bindResourceContract(resourceContractConf, contractMapping);
             mapping.addMapping(contractMapping);
         }
-        ConfigurationHelper[] classArr = doc.getChildren("class");
-        for (ConfigurationHelper classConf : classArr) {
+        for (ConfigurationHelper jsonContractConf : doc.getChildren("json-contract")) {
+            DefaultContractMapping contractMapping = new DefaultContractMapping();
+            bindJsonContract(jsonContractConf, contractMapping);
+            mapping.addMapping(contractMapping);
+        }
+        for (ConfigurationHelper xmlContractConf : doc.getChildren("xml-contract")) {
+            DefaultContractMapping contractMapping = new DefaultContractMapping();
+            bindXmlContract(xmlContractConf, contractMapping);
+            mapping.addMapping(contractMapping);
+        }
+        for (ConfigurationHelper classConf : doc.getChildren("class")) {
             String alias = classConf.getAttribute("alias");
             boolean newClassMapping = false;
             ClassMapping classMapping;
@@ -159,6 +168,21 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         return true;
     }
 
+
+    private void bindJsonContract(ConfigurationHelper contractConf, InternalContractMapping contractMapping)
+            throws ConfigurationException {
+        String aliasValue = contractConf.getAttribute("alias");
+        Alias alias = valueLookup.lookupAlias(aliasValue);
+        if (alias == null) {
+            contractMapping.setAlias(aliasValue);
+        } else {
+            contractMapping.setAlias(alias.getName());
+        }
+        bindExtends(contractConf, contractMapping);
+
+        bindJsonChildren(contractConf, contractMapping);
+    }
+
     private void bindJsonRootObject(ConfigurationHelper jsonObjectConf, RootJsonObjectMapping rootJsonObjectMapping)
             throws ConfigurationException {
         String aliasValue = jsonObjectConf.getAttribute("alias");
@@ -186,6 +210,10 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
 
         rootJsonObjectMapping.setDynamic(jsonObjectConf.getAttributeAsBoolean("dynamic", false));
 
+        bindJsonChildren(jsonObjectConf, rootJsonObjectMapping);
+    }
+
+    private void bindJsonChildren(ConfigurationHelper jsonObjectConf, InternalAliasMapping rootJsonObjectMapping) {
         for (ConfigurationHelper id : jsonObjectConf.getChildren("json-id", "id")) {
             JsonIdMapping jsonIdMapping = new JsonIdMapping();
             bindJsonProperty(id, jsonIdMapping, rootJsonObjectMapping);
@@ -247,7 +275,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
     }
 
     private void bindJsonArray(ConfigurationHelper jsonArrayConf, JsonArrayMapping jsonArrayMapping,
-                               RootJsonObjectMapping rootJsonObjectMapping) {
+                               InternalAliasMapping rootJsonObjectMapping) {
         String name = jsonArrayConf.getAttribute("name", null);
         if (name != null) {
             name = valueLookup.lookupMetaDataName(name);
@@ -302,7 +330,7 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
     }
 
     private void bindJsonPlainObject(ConfigurationHelper jsonObjectConf, PlainJsonObjectMapping jsonObjectMapping,
-                                     RootJsonObjectMapping rootJsonObjectMapping) {
+                                     InternalAliasMapping rootJsonObjectMapping) {
         String name = jsonObjectConf.getAttribute("name", null);
         if (name != null) {
             name = valueLookup.lookupMetaDataName(name);
@@ -385,6 +413,19 @@ public abstract class PlainMappingBinding extends AbstractConfigurationHelperMap
         bindSpellCheck(jsonPropConf, jsonPropertyMapping);
     }
 
+    private void bindXmlContract(ConfigurationHelper contractConf, InternalContractMapping contractMapping)
+            throws ConfigurationException {
+        String aliasValue = contractConf.getAttribute("alias");
+        Alias alias = valueLookup.lookupAlias(aliasValue);
+        if (alias == null) {
+            contractMapping.setAlias(aliasValue);
+        } else {
+            contractMapping.setAlias(alias.getName());
+        }
+        bindExtends(contractConf, contractMapping);
+
+        bindXmlObjectChildren(contractConf, contractMapping);
+    }
 
     private void bindXmlObject(ConfigurationHelper xmlObjectConf, XmlObjectMapping xmlObjectMapping)
             throws ConfigurationException {

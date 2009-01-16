@@ -94,6 +94,18 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
                         .add(property("data1").indexName("eleText").format("yyyy-MM-dd||dd-MM-yyyy").valueConverter("date"))
                         .add(content("content"))
         );
+        conf.addMapping(
+                contract("contract1")
+                        .add(id("/xml-fragment/data/id/@value").indexName("id"))
+                        .add(property("/xml-fragment/data/data1/@value"))
+        );
+        conf.addMapping(
+                contract("contract2")
+                        .add(property("/xml-fragment/data/data1").indexName("eleText"))
+        );
+        conf.addMapping(
+                xml("data7").extendsAliases("contract1", "contract2")
+        );
     }
 
     protected abstract AliasedXmlObject buildAliasedXmlObject(String alias, Reader data) throws Exception;
@@ -288,6 +300,34 @@ public abstract class AbstractXmlObjectTests extends AbstractTestCase {
         assertEquals("1", resource.getValue("$/data6/id"));
         assertEquals("2001-12-03", resource.getValue("eleText"));
         assertEquals("000021.2000", resource.getValue("value"));
+
+        tr.commit();
+        session.close();
+    }
+
+    public void testContractData7() throws Exception {
+        CompassSession session = openSession();
+        CompassTransaction tr = session.beginTransaction();
+
+        AliasedXmlObject xmlObject = buildAliasedXmlObject("data7", readData("data7"));
+        session.save(xmlObject);
+
+        assertNull(session.get("data7", "1"));
+
+        Resource resource = session.loadResource("data7", "1");
+        assertEquals("1", resource.getValue("$/data7/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        resource = session.loadResource("data7", xmlObject);
+        assertEquals("1", resource.getValue("$/data7/id"));
+        assertEquals(2, resource.getProperties("eleText").length);
+        assertEquals(2, resource.getProperties("value").length);
+
+        CompassHits hits = session.find("data11");
+        assertEquals(1, hits.length());
+        hits = session.find("data11attr");
+        assertEquals(1, hits.length());
 
         tr.commit();
         session.close();

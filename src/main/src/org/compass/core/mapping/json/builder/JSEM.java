@@ -51,6 +51,14 @@ public abstract class JSEM {
     }
 
     /**
+     * Constrcuts a new contract json mapping builder that can later be extended by other
+     * contracts / json mappings. Contract mappings allow to share common mapping definitions.
+     */
+    public static JsonContractMappingBuilder contract(String alias) {
+        return new JsonContractMappingBuilder(alias);
+    }
+
+    /**
      * Constructs a new json id mapping using the specified name. Can then be added
      * to a root json mapping builder using {@link JsonMappingBuilder#add(JsonIdMappingBuilder)}.
      */

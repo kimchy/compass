@@ -6,9 +6,20 @@
 -->
 
 <!ELEMENT compass-core-mapping (
-    (contract|class|resource|resource-contract|xml-object|root-json-object)*
+    (contract|class|resource|resource-contract|xml-object|xml-contract|root-json-object|json-contract)*
 )>
     <!ATTLIST compass-core-mapping package CDATA #IMPLIED>
+
+<!ELEMENT json-contract (
+    json-id*,
+    (json-analyzer?),
+    (json-boost?),
+    (json-property|json-array|json-object)*,
+    (json-content?)
+)>
+    <!ATTLIST json-contract alias CDATA #REQUIRED>
+    <!ATTLIST json-contract extends CDATA #IMPLIED>
+    <!ATTLIST json-contract analyzer CDATA #IMPLIED>
 
 <!ELEMENT root-json-object (
     all?,
@@ -21,6 +32,7 @@
 )>
     <!ATTLIST root-json-object alias CDATA #REQUIRED>
     <!ATTLIST root-json-object sub-index CDATA #IMPLIED>
+    <!ATTLIST root-json-object extends CDATA #IMPLIED>
     <!ATTLIST root-json-object analyzer CDATA #IMPLIED>
     <!ATTLIST root-json-object boost CDATA #IMPLIED>
     <!ATTLIST root-json-object dynamic (true|false) #IMPLIED>
@@ -91,6 +103,17 @@
     <!ATTLIST json-boost default CDATA #IMPLIED>
     <!ATTLIST json-boost converter CDATA #IMPLIED>
 
+<!ELEMENT xml-contract (
+    xml-id*,
+    (xml-analyzer?),
+    (xml-boost?),
+    (xml-property)*,
+    (xml-content?)
+)>
+    <!ATTLIST xml-contract alias CDATA #REQUIRED>
+    <!ATTLIST xml-contract extends CDATA #IMPLIED>
+    <!ATTLIST xml-contract analyzer CDATA #IMPLIED>
+
 <!ELEMENT xml-object (
     all?,
     sub-index-hash?,
@@ -102,6 +125,7 @@
 )>
     <!ATTLIST xml-object alias CDATA #REQUIRED>
     <!ATTLIST xml-object sub-index CDATA #IMPLIED>
+    <!ATTLIST xml-object extends CDATA #IMPLIED>
     <!ATTLIST xml-object xpath CDATA #IMPLIED>
     <!ATTLIST xml-object analyzer CDATA #IMPLIED>
     <!ATTLIST xml-object boost CDATA #IMPLIED>

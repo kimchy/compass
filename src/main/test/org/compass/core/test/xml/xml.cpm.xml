@@ -6,49 +6,61 @@
 <compass-core-mapping>
 
     <xml-object alias="data1">
-        <xml-id name="id" xpath="/xml-fragment/data/id/@value" />
-        <xml-property xpath="/xml-fragment/data/data1/@value" />
-        <xml-property name="eleText" xpath="/xml-fragment/data/data1" />
+        <xml-id name="id" xpath="/xml-fragment/data/id/@value"/>
+        <xml-property xpath="/xml-fragment/data/data1/@value"/>
+        <xml-property name="eleText" xpath="/xml-fragment/data/data1"/>
     </xml-object>
 
     <xml-object alias="data2" xpath="/xml-fragment/data[1]">
-        <xml-id name="id" xpath="id/@value" />
-        <xml-property xpath="data1/@value" />
-        <xml-property name="eleText" xpath="data1" />
+        <xml-id name="id" xpath="id/@value"/>
+        <xml-property xpath="data1/@value"/>
+        <xml-property name="eleText" xpath="data1"/>
     </xml-object>
 
     <xml-object alias="data3" xpath="/xml-fragment/data">
-        <xml-id name="id" xpath="id/@value" />
-        <xml-property xpath="data1/@value" />
-        <xml-property name="eleText" xpath="data1" />
+        <xml-id name="id" xpath="id/@value"/>
+        <xml-property xpath="data1/@value"/>
+        <xml-property name="eleText" xpath="data1"/>
     </xml-object>
 
     <xml-object alias="data4" xpath="/xml-fragment/data">
-        <xml-id name="id" xpath="id/@value" />
-        <xml-property xpath="data1/@value" />
-        <xml-property name="eleText" xpath="data1" />
-        <xml-content name="content" />
+        <xml-id name="id" xpath="id/@value"/>
+        <xml-property xpath="data1/@value"/>
+        <xml-property name="eleText" xpath="data1"/>
+        <xml-content name="content"/>
     </xml-object>
 
     <xml-object alias="data5-1" xpath="/xml-fragment/test1:data">
-        <xml-id name="id" xpath="test1:id/@value" />
-        <xml-property xpath="test1:data1/@value" />
-        <xml-property name="eleText" xpath="test1:data1" />
-        <xml-content name="content" />
+        <xml-id name="id" xpath="test1:id/@value"/>
+        <xml-property xpath="test1:data1/@value"/>
+        <xml-property name="eleText" xpath="test1:data1"/>
+        <xml-content name="content"/>
     </xml-object>
 
     <xml-object alias="data5-2" xpath="/xml-fragment/data">
-        <xml-id name="id" xpath="id/@value" />
-        <xml-property xpath="data1/@value" />
-        <xml-property name="eleText" xpath="data1" />
-        <xml-content name="content" />
+        <xml-id name="id" xpath="id/@value"/>
+        <xml-property xpath="data1/@value"/>
+        <xml-property name="eleText" xpath="data1"/>
+        <xml-content name="content"/>
     </xml-object>
 
     <xml-object alias="data6" xpath="/xml-fragment/data">
-        <xml-id name="id" xpath="id/@value" />
-        <xml-property xpath="data1/@value" format="000000.0000" value-converter="float" />
-        <xml-property name="eleText" xpath="data1" format="yyyy-MM-dd||dd-MM-yyyy" value-converter="date" />
-        <xml-content name="content" />
+        <xml-id name="id" xpath="id/@value"/>
+        <xml-property xpath="data1/@value" format="000000.0000" value-converter="float"/>
+        <xml-property name="eleText" xpath="data1" format="yyyy-MM-dd||dd-MM-yyyy" value-converter="date"/>
+        <xml-content name="content"/>
+    </xml-object>
+
+    <xml-contract alias="contract1">
+        <xml-id name="id" xpath="/xml-fragment/data/id/@value"/>
+        <xml-property xpath="/xml-fragment/data/data1/@value"/>
+    </xml-contract>
+
+    <xml-contract alias="contract2">
+        <xml-property name="eleText" xpath="/xml-fragment/data/data1"/>
+    </xml-contract>
+
+    <xml-object alias="data7" extends="contract1, contract2">
     </xml-object>
 
 </compass-core-mapping>

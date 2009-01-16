@@ -134,6 +134,33 @@
                 content : {
                     name : "content"
                 }
+            },
+            {
+                alias : "data7",
+                extends : "contract1, contract2"
+            }
+        ],
+        "xml-contract" : [
+            {
+                alias : "contract1",
+                id : {
+                    name : "id",
+                    xpath : "/xml-fragment/data/id/@value"
+                },
+                property : [
+                    {
+                        xpath : "/xml-fragment/data/data1/@value"
+                    }
+                ]
+            },
+            {
+                alias : "contract2",
+                property : [
+                    {
+                        name : "eleText",
+                        xpath : "/xml-fragment/data/data1"
+                    }
+                ]
             }
         ]
     }
